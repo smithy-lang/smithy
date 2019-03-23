@@ -1,0 +1,54 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.smithy.model.transform;
+
+import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.Trait;
+
+/**
+ * Filters traits out of the Model that do not match a predicate that
+ * accepts the shape that the trait is attached to and the trait.
+ *
+ * <p>Shapes are only modified and replaced into the model if one of their
+ * traits are modified.
+ *
+ * @see ModelTransformer#filterTraits(Model, BiPredicate)
+ */
+final class FilterTraits {
+    private final BiPredicate<Shape, Trait> predicate;
+
+    FilterTraits(BiPredicate<Shape, Trait> predicate) {
+        this.predicate = predicate;
+    }
+
+    Model transform(ModelTransformer transformer, Model model) {
+        return transformer.mapShapes(model, this::filterTraits);
+    }
+
+    private Shape filterTraits(Shape shape) {
+        List<Trait> keepTraits = shape.getAllTraits().values().stream()
+                .filter(trait -> predicate.test(shape, trait))
+                .collect(Collectors.toList());
+
+        return keepTraits.size() == shape.getAllTraits().size()
+               ? shape
+               : Shape.shapeToBuilder(shape).clearTraits().addTraits(keepTraits).build();
+    }
+}

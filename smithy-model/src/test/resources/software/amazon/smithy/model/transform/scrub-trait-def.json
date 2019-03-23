@@ -1,0 +1,83 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "traitDefs": {
+            "foo": {
+                "selector": "*",
+                "shape": "FooStructure"
+            },
+            "baz": {
+                "selector": "*",
+                "shape": "FooStructure"
+            },
+            "bar": {
+                "selector": "*",
+                "shape": "BarString"
+            },
+            "bam": {
+                "selector": "*",
+                "shape": "smithy.api#String"
+            },
+            "qux": {
+                "selector": "*",
+                "shape": "BarStringList"
+            },
+            "lorem": {
+                "selector": "*",
+                "shape": "ComplexRemoved"
+            },
+            "ipsum": {
+                "selector": "*",
+                "shape": "IpsumString"
+            }
+        },
+        "shapes": {
+            "FooStructure": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "smithy.api#String"
+                    },
+                    "bar": {
+                        "target": "BarString"
+                    },
+                    "ipsum": {
+                        "target": "IpsumString"
+                    }
+                }
+            },
+            "BarString": {
+                "type": "string"
+            },
+            "BarStringList": {
+                "type": "list",
+                "member": {
+                    "target": "BarString"
+                }
+            },
+            "ComplexRemoved": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "FooStructure"
+                    },
+                    "bar": {
+                        "target": "ComplexRemoved"
+                    }
+                }
+            },
+            "IpsumString": {
+                "type": "string"
+            },
+            "IpsumList": {
+                "type": "list",
+                "member": {
+                    "target": "IpsumString"
+                }
+            },
+            "KeepStructure": {
+                "type": "structure"
+            }
+        }
+    }
+}

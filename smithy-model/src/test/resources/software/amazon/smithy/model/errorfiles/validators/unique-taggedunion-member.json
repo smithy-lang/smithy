@@ -1,0 +1,33 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "A": {
+                "type": "union",
+                "members": {
+                    "Foo": {
+                        "target": "String"
+                    },
+                    "foo": {
+                        "target": "String"
+                    },
+                    "fOO": {
+                        "target": "String"
+                    },
+                    "baz": {
+                        "target": "String"
+                    },
+                    "Baz": {
+                        "target": "String"
+                    },
+                    "Bar": {
+                        "target": "String"
+                    }
+                }
+            },
+            "String": {
+                "type": "string"
+            }
+        }
+    }
+}

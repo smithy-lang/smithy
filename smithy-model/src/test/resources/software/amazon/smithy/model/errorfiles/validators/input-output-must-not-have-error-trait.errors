@@ -1,0 +1,2 @@
+[ERROR] (Target) ns.foo#MyOperation / [0, 0]: Operation output targets an invalid structure `ns.foo#ErrorStructure` that is marked with the `error` trait.
+[ERROR] (Target) ns.foo#MyOperation / [0, 0]: Operation input targets an invalid structure `ns.foo#ErrorStructure` that is marked with the `error` trait.

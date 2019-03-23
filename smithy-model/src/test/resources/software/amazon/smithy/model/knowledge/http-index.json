@@ -1,0 +1,161 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "MyService": {
+                "type": "service",
+                "version": "2017-01-17",
+                "protocols": {
+                    "example": {
+                    }
+                },
+                "operations": [
+                    "ServiceOperationNoInputOutput",
+                    "ServiceOperationExplicitUriMethodAndCode",
+                    "ServiceOperationExplicitMembers",
+                    "ServiceOperationExplicitBody",
+                    "WithLabels"
+                ]
+            },
+            "ServiceOperationNoInputOutput": {
+                "type": "operation",
+                "http": {
+                    "uri": "\/ServiceOperationNoInputOutput",
+                    "method": "PATCH"
+                }
+            },
+            "ServiceOperationExplicitUriMethodAndCode": {
+                "type": "operation",
+                "http": {
+                    "method": "PATCH",
+                    "uri": "\/someMethod",
+                    "code": 204
+                }
+            },
+            "ServiceOperationExplicitMembers": {
+                "type": "operation",
+                "input": "ServiceOperationExplicitMembersInput",
+                "output": "ServiceOperationExplicitMembersOutput",
+                "http": {
+                    "uri": "\/explicitMembersA",
+                    "method": "POST",
+                    "code": 200
+                }
+            },
+            "ServiceOperationExplicitMembersInput": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String",
+                        "httpHeader": "X-Foo"
+                    },
+                    "baz": {
+                        "target": "String",
+                        "httpQuery": "baz"
+                    },
+                    "bar": {
+                        "target": "StringList",
+                        "httpQuery": "bar"
+                    },
+                    "bam": {
+                        "target": "String",
+                        "httpPayload": true
+                    },
+                    "qux": {
+                        "target": "StringMap",
+                        "httpPrefixHeaders": "X-Prefix-"
+                    }
+                }
+            },
+            "ServiceOperationExplicitMembersOutput": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String",
+                        "httpHeader": "X-Foo"
+                    },
+                    "qux": {
+                        "target": "StringMap",
+                        "httpPrefixHeaders": "X-Prefix-"
+                    },
+                    "baz": {
+                        "target": "String"
+                    },
+                    "bar": {
+                        "target": "String"
+                    },
+                    "bam": {
+                        "target": "String"
+                    }
+                }
+            },
+            "ServiceOperationExplicitBody": {
+                "type": "operation",
+                "output": "ServiceOperationExplicitBodyOutput",
+                "http": {
+                    "uri": "\/explicitMembersB",
+                    "method": "POST",
+                    "code": 200
+                }
+            },
+            "ServiceOperationExplicitBodyOutput": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String",
+                        "httpHeader": "X-Foo"
+                    },
+                    "qux": {
+                        "target": "StringMap",
+                        "httpPrefixHeaders": "X-Prefix-"
+                    },
+                    "baz": {
+                        "target": "String",
+                        "httpPayload": true
+                    }
+                }
+            },
+            "WithLabels": {
+                "type": "operation",
+                "input": "WithLabelsInput",
+                "http": {
+                    "uri": "\/foo\/{baz}",
+                    "method": "POST"
+                }
+            },
+            "WithLabelsInput": {
+                "type": "structure",
+                "members": {
+                    "baz": {
+                        "target": "String",
+                        "httpLabel": true,
+                        "required": true
+                    }
+                }
+            },
+            "ErrorExplicitStatus": {
+                "type": "structure",
+                "error": "client",
+                "httpError": 403
+            },
+            "String": {
+                "type": "string"
+            },
+            "StringList": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "StringMap": {
+                "type": "map",
+                "key": {
+                    "target": "smithy.api#String"
+                },
+                "value": {
+                    "target": "smithy.api#String"
+                }
+            }
+        }
+    }
+}

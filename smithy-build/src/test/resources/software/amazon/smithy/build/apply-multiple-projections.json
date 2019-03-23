@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "projections": {
+    "a": {
+      "transforms": [
+        {"name": "includeByTag", "args": ["foo", "baz"]},
+        {"name": "apply", "args": ["excludeLength"]},
+        {"name": "excludeTraits", "args": ["documentation"]},
+        // No issue with applying it multiple times.
+        {"name": "apply", "args": ["excludeLength"]}
+      ]
+    },
+    "excludeLength": {
+      "abstract": true,
+      "transforms": [
+        {"name": "excludeTraits", "args": ["length"]},
+        {"name": "apply", "args": ["excludeTags"]}
+      ]
+    },
+    "excludeTags": {
+      "abstract": true,
+      "transforms": [
+        {"name": "excludeTraits", "args": ["tags"]}
+      ]
+    }
+  }
+}

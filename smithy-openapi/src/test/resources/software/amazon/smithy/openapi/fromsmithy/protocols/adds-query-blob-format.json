@@ -1,0 +1,44 @@
+{
+  "smithy": "1.0",
+  "smithy.example": {
+    "shapes": {
+      "Service": {
+        "type": "service",
+        "version": "2006-03-01",
+        "protocols": {
+          "aws.rest-json": {}
+        },
+        "operations": [
+          "Operation"
+        ]
+      },
+      "Operation": {
+        "type": "operation",
+        "input": "OperationInput",
+        "http": {
+          "uri": "/",
+          "method": "POST"
+        }
+      },
+      "OperationInput": {
+        "type": "structure",
+        "members": {
+          "blob1": {
+            "target": "Blob",
+            "httpQuery": "blob1"
+          },
+          "blobList": {
+            "target": "BlobList",
+            "httpQuery": "blob2"
+          }
+        }
+      },
+      "BlobList": {
+        "type": "list",
+        "member": {
+          "target": "Blob"
+        }
+      }
+    }
+  }
+}

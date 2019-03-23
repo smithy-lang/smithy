@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "imports": ["main.json", "a.json"],
+  "projections": {
+    "b": {
+      "imports": ["b.json"]
+    },
+    "c": {
+      "imports": ["c.json"]
+    }
+  }
+}

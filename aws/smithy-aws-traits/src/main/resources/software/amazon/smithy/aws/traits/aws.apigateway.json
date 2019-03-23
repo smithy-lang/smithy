@@ -1,0 +1,72 @@
+{
+  "smithy": "1.0",
+  "aws.apigateway": {
+    "traitDefs": {
+      "apiKeySource": {
+        "selector": "service",
+        "shape": "smithy.api#String",
+        "documentation": "Specifies the source of the caller identifier that will be used to throttle API methods that require a key.",
+        "externalDocumentation": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html",
+        "tags": ["internal"]
+      },
+      "authorizers": {
+        "selector": "service",
+        "shape": "aws.apigateway#Authorizers",
+        "documentation": "Lambda authorizers to attach to the authentication schemes defined on this service.",
+        "tags": ["internal"]
+      },
+      "requestValidator": {
+        "selector": ":test(service, operation)",
+        "shape": "smithy.api#String",
+        "documentation": "Selects which request validation strategy to use. One of: 'full', 'params-only', 'body-only'",
+        "tags": ["internal"]
+      }
+    },
+    "shapes": {
+      "Authorizers": {
+        "type": "map",
+        "private": true,
+        "documentation": "A list of API Gateway authorizers to augment the service's declared authentication mechanisms.",
+        "key": {"target": "smithy.api#String"},
+        "value": {"target": "aws.apigateway#Authorizer"}
+      },
+      "Authorizer": {
+        "type": "structure",
+        "private": true,
+        "documentation": "An object that associates an authorizer and associated metadata with an authentication mechanism.",
+        "members": {
+          "clientType": {
+            "target": "smithy.api#String",
+            "documentation": "The client authentication type. A value identifying the category of authorizer, such as \"oauth2\" or \"awsSigv4\"."
+          },
+          "type": {
+            "target": "smithy.api#String",
+            "required": true,
+            "documentation": "The type of the authorizer. This is a required property and the value must be \"token\", for an authorizer with the caller identity embedded in an authorization token, or \"request\", for an authorizer with the caller identity contained in request parameters."
+          },
+          "uri": {
+            "target": "smithy.api#String",
+            "required": true,
+            "documentation": "The Uniform Resource Identifier (URI) of the authorizer Lambda function"
+          },
+          "credentials": {
+            "target": "smithy.api#String",
+            "documentation": "Credentials required for invoking the authorizer"
+          },
+          "identitySource": {
+            "target": "smithy.api#String",
+            "documentation": "Comma-separated list of mapping expressions of the request parameters as the identity source. Applicable for the authorizer of the \"request\" type only."
+          },
+          "identityValidationExpression": {
+            "target": "smithy.api#String",
+            "documentation": "A regular expression for validating the token as the incoming identity"
+          },
+          "resultTtlInSeconds": {
+            "target": "smithy.api#Integer",
+            "documentation": "The number of seconds for which the resulting IAM policy is cached."
+          }
+        }
+      }
+    }
+  }
+}

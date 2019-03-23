@@ -1,0 +1,83 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "traitDefs": {
+            "bar": {
+                "selector": "*",
+                "shape": "BarTraitShape"
+            },
+            "quux": {
+                "selector": "*",
+                "shape": "QuuxTraitShape"
+            }
+        },
+        "shapes": {
+            "MyService": {
+                "type": "service",
+                "protocols": {
+                    "foo": {
+                    }
+                },
+                "version": "2017-01-19",
+                "operations": [
+                    "MyOperation"
+                ]
+            },
+            "MyOperation": {
+                "type": "operation",
+                "input": "MyOperationInput"
+            },
+            "MyOperationInput": {
+                "type": "structure",
+                "members": {
+                    "fizz": {
+                        "target": "Include1"
+                    },
+                    "buzz": {
+                        "target": "Include2"
+                    }
+                }
+            },
+            "Exclude1": {
+                "type": "string",
+                "ns.foo#quux": {
+                    "member": "pop"
+                }
+            },
+            "Exclude2": {
+                "type": "string"
+            },
+            "Include1": {
+                "type": "string",
+                "ns.foo#bar": {
+                    "member": "baz"
+                }
+            },
+            "Include2": {
+                "type": "string"
+            },
+            "BarTraitShape": {
+                "type": "structure",
+                "members": {
+                    "member": {
+                        "target": "BarTraitShapeMember"
+                    }
+                }
+            },
+            "QuuxTraitShape": {
+                "type": "structure",
+                "members": {
+                    "member": {
+                        "target": "QuuxTraitShapeMember"
+                    }
+                }
+            },
+            "BarTraitShapeMember": {
+                "type": "string"
+            },
+            "QuuxTraitShapeMember": {
+                "type": "string"
+            }
+        }
+    }
+}

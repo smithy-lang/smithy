@@ -1,0 +1,15 @@
+[ERROR] (Target) ns.foo#UnresolvedOutput$items / [0, 0]: member shape targets an unresolved shape `ns.foo#Missing`
+[ERROR] (Target) ns.foo#UnresolvedOutput$nextToken / [0, 0]: member shape targets an unresolved shape `ns.foo#Missing`
+[ERROR] (Target) ns.foo#UnresolvedInput$pageSize / [0, 0]: member shape targets an unresolved shape `ns.foo#Missing`
+[ERROR] (Target) ns.foo#UnresolvedInput$nextToken / [0, 0]: member shape targets an unresolved shape `ns.foo#Missing`
+[ERROR] (PaginatedTrait) ns.foo#Invalid1 / [0, 0]: `paginated` operations require an input
+[ERROR] (PaginatedTrait) ns.foo#Invalid2 / [0, 0]: `paginated` trait `inputToken` property references a non-existent member named `nextToken`
+[ERROR] (PaginatedTrait) ns.foo#Invalid3 / [0, 0]: `paginated` trait `inputToken` references input member `InputNotString`, a member that targets a integer shape, but inputToken must reference a member that targets a(n) `string`.
+[ERROR] (PaginatedTrait) ns.foo#Invalid3 / [0, 0]: `paginated` trait `outputToken` references output member `InputNotString`, a member that targets a integer shape, but outputToken must reference a member that targets a(n) `string`.
+[ERROR] (PaginatedTrait) ns.foo#Invalid4 / [0, 0]: `paginated` trait `inputToken` must reference an optional input structure member, but found a reference to `ns.foo#NonOptionalInput$nextToken`, a required member.
+[ERROR] (PaginatedTrait) ns.foo#Invalid4 / [0, 0]: `paginated` trait `outputToken` must reference an optional output structure member, but found a reference to `ns.foo#NonOptionalOutput$nextToken`, a required member.
+[ERROR] (PaginatedTrait) ns.foo#Invalid4 / [0, 0]: `paginated` trait `pageSize` must reference an optional input structure member, but found a reference to `ns.foo#NonOptionalInput$pageSize`, a required member.
+[ERROR] (PaginatedTrait) ns.foo#Invalid6 / [0, 0]: `paginated` trait `pageSize` references input member `Invalid6Input`, a member that targets a string shape, but pageSize must reference a member that targets a(n) `integer`.
+[ERROR] (PaginatedTrait) ns.foo#Invalid7 / [0, 0]: `paginated` trait `items` references output member `Invalid7Input`, a member that targets a string shape, but items must reference a member that targets one of the following types: `list`, `map`.
+[ERROR] (PaginatedTrait) ns.foo#Invalid8 / [0, 0]: `paginated` trait `outputToken` property references a non-existent member named `missing`
+[ERROR] (PaginatedTrait) ns.foo#InvalidNoOutput / [0, 0]: `paginated` operations require an output

@@ -1,0 +1,85 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "Valid1": {
+                "type": "string",
+                "enum": {
+                    "foo": {
+                    },
+                    "bar": {
+                    }
+                }
+            },
+            "Valid2": {
+                "type": "string",
+                "enum": {
+                    "foo": {
+                        "name": "FOO",
+                        "documentation": "foo",
+                        "tags": [
+                            "a",
+                            "b"
+                        ]
+                    },
+                    "bar": {
+                        "name": "BAR",
+                        "documentation": "bar",
+                        "tags": [
+                            "a",
+                            "b"
+                        ]
+                    }
+                }
+            },
+            "Warn1": {
+                "type": "string",
+                "enum": {
+                    "bar": {
+                        "name": "_bar"
+                    },
+                    "baz": {
+                        "name": "baz"
+                    }
+                }
+            },
+            "Invalid1": {
+                "type": "string",
+                "enum": {
+                    "foo": {
+                    },
+                    "bar": {
+                        "name": "BAR",
+                        "documentation": "bar",
+                        "tags": [
+                            "a",
+                            "b"
+                        ]
+                    }
+                }
+            },
+            "Invalid2": {
+                "type": "string",
+                "enum": {
+                    "foo": {
+                        "name": "invalid!"
+                    },
+                    "bar": {
+                        "name": "invalid2!"
+                    }
+                }
+            },
+            "Invalid3": {
+                "type": "string",
+                "enum": {
+                    "foo": {
+                        "name": "a"
+                    },
+                    "bar": {
+                        "name": "a"
+                    }
+                }
+            }
+        }
+    }
+}

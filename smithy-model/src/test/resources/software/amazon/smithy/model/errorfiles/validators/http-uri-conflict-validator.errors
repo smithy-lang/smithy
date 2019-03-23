@@ -1,0 +1,5 @@
+[ERROR] (HttpUriConflict) ns.foo#A / [0, 0]: Operation URI, `/foo`, conflicts with other operation URIs in the same service: [`ns.foo#B` (/foo), `ns.foo#C` (/foo)]
+[ERROR] (HttpUriConflict) ns.foo#C / [0, 0]: Operation URI, `/foo`, conflicts with other operation URIs in the same service: [`ns.foo#A` (/foo), `ns.foo#B` (/foo)]
+[ERROR] (HttpUriConflict) ns.foo#B / [0, 0]: Operation URI, `/foo`, conflicts with other operation URIs in the same service: [`ns.foo#A` (/foo), `ns.foo#C` (/foo)]
+[ERROR] (HttpUriConflict) ns.foo#E / [0, 0]: Operation URI, `/baz`, conflicts with other operation URIs in the same service: [`ns.foo#D` (/baz)]
+[ERROR] (HttpUriConflict) ns.foo#D / [0, 0]: Operation URI, `/baz`, conflicts with other operation URIs in the same service: [`ns.foo#E` (/baz)]

@@ -1,0 +1,1 @@
+[ERROR] (XmlNamespaceTrait) ns.foo#InvalidNamespace / [28, 27]: An `xmlNamespace` trait is applied to the (structure: `ns.foo#InvalidNamespace`) shape with an invalid uri: ::foo

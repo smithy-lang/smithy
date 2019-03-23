@@ -1,0 +1,161 @@
+{
+  "smithy": "1.0",
+  "ns.foo": {
+    "shapes": {
+
+      "ValidSingleEventInputOperation": {
+        "type": "operation",
+        "input": "ValidSingleEventInput",
+        "inputEventStream": "events"
+      },
+
+      "ValidSingleEventOutputOperation": {
+        "type": "operation",
+        "output": "ValidSingleEventOutput",
+        "outputEventStream": "events"
+      },
+
+      "ValidSingleEventBidirectionalOperation": {
+        "type": "operation",
+        "input": "ValidSingleEventInput",
+        "inputEventStream": "events",
+        "output": "ValidSingleEventOutput",
+        "outputEventStream": "events"
+      },
+
+      "ValidSingleEventInput": {
+        "type": "structure",
+        "members": {
+          "events": {"target": "Event"}
+        }
+      },
+
+      "ValidSingleEventOutput": {
+        "type": "structure",
+        "members": {
+          "events": {"target": "Event"}
+        }
+      },
+
+      "Event": {
+        "type": "structure"
+      },
+
+      "ValidMultiEventInputOperation": {
+        "type": "operation",
+        "input": "ValidMultiEventInput",
+        "inputEventStream": "events"
+      },
+
+      "ValidMultiEventOutputOperation": {
+        "type": "operation",
+        "output": "ValidMultiEventOutput",
+        "outputEventStream": "events"
+      },
+
+      "ValidMultiEventBidirectionalOperation": {
+        "type": "operation",
+        "input": "ValidMultiEventInput",
+        "inputEventStream": "events",
+        "output": "ValidMultiEventOutput",
+        "outputEventStream": "events"
+      },
+
+      "ValidMultiEventInput": {
+        "type": "structure",
+        "members": {
+          "events": {"target": "Event"}
+        }
+      },
+
+      "ValidMultiEventOutput": {
+        "type": "structure",
+        "members": {
+          "events": {"target": "Event"}
+        }
+      },
+
+      "ValidUnion": {
+        "type": "union",
+        "members": {
+          "a": {"target": "Event"},
+          "b": {"target": "Event"}
+        }
+      },
+
+      "EventStreamNonInput": {
+        "type": "operation",
+        "inputEventStream": "events"
+      },
+
+      "EventStreamInputMissing": {
+        "type": "operation",
+        "input": "EventStreamInputMissingInput",
+        "inputEventStream": "events"
+      },
+
+      "EventStreamInputMemberMissing": {
+        "type": "operation",
+        "input": "EventStreamInputMemberMissingInput",
+        "inputEventStream": "events"
+      },
+
+      "EventStreamInputMemberMissingInput": {
+        "type": "structure",
+        "members": {
+          "foo": {"target": "smithy.api#String"}
+        }
+      },
+
+      "EventStreamInputMemberMustNotBeRequired": {
+        "type": "operation",
+        "input": "EventStreamInputMemberMustNotBeRequiredInput",
+        "inputEventStream": "events"
+      },
+
+      "EventStreamInputMemberMustNotBeRequiredInput": {
+        "type": "structure",
+        "members": {
+          "events": {"target": "Event", "required": true}
+        }
+      },
+
+      "EventStreamReferencesInvalidShape": {
+        "type": "operation",
+        "input": "EventStreamReferencesInvalidShapeInput",
+        "inputEventStream": "events"
+      },
+
+      "EventStreamReferencesInvalidShapeInput": {
+        "type": "structure",
+        "members": {
+          "events": {"target": "smithy.api#String"}
+        }
+      },
+
+      "EventStreamReferencesInvalidMultiEventShape": {
+        "type": "operation",
+        "input": "EventStreamReferencesInvalidMultiEventShapeInput",
+        "inputEventStream": "events"
+      },
+
+      "EventStreamReferencesInvalidMultiEventShapeInput": {
+        "type": "structure",
+        "members": {
+          "events": {
+            "target": "InvalidUnion"
+          }
+        }
+      },
+
+      "InvalidUnion": {
+        "type": "union",
+        "members": {
+          "a": {"target": "Event"},
+          "b": {"target": "smithy.api#String"},
+          "c": {"target": "smithy.api#String"}
+        }
+      }
+    }
+  }
+}

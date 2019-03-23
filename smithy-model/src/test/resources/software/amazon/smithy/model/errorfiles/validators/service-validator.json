@@ -1,0 +1,181 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "InvalidServiceWithDuplicateNames": {
+                "type": "service",
+                "version": "XYZ",
+                "protocols": {
+                    "a": {
+                    }
+                },
+                "authentication": {
+                    "b": {
+                    }
+                },
+                "resources": [
+                    "ResourceA",
+                    "ns.baz#ResourceA"
+                ],
+                "operations": [
+                    "OperationA"
+                ]
+            },
+            "OperationA": {
+                "type": "operation",
+                "readonly": true
+            },
+            "ResourceA": {
+                "type": "resource",
+                "identifiers": {
+                    "resourceAId": "ResourceAId"
+                },
+                "resources": [
+                    "ResourceB"
+                ]
+            },
+            "ResourceAId": {
+                "type": "string"
+            },
+            "ResourceB": {
+                "type": "resource",
+                "identifiers": {
+                    "resourceAId": "ResourceAId"
+                },
+                "operations": [
+                    "OperationB"
+                ]
+            },
+            "OperationB": {
+                "type": "operation",
+                "readonly": true,
+                "input": "OperationBInput"
+            },
+            "OperationBInput": {
+                "type": "structure",
+                "members": {
+                    "resourceAId": {
+                        "target": "ResourceAId",
+                        "required": true
+                    }
+                }
+            }
+        }
+    },
+    "ns.baz": {
+        "shapes": {
+            "ResourceA": {
+                "type": "resource",
+                "identifiers": {
+                    "resourceAId": "ResourceAId"
+                },
+                "operations": [
+                    "OperationA",
+                    "OperationB"
+                ],
+                "resources": [
+                    "ResourceB"
+                ]
+            },
+            "ResourceAId": {
+                "type": "string"
+            },
+            "ResourceB": {
+                "type": "resource",
+                "identifiers": {
+                    "resourceAId": "ResourceAId"
+                },
+                "operations": [
+                    "OperationB"
+                ]
+            },
+            "OperationA": {
+                "type": "operation",
+                "readonly": true,
+                "input": "OperationAInput"
+            },
+            "OperationAInput": {
+                "type": "structure",
+                "members": {
+                    "resourceAId": {
+                        "target": "ResourceAId",
+                        "required": true
+                    }
+                }
+            },
+            "OperationB": {
+                "type": "operation",
+                "readonly": true,
+                "input": "OperationBInput"
+            },
+            "OperationBInput": {
+                "type": "structure",
+                "members": {
+                    "resourceAId": {
+                        "target": "ResourceAId",
+                        "required": true
+                    }
+                }
+            }
+        }
+    },
+    "ns.invalid": {
+        "shapes": {
+            "InvalidService1": {
+                "type": "service",
+                "version": "XYZ",
+                "protocols": {
+                    "1": {
+                    },
+                    "_": {
+                    },
+                    "a.$": {
+                    },
+                    "a.B": {
+                    },
+                    "a.-+-.": {
+                    },
+                    "abc": {
+                    },
+                    "skip.me.too-1.1": {
+                    },
+                    "skip.me.too-1.1++": {
+                    },
+                    "foo": {
+                        "authentication": ["abc", "def"]
+                    }
+                },
+                "authentication": {
+                    "1": {
+                    },
+                    "_": {
+                    },
+                    "a.$": {
+                    },
+                    "a.B": {
+                    },
+                    "a.-+-.": {
+                    },
+                    "abc": {
+                    },
+                    "skip.me.too-1.1": {
+                    },
+                    "skip.me.too-1.1++": {
+                    },
+                    "baz": {
+                        "q": 0.5
+                    }
+                }
+            },
+            "InvalidService2": {
+                "type": "service",
+                "version": "XYZ",
+                "protocols": {
+                    "foo": {
+                        "authentication": ["bar"]
+                    }
+                }
+            }
+        }
+    }
+}

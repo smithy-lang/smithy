@@ -1,0 +1,73 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/1": {
+      "get": {
+        "operationId": "Operation1",
+        "responses": {
+          "200": {
+            "description": "Operation1 response"
+          }
+        }
+      }
+    },
+    "/2": {
+      "get": {
+        "operationId": "Operation2",
+        "responses": {
+          "200": {
+            "description": "Operation2 response"
+          }
+        },
+        "security": [
+          {
+            "http-basic": [ ]
+          }
+        ]
+      }
+    },
+    "/3": {
+      "get": {
+        "operationId": "Operation3",
+        "responses": {
+          "200": {
+            "description": "Operation3 response"
+          }
+        },
+        "security": [
+          {
+            "sigv4": [ ]
+          },
+          {
+            "http-basic": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "http-basic": {
+        "type": "http",
+        "description": "HTTP Basic authentication",
+        "scheme": "Basic"
+      },
+      "sigv4": {
+        "type": "apiKey",
+        "description": "AWS Signature Version 4 authentication",
+        "name": "Authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "awsSigv4"
+      }
+    }
+  },
+  "security": [
+    {
+      "sigv4": [ ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+# doc builds
+docs/smithy.egg-info
+docs/dist
+*.pyc
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+target/
+**/dependency-reduced-pom.xml
+
+# Gradle
+/.gradle
+build/
+!smithy-build/src/main/java/software/amazon/smithy/build
+!smithy-build/src/main/resources/software/amazon/smithy/build
+!smithy-build/src/test/java/software/amazon/smithy/build
+!smithy-build/src/test/resources/software/amazon/smithy/build
+*/out/
+*/*/out/

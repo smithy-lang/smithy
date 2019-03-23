@@ -1,0 +1,46 @@
+{
+    "smithy": "1.0",
+    "ns.shared": {
+        "traitDefs": {
+            "customTrait": {
+                "selector": "*"
+            }
+        }
+    },
+    "ns.foo": {
+        "shapes": {
+            "MyString": {
+                "type": "string"
+            }
+        },
+        "traits": {
+            "MyString": {
+                "ns.shared#customTrait": true
+            }
+        }
+    },
+    "ns.baz": {
+        "shapes": {
+            "MyString": {
+                "type": "string"
+            }
+        },
+        "traits": {
+            "MyString": {
+                "ns.shared#customTrait": true
+            }
+        }
+    },
+    "ns.bar": {
+        "shapes": {
+            "MyString": {
+                "type": "string"
+            }
+        },
+        "traits": {
+            "MyString": {
+                "ns.shared#customTrait": true
+            }
+        }
+    }
+}

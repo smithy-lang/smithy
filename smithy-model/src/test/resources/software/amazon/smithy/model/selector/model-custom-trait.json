@@ -1,0 +1,57 @@
+{
+  "smithy": "1.0",
+
+  "com.example": {
+    "traitDefs": {
+      "beta": {
+        "selector": "member:of(structure)"
+      },
+      "structuredTrait": {
+        "selector": "string",
+        "shape": "StructuredTraitShape",
+        "conflicts": ["com.example#beta"]
+      }
+    },
+
+    "shapes": {
+      "MyShape": {
+        "type": "structure",
+        "members": {
+          "foo": {
+            "target": "StringShape",
+            "required": true,
+            "com.example#beta": true
+          }
+        }
+      },
+
+      "StringShape": {
+        "type": "string",
+        "com.example#structuredTrait": {
+          "lorem": "This is a custom trait!",
+          "ipsum": "lorem and ipsum are both required values."
+        }
+      },
+
+      "AnotherStructureShape": {
+        "type" : "structure",
+        "members": {
+          "bar" : {
+            "target": "MyShape",
+            "required": true,
+            "com.example#beta" : true
+          }
+        }
+      },
+
+      "StructuredTraitShape": {
+        "type": "structure",
+        "members": {
+          "lorem": {"target": "StringShape", "required": true},
+          "ipsum": {"target": "StringShape", "required": true},
+          "dolor": {"target": "StringShape"}
+        }
+      }
+    }
+  }
+}

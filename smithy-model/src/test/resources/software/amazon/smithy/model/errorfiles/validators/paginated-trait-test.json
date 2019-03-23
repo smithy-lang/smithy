@@ -1,0 +1,311 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "Valid1": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items"
+                },
+                "input": "ValidInput",
+                "output": "ValidOutput"
+            },
+            "Valid2": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                },
+                "input": "ValidInput",
+                "output": "ValidOutput"
+            },
+            "Valid3": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken"
+                },
+                "input": "ValidInput3",
+                "output": "ValidOutput3"
+            },
+            "ValidInput3": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "smithy.api#String"
+                    }
+                }
+            },
+            "ValidOutput3": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "smithy.api#String"
+                    }
+                }
+            },
+            "Invalid1": {
+                "type": "operation",
+                "readonly": true,
+                "output": "ValidOutput",
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                }
+            },
+            "InvalidNoOutput": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                },
+                "input": "ValidInput"
+            },
+            "Invalid2": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                },
+                "input": "MissingInputToken",
+                "output": "MissingOutputToken"
+            },
+            "MissingInputToken": {
+                "type": "structure",
+                "members": {
+                    "pageSize": {
+                        "target": "smithy.api#Integer"
+                    }
+                }
+            },
+            "MissingOutputToken": {
+                "type": "structure",
+                "members": {
+                    "items": {
+                        "target": "StringList"
+                    }
+                }
+            },
+            "Invalid3": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                },
+                "input": "InputNotString",
+                "output": "OutputNotString"
+            },
+            "InputNotString": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "smithy.api#Integer"
+                    },
+                    "pageSize": {
+                        "target": "smithy.api#Integer"
+                    }
+                }
+            },
+            "OutputNotString": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "smithy.api#Integer"
+                    }
+                }
+            },
+            "Invalid4": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                },
+                "input": "NonOptionalInput",
+                "output": "NonOptionalOutput"
+            },
+            "NonOptionalInput": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "String",
+                        "required": true
+                    },
+                    "pageSize": {
+                        "target": "Number",
+                        "required": true
+                    }
+                }
+            },
+            "NonOptionalOutput": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "String",
+                        "required": true
+                    },
+                    "items": {
+                        "target": "StringList"
+                    }
+                }
+            },
+            "Invalid5": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                },
+                "input": "UnresolvedInput",
+                "output": "UnresolvedOutput"
+            },
+            "UnresolvedInput": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "Missing"
+                    },
+                    "pageSize": {
+                        "target": "Missing"
+                    }
+                }
+            },
+            "UnresolvedOutput": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "Missing"
+                    },
+                    "items": {
+                        "target": "Missing",
+                        "required": true
+                    }
+                }
+            },
+            "Invalid6": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                },
+                "input": "Invalid6Input",
+                "output": "ValidOutput"
+            },
+            "Invalid6Input": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "smithy.api#String"
+                    },
+                    "pageSize": {
+                        "target": "smithy.api#String"
+                    }
+                }
+            },
+            "Invalid7": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                },
+                "input": "ValidInput",
+                "output": "Invalid7Input"
+            },
+            "Invalid7Input": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "smithy.api#String"
+                    },
+                    "items": {
+                        "target": "String",
+                        "required": true
+                    }
+                }
+            },
+            "Invalid8": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "missing",
+                    "items": "items",
+                    "pageSize": "pageSize"
+                },
+                "input": "ValidInput",
+                "output": "Invalid8Output"
+            },
+            "Invalid8Output": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "smithy.api#String"
+                    }
+                }
+            },
+            "ValidInput": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "smithy.api#String"
+                    },
+                    "pageSize": {
+                        "target": "smithy.api#Integer"
+                    }
+                }
+            },
+            "ValidOutput": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {
+                        "target": "smithy.api#String"
+                    },
+                    "items": {
+                        "target": "StringList",
+                        "required": true
+                    }
+                }
+            },
+            "StringList": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "String": {
+                "type": "string"
+            },
+            "Number": {
+                "type": "integer"
+            }
+        }
+    }
+}

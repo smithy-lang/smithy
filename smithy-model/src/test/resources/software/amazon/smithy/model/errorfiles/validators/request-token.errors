@@ -1,0 +1,1 @@
+[ERROR] (ExclusiveStructureMemberTrait) ns.foo#InvalidInputWithMultiple / [0, 0]: The `idempotencyToken` trait can be applied to only a single member of a structure, but was found on the following members: `anotherToken`, `token`

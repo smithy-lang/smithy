@@ -1,0 +1,91 @@
+{
+  "smithy": "1.0",
+  "com.example": {
+    "shapes": {
+      "A": {
+        "type": "map",
+        "key": {
+          "target": "smithy.api#String"
+        },
+        "value": {
+          "target": "smithy.api#String"
+        }
+      },
+      "B": {
+        "type": "map",
+        "key": {
+          "target": "String"
+        },
+        "value": {
+          "target": "String"
+        }
+      },
+      "C": {
+        "type": "map",
+        "key": {
+          "target": "String"
+        },
+        "value": {
+          "target": "String"
+        },
+        "deprecated": {}
+      },
+      "D": {
+        "type": "map",
+        "key": {
+          "target": "String"
+        },
+        "value": {
+          "target": "String"
+        },
+        "deprecated": {},
+        "since": "1.0"
+      },
+      "E": {
+        "type": "map",
+        "key": {
+          "target": "String",
+          "sensitive": true,
+          "since": "1.1"
+        },
+        "value": {
+          "target": "String"
+        },
+        "deprecated": {},
+        "since": "1.0"
+      },
+      "F": {
+        "type": "map",
+        "key": {
+          "target": "String",
+          "sensitive": true,
+          "since": "1.1"
+        },
+        "value": {
+          "target": "String",
+          "sensitive": true,
+          "since": "1.1"
+        },
+        "deprecated": {},
+        "since": "1.0"
+      },
+      "G": {
+        "type": "map",
+        "key": {
+          "target": "String",
+          "sensitive": true,
+          "since": "1.1"
+        },
+        "value": {
+          "target": "String",
+          "since": "1.2"
+        },
+        "deprecated": {},
+        "since": "1.0"
+      },
+      "String": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,244 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.smithy.aws.traits.iam;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import software.amazon.smithy.aws.traits.ArnReferenceTrait;
+import software.amazon.smithy.aws.traits.ServiceTrait;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
+import software.amazon.smithy.model.knowledge.KnowledgeIndex;
+import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.shapes.ToShapeId;
+
+/**
+ * Provides an index of condition keys for a service, including any condition
+ * keys inferred from resource identifiers.
+ */
+public final class ConditionKeysIndex implements KnowledgeIndex {
+    private static final String STRING_TYPE = "String";
+    private static final String ARN_TYPE = "ARN";
+
+    private final Map<ShapeId, Map<String, ConditionKeyDefinition>> serviceConditionKeys = new HashMap<>();
+    private final Map<ShapeId, Map<ShapeId, Set<String>>> resourceConditionKeys = new HashMap<>();
+
+    public ConditionKeysIndex(Model model) {
+        var index = model.getShapeIndex();
+        var bindingIndex = model.getKnowledge(IdentifierBindingIndex.class);
+
+        index.shapes(ServiceShape.class).forEach(service -> {
+            service.getTrait(ServiceTrait.class).ifPresent(trait -> {
+                // Copy over the explicitly defined condition keys into the service map.
+                // This will be mutated when adding inferred resource condition keys.
+                serviceConditionKeys.put(service.getId(), new HashMap<>(
+                        service.getTrait(DefineConditionKeysTrait.class)
+                                .map(DefineConditionKeysTrait::getConditionKeys)
+                                .orElse(Map.of())));
+                resourceConditionKeys.put(service.getId(), new HashMap<>());
+
+                // Defines the scoping of any derived condition keys.
+                String arnRoot = trait.getArnNamespace();
+
+                // Compute the keys of child resources.
+                service.getResources().stream().flatMap(id -> index.getShape(id).stream()).forEach(resource -> {
+                    compute(index, bindingIndex, service.getId(), arnRoot, resource, null, Set.of());
+                });
+
+                // Compute the keys of operations of the service.
+                service.getOperations().stream().flatMap(id -> index.getShape(id).stream()).forEach(operation -> {
+                    compute(index, bindingIndex, service.getId(), arnRoot, operation, null, Set.of());
+                });
+            });
+        });
+    }
+
+    /**
+     * Get all of the explicit and inferred condition keys used in the entire service.
+     *
+     * <p>The result does not include global condition keys like "aws:accountId".
+     * Use {@link #getConditionKeyNames} to find all of the condition keys used
+     * but not necessarily defined for a service.
+     *
+     * @param service Service shape/shapeId to get.
+     * @return Returns the conditions keys of the service or an empty map when not found.
+     */
+    public Map<String, ConditionKeyDefinition> getDefinedConditionKeys(ToShapeId service) {
+        return Collections.unmodifiableMap(serviceConditionKeys.getOrDefault(service.toShapeId(), Map.of()));
+    }
+
+    /**
+     * Get all of the condition key names used in a service.
+     *
+     * @param service Service shape/shapeId use to scope the result.
+     * @return Returns the conditions keys of the service or an empty map when not found.
+     */
+    public Set<String> getConditionKeyNames(ToShapeId service) {
+        return resourceConditionKeys.getOrDefault(service.toShapeId(), Map.of())
+                .values().stream()
+                .flatMap(Set::stream)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    /**
+     * Get all of the defined condition keys used in an operation or resource, including
+     * any inferred keys and keys inherited by parent resource bindings.
+     *
+     * @param service Service shape/shapeId use to scope the result.
+     * @param resourceOrOperation Resource or operation shape/shapeId
+     * @return Returns the conditions keys of the service or an empty map when not found.
+     */
+    public Set<String> getConditionKeyNames(ToShapeId service, ToShapeId resourceOrOperation) {
+        ShapeId serviceId = service.toShapeId();
+        ShapeId subjectId = resourceOrOperation.toShapeId();
+        return Collections.unmodifiableSet(
+                resourceConditionKeys.getOrDefault(serviceId, Map.of()).getOrDefault(subjectId, Set.of()));
+    }
+
+    /**
+     * Get all of the defined condition keys used in an operation or resource, including
+     * any inferred keys and keys inherited by parent resource bindings.
+     *
+     * <p>The result does not include global condition keys like "aws:accountId".
+     * Use {@link #getConditionKeyNames} to find all of the condition keys used
+     * but not necessarily defined for a resource or operation.
+     *
+     * @param service Service shape/shapeId use to scope the result.
+     * @param resourceOrOperation Resource or operation shape/shapeId
+     * @return Returns the conditions keys of the service or an empty map when not found.
+     */
+    public Map<String, ConditionKeyDefinition> getDefinedConditionKeys(
+            ToShapeId service,
+            ToShapeId resourceOrOperation
+    ) {
+        var serviceDefinitions = getDefinedConditionKeys(service);
+        Map<String, ConditionKeyDefinition> definitions = new HashMap<>();
+
+        for (var name : getConditionKeyNames(service, resourceOrOperation)) {
+            if (serviceDefinitions.containsKey(name)) {
+                definitions.put(name, serviceDefinitions.get(name));
+            }
+        }
+
+        return definitions;
+    }
+
+    private void compute(
+            ShapeIndex index,
+            IdentifierBindingIndex bindingIndex,
+            ShapeId service,
+            String arnRoot,
+            Shape subject,
+            ResourceShape parent,
+            Set<String> parentDefinitions
+    ) {
+        Set<String> definitions = new HashSet<>(parentDefinitions);
+        resourceConditionKeys.get(service).put(subject.getId(), definitions);
+        subject.getTrait(ConditionKeysTrait.class).ifPresent(trait -> definitions.addAll(trait.getValues()));
+
+        // Continue recursing into resources and computing keys.
+        subject.asResourceShape().ifPresent(resource -> {
+            // Add any inferred resource identifiers to the resource and to the service-wide definitions.
+            Map<String, String> childIdentifiers = resource.hasTrait(InferConditionKeysTrait.class)
+                    ? inferChildResourceIdentifiers(index, service, arnRoot, resource, parent)
+                    : Map.of();
+
+            // Compute the keys of each child operation.
+            resource.getAllOperations().stream().flatMap(id -> index.getShape(id).stream()).forEach(child -> {
+                // Only apply child identifiers to the operation if the operation binds them
+                // (for example, list operations omit one or more child identifiers).
+                Set<String> operationKeys = new HashSet<>(definitions);
+                for (var binding : bindingIndex.getOperationBindings(resource, child).keySet()) {
+                    if (childIdentifiers.containsKey(binding)) {
+                        operationKeys.add(childIdentifiers.get(binding));
+                    }
+                }
+                compute(index, bindingIndex, service, arnRoot, child, resource, operationKeys);
+            });
+
+            // Child resources always inherit the identifiers of the parent.
+            definitions.addAll(childIdentifiers.values());
+
+            // Compute the keys of each child resource.
+            resource.getResources().stream().flatMap(id -> index.getShape(id).stream()).forEach(child -> {
+                compute(index, bindingIndex, service, arnRoot, child, resource, definitions);
+            });
+        });
+    }
+
+    private Map<String, String> inferChildResourceIdentifiers(
+            ShapeIndex index,
+            ShapeId service,
+            String arnRoot,
+            ResourceShape resource,
+            ResourceShape parent
+    ) {
+        Map<String, String> result = new HashMap<>();
+
+        // We want child resources to reuse parent resource context keys, so
+        // extract out identifiers that were introduced by the child resource.
+        Set<String> parentIds = parent == null ? Set.of() : parent.getIdentifiers().keySet();
+        Set<String> childIds = new HashSet<>(resource.getIdentifiers().keySet());
+        childIds.removeAll(parentIds);
+
+        for (var childId : childIds) {
+            index.getShape(resource.getIdentifiers().get(childId)).ifPresent(shape -> {
+                // Only infer identifiers introduced by a child. Children should
+                // use their parent identifiers and not duplicate them.
+                var builder = ConditionKeyDefinition.builder();
+                if (shape.hasTrait(ArnReferenceTrait.class)) {
+                    // Use an ARN type if the targeted shape has the arnReference trait.
+                    builder.type(ARN_TYPE);
+                } else {
+                    // Fall back to a string type otherwise.
+                    builder.type(STRING_TYPE);
+                }
+
+                // Compute a simple doc string: "[NAME] resource [NAME] identifier"
+                builder.documentation(computeIdentifierDocs(resource.getId(), childId));
+                // The identifier name is comprised of "[arn service]:[Resource name][uppercase identifier name]
+                String computeIdentifierName = computeIdentifierName(arnRoot, resource, childId);
+                // Add the computed identifier binding and resolved context key to the result map.
+                result.put(childId, computeIdentifierName);
+                // Register the newly inferred context key definition with the service.
+                serviceConditionKeys.get(service).put(computeIdentifierName, builder.build());
+            });
+        }
+
+        return result;
+    }
+
+    private static String computeIdentifierDocs(ShapeId id, String identifierName) {
+        return id.getName() + " resource " + identifierName + " identifier";
+    }
+
+    private static String computeIdentifierName(String arnRoot, ResourceShape resource, String identifierName) {
+        return arnRoot + ":" + resource.getId().getName() + ucfirst(identifierName);
+    }
+
+    private static String ucfirst(String value) {
+        return value.isEmpty() ? value : value.substring(0, 1).toUpperCase(Locale.US) + value.substring(1);
+    }
+}

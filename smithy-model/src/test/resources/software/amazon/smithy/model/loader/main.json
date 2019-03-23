@@ -1,0 +1,86 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "foo": "baz",
+        "bar": "qux",
+        "list": [
+            "a",
+            "b"
+        ]
+    },
+    "example.namespace": {
+        "shapes": {
+            "String": {
+                "type": "string",
+                "sensitive": true
+            },
+            "Byte": {
+                "type": "byte"
+            },
+            "Short": {
+                "type": "short"
+            },
+            "Integer": {
+                "type": "integer"
+            },
+            "Float": {
+                "type": "float"
+            },
+            "Double": {
+                "type": "double"
+            },
+            "Long": {
+                "type": "long"
+            },
+            "BigDecimal": {
+                "type": "bigDecimal"
+            },
+            "BigInteger": {
+                "type": "bigInteger"
+            },
+            "Blob": {
+                "type": "blob"
+            },
+            "Boolean": {
+                "type": "boolean"
+            },
+            "Timestamp": {
+                "type": "timestamp"
+            },
+            "List": {
+                "type": "list",
+                "member": {
+                    "target": "Timestamp"
+                }
+            },
+            "Map": {
+                "type": "map",
+                "key": {
+                    "target": "String"
+                },
+                "value": {
+                    "target": "List"
+                }
+            },
+            "Structure": {
+                "type": "structure",
+                "members": {
+                    "memberName": {
+                        "target": "String"
+                    }
+                }
+            },
+            "TaggedUnion": {
+                "type": "union",
+                "members": {
+                    "foo": {
+                        "target": "String"
+                    },
+                    "baz": {
+                        "target": "Integer"
+                    }
+                }
+            }
+        }
+    }
+}

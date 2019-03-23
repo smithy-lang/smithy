@@ -1,0 +1,10 @@
+{
+    "smithy": "1.0",
+    "com.foo": {
+        "traits": {
+            "String": {
+                "sensitive": true
+            }
+        }
+    }
+}

@@ -1,0 +1,96 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "NonAwsService": {
+                "type": "service",
+                "version": "2018-03-17"
+            },
+            "EmptyAwsService": {
+                "type": "service",
+                "version": "2018-03-17",
+                "aws.api#service": {
+                    "sdkId": "Something Empty"
+                }
+            },
+            "SomeService": {
+                "type": "service",
+                "version": "2018-03-17",
+                "aws.api#service": {
+                    "sdkServiceId": "Some Value",
+                    "arnNamespace": "service",
+                    "cloudFormationName": "SomeService"
+                },
+                "resources": [
+                    "SomeResource",
+                    "RootArnResource",
+                    "AbsoluteResource"
+                ]
+            },
+            "RootArnResource": {
+                "type": "resource",
+                "aws.api#arn": {
+                    "noRegion": true,
+                    "noAccount": true,
+                    "template": "rootArnResource"
+                }
+            },
+            "SomeResource": {
+                "type": "resource",
+                "identifiers": {
+                    "someId": "SomeResourceId"
+                },
+                "aws.api#arn": {
+                    "template": "someresource\/{someId}"
+                },
+                "resources": [
+                    "ChildResource"
+                ]
+            },
+            "ChildResource": {
+                "type": "resource",
+                "identifiers": {
+                    "someId": "SomeResourceId",
+                    "childId": "ChildResourceId"
+                },
+                "aws.api#arn": {
+                    "template": "someresource\/{someId}\/{childId}"
+                },
+                "resources": [
+                    "AnotherChild"
+                ]
+            },
+            "AnotherChild": {
+                "type": "resource",
+                "identifiers": {
+                    "someId": "SomeResourceId",
+                    "childId": "ChildResourceId"
+                }
+            },
+            "AbsoluteResource": {
+                "type": "resource",
+                "identifiers": {
+                    "arn": "AbsoluteResourceArn"
+                },
+                "aws.api#arn": {
+                    "template": "{arn}",
+                    "absolute": true
+                }
+            },
+            "AbsoluteResourceArn": {
+                "type": "string",
+                "aws.api#arnReference": {
+                    "type": "AWS::SomeService::AbsoluteResource",
+                    "service": "ns.foo#SomeService",
+                    "resource": "ns.foo#AbsoluteResource"
+                }
+            },
+            "SomeResourceId": {
+                "type": "string"
+            },
+            "ChildResourceId": {
+                "type": "string"
+            }
+        }
+    }
+}

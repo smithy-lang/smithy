@@ -1,0 +1,41 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "Valid": {
+                "type": "operation",
+                "input": "ValidInput"
+            },
+            "ValidInput": {
+                "type": "structure",
+                "members": {
+                    "token": {
+                        "target": "String",
+                        "idempotencyToken": true
+                    }
+                }
+            },
+            "String": {
+                "type": "string"
+            },
+            "Invalid": {
+                "type": "operation",
+                "readonly": true,
+                "input": "InvalidInputWithMultiple"
+            },
+            "InvalidInputWithMultiple": {
+                "type": "structure",
+                "members": {
+                    "token": {
+                        "target": "String",
+                        "idempotencyToken": true
+                    },
+                    "anotherToken": {
+                        "target": "String",
+                        "idempotencyToken": true
+                    }
+                }
+            }
+        }
+    }
+}

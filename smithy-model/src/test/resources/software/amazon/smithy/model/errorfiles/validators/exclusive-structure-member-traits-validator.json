@@ -1,0 +1,59 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "Invalid1": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String",
+                        "eventPayload": true
+                    },
+                    "baz": {
+                        "target": "String",
+                        "eventPayload": true
+                    },
+                    "bar": {
+                        "target": "String",
+                        "eventHeader": true
+                    }
+                }
+            },
+            "Invalid2": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String",
+                        "idempotencyToken": true
+                    },
+                    "baz": {
+                        "target": "String",
+                        "idempotencyToken": true
+                    },
+                    "bar": {
+                        "target": "String"
+                    }
+                }
+            },
+            "Invalid3": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String",
+                        "httpPayload": true
+                    },
+                    "baz": {
+                        "target": "String",
+                        "httpPayload": true
+                    },
+                    "bar": {
+                        "target": "String"
+                    }
+                }
+            },
+            "String": {
+                "type": "string"
+            }
+        }
+    }
+}

@@ -1,0 +1,76 @@
+{
+    "smithy": "1.0",
+    "smithy.example": {
+        "shapes": {
+            "InvalidService": {
+                "type": "service",
+                "version": "2018-04-08",
+                "operations": [
+                    "smithy.private#PrivateOperation"
+                ]
+            },
+            "InvalidList": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.private#PrivateString"
+                }
+            },
+            "InvalidStructure": {
+                "type": "structure",
+                "members": {
+                    "invalid": {
+                        "target": "smithy.private#PrivateString"
+                    }
+                }
+            },
+            "InvalidMap": {
+                "type": "map",
+                "key": {
+                    "target": "smithy.private#PrivateString"
+                },
+                "value": {
+                    "target": "smithy.private#PrivateString"
+                }
+            },
+            "InvalidOperation": {
+                "type": "operation",
+                "input": "smithy.private#PrivateStructure",
+                "output": "smithy.private#PrivateStructure",
+                "errors": [
+                    "smithy.private#PrivateError"
+                ]
+            }
+        }
+    },
+    "smithy.private": {
+        "shapes": {
+            "PrivateStructure": {
+                "type": "structure",
+                "private": true,
+                "members": {
+                    "valid": {
+                        "target": "PrivateString"
+                    }
+                }
+            },
+            "PrivateError": {
+                "type": "structure",
+                "private": true,
+                "error": "client"
+            },
+            "PrivateString": {
+                "type": "string",
+                "private": true
+            },
+            "PrivateOperation": {
+                "type": "operation",
+                "private": true,
+                "input": "PrivateStructure",
+                "output": "PrivateStructure",
+                "errors": [
+                    "PrivateError"
+                ]
+            }
+        }
+    }
+}

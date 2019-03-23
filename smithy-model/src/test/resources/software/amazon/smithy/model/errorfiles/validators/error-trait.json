@@ -1,0 +1,23 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "ValidClient": {
+                "type": "structure",
+                "error": "client"
+            },
+            "ValidServer": {
+                "type": "structure",
+                "error": "server"
+            },
+            "ValidServerWithTag": {
+                "type": "structure",
+                "error": "server"
+            },
+            "InvalidDoesNotStartWithClientOrServer": {
+                "type": "structure",
+                "error": "notFound"
+            }
+        }
+    }
+}

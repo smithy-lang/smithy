@@ -1,0 +1,18 @@
+rootProject.name = "smithy"
+include(":smithy-aws-traits")
+include(":smithy-aws-apigateway-openapi")
+include(":smithy-cli")
+include(":smithy-codegen-core")
+include(":smithy-codegen-freemarker")
+include(":smithy-build")
+include(":smithy-model")
+include(":smithy-diff")
+include(":smithy-linters")
+include(":smithy-mqtt-traits")
+include(":smithy-jsonschema")
+include(":smithy-openapi")
+
+project(":smithy-aws-traits").projectDir = file("aws/smithy-aws-traits")
+project(":smithy-aws-apigateway-openapi").projectDir = file("aws/smithy-aws-apigateway-openapi")
+project(":smithy-codegen-core").projectDir = file("codegen/smithy-codegen-core")
+project(":smithy-codegen-freemarker").projectDir = file("codegen/smithy-codegen-freemarker")

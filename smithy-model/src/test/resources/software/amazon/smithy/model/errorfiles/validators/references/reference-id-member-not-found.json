@@ -1,0 +1,24 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "MyStructure": {
+                "type": "structure",
+                "references": {
+                    "foo": {
+                        "resource": "MyResource",
+                        "ids": {
+                            "abc": "invalidMemberName"
+                        }
+                    }
+                }
+            },
+            "MyResource": {
+                "type": "resource",
+                "identifiers": {
+                    "abc": "smithy.api#String"
+                }
+            }
+        }
+    }
+}

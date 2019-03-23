@@ -1,0 +1,128 @@
+{
+  "smithy": "1.0",
+  "aws.api": {
+    "traitDefs": {
+      "arn": {
+        "selector": "resource",
+        "shape": "aws.api#ArnTrait",
+        "externalDocumentation": "https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html",
+        "documentation": "Specifies an ARN template for the resource."
+      },
+      "service": {
+        "selector": "service",
+        "shape": "aws.api#AwsServiceTrait"
+      },
+      "arnReference": {
+        "selector": "string",
+        "shape": "aws.api#ArnReferenceTrait",
+        "documentation": "Marks a string as containing an ARN."
+      },
+      "unsignedPayload": {
+        "selector": "operation",
+        "shape": "aws.api#StringList",
+        "documentation": "Indicates that the request payload of a signed request is not to be used as part of the signature. Providing a list of strings will limit the effect of this trait to only specific authentication schemes by name."
+      },
+      "data": {
+        "selector": ":test(simpleType, collection, structure, union, member)",
+        "shape": "aws.api#DataLevel",
+        "documentation": "Designates the target as containing data of a known classification level."
+      }
+    },
+    "shapes": {
+      "ArnTrait": {
+        "type": "structure",
+        "members": {
+          "template": {
+            "target": "smithy.api#String",
+            "required": true
+          },
+          "absolute": {
+            "target": "smithy.api#Boolean"
+          },
+          "noRegion": {
+            "target": "smithy.api#Boolean"
+          },
+          "noAccount": {
+            "target": "smithy.api#Boolean"
+          }
+        },
+        "private": true
+      },
+      "AwsServiceTrait": {
+        "type": "structure",
+        "members": {
+          "sdkId": {
+            "target": "smithy.api#String",
+            "required": true
+          },
+          "arnNamespace": {
+            "target": "aws.api#ArnNamespace"
+          },
+          "cloudFormationName": {
+            "target": "aws.api#CloudFormationName"
+          },
+          "cloudTrailEventSource": {
+            "target": "smithy.api#String"
+          }
+        },
+        "private": true
+      },
+      "ArnNamespace": {
+        "type": "string",
+        "pattern": "^[a-z0-9.\\-]{1,63}$",
+        "private": true
+      },
+      "CloudFormationName": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Za-z0-9]+$",
+        "private": true
+      },
+      "ArnReferenceTrait": {
+        "type": "structure",
+        "members": {
+          "type": {
+            "target": "smithy.api#String"
+          },
+          "resource": {
+            "target": "smithy.api#String"
+          },
+          "service": {
+            "target": "smithy.api#String"
+          }
+        },
+        "private": true
+      },
+      "DataLevel": {
+        "type": "string",
+        "private": true,
+        "enum": {
+          "content": {
+            "name": "CUSTOMER_CONTENT",
+            "documentation": "Customer content means any software (including machine images), data, text, audio, video or images that customers or any customer end user transfers to AWS for processing, storage or hosting by AWS services in connection with the customer’s accounts and any computational results that customers or any customer end user derive from the foregoing through their use of AWS services."
+          },
+          "account": {
+            "name": "CUSTOMER_ACCOUNT_INFORMATION"
+          },
+          "usage": {
+            "name": "ACCOUNT_USAGE_DATA",
+            "documentation": "Account usage data means usage data related to a customer’s account, such as resource identifiers, usage statistics, logging data, and analytics."
+          },
+          "tagging": {
+            "name": "TAG_DATA",
+            "documentation": "Designates metadata tags applied to AWS resources."
+          },
+          "permissions": {
+            "name": "PERMISSIONS_DATA",
+            "documentation": "Designates security and access roles, rules, usage policies, and permissions."
+          }
+        }
+      },
+      "StringList": {
+        "type": "list",
+        "member": {
+          "target": "smithy.api#String"
+        }
+      }
+    }
+  }
+}

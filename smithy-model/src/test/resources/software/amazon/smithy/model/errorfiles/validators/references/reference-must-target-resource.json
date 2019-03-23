@@ -1,0 +1,15 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "MyStructure": {
+                "type": "structure",
+                "references": {
+                    "foo": {
+                        "resource": "smithy.api#String"
+                    }
+                }
+            }
+        }
+    }
+}

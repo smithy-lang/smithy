@@ -1,0 +1,15 @@
+{
+    "smithy": "1.0",
+    "example.namespace": {
+        "shapes": {
+            "Invalid1": {
+                "type": "structure",
+                "error": "foo"
+            },
+            "Invalid2": {
+                "type": "structure",
+                "error": "foo"
+            }
+        }
+    }
+}

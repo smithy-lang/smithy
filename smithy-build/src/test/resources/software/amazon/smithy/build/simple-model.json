@@ -1,0 +1,29 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "String1": {
+                "type": "string",
+                "documentation": "docs",
+                "tags": [
+                    "foo"
+                ]
+            },
+            "String2": {
+                "type": "string"
+            },
+            "String3": {
+                "type": "string",
+                "tags": [
+                    "baz"
+                ],
+                "mediaType": "application\/json",
+                "length": {
+                    "min": 0,
+                    "max": 10
+                },
+                "documentation": "docs"
+            }
+        }
+    }
+}

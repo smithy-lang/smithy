@@ -1,0 +1,78 @@
+{
+  "smithy": "1.0",
+  "foo.alpha": {
+    "shapes": {
+      "MyString1": {
+        "type": "string",
+        "hello": true
+      },
+      "MyString2": {
+        "type": "string",
+        "foo.alpha#hello": true
+      },
+      "MyString3": {
+        "type": "string",
+        "foo.beta#hello": true
+      },
+      "MyString4": {
+        "type": "string",
+        "foo.gamma#hello": true
+      }
+    },
+    "traitDefs": {
+      "hello": {
+        "selector": "*"
+      }
+    }
+  },
+  "foo.beta": {
+    "shapes": {
+      "MyString1": {
+        "type": "string",
+        "hello": true
+      },
+      "MyString2": {
+        "type": "string",
+        "foo.alpha#hello": true
+      },
+      "MyString3": {
+        "type": "string",
+        "foo.beta#hello": true
+      },
+      "MyString4": {
+        "type": "string",
+        "foo.gamma#hello": true
+      }
+    },
+    "traitDefs": {
+      "hello": {
+        "selector": "*"
+      }
+    }
+  },
+  "foo.gamma": {
+    "shapes": {
+      "MyString1": {
+        "type": "string",
+        "hello": true
+      },
+      "MyString2": {
+        "type": "string",
+        "foo.alpha#hello": true
+      },
+      "MyString3": {
+        "type": "string",
+        "foo.beta#hello": true
+      },
+      "MyString4": {
+        "type": "string",
+        "foo.gamma#hello": true
+      }
+    },
+    "traitDefs": {
+      "hello": {
+        "selector": "*"
+      }
+    }
+  }
+}

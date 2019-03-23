@@ -1,0 +1,11 @@
+{
+  "smithy": "1.0",
+  "smithy.example": {
+    "shapes": {
+      "Service": {
+        "type": "service",
+        "version": "2006-03-01"
+      }
+    }
+  }
+}

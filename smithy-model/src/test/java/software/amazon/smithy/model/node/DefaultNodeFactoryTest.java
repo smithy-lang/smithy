@@ -1,0 +1,175 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.smithy.model.node;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.loader.ModelSyntaxException;
+
+public class DefaultNodeFactoryTest {
+    @Test
+    public void parsesFalseNodes() {
+        Node result = Node.parse("true");
+
+        assertThat(result.isBooleanNode(), is(true));
+        assertThat(result.expectBooleanNode().getValue(), is(true));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesTrueNodes() {
+        Node result = Node.parse("false");
+
+        assertThat(result.isBooleanNode(), is(true));
+        assertThat(result.expectBooleanNode().getValue(), is(false));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesNullNodes() {
+        Node result = Node.parse("null");
+
+        assertThat(result.isNullNode(), is(true));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesStringNode() {
+        Node result = Node.parse("\"foo\"");
+
+        assertThat(result.isStringNode(), is(true));
+        assertThat(result.expectStringNode().getValue(), equalTo("foo"));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesIntegerNode() {
+        Node result = Node.parse("10");
+
+        assertThat(result.isNumberNode(), is(true));
+        assertThat(result.expectNumberNode().getValue(), equalTo(10L));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesFloatNode() {
+        Node result = Node.parse("1.5");
+
+        assertThat(result.isNumberNode(), is(true));
+        assertThat(result.expectNumberNode().getValue(), equalTo(1.5));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesEmptyArray() {
+        Node result = Node.parse("[]");
+
+        assertThat(result.isArrayNode(), is(true));
+        assertThat(result.expectArrayNode().isEmpty(), is(true));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesArrayOneValue() {
+        Node result = Node.parse("[true]");
+
+        assertThat(result.isArrayNode(), is(true));
+        assertThat(result.expectArrayNode().isEmpty(), is(false));
+        assertThat(result.expectArrayNode().get(0).get().isBooleanNode(), is(true));
+        assertThat(result.expectArrayNode().get(0).get().expectBooleanNode().getValue(), is(true));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+        assertThat(result.expectArrayNode().get(0).get().getSourceLocation().getLine(), is(1));
+        assertThat(result.expectArrayNode().get(0).get().getSourceLocation().getColumn(), is(2));
+    }
+
+    @Test
+    public void parsesArrayMultipleValues() {
+        Node result = Node.parse("[true, false, \"foo\"]");
+
+        assertThat(result.isArrayNode(), is(true));
+        assertThat(result.expectArrayNode().isEmpty(), is(false));
+        assertThat(result.expectArrayNode().get(0).get().isBooleanNode(), is(true));
+        assertThat(result.expectArrayNode().get(0).get().expectBooleanNode().getValue(), is(true));
+        assertThat(result.expectArrayNode().get(1).get().isBooleanNode(), is(true));
+        assertThat(result.expectArrayNode().get(1).get().expectBooleanNode().getValue(), is(false));
+        assertThat(result.expectArrayNode().get(2).get().isStringNode(), is(true));
+        assertThat(result.expectArrayNode().get(2).get().expectStringNode().getValue(), equalTo("foo"));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+
+        assertThat(result.expectArrayNode().get(1).get().getSourceLocation().getLine(), is(1));
+        assertThat(result.expectArrayNode().get(1).get().getSourceLocation().getColumn(), is(8));
+    }
+
+    @Test
+    public void parsesEmptyObject() {
+        Node result = Node.parse("{}");
+
+        assertThat(result.isObjectNode(), is(true));
+        assertThat(result.expectObjectNode().isEmpty(), is(true));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+    }
+
+    @Test
+    public void parsesObjectWithOneEntry() {
+        Node result = Node.parse("{\"foo\": \"bar\"}");
+
+        assertThat(result.isObjectNode(), is(true));
+        assertThat(result.expectObjectNode().isEmpty(), is(false));
+        assertThat(result.expectObjectNode().getMember("foo").isPresent(), is(true));
+        assertThat(result.expectObjectNode().expectMember("foo").isStringNode(), is(true));
+        assertThat(result.expectObjectNode().expectMember("foo").expectStringNode().getValue(), equalTo("bar"));
+
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+
+        assertThat(result.expectObjectNode().expectMember("foo").getSourceLocation().getLine(), is(1));
+        assertThat(result.expectObjectNode().expectMember("foo").getSourceLocation().getColumn(), is(9));
+    }
+
+    @Test
+    public void parsesObjectWithNestedObjects() {
+        Node result = Node.parse("{\"foo\": {\"bar\": {\"baz\": [1, true]}}}");
+
+        assertThat(result.isObjectNode(), is(true));
+        assertThat(result.expectObjectNode().isEmpty(), is(false));
+        assertThat(result.getSourceLocation().getLine(), is(1));
+        assertThat(result.getSourceLocation().getColumn(), is(1));
+
+        assertThat(result.expectObjectNode().expectMember("foo").expectObjectNode().expectMember("bar")
+                           .getSourceLocation().getLine(), is(1));
+        assertThat(result.expectObjectNode().expectMember("foo").expectObjectNode().expectMember("bar")
+                           .getSourceLocation().getColumn(), is(17));
+    }
+
+    @Test
+    public void requiresNonEmptyString() {
+        Assertions.assertThrows(ModelSyntaxException.class, () -> Node.parse(""));
+    }
+}

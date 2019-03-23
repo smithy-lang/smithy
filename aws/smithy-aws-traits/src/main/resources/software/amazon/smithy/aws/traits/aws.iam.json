@@ -1,0 +1,86 @@
+{
+  "smithy": "1.0",
+  "aws.iam": {
+    "traitDefs": {
+      "actionPermissionDescription": {
+        "selector": "operation",
+        "shape": "smithy.api#String",
+        "documentation": "A brief description of what granting the user permission to invoke an operation would entail. This description should begin with something similar to 'Enables the user to...' or 'Grants permission to...'"
+      },
+      "defineConditionKeys": {
+        "selector": "service",
+        "shape": "aws.iam#DefineConditionKeysTrait",
+        "documentation": "Defines the set of condition keys that appear within a service in addition to inferred and global condition keys."
+      },
+      "conditionKeys": {
+        "selector": ":test(resource, operation)",
+        "shape": "aws.iam#IdentifierList",
+        "documentation": "Applies condition keys by name to a resource or operation"
+      },
+      "inferConditionKeys": {
+        "selector": "resource",
+        "documentation": "Infers the condition keys of a resource"
+      },
+      "requiredActions": {
+        "selector": "operation",
+        "shape": "aws.iam#IdentifierList",
+        "documentation": "Other actions that the invoker must be authorized to perform when executing the targeted operation."
+      }
+    },
+    "shapes": {
+      "IdentifierList": {
+        "type": "list",
+        "private": true,
+        "member": { "target": "aws.iam#IamIdentifier" }
+      },
+      "IamIdentifier": {
+        "type": "string",
+        "private": true,
+        "pattern": "^([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:[^:]+)$"
+      },
+      "DefineConditionKeysTrait": {
+        "type": "map",
+        "private": true,
+        "key": {"target": "aws.iam#IamIdentifier"},
+        "value": {"target": "aws.iam#ConditionKeyDefinition"}
+      },
+      "ConditionKeyDefinition": {
+        "type": "structure",
+        "private": true,
+        "members": {
+          "documentation": {
+            "target": "smithy.api#String"
+          },
+          "externalDocumentation": {
+            "target": "smithy.api#String"
+          },
+          "type": {
+            "target": "aws.iam#ConditionKeyType",
+            "required": true
+          }
+        }
+      },
+      "ConditionKeyType": {
+        "type": "string",
+        "private": true,
+        "documentation": "The IAM policy type of the value that will supplied for this context key",
+        "smithy.api#enum": {
+          "ARN": {},
+          "ArrayOfARN": {},
+          "Binary": {},
+          "ArrayOfBinary": {},
+          "String": {},
+          "ArrayOfString": {},
+          "Numeric": {},
+          "ArrayOfNumeric": {},
+          "Date": {},
+          "ArrayOfDate": {},
+          "Bool": {},
+          "ArrayOfBool": {},
+          "IPAddress": {},
+          "ArrayOfIPAddress": {}
+        }
+      }
+    }
+  }
+}

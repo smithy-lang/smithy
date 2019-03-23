@@ -1,0 +1,32 @@
+{
+  "smithy": "1.0",
+  "ns.foo": {
+    "shapes": {
+      "ValidNamespace1": {
+        "type": "structure",
+        "members": {
+          "a": {
+            "target": "String"
+          }
+        },
+        "smithy.api#xmlNamespace": {
+          "uri": "http://foo.com"
+        }
+      },
+      "InvalidNamespace": {
+        "type": "structure",
+        "members": {
+          "a": {
+            "target": "String"
+          }
+        },
+        "smithy.api#xmlNamespace": {
+          "uri": "::foo"
+        }
+      },
+      "String": {
+        "type": "string"
+      }
+    }
+  }
+}

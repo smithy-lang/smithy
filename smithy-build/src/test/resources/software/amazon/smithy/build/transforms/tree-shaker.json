@@ -1,0 +1,37 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "MyService": {
+                "type": "service",
+                "protocols": {
+                    "foo": {
+                    }
+                },
+                "version": "2017-01-19"
+            },
+            "Exclude1": {
+                "type": "string"
+            },
+            "Exclude2": {
+                "type": "string",
+                "tags": [
+                    "foo"
+                ]
+            },
+            "Include1": {
+                "type": "string",
+                "tags": [
+                    "export",
+                    "foo"
+                ]
+            },
+            "Include2": {
+                "type": "string",
+                "tags": [
+                    "export"
+                ]
+            }
+        }
+    }
+}

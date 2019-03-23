@@ -1,0 +1,74 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "ValidEvent": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "smithy.api#String",
+                        "eventHeader": true
+                    },
+                    "bar": {
+                        "target": "smithy.api#String",
+                        "eventHeader": true
+                    },
+                    "baz": {
+                        "target": "smithy.api#Blob",
+                        "eventPayload": true
+                    }
+                }
+            },
+            "InvalidEvent1": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "smithy.api#String",
+                        "eventPayload": true
+                    },
+                    "baz": {
+                        "target": "smithy.api#Blob"
+                    }
+                }
+            },
+            "InvalidEvent2": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "smithy.api#Boolean",
+                        "eventPayload": true
+                    },
+                    "baz": {
+                        "target": "smithy.api#Blob",
+                        "eventPayload": true
+                    }
+                }
+            },
+            "InvalidEvent3": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "Structure",
+                        "eventHeader": true
+                    },
+                    "baz": {
+                        "target": "Structure",
+                        "eventPayload": true
+                    }
+                }
+            },
+            "InvalidEvent4": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "smithy.api#Boolean",
+                        "eventPayload": true
+                    }
+                }
+            },
+            "Structure": {
+                "type": "structure"
+            }
+        }
+    }
+}

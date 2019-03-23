@@ -1,0 +1,76 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "Get",
+        "responses": {
+          "200": {
+            "description": "Get response"
+          }
+        }
+      },
+      "put": {
+        "operationId": "Put",
+        "responses": {
+          "200": {
+            "description": "Put response"
+          }
+        }
+      },
+      "post": {
+        "operationId": "Post",
+        "responses": {
+          "200": {
+            "description": "Post response"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Delete",
+        "responses": {
+          "200": {
+            "description": "Delete response"
+          }
+        }
+      },
+      "options": {
+        "operationId": "Options",
+        "responses": {
+          "200": {
+            "description": "Options response"
+          }
+        }
+      },
+      "head": {
+        "operationId": "Head",
+        "responses": {
+          "200": {
+            "description": "Head response"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "Patch",
+        "responses": {
+          "200": {
+            "description": "Patch response"
+          }
+        }
+      },
+      "trace": {
+        "operationId": "Trace",
+        "responses": {
+          "200": {
+            "description": "Trace response"
+          }
+        }
+      }
+    }
+  },
+  "components": { }
+}

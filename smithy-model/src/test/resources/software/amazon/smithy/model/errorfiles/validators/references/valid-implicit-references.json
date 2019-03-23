@@ -1,0 +1,69 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "MyStructure": {
+                "type": "structure",
+                "members": {
+                    "abc": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    },
+                    "def": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    }
+                },
+                "references": {
+                    "self": {
+                        "resource": "MyResource"
+                    },
+                    "another": {
+                        "resource": "MyResource"
+                    },
+                    "resource2": {
+                        "resource": "MyResource2"
+                    }
+                }
+            },
+            "AnotherStructure": {
+                "type": "structure",
+                "members": {
+                    "abc": {
+                        "target": "smithy.api#String"
+                    },
+                    "def": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    }
+                },
+                "references": {
+                    "membersDoNotNeedToBeRequired": {
+                        "resource": "MyResource"
+                    }
+                }
+            },
+            "MyString": {
+                "type": "string",
+                "references": {
+                    "resource2": {
+                        "resource": "MyResource2"
+                    }
+                }
+            },
+            "MyResource": {
+                "type": "resource",
+                "identifiers": {
+                    "abc": "smithy.api#String",
+                    "def": "smithy.api#String"
+                }
+            },
+            "MyResource2": {
+                "type": "resource",
+                "identifiers": {
+                    "abc": "smithy.api#String"
+                }
+            }
+        }
+    }
+}

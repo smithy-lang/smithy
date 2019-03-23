@@ -1,0 +1,67 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": [
+            {
+                "name": "StutteredShapeName"
+            }
+        ]
+    },
+    "ns.foo": {
+        "shapes": {
+            "Valid": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String"
+                    },
+                    "baz": {
+                        "target": "String"
+                    }
+                }
+            },
+            "Valid": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String"
+                    },
+                    "baz": {
+                        "target": "String"
+                    }
+                }
+            },
+            "Invalid": {
+                "type": "structure",
+                "members": {
+                    "invalidFoo": {
+                        "target": "String"
+                    },
+                    "invalidBar": {
+                        "target": "String"
+                    },
+                    "InvalidBaz": {
+                        "target": "String"
+                    }
+                }
+            },
+            "Invalid2": {
+                "type": "union",
+                "members": {
+                    "invalid2Foo": {
+                        "target": "String"
+                    },
+                    "invalid2Bar": {
+                        "target": "String"
+                    },
+                    "Invalid2Baz": {
+                        "target": "String"
+                    }
+                }
+            },
+            "String": {
+                "type": "string"
+            }
+        }
+    }
+}

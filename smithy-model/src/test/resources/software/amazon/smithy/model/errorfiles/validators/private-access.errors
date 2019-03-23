@@ -1,0 +1,8 @@
+[ERROR] (PrivateAccess) smithy.example#InvalidList$member / [0, 0]: This shape has an invalid member_target relationship that targets a private shape, `smithy.private#PrivateString`, in another namespace.
+[ERROR] (PrivateAccess) smithy.example#InvalidMap$key / [0, 0]: This shape has an invalid member_target relationship that targets a private shape, `smithy.private#PrivateString`, in another namespace.
+[ERROR] (PrivateAccess) smithy.example#InvalidMap$value / [0, 0]: This shape has an invalid member_target relationship that targets a private shape, `smithy.private#PrivateString`, in another namespace.
+[ERROR] (PrivateAccess) smithy.example#InvalidOperation / [0, 0]: This shape has an invalid error relationship that targets a private shape, `smithy.private#PrivateError`, in another namespace.
+[ERROR] (PrivateAccess) smithy.example#InvalidOperation / [0, 0]: This shape has an invalid input relationship that targets a private shape, `smithy.private#PrivateStructure`, in another namespace.
+[ERROR] (PrivateAccess) smithy.example#InvalidOperation / [0, 0]: This shape has an invalid output relationship that targets a private shape, `smithy.private#PrivateStructure`, in another namespace.
+[ERROR] (PrivateAccess) smithy.example#InvalidService / [0, 0]: This shape has an invalid operation relationship that targets a private shape, `smithy.private#PrivateOperation`, in another namespace.
+[ERROR] (PrivateAccess) smithy.example#InvalidStructure$invalid / [0, 0]: This shape has an invalid member_target relationship that targets a private shape, `smithy.private#PrivateString`, in another namespace.

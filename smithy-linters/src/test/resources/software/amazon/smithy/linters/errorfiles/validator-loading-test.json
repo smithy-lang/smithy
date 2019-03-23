@@ -1,0 +1,57 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": [
+            {
+                "name": "UnknownValidator"
+            },
+            {
+                "name": "UnreferencedShape"
+            },
+            {
+                "name": "CamelCase"
+            },
+            "foo"
+        ],
+        "smithy.suppressions": [
+            {
+                "ids": [
+                    "UnreferencedShape"
+                ]
+            },
+            {
+                "ids": [
+                    "UnknownValidator"
+                ]
+            },
+            [
+            ],
+            {
+                "ids": [
+                    "CamelCase"
+                ],
+                "shapes": [
+                    "ns.foo#IgnoreMe",
+                    "ns.baz#"
+                ]
+            }
+        ]
+    },
+    "ns.foo": {
+        "shapes": {
+            "OrphanShape": {
+                "type": "string"
+            },
+            "Ignore_Me": {
+                "type": "string"
+            }
+        }
+    },
+    "ns.baz": {
+        "shapes": {
+            "This_is_ignored_too": {
+                "type": "string"
+            }
+        }
+    }
+}

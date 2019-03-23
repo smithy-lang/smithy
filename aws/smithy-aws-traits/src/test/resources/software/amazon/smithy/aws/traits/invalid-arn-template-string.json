@@ -1,0 +1,23 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "SomeService": {
+                "type": "service",
+                "version": "2018-03-17",
+                "aws.api#service": {
+                    "sdkId": "Some Value"
+                },
+                "resources": [
+                    "A"
+                ]
+            },
+            "A": {
+                "type": "resource",
+                "aws.api#arn": {
+                    "template": "{;;;}"
+                }
+            }
+        }
+    }
+}

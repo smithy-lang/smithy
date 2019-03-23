@@ -1,0 +1,94 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": [
+            {
+                "name": "StandardOperationVerb",
+                "id": "Pointless"
+            },
+            {
+                "name": "StandardOperationVerb",
+                "id": "WithVerbsAndPrefixes",
+                "configuration": {
+                    "verbs": [
+                        "Create",
+                        "Update",
+                        "Delete"
+                    ],
+                    "prefixes": [
+                        "Batch"
+                    ]
+                }
+            },
+            {
+                "name": "StandardOperationVerb",
+                "id": "SuggestAlternatives",
+                "configuration": {
+                    "verbs": [
+                        "Create",
+                        "Update",
+                        "Delete"
+                    ],
+                    "prefixes": [
+                        "Batch"
+                    ],
+                    "suggestAlternatives": {
+                        "Make": [
+                            "Create",
+                            "Generate"
+                        ],
+                        "Change": [
+                            "Update"
+                        ],
+                        "Destroy": [
+                            "Delete"
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "ns.foo": {
+        "shapes": {
+            "CreateFoo": {
+                "type": "operation"
+            },
+            "DeleteFoo": {
+                "type": "operation"
+            },
+            "UpdateFoo": {
+                "type": "operation"
+            },
+            "BatchCreateFoo": {
+                "type": "operation"
+            },
+            "BatchDeleteFoo": {
+                "type": "operation"
+            },
+            "BatchUpdateFoo": {
+                "type": "operation"
+            },
+            "BatchMakeFoo": {
+                "type": "operation"
+            },
+            "BatchDestroyFoo": {
+                "type": "operation"
+            },
+            "BatchChangeFoo": {
+                "type": "operation"
+            },
+            "MakeFoo": {
+                "type": "operation"
+            },
+            "DestroyFoo": {
+                "type": "operation"
+            },
+            "ChangeFoo": {
+                "type": "operation"
+            },
+            "Batch": {
+                "type": "operation"
+            }
+        }
+    }
+}

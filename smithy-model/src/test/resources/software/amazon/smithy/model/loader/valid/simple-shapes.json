@@ -1,0 +1,103 @@
+{
+  "smithy": "1.0",
+  "smithy.example": {
+    "shapes": {
+      "MyBigDecimal1": {
+        "type": "bigDecimal"
+      },
+      "MyBigDecimal2": {
+        "type": "bigDecimal",
+        "deprecated": {},
+        "since": "1.8"
+      },
+      "MyBigInteger1": {
+        "type": "bigInteger"
+      },
+      "MyBigInteger2": {
+        "type": "bigInteger",
+        "deprecated": {},
+        "since": "1.7"
+      },
+      "MyBlob1": {
+        "type": "blob"
+      },
+      "MyBlob2": {
+        "type": "blob",
+        "deprecated": {},
+        "since": "1.10"
+      },
+      "MyBoolean1": {
+        "type": "boolean"
+      },
+      "MyBoolean2": {
+        "type": "boolean",
+        "deprecated": {},
+        "since": "1.0"
+      },
+      "MyByte1": {
+        "type": "byte"
+      },
+      "MyByte2": {
+        "type": "byte",
+        "deprecated": {},
+        "since": "1.1"
+      },
+      "MyDouble1": {
+        "type": "double"
+      },
+      "MyDouble2": {
+        "type": "double",
+        "deprecated": {},
+        "since": "1.6"
+      },
+      "MyFloat1": {
+        "type": "float"
+      },
+      "MyFloat2": {
+        "type": "float",
+        "deprecated": {},
+        "since": "1.5"
+      },
+      "MyInteger1": {
+        "type": "integer"
+      },
+      "MyInteger2": {
+        "type": "integer",
+        "deprecated": {},
+        "since": "1.3"
+      },
+      "MyLong1": {
+        "type": "long"
+      },
+      "MyLong2": {
+        "type": "long",
+        "deprecated": {},
+        "since": "1.4"
+      },
+      "MyShort1": {
+        "type": "short"
+      },
+      "MyShort2": {
+        "type": "short",
+        "deprecated": {},
+        "since": "1.2"
+      },
+      "MyString1": {
+        "type": "string"
+      },
+      "MyString2": {
+        "type": "string",
+        "deprecated": {},
+        "since": "1.9"
+      },
+      "MyTimestamp1": {
+        "type": "timestamp"
+      },
+      "MyTimestamp2": {
+        "type": "timestamp",
+        "deprecated": {},
+        "since": "1.11"
+      }
+    }
+  }
+}

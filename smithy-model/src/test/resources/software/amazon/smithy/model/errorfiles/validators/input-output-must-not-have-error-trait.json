@@ -1,0 +1,16 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "MyOperation": {
+                "type": "operation",
+                "input": "ErrorStructure",
+                "output": "ErrorStructure"
+            },
+            "ErrorStructure": {
+                "type": "structure",
+                "error": "client"
+            }
+        }
+    }
+}

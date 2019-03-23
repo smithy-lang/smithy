@@ -1,0 +1,18 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "MyString": {
+                "type": "string",
+                "references": {
+                    "foo": {
+                        "resource": "ns.foo#NotFound",
+                        "ids": {
+                            "foo": "baz"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

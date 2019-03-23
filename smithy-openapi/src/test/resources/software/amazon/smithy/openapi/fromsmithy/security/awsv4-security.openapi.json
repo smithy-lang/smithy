@@ -1,0 +1,35 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "Operation1",
+        "responses": {
+          "200": {
+            "description": "Operation1 response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "sigv4": {
+        "type": "apiKey",
+        "description": "AWS Signature Version 4 authentication",
+        "name": "Authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "awsSigv4"
+      }
+    }
+  },
+  "security": [
+    {
+      "sigv4": [ ]
+    }
+  ]
+}

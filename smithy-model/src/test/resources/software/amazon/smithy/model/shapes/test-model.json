@@ -1,0 +1,246 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "foo": "baz",
+        "bar": {
+            "b": 1,
+            "a": 2
+        }
+    },
+    "ns.foo": {
+        "shapes": {
+            "AnotherService": {
+                "type": "service",
+                "version": "2017-01-17",
+                "protocols": {
+                    "a": {
+                    },
+                    "b": {
+                    }
+                }
+            },
+            "MyService": {
+                "type": "service",
+                "version": "2017-01-17",
+                "protocols": {
+                    "a": {
+                        "settings": {
+                            "foo": "baz"
+                        }
+                    },
+                    "b": {
+                    }
+                },
+                "resources": [
+                    "MyResource",
+                    "BasicResource"
+                ]
+            },
+            "MyResource": {
+                "type": "resource",
+                "identifiers": {
+                    "id": "MyResourceId"
+                },
+                "read": "GetMyResource",
+                "delete": "DeleteMyResource"
+            },
+            "MyResourceId": {
+                "type": "string"
+            },
+            "DeleteMyResource": {
+                "type": "operation",
+                "idempotent": true,
+                "input": "DeleteMyResourceInput"
+            },
+            "DeleteMyResourceInput": {
+                "type": "structure",
+                "members": {
+                    "id": {
+                        "target": "MyResourceId",
+                        "required": true
+                    }
+                }
+            },
+            "GetMyResource": {
+                "type": "operation",
+                "readonly": true,
+                "input": "GetMyResourceInput",
+                "output": "GetMyResourceOutput",
+                "errors": [
+                    "ResourceNotFoundError"
+                ]
+            },
+            "GetMyResourceInput": {
+                "type": "structure",
+                "members": {
+                    "id": {
+                        "target": "MyResourceId",
+                        "required": true
+                    }
+                }
+            },
+            "GetMyResourceOutput": {
+                "type": "structure",
+                "members": {
+                    "someValue": {
+                        "target": "AList"
+                    }
+                }
+            },
+            "ResourceNotFoundError": {
+                "type": "structure",
+                "error": "client"
+            },
+            "MyString": {
+                "type": "string",
+                "mediaType": "application\/json",
+                "documentation": "docs"
+            },
+            "AList": {
+                "type": "list",
+                "documentation": "abc",
+                "member": {
+                    "target": "MyString"
+                }
+            },
+            "ASet": {
+                "type": "set",
+                "documentation": "abc",
+                "member": {
+                    "target": "MyString"
+                }
+            },
+            "Map": {
+                "type": "map",
+                "documentation": "abc",
+                "key": {
+                    "target": "MyString"
+                },
+                "value": {
+                    "target": "MyString"
+                }
+            },
+            "TaggedUnion": {
+                "type": "union",
+                "members": {
+                    "b": {
+                        "target": "MyString"
+                    },
+                    "a": {
+                        "target": "MyString"
+                    }
+                },
+                "documentation": "abc"
+            },
+            "Structure": {
+                "type": "structure",
+                "members": {
+                    "b": {
+                        "target": "MyString",
+                        "documentation": "docs"
+                    },
+                    "a": {
+                        "target": "MyString",
+                        "required": true
+                    }
+                },
+                "documentation": "abc"
+            },
+            "BasicResource": {
+                "type": "resource"
+            }
+        },
+        "traitDefs": {
+            "b": {},
+            "a": {}
+        }
+    },
+    "ns.baz": {
+        "shapes": {
+            "String": {
+                "type": "string"
+            }
+        }
+    },
+    "ns.shapes": {
+        "shapes": {
+            "String": {
+                "type": "string",
+                "sensitive": true
+            },
+            "Byte": {
+                "type": "byte"
+            },
+            "Short": {
+                "type": "short"
+            },
+            "Integer": {
+                "type": "integer"
+            },
+            "Float": {
+                "type": "float"
+            },
+            "Double": {
+                "type": "double"
+            },
+            "Long": {
+                "type": "long"
+            },
+            "BigDecimal": {
+                "type": "bigDecimal"
+            },
+            "BigInteger": {
+                "type": "bigInteger"
+            },
+            "Blob": {
+                "type": "blob"
+            },
+            "Boolean": {
+                "type": "boolean"
+            },
+            "Timestamp": {
+                "type": "timestamp"
+            },
+            "List": {
+                "type": "list",
+                "member": {
+                    "target": "Timestamp"
+                }
+            },
+            "Set": {
+                "type": "set",
+                "member": {
+                    "target": "Long"
+                }
+            },
+            "Map": {
+                "type": "map",
+                "key": {
+                    "target": "String"
+                },
+                "value": {
+                    "target": "List"
+                }
+            },
+            "Structure": {
+                "type": "structure",
+                "members": {
+                    "memberName": {
+                        "target": "String"
+                    }
+                }
+            },
+            "TaggedUnion": {
+                "type": "union",
+                "members": {
+                    "foo": {
+                        "target": "String"
+                    },
+                    "baz": {
+                        "target": "Integer"
+                    }
+                }
+            }
+        }
+    }
+}

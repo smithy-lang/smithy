@@ -1,0 +1,42 @@
+/**
+ * Add overrides to how tabs are styled to make them less visually
+ * obstrusive. Note, however, that this might need to be looked at in
+ * the future if we ever want to use non-code-tabs.
+ */
+
+ /* No need for margin below code samples when in a tab. */
+.code-tab pre {
+    margin-bottom: 0;
+}
+
+.sphinx-tabs {
+    margin-top: 2rem;
+}
+
+/* Make the tab headings smaller to not distract from content. */
+.ui.attached.tabular.menu {
+    font-size: 80%;
+}
+
+/* Code tabs should encompass the entire tab. */
+.code-tab.tab {
+    padding: 0 !important;
+}
+
+.ui.tabular.menu {
+    border-bottom-color: #eee !important;
+}
+
+.ui.tabular.menu .item  {
+    border: none !important;
+}
+
+.ui.attached.segment.code-tab {
+    border: none !important;
+}
+
+/* Remove code tab headings and use the same color as code backgrounds */
+.ui.tabular.menu .active.item {
+    border: none !important;
+    background-color: #f6f8fa;
+}

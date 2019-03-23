@@ -1,0 +1,62 @@
+{
+  "smithy": "1.0",
+  "smithy.example": {
+    "shapes": {
+      "Service": {
+        "type": "service",
+        "version": "2006-03-01",
+        "protocols": {
+          "aws.rest-json": {}
+        },
+        "operations": [
+          "Operation"
+        ]
+      },
+      "Operation": {
+        "type": "operation",
+        "idempotent": true,
+        "input": "OperationInput",
+        "output": "OperationOutput",
+        "errors": ["Error"],
+        "http": {"uri": "/", "method": "POST"}
+      },
+      "OperationInput": {
+        "type": "structure",
+        "members": {
+          "header": {
+            "target": "String",
+            "httpHeader": "X-Foo-Header"
+          },
+          "body": {
+            "target": "Blob",
+            "httpPayload": true
+          }
+        }
+      },
+      "OperationOutput": {
+        "type": "structure",
+        "members": {
+          "header": {
+            "target": "String",
+            "httpHeader": "X-Foo-Header"
+          },
+          "body": {
+            "target": "Blob",
+            "httpPayload": true
+          }
+        }
+      },
+      "Error": {
+        "type": "structure",
+        "error": "client",
+        "httpError": 404,
+        "members": {
+          "foo": {
+            "httpPayload": true,
+            "target": "String"
+          }
+        }
+      }
+    }
+  }
+}

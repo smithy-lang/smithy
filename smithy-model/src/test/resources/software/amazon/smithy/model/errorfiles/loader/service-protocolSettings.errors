@@ -1,0 +1,3 @@
+[ERROR] (Model) ns.foo#Service1 / [0, 0]: Error creating trait `protocols`: Expected string, but found number.
+[ERROR] (Model) ns.foo#Service2 / [0, 0]: Error creating trait `protocols`: Expected object, but found array.
+[ERROR] (Model) ns.foo#Service3 / [0, 0]: Error creating trait `protocols`: Expected object, but found boolean.

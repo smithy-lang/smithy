@@ -1,0 +1,52 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "Operation",
+        "parameters": [
+          {
+            "name": "X-Timestamp3",
+            "in": "header",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "X-Timestamp1",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Timestamp2",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/SmithyExampleOperationInputTimestamp2Member"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SmithyExampleOperationInputTimestamp2Member": {
+        "type": "number"
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "ResourceA": {
+                "type": "resource",
+                "identifiers": {
+                    "id": "smithy.api#String"
+                },
+                "read": "GetValidA",
+                "update": "UpdateValidA",
+                "delete": "DeleteValidA",
+                "list": "ListValidA"
+            },
+            "GetValidA": {
+                "type": "operation",
+                "readonly": true
+            },
+            "DeleteValidA": {
+                "type": "operation",
+                "idempotent": true
+            },
+            "UpdateValidA": {
+                "type": "operation"
+            },
+            "ListValidA": {
+                "type": "operation",
+                "readonly": true,
+                "input": "ResourceAInput"
+            },
+            "ResourceAInput": {
+                "type": "structure",
+                "members": {
+                    "id": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    }
+                }
+            }
+        }
+    }
+}

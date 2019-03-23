@@ -1,0 +1,196 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.smithy.model;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static software.amazon.smithy.model.Pattern.Segment;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+public class PatternTest {
+
+    private static List<Segment> parser(String target) {
+        String[] unparsedSegments = target.split(java.util.regex.Pattern.quote("/"));
+        List<Segment> segments = new ArrayList<>();
+        int offset = 1;
+        for (int i = 1; i < unparsedSegments.length; i++) {
+            String segment = unparsedSegments[i];
+            segments.add(Segment.parse(segment, offset));
+            offset += segment.length();
+        }
+        return segments;
+    }
+
+    @Test
+    public void parsesGreedyLabels() {
+        String target = "/foo/baz/{bar+}";
+        Pattern pattern = Pattern.builder()
+                .segments(parser(target))
+                .pattern(target)
+                .build();
+
+        assertThat(pattern.toString(), equalTo(target));
+        assertThat(pattern.getGreedyLabel(), equalTo(Optional.of(
+                new Segment("bar", Segment.Type.GREEDY_LABEL))));
+    }
+
+    @Test
+    public void computesHashAndEquals() {
+        String target1 = "/foo";
+        Pattern pattern1 = Pattern.builder()
+                .segments(parser(target1))
+                .pattern(target1)
+                .build();
+        String target2 = "/foo/{baz+}/";
+        Pattern pattern2 = Pattern.builder()
+                .segments(parser(target2))
+                .pattern(target2)
+                .build();
+
+        assertThat(pattern1, equalTo(pattern1));
+        assertThat(pattern1, not(equalTo(pattern2)));
+        assertThat(pattern1.hashCode(), is(pattern1.hashCode()));
+        assertThat(pattern1.hashCode(), not(pattern2.hashCode()));
+        assertThat(pattern2, equalTo(pattern2));
+        assertThat(pattern2.hashCode(), is(pattern2.hashCode()));
+    }
+
+    @Test
+    public void labelsAreCaseInsensitive() {
+        String target = "/foo/{baz}";
+        Pattern pattern = Pattern.builder()
+                                  .segments(parser(target))
+                .pattern(target)
+                .build();
+        Segment segment = new Segment("baz", Segment.Type.LABEL);
+
+        assertThat(pattern.getLabel("baz"), is(Optional.of(segment)));
+        assertThat(pattern.getLabel("BAZ"), is(Optional.of(segment)));
+    }
+
+    @Test
+    public void labelsMustNotIncludeEmptySegments() {
+        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+            String target = "//baz";
+            Pattern.builder()
+                    .segments(parser(target))
+                    .pattern(target)
+                    .build();
+        });
+
+        assertThat(thrown.getMessage(), containsString("Segments must not be empty"));
+    }
+
+    @Test
+    public void labelsMustNotBeRepeated() {
+        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+            String target = "/{foo}/{Foo}";
+            Pattern.builder()
+                    .segments(parser(target))
+                    .pattern(target)
+                    .build();
+        });
+
+        assertThat(thrown.getMessage(), containsString("Label `Foo` is defined more than once"));
+    }
+
+    @Test
+    public void restrictsGreedyLabels() {
+        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+            String target = "/foo/{baz+}";
+            Pattern.builder()
+                    .allowsGreedyLabels(false)
+                    .segments(parser(target))
+                    .pattern(target)
+                    .build();
+        });
+
+        assertThat(thrown.getMessage(), containsString("Pattern must not contain a greedy label"));
+    }
+
+    @Test
+    public void noMoreThanOneGreedyLabel() {
+        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+            String target = "/{foo+}/{baz+}";
+            Pattern.builder()
+                    .segments(parser(target))
+                    .pattern(target)
+                    .build();
+        });
+
+        assertThat(thrown.getMessage(), containsString("At most one greedy label segment may exist in a pattern"));
+    }
+
+    @Test
+    public void greedyLabelsMustBeLastLabelInPattern() {
+        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+            String target = "/{foo+}/{baz}";
+            Pattern.builder()
+                    .segments(parser(target))
+                    .pattern(target)
+                    .build();
+        });
+
+        assertThat(thrown.getMessage(), containsString("A greedy label must be the last label in its pattern"));
+    }
+
+    @Test
+    public void noEmptyLabels() {
+        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+            String target = "/{}";
+            Pattern.builder()
+                    .segments(parser(target))
+                    .pattern(target)
+                    .build();
+        });
+
+        assertThat(thrown.getMessage(), containsString("Empty label declaration"));
+    }
+
+    @Test
+    public void labelsMustMatchRegex() {
+        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+            String target = "/{!}";
+            Pattern.builder()
+                    .segments(parser(target))
+                    .pattern(target)
+                    .build();
+        });
+
+        assertThat(thrown.getMessage(), containsString("Invalid label name"));
+    }
+
+    @Test
+    public void labelsMustSpanEntireSegment() {
+        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+            String target = "/{foo}baz";
+            Pattern.builder()
+                    .segments(parser(target))
+                    .pattern(target)
+                    .build();
+        });
+
+        assertThat(thrown.getMessage(), containsString("Literal segments must not contain"));
+    }
+}

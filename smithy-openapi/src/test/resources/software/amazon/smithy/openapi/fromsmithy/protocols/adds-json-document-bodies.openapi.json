@@ -1,0 +1,60 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/document": {
+      "post": {
+        "operationId": "CreateDocument",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "abc": {
+                    "$ref": "#/components/schemas/SmithyExampleCreateDocumentInputAbcMember"
+                  },
+                  "def": {
+                    "$ref": "#/components/schemas/SmithyExampleCreateDocumentInputDefMember"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/SmithyExampleCreateDocumentInputQueryMember"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CreateDocument response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SmithyExampleCreateDocumentInputQueryMember": {
+        "type": "string"
+      },
+      "SmithyExampleCreateDocumentInputAbcMember": {
+        "type": "string"
+      },
+      "SmithyExampleCreateDocumentInputDefMember": {
+        "type": "number",
+        "format": "int32",
+        "nullable": true
+      }
+    }
+  }
+}
