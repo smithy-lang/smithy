@@ -1,0 +1,48 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "String1": {
+                "type": "string",
+                "ns.foo#custom1": true
+            },
+            "String2": {
+                "type": "string",
+                "ns.foo#custom1": 10
+            },
+            "String3": {
+                "type": "string",
+                "ns.foo#custom2": {
+                    "foo": "hello"
+                }
+            },
+            "String4": {
+                "type": "string",
+                "ns.foo#custom2": {
+                    "baz": "hello"
+                }
+            },
+            "Schema": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String1",
+                        "required": true
+                    },
+                    "baz": {
+                        "target": "String1"
+                    }
+                }
+            }
+        },
+        "traitDefs": {
+            "custom1": {
+                "selector": "string"
+            },
+            "custom2": {
+                "shape": "Schema",
+                "selector": "string"
+            }
+        }
+    }
+}

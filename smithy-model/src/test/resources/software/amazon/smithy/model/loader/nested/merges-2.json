@@ -1,0 +1,10 @@
+{
+    "smithy": "1.0",
+    "example.namespace": {
+        "traits": {
+            "String": {
+                "documentation": "This will not get picked up due to the import path order in the test"
+            }
+        }
+    }
+}

@@ -1,0 +1,5 @@
+[ERROR] (ShapeIdConflict) ns.foo#A$Baz / [20, 28]: Shape ID `ns.foo#A$Baz` conflicts with other shape IDs in the model: [`ns.foo#A$baz`]
+[ERROR] (ShapeIdConflict) ns.foo#A$Foo / [8, 28]: Shape ID `ns.foo#A$Foo` conflicts with other shape IDs in the model: [`ns.foo#A$fOO`, `ns.foo#A$foo`]
+[ERROR] (ShapeIdConflict) ns.foo#A$baz / [17, 28]: Shape ID `ns.foo#A$baz` conflicts with other shape IDs in the model: [`ns.foo#A$Baz`]
+[ERROR] (ShapeIdConflict) ns.foo#A$fOO / [14, 28]: Shape ID `ns.foo#A$fOO` conflicts with other shape IDs in the model: [`ns.foo#A$Foo`, `ns.foo#A$foo`]
+[ERROR] (ShapeIdConflict) ns.foo#A$foo / [11, 28]: Shape ID `ns.foo#A$foo` conflicts with other shape IDs in the model: [`ns.foo#A$Foo`, `ns.foo#A$fOO`]

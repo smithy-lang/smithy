@@ -1,0 +1,257 @@
+{
+  "smithy": "1.0",
+  "ns.foo": {
+    "shapes": {
+      "Structure": {
+        "type": "structure",
+        "members": {
+          "ValidMember1": {
+            "target": "smithy.api#Byte",
+            "range": {
+              "min": 0,
+              "max": 10
+            }
+          },
+          "ValidMember2": {
+            "target": "smithy.api#Short",
+            "range": {
+              "min": 0,
+              "max": 10
+            }
+          },
+          "ValidMember3": {
+            "target": "smithy.api#Integer",
+            "range": {
+              "min": 0,
+              "max": 10
+            }
+          },
+          "ValidMember4": {
+            "target": "smithy.api#Long",
+            "range": {
+              "min": 0,
+              "max": 10
+            }
+          },
+          "ValidMember5": {
+            "target": "smithy.api#BigInteger",
+            "range": {
+              "min": 0,
+              "max": 10
+            }
+          },
+          "ValidMember6": {
+            "target": "smithy.api#Float",
+            "range": {
+              "min": 0,
+              "max": 10
+            }
+          },
+          "ValidMember7": {
+            "target": "smithy.api#Float",
+            "range": {
+              "min": 0.5,
+              "max": 10.5
+            }
+          },
+          "ValidMember8": {
+            "target": "smithy.api#Double",
+            "range": {
+              "min": 0,
+              "max": 10
+            }
+          },
+          "ValidMember9": {
+            "target": "smithy.api#Double",
+            "range": {
+              "min": 0.5,
+              "max": 10.5
+            }
+          },
+          "ValidMember10": {
+            "target": "smithy.api#BigDecimal",
+            "range": {
+              "min": 0,
+              "max": 10
+            }
+          },
+          "ValidMember11": {
+            "target": "smithy.api#BigDecimal",
+            "range": {
+              "min": 0.5,
+              "max": 10.5
+            }
+          },
+          "ValidMember12": {
+            "target": "smithy.api#BigDecimal",
+            "range": {
+              "min": 0.5e4,
+              "max": 10.5e4
+            }
+          },
+          "InvalidMember1": {
+            "target": "smithy.api#Byte",
+            "range": {
+              "min": 0.5,
+              "max": 10.5
+            }
+          },
+          "InvalidMember2": {
+            "target": "smithy.api#Short",
+            "range": {
+              "min": 0.5,
+              "max": 10.5
+            }
+          },
+          "InvalidMember3": {
+            "target": "smithy.api#Integer",
+            "range": {
+              "min": 0.5,
+              "max": 10.5
+            }
+          },
+          "InvalidMember4": {
+            "target": "smithy.api#Long",
+            "range": {
+              "min": 0.5,
+              "max": 10.5
+            }
+          },
+          "InvalidMember5": {
+            "target": "smithy.api#BigInteger",
+            "range": {
+              "min": 0.5,
+              "max": 10.5
+            }
+          },
+          "InvalidMember6": {
+            "target": "smithy.api#BigDecimal",
+            "range": {
+              "min": 1,
+              "max": 0
+            }
+          }
+        }
+      },
+      "Valid1": {
+        "type": "byte",
+        "range": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      "Valid2": {
+        "type": "short",
+        "range": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      "Valid3": {
+        "type": "integer",
+        "range": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      "Valid4": {
+        "type": "long",
+        "range": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      "Valid5": {
+        "type": "bigInteger",
+        "range": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      "Valid6": {
+        "type": "float",
+        "range": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      "Valid7": {
+        "type": "float",
+        "range": {
+          "min": 0.5,
+          "max": 10.5
+        }
+      },
+      "Valid8": {
+        "type": "double",
+        "range": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      "Valid9": {
+        "type": "double",
+        "range": {
+          "min": 0.5,
+          "max": 10.5
+        }
+      },
+      "Valid10": {
+        "type": "bigDecimal",
+        "range": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      "Valid11": {
+        "type": "bigDecimal",
+        "range": {
+          "min": 0.5,
+          "max": 10.5
+        }
+      },
+      "Invalid1": {
+        "type": "byte",
+        "range": {
+          "min": 0.5,
+          "max": 10.5
+        }
+      },
+      "Invalid2": {
+        "type": "short",
+        "range": {
+          "min": 0.5,
+          "max": 10.5
+        }
+      },
+      "Invalid3": {
+        "type": "integer",
+        "range": {
+          "min": 0.5,
+          "max": 10.5
+        }
+      },
+      "Invalid4": {
+        "type": "long",
+        "range": {
+          "min": 0.5,
+          "max": 10.5
+        }
+      },
+      "Invalid5": {
+        "type": "bigInteger",
+        "range": {
+          "min": 0.5,
+          "max": 10.5
+        }
+      },
+      "Invalid6": {
+        "type": "bigDecimal",
+        "range": {
+          "min": 1,
+          "max": 0
+        }
+      }
+    }
+  }
+}

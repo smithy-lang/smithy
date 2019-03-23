@@ -1,0 +1,53 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "MyStructure": {
+                "type": "structure",
+                "members": {
+                    "abc": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    },
+                    "def": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    },
+                    "hij": {
+                        "target": "smithy.api#Float"
+                    }
+                },
+                "references": {
+                    "notIdentifier": {
+                        "resource": "MyResource",
+                        "ids": {
+                            "notId": "abc",
+                            "def": "def"
+                        }
+                    },
+                    "notMember": {
+                        "resource": "MyResource",
+                        "ids": {
+                            "abc": "notMember",
+                            "def": "def"
+                        }
+                    },
+                    "notStringTarget": {
+                        "resource": "MyResource",
+                        "ids": {
+                            "abc": "abc",
+                            "def": "hij"
+                        }
+                    }
+                }
+            },
+            "MyResource": {
+                "type": "resource",
+                "identifiers": {
+                    "abc": "smithy.api#String",
+                    "def": "smithy.api#String"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,2 @@
+[ERROR] (ResourceLifecycle) ns.foo#Resource / [0, 0]: The `create` lifecycle operation of this resource targets an invalid operation, `ns.foo#CreateResource`. The targeted operation must be marked as idempotent.
+[ERROR] (ResourceLifecycle) ns.foo#Resource / [0, 0]: The `delete` lifecycle operation of this resource targets an invalid operation, `ns.foo#DeleteResource`. The targeted operation must be marked as idempotent.

@@ -1,0 +1,9 @@
+[DANGER] (AbbreviationNameWithAllowed) ns.foo#BamID2HTTP / [0, 0]: shape name, `BamID2HTTP`, contains invalid abbreviations. Change this shape name to `BamId2HTTP`
+[DANGER] (AbbreviationNameWithAllowed) ns.foo#Structure$loremIPSUM / [0, 0]: member name, `loremIPSUM`, contains invalid abbreviations. Change this member name to `loremIpsum`
+[DANGER] (DefaultAbbreviationName) ns.foo#BamID2HTTP / [0, 0]: shape name, `BamID2HTTP`, contains invalid abbreviations. Change this shape name to `BamId2Http`
+[DANGER] (DefaultAbbreviationName) ns.foo#BazID / [0, 0]: shape name, `BazID`, contains invalid abbreviations. Change this shape name to `BazId`
+[DANGER] (DefaultAbbreviationName) ns.foo#ID / [0, 0]: shape name, `ID`, contains invalid abbreviations. Change this shape name to `Id`
+[DANGER] (DefaultAbbreviationName) ns.foo#Structure$bamHTTP / [0, 0]: member name, `bamHTTP`, contains invalid abbreviations. Change this member name to `bamHttp`
+[DANGER] (DefaultAbbreviationName) ns.foo#Structure$bazID / [0, 0]: member name, `bazID`, contains invalid abbreviations. Change this member name to `bazId`
+[DANGER] (DefaultAbbreviationName) ns.foo#Structure$ID / [0, 0]: member name, `ID`, contains invalid abbreviations. Change this member name to `Id`
+[DANGER] (DefaultAbbreviationName) ns.foo#Structure$loremIPSUM / [0, 0]: member name, `loremIPSUM`, contains invalid abbreviations. Change this member name to `loremIpsum`

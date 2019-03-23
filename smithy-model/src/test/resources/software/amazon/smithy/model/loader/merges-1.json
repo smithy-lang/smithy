@@ -1,0 +1,10 @@
+{
+    "smithy": "1.0",
+    "example.namespace": {
+        "shapes": {
+            "String": {
+                "type": "string"
+            }
+        }
+    }
+}

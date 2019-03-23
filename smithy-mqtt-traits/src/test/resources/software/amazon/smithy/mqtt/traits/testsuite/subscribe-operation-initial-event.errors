@@ -1,0 +1,1 @@
+[ERROR] (MqttSubscribeOutput) smithy.example#Foo / [5, 24]: Operations marked with the `mqttSubscribe` trait must not utilize event streams with initial responses in their output structure.

@@ -1,0 +1,150 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "ValidA": {
+                "type": "resource",
+                "identifiers": {
+                    "validId": "ValidAIdentifier"
+                },
+                "create": "CreateValidA",
+                "read": "GetValidA",
+                "update": "UpdateValidA",
+                "delete": "DeleteValidA",
+                "list": "ListValidA"
+            },
+            "ValidAIdentifier": {
+                "type": "string"
+            },
+            "CreateValidA": {
+                "type": "operation"
+            },
+            "GetValidA": {
+                "type": "operation",
+                "readonly": true,
+                "input": "ResourceInput"
+            },
+            "DeleteValidA": {
+                "type": "operation",
+                "idempotent": true,
+                "input": "ResourceInput"
+            },
+            "UpdateValidA": {
+                "type": "operation",
+                "input": "ResourceInput"
+            },
+            "ListValidA": {
+                "type": "operation",
+                "readonly": true
+            },
+            "ResourceInput": {
+                "type": "structure",
+                "members": {
+                    "validId": {
+                        "target": "ValidAIdentifier",
+                        "required": true
+                    }
+                }
+            },
+            "ValidB": {
+                "type": "resource",
+                "identifiers": {
+                    "validB": "smithy.api#String"
+                },
+                "create": "CreateValidB",
+                "update": "CreateValidB",
+                "resources": [
+                    "ValidC",
+                    "ValidD"
+                ]
+            },
+            "CreateValidB": {
+                "type": "operation",
+                "idempotent": true,
+                "input": "CreateValidBInput"
+            },
+            "CreateValidBInput": {
+                "type": "structure",
+                "members": {
+                    "validB": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    }
+                }
+            },
+            "ValidC": {
+                "type": "resource",
+                "identifiers": {
+                    "validB": "smithy.api#String",
+                    "validC": "ValidCIdentifier"
+                },
+                "create": "CreateValidC"
+            },
+            "ValidCIdentifier": {
+                "type": "string"
+            },
+            "CreateValidC": {
+                "type": "operation",
+                "idempotent": true,
+                "input": "CreateValidCInput"
+            },
+            "CreateValidCInput": {
+                "type": "structure",
+                "members": {
+                    "validB": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    },
+                    "validC": {
+                        "target": "ValidCIdentifier",
+                        "required": true
+                    }
+                }
+            },
+            "ValidD": {
+                "type": "resource",
+                "identifiers": {
+                    "validB": "smithy.api#String",
+                    "validD": "smithy.api#String"
+                },
+                "create": "CreateValidD",
+                "list": "ListValidD"
+            },
+            "CreateValidD": {
+                "type": "operation",
+                "input": "CreateValidDInput"
+            },
+            "CreateValidDInput": {
+                "type": "structure",
+                "members": {
+                    "validB": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    }
+                }
+            },
+            "ListValidD": {
+                "type": "operation",
+                "readonly": true,
+                "input": "ListValidDInput"
+            },
+            "ListValidDInput": {
+                "type": "structure",
+                "members": {
+                    "validB": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    }
+                }
+            },
+            "ValidE": {
+                "type": "resource",
+                "create": "CreateValidE"
+            },
+            "CreateValidE": {
+                "type": "operation",
+                "idempotent": true
+            }
+        }
+    }
+}

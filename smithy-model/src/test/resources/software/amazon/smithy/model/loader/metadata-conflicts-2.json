@@ -1,0 +1,10 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "foo": "bar",
+        "list": [
+            "a",
+            "b"
+        ]
+    }
+}

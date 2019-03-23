@@ -1,0 +1,2 @@
+[ERROR] (Model) - / [0, 0]: `isa` is a reserved word for a structure shape
+[ERROR] (Model) ns.foo#MyStructure / [0, 0]: Unable to resolve trait `isa` (string value defined in the `ns.foo` namespace). If this is a custom trait, then it must be defined before it can be used in a model.

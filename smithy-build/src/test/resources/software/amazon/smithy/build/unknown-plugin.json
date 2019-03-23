@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "plugins": {
+    "unknown1": {}
+  },
+  "projections": {
+    "a": {
+      "plugins": {
+        "unknown2": {}
+      }
+    },
+    "b": {
+      "plugins": {
+        "unknown3": {}
+      }
+    }
+  }
+}

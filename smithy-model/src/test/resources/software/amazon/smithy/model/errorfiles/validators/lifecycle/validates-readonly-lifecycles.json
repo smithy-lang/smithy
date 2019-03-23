@@ -1,0 +1,48 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "Resource": {
+                "type": "resource",
+                "identifiers": {
+                    "id": "smithy.api#String"
+                },
+                "create": "CreateResource",
+                "read": "GetResource",
+                "update": "UpdateResource",
+                "delete": "DeleteResource",
+                "list": "ListResource"
+            },
+            "CreateResource": {
+                "type": "operation",
+                "readonly": true
+            },
+            "GetResource": {
+                "type": "operation",
+                "input": "ResourceInput"
+            },
+            "UpdateResource": {
+                "type": "operation",
+                "readonly": true,
+                "input": "ResourceInput"
+            },
+            "DeleteResource": {
+                "type": "operation",
+                "readonly": true,
+                "input": "ResourceInput"
+            },
+            "ListResource": {
+                "type": "operation"
+            },
+            "ResourceInput": {
+                "type": "structure",
+                "members": {
+                    "id": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    }
+                }
+            }
+        }
+    }
+}

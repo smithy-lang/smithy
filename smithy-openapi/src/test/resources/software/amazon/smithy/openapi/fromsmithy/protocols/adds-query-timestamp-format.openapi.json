@@ -1,0 +1,56 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "Operation",
+        "parameters": [
+          {
+            "name": "query1",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "query3",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "explode": true
+          },
+          {
+            "name": "query2",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/SmithyExampleOperationInputTimestamp2Member"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SmithyExampleOperationInputTimestamp2Member": {
+        "type": "number"
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "plugins": {
+    "test1": {"hello": "there"}
+  },
+  "projections": {
+    "source": {
+      "plugins": {
+        "test2": {"hello": "there"}
+      }
+    },
+    "a": {
+      "plugins": {
+        "test2": {"hello": "a"}
+      }
+    },
+    "b": {
+      "plugins": {
+        "test2": {"hello": "b"}
+      }
+    }
+  }
+}

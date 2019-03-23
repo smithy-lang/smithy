@@ -1,0 +1,275 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "Byte": {
+                "type": "byte",
+                "range": {
+                    "min": 10,
+                    "max": 20
+                }
+            },
+            "Short": {
+                "type": "short",
+                "range": {
+                    "min": 10,
+                    "max": 20
+                }
+            },
+            "Integer": {
+                "type": "integer",
+                "range": {
+                    "min": 10,
+                    "max": 20
+                }
+            },
+            "Long": {
+                "type": "long",
+                "range": {
+                    "min": 10,
+                    "max": 20
+                }
+            },
+            "Float": {
+                "type": "float",
+                "range": {
+                    "min": 10,
+                    "max": 20
+                }
+            },
+            "Double": {
+                "type": "double",
+                "range": {
+                    "min": 10,
+                    "max": 20
+                }
+            },
+            "BigInteger": {
+                "type": "bigInteger",
+                "range": {
+                    "min": 10,
+                    "max": 20
+                }
+            },
+            "BigDecimal": {
+                "type": "bigDecimal",
+                "range": {
+                    "min": 10,
+                    "max": 20
+                }
+            },
+            "String1": {
+                "type": "string",
+                "mediaType": "application\/json"
+            },
+            "String2": {
+                "type": "string",
+                "length": {
+                    "min": 1,
+                    "max": 3
+                }
+            },
+            "String3": {
+                "type": "string",
+                "enum": {
+                    "foo": {
+                        "name": "FOO"
+                    },
+                    "bar": {
+                        "name": "BAR"
+                    }
+                }
+            },
+            "String4": {
+                "type": "string",
+                "pattern": "[A-Z]+"
+            },
+            "String5": {
+                "type": "string",
+                "time": "full-date"
+            },
+            "String6": {
+                "type": "string",
+                "time": "date-time"
+            },
+            "String7": {
+                "type": "string",
+                "time": "partial-time"
+            },
+            "Blob1": {
+                "type": "blob"
+            },
+            "Blob2": {
+                "type": "blob",
+                "length": {
+                    "min": 1,
+                    "max": 3
+                }
+            },
+            "Timestamp": {
+                "type": "timestamp"
+            },
+            "Boolean": {
+                "type": "boolean"
+            },
+            "List": {
+                "type": "list",
+                "member": {
+                    "target": "String"
+                },
+                "length": {
+                    "min": 1,
+                    "max": 2
+                }
+            },
+            "Set": {
+                "type": "set",
+                "member": {
+                    "target": "String"
+                },
+                "length": {
+                    "min": 1,
+                    "max": 2
+                }
+            },
+            "String": {
+                "type": "string"
+            },
+            "KeyString": {
+                "type": "string",
+                "length": {
+                    "min": 1,
+                    "max": 2
+                }
+            },
+            "Map": {
+                "type": "map",
+                "key": {
+                    "target": "KeyString"
+                },
+                "value": {
+                    "target": "List"
+                },
+                "length": {
+                    "min": 1,
+                    "max": 2
+                }
+            },
+            "Structure": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String",
+                        "required": true
+                    },
+                    "baz": {
+                        "target": "String"
+                    },
+                    "bar": {
+                        "target": "List"
+                    },
+                    "bam": {
+                        "target": "Structure"
+                    }
+                }
+            },
+            "TaggedUnion": {
+                "type": "union",
+                "members": {
+                    "foo": {
+                        "target": "String"
+                    },
+                    "baz": {
+                        "target": "String"
+                    }
+                }
+            },
+
+            "HttpDate": {
+                "type": "timestamp",
+                "timestampFormat": "http-date"
+            },
+            "DateTime": {
+                "type": "timestamp",
+                "timestampFormat": "date-time"
+            },
+            "EpochSeconds": {
+                "type": "timestamp",
+                "timestampFormat": "epoch-seconds"
+            },
+            "TimestampList": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#Timestamp",
+                    "timestampFormat": "date-time"
+                }
+            },
+            "TimestampListNoFormatTrait": {
+                "type": "list",
+                "member": {
+                    "target": "Timestamp"
+                }
+            },
+
+            "Structure2": {
+                "type": "structure",
+                "members": {
+                    "a": {
+                        "target": "smithy.api#String",
+                        "pattern": "^[0-9]"
+                    },
+                    "b": {
+                        "target": "smithy.api#String",
+                        "length": {
+                            "min": 10
+                        }
+                    },
+                    "c": {
+                        "target": "smithy.api#Integer",
+                        "range": {
+                            "min": 10
+                        }
+                    }
+                }
+            },
+            "Structure3": {
+                "type": "structure",
+                "members": {
+                    "optionalInt": {
+                        "target": "smithy.api#PrimitiveInteger"
+                    },
+                    "requiredInt": {
+                        "target": "smithy.api#PrimitiveInteger",
+                        "required": true
+                    },
+                    "requiredInt2": {
+                        "target": "smithy.api#PrimitiveInteger",
+                        "required": true,
+                        "box": true
+                    }
+                }
+            },
+            "Service": {
+                "type": "service",
+                "version": "2017-17-01",
+                "protocols": {
+                    "foo": {
+                    }
+                },
+                "operations": [
+                    "Operation"
+                ],
+                "resources": [
+                    "Resource"
+                ]
+            },
+            "Operation": {
+                "type": "operation",
+                "readonly": true
+            },
+            "Resource": {
+                "type": "resource"
+            }
+        }
+    }
+}

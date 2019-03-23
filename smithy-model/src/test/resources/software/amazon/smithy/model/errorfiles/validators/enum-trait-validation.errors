@@ -1,0 +1,9 @@
+[ERROR] (EnumTrait) ns.foo#Invalid1 / [0, 0]: `foo` enum value body is missing the `name` property; if any enum trait value contains a `name` property, then all values must contain the `name` property.
+[ERROR] (EnumTrait) ns.foo#Invalid3 / [0, 0]: Duplicate enum trait values found with the same `name` property of 'a'
+[ERROR] (TraitValue) ns.foo#Invalid2 / [0, 0]: Error validating trait `enum`.bar.name: String value provided for `smithy.api#EnumConstantBodyName` must match regular expression: ^[a-zA-Z_]+[a-zA-Z_0-9]*$
+[ERROR] (TraitValue) ns.foo#Invalid2 / [0, 0]: Error validating trait `enum`.foo.name: String value provided for `smithy.api#EnumConstantBodyName` must match regular expression: ^[a-zA-Z_]+[a-zA-Z_0-9]*$
+[WARNING] (EnumTrait) ns.foo#Invalid2 / [0, 0]: The name `invalid!` does not match our recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores.
+[WARNING] (EnumTrait) ns.foo#Invalid2 / [0, 0]: The name `invalid2!` does not match our recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores.
+[WARNING] (EnumTrait) ns.foo#Invalid3 / [0, 0]: The name `a` does not match our recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores.
+[WARNING] (EnumTrait) ns.foo#Warn1 / [0, 0]: The name `_bar` does not match our recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores.
+[WARNING] (EnumTrait) ns.foo#Warn1 / [0, 0]: The name `baz` does not match our recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores.

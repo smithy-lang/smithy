@@ -1,0 +1,5 @@
+[DANGER] (MissingDocumentation) ns.foo#Map / [0, 0]: This shape should have documentation
+[DANGER] (MissingDocumentation) ns.foo#MyService / [0, 0]: This shape should have documentation
+[DANGER] (MissingDocumentation) ns.foo#SomeList / [0, 0]: This shape should have documentation
+[DANGER] (MissingDocumentation) ns.foo#Structure / [0, 0]: This shape should have documentation
+[DANGER] (MissingDocumentation) ns.foo#Structure$baz / [0, 0]: This shape should have documentation

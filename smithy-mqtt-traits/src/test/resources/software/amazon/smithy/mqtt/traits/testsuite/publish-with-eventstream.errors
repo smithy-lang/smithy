@@ -1,0 +1,1 @@
+[ERROR] (TraitConflict) smithy.example#Publish / [5, 1]: Found conflicting traits on operation shape: `mqttPublish` conflicts with `inputEventStream`

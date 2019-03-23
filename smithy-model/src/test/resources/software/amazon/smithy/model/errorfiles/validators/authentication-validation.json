@@ -1,0 +1,31 @@
+{
+  "smithy": "1.0",
+  "ns.foo": {
+    "shapes": {
+      "ValidService": {
+        "type": "service",
+        "version": "2019-02-11",
+        "authentication": {"foo": {}, "baz": {}, "bar": {}},
+        "authenticationSchemes": ["foo", "bar"],
+        "operations": ["ValidOperation1", "ValidOperation2", "InvalidOperation1"]
+      },
+      "ValidOperation1": {
+        "type": "operation",
+        "authenticationSchemes": ["baz"]
+      },
+      "ValidOperation2": {
+        "type": "operation"
+      },
+      "InvalidOperation1": {
+        "type": "operation",
+        "authenticationSchemes": ["invalid"]
+      },
+      "InvalidService": {
+        "type": "service",
+        "version": "2019-02-11",
+        "authentication": {"foo": {}, "baz": {}, "bar": {}},
+        "authenticationSchemes": ["foo", "qux"]
+      }
+    }
+  }
+}

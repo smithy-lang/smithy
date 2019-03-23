@@ -1,0 +1,45 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "MyService": {
+                "type": "service",
+                "protocols": {
+                    "foo": {
+                    },
+                    "baz": {
+                    }
+                },
+                "version": "2017-01-19",
+                "resources": [
+                    "MyResource"
+                ]
+            },
+            "MyResource": {
+                "type": "resource",
+                "identifiers": {
+                    "id": "MyResourceId"
+                },
+                "read": "GetMyResource"
+            },
+            "MyResourceId": {
+                "type": "string"
+            },
+            "GetMyResource": {
+                "type": "operation",
+                "readonly": true,
+                "input": "GetMyResourceInput"
+            },
+            "GetMyResourceInput": {
+                "type": "structure",
+                "members": {
+                    "id": {
+                        "target": "MyResourceId",
+                        "required": true,
+                        "sensitive": true
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,41 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "Service1": {
+                "type": "service",
+                "version": "foo",
+                "protocols": {
+                    "foo.baz": {
+                        "settings": {
+                            "baz": 12
+                        }
+                    }
+                }
+            },
+            "Service2": {
+                "type": "service",
+                "version": "foo",
+                "protocols": [
+                    "foo.baz"
+                ]
+            },
+            "Service3": {
+                "type": "service",
+                "version": "foo",
+                "protocols": false
+            },
+            "Service4": {
+                "type": "service",
+                "version": "foo",
+                "protocols": {
+                    "foo.baz": {
+                        "settings": {
+                            "bar": "true"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

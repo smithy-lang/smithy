@@ -1,0 +1,37 @@
+{
+  "smithy": "1.0",
+  "smithy.example": {
+    "shapes": {
+      "Foo": {
+        "type": "structure",
+        "members": {
+          "baz": {"target": "String"},
+          "bar": {"target":  "Integer"}
+        }
+      },
+      "Integer": {
+        "type": "integer"
+      },
+      "MyList": {
+        "type": "list",
+        "member": {
+          "target": "String"
+        }
+      },
+      "MyString": {
+        "type": "string"
+      },
+      "MyResource": {
+        "type": "resource",
+        "identifiers": {
+          "a": "MyString",
+          "b": "AnotherString",
+          "c": "String"
+        }
+      },
+      "AnotherString": {
+        "type": "string"
+      }
+    }
+  }
+}

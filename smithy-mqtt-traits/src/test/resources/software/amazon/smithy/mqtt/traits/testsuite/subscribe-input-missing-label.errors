@@ -1,0 +1,1 @@
+[ERROR] (MqttSubscribeInput) smithy.example#FooInput$baz / [16, 6]: All input members of an operation marked with the `mqttSubscribe` trait must be marked with the `mqttTopicLabel` trait, and this member is used as part of the input of the `smithy.example#Foo` operation.

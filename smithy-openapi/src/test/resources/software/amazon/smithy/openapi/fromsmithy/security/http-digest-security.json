@@ -1,0 +1,18 @@
+{
+  "smithy": "1.0",
+  "smithy.example": {
+    "shapes": {
+      "Service": {
+        "type": "service",
+        "version": "2006-03-01",
+        "protocols": {"aws.rest-json": {}},
+        "authentication": {"http-digest": {}},
+        "operations": ["Operation1"]
+      },
+      "Operation1": {
+        "type": "operation",
+        "http": {"uri": "/", "method": "GET"}
+      }
+    }
+  }
+}

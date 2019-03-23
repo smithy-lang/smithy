@@ -1,0 +1,112 @@
+{
+  "smithy": "1.0",
+  "com.foo": {
+    "shapes": {
+      "A": {
+        "type": "structure",
+        "members": {}
+      },
+      "B": {
+        "type": "structure",
+        "members": {}
+      },
+      "C": {
+        "type": "structure",
+        "members": {}
+      },
+      "D": {
+        "type": "structure",
+        "members": {}
+      },
+      "E": {
+        "type": "structure",
+        "members": {}
+      },
+      "F": {
+        "type": "structure",
+        "members": {},
+        "deprecated": {}
+      },
+      "G": {
+        "type": "structure",
+        "members": {},
+        "deprecated": {},
+        "documentation": "foo"
+      },
+      "H": {
+        "type": "structure",
+        "members": {
+          "foo": {
+            "target": "E"
+          }
+        }
+      },
+      "I": {
+        "type": "structure",
+        "members": {
+          "baz": {
+            "target": "H"
+          },
+          "foo": {
+            "target": "E"
+          }
+        }
+      },
+      "J": {
+        "type": "structure",
+        "members": {
+          "baz": {
+            "target": "H"
+          },
+          "foo": {
+            "target": "E",
+            "deprecated": {}
+          }
+        }
+      },
+      "K": {
+        "type": "structure",
+        "members": {
+          "baz": {
+            "target": "H",
+            "deprecated": {}
+          },
+          "foo": {
+            "target": "E",
+            "deprecated": {},
+            "since": "2.0"
+          }
+        }
+      },
+      "L": {
+        "type": "structure",
+        "members": {
+          "baz": {
+            "target": "H",
+            "deprecated": {}
+          },
+          "foo": {
+            "target": "E",
+            "deprecated": {},
+            "since": "2.0"
+          }
+        }
+      },
+      "M": {
+        "type": "structure",
+        "members": {
+          "baz": {
+            "target": "H",
+            "deprecated": {}
+          },
+          "foo": {
+            "target": "E",
+            "deprecated": {},
+            "since": "2.0"
+          }
+        },
+        "documentation": "abc"
+      }
+    }
+  }
+}

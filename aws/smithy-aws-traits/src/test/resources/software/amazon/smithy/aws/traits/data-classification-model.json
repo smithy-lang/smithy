@@ -1,0 +1,21 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "A": {
+                "type": "string",
+                "aws.api#data": "account"
+            },
+            "B": {
+                "type": "list",
+                "member": {
+                    "target": "BMember"
+                },
+                "aws.api#data": "tagging"
+            },
+            "BMember": {
+                "type": "string"
+            }
+        }
+    }
+}

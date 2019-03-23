@@ -1,0 +1,1 @@
+[ERROR] (Model) ns.foo#Invalid / [0, 0]: Error creating trait `externalDocumentation`: externalDocumentation must be a valid URL. Found invalid!

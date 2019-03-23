@@ -1,0 +1,140 @@
+{
+  "smithy": "1.0",
+  "com.foo": {
+    "shapes": {
+      "A": {
+        "type": "union",
+        "members": {
+          "a": {
+            "target": "B"
+          }
+        }
+      },
+      "B": {
+        "type": "union",
+        "members": {
+          "a": {
+            "target": "A"
+          }
+        }
+      },
+      "C": {
+        "type": "union",
+        "members": {
+          "a": {
+            "target": "A"
+          }
+        }
+      },
+      "D": {
+        "type": "union",
+        "members": {
+          "a": {
+            "target": "A"
+          }
+        }
+      },
+      "E": {
+        "type": "union",
+        "members": {
+          "a": {
+            "target": "D"
+          }
+        }
+      },
+      "F": {
+        "type": "union",
+        "members": {
+          "a": {
+            "target": "E"
+          }
+        },
+        "deprecated": {}
+      },
+      "G": {
+        "type": "union",
+        "members": {
+          "abc": {
+            "target": "F"
+          }
+        },
+        "deprecated": {},
+        "documentation": "foo"
+      },
+      "H": {
+        "type": "union",
+        "members": {
+          "foo": {
+            "target": "E"
+          }
+        }
+      },
+      "I": {
+        "type": "union",
+        "members": {
+          "baz": {
+            "target": "H"
+          },
+          "foo": {
+            "target": "E"
+          }
+        }
+      },
+      "J": {
+        "type": "union",
+        "members": {
+          "baz": {
+            "target": "H"
+          },
+          "foo": {
+            "target": "E",
+            "deprecated": {}
+          }
+        }
+      },
+      "K": {
+        "type": "union",
+        "members": {
+          "baz": {
+            "target": "H",
+            "deprecated": {}
+          },
+          "foo": {
+            "target": "E",
+            "deprecated": {},
+            "since": "2.0"
+          }
+        }
+      },
+      "L": {
+        "type": "union",
+        "members": {
+          "baz": {
+            "target": "H",
+            "deprecated": {}
+          },
+          "foo": {
+            "target": "E",
+            "deprecated": {},
+            "since": "2.0"
+          }
+        }
+      },
+      "M": {
+        "type": "union",
+        "members": {
+          "baz": {
+            "target": "H",
+            "deprecated": {}
+          },
+          "foo": {
+            "target": "E",
+            "deprecated": {},
+            "since": "2.0"
+          }
+        },
+        "documentation": "abc"
+      }
+    }
+  }
+}

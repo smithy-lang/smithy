@@ -1,0 +1,60 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": [
+            {
+                "name": "AbbreviationName",
+                "id": "DefaultAbbreviationName"
+            },
+            {
+                "name": "AbbreviationName",
+                "id": "AbbreviationNameWithAllowed",
+                "configuration": {
+                    "allowedAbbreviations": [
+                        "ID",
+                        "HTTP"
+                    ]
+                }
+            }
+        ]
+    },
+    "ns.foo": {
+        "shapes": {
+            "FooId": {
+                "type": "string"
+            },
+            "BazID": {
+                "type": "string"
+            },
+            "FooIdHttp": {
+                "type": "string"
+            },
+            "BamID2HTTP": {
+                "type": "string"
+            },
+            "ID": {
+                "type": "string"
+            },
+            "Structure": {
+                "type": "structure",
+                "members": {
+                    "fooId": {
+                        "target": "FooId"
+                    },
+                    "bazID": {
+                        "target": "FooId"
+                    },
+                    "bamHTTP": {
+                        "target": "FooId"
+                    },
+                    "loremIPSUM": {
+                        "target": "FooId"
+                    },
+                    "ID": {
+                        "target": "FooId"
+                    }
+                }
+            }
+        }
+    }
+}

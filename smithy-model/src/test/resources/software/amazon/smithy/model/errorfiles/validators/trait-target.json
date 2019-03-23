@@ -1,0 +1,41 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "String": {
+                "type": "string",
+                "range": {
+                    "min": 0,
+                    "max": 10
+                }
+            },
+            "Invoke": {
+                "type": "operation",
+                "input": "InvokeInput"
+            },
+            "InvokeInput": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String",
+                        "test": true
+                    }
+                }
+            },
+            "Invalid": {
+                "type": "structure",
+                "members": {
+                    "baz": {
+                        "target": "String",
+                        "test": true
+                    }
+                }
+            }
+        },
+        "traitDefs": {
+            "test": {
+                "selector": "operation -[input]-> structure > member"
+            }
+        }
+    }
+}

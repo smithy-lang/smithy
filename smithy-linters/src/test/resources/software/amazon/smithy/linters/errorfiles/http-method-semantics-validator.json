@@ -1,0 +1,90 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": [
+            {
+                "name": "HttpMethodSemantics"
+            }
+        ]
+    },
+    "ns.foo": {
+        "shapes": {
+            "A": {
+                "type": "operation",
+                "readonly": true,
+                "http": {
+                    "method": "GET",
+                    "uri": "/A"
+                }
+            },
+            "B": {
+                "type": "operation",
+                "readonly": true,
+                "http": {
+                    "method": "HEAD",
+                    "uri": "/B"
+                }
+            },
+            "C": {
+                "type": "operation",
+                "idempotent": true,
+                "http": {
+                    "method": "DELETE",
+                    "uri": "/C"
+                }
+            },
+            "D": {
+                "type": "operation",
+                "idempotent": true,
+                "http": {
+                    "method": "PUT",
+                    "uri": "/D"
+                }
+            },
+            "E": {
+                "type": "operation",
+                "http": {
+                    "method": "PATCH",
+                    "uri": "/E"
+                }
+            },
+            "F": {
+                "type": "operation",
+                "http": {
+                    "method": "POST",
+                    "uri": "/F"
+                }
+            },
+            "G": {
+                "type": "operation",
+                "readonly": true,
+                "http": {
+                    "method": "POST",
+                    "uri": "/G"
+                }
+            },
+            "H": {
+                "type": "operation",
+                "http": {
+                    "method": "DELETE",
+                    "uri": "/H"
+                }
+            },
+            "I": {
+                "type": "operation",
+                "http": {
+                    "method": "GET",
+                    "uri": "/I"
+                }
+            },
+            "J": {
+                "type": "operation",
+                "idempotent": true,
+                "http": {
+                    "method": "POST",
+                    "uri": "/J"
+                }
+            }
+        }
+    }
+}

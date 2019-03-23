@@ -1,0 +1,69 @@
+{
+  "smithy": "1.0",
+  "ns.foo": {
+    "shapes": {
+      "MyService": {
+        "type": "service",
+        "version": "XYZ",
+        "resources": ["ValidResource", "InvalidResource"]
+      },
+      "ValidResource": {
+        "type": "resource",
+        "identifiers": {"foo": "smithy.api#String"},
+        "operations": ["ValidResourceOperation1", "ValidResourceOperation2"]
+      },
+      "ValidResourceOperation1": {
+        "type": "operation",
+        "instanceOperation": true,
+        "input": "ValidResourceOperation1Input"
+      },
+      "ValidResourceOperation1Input": {
+        "type": "structure",
+        "members": {
+          "foo": {
+            "target": "smithy.api#String",
+            "required": true
+          }
+        }
+      },
+      "ValidResourceOperation2": {
+        "type": "operation",
+        "collectionOperation": true,
+        "input": "ValidResourceOperation2Input"
+      },
+      "ValidResourceOperation2Input": {
+        "type": "structure",
+        "members": {}
+      },
+
+      "InvalidResource": {
+        "type": "resource",
+        "identifiers": {"foo": "smithy.api#String"},
+        "operations": ["InvalidResourceOperation1", "InvalidResourceOperation2"]
+      },
+      "InvalidResourceOperation1": {
+        "type": "operation",
+        "instanceOperation": true,
+        "input": "InvalidResourceOperation1Input"
+      },
+      "InvalidResourceOperation1Input": {
+        "type": "structure",
+        "members": {}
+      },
+      "InvalidResourceOperation2": {
+        "type": "operation",
+        "collectionOperation": true,
+        "input": "InvalidResourceOperation2Input"
+      },
+      "InvalidResourceOperation2Input": {
+        "type": "structure",
+        "members": {
+          "foo": {
+            "target": "smithy.api#String",
+            "required": true
+          }
+        }
+      }
+    }
+  }
+}

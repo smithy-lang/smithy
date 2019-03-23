@@ -1,0 +1,43 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": [
+            {
+                "name": "ShouldHaveUsedTimestamp",
+                "configuration": {
+                    "additionalPatterns": [
+                        "^Oops.*$"
+                    ]
+                }
+            }
+        ]
+    },
+    "example.namespace": {
+        "shapes": {
+            "Consolidate": {
+                "type": "string"
+            },
+            "Dates": {
+                "type": "string"
+            },
+            "Bat": {
+                "type": "string"
+            },
+            "Prefixtime": {
+                "type": "string"
+            },
+            "Prefixdate": {
+                "type": "string"
+            },
+            "Prefixat": {
+                "type": "string"
+            },
+            "Prefixon": {
+                "type": "string"
+            },
+            "CreatedOn": {
+                "type": "timestamp"
+            }
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "MyString": {
+                "type": "string",
+                "references": {
+                    "another": {
+                        "resource": "MyResource"
+                    }
+                }
+            },
+            "MyResource": {
+                "type": "resource",
+                "identifiers": {
+                    "abc": "smithy.api#String",
+                    "def": "smithy.api#String"
+                }
+            }
+        }
+    }
+}

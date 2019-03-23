@@ -1,0 +1,39 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "Valid": {
+                "type": "structure",
+                "deprecated": {
+                    "message": "Message"
+                },
+                "members": {
+                    "abc": {
+                        "target": "String",
+                        "deprecated": {}
+                    },
+                    "def": {
+                        "target": "String",
+                        "deprecated": {
+                            "message": "Another message"
+                        }
+                    }
+                }
+            },
+            "Invalid1": {
+                "type": "integer"
+            },
+            "Invalid2": {
+                "type": "integer",
+                "deprecated": "Foo"
+            },
+            "Invalid3": {
+                "type": "integer",
+                "deprecated": "Foo"
+            },
+            "String": {
+                "type": "string"
+            }
+        }
+    }
+}

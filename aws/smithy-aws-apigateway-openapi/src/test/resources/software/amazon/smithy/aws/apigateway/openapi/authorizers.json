@@ -1,0 +1,24 @@
+{
+  "smithy": "1.0",
+  "ns.foo": {
+    "shapes": {
+      "SomeService": {
+        "type": "service",
+        "version": "2018-03-17",
+        "protocols": {"aws.rest-json": {}},
+        "authentication": {"aws.v4": {}},
+        "aws.apigateway#authorizers": {
+          "aws.v4": {
+            "clientType": "awsSigV4",
+            "type": "request",
+            "uri": "arn:foo:baz",
+            "credentials": "arn:foo:bar",
+            "identitySource": "mapping.expression",
+            "identityValidationExpression": "[A-Z]+",
+            "resultTtlInSeconds": 100
+          }
+        }
+      }
+    }
+  }
+}

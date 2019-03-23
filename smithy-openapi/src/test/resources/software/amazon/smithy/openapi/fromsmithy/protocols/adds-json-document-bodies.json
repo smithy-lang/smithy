@@ -1,0 +1,40 @@
+{
+  "smithy": "1.0",
+  "smithy.example": {
+    "shapes": {
+      "Service": {
+        "type": "service",
+        "version": "2006-03-01",
+        "protocols": {
+          "aws.rest-json": {}
+        },
+        "operations": [
+          "CreateDocument"
+        ]
+      },
+      "CreateDocument": {
+        "type": "operation",
+        "input": "CreateDocumentInput",
+        "http": {
+          "uri": "/document",
+          "method": "POST"
+        }
+      },
+      "CreateDocumentInput": {
+        "type": "structure",
+        "members": {
+          "query": {
+            "target": "String",
+            "httpQuery": "query"
+          },
+          "abc": {
+            "target": "String"
+          },
+          "def": {
+            "target": "Integer"
+          }
+        }
+      }
+    }
+  }
+}

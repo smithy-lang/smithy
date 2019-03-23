@@ -1,0 +1,32 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "Resource": {
+                "type": "resource",
+                "identifiers": {
+                    "id": "smithy.api#String"
+                },
+                "create": "CreateResource",
+                "delete": "DeleteResource"
+            },
+            "CreateResource": {
+                "type": "operation",
+                "input": "ResourceInput"
+            },
+            "DeleteResource": {
+                "type": "operation",
+                "input": "ResourceInput"
+            },
+            "ResourceInput": {
+                "type": "structure",
+                "members": {
+                    "id": {
+                        "target": "smithy.api#String",
+                        "required": true
+                    }
+                }
+            }
+        }
+    }
+}

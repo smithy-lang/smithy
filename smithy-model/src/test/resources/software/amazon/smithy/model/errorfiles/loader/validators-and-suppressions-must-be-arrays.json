@@ -1,0 +1,9 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": {
+        },
+        "smithy.suppressions": {
+        }
+    }
+}

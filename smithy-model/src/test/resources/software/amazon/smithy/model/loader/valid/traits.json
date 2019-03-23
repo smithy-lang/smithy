@@ -1,0 +1,138 @@
+{
+  "smithy": "1.0",
+  "com.example": {
+    "shapes": {
+      "A": {
+        "type": "string",
+        "smithy.api#sensitive": true
+      },
+      "B": {
+        "type": "string",
+        "smithy.api#deprecated": {},
+        "smithy.api#sensitive": true
+      },
+      "C": {
+        "type": "string",
+        "smithy.api#deprecated": {},
+        "smithy.api#sensitive": true
+      },
+      "D": {
+        "type": "string",
+        "smithy.api#deprecated": {},
+        "smithy.api#sensitive": true
+      },
+      "E": {
+        "type": "string",
+        "smithy.api#documentation": "Hello!"
+      },
+      "F": {
+        "type": "string",
+        "smithy.api#documentation": "\nHello! This is a test.\n\nIs it working? Is \"This\" the 'expected' result?\nIs this a backslash? \"\\\"."
+      },
+      "Foo": {
+        "type": "resource",
+        "identifiers": {
+          "abc": "smithy.api#String"
+        }
+      },
+      "G": {
+        "type": "string",
+        "smithy.api#documentation": "\nHello! This is a test.\n\nIgnore these tokens: {}[](),:->$version//<> +10 -10 =\n\nIs it working? Is 'This' the \"expected\" result?\nIs this a backslash? '\\'."
+      },
+      "H": {
+        "type": "string",
+        "smithy.api#documentation": "Hello"
+      },
+      "I": {
+        "type": "string",
+        "smithy.api#references": {
+          "test": {
+            "resource": "com.example#Foo"
+          },
+          "baz": {
+            "resource": "com.example#Foo",
+            "rel": "baz"
+          }
+        }
+      },
+      "J": {
+        "type": "string",
+        "smithy.api#references": {
+          "test": {
+            "resource": "com.example#Foo"
+          },
+          "baz": {
+            "resource": "com.example#Foo",
+            "rel": "baz"
+          }
+        }
+      },
+      "K": {
+        "type": "string",
+        "smithy.api#references": {}
+      },
+      "L": {
+        "type": "string",
+        "smithy.api#tags": []
+      },
+      "M": {
+        "type": "string",
+        "smithy.api#tags": [
+          "a",
+          "b",
+          "c"
+        ]
+      },
+      "N": {
+        "type": "string",
+        "smithy.api#tags": [
+          "a",
+          "b",
+          "c"
+        ]
+      },
+      "O": {
+        "type": "string",
+        "smithy.api#tags": [
+          "a",
+          "b",
+          "c"
+        ]
+      },
+      "P": {
+        "type": "string",
+        "smithy.api#tags": [
+          "a",
+          "b",
+          "c"
+        ]
+      },
+      "Q": {
+        "type": "string",
+        "smithy.api#sensitive": true
+      },
+      "R": {
+        "type": "string",
+        "com.example#numeric": 100
+      },
+      "S": {
+        "type": "string",
+        "smithy.api#references": {}
+      },
+      "T": {
+        "type": "string",
+        "smithy.api#tags": []
+      },
+      "U": {
+        "type": "string",
+        "documentation": "This is a string defined on multiple lines. It can span a great many lines."
+      }
+    },
+    "traitDefs": {
+      "numeric": {
+        "selector": "*",
+        "shape": "smithy.api#Integer"
+      }
+    }
+  }
+}

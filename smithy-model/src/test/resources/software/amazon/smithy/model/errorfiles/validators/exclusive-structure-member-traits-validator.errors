@@ -1,0 +1,3 @@
+[ERROR] (ExclusiveStructureMemberTrait) ns.foo#Invalid1 / [0, 0]: The `eventPayload` trait can be applied to only a single member of a structure, but was found on the following members: `baz`, `foo`
+[ERROR] (ExclusiveStructureMemberTrait) ns.foo#Invalid2 / [0, 0]: The `idempotencyToken` trait can be applied to only a single member of a structure, but was found on the following members: `baz`, `foo`
+[ERROR] (ExclusiveStructureMemberTrait) ns.foo#Invalid3 / [0, 0]: The `httpPayload` trait can be applied to only a single member of a structure, but was found on the following members: `baz`, `foo`

@@ -1,0 +1,29 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": [
+            {
+                "name": "EmitNoneSelector",
+                "id": "NoLengthTraits",
+                "configuration": {
+                    "selector": "[trait|length]"
+                }
+            },
+            {
+                "name": "EmitNoneSelector",
+                "id": "NoDocumentationTraits",
+                "configuration": {
+                    "selector": "[trait|documentation]"
+                }
+            }
+        ]
+    },
+    "ns.foo": {
+        "shapes": {
+            "String": {
+                "type": "string",
+                "documentation": "Foo"
+            }
+        }
+    }
+}

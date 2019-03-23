@@ -1,0 +1,65 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": [
+            {
+                "name": "HttpResponseCodeSemantics"
+            }
+        ]
+    },
+    "ns.foo": {
+        "shapes": {
+            "A": {
+                "type": "operation",
+                "readonly": true,
+                "http": {
+                    "method": "GET",
+                    "uri": "\/A",
+                    "code": 200
+                }
+            },
+            "B": {
+                "type": "operation",
+                "readonly": true,
+                "http": {
+                    "method": "GET",
+                    "uri": "\/B",
+                    "code": 404
+                }
+            },
+            "C": {
+                "type": "operation",
+                "readonly": true,
+                "http": {
+                    "method": "GET",
+                    "uri": "\/C",
+                    "code": 100
+                }
+            },
+            "ErrorA": {
+                "type": "structure",
+                "error": "client",
+                "httpError": 404
+            },
+            "ErrorB": {
+                "type": "structure",
+                "error": "server",
+                "httpError": 500
+            },
+            "ErrorC": {
+                "type": "structure",
+                "error": "client"
+            },
+            "ErrorD": {
+                "type": "structure",
+                "error": "server",
+                "httpError": 404
+            },
+            "ErrorE": {
+                "type": "structure",
+                "error": "client",
+                "httpError": 200
+            }
+        }
+    }
+}

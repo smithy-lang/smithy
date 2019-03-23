@@ -1,0 +1,276 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.smithy.openapi.model;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import software.amazon.smithy.jsonschema.Schema;
+import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+
+public final class ParameterObject extends Component implements ToSmithyBuilder<ParameterObject> {
+    private final String name;
+    private final String in;
+    private final String description;
+    private final boolean required;
+    private final boolean deprecated;
+    private final boolean allowEmptyValue;
+    private final String style;
+    private final boolean explode;
+    private final boolean allowReserved;
+    private final Schema schema;
+    private final Node example;
+    private final Map<String, Node> examples;
+    private final Map<String, MediaTypeObject> content;
+
+    private ParameterObject(Builder builder) {
+        super(builder);
+        name = builder.name;
+        in = builder.in;
+        description = builder.description;
+        required = builder.required;
+        deprecated = builder.deprecated;
+        allowEmptyValue = builder.allowEmptyValue;
+        style = builder.style;
+        explode = builder.explode;
+        allowReserved = builder.allowReserved;
+        schema = builder.schema;
+        example = builder.example;
+        examples = Collections.unmodifiableMap(new LinkedHashMap<>(builder.examples));
+        content = Collections.unmodifiableMap(new LinkedHashMap<>(builder.content));
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public Optional<String> getName() {
+        return Optional.ofNullable(name);
+    }
+
+    public Optional<String> getIn() {
+        return Optional.ofNullable(in);
+    }
+
+    public Map<String, Node> getExamples() {
+        return examples;
+    }
+
+    public Map<String, MediaTypeObject> getContent() {
+        return content;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
+    public boolean isAllowEmptyValue() {
+        return allowEmptyValue;
+    }
+
+    public boolean isExplode() {
+        return explode;
+    }
+
+    public boolean isAllowReserved() {
+        return allowReserved;
+    }
+
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description);
+    }
+
+    public Optional<String> getStyle() {
+        return Optional.ofNullable(style);
+    }
+
+    public Optional<Schema> getSchema() {
+        return Optional.ofNullable(schema);
+    }
+
+    public Optional<Node> getExample() {
+        return Optional.ofNullable(example);
+    }
+
+    @Override
+    protected ObjectNode.Builder createNodeBuilder() {
+        var builder = Node.objectNodeBuilder()
+                .withOptionalMember("name", getName().map(Node::from))
+                .withOptionalMember("in", getIn().map(Node::from))
+                .withOptionalMember("description", getDescription().map(Node::from))
+                .withOptionalMember("style", getStyle().map(Node::from))
+                .withOptionalMember("schema", getSchema())
+                .withOptionalMember("example", getExample());
+
+        if (isDeprecated()) {
+            builder.withMember("deprecated", Node.from(true));
+        }
+
+        if (isAllowEmptyValue()) {
+            builder.withMember("allowEmptyValue", Node.from(true));
+        }
+
+        if (isAllowReserved()) {
+            builder.withMember("allowReserved", Node.from(true));
+        }
+
+        if (isExplode()) {
+            builder.withMember("explode", Node.from(true));
+        }
+
+        if (isRequired()) {
+            builder.withMember("required", Node.from(true));
+        }
+
+        if (!examples.isEmpty()) {
+            builder.withMember("examples", getExamples().entrySet().stream()
+                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+        }
+
+        if (!content.isEmpty()) {
+            builder.withMember("content", getContent().entrySet().stream()
+                    .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
+        }
+
+        return builder;
+    }
+
+    @Override
+    public Builder toBuilder() {
+        return builder()
+                .extensions(getExtensions())
+                .name(name)
+                .in(in)
+                .description(description)
+                .required(required)
+                .deprecated(deprecated)
+                .allowEmptyValue(allowEmptyValue)
+                .style(style)
+                .explode(explode)
+                .allowReserved(allowReserved)
+                .schema(schema)
+                .example(example)
+                .examples(examples)
+                .content(content);
+    }
+
+    public static final class Builder extends Component.Builder<Builder, ParameterObject> {
+        private String name;
+        private String in;
+        private String description;
+        private boolean required;
+        private boolean deprecated;
+        private boolean allowEmptyValue;
+        private String style;
+        private boolean explode;
+        private boolean allowReserved;
+        private Schema schema;
+        private Node example;
+        private final Map<String, Node> examples = new LinkedHashMap<>();
+        private final Map<String, MediaTypeObject> content = new LinkedHashMap<>();
+
+        private Builder() {}
+
+        @Override
+        public ParameterObject build() {
+            return new ParameterObject(this);
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder in(String in) {
+            this.in = in;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder required(boolean required) {
+            this.required = required;
+            return this;
+        }
+
+        public Builder deprecated(boolean deprecated) {
+            this.deprecated = deprecated;
+            return this;
+        }
+
+        public Builder allowEmptyValue(boolean allowEmptyValue) {
+            this.allowEmptyValue = allowEmptyValue;
+            return this;
+        }
+
+        public Builder style(String style) {
+            this.style = style;
+            return this;
+        }
+
+        public Builder explode(boolean explode) {
+            this.explode = explode;
+            return this;
+        }
+
+        public Builder allowReserved(boolean allowReserved) {
+            this.allowReserved = allowReserved;
+            return this;
+        }
+
+        public Builder schema(Schema schema) {
+            this.schema = schema;
+            return this;
+        }
+
+        public Builder example(Node example) {
+            this.example = example;
+            return this;
+        }
+
+        public Builder examples(Map<String, Node> examples) {
+            this.examples.clear();
+            this.examples.putAll(examples);
+            return this;
+        }
+
+        public Builder putExample(String name, Node example) {
+            this.examples.put(name, example);
+            return this;
+        }
+
+        public Builder content(Map<String, MediaTypeObject> content) {
+            this.content.clear();
+            this.content.putAll(content);
+            return this;
+        }
+
+        public Builder putContent(String name, MediaTypeObject mediaTypeObject) {
+            this.content.put(name, mediaTypeObject);
+            return this;
+        }
+    }
+}

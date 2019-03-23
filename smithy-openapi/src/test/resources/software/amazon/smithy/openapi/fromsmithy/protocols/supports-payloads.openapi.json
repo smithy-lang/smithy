@@ -1,0 +1,89 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/": {
+      "post": {
+        "operationId": "Operation",
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/SmithyExampleOperationInputBodyMember"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Foo-Header",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/SmithyExampleOperationInputHeaderMember"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation 200 response",
+            "headers": {
+              "X-Foo-Header": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmithyExampleOperationOutputHeaderMember"
+                }
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmithyExampleOperationOutputBodyMember"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404 response",
+            "headers": {
+              "X-Foo-Header": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmithyExampleOperationOutputHeaderMember"
+                }
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmithyExampleErrorFooMember"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SmithyExampleOperationInputHeaderMember": {
+        "type": "string"
+      },
+      "SmithyExampleErrorFooMember": {
+        "type": "string"
+      },
+      "SmithyExampleOperationOutputHeaderMember": {
+        "type": "string"
+      },
+      "SmithyExampleOperationInputBodyMember": {
+        "type": "string",
+        "format": "byte"
+      },
+      "SmithyExampleOperationOutputBodyMember": {
+        "type": "string",
+        "format": "byte"
+      }
+    }
+  }
+}

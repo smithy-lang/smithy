@@ -1,0 +1,33 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "A": {
+                "type": "resource",
+                "identifiers": {
+                    "a": "smithy.api#String"
+                },
+                "resources": [
+                    "B"
+                ]
+            },
+            "B": {
+                "type": "resource",
+                "identifiers": {
+                    "a": "smithy.api#String",
+                    "b": "smithy.api#String"
+                },
+                "operations": [
+                    "InvokeB"
+                ]
+            },
+            "InvokeB": {
+                "type": "operation",
+                "input": "InvokeBInput"
+            },
+            "InvokeBInput": {
+                "type": "structure"
+            }
+        }
+    }
+}

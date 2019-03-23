@@ -1,0 +1,184 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "ValidList": {
+                "type": "list",
+                "member": {
+                    "target": "String"
+                }
+            },
+            "InvalidListMemberReference": {
+                "type": "list",
+                "member": {
+                    "target": "NotFound"
+                }
+            },
+            "InvalidListMemberMember": {
+                "type": "list",
+                "member": {
+                    "target": "ValidInput$integer"
+                }
+            },
+            "InvalidListMemberResource": {
+                "type": "list",
+                "member": {
+                    "target": "MyResource"
+                }
+            },
+            "InvalidListMemberService": {
+                "type": "list",
+                "member": {
+                    "target": "MyService"
+                }
+            },
+            "MyService": {
+                "type": "service",
+                "version": "2017-01-17",
+                "protocols": {
+                    "foo": {
+                    }
+                },
+                "resources": [
+                    "MyResource",
+                    "InvalidResourceLifecycle"
+                ]
+            },
+            "MyResource": {
+                "type": "resource",
+                "identifiers": {
+                    "myId": "MyResourceIdentifier"
+                }
+            },
+            "MyResourceIdentifier": {
+                "type": "string"
+            },
+            "Integer": {
+                "type": "integer"
+            },
+            "String": {
+                "type": "string"
+            },
+            "InvalidResourceIdentifierType": {
+                "type": "resource",
+                "identifiers": {
+                    "invalidInteger": "Integer"
+                }
+            },
+            "InvalidResourceIdentifierReference": {
+                "type": "resource",
+                "identifiers": {
+                    "invalidId": "NotFound"
+                }
+            },
+            "InvalidResourceBindingReference": {
+                "type": "resource",
+                "resources": [
+                    "NotFound"
+                ]
+            },
+            "InvalidResourceBindingType": {
+                "type": "resource",
+                "resources": [
+                    "Integer"
+                ]
+            },
+            "ValidOperation": {
+                "type": "operation",
+                "readonly": true,
+                "input": "ValidInput",
+                "output": "ValidOutput",
+                "errors": [
+                    "ValidError"
+                ]
+            },
+            "ValidInput": {
+                "type": "structure",
+                "members": {
+                    "integer": {
+                        "target": "Integer"
+                    }
+                }
+            },
+            "ValidOutput": {
+                "type": "structure",
+                "members": {
+                    "integer": {
+                        "target": "Integer"
+                    }
+                }
+            },
+            "ValidError": {
+                "type": "structure",
+                "error": "client",
+                "members": {
+                    "integer": {
+                        "target": "Integer"
+                    }
+                }
+            },
+            "InalidOperationInputOutputErrorNotFound": {
+                "type": "operation",
+                "readonly": true,
+                "input": "NotFound",
+                "output": "NotFound",
+                "errors": [
+                    "NotFound"
+                ]
+            },
+            "InalidOperationInputOutputErrorBadTypes": {
+                "type": "operation",
+                "readonly": true,
+                "input": "Integer",
+                "output": "Integer",
+                "errors": [
+                    "Integer"
+                ]
+            },
+            "InvalidOperationBadErrorTraits": {
+                "type": "operation",
+                "readonly": true,
+                "input": "ValidError",
+                "output": "ValidError",
+                "errors": [
+                    "ValidInput"
+                ]
+            },
+            "InvalidResourceLifecycle": {
+                "type": "resource",
+                "create": "Integer",
+                "read": "Integer",
+                "update": "Integer",
+                "delete": "Integer"
+            },
+            "InvalidMapType": {
+                "type": "map",
+                "key": {
+                    "target": "ValidInput"
+                },
+                "value": {
+                    "target": "Integer"
+                }
+            },
+            "ValidMap": {
+                "type": "map",
+                "key": {
+                    "target": "String"
+                },
+                "value": {
+                    "target": "String"
+                }
+            }
+        }
+    },
+    "another.ns": {
+        "shapes": {
+            "String": {
+                "type": "string"
+            },
+            "InvalidResource2": {
+                "type": "resource"
+            }
+        }
+    }
+}

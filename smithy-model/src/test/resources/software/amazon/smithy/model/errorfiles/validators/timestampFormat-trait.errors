@@ -1,0 +1,2 @@
+[ERROR] (TraitTarget) ns.foo#Invalid2 / [21, 25]: Trait `timestampFormat` cannot be applied to `ns.foo#Invalid2`
+[ERROR] (TraitValue) ns.foo#Invalid1 / [19, 36]: Error validating trait `timestampFormat`

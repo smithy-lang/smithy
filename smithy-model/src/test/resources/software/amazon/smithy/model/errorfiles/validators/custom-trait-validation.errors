@@ -1,0 +1,2 @@
+[ERROR] (TraitValue) ns.foo#String2 / [0, 0]: Value provided for boolean trait `ns.foo#custom1` can only be set to true. Found number
+[ERROR] (TraitValue) ns.foo#String4 / [0, 0]: Error validating trait `ns.foo#custom2`: Missing required structure member `foo` for `ns.foo#Schema`

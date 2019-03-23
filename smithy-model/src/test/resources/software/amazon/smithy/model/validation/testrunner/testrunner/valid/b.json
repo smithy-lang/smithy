@@ -1,0 +1,11 @@
+{
+  "smithy": "1.0",
+  "smithy.example": {
+    "shapes": {
+      "MyString": {
+        "type": "string",
+        "length": true
+      }
+    }
+  }
+}

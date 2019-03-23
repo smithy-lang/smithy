@@ -1,0 +1,204 @@
+{
+  "smithy": "1.0",
+  "example.rest": {
+    "shapes": {
+      "RestService": {
+        "type": "service",
+        "version": "2006-03-01",
+        "protocols": {
+          "aws.rest-json": {}
+        },
+        "operations": [
+          "CreateDocument",
+          "PutPayload"
+        ]
+      },
+      "PutPayload": {
+        "type": "operation",
+        "idempotent": true,
+        "input": "PutPayloadInput",
+        "output": "PutPayloadOutput",
+        "errors": ["PayloadNotFound"],
+        "deprecated": {},
+        "http": {
+          "uri": "/payload/{path}",
+          "method": "PUT"
+        }
+      },
+      "PutPayloadInput": {
+        "type": "structure",
+        "members": {
+          "path": {
+            "target": "String",
+            "httpLabel": true,
+            "required": true
+          },
+          "header": {
+            "target": "String",
+            "httpHeader": "X-Foo-Header"
+          },
+          "query": {
+            "target": "Integer",
+            "httpQuery": "query"
+          },
+          "timeQuery": {
+            "target": "smithy.api#Timestamp",
+            "httpQuery": "timeQuery"
+          },
+          "enum": {
+            "target": "EnumString",
+            "httpHeader": "X-EnumString"
+          },
+          "body": {
+            "target": "Blob",
+            "httpPayload": true
+          }
+        }
+      },
+      "PutPayloadOutput": {
+        "type": "structure",
+        "members": {
+          "header": {
+            "target": "String",
+            "httpHeader": "X-Foo-Header"
+          },
+          "body": {
+            "target": "Blob",
+            "httpPayload": true
+          }
+        }
+      },
+      "PayloadNotFound": {
+        "type": "structure",
+        "error": "client",
+        "httpError": 404
+      },
+      "CreateDocument": {
+        "type": "operation",
+        "input": "CreateDocumentInput",
+        "output": "CreateDocumentOutput",
+        "http": {
+          "uri": "/document",
+          "method": "POST"
+        }
+      },
+      "CreateDocumentInput": {
+        "type": "structure",
+        "members": {
+          "query": {
+            "target": "QueryList",
+            "httpQuery": "query"
+          },
+          "abc": {
+            "target": "String",
+            "sensitive": true
+          },
+          "def": {
+            "target": "Integer"
+          },
+          "hij": {
+            "target": "Map"
+          },
+          "stringDateTime": {
+            "target": "StringDateTime"
+          }
+        }
+      },
+      "CreateDocumentOutput": {
+        "type": "structure",
+        "members": {
+          "foo": {
+            "target": "String"
+          },
+          "baz": {
+            "target": "String"
+          },
+          "list": {
+            "target": "List"
+          },
+          "time": {
+            "target": "Timestamp",
+            "required": true
+          },
+          "taggedUnion": {
+            "target": "TaggedUnion"
+          }
+        }
+      },
+      "Blob": {
+        "type": "blob"
+      },
+      "String": {
+        "type": "string"
+      },
+      "Integer": {
+        "type": "integer"
+      },
+      "Map": {
+        "type": "map",
+        "key": {
+          "target": "String",
+          "length": {
+            "min": 2,
+            "max": 10
+          }
+        },
+        "value": {
+          "target": "String",
+          "sensitive": true
+        }
+      },
+      "List": {
+        "type": "list",
+        "member": {
+          "target": "String"
+        },
+        "length": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      "QueryList": {
+        "type": "list",
+        "documentation": "Query list docs!",
+        "member": {
+          "target": "String",
+          "documentation": "Query list member reference docs!"
+        },
+        "length": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      "Timestamp": {
+        "type": "timestamp"
+      },
+      "StringDateTime": {
+        "type": "timestamp",
+        "timestampFormat": "date-time"
+      },
+      "EnumString": {
+        "type": "string",
+        "enum": {
+          "a": {
+            "name": "A"
+          },
+          "c": {
+            "name": "C"
+          }
+        }
+      },
+      "TaggedUnion": {
+        "type": "union",
+        "members": {
+          "a": {
+            "target": "String"
+          },
+          "b": {
+            "target": "String"
+          }
+        }
+      }
+    }
+  }
+}

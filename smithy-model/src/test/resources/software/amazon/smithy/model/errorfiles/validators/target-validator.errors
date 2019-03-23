@@ -1,0 +1,23 @@
+[ERROR] (Target) ns.foo#InvalidListMemberMember$member / [0, 0]: Members cannot target member shapes, but found (member: `ns.foo#ValidInput$integer`)
+[ERROR] (Target) ns.foo#InalidOperationInputOutputErrorBadTypes / [0, 0]: operation shape `error` relationships must target a structure shape, but found (integer: `ns.foo#Integer`)
+[ERROR] (Target) ns.foo#InalidOperationInputOutputErrorBadTypes / [0, 0]: operation shape `input` relationships must target a structure shape, but found (integer: `ns.foo#Integer`)
+[ERROR] (Target) ns.foo#InalidOperationInputOutputErrorBadTypes / [0, 0]: operation shape `output` relationships must target a structure shape, but found (integer: `ns.foo#Integer`)
+[ERROR] (Target) ns.foo#InalidOperationInputOutputErrorNotFound / [0, 0]: operation shape has a `error` relationship to an unresolved shape `ns.foo#NotFound`
+[ERROR] (Target) ns.foo#InalidOperationInputOutputErrorNotFound / [0, 0]: operation shape has a `input` relationship to an unresolved shape `ns.foo#NotFound`
+[ERROR] (Target) ns.foo#InalidOperationInputOutputErrorNotFound / [0, 0]: operation shape has a `output` relationship to an unresolved shape `ns.foo#NotFound`
+[ERROR] (Target) ns.foo#InvalidListMemberReference$member / [0, 0]: member shape targets an unresolved shape `ns.foo#NotFound`
+[ERROR] (Target) ns.foo#InvalidListMemberResource$member / [0, 0]: Members cannot target resource shapes, but found (resource: `ns.foo#MyResource`)
+[ERROR] (Target) ns.foo#InvalidListMemberService$member / [0, 0]: Members cannot target service shapes, but found (service: `ns.foo#MyService`)
+[ERROR] (Target) ns.foo#InvalidMapType / [0, 0]: Map key member targets (structure: `ns.foo#ValidInput`), but is expected to target a string
+[ERROR] (Target) ns.foo#InvalidOperationBadErrorTraits / [0, 0]: Operation error targets an invalid structure, `ns.foo#ValidInput`, that is not marked with the `error` trait.
+[ERROR] (Target) ns.foo#InvalidOperationBadErrorTraits / [0, 0]: Operation input targets an invalid structure `ns.foo#ValidError` that is marked with the `error` trait.
+[ERROR] (Target) ns.foo#InvalidOperationBadErrorTraits / [0, 0]: Operation output targets an invalid structure `ns.foo#ValidError` that is marked with the `error` trait.
+[ERROR] (Target) ns.foo#InvalidResourceBindingReference / [0, 0]: resource shape has a `resource` relationship to an unresolved shape `ns.foo#NotFound`
+[ERROR] (Target) ns.foo#InvalidResourceBindingType / [0, 0]: resource shape `resource` relationships must target a resource shape, but found (integer: `ns.foo#Integer`)
+[ERROR] (Target) ns.foo#InvalidResourceIdentifierReference / [0, 0]: resource shape has a `identifier` relationship to an unresolved shape `ns.foo#NotFound`
+[ERROR] (Target) ns.foo#InvalidResourceIdentifierType / [0, 0]: resource shape `identifier` relationships must target a string shape, but found (integer: `ns.foo#Integer`)
+[ERROR] (Target) ns.foo#InvalidResourceLifecycle / [0, 0]: Resource create lifecycle operation must target an operation, but found (integer: `ns.foo#Integer`)
+[ERROR] (Target) ns.foo#InvalidResourceLifecycle / [0, 0]: Resource delete lifecycle operation must target an operation, but found (integer: `ns.foo#Integer`)
+[ERROR] (Target) ns.foo#InvalidResourceLifecycle / [0, 0]: Resource read lifecycle operation must target an operation, but found (integer: `ns.foo#Integer`)
+[ERROR] (Target) ns.foo#InvalidResourceLifecycle / [0, 0]: Resource update lifecycle operation must target an operation, but found (integer: `ns.foo#Integer`)
+[ERROR] (Target) ns.foo#InvalidResourceLifecycle / [0, 0]: resource shape `operation` relationships must target a operation shape, but found (integer: `ns.foo#Integer`)

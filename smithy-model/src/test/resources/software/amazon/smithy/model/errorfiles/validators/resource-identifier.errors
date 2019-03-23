@@ -1,0 +1,3 @@
+[ERROR] (ResourceIdentifier) ns.foo#Invalid2 / [0, 0]: This resource is bound as a child of `ns.foo#Valid1`, but it is invalid because its `identifiers` property is missing the following identifiers that are defined in `ns.foo#Valid1`: [b]
+[ERROR] (ResourceIdentifier) ns.foo#Invalid3 / [0, 0]: The `identifiers` property of this resource is incompatible with its binding to `ns.foo#Valid1`: expected the `b` member to target `smithy.api#String`, but found a target of `ns.foo#MyString`
+[ERROR] (Target) ns.foo#Invalid1 / [0, 0]: resource shape `identifier` relationships must target a string shape, but found (float: `smithy.api#Float`)

@@ -1,0 +1,89 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": [
+            {
+                "name": "ShouldHaveUsedTimestamp",
+                "configuration": {
+                    "additionalPatterns": [
+                        "^Oops.*$"
+                    ]
+                }
+            }
+        ]
+    },
+    "example.namespace": {
+        "shapes": {
+            "WrongType": {
+                "type": "string"
+            },
+            "OopsString": {
+                "type": "string"
+            },
+            "OopsInteger": {
+                "type": "integer"
+            },
+            "OopsFloat": {
+                "type": "integer"
+            },
+            "OopsLong": {
+                "type": "long"
+            },
+            "Structure": {
+                "type": "structure",
+                "members": {
+                    "OopsStructureMember": {
+                        "target": "WrongType"
+                    }
+                }
+            },
+            "TaggedUnion": {
+                "type": "union",
+                "members": {
+                    "OopsTaggedUnionMember": {
+                        "target": "WrongType"
+                    }
+                }
+            },
+            "Timestamp": {
+                "type": "string"
+            },
+            "TimestampFoo": {
+                "type": "string"
+            },
+            "FooTimestamp": {
+                "type": "string"
+            },
+            "Time": {
+                "type": "string"
+            },
+            "TimeFoo": {
+                "type": "string"
+            },
+            "FooTime": {
+                "type": "string"
+            },
+            "Date": {
+                "type": "string"
+            },
+            "DateFoo": {
+                "type": "string"
+            },
+            "FooDate": {
+                "type": "string"
+            },
+            "CreatedAt": {
+                "type": "string"
+            },
+            "StartedAt": {
+                "type": "string"
+            },
+            "CreatedOn": {
+                "type": "string"
+            },
+            "StartedOn": {
+                "type": "string"
+            }
+        }
+    }
+}

@@ -1,0 +1,624 @@
+{
+    "smithy": "1.0",
+    "metadata": {
+        "smithy.validators": [
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ""
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ""
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "!"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "'foo'"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "\"foo\""
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "invalid"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo|]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[|]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[a=]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[a=b"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "string=b"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo=']"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo=\"]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo==value]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo^foo]"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":each(:not(string) > list"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "foo -[]->"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "foo -[foo]->"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":not"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":not("
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":not()"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":not(string"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":each"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":each("
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":nay()"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":each(string"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":each(string, "
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":each(string, )"
+                }
+            },
+            {
+                "id": "invalid",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":each(string, :not())"
+                }
+            },
+            {
+                "id": "integer",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "integer"
+                }
+            },
+            {
+                "id": "long",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "long"
+                }
+            },
+            {
+                "id": "float",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "float"
+                }
+            },
+            {
+                "id": "boolean",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "boolean"
+                }
+            },
+            {
+                "id": "blob",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "blob"
+                }
+            },
+            {
+                "id": "list",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "list"
+                }
+            },
+            {
+                "id": "map",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "map"
+                }
+            },
+            {
+                "id": "operation",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "operation"
+                }
+            },
+            {
+                "id": "resource",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "resource"
+                }
+            },
+            {
+                "id": "member",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "member"
+                }
+            },
+            {
+                "id": "number",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "number"
+                }
+            },
+            {
+                "id": "simpleType",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "simpleType"
+                }
+            },
+            {
+                "id": "shapeId",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[id='ns.foo#String']"
+                }
+            },
+            {
+                "id": "shapeId",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[id=ns.foo#String]"
+                }
+            },
+            {
+                "id": "shapeName",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[id|name='String']"
+                }
+            },
+            {
+                "id": "shapeName",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[id|name=\"String\"]"
+                }
+            },
+            {
+                "id": "shapeNamespace",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[id|namespace='other.namespace']"
+                }
+            },
+            {
+                "id": "shapeMember",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[id|member=memberName]"
+                }
+            },
+            {
+                "id": "traitExists",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|mediaType]"
+                }
+            },
+            {
+                "id": "traitEqualTo",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|mediaType='text\/plain']"
+                }
+            },
+            {
+                "id": "traitEqualToCaseInsensitive",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|mediaType='TEXT\/PLAIN' i]"
+                }
+            },
+            {
+                "id": "traitEqualToCaseInsensitiveNoQuotes",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|mediaType^=TEXT  i]"
+                }
+            },
+            {
+                "id": "traitStartsWith",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|mediaType^='text']"
+                }
+            },
+            {
+                "id": "traitEndsWith",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|mediaType$='plain']"
+                }
+            },
+            {
+                "id": "traitContains",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|mediaType*='plain']"
+                }
+            },
+            {
+                "id": "traitContains",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|smithy.api#mediaType*=plain]"
+                }
+            },
+            {
+                "id": "traitStartsWithCaseInsensitive",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|mediaType^='PLAIN' i]"
+                }
+            },
+            {
+                "id": "traitEndsWithICaseInsensitive",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|mediaType='PLAIN' i]"
+                }
+            },
+            {
+                "id": "traitContainsCaseInsensitive",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|mediaType*='PLAIN' i]"
+                }
+            },
+            {
+                "id": "valid-neighbor-only",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ">"
+                }
+            },
+            {
+                "id": "identifier",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "resource -[identifier]-> string"
+                }
+            },
+            {
+                "id": "serviceChild",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "service -[resource]-> resource"
+                }
+            },
+            {
+                "id": "noMatchInvalidRel",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "service -[foo]-> *"
+                }
+            },
+            {
+                "id": "any",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":each(long, float, boolean)"
+                }
+            },
+            {
+                "id": "not",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":not(:each([trait|error], simpleType))"
+                }
+            },
+            {
+                "id": "serviceVersion",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[service|version^=2017]"
+                }
+            },
+            {
+                "id": "memberTargetsString",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": ":test(member > [id='ns.foo#String'])"
+                }
+            },
+            {
+                "id": "ignored",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo]"
+                }
+            },
+            {
+                "id": "ignored",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[foo=baz]"
+                }
+            },
+            {
+                "id": "ignored",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "list :each(-[identifier]->, -[bound]->) *"
+                }
+            }
+        ]
+    },
+    "ns.foo": {
+        "shapes": {
+            "String": {
+                "type": "string"
+            },
+            "Integer": {
+                "type": "integer"
+            },
+            "Long": {
+                "type": "long"
+            },
+            "Float": {
+                "type": "float"
+            },
+            "Boolean": {
+                "type": "boolean"
+            },
+            "Blob": {
+                "type": "blob"
+            },
+            "List": {
+                "type": "list",
+                "member": {
+                    "target": "String"
+                }
+            },
+            "Map": {
+                "type": "map",
+                "key": {
+                    "target": "String"
+                },
+                "value": {
+                    "target": "String"
+                }
+            },
+            "MyService": {
+                "type": "service",
+                "version": "2017-01-17",
+                "protocols": {
+                    "foo": {
+                    }
+                },
+                "resources": [
+                    "MyResource"
+                ],
+                "operations": [
+                    "OperationA"
+                ]
+            },
+            "MyResource": {
+                "type": "resource",
+                "identifiers": {
+                    "id": "MyResourceIdentifier"
+                },
+                "operations": [
+                    "OperationB"
+                ]
+            },
+            "MyResourceIdentifier": {
+                "type": "string"
+            },
+            "OperationA": {
+                "type": "operation",
+                "readonly": true,
+                "input": "OperationAInput",
+                "output": "OperationAOutput",
+                "errors": [
+                    "OperationErrorA",
+                    "OperationErrorB"
+                ]
+            },
+            "OperationAInput": {
+                "type": "structure",
+                "members": {
+                    "memberName": {
+                        "target": "String"
+                    },
+                    "otherMemberName": {
+                        "target": "Integer"
+                    }
+                }
+            },
+            "OperationAOutput": {
+                "type": "structure",
+                "members": {
+                    "b": {
+                        "target": "Map"
+                    }
+                }
+            },
+            "OperationErrorA": {
+                "type": "structure",
+                "error": "client"
+            },
+            "OperationErrorB": {
+                "type": "structure",
+                "error": "server"
+            },
+            "OperationB": {
+                "type": "operation",
+                "input": "OperationBInput"
+            },
+            "OperationBInput": {
+                "type": "structure",
+                "members": {
+                    "id": {
+                        "target": "MyResourceIdentifier",
+                        "required": true
+                    }
+                }
+            },
+            "UtcTimestamp": {
+                "type": "timestamp"
+            },
+            "Blob": {
+                "type": "blob",
+                "mediaType": "text\/plain"
+            }
+        }
+    },
+    "other.ns": {
+        "shapes": {
+            "String": {
+                "type": "string"
+            }
+        }
+    }
+}

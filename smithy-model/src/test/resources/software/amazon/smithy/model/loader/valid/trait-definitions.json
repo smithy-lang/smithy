@@ -1,0 +1,39 @@
+{
+  "smithy": "1.0",
+  "example.namespace": {
+    "shapes": {
+      "MyString1": {
+        "type": "string",
+        "example.namespace#customTrait": true,
+        "example.namespace#documentation": "foo"
+      },
+      "MyString2": {
+        "type": "string",
+        "example.namespace#customTrait": true,
+        "smithy.api#documentation": "foo"
+      },
+      "MyString3": {
+        "type": "string",
+        "example.namespace#documentation": "baz",
+        "smithy.api#documentation": "foo"
+      },
+      "MyString4": {
+        "type": "string",
+        "numeric": 10
+      }
+    },
+    "traitDefs": {
+      "customTrait": {
+        "selector": "*"
+      },
+      "documentation": {
+        "selector": "*",
+        "shape": "smithy.api#String"
+      },
+      "numeric": {
+        "selector": "*",
+        "shape": "Integer"
+      }
+    }
+  }
+}

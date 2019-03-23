@@ -1,0 +1,1 @@
+[WARNING] (AuthenticationProtocols) ns.foo#InvalidOperation1 / [0, 0]: The `authenticationSchemes` trait resolved for this operation, [`x`], is not compatible with the authentication schemes of the `baz` protocol of the `ns.foo#ValidService` service to which this operation is bound: [`y`]. The authentication scheme for this operation over the `baz` protocol is undefined.

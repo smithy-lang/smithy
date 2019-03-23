@@ -1,0 +1,11 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "traitDefs": {
+            "custom": {
+                "shape": "Invalid",
+                "selector": "string"
+            }
+        }
+    }
+}

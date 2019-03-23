@@ -1,0 +1,71 @@
+{
+  "smithy": "1.0",
+  "example.smithy": {
+    "shapes": {
+      "EmptyOperation": {
+        "type": "operation"
+      },
+
+      "NotEventStreamOperation": {
+        "type": "operation",
+        "input": "NotEventStreamStructure",
+        "output": "NotEventStreamStructure"
+      },
+      "NotEventStreamStructure": {
+        "type": "structure",
+        "members": {
+          "foo": {"target": "smithy.api#String"}
+        }
+      },
+
+      "EventStreamOperation": {
+        "type": "operation",
+        "input": "EventStreamOperationInput",
+        "inputEventStream": "c",
+        "output": "EventStreamOperationOutput",
+        "outputEventStream": "c"
+      },
+
+      "EventStreamOperationInput": {
+        "type": "structure",
+        "members": {
+          "a": {"target": "smithy.api#String"},
+          "b": {"target": "smithy.api#Integer"},
+          "c": {"target": "InputEventStream"}
+        }
+      },
+
+      "EventStreamOperationOutput": {
+        "type": "structure",
+        "members": {
+          "a": {"target": "smithy.api#String"},
+          "b": {"target": "smithy.api#Integer"},
+          "c": {"target": "OutputEventStream"}
+        }
+      },
+
+      "InputEventStream": {
+        "type": "union",
+        "members": {
+          "eventA": {"target": "EventStructure"},
+          "eventB": {"target": "EventStructure"}
+        }
+      },
+
+      "OutputEventStream": {
+        "type": "union",
+        "members": {
+          "eventA": {"target": "EventStructure"},
+          "eventB": {"target": "EventStructure"}
+        }
+      },
+
+      "EventStructure": {
+        "type": "structure",
+        "members": {
+          "foo": {"target": "smithy.api#String"}
+        }
+      }
+    }
+  }
+}

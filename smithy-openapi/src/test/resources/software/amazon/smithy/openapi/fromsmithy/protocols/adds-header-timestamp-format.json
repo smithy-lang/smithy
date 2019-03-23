@@ -1,0 +1,49 @@
+{
+  "smithy": "1.0",
+  "smithy.example": {
+    "shapes": {
+      "Service": {
+        "type": "service",
+        "version": "2006-03-01",
+        "protocols": {
+          "aws.rest-json": {}
+        },
+        "operations": [
+          "Operation"
+        ]
+      },
+      "Operation": {
+        "type": "operation",
+        "input": "OperationInput",
+        "http": {
+          "uri": "/",
+          "method": "POST"
+        }
+      },
+      "OperationInput": {
+        "type": "structure",
+        "members": {
+          "timestamp1": {
+            "target": "Timestamp",
+            "httpHeader": "X-Timestamp1"
+          },
+          "timestamp2": {
+            "target": "Timestamp",
+            "httpHeader": "X-Timestamp2",
+            "timestampFormat": "epoch-seconds"
+          },
+          "timestampList": {
+            "target": "TimestampList",
+            "httpHeader": "X-Timestamp3"
+          }
+        }
+      },
+      "TimestampList": {
+        "type": "list",
+        "member": {
+          "target": "Timestamp"
+        }
+      }
+    }
+  }
+}

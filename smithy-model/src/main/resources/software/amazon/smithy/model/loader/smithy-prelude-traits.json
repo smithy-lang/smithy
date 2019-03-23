@@ -1,0 +1,700 @@
+{
+  "smithy": "1.0",
+  "smithy.api": {
+    "traitDefs": {
+      "box": {
+        "selector": ":test(boolean, byte, short, integer, long, float, double, member > :test(boolean, byte, short, integer, long, float, double))",
+        "documentation": "Indicates that a shape is boxed. When a boxed shape is the target of a member, the member may or may not contain a value, and the member has no default value.",
+        "tags": ["diff.error.const"]
+      },
+      "collectionOperation": {
+        "selector": "operation",
+        "documentation": "Indicates that an operation is intended to be used as a resource collection operation."
+      },
+      "deprecated": {
+        "selector": "*",
+        "shape": "DeprecatedShape",
+        "documentation": "Marks a shape or member as deprecated."
+      },
+      "documentation": {
+        "selector": "*",
+        "shape": "String",
+        "documentation": "Adds documentation to a shape or member. The format of the documentation trait MUST be a valid HTML fragment."
+      },
+      "endpoints": {
+        "selector": "service",
+        "shape": "Endpoints",
+        "documentation": "Defines the endpoints of a service. Tools can iterate through the list of endpoints to determine the appropriate endpoint to use when connecting to a service."
+      },
+      "protocols": {
+        "selector": "service",
+        "shape": "Protocols",
+        "documentation": "Defines the protocols supported by a service."
+      },
+      "authentication": {
+        "selector": "service",
+        "shape": "AuthenticationSchemes",
+        "documentation": "Defines the authentication schemes supported by a service."
+      },
+      "authenticationSchemes": {
+        "selector": ":test(service, operation)",
+        "shape": "StringList",
+        "documentation": "Defines the authentication schemes supported by a service or operation."
+      },
+      "externalDocumentation": {
+        "selector": ":test(service, operation)",
+        "shape": "Uri",
+        "documentation": "Links a service or operation to a URL that contains additional documentation."
+      },
+      "error": {
+        "selector": "structure",
+        "shape": "ErrorKind",
+        "documentation": "Indicates that a structure shape represents an error. All shapes referenced by the errors list of an operation MUST be targeted with this trait.",
+        "tags": ["diff.error.const"]
+      },
+      "retryable": {
+        "selector": "structure[trait|error]",
+        "documentation": "Indicates that an error MAY be retried by the client."
+      },
+      "readonly": {
+        "selector": "operation",
+        "documentation": "Indicates that an operation is effectively read-only.",
+        "conflicts": ["idempotent"]
+      },
+      "idempotent": {
+        "selector": "operation",
+        "documentation": "Indicates that the intended effect on the server of multiple identical requests with an operation is the same as the effect for a single such request.",
+        "conflicts": ["readonly"],
+        "tags": ["diff.error.remove"]
+      },
+      "idempotencyToken": {
+        "selector": ":test(member:of(structure) > string)",
+        "documentation": "Defines the input member of an operation that is used by the sever to identify and discard replayed requests.",
+        "structurallyExclusive": true
+      },
+      "instanceOperation": {
+        "selector": "operation",
+        "documentation": "Indicates that an operation is intended to be used as a resource instance operation."
+      },
+      "jsonName": {
+        "selector": "member:of(structure)",
+        "shape": "String",
+        "documentation": "The jsonName trait allows a serialized object property name to differ from a structure member name used in the model.",
+        "tags": ["diff.error.const"]
+      },
+      "xmlAttribute": {
+        "selector": ":test(member:of(structure) > :test(boolean, number, string, timestamp))",
+        "documentation": "Moves a serialized object property to an attribute of the enclosing structure.",
+        "conflicts": ["xmlNamespace"],
+        "tags": ["diff.error.const"]
+      },
+      "xmlFlattened": {
+        "selector": "collection",
+        "documentation": "Moves serialized collection members from their collection element to that of the collection's container.",
+        "tags": ["diff.error.const"]
+      },
+      "xmlName": {
+        "selector": "*",
+        "shape": "ValidXmlName",
+        "documentation": "Allows a serialized object property name to differ from a structure member name used in the model.",
+        "tags": ["diff.error.const"]
+      },
+      "xmlNamespace": {
+        "selector": "*",
+        "shape": "XmlNamespace",
+        "documentation": "Adds an xmlns namespace definition URI to an XML element.",
+        "conflicts": ["xmlAttribute"],
+        "tags": ["diff.error.const"]
+      },
+      "mediaType": {
+        "selector": ":each(blob, string)",
+        "shape": "String",
+        "documentation": "Describes the contents of a blob shape using a media type as defined by RFC 6838 (e.g., \u201cvideo\/quicktime\u201d).",
+        "tags": ["diff.error.remove"]
+      },
+      "references": {
+        "selector": ":test(structure, string)",
+        "shape": "ReferencesMap",
+        "documentation": "Defines the resource shapes that are referenced by a string shape or a structure shape and the members of the structure that provide values for the identifiers of the resource."
+      },
+      "resourceIdentifier": {
+        "selector": ":test(member:of(structure)[trait|required] > string)",
+        "shape": "NonEmptyString",
+        "documentation": "Indicates that the targeted structure member provides an identifier for a resource.",
+        "tags": ["diff.error.remove"]
+      },
+      "private": {
+        "selector": "*",
+        "documentation": "Prevents models defined in a different namespace from referencing the targeted shape."
+      },
+      "sensitive": {
+        "selector": ":test(blob, string, member > :each(blob, string))",
+        "documentation": "Indicates that the data stored in the shape or member is sensitive and MUST be handled with care."
+      },
+      "since": {
+        "selector": "*",
+        "shape": "String",
+        "documentation": "Defines the version or date in which a shape or member was added to the model."
+      },
+      "streaming": {
+        "selector": "blob",
+        "documentation": "Indicates that the the data stored in the shape is very large and should not be stored in memory, or that the size of the data stored in the shape is unknown at the start of a request",
+        "tags": ["diff.error.const"]
+      },
+      "synthetic": {
+        "selector": "*",
+        "documentation": "Indicates that an error structure can be returned from any operation in the model.",
+        "tags": ["diff.error.remove"]
+      },
+      "tags": {
+        "selector": "*",
+        "shape": "StringList",
+        "documentation": "Tags a shape with arbitrary tag names that can be used to filter and group shapes in the model."
+      },
+      "title": {
+        "selector": ":test(service, operation)",
+        "shape": "String",
+        "documentation": "Defines a proper name for a service or resource shape. This title can be used in automatically generated documentation and other contexts to provide a user friendly name for services and resources."
+      },
+      "enum": {
+        "selector": "string",
+        "shape": "EnumConstants",
+        "documentation": "Constrains the acceptable values of a string to a fixed set of constant values.",
+        "tags": ["diff.error.add", "diff.error.remove"]
+      },
+      "length": {
+        "selector": ":test(collection, map, string, blob, member > :each(collection, map, string, blob))",
+        "shape": "LengthTrait",
+        "documentation": "Constrains a shape to minimum and maximum number of elements or size."
+      },
+      "range": {
+        "selector": ":test(number, member > number)",
+        "shape": "RangeTrait",
+        "documentation": "Restricts allowed values of byte, short, integer, long, float, double, bigDecimal, and bigInteger shapes within an acceptable lower and upper bound."
+      },
+      "pattern": {
+        "selector": ":test(string, member > string)",
+        "shape": "String",
+        "documentation": "Restricts string shape values to a specified regular expression."
+      },
+      "required": {
+        "selector": "member:of(structure)",
+        "documentation": "Marks a structure member as required, meaning a value for the member MUST be present.",
+        "tags": ["diff.error.add"]
+      },
+      "uniqueItems": {
+        "selector": "list",
+        "documentation": "Indicates that the items in a list MUST be unique."
+      },
+      "paginated": {
+        "selector": "operation",
+        "shape": "PaginatedObject",
+        "documentation": "The paginated trait indicates that an operation intentionally limits the number of results returned in a single response and that multiple invocations might be necessary to retrieve all results.",
+        "tags": ["diff.error.remove"]
+      },
+      "http": {
+        "selector": "operation",
+        "shape": "HttpObject",
+        "documentation": "Configures the HTTP bindings of an operation.",
+        "tags": ["diff.error.remove"]
+      },
+      "httpLabel": {
+        "selector": ":test(member:of(structure) > :test(string, number, boolean, timestamp))",
+        "documentation": "Binds an operation input structure member to an HTTP label.",
+        "conflicts": ["httpHeader", "httpQuery", "httpPrefixHeaders", "httpPayload"],
+        "tags": ["diff.error.const"]
+      },
+      "httpQuery": {
+        "selector": ":test(member:of(structure) > :test(simpleType, collection > member > simpleType))",
+        "shape": "NonEmptyString",
+        "documentation": "Binds an operation input structure member to a query string parameter.",
+        "conflicts": ["httpLabel", "httpHeader", "httpPrefixHeaders", "httpPayload"],
+        "tags": ["diff.error.const"]
+      },
+      "httpHeader": {
+        "selector": ":test(member:of(structure) > :test(boolean, number, string, timestamp, collection > member > :test(boolean, number, string, timestamp)))",
+        "shape": "NonEmptyString",
+        "documentation": "Binds a structure member to an HTTP header.",
+        "conflicts": ["httpLabel", "httpQuery", "httpPrefixHeaders", "httpPayload"],
+        "tags": ["diff.error.const"]
+      },
+      "httpPrefixHeaders": {
+        "selector": ":test(member:of(structure) > map > member[id|member=value] > :test(simpleType, collection > member > simpleType))",
+        "shape": "String",
+        "documentation": "Binds a map of key-value pairs to prefixed HTTP headers.",
+        "conflicts": ["httpLabel", "httpQuery", "httpHeader", "httpPayload"],
+        "structurallyExclusive": true,
+        "tags": ["diff.error.const"]
+      },
+      "httpPayload": {
+        "selector": ":test(member:of(structure) > :test(string, blob, structure, union))",
+        "documentation": "Binds a single structure member to the body of an HTTP request.",
+        "conflicts": ["httpLabel", "httpQuery", "httpHeader", "httpPrefixHeaders"],
+        "structurallyExclusive": true,
+        "tags": ["diff.error.const"]
+      },
+      "httpError": {
+        "selector": "structure[trait|error]",
+        "shape": "PrimitiveInteger",
+        "documentation": "Defines an HTTP response code for an operation error."
+      },
+      "cors": {
+        "selector": "service",
+        "shape": "CorsObject",
+        "documentation": "Defines how a service supports cross-origin resource sharing."
+      },
+      "eventPayload": {
+        "selector": "member:of(structure):test(> :each(blob, string, structure, union))",
+        "conflicts": ["eventHeader"],
+        "structurallyExclusive": true,
+        "tags": ["diff.error.const"]
+      },
+      "eventHeader": {
+        "selector": "member:of(structure):test( > :each(boolean, byte, short, integer, long, blob, string, timestamp))",
+        "conflicts": ["eventPayload"],
+        "tags": ["diff.error.const"]
+      },
+      "inputEventStream": {
+        "selector": "operation:test(-[input]->)",
+        "shape": "smithy.api#String",
+        "tags": ["diff.error.const"]
+      },
+      "outputEventStream": {
+        "selector": "operation:test(-[output]->)",
+        "shape": "smithy.api#String",
+        "tags": ["diff.error.const"]
+      },
+      "idRef": {
+        "selector": ":test(string, member > string)",
+        "shape": "IdRefTrait"
+      },
+      "time": {
+        "selector": "string",
+        "shape": "TimeTrait",
+        "deprecated": true,
+        "deprecationReason": "Use the timestamp shape and the timestampFormat trait"
+      },
+      "timestampFormat": {
+        "selector": ":test(timestamp, member > timestamp)",
+        "shape": "TimestampFormatTrait"
+      },
+      "endpoint": {
+        "selector": "operation",
+        "shape": "EndpointObject",
+        "documentation": "Configures a custom operation endpoint.",
+        "tags": ["diff.error.const"]
+      },
+      "hostLabel": {
+        "selector": ":test(member:of(structure)[trait|required] > string)",
+        "documentation": "Binds a top-level operation input structure member to a label in the hostPrefix of an endpoint trait.",
+        "tags": ["diff.error.const"]
+      }
+    },
+    "shapes": {
+      "Uri": {
+        "type": "string",
+        "private": true
+      },
+      "StringList": {
+        "type": "list",
+        "member": {
+          "target": "String"
+        },
+        "private": true
+      },
+      "StringMap": {
+        "type": "map",
+        "key": {
+          "target": "String"
+        },
+        "value": {
+          "target": "String"
+        },
+        "private": true
+      },
+      "NonEmptyStringMap": {
+        "type": "map",
+        "key": {
+          "target": "NonEmptyString"
+        },
+        "value": {
+          "target": "NonEmptyString"
+        },
+        "private": true
+      },
+      "NonEmptyString": {
+        "type": "string",
+        "length": {
+          "min": 1
+        },
+        "private": true
+      },
+      "DeprecatedShape": {
+        "type": "structure",
+        "members": {
+          "message": {
+            "target": "String",
+            "documentation": "Provides a plain text message for a deprecated shape or member."
+          },
+          "since": {
+            "target": "String",
+            "documentation": "Provides a plain text date or version for when a shape or member was deprecated."
+          }
+        },
+        "private": true
+      },
+      "NonEmptyStringList": {
+        "type": "list",
+        "member": {
+          "target": "NonEmptyString"
+        },
+        "private": true
+      },
+      "Endpoints": {
+        "type": "map",
+        "key": {
+          "target": "NonEmptyString"
+        },
+        "value": {
+          "target": "Endpoint"
+        },
+        "private": true
+      },
+      "Endpoint": {
+        "type": "structure",
+        "members": {
+          "url": {
+            "target": "NonEmptyString",
+            "required": true,
+            "documentation": "Defines the URL of the endpoint. The provided string value MUST be a valid URI that contains a scheme and an authority. The URL supports a single URI template of \u201c{endpoint}\u201d. This value represents the endpoint name provided when searching the endpoints list for a matching endpoint. This value does not represent the name property of an endpoint.\n\nFor example, given an endpoint variable of \u201cmy-region\u201d and a uri of https:\/\/{endpoint}.example.com, the URI expands to https:\/\/my-region.example.com."
+          },
+          "q": {
+            "target": "RelativeQualityFactor",
+            "documentation": "Specifies which endpoint or endpoint template a service would prefer that clients use on a scale of 0 to 1. Client scenarios that match multiple endpoints SHOULD use the endpoint with the greatest relative quality factor. Defaults to 1.0."
+          },
+          "settings": {
+            "target": "StringMap",
+            "documentation": "Additional configuration properties. Vendor-specific tooling can use these properties as needed when resolving the correct endpoint."
+          },
+          "deprecated": {
+            "target": "smithy.api#Boolean",
+            "documentation": "Whether the endpoint should be considered deprecated for the service targeted by the endpoints trait."
+          },
+          "deprecationReason": {
+            "target": "smithy.api#String",
+            "documentation": "Provides a plain text reason for why the endpoint should be considered deprecated. May only be set if the deprecated property is set to true."
+          },
+          "tags": {
+            "target": "StringList",
+            "documentation": "Attaches a list of tags that allow endpoints to be categorized and grouped."
+          }
+        },
+        "private": true
+      },
+      "RelativeQualityFactor": {
+        "type": "double",
+        "range": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "private": true
+      },
+      "Protocols": {
+        "type": "map",
+        "key": {
+          "target": "ProtocolOrAuthName"
+        },
+        "value": {
+          "target": "Protocol"
+        },
+        "private": true
+      },
+      "Protocol": {
+        "type": "structure",
+        "members": {
+          "q": {
+            "target": "RelativeQualityFactor",
+            "documentation": "Specifies which protocol a service would prefer that clients use on a scale of 0 to 1.0. Clients that support multiple protocols used by the service SHOULD select the protocol with the greatest relative quality factor. Defaults to 1.0."
+          },
+          "settings": {
+            "target": "StringMap",
+            "documentation": "Additional properties MAY be provided to configure the protocol. The set of available properties is determined by the protocol."
+          },
+          "deprecated": {
+            "target": "smithy.api#Boolean",
+            "documentation": "Whether the protocol should be considered deprecated for the service targeted by the protocols trait."
+          },
+          "deprecationReason": {
+            "target": "smithy.api#String",
+            "documentation": "Provides a plain text reason for why the protocol should be considered deprecated. May only be set if the deprecated property is set to true."
+          },
+          "tags": {
+            "target": "StringList",
+            "documentation": "Attaches a list of tags that allow protocols to be categorized and grouped."
+          },
+          "authentication": {
+            "target": "StringList",
+            "documentation": "A priority ordered list of authentication schemes to use with this protocol."
+          }
+        },
+        "private": true
+      },
+      "AuthenticationSchemes": {
+        "type": "map",
+        "key": {
+          "target": "ProtocolOrAuthName"
+        },
+        "value": {
+          "target": "AuthenticationScheme"
+        },
+        "private": true
+      },
+      "AuthenticationScheme": {
+        "type": "structure",
+        "members": {
+          "settings": {
+            "target": "StringMap",
+            "documentation": "Additional properties MAY be provided to configure the scheme. The set of available properties is determined by the authentication scheme."
+          },
+          "deprecated": {
+            "target": "smithy.api#Boolean",
+            "documentation": "Whether the authentication scheme should be considered deprecated for the service targeted by the authentication trait."
+          },
+          "deprecationReason": {
+            "target": "smithy.api#String",
+            "documentation": "Provides a plain text reason for why the scheme should be considered deprecated. May only be set if the deprecated property is set to true."
+          },
+          "tags": {
+            "target": "StringList",
+            "documentation": "Attaches a list of tags that allow the authentication scheme to be categorized and grouped."
+          }
+        },
+        "private": true
+      },
+      "ProtocolOrAuthName": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9\\-.+]*$",
+        "private": true
+      },
+      "ErrorKind": {
+        "type": "string",
+        "enum": {
+          "client": {"name": "CLIENT"},
+          "server": {"name": "SERVER"}
+        },
+        "private": true
+      },
+      "ReferencesMap": {
+        "type": "map",
+        "key": {
+          "target": "NonEmptyString"
+        },
+        "value": {
+          "target": "Reference"
+        },
+        "private": true
+      },
+      "Reference": {
+        "type": "structure",
+        "members": {
+          "resource": {
+            "target": "NonEmptyString",
+            "required": true,
+            "documentation": "The shape ID of the referenced resource."
+          },
+          "ids": {
+            "target": "NonEmptyStringMap",
+            "documentation": "Defines a mapping of each resource identifier name to a structure member name that provides its value. Each key in the map MUST refer to one of the identifier names in the identifiers property of the resource, and each value in the map MUST refer to a valid structure member name that targets a string shape."
+          },
+          "service": {
+            "target": "NonEmptyString",
+            "documentation": "Providing a service makes the reference specific to a particular binding of the resource to a service. When omitted, the reference is late-bound to a service, meaning the reference is assumed to be a reference to the resource bound to the service currently in use by the client or server."
+          },
+          "rel": {
+            "target": "NonEmptyString",
+            "documentation": "Defines the semantics of the relationship. The rel property SHOULD contain a link relation as defined in RFC 5988#section-4."
+          }
+        },
+        "private": true
+      },
+      "EnumConstants": {
+        "type": "map",
+        "key": {
+          "target": "smithy.api#String"
+        },
+        "value": {
+          "target": "EnumConstantBody"
+        },
+        "private": true
+      },
+      "EnumConstantBody": {
+        "type": "structure",
+        "documentation": "An enum definition for the enum trait.",
+        "members": {
+          "documentation": {
+            "target": "smithy.api#String",
+            "documentation": "Provides optional documentation about the enum constant value."
+          },
+          "tags": {
+            "target": "StringList",
+            "documentation": "Applies a list of tags to the enum constant."
+          },
+          "name": {
+            "target": "EnumConstantBodyName"
+          }
+        },
+        "private": true
+      },
+      "EnumConstantBodyName": {
+        "type": "string",
+        "pattern": "^[a-zA-Z_]+[a-zA-Z_0-9]*$",
+        "documentation": "The optional name or label of the enum constant value. This property is used in code generation to provide a label for each enum value. No two enums can have the same 'name' value.",
+        "private": true
+      },
+      "LengthTrait": {
+        "type": "structure",
+        "members": {
+          "min": {
+            "target": "Long",
+            "documentation": "Integer value that represents the minimum inclusive length of a shape."
+          },
+          "max": {
+            "target": "Long",
+            "documentation": "Integer value that represents the maximum inclusive length of a shape."
+          }
+        },
+        "private": true
+      },
+      "RangeTrait": {
+        "type": "structure",
+        "members": {
+          "min": {
+            "target": "BigDecimal",
+            "documentation": "Specifies the allowed inclusive minimum value."
+          },
+          "max": {
+            "target": "BigDecimal",
+            "documentation": "Specifies the allowed inclusive maximum value."
+          }
+        },
+        "private": true
+      },
+      "PaginatedObject": {
+        "type": "structure",
+        "members": {
+          "inputToken": {
+            "target": "NonEmptyString",
+            "required": true,
+            "documentation": "The name of the operation input member that represents the continuation token. When this value is provided as operation input, the service returns results from where the previous response left off. This input member MUST NOT be required and MUST target a string shape."
+          },
+          "outputToken": {
+            "target": "NonEmptyString",
+            "required": true,
+            "documentation": "The name of the operation output member that represents the continuation token. When this value is present in operation output, it indicates that there are more results to retrieve. To get the next page of results, the client uses the output token as the input token of the next request. This output member MUST NOT be required and MUST target a string shape."
+          },
+          "items": {
+            "target": "NonEmptyString",
+            "documentation": "The name of a top-level output member of the operation that is the data that is being paginated across many responses. The named output member, if specified, MUST target a list or map."
+          },
+          "pageSize": {
+            "target": "NonEmptyString",
+            "documentation": "The name of an operation input member that limits the maximum number of results to include in the operation output. This input member MUST NOT be required and MUST target an integer shape."
+          }
+        },
+        "private": true
+      },
+      "HttpObject": {
+        "type": "structure",
+        "members": {
+          "method": {
+            "target": "NonEmptyString",
+            "required": true,
+            "documentation": "The HTTP method of the operation."
+          },
+          "uri": {
+            "target": "NonEmptyString",
+            "required": true,
+            "documentation": "The URI pattern of the operation. Labels defined in the URI pattern are used to bind operation input members to the URI."
+          },
+          "code": {
+            "target": "PrimitiveInteger",
+            "documentation": "The HTTP status code of a successful response. Defaults to 200 if not provided."
+          }
+        },
+        "private": true
+      },
+      "CorsObject": {
+        "type": "structure",
+        "members": {
+          "origin": {
+            "target": "NonEmptyString",
+            "documentation": "The origin from which browser script-originating requests will be allowed. Defaults to *."
+          },
+          "maxAge": {
+            "target": "Integer",
+            "documentation": "The maximum number of seconds for which browsers are allowed to cache the results of a preflight OPTIONS request. Defaults to 600, the maximum age permitted by several browsers. Set to -1 to disable caching entirely."
+          },
+          "additionalAllowedHeaders": {
+            "target": "NonEmptyStringList",
+            "documentation": "The names of headers that should be included in the Access-Control-Allow-Headers header in responses to preflight OPTIONS requests. This list will be used in addition to the names of all request headers bound to an input data member via the httpHeader, as well as any headers required by the protocol or authentication scheme."
+          },
+          "additionalExposedHeaders": {
+            "target": "NonEmptyStringList",
+            "documentation": "The names of headers that should be included in the Access-Control-Expose-Headers header in all responses sent by the service. This list will be used in addition to the names of all request headers bound to an output data member via the httpHeader, as well as any headers required by the protocol or authentication scheme."
+          }
+        },
+        "private": true
+      },
+      "TimeTrait": {
+        "type": "string",
+        "deprecated": {},
+        "private": true
+      },
+      "TimestampFormatTrait": {
+        "type": "string",
+        "enum": {
+          "date-time": {},
+          "http-date": {},
+          "epoch-seconds": {}
+        },
+        "private": true
+      },
+      "IdRefTrait": {
+        "type": "structure",
+        "private": true,
+        "members": {
+          "selector": { "target": "String" },
+          "failWhenMissing": { "target": "PrimitiveBoolean" },
+          "errorMessage": { "target": "String" }
+        }
+      },
+      "XmlNamespace": {
+        "type": "structure",
+        "members": {
+          "uri": {
+            "target": "NonEmptyString",
+            "required": true,
+            "documentation": "The namespace URI for scoping this XML element."
+          }
+        },
+        "private": true
+      },
+      "ValidXmlName": {
+        "type": "string",
+        "pattern": "^[a-zA-Z_][a-zA-Z_\\d-]*$",
+        "private": true
+      },
+      "EndpointObject": {
+        "type": "structure",
+        "members": {
+          "hostPrefix": {
+            "target": "NonEmptyString",
+            "required": true,
+            "documentation": "A host prefix pattern for the operation. Labels defined in the host pattern are used to bind top-level operation input members to the host."
+          }
+        },
+        "private": true
+      }
+    }
+  }
+}

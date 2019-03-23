@@ -1,0 +1,82 @@
+{
+  "smithy": "1.0",
+  "example.smithy": {
+    "shapes": {
+      "MyService": {
+        "type": "service",
+        "version": "2006-03-01",
+        "protocols": {
+          "aws.rest-json": {}
+        },
+        "operations": [
+          "MyOperation",
+          "OtherOperation"
+        ]
+      },
+      "MyOperation": {
+        "type": "operation",
+        "input": "MyOperationInput",
+        "output": "MyOperationOutput",
+        "http": {
+          "uri": "/foo",
+          "method": "POST"
+        }
+      },
+      "OtherOperation": {
+        "type": "operation",
+        "readonly": true,
+        "output": "OtherOperationOutput",
+        "http": {
+          "uri": "/bar",
+          "method": "GET"
+        }
+      },
+      "MyOperationInput": {
+        "type": "structure",
+        "members": {
+          "payload": {
+            "target": "InboundBinaryPayload",
+            "required": true,
+            "httpPayload": true
+          }
+        }
+      },
+      "MyOperationOutput": {
+        "type": "structure",
+        "members": {
+          "payload": {
+            "target": "OutboundBinaryPayload",
+            "required": true,
+            "httpPayload": true
+          }
+        }
+      },
+      "OtherOperationOutput": {
+        "type": "structure",
+        "members": {
+          "abc": {
+            "target": "StringShape"
+          },
+          "def": {
+            "target": "NonPayloadBinaryShape"
+          }
+        }
+      },
+      "InboundBinaryPayload": {
+        "type": "blob",
+        "mediaType": "image/*"
+      },
+      "OutboundBinaryPayload": {
+        "type": "blob",
+        "mediaType": "application/zip"
+      },
+      "NonPayloadBinaryShape": {
+        "type": "blob",
+        "mediaType": "audio/mp4"
+      },
+      "StringShape": {
+        "type": "string"
+      }
+    }
+  }
+}

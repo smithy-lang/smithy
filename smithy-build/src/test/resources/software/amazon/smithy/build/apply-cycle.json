@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "projections": {
+    "foo": {
+      "transforms": [
+        {"name": "apply", "args": ["bar"]}
+      ]
+    },
+    "bar": {
+      "transforms": [
+        {"name": "apply", "args": ["foo"]}
+      ]
+    }
+  }
+}

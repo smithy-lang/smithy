@@ -1,0 +1,192 @@
+{
+  "smithy": "1.0",
+  "metadata": {
+    "smithy.validators": [
+      {
+        "id": "FooReservedWords",
+        "name": "ReservedWords",
+        "configuration": {
+          "reserved": [
+            {
+              "words": [
+                "fooshape"
+              ]
+            },
+            {
+              "words": [
+                "_*"
+              ],
+              "reason": "Foo does not allow preceding underscores."
+            },
+            {
+              "selector": "operation",
+              "words": [
+                "operationb"
+              ],
+              "reason": "Foo has a built in OperationB, we can rename around it."
+            },
+            {
+              "selector": "structure",
+              "words": [
+                "*errorb*"
+              ]
+            },
+            {
+              "selector": "member:of(structure)",
+              "words": [
+                "*hermembername",
+                "string"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "ns.foo": {
+    "shapes": {
+      "_foo": {
+        "type": "structure",
+        "members": {
+          "bar": {
+            "target": "String"
+          }
+        }
+      },
+      "String": {
+        "type": "string"
+      },
+      "Integer": {
+        "type": "integer"
+      },
+      "Long": {
+        "type": "long"
+      },
+      "Float": {
+        "type": "float"
+      },
+      "Boolean": {
+        "type": "boolean"
+      },
+      "List": {
+        "type": "list",
+        "member": {
+          "target": "String"
+        }
+      },
+      "Map": {
+        "type": "map",
+        "key": {
+          "target": "String"
+        },
+        "value": {
+          "target": "String"
+        }
+      },
+      "MyService": {
+        "type": "service",
+        "version": "2017-01-17",
+        "protocols": {
+          "foo": {
+          }
+        },
+        "resources": [
+          "MyResource"
+        ],
+        "operations": [
+          "OperationA"
+        ]
+      },
+      "MyResource": {
+        "type": "resource",
+        "identifiers": {
+          "id": "MyResourceIdentifier"
+        },
+        "operations": [
+          "OperationB"
+        ]
+      },
+      "MyResourceIdentifier": {
+        "type": "string"
+      },
+      "OperationA": {
+        "type": "operation",
+        "readonly": true,
+        "input": "OperationAInput",
+        "output": "OperationAOutput",
+        "errors": [
+          "OperationErrorA",
+          "OperationErrorB"
+        ]
+      },
+      "OperationAInput": {
+        "type": "structure",
+        "members": {
+          "memberName": {
+            "target": "String"
+          },
+          "otherMemberName": {
+            "target": "Integer"
+          },
+          "fooShape": {
+            "target": "FooShape"
+          }
+        }
+      },
+      "OperationAOutput": {
+        "type": "structure",
+        "members": {
+          "b": {
+            "target": "Map"
+          }
+        }
+      },
+      "OperationErrorA": {
+        "type": "structure",
+        "error": "client"
+      },
+      "OperationErrorB": {
+        "type": "structure",
+        "error": "server"
+      },
+      "OperationB": {
+        "type": "operation",
+        "input": "OperationBInput"
+      },
+      "OperationBInput": {
+        "type": "structure",
+        "members": {
+          "id": {
+            "target": "MyResourceIdentifier",
+            "required": true
+          }
+        }
+      },
+      "_OperationBaz": {
+        "type": "operation",
+        "input": "_foo"
+      },
+      "UtcTimestamp": {
+        "type": "timestamp"
+      },
+      "FooShape": {
+        "type": "structure",
+        "members": {
+          "c": {
+            "target": "Float"
+          },
+          "string": {
+            "target": "String"
+          },
+          "_qux": {
+            "target": "String"
+          }
+        }
+      },
+      "Blob": {
+        "type": "blob",
+        "mediaType": "text\/plain"
+      }
+    }
+  }
+}

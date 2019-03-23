@@ -1,0 +1,1 @@
+[ERROR] (SingleResourceBinding) ns.foo#ResourceB / [0, 0]: A resource can appear only once in an entire service closure. This resource is illegally bound into the `ns.foo#MyService` service closure from multiple shapes: [`ns.foo#MyService`, `ns.foo#ResourceA`]

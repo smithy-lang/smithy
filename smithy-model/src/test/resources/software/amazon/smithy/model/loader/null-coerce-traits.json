@@ -1,0 +1,13 @@
+{
+  "smithy": "1.0",
+  "ns.foo": {
+    "shapes": {
+      "Foo": {
+        "type": "string",
+        "deprecated": {},
+        "references": null,
+        "tags": null
+      }
+    }
+  }
+}

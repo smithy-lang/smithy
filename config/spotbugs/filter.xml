@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License").
+  ~ You may not use this file except in compliance with the License.
+  ~ A copy of the License is located at
+  ~
+  ~  http://aws.amazon.com/apache2.0
+  ~
+  ~ or in the "license" file accompanying this file. This file is distributed
+  ~ on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+  ~ express or implied. See the License for the specific language governing
+  ~ permissions and limitations under the License.
+  -->
+
+<FindBugsFilter>
+    <!-- Ignore all test files. -->
+    <Match>
+        <Class name="~Test\.java$"/>
+    </Match>
+
+    <!-- Equals is overridden in Shape implementations, but hashCode is
+         intentionally not overridden since it's unnecessary. -->
+    <Match>
+        <Package name="software.amazon.smithy.model.shapes"/>
+        <Bug pattern="HE_EQUALS_NO_HASHCODE" />
+    </Match>
+
+    <!-- The MockManifest uses a hardcoded value for a mock, so
+         it makes sense. -->
+    <Match>
+        <Class name="software.amazon.smithy.build.MockManifest"/>
+        <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
+    </Match>
+
+    <!-- This method is definitely called, so it might be a bug
+         in spot bugs -->
+    <Match>
+        <Class name="software.smithy.linters.ReservedWordsValidator$ReservedWords"/>
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+    </Match>
+
+    <!-- Exceptions aren't going to be serialized. -->
+    <Match>
+        <Bug pattern="SE_NO_SERIALVERSIONID,SE_BAD_FIELD"/>
+    </Match>
+
+    <!-- This is definitely cleaned up and not a redundant null check
+         software.amazon.smithy.model.loader.ModelAssembler.loadPreludeModel -->
+    <Match>
+        <Class name="software.amazon.smithy.model.loader.ModelAssembler"/>
+        <Bug pattern="OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE,RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+    </Match>
+
+    <!-- Intentional fall through in a lexer -->
+    <Match>
+        <Class name="software.amazon.smithy.model.loader.SmithyModelLexer"/>
+        <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+    </Match>
+
+    <!-- This is intentional since the # must occur after a namespace. -->
+    <Match>
+        <Class name="software.amazon.smithy.model.traits.TraitDefinition$Builder"/>
+        <Bug pattern="RV_CHECK_FOR_POSITIVE_INDEXOF"/>
+    </Match>
+
+    <!-- NoSuchElementException actually is thrown if the deque is empty. -->
+    <Match>
+        <Class name="software.amazon.smithy.model.traits.WeightedNamedElements$ElementIterator"/>
+        <Bug pattern="IT_NO_SUCH_ELEMENT"/>
+    </Match>
+
+    <!-- Things are initialized lazily -->
+    <Match>
+        <Package name="software.amazon.smithy.jsonschema"/>
+        <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+    </Match>
+    <Match>
+        <Package name="software.amazon.smithy.openapi"/>
+        <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+    </Match>
+</FindBugsFilter>

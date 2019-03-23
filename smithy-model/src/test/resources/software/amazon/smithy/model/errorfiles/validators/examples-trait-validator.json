@@ -1,0 +1,72 @@
+{
+    "smithy": "1.0",
+    "ns.foo": {
+        "shapes": {
+            "Operation": {
+                "type": "operation",
+                "readonly": true,
+                "input": "OperationInput",
+                "output": "OperationOutput",
+                "examples": [
+                    {
+                        "title": "Testing 1",
+                        "input": {
+                            "foo": "value1"
+                        },
+                        "output": {
+                            "bam": "value2"
+                        }
+                    },
+                    {
+                        "title": "Testing 2",
+                        "input": {
+                            "baz": "baz"
+                        },
+                        "output": {
+                            "additional": "value"
+                        }
+                    }
+                ]
+            },
+            "OperationInput": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String",
+                        "required": true
+                    },
+                    "baz": {
+                        "target": "String"
+                    }
+                }
+            },
+            "OperationOutput": {
+                "type": "structure",
+                "members": {
+                    "bam": {
+                        "target": "String",
+                        "required": true
+                    }
+                }
+            },
+            "Operation2": {
+                "type": "operation",
+                "readonly": true,
+                "examples": [
+                    {
+                        "title": "Testing 3",
+                        "input": {
+                            "foo": "baz"
+                        },
+                        "output": {
+                            "foo": "baz"
+                        }
+                    }
+                ]
+            },
+            "String": {
+                "type": "string"
+            }
+        }
+    }
+}
