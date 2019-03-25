@@ -66,8 +66,8 @@ subprojects {
 
         // Reusable license copySpec
         val licenseSpec = copySpec {
-            from("${project.rootDir}/LICENSE.txt")
-            from("${project.rootDir}/NOTICE.txt")
+            from("${project.rootDir}/LICENSE")
+            from("${project.rootDir}/NOTICE")
         }
 
         // Set up tasks that build source and javadoc jars.
