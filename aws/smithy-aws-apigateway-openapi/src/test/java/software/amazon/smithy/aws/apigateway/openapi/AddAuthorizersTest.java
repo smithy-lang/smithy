@@ -43,10 +43,10 @@ public class AddAuthorizersTest {
         assertThat(sigV4.getExtension("x-amazon-apigateway-authtype").get(), equalTo(Node.from("awsSigV4")));
         var authorizer = sigV4.getExtension("x-amazon-apigateway-authorizer").get().expectObjectNode();
         assertThat(authorizer.getStringMember("type").get().getValue(), equalTo("request"));
-        assertThat(authorizer.getStringMember("uri").get().getValue(), equalTo("arn:foo:baz"));
-        assertThat(authorizer.getStringMember("credentials").get().getValue(), equalTo("arn:foo:bar"));
+        assertThat(authorizer.getStringMember("authorizerUri").get().getValue(), equalTo("arn:foo:baz"));
+        assertThat(authorizer.getStringMember("authorizerCredentials").get().getValue(), equalTo("arn:foo:bar"));
         assertThat(authorizer.getStringMember("identitySource").get().getValue(), equalTo("mapping.expression"));
         assertThat(authorizer.getStringMember("identityValidationExpression").get().getValue(), equalTo("[A-Z]+"));
-        assertThat(authorizer.getNumberMember("resultTtlInSeconds").get().getValue(), equalTo(100));
+        assertThat(authorizer.getNumberMember("authorizerResultTtlInSeconds").get().getValue(), equalTo(100));
     }
 }
