@@ -3,6 +3,7 @@ package software.amazon.smithy.openapi.fromsmithy;
 import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.AuthenticationTrait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.model.SecurityScheme;
 
@@ -25,11 +26,16 @@ public interface SecuritySchemeConverter {
      * Creates an OpenAPI security scheme.
      *
      * @param context Conversion context
+     * @param authTrait Authentication trait of the service.
+     * @param authScheme The matching authentication scheme being converted.
      * @return The generated security scheme
      *
      * @see <a href="https://swagger.io/specification/#securitySchemeObject">Security Scheme Object</a>
      */
-    SecurityScheme createSecurityScheme(Context context);
+    SecurityScheme createSecurityScheme(
+            Context context,
+            AuthenticationTrait authTrait,
+            AuthenticationTrait.AuthScheme authScheme);
 
     /**
      * Get the name that should be used for this security scheme throughout

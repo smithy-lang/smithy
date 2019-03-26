@@ -10,6 +10,7 @@ import software.amazon.smithy.openapi.fromsmithy.plugins.CheckForPrefixHeaders;
 import software.amazon.smithy.openapi.fromsmithy.plugins.RemoveUnusedComponentsPlugin;
 import software.amazon.smithy.openapi.fromsmithy.plugins.UnsupportedTraitsPlugin;
 import software.amazon.smithy.openapi.fromsmithy.protocols.AwsRestJsonProtocol;
+import software.amazon.smithy.openapi.fromsmithy.security.AmazonCognitoUserPools;
 import software.amazon.smithy.openapi.fromsmithy.security.AwsV4;
 import software.amazon.smithy.openapi.fromsmithy.security.HttpBasic;
 import software.amazon.smithy.openapi.fromsmithy.security.HttpBearer;
@@ -32,17 +33,22 @@ module software.amazon.smithy.openapi {
     uses SecuritySchemeConverter;
 
     provides OpenApiProtocol with AwsRestJsonProtocol;
+
     provides SchemaBuilderMapper with OpenApiJsonSchemaMapper;
+
     provides SmithyOpenApiPlugin with
             CheckForGreedyLabels,
             CheckForPrefixHeaders,
             RemoveUnusedComponentsPlugin,
             UnsupportedTraitsPlugin;
+
     provides SecuritySchemeConverter with
+            AmazonCognitoUserPools,
             AwsV4,
             HttpBasic,
             HttpDigest,
             HttpBearer,
             XApiKey;
+
     provides SmithyBuildPlugin with Smithy2OpenApi;
 }

@@ -1,0 +1,41 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "Operation1",
+        "responses": {
+          "200": {
+            "description": "Operation1 response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apigateway.cognito-user-pools": {
+        "type": "apiKey",
+        "description": "Amazon Cognito User Pools authentication",
+        "name": "Authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "cognito_user_pools",
+        "x-amazon-apigateway-authorizer": {
+          "type": "cognito_user_pools",
+          "providerARNs": [
+            "arn:foo:baz"
+          ]
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "apigateway.cognito-user-pools": [ ]
+    }
+  ]
+}

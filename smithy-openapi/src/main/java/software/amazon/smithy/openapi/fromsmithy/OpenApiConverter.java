@@ -47,6 +47,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.traits.AuthenticationTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
@@ -555,15 +556,18 @@ public final class OpenApiConverter {
             ComponentsObject.Builder components,
             SmithyOpenApiPlugin plugin
     ) {
-        for (var converter : context.getSecuritySchemeConverters()) {
-            var securityName = converter.getSecurityName(context);
-            var authName = converter.getAuthenticationSchemeName();
-            var createdScheme = converter.createSecurityScheme(context);
-            var scheme = plugin.updateSecurityScheme(context, authName, securityName, createdScheme);
-            if (scheme != null) {
-                components.putSecurityScheme(securityName, scheme);
+        context.getService().getTrait(AuthenticationTrait.class).ifPresentOrElse(trait -> {
+            for (var converter : context.getSecuritySchemeConverters()) {
+                var securityName = converter.getSecurityName(context);
+                var authName = converter.getAuthenticationSchemeName();
+                var authenticationScheme = trait.getAuthenticationSchemes().get(authName);
+                var createdScheme = converter.createSecurityScheme(context, trait, authenticationScheme);
+                var securityScheme = plugin.updateSecurityScheme(context, authName, securityName, createdScheme);
+                if (securityScheme != null) {
+                    components.putSecurityScheme(securityName, securityScheme);
+                }
             }
-        }
+        }, () -> LOGGER.warning("No authentication trait found on service while converting to OpenAPI"));
 
         // Add service-wide security requirements.
         var authIndex = context.getModel().getKnowledge(AuthenticationSchemeIndex.class);
