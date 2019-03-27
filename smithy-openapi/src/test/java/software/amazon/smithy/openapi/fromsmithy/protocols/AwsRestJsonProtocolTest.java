@@ -1,8 +1,5 @@
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -24,7 +21,7 @@ public class AwsRestJsonProtocolTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("adds-json-document-bodies.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 
     @Test
@@ -50,7 +47,7 @@ public class AwsRestJsonProtocolTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("adds-path-timestamp-format.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 
     @Test
@@ -63,7 +60,7 @@ public class AwsRestJsonProtocolTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("adds-query-timestamp-format.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 
     @Test
@@ -76,7 +73,7 @@ public class AwsRestJsonProtocolTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("adds-query-blob-format.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 
     @Test
@@ -89,7 +86,7 @@ public class AwsRestJsonProtocolTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("adds-header-timestamp-format.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 
     @Test
@@ -102,7 +99,7 @@ public class AwsRestJsonProtocolTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("adds-header-mediatype-format.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 
     @Test
@@ -115,6 +112,6 @@ public class AwsRestJsonProtocolTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("supports-payloads.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 }

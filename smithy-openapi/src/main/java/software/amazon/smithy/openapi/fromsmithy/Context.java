@@ -25,7 +25,6 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.openapi.OpenApiException;
-import software.amazon.smithy.openapi.model.OpenApi;
 
 /**
  * Smithy to OpenAPI conversion context object.
@@ -34,14 +33,12 @@ public final class Context {
     private final Model model;
     private final ServiceShape service;
     private final JsonSchemaConverter jsonSchemaConverter;
-    private final OpenApi.Builder openApiBuilder;
     private final String protocolName;
     private final ProtocolsTrait.Protocol protocol;
     private final SchemaDocument schemas;
     private final List<SecuritySchemeConverter> securitySchemeConverters;
 
     public Context(
-            OpenApi.Builder openApiBuilder,
             Model model,
             ServiceShape service,
             JsonSchemaConverter jsonSchemaConverter,
@@ -50,7 +47,6 @@ public final class Context {
             SchemaDocument schemas,
             List<SecuritySchemeConverter> securitySchemeConverters
     ) {
-        this.openApiBuilder = openApiBuilder;
         this.model = model;
         this.service = service;
         this.jsonSchemaConverter = jsonSchemaConverter;
@@ -58,15 +54,6 @@ public final class Context {
         this.protocol = protocol;
         this.schemas = schemas;
         this.securitySchemeConverters = securitySchemeConverters;
-    }
-
-    /**
-     * Gets the OpenAPI builder being created.
-     *
-     * @return Returns the OpenAPI builder.
-     */
-    public OpenApi.Builder getOpenApiBuilder() {
-        return openApiBuilder;
     }
 
     /**

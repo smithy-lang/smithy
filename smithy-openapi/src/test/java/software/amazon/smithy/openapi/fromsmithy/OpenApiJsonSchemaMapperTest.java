@@ -83,7 +83,7 @@ public class OpenApiJsonSchemaMapperTest {
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .convert(ShapeIndex.builder().addShape(string).build(), string);
 
-        assertThat(document.getRootSchema().getExtension("externalDocs").get(), equalTo(Node.from(link)));
+        Node.assertEquals(document.getRootSchema().getExtension("externalDocs").get(), Node.from(link));
     }
 
     @Test

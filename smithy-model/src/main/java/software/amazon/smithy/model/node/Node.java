@@ -294,6 +294,40 @@ public abstract class Node implements FromSourceLocation, ToNode {
     }
 
     /**
+     * Testing helper used to compare two Nodes for equivalence.
+     *
+     * <p>Compares two Node values and throws if they aren't equal. The
+     * thrown exception contains a message that shows the differences
+     * between the two Nodes as returned by {@link #diff(ToNode, ToNode)}.
+     *
+     * @param actual Node to use as the starting node.
+     * @param expected Node to compare against.
+     * @throws ExpectationNotMetException if the nodes are not equivalent.
+     */
+    public static void assertEquals(ToNode actual, ToNode expected) {
+        var actualNode = actual.toNode();
+        var expectedNode = expected.toNode();
+        if (!actualNode.equals(expectedNode)) {
+            throw new ExpectationNotMetException(String.format(
+                    "Actual node did not match expected Node.%nActual:%n%s%nExpected:%n%s%nDiff: %s",
+                    Node.prettyPrintJson(actualNode),
+                    Node.prettyPrintJson(expectedNode),
+                    String.join(System.lineSeparator(), diff(actualNode, expectedNode))), actualNode);
+        }
+    }
+
+    /**
+     * Computes the differences between two Nodes as a String.
+     *
+     * @param actual Node to use as the starting node.
+     * @param expected Node to compare against.
+     * @return Returns the differences as a String.
+     */
+    public static List<String> diff(ToNode actual, ToNode expected) {
+        return NodeDiff.diff(actual, expected);
+    }
+
+    /**
      * Gets the type of the node.
      *
      * @return Returns the node type.

@@ -22,6 +22,11 @@ public final class UnsupportedTraitsPlugin implements SmithyOpenApiPlugin {
             "inputEventStream", "outputEventStream", "eventPayload", "eventHeader", "streaming");
 
     @Override
+    public byte getOrder() {
+        return -128;
+    }
+
+    @Override
     public void before(Context context, OpenApi.Builder builder) {
         List<Pair<ShapeId, List<String>>> violations = context.getModel().getShapeIndex().shapes()
                 .map(shape -> new Pair<>(shape.getId(), TRAITS.stream()

@@ -25,6 +25,11 @@ public class CheckForPrefixHeaders implements SmithyOpenApiPlugin {
     private static final Logger LOGGER = Logger.getLogger(CheckForGreedyLabels.class.getName());
 
     @Override
+    public byte getOrder() {
+        return -128;
+    }
+
+    @Override
     public void before(Context context, OpenApi.Builder builder) {
         var httpBindings = context.getModel().getKnowledge(HttpBindingIndex.class);
         context.getModel().getShapeIndex().shapes(OperationShape.class).forEach(operation -> {

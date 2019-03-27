@@ -40,6 +40,7 @@ import software.amazon.smithy.model.knowledge.AuthenticationSchemeIndex;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -198,13 +199,42 @@ public final class OpenApiConverter {
     }
 
     /**
-     * Converts the given service shape to OpenAPI using the given model.
+     * Converts the given service shape to OpenAPI model using the given
+     * Smithy model.
      *
      * @param model Smithy model to convert.
      * @param serviceShapeId Service to convert.
      * @return Returns the converted model.
      */
     public OpenApi convert(Model model, ShapeId serviceShapeId) {
+        return convertWithEnvironment(createConversionEnvironment(model, serviceShapeId));
+    }
+
+    /**
+     * Converts the given service shape to a JSON/Node representation of an
+     * OpenAPI model using the given Smithy model.
+     *
+     * <p>The result of this method may differ from the result of calling
+     * {@link OpenApi#toNode()} because this method will pass the Node
+     * representation of the OpenAPI through the {@link SmithyOpenApiPlugin#updateNode}
+     * method of each registered {@link SmithyOpenApiPlugin}. This may cause
+     * the returned value to no longer be a valid OpenAPI model but still
+     * representative of the desired artifact (for example, an OpenAPI model
+     * used with Amazon CloudFormation might used intrinsic JSON functions or
+     * variable expressions that are replaced when synthesized).
+     *
+     * @param model Smithy model to convert.
+     * @param serviceShapeId Service to convert.
+     * @return Returns the converted model.
+     */
+    public ObjectNode convertToNode(Model model, ShapeId serviceShapeId) {
+        var environment = createConversionEnvironment(model, serviceShapeId);
+        var openApi = convertWithEnvironment(environment);
+        var node = openApi.toNode().expectObjectNode();
+        return environment.plugin.updateNode(environment.context, openApi, node);
+    }
+
+    private ConversionEnvironment createConversionEnvironment(Model model, ShapeId serviceShapeId) {
         setJsonSchemaDiscovery();
 
         // Update the JSON schema config with the settings from this class and
@@ -227,17 +257,42 @@ public final class OpenApiConverter {
 
         var protocolPair = resolveProtocol(service);
         var resolvedProtocolName = protocolPair.getLeft();
-        var protocolService = protocolPair.getRight().getLeft();
         var protocolInstance = protocolPair.getRight().getRight();
-        var openapi = OpenApi.builder().openapi(OpenApiConstants.VERSION).info(createInfo(service));
         var components = ComponentsObject.builder();
         var schemas = addSchemas(components, model.getShapeIndex(), service);
         var securitySchemeConverters = loadSecuritySchemes(model, protocolName, service);
         var context = new Context(
-                openapi, model, service, getJsonSchemaConverter(),
+                model, service, getJsonSchemaConverter(),
                 resolvedProtocolName, protocolInstance, schemas, securitySchemeConverters);
 
         var plugin = loadPlugins();
+        return new ConversionEnvironment(context, plugin, components);
+    }
+
+    private static final class ConversionEnvironment {
+        private final Context context;
+        private final SmithyOpenApiPlugin plugin;
+        private final ComponentsObject.Builder components;
+
+        private ConversionEnvironment(
+                Context context,
+                SmithyOpenApiPlugin plugin,
+                ComponentsObject.Builder components
+        ) {
+            this.context = context;
+            this.plugin = plugin;
+            this.components = components;
+        }
+    }
+
+    private OpenApi convertWithEnvironment(ConversionEnvironment environment) {
+        var service = environment.context.getService();
+        var context = environment.context;
+        var plugin = environment.plugin;
+        var protocolPair = resolveProtocol(service);
+        var protocolService = protocolPair.getRight().getLeft();
+        var openapi = OpenApi.builder().openapi(OpenApiConstants.VERSION).info(createInfo(service));
+
         plugin.before(context, openapi);
 
         // The externalDocumentation trait of the service maps to externalDocs.
@@ -246,13 +301,13 @@ public final class OpenApiConverter {
                         ExternalDocumentation.builder().url(trait.getValue()).build()));
 
         // Include @tags trait tags that are compatible with OpenAPI settings.
-        if (config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_TAGS)) {
+        if (environment.context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_TAGS)) {
             getSupportedTags(service).forEach(tag -> openapi.addTag(TagObject.builder().name(tag).build()));
         }
 
-        addPaths(context, protocolService, plugin);
-        addSecurityComponents(context, components, plugin);
-        openapi.components(components.build());
+        addPaths(context, openapi, protocolService, plugin);
+        addSecurityComponents(context, openapi, environment.components, plugin);
+        openapi.components(environment.components.build());
 
         return plugin.after(context, openapi.build());
     }
@@ -390,7 +445,12 @@ public final class OpenApiConverter {
         return document;
     }
 
-    private void addPaths(Context context, OpenApiProtocol protocolService, SmithyOpenApiPlugin plugin) {
+    private void addPaths(
+            Context context,
+            OpenApi.Builder openApiBuilder,
+            OpenApiProtocol protocolService,
+            SmithyOpenApiPlugin plugin
+    ) {
         var topDownIndex = context.getModel().getKnowledge(TopDownIndex.class);
         Map<String, PathItem.Builder> paths = new HashMap<>();
 
@@ -451,7 +511,7 @@ public final class OpenApiConverter {
             var pathName = entry.getKey();
             // Enact the plugin infrastructure to update the PathItem if necessary.
             var pathItem = plugin.updatePathItem(context, entry.getValue().build());
-            context.getOpenApiBuilder().putPath(pathName, pathItem);
+            openApiBuilder.putPath(pathName, pathItem);
         }
     }
 
@@ -553,6 +613,7 @@ public final class OpenApiConverter {
 
     private void addSecurityComponents(
             Context context,
+            OpenApi.Builder openApiBuilder,
             ComponentsObject.Builder components,
             SmithyOpenApiPlugin plugin
     ) {
@@ -574,7 +635,7 @@ public final class OpenApiConverter {
         var schemes = authIndex.getDefaultServiceSchemes(context.getService());
         for (var converter : findMatchingConverters(context, schemes)) {
             var result = converter.createSecurityRequirements(context, context.getService());
-            context.getOpenApiBuilder().addSecurity(Map.of(converter.getSecurityName(context), result));
+            openApiBuilder.addSecurity(Map.of(converter.getSecurityName(context), result));
         }
     }
 
