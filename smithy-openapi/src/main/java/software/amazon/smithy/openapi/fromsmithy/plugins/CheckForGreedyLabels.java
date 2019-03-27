@@ -17,6 +17,11 @@ public class CheckForGreedyLabels implements SmithyOpenApiPlugin {
     private static final Logger LOGGER = Logger.getLogger(CheckForGreedyLabels.class.getName());
 
     @Override
+    public byte getOrder() {
+        return -128;
+    }
+
+    @Override
     public OpenApi after(Context context, OpenApi openApi) {
         var forbid = context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.FORBID_GREEDY_LABELS);
 

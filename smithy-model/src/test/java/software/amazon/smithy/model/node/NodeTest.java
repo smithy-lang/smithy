@@ -186,4 +186,19 @@ public class NodeTest {
 
         assertThat(result.getType(), is(NodeType.OBJECT));
     }
+
+    @Test
+    public void ensuresNodesAreEqual() {
+        var node = Node.from(true);
+
+        Node.assertEquals(node, node);
+    }
+
+    @Test
+    public void throwsWhenNodesArentEqual() {
+        var a = Node.objectNodeBuilder().withMember("foo", "bar").withMember("baz", true).build();
+        var b = Node.objectNodeBuilder().withMember("foo", "bar").withMember("baz", false).build();
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> Node.assertEquals(a, b));
+    }
 }

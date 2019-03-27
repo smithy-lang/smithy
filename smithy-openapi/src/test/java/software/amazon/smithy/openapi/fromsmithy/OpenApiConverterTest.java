@@ -18,7 +18,6 @@ package software.amazon.smithy.openapi.fromsmithy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 import java.util.Optional;
@@ -44,7 +43,7 @@ public class OpenApiConverterTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("test-service.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 
     @Test
@@ -60,7 +59,7 @@ public class OpenApiConverterTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("tagged-service.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 
     @Test
@@ -116,7 +115,7 @@ public class OpenApiConverterTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("unsupported-http-method.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 
     @Test
@@ -174,6 +173,6 @@ public class OpenApiConverterTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("mixed-security-service.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 }

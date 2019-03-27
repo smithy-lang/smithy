@@ -27,6 +27,11 @@ public class RemoveUnusedComponentsPlugin implements SmithyOpenApiPlugin {
     private static final Logger LOGGER = Logger.getLogger(RemoveUnusedComponentsPlugin.class.getName());
 
     @Override
+    public byte getOrder() {
+        return 64;
+    }
+
+    @Override
     public OpenApi after(Context context, OpenApi openapi) {
         if (context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.OPENAPI_KEEP_UNUSED_COMPONENTS)) {
             return openapi;

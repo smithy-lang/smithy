@@ -22,7 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConstants;
 
 /**
- * Converts Smithy to an OpenAPI model.
+ * Converts Smithy to an OpenAPI model and saves it as a JSON file.
  *
  * <p>This plugin requires a setting named "service" that is the
  * Shape ID of the Smithy service shape to convert to OpenAPI.
@@ -49,7 +49,7 @@ public final class Smithy2OpenApi implements SmithyBuildPlugin {
                 .expectStringNode("`" + OpenApiConstants.SERVICE + "` must be a string value")
                 .getValue());
 
-        var openApi = converter.convert(context.getModel(), shapeId);
-        context.getFileManifest().writeJson(shapeId.getName() + ".openapi.json", openApi.toNode());
+        var openApiNode = converter.convertToNode(context.getModel(), shapeId);
+        context.getFileManifest().writeJson(shapeId.getName() + ".openapi.json", openApiNode);
     }
 }

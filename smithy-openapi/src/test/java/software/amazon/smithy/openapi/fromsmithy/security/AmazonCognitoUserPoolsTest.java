@@ -1,8 +1,5 @@
 package software.amazon.smithy.openapi.fromsmithy.security;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -23,7 +20,7 @@ public class AmazonCognitoUserPoolsTest {
         var expectedNode = Node.parse(LoaderUtils.readInputStream(
                 getClass().getResourceAsStream("cognito-user-pools-security.openapi.json"), "UTF-8"));
 
-        assertThat(result.toNode(), equalTo(expectedNode));
+        Node.assertEquals(result, expectedNode);
     }
 
     @Test
