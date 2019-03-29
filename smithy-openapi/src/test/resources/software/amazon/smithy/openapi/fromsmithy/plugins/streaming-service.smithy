@@ -7,9 +7,10 @@ service Streaming {
 }
 
 @http(method: GET, uri: "/")
-operation StreamingOperation(Input)
+@readonly
+operation StreamingOperation() -> Output
 
-structure Input {
+structure Output {
   @httpPayload
   body: StreamingPayload,
 }

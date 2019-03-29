@@ -1,12 +1,5 @@
 {
     "smithy": "1.0",
-    "metadata": {
-        "smithy.validators": [
-            {
-                "name": "HttpResponseCodeSemantics"
-            }
-        ]
-    },
     "ns.foo": {
         "shapes": {
             "A": {

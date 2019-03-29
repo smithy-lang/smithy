@@ -33,7 +33,7 @@
                 "readonly": true,
                 "http": {
                     "method": "GET",
-                    "uri": "\/A\/{foo}",
+                    "uri": "/A/{foo}",
                     "code": 200
                 }
             },
@@ -44,7 +44,7 @@
                 "output": "BOutput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/b\/{d}",
+                    "uri": "/b/{d}",
                     "code": 200
                 }
             },
@@ -56,12 +56,12 @@
             },
             "C": {
                 "type": "operation",
-                "readonly": true,
+                "idempotent": true,
                 "input": "CInput",
                 "output": "COutput",
                 "http": {
-                    "method": "GET",
-                    "uri": "\/c\/{a}",
+                    "method": "PUT",
+                    "uri": "/c/{a}",
                     "code": 200
                 }
             },
@@ -131,7 +131,7 @@
                 "output": "DOutput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/d",
+                    "uri": "/d",
                     "code": 200
                 }
             },
@@ -183,7 +183,7 @@
                 "input": "EInput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/e\/{label1}\/{label2}"
+                    "uri": "/e/{label1}/{label2}"
                 }
             },
             "EInput": {
@@ -203,12 +203,12 @@
             },
             "F": {
                 "type": "operation",
-                "readonly": true,
+                "idempotent": true,
                 "input": "FInputOutput",
                 "output": "FInputOutput",
                 "http": {
-                    "method": "GET",
-                    "uri": "\/f",
+                    "method": "PUT",
+                    "uri": "/f",
                     "code": 204
                 }
             },
@@ -227,7 +227,7 @@
                 "output": "GOutput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/g\/{a}",
+                    "uri": "/g/{a}",
                     "code": 200
                 }
             },
@@ -270,7 +270,7 @@
                 "input": "HInput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/g"
+                    "uri": "/g"
                 }
             },
             "HInput": {
@@ -288,7 +288,7 @@
                 "input": "JInput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/j"
+                    "uri": "/j"
                 }
             },
             "JInput": {
@@ -310,7 +310,7 @@
                 "input": "KInput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/k"
+                    "uri": "/k"
                 }
             },
             "KInput": {
@@ -339,16 +339,16 @@
                 "readonly": true,
                 "http": {
                     "method": "GET",
-                    "uri": "\/k"
+                    "uri": "/k"
                 }
             },
             "M": {
                 "type": "operation",
-                "readonly": true,
+                "idempotent": true,
                 "input": "MInput",
                 "http": {
-                    "method": "GET",
-                    "uri": "\/m"
+                    "method": "PUT",
+                    "uri": "/m"
                 }
             },
             "MInput": {
@@ -366,7 +366,7 @@
                 "input": "NInput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/n"
+                    "uri": "/n"
                 }
             },
             "NInput": {
@@ -385,7 +385,7 @@
                 "input": "OInput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/o\/{a}"
+                    "uri": "/o/{a}"
                 }
             },
             "OInput": {
@@ -403,7 +403,7 @@
                 "input": "PInput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/p\/{a+}"
+                    "uri": "/p/{a+}"
                 }
             },
             "PInput": {
@@ -422,7 +422,7 @@
                 "input": "QInput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/q"
+                    "uri": "/q"
                 }
             },
             "QInput": {
@@ -440,7 +440,7 @@
                 "input": "RInput",
                 "http": {
                     "method": "GET",
-                    "uri": "\/r"
+                    "uri": "/r"
                 }
             },
             "RInput": {

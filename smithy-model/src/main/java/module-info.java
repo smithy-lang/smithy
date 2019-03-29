@@ -86,9 +86,11 @@ import software.amazon.smithy.model.validation.builtins.HostLabelTraitValidator;
 import software.amazon.smithy.model.validation.builtins.HttpBindingsMissingValidator;
 import software.amazon.smithy.model.validation.builtins.HttpHeaderTraitValidator;
 import software.amazon.smithy.model.validation.builtins.HttpLabelTraitValidator;
+import software.amazon.smithy.model.validation.builtins.HttpMethodSemanticsValidator;
 import software.amazon.smithy.model.validation.builtins.HttpPayloadValidator;
 import software.amazon.smithy.model.validation.builtins.HttpPrefixHeadersTraitValidator;
 import software.amazon.smithy.model.validation.builtins.HttpQueryTraitValidator;
+import software.amazon.smithy.model.validation.builtins.HttpResponseCodeSemanticsValidator;
 import software.amazon.smithy.model.validation.builtins.HttpUriConflictValidator;
 import software.amazon.smithy.model.validation.builtins.PaginatedTraitValidator;
 import software.amazon.smithy.model.validation.builtins.PrivateAccessValidator;
@@ -203,9 +205,11 @@ module software.amazon.smithy.model {
             HttpBindingsMissingValidator,
             HttpHeaderTraitValidator,
             HttpLabelTraitValidator,
+            HttpMethodSemanticsValidator,
             HttpPayloadValidator,
             HttpPrefixHeadersTraitValidator,
             HttpQueryTraitValidator,
+            HttpResponseCodeSemanticsValidator,
             HttpUriConflictValidator,
             PaginatedTraitValidator,
             PrivateAccessValidator,

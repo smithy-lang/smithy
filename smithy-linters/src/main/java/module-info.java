@@ -18,8 +18,6 @@ import software.smithy.linters.AbbreviationNameValidator;
 import software.smithy.linters.CamelCaseValidator;
 import software.smithy.linters.EmitEachSelectorValidator;
 import software.smithy.linters.EmitNoneSelectorValidator;
-import software.smithy.linters.HttpMethodSemanticsValidator;
-import software.smithy.linters.HttpResponseCodeSemanticsValidator;
 import software.smithy.linters.InputOutputStructureReuseValidator;
 import software.smithy.linters.MissingPaginatedTraitValidator;
 import software.smithy.linters.ReservedWordsValidator;
@@ -40,8 +38,6 @@ module software.amazon.smithy.linters {
             CamelCaseValidator,
             EmitEachSelectorValidator,
             EmitNoneSelectorValidator,
-            HttpMethodSemanticsValidator,
-            HttpResponseCodeSemanticsValidator,
             InputOutputStructureReuseValidator,
             MissingPaginatedTraitValidator,
             ReservedWordsValidator,

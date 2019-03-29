@@ -1,12 +1,5 @@
 {
     "smithy": "1.0",
-    "metadata": {
-        "smithy.validators": [
-            {
-                "name": "HttpMethodSemantics"
-            }
-        ]
-    },
     "ns.foo": {
         "shapes": {
             "A": {
@@ -83,6 +76,47 @@
                 "http": {
                     "method": "POST",
                     "uri": "/J"
+                }
+            },
+            "K": {
+                "type": "operation",
+                "readonly": true,
+                "http": {
+                    "method": "GET",
+                    "uri": "/K"
+                },
+                "input": "KInput"
+            },
+            "KInput": {
+                "type": "structure",
+                "members": {
+                    "payload": {
+                        "target": "String",
+                        "required": true,
+                        "httpPayload": true
+                    }
+                }
+            },
+            "L": {
+                "type": "operation",
+                "readonly": true,
+                "http": {
+                    "method": "GET",
+                    "uri": "/L"
+                },
+                "input": "LInput"
+            },
+            "LInput": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "target": "String",
+                        "httpHeader": "X-Foo"
+                    },
+                    "payload": {
+                        "target": "String",
+                        "required": true
+                    }
                 }
             }
         }
