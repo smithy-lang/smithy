@@ -42,11 +42,11 @@ import software.amazon.smithy.model.node.StringNode;
  *
  * <p>and the following Node value:
  *
- * <p>{@code {"hello": "FOO", "baz": "test": "do not replace FOO"}},
+ * <p>{@code {"hello": "FOO", "baz": "do not replace FOO"}},
  *
  * <p>the resulting Node will become:
  *
- * <p>{@code {"hello": {"bar: "baz"}, "baz": "test": "do not replace FOO"}}.
+ * <p>{@code {"hello": {"bar: "baz"}, "baz": "do not replace FOO"}}.
  *
  * <p>Notice that "do not replace FOO" was not modified because the entire
  * string did not literally match the string "FOO".
