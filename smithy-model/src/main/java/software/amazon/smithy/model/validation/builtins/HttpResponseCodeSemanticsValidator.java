@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.smithy.linters;
+package software.amazon.smithy.model.validation.builtins;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +30,11 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.model.validation.ValidatorService;
 
 /**
  * Ensures that HTTP response codes are appropriate for operations and errors.
  */
-public class HttpResponseCodeSemanticsValidator extends AbstractValidator {
-
-    public static ValidatorService provider() {
-        return ValidatorService.createSimpleProvider(
-                HttpResponseCodeSemanticsValidator.class, HttpResponseCodeSemanticsValidator::new);
-    }
+public final class HttpResponseCodeSemanticsValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
