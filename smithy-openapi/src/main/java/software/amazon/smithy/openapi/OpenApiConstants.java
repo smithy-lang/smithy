@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.openapi;
 
+import software.amazon.smithy.build.JsonSubstitutions;
 import software.amazon.smithy.model.node.ArrayNode;
 
 public final class OpenApiConstants {
@@ -108,6 +109,19 @@ public final class OpenApiConstants {
      * of the Smithy authentication scheme is used.
      */
     public static final String SECURITY_NAME_PREFIX = "openapi.security.name.";
+
+    /**
+     * Defines a map of String to any Node value to find and replace in the
+     * generated OpenAPI model.
+     *
+     * <p>String values are replaced if the string in its entirety matches
+     * one of the keys provided in the {@code openapi.substitutions} map. The
+     * corresponding value is then substituted for the string-- this could even
+     * result in a string changing into an object, array, etc.
+     *
+     * @see JsonSubstitutions
+     */
+    public static final String SUBSTITUTIONS = "openapi.substitutions";
 
     private OpenApiConstants() {}
 }

@@ -7,6 +7,7 @@ import software.amazon.smithy.openapi.fromsmithy.Smithy2OpenApi;
 import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
 import software.amazon.smithy.openapi.fromsmithy.plugins.CheckForGreedyLabels;
 import software.amazon.smithy.openapi.fromsmithy.plugins.CheckForPrefixHeaders;
+import software.amazon.smithy.openapi.fromsmithy.plugins.JsonSubstitutionsPlugin;
 import software.amazon.smithy.openapi.fromsmithy.plugins.RemoveUnusedComponentsPlugin;
 import software.amazon.smithy.openapi.fromsmithy.plugins.UnsupportedTraitsPlugin;
 import software.amazon.smithy.openapi.fromsmithy.protocols.AwsRestJsonProtocol;
@@ -39,6 +40,7 @@ module software.amazon.smithy.openapi {
     provides SmithyOpenApiPlugin with
             CheckForGreedyLabels,
             CheckForPrefixHeaders,
+            JsonSubstitutionsPlugin,
             RemoveUnusedComponentsPlugin,
             UnsupportedTraitsPlugin;
 
