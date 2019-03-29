@@ -17,6 +17,7 @@ import software.amazon.smithy.aws.apigateway.openapi.AddApiKeySource;
 import software.amazon.smithy.aws.apigateway.openapi.AddAuthorizers;
 import software.amazon.smithy.aws.apigateway.openapi.AddBinaryTypes;
 import software.amazon.smithy.aws.apigateway.openapi.AddRequestValidators;
+import software.amazon.smithy.aws.apigateway.openapi.CloudFormationSubstitution;
 import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
 
 module software.amazon.smithy.aws.apigateway.openapi {
@@ -29,5 +30,6 @@ module software.amazon.smithy.aws.apigateway.openapi {
             AddAuthorizers,
             AddRequestValidators,
             AddBinaryTypes,
-            AddApiKeySource;
+            AddApiKeySource,
+            CloudFormationSubstitution;
 }

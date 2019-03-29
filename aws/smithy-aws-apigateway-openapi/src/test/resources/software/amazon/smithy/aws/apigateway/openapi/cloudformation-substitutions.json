@@ -1,0 +1,32 @@
+{
+  "smithy": "1.0",
+  "example.smithy": {
+    "shapes": {
+      "MyService": {
+        "type": "service",
+        "version": "2006-03-01",
+        "protocols": {
+          "aws.rest-json": {
+          }
+        },
+        "authentication": {
+          "apigateway.cognito-user-pools": {
+            "settings": {
+              "providerARNs": "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/user_pool_id,arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/other_user_pool_id"
+            }
+          }
+        },
+        "operations": [
+          "MyOperation"
+        ]
+      },
+      "MyOperation": {
+        "type": "operation",
+        "http": {
+          "uri": "/foo",
+          "method": "GET"
+        }
+      }
+    }
+  }
+}
