@@ -1,6 +1,5 @@
 package software.amazon.smithy.openapi.fromsmithy.security;
 
-import software.amazon.smithy.model.traits.AuthenticationTrait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
@@ -10,16 +9,12 @@ import software.amazon.smithy.openapi.model.SecurityScheme;
  */
 public final class HttpBasic implements SecuritySchemeConverter {
     @Override
-    public String getAuthenticationSchemeName() {
+    public String getAuthSchemeName() {
         return "http-basic";
     }
 
     @Override
-    public SecurityScheme createSecurityScheme(
-            Context context,
-            AuthenticationTrait authTrait,
-            AuthenticationTrait.AuthScheme authScheme
-    ) {
+    public SecurityScheme createSecurityScheme(Context context) {
         return SecurityScheme.builder()
                 .type("http")
                 .scheme("Basic")

@@ -1,4 +1,4 @@
-package software.amazon.smithy.openapi.fromsmithy.security;
+package software.amazon.smithy.aws.apigateway.openapi;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,10 +9,11 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 
-public class AmazonCognitoUserPoolsTest {
+public class CognitoUserPoolsConverterTest {
     @Test
     public void addsAwsV4() {
-        Model model = Model.assembler()
+        Model model = Model.assembler(getClass().getClassLoader())
+                .discoverModels(getClass().getClassLoader())
                 .addImport(getClass().getResource("cognito-user-pools-security.json"))
                 .assemble()
                 .unwrap();
@@ -26,13 +27,14 @@ public class AmazonCognitoUserPoolsTest {
     @Test
     public void requiresProviderArns() {
         var thrown = Assertions.assertThrows(OpenApiException.class, () -> {
-            Model model = Model.assembler()
+            Model model = Model.assembler(getClass().getClassLoader())
+                    .discoverModels(getClass().getClassLoader())
                     .addImport(getClass().getResource("invalid-cognito-user-pools-security.json"))
                     .assemble()
                     .unwrap();
             OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
         });
 
-        Assertions.assertTrue(thrown.getMessage().contains("providerARNs"));
+        Assertions.assertTrue(thrown.getMessage().contains("Missing required"));
     }
 }

@@ -17,6 +17,7 @@ import software.amazon.smithy.aws.traits.ArnReferenceTrait;
 import software.amazon.smithy.aws.traits.ArnTemplateValidator;
 import software.amazon.smithy.aws.traits.ArnTrait;
 import software.amazon.smithy.aws.traits.AwsModelDiscovery;
+import software.amazon.smithy.aws.traits.CognitoUserPoolsProviderArnsTrait;
 import software.amazon.smithy.aws.traits.DataTrait;
 import software.amazon.smithy.aws.traits.SdkServiceIdValidator;
 import software.amazon.smithy.aws.traits.ServiceTrait;
@@ -61,6 +62,7 @@ module software.amazon.smithy.aws.traits {
             ArnReferenceTrait,
             ArnTrait,
             ConditionKeysTrait,
+            CognitoUserPoolsProviderArnsTrait,
             DataTrait,
             DefineConditionKeysTrait,
             InferConditionKeysTrait,

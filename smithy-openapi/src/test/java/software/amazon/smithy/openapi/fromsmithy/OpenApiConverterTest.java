@@ -73,7 +73,7 @@ public class OpenApiConverterTest {
                     .convert(model, ShapeId.from("smithy.example#Service"));
         });
 
-        assertThat(thrown.getMessage(), containsString("protocol trait"));
+        assertThat(thrown.getMessage(), containsString("`protocols` trait"));
     }
 
     @Test

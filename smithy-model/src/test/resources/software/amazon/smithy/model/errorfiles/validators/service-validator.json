@@ -5,14 +5,7 @@
             "InvalidServiceWithDuplicateNames": {
                 "type": "service",
                 "version": "XYZ",
-                "protocols": {
-                    "a": {
-                    }
-                },
-                "authentication": {
-                    "b": {
-                    }
-                },
+                "protocols": [{"name": "a", "auth": ["b"]}],
                 "resources": [
                     "ResourceA",
                     "ns.baz#ResourceA"
@@ -124,57 +117,22 @@
             "InvalidService1": {
                 "type": "service",
                 "version": "XYZ",
-                "protocols": {
-                    "1": {
-                    },
-                    "_": {
-                    },
-                    "a.$": {
-                    },
-                    "a.B": {
-                    },
-                    "a.-+-.": {
-                    },
-                    "abc": {
-                    },
-                    "skip.me.too-1.1": {
-                    },
-                    "skip.me.too-1.1++": {
-                    },
-                    "foo": {
-                        "authentication": ["abc", "def"]
-                    }
-                },
-                "authentication": {
-                    "1": {
-                    },
-                    "_": {
-                    },
-                    "a.$": {
-                    },
-                    "a.B": {
-                    },
-                    "a.-+-.": {
-                    },
-                    "abc": {
-                    },
-                    "skip.me.too-1.1": {
-                    },
-                    "skip.me.too-1.1++": {
-                    },
-                    "baz": {
-                        "q": 0.5
-                    }
-                }
+                "protocols": [
+                    {"name": "1"},
+                    {"name": "-"},
+                    {"name": "a.$"},
+                    {"name": "a.B"},
+                    {"name": "a.-+-."},
+                    {"name": "abc"},
+                    {"name": "skip.me.too-1.1"},
+                    {"name": "skip.me.too-1.1++"},
+                    {"name": "foo", "auth": ["abc", "def"]}
+                ]
             },
             "InvalidService2": {
                 "type": "service",
                 "version": "XYZ",
-                "protocols": {
-                    "foo": {
-                        "authentication": ["bar"]
-                    }
-                }
+                "protocols": [{"name": "foo", "auth": ["bar"]}]
             }
         }
     }

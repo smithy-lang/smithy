@@ -538,7 +538,7 @@ Various HTTP headers are not allowed for the ``httpHeader`` and
     * - Max-Forwards
       - This is controlled at a lower level by the HTTP client.
     * - Proxy-Authenticate
-      - Use the :ref:`authentication-trait` of a service.
+      - Use the :ref:`protocols-trait` of a service.
     * - Server
       - The Server header is controlled by the HTTP server, not the model.
     * - TE
@@ -552,7 +552,7 @@ Various HTTP headers are not allowed for the ``httpHeader`` and
     * - User-Agent
       - Setting a User-Agent is the responsibility of an HTTP client.
     * - WWW-Authenticate
-      - Use the :ref:`authentication-trait` of a service.
+      - Use the :ref:`protocols-trait` of a service.
     * - X-Forwarded-For
       - X-Forwarded-For is an implementation detail of HTTP that does not
         need to be modeled.

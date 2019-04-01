@@ -4,10 +4,7 @@
         "shapes": {
             "MyService": {
                 "type": "service",
-                "protocols": {
-                    "foo": {
-                    }
-                },
+                "protocols": [{"name": "foo"}],
                 "version": "2017-01-19"
             },
             "Exclude1": {

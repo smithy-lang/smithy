@@ -5,10 +5,7 @@
       "RestService": {
         "type": "service",
         "version": "2006-03-01",
-        "protocols": {
-          "smithy.example": {
-          }
-        },
+        "protocols": [{"name": "smithy.example"}],
         "operations": [
           "CreateDocument",
           "PutPayload"

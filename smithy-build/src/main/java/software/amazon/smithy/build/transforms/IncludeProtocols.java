@@ -38,20 +38,18 @@ public final class IncludeProtocols implements ProjectionTransformer {
     @Override
     public BiFunction<ModelTransformer, Model, Model> createTransformer(List<String> arguments) {
         Set<String> includeNames = new HashSet<>(arguments);
-        return (transformer, model) -> transformer.mapShapes(
-                model,
-                shape -> shape.getTrait(ProtocolsTrait.class)
-                        .map(protocols -> {
-                            Set<String> names = getSchemeNameIntersection(protocols, includeNames);
-                            return names.size() == protocols.getProtocols().size()
-                                    ? shape
-                                    : updateTrait(shape, protocols, includeNames);
-                        })
-                        .orElse(shape));
+        return (transformer, model) -> transformer.mapShapes(model, shape -> shape.getTrait(ProtocolsTrait.class)
+                .map(protocols -> {
+                    Set<String> names = getSchemeNameIntersection(protocols, includeNames);
+                    return names.size() == protocols.getProtocols().size()
+                            ? shape
+                            : updateTrait(shape, protocols, includeNames);
+                })
+                .orElse(shape));
     }
 
     private static Set<String> getSchemeNameIntersection(ProtocolsTrait protocols, Set<String> includeNames) {
-        Set<String> names = protocols.getProtocols().keySet();
+        Set<String> names = new HashSet<>(protocols.getProtocolNames());
         names.retainAll(includeNames);
         return names;
     }
@@ -59,9 +57,9 @@ public final class IncludeProtocols implements ProjectionTransformer {
     private static Shape updateTrait(Shape shape, ProtocolsTrait trait, Set<String> names) {
         ProtocolsTrait.Builder builder = ProtocolsTrait.builder();
         builder.clearProtocols();
-        trait.getProtocols().entrySet().stream()
-                .filter(e -> names.contains(e.getKey()))
-                .forEach(entry -> builder.putProtocol(entry.getKey(), entry.getValue()));
+        trait.getProtocols().stream()
+                .filter(protocol -> names.contains(protocol.getName()))
+                .forEach(builder::addProtocol);
         return Shape.shapeToBuilder(shape).addTrait(builder.build()).build();
     }
 }

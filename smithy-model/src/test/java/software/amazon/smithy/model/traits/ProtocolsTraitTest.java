@@ -16,16 +16,13 @@
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -35,16 +32,14 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public class ProtocolsTraitTest {
     @Test
     public void loadsTraits() {
-        Node node = Node.objectNode()
-                .withMember("foo", Node.objectNode())
-                .withMember("baz", Node.objectNode()
-                        .withMember("deprecated", Node.from(true))
-                        .withMember("deprecationReason", Node.from("Just because"))
-                        .withMember("tags", ArrayNode.fromStrings(Arrays.asList("foo", "bar", "baz")))
-                        .withMember("settings", Node.objectNode()
-                                           .withMember("test.property", Node.from("abc"))
-                                           .withMember("ns.name", Node.from("def")))
-                        .withMember("authentication", ArrayNode.fromStrings(Arrays.asList("abc", "def"))));
+        Node node = Node.arrayNode()
+                .withValue(Node.objectNode()
+                        .withMember("name", Node.from("foo"))
+                        .withMember("auth", ArrayNode.fromStrings(List.of("foo"))))
+                .withValue(Node.objectNode()
+                        .withMember("name", Node.from("baz"))
+                        .withMember("tags", ArrayNode.fromStrings(List.of("foo", "bar", "baz")))
+                        .withMember("auth", ArrayNode.fromStrings(List.of("abc", "def"))));
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait("smithy.api#protocols", ShapeId.from("ns.qux#foo"), node);
 
@@ -53,18 +48,8 @@ public class ProtocolsTraitTest {
         ProtocolsTrait protocolsTrait = (ProtocolsTrait) trait.get();
         assertEquals(protocolsTrait.getProtocols().size(), 2);
 
-        Iterator<Map.Entry<String, ProtocolsTrait.Protocol>> iter = protocolsTrait.getProtocols()
-                .entrySet().iterator();
-        Map.Entry<String, ProtocolsTrait.Protocol> entry = iter.next();
-        assertThat(entry.getKey(), equalTo("foo"));
-
-        entry = iter.next();
-        assertThat(entry.getKey(), equalTo("baz"));
-
-        assertThat(entry.getValue().getAllSettings(), hasKey("test.property"));
-        assertThat(entry.getValue().getAllSettings(), hasKey("ns.name"));
-
-        assertThat(entry.getValue().getAuthentication(), contains("abc", "def"));
+        assertTrue(protocolsTrait.getProtocol("foo").isPresent());
+        assertThat(protocolsTrait.getAllAuthSchemes(), containsInAnyOrder("abc", "def", "foo"));
 
         assertThat(protocolsTrait.toNode(), equalTo(node));
         assertThat(protocolsTrait.toBuilder().build(), equalTo(protocolsTrait));

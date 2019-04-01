@@ -5,7 +5,7 @@
       "SomeService": {
         "type": "service",
         "version": "2018-03-17",
-        "authentication": {"aws.v4": {}},
+        "protocols": [{"name": "aws.rest-json", "auth": ["aws.v4"]}],
         "aws.apigateway#authorizers": {
           "invalid": {
             "clientType": "awsSigV4",

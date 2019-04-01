@@ -15,14 +15,14 @@
 
 package software.amazon.smithy.build.transforms;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-
 import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
@@ -33,8 +33,8 @@ public class IncludeProtocolsTest {
         ServiceShape service = ServiceShape.builder()
                 .version("1")
                 .addTrait(ProtocolsTrait.builder()
-                        .putProtocol("foo", ProtocolsTrait.Protocol.builder().build())
-                        .putProtocol("qux", ProtocolsTrait.Protocol.builder().build()).build())
+                        .addProtocol(Protocol.builder().name("foo").build())
+                        .addProtocol(Protocol.builder().name("qux").build()).build())
                 .id("ns.foo#baz")
                 .build();
         ShapeIndex index = ShapeIndex.builder().addShape(service).build();
@@ -44,6 +44,6 @@ public class IncludeProtocolsTest {
                 .apply(ModelTransformer.create(), model);
         ServiceShape shape = result.getShapeIndex().getShape(service.getId()).get().asServiceShape().get();
 
-        assertThat(shape.getTrait(ProtocolsTrait.class).get().getProtocols().keySet(), contains("qux"));
+        Assertions.assertEquals(shape.getTrait(ProtocolsTrait.class).get().getProtocolNames(), List.of("qux"));
     }
 }

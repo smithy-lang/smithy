@@ -6,7 +6,7 @@
         "type": "service",
         "version": "2006-03-01",
         "tags": ["foo"],
-        "protocols": {"aws.rest-json": {}},
+        "protocols": [{"name": "aws.rest-json"}],
         "operations": ["Patch", "Post", "Put", "Head", "Trace", "Options", "Get", "Delete", "LoremIpsum"]
       },
       "Patch": {

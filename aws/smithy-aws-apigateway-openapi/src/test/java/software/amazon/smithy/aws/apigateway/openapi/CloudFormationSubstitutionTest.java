@@ -27,6 +27,7 @@ public class CloudFormationSubstitutionTest {
     @Test
     public void performsSubstitutionsByDefault() {
         Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
                 .addImport(getClass().getResource("cloudformation-substitutions.json"))
                 .assemble()
                 .unwrap();
@@ -45,6 +46,7 @@ public class CloudFormationSubstitutionTest {
     @Test
     public void pluginCanBeDisabled() {
         Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
                 .addImport(getClass().getResource("cloudformation-substitutions.json"))
                 .assemble()
                 .unwrap();

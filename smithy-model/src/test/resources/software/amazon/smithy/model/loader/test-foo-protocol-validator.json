@@ -9,11 +9,6 @@
                     {
                         "name": "example.foo"
                     }
-                ],
-                "authentication": [
-                    {
-                        "name": "example.baz"
-                    }
                 ]
             },
             "OtherService": {
@@ -22,11 +17,6 @@
                 "protocols": [
                     {
                         "name": "example.foo"
-                    }
-                ],
-                "authentication": [
-                    {
-                        "name": "example.baz"
                     }
                 ]
             }

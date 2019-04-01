@@ -1,6 +1,6 @@
 namespace aws.iotjobs
 
-@protocols(aws.mqtt-json: {})
+@protocols([{name: aws.mqtt-json}])
 service IotJobs {
   version: "2018-08-14",
   operations: [

@@ -5,8 +5,7 @@
       "Service": {
         "type": "service",
         "version": "2006-03-01",
-        "protocols": {"aws.rest-json": {}},
-        "authentication": {"http-basic": {}},
+        "protocols": [{"name": "aws.rest-json", "auth": ["http-basic"]}],
         "operations": ["Operation1"]
       },
       "Operation1": {

@@ -23,7 +23,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.model.traits.ProtocolsTrait;
+import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.openapi.OpenApiException;
 
 /**
@@ -33,8 +33,8 @@ public final class Context {
     private final Model model;
     private final ServiceShape service;
     private final JsonSchemaConverter jsonSchemaConverter;
-    private final String protocolName;
-    private final ProtocolsTrait.Protocol protocol;
+    private final Protocol protocol;
+    private final OpenApiProtocol openApiProtocol;
     private final SchemaDocument schemas;
     private final List<SecuritySchemeConverter> securitySchemeConverters;
 
@@ -42,16 +42,16 @@ public final class Context {
             Model model,
             ServiceShape service,
             JsonSchemaConverter jsonSchemaConverter,
-            String protocolName,
-            ProtocolsTrait.Protocol protocol,
+            Protocol protocol,
+            OpenApiProtocol openApiProtocol,
             SchemaDocument schemas,
             List<SecuritySchemeConverter> securitySchemeConverters
     ) {
         this.model = model;
         this.service = service;
         this.jsonSchemaConverter = jsonSchemaConverter;
-        this.protocolName = protocolName;
         this.protocol = protocol;
+        this.openApiProtocol = openApiProtocol;
         this.schemas = schemas;
         this.securitySchemeConverters = securitySchemeConverters;
     }
@@ -100,7 +100,7 @@ public final class Context {
      * @return Returns the protocol name.
      */
     public String getProtocolName() {
-        return protocolName;
+        return protocol.getName();
     }
 
     /**
@@ -108,8 +108,17 @@ public final class Context {
      *
      * @return Returns the protocol being used.
      */
-    public ProtocolsTrait.Protocol getProtocol() {
+    public Protocol getProtocol() {
         return protocol;
+    }
+
+    /**
+     * Gets the OpenAPI protocol conversion object.
+     *
+     * @return Returns the OpenAPI protocol.
+     */
+    public OpenApiProtocol getOpenApiProtocol() {
+        return openApiProtocol;
     }
 
     /**

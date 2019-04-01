@@ -24,19 +24,22 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
-import software.amazon.smithy.model.traits.AuthenticationTrait;
+import software.amazon.smithy.model.traits.AuthTrait;
+import software.amazon.smithy.model.traits.Protocol;
+import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
-public class IncludeAuthenticationTest {
+public class IncludeAuthTest {
 
     @Test
     public void filtersUnsupportedAuthSchemes() {
         ServiceShape service1 = ServiceShape.builder()
                 .id("ns.foo#foo")
                 .version("1")
-                .addTrait(AuthenticationTrait.builder()
-                        .putAuthenticationScheme("foo", AuthenticationTrait.AuthScheme.builder().build())
-                        .putAuthenticationScheme("baz", AuthenticationTrait.AuthScheme.builder().build()).build())
+                .addTrait(ProtocolsTrait.builder()
+                        .addProtocol(Protocol.builder().name("foo").addAuth("foo").addAuth("baz").build())
+                        .build())
+                .addTrait(AuthTrait.builder().addValue("foo").addValue("baz").build())
                 .build();
         ServiceShape service2 = ServiceShape.builder()
                 .id("ns.foo#baz")
@@ -45,8 +48,7 @@ public class IncludeAuthenticationTest {
         ServiceShape service3 = ServiceShape.builder()
                 .id("ns.foo#bar")
                 .version("1")
-                .addTrait(AuthenticationTrait.builder()
-                        .putAuthenticationScheme("foo", AuthenticationTrait.AuthScheme.builder().build()).build())
+                .addTrait(ProtocolsTrait.builder().addProtocol(Protocol.builder().name("foo").build()).build())
                 .build();
         ShapeIndex index = ShapeIndex.builder()
                 .addShapes(service1, service2, service3)
@@ -54,13 +56,13 @@ public class IncludeAuthenticationTest {
         Model model = Model.builder()
                 .shapeIndex(index)
                 .build();
-        Model result = new IncludeAuthentication()
+        Model result = new IncludeAuth()
                 .createTransformer(Collections.singletonList("foo"))
                 .apply(ModelTransformer.create(), model);
 
-        assertThat(result.getShapeIndex().getShape(service1.getId()).get().asServiceShape().get()
-                .getTrait(AuthenticationTrait.class).get()
-                .getAuthenticationSchemes().keySet(), contains("foo"));
+        var updateService1 = result.getShapeIndex().getShape(service1.getId()).get();
+        assertThat(updateService1.getTrait(AuthTrait.class).get().getValues(), contains("foo"));
+        assertThat(updateService1.getTrait(ProtocolsTrait.class).get().getAllAuthSchemes(), contains("foo"));
         assertThat(result.getShapeIndex().getShape(service2.getId()).get(), equalTo(service2));
         assertThat(result.getShapeIndex().getShape(service3.getId()).get(), equalTo(service3));
     }
