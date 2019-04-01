@@ -1,7 +1,8 @@
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.Set;
-import software.amazon.smithy.aws.traits.CognitoUserPoolsProviderArnsTrait;
+import software.amazon.smithy.aws.traits.CognitoUserPoolsSettingsTrait;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
@@ -32,10 +33,10 @@ public class CognitoUserPoolsConverter implements SecuritySchemeConverter {
     public SecurityScheme createSecurityScheme(Context context) {
         // Providers are provided in a required trait.
         var providers = context.getService()
-                .getTrait(CognitoUserPoolsProviderArnsTrait.class)
+                .getTrait(CognitoUserPoolsSettingsTrait.class)
                 .orElseThrow(() -> new OpenApiException(String.format(
                         "Missing required `%s` trait for the `%s` authentication scheme of `%s`.",
-                        CognitoUserPoolsProviderArnsTrait.TRAIT, SCHEME, context.getService().getId())));
+                        CognitoUserPoolsSettingsTrait.TRAIT, SCHEME, context.getService().getId())));
 
         return SecurityScheme.builder()
                 .type("apiKey")
@@ -45,7 +46,8 @@ public class CognitoUserPoolsConverter implements SecuritySchemeConverter {
                 .putExtension("x-amazon-apigateway-authtype", Node.from(AUTH_TYPE))
                 .putExtension("x-amazon-apigateway-authorizer", Node.objectNode()
                         .withMember("type", Node.from(AUTH_TYPE))
-                        .withMember(PROVIDER_ARNS_PROPERTY, providers.toNode()))
+                        .withMember(PROVIDER_ARNS_PROPERTY,
+                                    providers.getProviderArns().stream().map(Node::from).collect(ArrayNode.collect())))
                 .build();
     }
 

@@ -27,10 +27,10 @@
         "shape": "aws.api#DataLevel",
         "documentation": "Designates the target as containing data of a known classification level."
       },
-      "cognitoUserPoolsProviderArns": {
+      "cognitoUserPoolsSettings": {
         "selector": "service",
-        "shape": "aws.api#StringList",
-        "documentation": "Amazon Cognito User Pools Provider ARNs used when authenticating via the `aws.cognito-user-pools` auth scheme.",
+        "shape": "aws.api#CognitoUserPoolsSettingsTrait",
+        "documentation": "Configures an Amazon Cognito User Pools auth scheme.",
         "tags": ["internal"]
       }
     },
@@ -127,6 +127,16 @@
         "type": "list",
         "member": {
           "target": "smithy.api#String"
+        }
+      },
+      "CognitoUserPoolsSettingsTrait": {
+        "type": "structure",
+        "private": true,
+        "members": {
+          "providerArns": {
+            "required": true,
+            "target": "StringList"
+          }
         }
       }
     }
