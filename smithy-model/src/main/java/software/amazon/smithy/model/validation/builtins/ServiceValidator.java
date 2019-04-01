@@ -15,40 +15,30 @@
 
 package software.amazon.smithy.model.validation.builtins;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.AuthenticationTrait;
-import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
 
 /**
  * Validates that service shapes do not contain duplicate resource or
- * operation shape names. Validates that authentication schemes listed in
- * a protocol trait on a service also exist in the authentication trait.
+ * operation shape names.
  */
 public class ServiceValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
         TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
-        List<ValidationEvent> events = new ArrayList<>();
-        model.getShapeIndex().shapes(ServiceShape.class)
+        return model.getShapeIndex().shapes(ServiceShape.class)
                 .flatMap(shape -> validateService(topDownIndex, shape).stream())
-                .forEach(events::add);
-        model.getShapeIndex().shapes(ServiceShape.class)
-                .flatMap(shape -> validateServiceTraits(shape).stream())
-                .forEach(events::add);
-        return events;
+                .collect(Collectors.toList());
     }
 
     private List<ValidationEvent> validateService(TopDownIndex topDownIndex, ServiceShape shape) {
@@ -69,46 +59,6 @@ public class ServiceValidator extends AbstractValidator {
         }
 
         return events;
-    }
-
-    private List<ValidationEvent> validateServiceTraits(ServiceShape shape) {
-        // If any of the available protocols lists an authentication scheme, we need to
-        // validate that we have an `authentication` trait that contains the scheme(s).
-        return shape.getTrait(ProtocolsTrait.class)
-                .filter(protocolsTrait -> protocolsTrait.getProtocols().values().stream()
-                        .anyMatch(protocol -> !protocol.getAuthentication().isEmpty()))
-                .map(protocolsTrait -> validateProtocolAuthentication(shape, protocolsTrait))
-                .orElse(List.of());
-    }
-
-    private List<ValidationEvent> validateProtocolAuthentication(ServiceShape shape, ProtocolsTrait protocols) {
-        // Validate we have an `authentication` trait, and that all protocol authentication
-        // schemes are contained within it.
-        return shape.getTrait(AuthenticationTrait.class)
-                .map(authenticationTrait -> validateProtocolAuthenticationSchemes(shape,
-                        protocols, authenticationTrait))
-                .orElse(List.of(error(shape, protocols,
-                        "An authentication scheme is specified in the `protocol` trait "
-                        + "on the service, but no `authentication` trait is present")));
-    }
-
-    private List<ValidationEvent> validateProtocolAuthenticationSchemes(
-            ServiceShape shape,
-            ProtocolsTrait protocols,
-            AuthenticationTrait authentication
-    ) {
-        // Make sure that any authentication scheme listed in the `protocol` trait is
-        // also present in the `authentication` trait itself.
-        return protocols.getProtocols().entrySet().stream()
-                .flatMap(protocolEntry -> protocolEntry.getValue().getAuthentication().stream()
-                        .map(auth -> new Pair<>(protocolEntry.getKey(), auth)))
-                .filter(pair -> !authentication.getAuthenticationSchemes().containsKey(pair.getRight()))
-                .map(pair -> error(shape, protocols, String.format(
-                        "The `%s` authentication scheme specified in the `%s` protocol is "
-                        + "not specified in the `%s` service's authentication trait: [%s]",
-                        pair.getRight(), pair.getLeft(), shape.getId(),
-                        ValidationUtils.tickedList(authentication.getAuthenticationSchemes().keySet()))))
-                .collect(toList());
     }
 
     private ValidationEvent conflictingNames(ServiceShape shape, String descriptor, Map<String, List<ShapeId>> dupes) {

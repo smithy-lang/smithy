@@ -3529,215 +3529,6 @@ Value type
         }
 
 
-.. _authentication-traits:
-
-Authentication traits
-=====================
-
-Smithy defines two traits used to influence authentication:
-``authentication`` and ``authenticationSchemes``.
-
-
-.. _authentication-trait:
-
-``authentication`` trait
-------------------------
-
-Summary
-    Defines the authentication schemes supported by a service.
-Trait selector
-    ``service``
-Value type
-    ``object``
-
-The ``authentication`` trait is a map in which each key is the name of an
-authentication scheme, and each value is an object that defines any properties
-used to configure the scheme. Each authentication scheme configuration
-supports the following properties:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 10 80
-
-    * - Property
-      - Type
-      - Description
-    * - deprecated
-      - ``boolean``
-      - Whether the authentication scheme should be considered deprecated for
-        the service targeted by the ``authentication`` trait.
-    * - deprecationReason
-      - ``string``
-      - Provides a plain text reason for why the scheme should be considered
-        deprecated. May only be set if the ``deprecated`` property is set to
-        ``true``.
-    * - tags
-      - ``List<string>``
-      - Attaches a list of tags that allow the authentication scheme to be
-        categorized and grouped.
-    * - settings
-      - ``Map<string, string>``
-      - Additional properties MAY be provided to configure the scheme. The
-        set of available properties is determined by the authentication scheme.
-        All additional properties MUST be strings.
-
-The following example adds the "http-basic" scheme to a service:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        @authentication(http-basic: {})
-        service WeatherService {
-            version: "2017-02-11",
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "smithy.example": {
-                "shapes": {
-                    "WeatherService": {
-                        "type": "service",
-                        "version": "2017-02-11",
-                        "authentication": {
-                            "http-basic": {}
-                        }
-                    }
-                }
-            }
-        }
-
-Operations bound to a service are expected to support every listed
-authentication scheme unless the operation or the service is annotated
-with the :ref:`authenticationSchemes-trait`.
-
-
-Built-in schemes
-````````````````
-
-Smithy defines the following built-in authentication schemes:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 20 80
-
-    * - Scheme
-      - Description
-    * - http-basic
-      - HTTP Basic Authentication as defined in :rfc:`2617`.
-    * - http-digest
-      - HTTP Digest Authentication as defined in :rfc:`2617`.
-    * - http-bearer
-      - HTTP Bearer Authentication as defined in :rfc:`6750`.
-    * - http-x-api-key
-      - An HTTP-specific authentication scheme that sends an arbitrary
-        API key in the "X-Api-Key" HTTP header.
-    * - none
-      - Indicates that the API can be called without authentication.
-
-Any custom authentication scheme defined in Smithy models SHOULD utilize
-some kind of prefix to prevent collisions with other custom schemes
-(for example, "aws.v4" if preferred over just "v4").
-
-
-.. _authenticationSchemes-trait:
-
-``authenticationSchemes`` trait
--------------------------------
-
-Summary
-    Defines the authentication schemes supported by a service or operation.
-Trait selector
-    ``:test(service, operation)``
-
-    *Service or operation shapes*
-Value type
-    This trait contains a priority ordered list of string values that
-    reference authentication schemes defined on a service shape.
-
-The ``authenticationSchemes`` trait is used to explicitly define which
-authentication schemes defined by the :ref:`authentication-trait` of a
-service are supported by an operation.
-
-Operations that are not annotated with the ``authenticationSchemes`` trait
-inherit the ``authenticationSchemes`` trait of the service they are bound
-to, and if the service is not annotated with the ``authenticationSchemes``
-trait, then the operation is expected to support each of the authentication
-schemes defined by the ``authentication`` trait of the service.
-
-Each entry in the ``authenticationSchemes`` trait MUST map to a corresponding
-``authentication`` trait scheme defined on the service shape to which an
-operation is bound.
-
-The following example defines two operations:
-
-* OperationA defines an explicit list of the authentication schemes it
-  supports using the ``authenticationSchemes`` trait.
-* OperationB does is not annotated with the ``authenticationSchemes``
-  trait, so the schemes supported by this operation inherit from the
-  ``authenticationSchemes`` trait defined on the service.
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        // Define and configure every authentication scheme that can be
-        // used with this service.
-        @authentication(
-            http-basic: {},
-            http-digest: {},
-            none: {})
-        // Every operation bound this service, by default, is expected
-        // to support http-basic and http-digest.
-        @authenticationSchemes([http-basic, http-digest])
-        service AuthenticatedService {
-            version: "2017-02-11",
-            operations: [OperationA, OperationB]
-        }
-
-        // This operation is configured to either be unauthenticated
-        // or to use http-basic. It is not expected to support http-digest.
-        @authenticationSchemes([none, http-basic])
-        operation OperationA()
-
-        // This operation defines no authenticationSchemes, so it is
-        // expected to support the authenticationSchemes defined on the
-        // service shape it's bound to (that is, http-basic, http-digest).
-        operation OperationB()
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "smithy.example": {
-                "shapes": {
-                    "AuthenticatedService": {
-                        "type": "service",
-                        "version": "2017-02-11",
-                        "authentication": {
-                            "http-basic": {},
-                            "http-digest": {},
-                            "none": {},
-                        },
-                        "operations": [
-                            "OperationA",
-                            "OperationB"
-                        ]
-                    },
-                    "OperationA": {
-                        "type": "operation",
-                        "authenticationSchemes": ["none", "http-basic"]
-                    },
-                    "OperationB": {
-                        "type": "operation"
-                    }
-                }
-            }
-        }
-
-
 Behavior traits
 ===============
 
@@ -4328,11 +4119,288 @@ match for the name of the resource identifier.
         }
 
 
-Serialization and protocol traits
-=================================
+Protocol traits
+===============
 
 Serialization and protocols traits define how data is transferred over
 the wire.
+
+
+.. _protocols-trait:
+
+``protocols`` trait
+-------------------
+
+Summary
+    Defines the protocols supported by a service.
+Trait selector
+    ``service``
+Value type
+    ``array`` of protocol ``object``
+
+Smithy is protocol agnostic, which means it focuses on the interfaces and
+abstractions that are provided to end-users rather than how the data is sent
+over the wire. In Smithy, a *protocol* is a named set of rules that defines
+the syntax and semantics of how a client and server communicate. A protocol
+name defines both the application protocol of a service and the serialization
+formats used in messages. These serialization formats MAY be influenced by
+payload serialization traits like :ref:`jsonName-trait` and
+:ref:`xmlAttribute-trait`.
+
+The ``protocols`` trait of a service defines a priority ordered list of
+protocols supported by the service and the authentication schemes that each
+protocol supports. A client MUST understand at least one of the protocols in
+order to successfully communicate with the service.
+
+The value of the ``protocols`` trait is an array of protocol objects. Each
+protocol object supports the following key-value pairs:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - name
+      - ``string``
+      - **Required**. The name of the protocol. The name MUST be unique across
+        the entire list and MUST match the following regular expression:
+        ``^[a-z][a-z0-9\-.+]*$``.
+    * - auth
+      - ``List<string>``
+      - A priority ordered list of authentication schemes supported by this
+        protocol. Each value MUST match the following regular expression:
+        ``^[a-z][a-z0-9\-.+]*$``.
+    * - tags
+      - ``List<string>``
+      - Attaches a list of tags that allow the protocol to be categorized and
+        grouped.
+
+The following example defines a service that supports both the
+"smithy.example" protocol and the "aws.mqtt" protocols. The
+"aws.mqtt" protocol is defined with an optional list of tags.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @protocols([
+            {name: smithy.example, auth: [http-basic]},
+            {name: aws.mqtt, auth: [x.509], tags: [internal]}])
+        service WeatherService {
+          version: "2017-02-11",
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "smithy.example": {
+                "shapes": {
+                    "WeatherService": {
+                        "type": "service",
+                        "version": "2017-02-11",
+                        "protocols": [
+                            {"name": "smithy.example", "auth": ["http-basic"]},
+                            {"name": "aws.mqtt", "auth": ["x.509"], "tags": ["internal"]}
+                        ]
+                    }
+                }
+            }
+        }
+
+An operation bound to a service is expected to support every listed ``auth``
+scheme of every protocol unless the operation or the service is annotated
+with the :ref:`auth-trait`.
+
+
+Built-in auth schemes
+`````````````````````
+
+Smithy defines the following built-in authentication schemes that can be
+used with the ``protocols`` trait.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Scheme
+      - Description
+    * - http-basic
+      - HTTP Basic Authentication as defined in :rfc:`2617`.
+    * - http-digest
+      - HTTP Digest Authentication as defined in :rfc:`2617`.
+    * - http-bearer
+      - HTTP Bearer Authentication as defined in :rfc:`6750`.
+    * - http-x-api-key
+      - An HTTP-specific authentication scheme that sends an arbitrary
+        API key in the "X-Api-Key" HTTP header.
+    * - none
+      - Indicates that the API can be called without authentication.
+
+Custom authentication schemes MAY be referenced in Smithy models and
+SHOULD utilize some kind of prefix to prevent collisions with other
+custom schemes (for example, "aws.v4" is preferred over just "v4").
+
+
+.. _auth-trait:
+
+``auth`` trait
+--------------
+
+Summary
+    Defines the priority ordered authentication schemes supported by a service
+    or operation. When applied to a service, it defines the default
+    authentication schemes of every operation in the service. When applied
+    to an operation, it defines the list of all authentication schemes
+    supported by the operation, overriding any ``auth`` trait specified
+    on a service.
+Trait selector
+    ``:test(service, operation)``
+
+    *Service or operation shapes*
+Value type
+    This trait contains a priority ordered list of string values that
+    reference authentication schemes defined on a service shape.
+
+The ``auth`` trait is used to explicitly define which authentication schemes
+defined by the :ref:`protocols-trait` of a service are supported by an
+operation.
+
+Operations that are not annotated with the ``auth`` trait inherit the ``auth``
+trait of the service they are bound to, and if the service is not annotated
+with the ``auth`` trait, then the operation is expected to support each of
+the authentication schemes defined by all of the protocols of the service.
+Each entry in the ``auth`` trait MUST map to a corresponding ``auth``
+property in the ``protocols`` trait of a service with the exception of the
+"none" auth scheme which can be used without defining it in a protocol.
+
+When connecting to a service using a specific protocol, only the intersection
+of the ``auth`` schemes listed in the selected protocol and the ``auth``
+schemes defined in the resolved ``auth`` trait are eligible for the client
+to use.
+
+The following example defines two operations:
+
+* OperationA defines an explicit list of the authentication schemes it
+  supports using the ``auth`` trait.
+* OperationB does is not annotated with the ``auth`` trait, so the schemes
+  supported by this operation inherit from the ``protocols`` trait defined
+  on the service.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @protocols([{name: smithy.example, auth: [http-basic, http-digest]}])
+        // Every operation by default should support http-basic and http-digest.
+        @auth([http-basic, http-digest])
+        service AuthenticatedService {
+            version: "2017-02-11",
+            operations: [OperationA, OperationB]
+        }
+
+        // This operation is configured to either be unauthenticated
+        // or to use http-basic. It is not expected to support http-digest.
+        @auth([none, http-basic])
+        operation OperationA()
+
+        // This operation defines no auth, so it is expected to support the auth
+        // defined on the service: http-basic and http-digest.
+        operation OperationB()
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "smithy.example": {
+                "shapes": {
+                    "AuthenticatedService": {
+                        "type": "service",
+                        "version": "2017-02-11",
+                        "protocols": [{"name": "smithy.example", "auth": ["http-basic", "http-digest"]}],
+                        "operations": ["OperationA", "OperationB"]
+                    },
+                    "OperationA": {
+                        "type": "operation",
+                        "auth": ["none", "http-basic"]
+                    },
+                    "OperationB": {
+                        "type": "operation"
+                    }
+                }
+            }
+        }
+
+
+The following ``auth`` trait is invalid because it uses an ``auth`` trait
+scheme that is not supported by any of the ``protocols`` of the service:
+
+.. code-block:: smithy
+
+    @protocols([{name: smithy.example, auth: [http-basic]}])
+    @auth([http-digest]) // <-- Invalid!
+    service InvalidExample {
+        version: "2017-02-11"
+    }
+
+The following example demonstrates how a service that supports multiple
+protocols can define different authentication schemes for each protocol.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @protocols([
+            {name: example.foo, auth: [http-basic, http-digest]},
+            {name: example.baz, auth: [x.509]}])
+        @auth([http-basic, x.509])
+        service AuthenticatedService {
+            version: "2017-02-11",
+            operations: [OperationA, OperationB]
+        }
+
+        @auth([http-digest, x.509])
+        operation OperationA()
+
+        operation OperationB()
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "smithy.example": {
+                "shapes": {
+                    "AuthenticatedService": {
+                        "type": "service",
+                        "version": "2017-02-11",
+                        "protocols": [
+                            {"name": "example.foo", "auth": ["http-basic", "http-digest"]},
+                            {"name": "example.baz", "auth": ["x.509"]},
+                        ],
+                        "operations": ["OperationA", "OperationB"]
+                    },
+                    "OperationA": {
+                        "type": "operation",
+                        "auth": ["http-digest", "x.509"]
+                    },
+                    "OperationB": {
+                        "type": "operation"
+                    }
+                }
+            }
+        }
+
+When connecting to the above service over the "example.foo" protocol:
+
+* ``OperationA`` supports the "http-digest" authentication scheme.
+* ``OperationB`` supports the "http-basic" and "http-digest" authentication
+  schemes.
+
+When connecting to the above service over the "example.baz" protocol,
+both ``OperationA`` and ``OperationB`` support only the x.509 authentication
+scheme.
 
 
 .. _jsonName-trait:
@@ -4430,180 +4498,6 @@ The following example defines a video/quicktime blob:
 
         @mediaType("video/quicktime")
         blob VideoData
-
-
-.. _protocols-trait:
-
-``protocols`` trait
--------------------
-
-Summary
-    Defines the protocols supported by a service.
-Trait selector
-    ``service``
-Value type
-    ``object``
-
-Smithy is protocol agnostic, which means it focuses on the interfaces and
-abstractions that are provided to end-users rather than how the data is sent
-over the wire. In Smithy, a *protocol* is a named set of rules that define the
-syntax and semantics of how a client and server communicate. A protocol name
-(``smithy.example`` for example) SHOULD imply both the application protocol of
-a service and the serialization formats used in messages. These serialization
-formats MAY be influenced by the payload serialization traits like
-:ref:`jsonName-trait`, :ref:`xmlAttribute-trait`, etc.
-
-The ``protocols`` property of a service defines the set of protocols supported
-by the service and how the protocol is configured. A client MUST understand at
-least one of the protocols in order to successfully communicate with the
-service.
-
-The value of the ``protocols`` trait is a map in which each key is the name of
-the protocol, and each value is an object that defines any properties used to
-configure the protocol. Custom protocol names SHOULD be namespaced using "."
-characters.
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 10 80
-
-    * - Property
-      - Type
-      - Description
-    * - q
-      - ``float``
-      - The **relative quality factor** of a given protocol. This specifies
-        which protocol a service would prefer that clients use on a scale of
-        ``0`` to ``1.0``. Clients that support multiple protocols used by the
-        service SHOULD select the protocol with the greatest relative quality
-        factor. Defaults to ``1.0``.
-    * - deprecated
-      - ``boolean``
-      - Whether the protocol should be considered deprecated for the service
-        targeted by the ``protocols`` trait.
-    * - deprecationReason
-      - ``string``
-      - Provides a plain text reason for why the protocol should be considered
-        deprecated. May only be set if the ``deprecated`` property is set to
-        ``true``.
-    * - tags
-      - ``List<string>``
-      - Attaches a list of tags that allow the protocol to be categorized and
-        grouped.
-    * - settings
-      - ``Map<string, string>``
-      - Additional properties MAY be provided to configure the protocol. The
-        set of available properties is determined by the protocol. All
-        additional properties MUST be strings.
-    * - authentication
-      - ``List<string>``
-      - A priority ordered list of authentication schemes supported by this
-        protocol. Every authentication scheme listed in a protocol MUST also
-        be defined in the :ref:`authentication-trait` of the targeted
-        service. The priority ordering of the :ref:`authenticationSchemes-trait`
-        of an operation or a service supersedes the priority ordering of the
-        ``protocols`` trait.
-
-The following example adds scheme-specific settings to the "smithy.example"
-scheme, and provides a relative quality factor for the "smithy.mqtt" scheme.
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        service WeatherService {
-          version: "2017-02-11",
-        }
-
-        apply WeatherService @protocols(
-          smithy.example: { settings: { h2: eventStream } },
-          smithy.mqtt: { q: 0.5 }
-        )
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "smithy.example": {
-                "shapes": {
-                    "WeatherService": {
-                        "type": "service",
-                        "version": "2017-02-11",
-                        "protocols": {
-                            "smithy.example": {
-                              "settings": { "h2": "eventStream" }
-                            },
-                            "smithy.mqtt": {
-                              "q": 0.5,
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-The following example shows how you can assign authentication schemes to
-specific protocols. It specifies that only the "aws.v4" authentication scheme
-is available on the "smithy.example" protocol, and that "aws.v4" is preferred
-over "http-basic" on the "smithy.legacy" protocol.
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        service WeatherService {
-            version: "2017-02-11",
-        }
-
-        apply WeatherService @authentication(
-            aws.v4: { settings: { service: weather } },
-            http-basic: {
-              tags: [ legacy ]
-            }
-        )
-
-        apply WeatherService @protocols(
-          smithy.example: {
-            authentication: [ "aws.v4" ],
-            settings: { h2: eventStream }
-          },
-          smithy.legacy: {
-            authentication: [ "aws.v4", "http-basic" ],
-            q: 0.5,
-            tags: [ legacy ]
-          }
-        )
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "smithy.example": {
-                "shapes": {
-                    "WeatherService": {
-                        "type": "service",
-                        "version": "2017-02-11",
-                        "authentication": {
-                            "aws.v4": { "settings": { "service": "weather" } },
-                            "http-basic": {
-                                "tags": [ "legacy" ]
-                            }
-                        },
-                        "protocols": {
-                            "smithy.example": {
-                              "authentication": [ "aws.v4" ],
-                              "settings": { "h2": "eventStream" }
-                            },
-                            "smithy.legacy": {
-                              "authentication": [ "aws.v4", "http-basic" ],
-                              "q": 0.5,
-                              "tags": [ "legacy" ]
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
 
 .. _timestampFormat-trait:

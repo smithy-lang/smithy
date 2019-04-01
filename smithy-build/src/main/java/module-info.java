@@ -22,7 +22,7 @@ import software.amazon.smithy.build.transforms.ExcludeShapesByTag;
 import software.amazon.smithy.build.transforms.ExcludeTags;
 import software.amazon.smithy.build.transforms.ExcludeTraits;
 import software.amazon.smithy.build.transforms.ExcludeTraitsByTag;
-import software.amazon.smithy.build.transforms.IncludeAuthentication;
+import software.amazon.smithy.build.transforms.IncludeAuth;
 import software.amazon.smithy.build.transforms.IncludeMetadata;
 import software.amazon.smithy.build.transforms.IncludeNamespaces;
 import software.amazon.smithy.build.transforms.IncludeProtocols;
@@ -52,7 +52,7 @@ module software.amazon.smithy.build {
             ExcludeTags,
             ExcludeTraits,
             ExcludeTraitsByTag,
-            IncludeAuthentication,
+            IncludeAuth,
             IncludeMetadata,
             IncludeNamespaces,
             IncludeProtocols,

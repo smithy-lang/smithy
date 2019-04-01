@@ -27,9 +27,6 @@ import software.amazon.smithy.model.node.Node;
 /**
  * Contains abstract functionality to build traits that contain a list
  * of strings.
- *
- * @see TagsTrait
- * @see AuthenticationSchemesTrait
  */
 public abstract class StringListTrait extends AbstractTrait {
     private final List<String> values;

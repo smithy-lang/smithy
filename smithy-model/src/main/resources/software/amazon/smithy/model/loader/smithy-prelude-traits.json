@@ -21,24 +21,14 @@
         "shape": "String",
         "documentation": "Adds documentation to a shape or member. The format of the documentation trait MUST be a valid HTML fragment."
       },
-      "endpoints": {
-        "selector": "service",
-        "shape": "Endpoints",
-        "documentation": "Defines the endpoints of a service. Tools can iterate through the list of endpoints to determine the appropriate endpoint to use when connecting to a service."
-      },
       "protocols": {
         "selector": "service",
         "shape": "Protocols",
         "documentation": "Defines the protocols supported by a service."
       },
-      "authentication": {
-        "selector": "service",
-        "shape": "AuthenticationSchemes",
-        "documentation": "Defines the authentication schemes supported by a service."
-      },
-      "authenticationSchemes": {
+      "auth": {
         "selector": ":test(service, operation)",
-        "shape": "StringList",
+        "shape": "AuthenticationSchemes",
         "documentation": "Defines the authentication schemes supported by a service or operation."
       },
       "externalDocumentation": {
@@ -350,125 +340,34 @@
         },
         "private": true
       },
-      "Endpoints": {
-        "type": "map",
-        "key": {
-          "target": "NonEmptyString"
-        },
-        "value": {
-          "target": "Endpoint"
-        },
-        "private": true
-      },
-      "Endpoint": {
-        "type": "structure",
-        "members": {
-          "url": {
-            "target": "NonEmptyString",
-            "required": true,
-            "documentation": "Defines the URL of the endpoint. The provided string value MUST be a valid URI that contains a scheme and an authority. The URL supports a single URI template of \u201c{endpoint}\u201d. This value represents the endpoint name provided when searching the endpoints list for a matching endpoint. This value does not represent the name property of an endpoint.\n\nFor example, given an endpoint variable of \u201cmy-region\u201d and a uri of https:\/\/{endpoint}.example.com, the URI expands to https:\/\/my-region.example.com."
-          },
-          "q": {
-            "target": "RelativeQualityFactor",
-            "documentation": "Specifies which endpoint or endpoint template a service would prefer that clients use on a scale of 0 to 1. Client scenarios that match multiple endpoints SHOULD use the endpoint with the greatest relative quality factor. Defaults to 1.0."
-          },
-          "settings": {
-            "target": "StringMap",
-            "documentation": "Additional configuration properties. Vendor-specific tooling can use these properties as needed when resolving the correct endpoint."
-          },
-          "deprecated": {
-            "target": "smithy.api#Boolean",
-            "documentation": "Whether the endpoint should be considered deprecated for the service targeted by the endpoints trait."
-          },
-          "deprecationReason": {
-            "target": "smithy.api#String",
-            "documentation": "Provides a plain text reason for why the endpoint should be considered deprecated. May only be set if the deprecated property is set to true."
-          },
-          "tags": {
-            "target": "StringList",
-            "documentation": "Attaches a list of tags that allow endpoints to be categorized and grouped."
-          }
-        },
-        "private": true
-      },
-      "RelativeQualityFactor": {
-        "type": "double",
-        "range": {
-          "min": 0.0,
-          "max": 1.0
-        },
-        "private": true
-      },
       "Protocols": {
-        "type": "map",
-        "key": {
-          "target": "ProtocolOrAuthName"
-        },
-        "value": {
-          "target": "Protocol"
-        },
+        "type": "list",
+        "member": {"target": "Protocol"},
         "private": true
       },
       "Protocol": {
         "type": "structure",
         "members": {
-          "q": {
-            "target": "RelativeQualityFactor",
-            "documentation": "Specifies which protocol a service would prefer that clients use on a scale of 0 to 1.0. Clients that support multiple protocols used by the service SHOULD select the protocol with the greatest relative quality factor. Defaults to 1.0."
-          },
-          "settings": {
-            "target": "StringMap",
-            "documentation": "Additional properties MAY be provided to configure the protocol. The set of available properties is determined by the protocol."
-          },
-          "deprecated": {
-            "target": "smithy.api#Boolean",
-            "documentation": "Whether the protocol should be considered deprecated for the service targeted by the protocols trait."
-          },
-          "deprecationReason": {
-            "target": "smithy.api#String",
-            "documentation": "Provides a plain text reason for why the protocol should be considered deprecated. May only be set if the deprecated property is set to true."
+          "name": {
+            "target": "ProtocolOrAuthName",
+            "required": true,
+            "documentation": "The name that identifies the protocol. This name must be unique across the entire list."
           },
           "tags": {
             "target": "StringList",
             "documentation": "Attaches a list of tags that allow protocols to be categorized and grouped."
           },
-          "authentication": {
-            "target": "StringList",
-            "documentation": "A priority ordered list of authentication schemes to use with this protocol."
+          "auth": {
+            "target": "AuthenticationSchemes",
+            "documentation": "A priority ordered list of authentication schemes used with this protocol."
           }
         },
         "private": true
       },
       "AuthenticationSchemes": {
-        "type": "map",
-        "key": {
-          "target": "ProtocolOrAuthName"
-        },
-        "value": {
-          "target": "AuthenticationScheme"
-        },
-        "private": true
-      },
-      "AuthenticationScheme": {
-        "type": "structure",
-        "members": {
-          "settings": {
-            "target": "StringMap",
-            "documentation": "Additional properties MAY be provided to configure the scheme. The set of available properties is determined by the authentication scheme."
-          },
-          "deprecated": {
-            "target": "smithy.api#Boolean",
-            "documentation": "Whether the authentication scheme should be considered deprecated for the service targeted by the authentication trait."
-          },
-          "deprecationReason": {
-            "target": "smithy.api#String",
-            "documentation": "Provides a plain text reason for why the scheme should be considered deprecated. May only be set if the deprecated property is set to true."
-          },
-          "tags": {
-            "target": "StringList",
-            "documentation": "Attaches a list of tags that allow the authentication scheme to be categorized and grouped."
-          }
-        },
+        "type": "list",
+        "member": {"target": "ProtocolOrAuthName"},
+        "uniqueItems": true,
         "private": true
       },
       "ProtocolOrAuthName": {

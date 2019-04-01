@@ -3,7 +3,6 @@ package software.amazon.smithy.openapi.fromsmithy;
 import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.AuthenticationTrait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.model.SecurityScheme;
 
@@ -15,27 +14,21 @@ import software.amazon.smithy.openapi.model.SecurityScheme;
  */
 public interface SecuritySchemeConverter {
     /**
-     * Get the name of the Smithy Authentication scheme that matches
-     * this converter.
+     * Get the name of the Smithy auth scheme that matches this converter.
      *
-     * @return The Smithy security authentication scheme name.
+     * @return The Smithy security auth scheme name.
      */
-    String getAuthenticationSchemeName();
+    String getAuthSchemeName();
 
     /**
      * Creates an OpenAPI security scheme.
      *
-     * @param context Conversion context
-     * @param authTrait Authentication trait of the service.
-     * @param authScheme The matching authentication scheme being converted.
+     * @param context Conversion context.
      * @return The generated security scheme
      *
      * @see <a href="https://swagger.io/specification/#securitySchemeObject">Security Scheme Object</a>
      */
-    SecurityScheme createSecurityScheme(
-            Context context,
-            AuthenticationTrait authTrait,
-            AuthenticationTrait.AuthScheme authScheme);
+    SecurityScheme createSecurityScheme(Context context);
 
     /**
      * Get the name that should be used for this security scheme throughout
@@ -46,8 +39,8 @@ public interface SecuritySchemeConverter {
      * <ul>
      *     <li>Returns the value of "openapi.security.name.AUTHNAME" from
      *     the config object if present, where "AUTHNAME" is the return value
-     *     of {@link #getAuthenticationSchemeName()}.</li>
-     *     <li>Returns the result of {@link #getAuthenticationSchemeName()}</li>
+     *     of {@link #getAuthSchemeName()}.</li>
+     *     <li>Returns the result of {@link #getAuthSchemeName()}</li>
      * </ul>
      *
      * @param context Conversion context.
@@ -55,8 +48,8 @@ public interface SecuritySchemeConverter {
      */
     default String getSecurityName(Context context) {
         return context.getConfig().getStringMemberOrDefault(
-                OpenApiConstants.SECURITY_NAME_PREFIX + getAuthenticationSchemeName(),
-                getAuthenticationSchemeName());
+                OpenApiConstants.SECURITY_NAME_PREFIX + getAuthSchemeName(),
+                getAuthSchemeName());
     }
 
     /**

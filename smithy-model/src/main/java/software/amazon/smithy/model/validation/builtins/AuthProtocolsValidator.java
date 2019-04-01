@@ -20,14 +20,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.AuthenticationSchemeIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.traits.AuthTrait;
+import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.model.validation.ValidationUtils;
 
 /**
  * Validates that each operation in the closure of a service resolves to a
@@ -36,53 +36,55 @@ import software.amazon.smithy.model.validation.ValidationUtils;
  * service to which it is bound (if the service defines protocols, and
  * only for protocols that list explicitly supported authentication schemes).
  */
-public final class AuthenticationProtocolsValidator extends AbstractValidator {
+public final class AuthProtocolsValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         var topDownIndex = model.getKnowledge(TopDownIndex.class);
-        var authIndex = model.getKnowledge(AuthenticationSchemeIndex.class);
         return model.getShapeIndex().shapes(ServiceShape.class)
-                .flatMap(service -> validateOperationSchemesAgainstProtocols(topDownIndex, authIndex, service))
+                .flatMap(service -> validateOperationAgainstProtocols(topDownIndex, service))
                 .collect(Collectors.toList());
     }
 
-    private Stream<ValidationEvent> validateOperationSchemesAgainstProtocols(
-            TopDownIndex index,
-            AuthenticationSchemeIndex authIndex,
-            ServiceShape service
-    ) {
+    private Stream<ValidationEvent> validateOperationAgainstProtocols(TopDownIndex index, ServiceShape service) {
         var protocolsTrait = service.getTrait(ProtocolsTrait.class).orElse(null);
         if (protocolsTrait == null) {
             return Stream.empty();
         }
 
-        return protocolsTrait.getProtocols().entrySet().stream()
-                // Ignore protocols that don't define explicit schemes.
-                .filter(entry -> !entry.getValue().getAuthentication().isEmpty())
-                // Ensure that every operation is valid for this protocol.
-                .flatMap(entry -> index.getContainedOperations(service).stream()
-                        .flatMap(operation -> validateOperationSchemesAgainstProtocols(
-                                authIndex, service, operation, entry.getKey()).stream()));
+        // Ensure that every operation is valid for this protocol.
+        return protocolsTrait.getProtocols().stream()
+                .flatMap(protocol -> index.getContainedOperations(service).stream()
+                        .flatMap(operation -> validateOperationSchemesAgainstProtocols(service, operation, protocol)
+                                .stream()));
     }
 
     private Optional<ValidationEvent> validateOperationSchemesAgainstProtocols(
-            AuthenticationSchemeIndex authIndex,
             ServiceShape service,
             OperationShape operation,
-            String protocolName
+            Protocol protocol
     ) {
-        if (authIndex.isCompatibleWithService(service, operation, protocolName)) {
+        // Either the operation or the service has an "auth" trait.
+        var authTrait = operation.getTrait(AuthTrait.class).or(() -> service.getTrait(AuthTrait.class)).orElse(null);
+
+        // If no auth trait was found, then assume the operation is
+        // compatible with all auth schemes.
+        if (authTrait == null) {
+            return Optional.empty();
+        }
+
+        // Check if any of the schemes on the operation or service are also
+        // supported by the protocol.
+        var supportedSchemes = protocol.getAuth();
+        var values = authTrait.getValues();
+
+        // Each protocols trait is assumed to support "none".
+        if (values.contains(ProtocolsTrait.NONE_AUTH) || values.stream().anyMatch(supportedSchemes::contains)) {
             return Optional.empty();
         }
 
         return Optional.of(warning(operation, String.format(
-                "The `authenticationSchemes` trait resolved for this operation, [%s], is not compatible with "
-                + "the authentication schemes of the `%s` protocol of the `%s` service to which this operation "
-                + "is bound: [%s]. The authentication scheme for this operation over the `%s` protocol is undefined.",
-                ValidationUtils.tickedList(authIndex.getOperationSchemes(service, operation)),
-                protocolName,
-                service.getId(),
-                ValidationUtils.tickedList(authIndex.getSupportedServiceSchemes(service, protocolName)),
-                protocolName)));
+                "The `auth` trait resolved for this operation, %s, is not compatible with the `%s` "
+                + "protocol of the `%s` service: %s",
+                authTrait.getValues(), protocol.getName(), service.getId(), protocol.getAuth())));
     }
 }

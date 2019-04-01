@@ -4,12 +4,7 @@
         "shapes": {
             "MyService": {
                 "type": "service",
-                "protocols": {
-                    "foo": {
-                    },
-                    "baz": {
-                    }
-                },
+                "protocols": [{"name": "foo"}, {"name": "baz"}],
                 "version": "2017-01-19",
                 "resources": [
                     "MyResource"

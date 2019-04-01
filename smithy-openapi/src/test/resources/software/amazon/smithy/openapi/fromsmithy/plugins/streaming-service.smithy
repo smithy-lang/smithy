@@ -1,6 +1,6 @@
 namespace smithy.example
 
-@protocols(aws.rest-json: {})
+@protocols([{"name": "aws.rest-json"}])
 service Streaming {
   version: "2018-01-01",
   operations: [StreamingOperation]

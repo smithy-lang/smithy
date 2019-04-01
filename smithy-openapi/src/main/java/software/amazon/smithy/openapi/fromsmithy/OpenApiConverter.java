@@ -36,7 +36,7 @@ import software.amazon.smithy.jsonschema.SchemaDocument;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.Tagged;
-import software.amazon.smithy.model.knowledge.AuthenticationSchemeIndex;
+import software.amazon.smithy.model.knowledge.AuthIndex;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.Node;
@@ -48,9 +48,9 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
-import software.amazon.smithy.model.traits.AuthenticationTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
+import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -256,14 +256,16 @@ public final class OpenApiConverter {
                         "Shape `%s` is not a service shape", serviceShapeId)));
 
         var protocolPair = resolveProtocol(service);
-        var resolvedProtocolName = protocolPair.getLeft();
-        var protocolInstance = protocolPair.getRight().getRight();
+        var resolvedProtocol = protocolPair.getLeft();
+        var openApiProtocol = protocolPair.getRight();
+        // Set a protocol name if one wasn't set but instead derived.
+        protocolName = protocolName != null ? protocolName : resolvedProtocol.getName();
         var components = ComponentsObject.builder();
         var schemas = addSchemas(components, model.getShapeIndex(), service);
-        var securitySchemeConverters = loadSecuritySchemes(model, protocolName, service);
+        var securitySchemeConverters = loadSecuritySchemes(service);
         var context = new Context(
                 model, service, getJsonSchemaConverter(),
-                resolvedProtocolName, protocolInstance, schemas, securitySchemeConverters);
+                resolvedProtocol, openApiProtocol, schemas, securitySchemeConverters);
 
         var plugin = loadPlugins();
         return new ConversionEnvironment(context, plugin, components);
@@ -289,8 +291,7 @@ public final class OpenApiConverter {
         var service = environment.context.getService();
         var context = environment.context;
         var plugin = environment.plugin;
-        var protocolPair = resolveProtocol(service);
-        var protocolService = protocolPair.getRight().getLeft();
+        var openApiProtocol = environment.context.getOpenApiProtocol();
         var openapi = OpenApi.builder().openapi(OpenApiConstants.VERSION).info(createInfo(service));
 
         plugin.before(context, openapi);
@@ -305,7 +306,7 @@ public final class OpenApiConverter {
             getSupportedTags(service).forEach(tag -> openapi.addTag(TagObject.builder().name(tag).build()));
         }
 
-        addPaths(context, openapi, protocolService, plugin);
+        addPaths(context, openapi, openApiProtocol, plugin);
         addSecurityComponents(context, openapi, environment.components, plugin);
         openapi.components(environment.components.build());
 
@@ -334,24 +335,22 @@ public final class OpenApiConverter {
     }
 
     // Determine which OpenApiProtocol service provider and which service trait protocol to use.
-    private Pair<String, Pair<OpenApiProtocol, ProtocolsTrait.Protocol>> resolveProtocol(ServiceShape service) {
+    private Pair<Protocol, OpenApiProtocol> resolveProtocol(ServiceShape service) {
         var protocols = loadProtocols();
-        var supportedProtocols = service.getTrait(ProtocolsTrait.class)
-                .orElseThrow(() -> new OpenApiException("No protocol trait found on `" + service.getId() + "`"));
+        var protoTrait = service.getTrait(ProtocolsTrait.class)
+                .orElseThrow(() -> new OpenApiException("No `protocols` trait found on `" + service.getId() + "`"));
 
         if (protocolName == null) {
-            for (var protocolEntry : supportedProtocols.getProtocols().entrySet()) {
-                var maybeProtocol = findProtocol(protocolEntry.getKey(), protocols);
+            for (var protocolEntry : protoTrait.getProtocols()) {
+                var maybeProtocol = findProtocol(protocolEntry.getName(), protocols);
                 if (maybeProtocol.isPresent()) {
-                    return new Pair<>(protocolEntry.getKey(), new Pair<>(
-                            maybeProtocol.get(), protocolEntry.getValue()));
+                    return new Pair<>(protocolEntry, maybeProtocol.get());
                 }
             }
-        } else if (supportedProtocols.getProtocols().containsKey(protocolName)) {
+        } else if (protoTrait.getProtocol(protocolName).isPresent()) {
             var maybeProtocol = findProtocol(protocolName, protocols);
             if (maybeProtocol.isPresent()) {
-                return new Pair<>(protocolName, new Pair<>(
-                        maybeProtocol.get(), supportedProtocols.getProtocols().get(protocolName)));
+                return new Pair<>(protoTrait.getProtocol(protocolName).get(), maybeProtocol.get());
             }
         }
 
@@ -361,7 +360,7 @@ public final class OpenApiConverter {
                 + "protocols: [%s]",
                 service.getId(),
                 ValidationUtils.tickedList(protocols.stream().map(OpenApiProtocol::getProtocolNamePattern)),
-                ValidationUtils.tickedList(supportedProtocols.getProtocols().keySet())));
+                ValidationUtils.tickedList(protoTrait.getProtocolNames())));
     }
 
     // Finds an OpenAPI protocol matching the given protocol name.
@@ -378,14 +377,17 @@ public final class OpenApiConverter {
     }
 
     // Loads all of the OpenAPI security scheme implementations that are referenced by a service.
-    private List<SecuritySchemeConverter> loadSecuritySchemes(Model model, String protocolName, ServiceShape service) {
+    private List<SecuritySchemeConverter> loadSecuritySchemes(ServiceShape service) {
         var converters = discover(SecuritySchemeConverter.class);
-        var authIndex = model.getKnowledge(AuthenticationSchemeIndex.class);
-        var schemes = new HashSet<>(authIndex.getSupportedServiceSchemes(service, protocolName));
+        // Get auth schemes of a specific protocol.
+        var schemes = new HashSet<>(service.getTrait(ProtocolsTrait.class)
+                .flatMap(trait -> trait.getProtocol(protocolName))
+                .map(Protocol::getAuth)
+                .orElse(List.of()));
         List<SecuritySchemeConverter> resolved = new ArrayList<>();
 
         for (var converter: converters) {
-            if (schemes.remove(converter.getAuthenticationSchemeName())) {
+            if (schemes.remove(converter.getAuthSchemeName())) {
                 resolved.add(converter);
             }
         }
@@ -521,7 +523,7 @@ public final class OpenApiConverter {
             OperationShape shape
     ) {
         var service = context.getService();
-        var auth = context.getModel().getKnowledge(AuthenticationSchemeIndex.class);
+        var auth = context.getModel().getKnowledge(AuthIndex.class);
         var serviceSchemes = auth.getDefaultServiceSchemes(service);
         // Note: the eligible schemes have already been filtered for the protocol, so no need to do that here.
         var operationSchemes = auth.getOperationSchemes(service, shape, context.getProtocolName());
@@ -617,21 +619,20 @@ public final class OpenApiConverter {
             ComponentsObject.Builder components,
             SmithyOpenApiPlugin plugin
     ) {
-        context.getService().getTrait(AuthenticationTrait.class).ifPresentOrElse(trait -> {
+        context.getService().getTrait(ProtocolsTrait.class).ifPresentOrElse(trait -> {
             for (var converter : context.getSecuritySchemeConverters()) {
                 var securityName = converter.getSecurityName(context);
-                var authName = converter.getAuthenticationSchemeName();
-                var authenticationScheme = trait.getAuthenticationSchemes().get(authName);
-                var createdScheme = converter.createSecurityScheme(context, trait, authenticationScheme);
+                var authName = converter.getAuthSchemeName();
+                var createdScheme = converter.createSecurityScheme(context);
                 var securityScheme = plugin.updateSecurityScheme(context, authName, securityName, createdScheme);
                 if (securityScheme != null) {
                     components.putSecurityScheme(securityName, securityScheme);
                 }
             }
-        }, () -> LOGGER.warning("No authentication trait found on service while converting to OpenAPI"));
+        }, () -> LOGGER.warning("No `protocols` trait found on service while converting to OpenAPI"));
 
         // Add service-wide security requirements.
-        var authIndex = context.getModel().getKnowledge(AuthenticationSchemeIndex.class);
+        var authIndex = context.getModel().getKnowledge(AuthIndex.class);
         var schemes = authIndex.getDefaultServiceSchemes(context.getService());
         for (var converter : findMatchingConverters(context, schemes)) {
             var result = converter.createSecurityRequirements(context, context.getService());
@@ -641,7 +642,7 @@ public final class OpenApiConverter {
 
     private Collection<SecuritySchemeConverter> findMatchingConverters(Context context, Collection<String> schemes) {
         return context.getSecuritySchemeConverters().stream()
-                .filter(converter -> schemes.contains(converter.getAuthenticationSchemeName()))
+                .filter(converter -> schemes.contains(converter.getAuthSchemeName()))
                 .collect(Collectors.toList());
     }
 }

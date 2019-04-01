@@ -2,7 +2,6 @@ package software.amazon.smithy.openapi.fromsmithy.security;
 
 import java.util.Set;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.traits.AuthenticationTrait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
@@ -17,22 +16,18 @@ public final class AwsV4 implements SecuritySchemeConverter {
             AUTH_HEADER, "Date", "X-Amz-Date", "X-Amz-Target", "X-Amz-Security-Token");
 
     @Override
-    public String getAuthenticationSchemeName() {
+    public String getAuthSchemeName() {
         return "aws.v4";
     }
 
     @Override
     public String getSecurityName(Context context) {
         return context.getConfig().getStringMemberOrDefault(
-                OpenApiConstants.SECURITY_NAME_PREFIX + getAuthenticationSchemeName(), "sigv4");
+                OpenApiConstants.SECURITY_NAME_PREFIX + getAuthSchemeName(), "sigv4");
     }
 
     @Override
-    public SecurityScheme createSecurityScheme(
-            Context context,
-            AuthenticationTrait authTrait,
-            AuthenticationTrait.AuthScheme authScheme
-    ) {
+    public SecurityScheme createSecurityScheme(Context context) {
         return SecurityScheme.builder()
                 .type("apiKey")
                 .description("AWS Signature Version 4 authentication")

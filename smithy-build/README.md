@@ -319,7 +319,7 @@ orphaned shapes.
 ```
 
 
-#### includeAuthentication
+#### includeAuth
 
 Removes authentication schemes from shapes that do not match one of the
 given arguments (a list of authentication schemes).
@@ -330,7 +330,7 @@ given arguments (a list of authentication schemes).
   "projections": {
     "exampleProjection": {
       "transforms": [
-        {"name": "includeAuthentication", "arguments": ["aws/v4", "httpBasic"]}
+        {"name": "includeAuth", "arguments": ["aws.v4", "http-basic"]}
       ]
     }
   }
@@ -368,7 +368,7 @@ arguments (a list of protocol names).
   "projections": {
     "exampleProjection": {
       "transforms": [
-        {"name": "includeProtocols", "arguments": ["aws/rest-json"]}
+        {"name": "includeProtocols", "arguments": ["aws.rest-json"]}
       ]
     }
   }

@@ -252,10 +252,7 @@
             "Service": {
                 "type": "service",
                 "version": "2017-17-01",
-                "protocols": {
-                    "foo": {
-                    }
-                },
+                "protocols": [{"name": "foo"}],
                 "operations": [
                     "Operation"
                 ],

@@ -11,7 +11,6 @@ import software.amazon.smithy.openapi.fromsmithy.plugins.JsonSubstitutionsPlugin
 import software.amazon.smithy.openapi.fromsmithy.plugins.RemoveUnusedComponentsPlugin;
 import software.amazon.smithy.openapi.fromsmithy.plugins.UnsupportedTraitsPlugin;
 import software.amazon.smithy.openapi.fromsmithy.protocols.AwsRestJsonProtocol;
-import software.amazon.smithy.openapi.fromsmithy.security.AmazonCognitoUserPools;
 import software.amazon.smithy.openapi.fromsmithy.security.AwsV4;
 import software.amazon.smithy.openapi.fromsmithy.security.HttpBasic;
 import software.amazon.smithy.openapi.fromsmithy.security.HttpBearer;
@@ -45,7 +44,6 @@ module software.amazon.smithy.openapi {
             UnsupportedTraitsPlugin;
 
     provides SecuritySchemeConverter with
-            AmazonCognitoUserPools,
             AwsV4,
             HttpBasic,
             HttpDigest,

@@ -6,7 +6,7 @@
         "type": "service",
         "version": "2006-03-01",
         "tags": ["foo"],
-        "protocols": {"foo.baz.bar.bam.qux.lorem.ipsum": {}}
+        "protocols": [{"name": "foo.baz.bar.bam.qux.lorem.ipsum"}]
       }
     }
   }

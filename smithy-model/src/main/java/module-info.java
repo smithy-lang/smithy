@@ -14,8 +14,7 @@
  */
 
 import software.amazon.smithy.model.loader.ModelDiscovery;
-import software.amazon.smithy.model.traits.AuthenticationSchemesTrait;
-import software.amazon.smithy.model.traits.AuthenticationTrait;
+import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.CollectionOperationTrait;
 import software.amazon.smithy.model.traits.CorsTrait;
@@ -75,8 +74,8 @@ import software.amazon.smithy.model.transform.plugins.CleanResourceReferences;
 import software.amazon.smithy.model.transform.plugins.CleanStructureAndUnionMembers;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorService;
-import software.amazon.smithy.model.validation.builtins.AuthenticationProtocolsValidator;
-import software.amazon.smithy.model.validation.builtins.AuthenticationValidator;
+import software.amazon.smithy.model.validation.builtins.AuthProtocolsValidator;
+import software.amazon.smithy.model.validation.builtins.AuthValidator;
 import software.amazon.smithy.model.validation.builtins.EnumTraitValidator;
 import software.amazon.smithy.model.validation.builtins.EventPayloadTraitValidator;
 import software.amazon.smithy.model.validation.builtins.EventStreamValidator;
@@ -138,8 +137,7 @@ module software.amazon.smithy.model {
 
     // Concrete types for Traits.
     provides TraitService with
-            AuthenticationSchemesTrait,
-            AuthenticationTrait.Provider,
+            AuthTrait,
             BoxTrait,
             CollectionOperationTrait,
             CorsTrait.Provider,
@@ -194,8 +192,8 @@ module software.amazon.smithy.model {
 
     // Built-in validators applied to every model.
     provides Validator with
-            AuthenticationValidator,
-            AuthenticationProtocolsValidator,
+            AuthValidator,
+            AuthProtocolsValidator,
             EnumTraitValidator,
             EventPayloadTraitValidator,
             EventStreamValidator,

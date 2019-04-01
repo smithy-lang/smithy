@@ -696,9 +696,7 @@ the service converted to lowercase characters).
                     "FooBaz": {
                         "type": "service",
                         "version": "2018-03-17",
-                        "authentication": {
-                            "aws.v4": {}
-                        },
+                        "protocols": [{"name": "aws.rest-json", "auth": ["aws.v4"]}],
                         "aws.api#service": {
                             "sdkId": "Some Value"
                         }

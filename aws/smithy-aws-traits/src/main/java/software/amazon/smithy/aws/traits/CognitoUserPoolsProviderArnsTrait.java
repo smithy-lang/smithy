@@ -13,23 +13,26 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model.traits;
+package software.amazon.smithy.aws.traits;
 
 import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.model.traits.StringListTrait;
+import software.amazon.smithy.model.traits.TraitService;
 
-public final class AuthenticationSchemesTrait
-        extends StringListTrait implements ToSmithyBuilder<AuthenticationSchemesTrait> {
+public final class CognitoUserPoolsProviderArnsTrait
+        extends StringListTrait
+        implements ToSmithyBuilder<CognitoUserPoolsProviderArnsTrait> {
 
-    private static final String TRAIT = "smithy.api#authenticationSchemes";
+    public static final String TRAIT = "aws.api#cognitoUserPoolsProviderArns";
 
-    private AuthenticationSchemesTrait(List<String> values, FromSourceLocation sourceLocation) {
+    private CognitoUserPoolsProviderArnsTrait(List<String> values, FromSourceLocation sourceLocation) {
         super(TRAIT, values, sourceLocation);
     }
 
     public static TraitService provider() {
-        return TraitService.createStringListProvider(TRAIT, AuthenticationSchemesTrait::new);
+        return TraitService.createStringListProvider(TRAIT, CognitoUserPoolsProviderArnsTrait::new);
     }
 
     @Override
@@ -41,12 +44,12 @@ public final class AuthenticationSchemesTrait
         return new Builder();
     }
 
-    public static final class Builder extends StringListTrait.Builder<AuthenticationSchemesTrait, Builder> {
+    public static final class Builder extends StringListTrait.Builder<CognitoUserPoolsProviderArnsTrait, Builder> {
         private Builder() {}
 
         @Override
-        public AuthenticationSchemesTrait build() {
-            return new AuthenticationSchemesTrait(getValues(), getSourceLocation());
+        public CognitoUserPoolsProviderArnsTrait build() {
+            return new CognitoUserPoolsProviderArnsTrait(getValues(), getSourceLocation());
         }
     }
 }
