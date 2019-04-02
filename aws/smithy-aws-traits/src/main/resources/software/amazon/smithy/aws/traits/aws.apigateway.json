@@ -20,6 +20,20 @@
         "shape": "smithy.api#String",
         "documentation": "Selects which request validation strategy to use. One of: 'full', 'params-only', 'body-only'",
         "tags": ["internal"]
+      },
+      "integration": {
+        "selector": ":test(service, resource, operation)",
+        "shape": "IntegrationTrait",
+        "documentation": "Defines an API Gateway integration.",
+        "tags": ["internal"],
+        "conflicts": ["aws.apigateway#mockIntegration"]
+      },
+      "mockIntegration": {
+        "selector": ":test(service, resource, operation)",
+        "shape": "MockIntegrationTrait",
+        "documentation": "Defines an API Gateway mock integration.",
+        "tags": ["internal"],
+        "conflicts": ["aws.apigateway#integration"]
       }
     },
     "shapes": {
@@ -66,6 +80,163 @@
             "documentation": "The number of seconds for which the resulting IAM policy is cached."
           }
         }
+      },
+      "IntegrationTrait": {
+        "type": "structure",
+        "members": {
+          "uri": {
+            "target": "Arn",
+            "required": true
+          },
+          "credentials": {
+            "target": "IamRoleArn"
+          },
+          "httpMethod": {
+            "target": "smithy.api#String",
+            "required": true
+          },
+          "passThroughBehavior": {
+            "target": "PassThroughBehavior"
+          },
+          "contentHandling": {
+            "target": "ContentHandling"
+          },
+          "timeoutInMillis": {
+            "target": "smithy.api#Integer"
+          },
+          "connectionId": {
+            "target": "String"
+          },
+          "connectionType": {
+            "target": "ConnectionType"
+          },
+          "cacheNamespace": {
+            "target": "smithy.api#String"
+          },
+          "cacheKeyParameters": {
+            "target": "StringList"
+          },
+          "requestParameters": {
+            "target": "RequestParameters"
+          },
+          "requestTemplates": {
+            "target": "Templates"
+          },
+          "responses": {
+            "target": "Responses"
+          }
+        },
+        "private": true
+      },
+      "MockIntegrationTrait": {
+        "type": "structure",
+        "members": {
+          "passThroughBehavior": {
+            "target": "PassThroughBehavior"
+          },
+          "requestParameters": {
+            "target": "RequestParameters"
+          },
+          "requestTemplates": {
+            "target": "Templates"
+          },
+          "responses": {
+            "target": "Responses"
+          }
+        },
+        "private": true
+      },
+      "IamRoleArn": {
+        "type": "string",
+        "documentation": "<p>The ARN of the IAM role to assume with invoking the integration.</p><p>This string MAY contain the literal string <code>{serviceName}</code> and/or the literal string <code>{operationName}</code>, which will be replaced with the name of the Smithy service shape and the name of the Smithy operation shape, respectively.</p>",
+        "aws.api#arnReference": {
+          "type": "AWS::IAM::Role"
+        },
+        "private": true
+      },
+      "LambdaFunctionArn": {
+        "type": "string",
+        "documentation": "<p>The ARN of the Lambda function to invoke via a LambdaIntegration.</p><p>This string MAY contain the literal string <code>{serviceName}</code> and/or the literal string <code>{operationName}</code>, which will be replaced with the name of the Smithy service shape and the name of the Smithy operation shape, respectively.</p>",
+        "aws.api#arnReference": {
+          "type": "AWS::Lambda::Function"
+        },
+        "private": true
+      },
+      "Arn": {
+        "type": "string",
+        "documentation": "<p>The ARN of an AWS integration target.</p><p>This string MAY contain the literal string <code>{serviceName}</code> and/or the literal string <code>{operationName}</code>, which will be replaced with the name of the Smithy service shape and the name of the Smithy operation shape, respectively.</p>",
+        "aws.api#arnReference": {},
+        "private": true
+      },
+      "RequestParameters": {
+        "type": "map",
+        "documentation": "<p>A mapping of integration request parameters to the API Gateway data mapping expression that should be used to populate the parameter.</p> <p><strong>Note:</strong> This feature is provided primarily to allow injecting static values and context variables for request parameters. Request data MAY be mapped to headers using the syntax described in <a href=\"https://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html#mapping-response-parameters\">the API Gateway Developer Guide</a>; however, the data must be identified according to its location in the serialized request, which may differ from protocol to protocol. Here be dragons!</p>",
+        "key": {"target": "smithy.api#String"},
+        "value": {"target": "smithy.api#String"},
+        "private": true
+      },
+      "Templates": {
+        "type": "map",
+        "documentation": "<p>A map of MIME types to velocity templates allowing you to craft a new integration message from received data.</p><p><strong>Note:</strong> This feature is provided primarily to allow injecting static values and context variables for request parameters. Request data MAY be mapped to headers using the syntax described in <a href=\"https://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html#mapping-response-parameters\">the API Gateway Developer Guide</a>; however, the data must be identified according to its location in the serialized request, which may differ from protocol to protocol. Here be dragons!</p>",
+        "key": {"target": "smithy.api#String"},
+        "value": {"target": "smithy.api#String"},
+        "private": true
+      },
+      "ConnectionType": {
+        "type": "string",
+        "private": true,
+        "enum": {
+          "INTERNET": {},
+          "VPC_LINK": {}
+        }
+      },
+      "PassThroughBehavior": {
+        "type": "string",
+        "documentation": "Defines the passThroughBehavior for the integration",
+        "enum": {
+          "when_no_templates": {"name": "WHEN_NO_TEMPLATES"},
+          "when_no_match": {"name": "WHEN_NO_MATCH"},
+          "never": {"name": "NEVER"}
+        },
+        "private": true
+      },
+      "ContentHandling": {
+        "type": "string",
+        "documentation": "Defines the contentHandling for the integration",
+        "enum": {
+          "CONVERT_TO_TEXT": {"name": "CONVERT_TO_TEXT"},
+          "CONVERT_TO_BINARY": {"name": "CONVERT_TO_BINARY"}
+        },
+        "private": true
+      },
+      "StringList": {
+        "type": "list",
+        "member": {"target": "smithy.api#String"}
+      },
+      "Responses": {
+        "type": "map",
+        "documentation": "A map of response identifiers to responses.",
+        "key": {"target": "smithy.api#String"},
+        "value": {"target": "Response"},
+        "private": true
+      },
+      "Response": {
+        "type": "structure",
+        "documentation": "Defines a response and specifies parameter mappings.",
+        "members": {
+          "statusCode": {"target": "smithy.api#String"},
+          "contentHandling": {"target": "ContentHandling"},
+          "responseTemplates": {"target": "Templates"},
+          "responseParameters": {"target": "ResponseParameters"}
+        },
+        "private": true
+      },
+      "ResponseParameters": {
+        "type": "map",
+        "documentation": "Specifies parameter mappings for the response. Only the header and body parameters of the integration response can be mapped to the header parameters of the method.",
+        "key": {"target": "smithy.api#String"},
+        "value": {"target": "smithy.api#String"},
+        "private": true
       }
     }
   }

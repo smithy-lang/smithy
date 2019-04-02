@@ -1,0 +1,97 @@
+{
+  "smithy": "1.0",
+  "ns.foo": {
+    "shapes": {
+      "Service1": {
+        "type": "service",
+        "version": "2018-03-17",
+        "aws.api#service": {"sdkId": "Some Value"},
+        "aws.apigateway#integration": {
+          "uri": "arn:foo",
+          "httpMethod": "POST"
+        }
+      },
+      "Service2": {
+        "type": "service",
+        "version": "2018-03-17",
+        "aws.api#service": {"sdkId": "Some Value"},
+        "aws.apigateway#integration": {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:012345678901:function:HelloWorld/invocations",
+          "httpMethod" : "POST",
+          "credentials" : "arn:aws:iam::012345678901:role/apigateway-invoke-lambda-exec-role",
+          "requestTemplates" : {
+            "application/json" : "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
+            "application/xml" : "#set ($root=$input.path('$')) <stage>$root.name</stage> "
+          },
+          "requestParameters" : {
+            "integration.request.path.stage" : "method.request.querystring.version",
+            "integration.request.querystring.provider" : "method.request.querystring.vendor"
+          },
+          "cacheNamespace" : "cache namespace",
+          "cacheKeyParameters" : [],
+          "responses" : {
+            "2\\d{2}" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.requestId" : "integration.response.header.cid"
+              },
+              "responseTemplates" : {
+                "application/json" : "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
+                "application/xml" : "#set ($root=$input.path('$')) <stage>$root.name</stage> "
+              }
+            },
+            "302" : {
+              "statusCode" : "302",
+              "responseParameters" : {
+                "method.response.header.Location" : "integration.response.body.redirect.url"
+              }
+            },
+            "default" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.test-method-response-header" : "'static value'"
+              }
+            }
+          }
+        }
+      },
+      "Operation": {
+        "type": "operation",
+        "aws.apigateway#mockIntegration": {
+          "requestTemplates" : {
+            "application/json" : "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
+            "application/xml" : "#set ($root=$input.path('$')) <stage>$root.name</stage> "
+          },
+          "requestParameters" : {
+            "integration.request.path.stage" : "method.request.querystring.version",
+            "integration.request.querystring.provider" : "method.request.querystring.vendor"
+          },
+          "responses" : {
+            "2\\d{2}" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.requestId" : "integration.response.header.cid"
+              },
+              "responseTemplates" : {
+                "application/json" : "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
+                "application/xml" : "#set ($root=$input.path('$')) <stage>$root.name</stage> "
+              }
+            },
+            "302" : {
+              "statusCode" : "302",
+              "responseParameters" : {
+                "method.response.header.Location" : "integration.response.body.redirect.url"
+              }
+            },
+            "default" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.test-method-response-header" : "'static value'"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
