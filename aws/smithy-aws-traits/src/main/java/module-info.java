@@ -25,6 +25,8 @@ import software.amazon.smithy.aws.traits.UnsignedPayload;
 import software.amazon.smithy.aws.traits.apigateway.ApiKeySourceTrait;
 import software.amazon.smithy.aws.traits.apigateway.AuthorizersTrait;
 import software.amazon.smithy.aws.traits.apigateway.AuthorizersTraitValidator;
+import software.amazon.smithy.aws.traits.apigateway.IntegrationTrait;
+import software.amazon.smithy.aws.traits.apigateway.MockIntegrationTrait;
 import software.amazon.smithy.aws.traits.apigateway.RequestValidatorTrait;
 import software.amazon.smithy.aws.traits.iam.ActionPermissionDescriptionTrait;
 import software.amazon.smithy.aws.traits.iam.ConditionKeysTrait;
@@ -71,7 +73,9 @@ module software.amazon.smithy.aws.traits {
             // API Gateway traits.
             AuthorizersTrait,
             RequestValidatorTrait,
-            ApiKeySourceTrait;
+            ApiKeySourceTrait,
+            IntegrationTrait,
+            MockIntegrationTrait;
 
     // Add AWS trait validators.
     provides Validator with
