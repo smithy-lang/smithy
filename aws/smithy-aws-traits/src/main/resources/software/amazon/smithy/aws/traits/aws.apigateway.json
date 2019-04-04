@@ -84,6 +84,10 @@
       "IntegrationTrait": {
         "type": "structure",
         "members": {
+          "type": {
+            "target": "IntegrationType",
+            "required": true
+          },
           "uri": {
             "target": "Arn",
             "required": true
@@ -127,6 +131,15 @@
           }
         },
         "private": true
+      },
+      "IntegrationType": {
+        "type": "string",
+        "enum": {
+          "aws": {"name":  "AWS"},
+          "aws_proxy": {"name":  "AWS_PROXY"},
+          "http": {"name":  "HTTP"},
+          "http_proxy": {"name":  "HTTP_PROXY"}
+        }
       },
       "MockIntegrationTrait": {
         "type": "structure",

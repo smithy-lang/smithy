@@ -16,9 +16,10 @@
 import software.amazon.smithy.aws.apigateway.openapi.AddApiKeySource;
 import software.amazon.smithy.aws.apigateway.openapi.AddAuthorizers;
 import software.amazon.smithy.aws.apigateway.openapi.AddBinaryTypes;
+import software.amazon.smithy.aws.apigateway.openapi.AddIntegrations;
 import software.amazon.smithy.aws.apigateway.openapi.AddRequestValidators;
-import software.amazon.smithy.aws.apigateway.openapi.CognitoUserPoolsConverter;
 import software.amazon.smithy.aws.apigateway.openapi.CloudFormationSubstitution;
+import software.amazon.smithy.aws.apigateway.openapi.CognitoUserPoolsConverter;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
 
@@ -30,6 +31,7 @@ module software.amazon.smithy.aws.apigateway.openapi {
 
     provides SmithyOpenApiPlugin with
             AddAuthorizers,
+            AddIntegrations,
             AddRequestValidators,
             AddBinaryTypes,
             AddApiKeySource,

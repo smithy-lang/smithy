@@ -1,0 +1,40 @@
+{
+  "smithy": "1.0",
+  "ns.foo": {
+    "shapes": {
+      "Service": {
+        "type": "service",
+        "version": "2018-03-17",
+        "aws.api#service": {"sdkId": "Some Value"},
+        "aws.apigateway#integration": {"type": "aws", "uri" : "arn:Service", "httpMethod" : "POST"},
+        "resources": ["A", "B"],
+        "operations": ["O1"]
+      },
+      "A": {
+        "type": "resource",
+        "operations": ["O2", "O3"]
+      },
+      "B": {
+        "type": "resource",
+        "aws.apigateway#integration": {"type": "aws", "uri" : "arn:B", "httpMethod" : "POST"},
+        "operations": ["O4", "O5"]
+      },
+      "O1": {
+        "type": "operation",
+        "aws.apigateway#integration": {"type": "aws", "uri" : "arn:O1", "httpMethod" : "POST"}
+      },
+      "O2": {"type": "operation"},
+      "O3": {
+        "type": "operation",
+        "aws.apigateway#integration": {"type": "aws", "uri" : "arn:O3", "httpMethod" : "POST"}
+      },
+      "O4": {
+        "type": "operation"
+      },
+      "O5": {
+        "type": "operation",
+        "aws.apigateway#integration": {"type": "aws", "uri" : "arn:O5", "httpMethod" : "POST"}
+      }
+    }
+  }
+}
