@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.smithy.aws.traits.apigateway;
 
 import java.util.ArrayList;
@@ -22,6 +37,7 @@ import software.amazon.smithy.model.traits.TraitService;
 public final class IntegrationTrait extends AbstractTrait implements ToSmithyBuilder<IntegrationTrait> {
     public static final String TRAIT = "aws.apigateway#integration";
 
+    private static final String TYPE_KEY = "type";
     private static final String PASS_THROUGH_BEHAVIOR_KEY = "passThroughBehavior";
     private static final String REQUEST_PARAMETERS_KEY = "requestParameters";
     private static final String REQUEST_TEMPLATES_KEY = "requestTemplates";
@@ -36,11 +52,12 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     private static final String CONNECTION_ID_KEY = "connectionId";
     private static final String CONNECTION_TYPE = "connectionType";
     private static final Set<String> KEYS = Set.of(
-            PASS_THROUGH_BEHAVIOR_KEY, REQUEST_PARAMETERS_KEY, REQUEST_TEMPLATES_KEY,
-            RESPONSES_KEY, CREDENTIALS_KEY, HTTP_METHOD_KEY, CACHE_KEY_PARAMETERS_KEY,
-            CACHE_NAMESPACE_KEY, CONTENT_HANDLING_KEY, TIMEOUT_KEY, URI_KEY,
-            CONNECTION_ID_KEY, CONNECTION_TYPE);
+            TYPE_KEY, PASS_THROUGH_BEHAVIOR_KEY, REQUEST_PARAMETERS_KEY,
+            REQUEST_TEMPLATES_KEY, RESPONSES_KEY, CREDENTIALS_KEY, HTTP_METHOD_KEY,
+            CACHE_KEY_PARAMETERS_KEY, CACHE_NAMESPACE_KEY, CONTENT_HANDLING_KEY,
+            TIMEOUT_KEY, URI_KEY, CONNECTION_ID_KEY, CONNECTION_TYPE);
 
+    private final String type;
     private final String uri;
     private final String credentials;
     private final String httpMethod;
@@ -57,6 +74,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
 
     private IntegrationTrait(Builder builder) {
         super(TRAIT, builder.getSourceLocation());
+        type = SmithyBuilder.requiredState(TYPE_KEY, builder.type);
         uri = SmithyBuilder.requiredState(URI_KEY, builder.uri);
         httpMethod = SmithyBuilder.requiredState(HTTP_METHOD_KEY, builder.httpMethod);
         credentials = builder.credentials;
@@ -78,6 +96,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
             builder.sourceLocation(value);
             ObjectNode node = value.expectObjectNode();
             node.warnIfAdditionalProperties(KEYS);
+            builder.type(node.expectMember(TYPE_KEY).expectStringNode().getValue());
             builder.uri(node.expectMember(URI_KEY).expectStringNode().getValue());
             builder.httpMethod(node.expectMember(HTTP_METHOD_KEY).expectStringNode().getValue());
             node.getArrayMember(CACHE_KEY_PARAMETERS_KEY)
@@ -119,6 +138,15 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * Gets the integration type.
+     *
+     * @return Returns the integration type.
+     */
+    public String getType() {
+        return type;
     }
 
     /**
@@ -307,6 +335,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     @Override
     protected ObjectNode createNode() {
         return Node.objectNodeBuilder()
+                .withMember(TYPE_KEY, getType())
                 .withMember(URI_KEY, getUri())
                 .withMember(HTTP_METHOD_KEY, getHttpMethod())
                 .withOptionalMember(CREDENTIALS_KEY, getCredentials().map(Node::from))
@@ -335,6 +364,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     @Override
     public Builder toBuilder() {
         var builder = builder()
+                .type(type)
                 .uri(uri)
                 .credentials(credentials)
                 .httpMethod(httpMethod)
@@ -352,6 +382,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     }
 
     public static final class Builder extends AbstractTraitBuilder<IntegrationTrait, Builder> {
+        private String type;
         private String uri;
         private String credentials;
         private String httpMethod;
@@ -369,6 +400,17 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         @Override
         public IntegrationTrait build() {
             return new IntegrationTrait(this);
+        }
+
+        /**
+         * Sets the integration type.
+         *
+         * @param type Type to set (aws, aws_proxy, http, http_proxy).
+         * @return Returns the builder.
+         */
+        public Builder type(String type) {
+            this.type = type;
+            return this;
         }
 
         /**

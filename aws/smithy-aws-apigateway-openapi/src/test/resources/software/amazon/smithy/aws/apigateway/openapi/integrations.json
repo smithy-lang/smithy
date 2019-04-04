@@ -1,20 +1,12 @@
 {
   "smithy": "1.0",
-  "ns.foo": {
+  "smithy.example": {
     "shapes": {
-      "Service1": {
+      "Service": {
         "type": "service",
         "version": "2018-03-17",
-        "aws.api#service": {"sdkId": "Some Value"},
-        "aws.apigateway#integration": {
-          "type": "http",
-          "uri": "arn:foo",
-          "httpMethod": "POST"
-        }
-      },
-      "Service2": {
-        "type": "service",
-        "version": "2018-03-17",
+        "protocols": [{"name": "aws.rest-json"}],
+        "operations": ["Operation1", "Operation2"],
         "aws.api#service": {"sdkId": "Some Value"},
         "aws.apigateway#integration": {
           "type": "aws",
@@ -57,10 +49,14 @@
           }
         }
       },
-      "Operation": {
+      "Operation1": {
         "type": "operation",
+        "http": {"method": "POST", "uri":  "/1"}
+      },
+      "Operation2": {
+        "type": "operation",
+        "http": {"method": "POST", "uri":  "/2"},
         "aws.apigateway#mockIntegration": {
-          "type": "aws",
           "requestTemplates" : {
             "application/json" : "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
             "application/xml" : "#set ($root=$input.path('$')) <stage>$root.name</stage> "
