@@ -32,7 +32,9 @@ public final class ResourceIdentifierTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, ResourceIdentifierTrait::new);
+    public static final class Provider extends StringTrait.Provider<ResourceIdentifierTrait> {
+        public Provider() {
+            super(TRAIT, ResourceIdentifierTrait::new);
+        }
     }
 }

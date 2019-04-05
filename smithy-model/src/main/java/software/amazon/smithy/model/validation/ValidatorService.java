@@ -57,52 +57,33 @@ public interface ValidatorService {
     }
 
     /**
-     * Creates a {@code ValidatorService} using the given name and factory function.
-     *
-     * @param name Name of the validator that this service provides.
-     * @param creator Factory function used to create the {@link Validator}.
-     * @param <V> Type of validator being created.
-     * @return Returns the created {@code ValidatorService}.
+     * Provides a simple abstraction for creating validator service subclasses.
      */
-    static <V extends Validator> ValidatorService createProvider(String name, Function<ObjectNode, V> creator) {
-        return new ValidatorService() {
-            @Override
-            public String getName() {
-                return name;
-            }
+    abstract class Provider implements ValidatorService {
+        private String name;
+        private Function<ObjectNode, ? extends Validator> provider;
 
-            @Override
-            public Validator createValidator(ObjectNode configuration) {
-                return creator.apply(configuration);
-            }
-        };
-    }
+        public Provider(String name, Function<ObjectNode, ? extends Validator> provider) {
+            this.name = name;
+            this.provider = provider;
+        }
 
-    /**
-     * Creates a {@code ValidatorService} using the given class and factory function.
-     *
-     * @param clazz Class from which to derive a validator name.
-     * @param creator Factory function used to create the {@link Validator}.
-     * @param <V> Type of validator being created.
-     * @return Returns the created {@code ValidatorService}.
-     * @see #determineValidatorName
-     */
-    static <V extends Validator> ValidatorService createProvider(Class<V> clazz, Function<ObjectNode, V> creator) {
-        return createProvider(determineValidatorName(clazz), creator);
-    }
+        public <T extends Validator> Provider(Class<T> klass, Function<ObjectNode, T> provider) {
+            this(determineValidatorName(klass), provider);
+        }
 
-    /**
-     * Creates a {@code ValidatorService} using the given class and supplier.
-     *
-     * <p>This kind of validator doesn't use configuration.
-     *
-     * @param clazz Class from which to derive a validator name.
-     * @param creator Factory function used to create the {@link Validator}.
-     * @param <V> Type of validator being created.
-     * @return Returns the created {@code ValidatorService}.
-     * @see #determineValidatorName
-     */
-    static <V extends Validator> ValidatorService createSimpleProvider(Class<V> clazz, Supplier<V> creator) {
-        return createProvider(determineValidatorName(clazz), configuration -> creator.get());
+        public <T extends Validator> Provider(Class<T> klass, Supplier<T> supplier) {
+            this(determineValidatorName(klass), c -> supplier.get());
+        }
+
+        @Override
+        public final String getName() {
+            return name;
+        }
+
+        @Override
+        public final Validator createValidator(ObjectNode configuration) {
+            return provider.apply(configuration);
+        }
     }
 }

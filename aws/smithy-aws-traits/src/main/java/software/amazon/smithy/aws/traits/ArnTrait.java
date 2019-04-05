@@ -22,11 +22,11 @@ import java.util.regex.Pattern;
 import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.ToSmithyBuilder;
-import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
-import software.amazon.smithy.model.traits.TraitService;
+import software.amazon.smithy.model.traits.Trait;
 
 /**
  * Configures the ARN template of a resource shape, relative to the
@@ -61,26 +61,22 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
         }
     }
 
-    public static TraitService provider() {
-        return TraitService.createProvider(TRAIT, (target, value) -> {
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(TRAIT);
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
             var builder = builder();
             var objectNode = value.expectObjectNode();
             objectNode.warnIfAdditionalProperties(PROPERTIES);
             builder.template(objectNode.expectMember(TEMPLATE).expectStringNode().getValue());
-            builder.absolute(objectNode.getMember(ABSOLUTE)
-                    .map(Node::expectBooleanNode)
-                    .map(BooleanNode::getValue)
-                    .orElse(false));
-            builder.noRegion(objectNode.getMember(NO_REGION)
-                    .map(Node::expectBooleanNode)
-                    .map(BooleanNode::getValue)
-                    .orElse(false));
-            builder.noAccount(objectNode.getMember(NO_ACCOUNT)
-                    .map(Node::expectBooleanNode)
-                    .map(BooleanNode::getValue)
-                    .orElse(false));
+            builder.absolute(objectNode.getBooleanMemberOrDefault(ABSOLUTE));
+            builder.noRegion(objectNode.getBooleanMemberOrDefault(NO_REGION));
+            builder.noAccount(objectNode.getBooleanMemberOrDefault(NO_ACCOUNT));
             return builder.build();
-        });
+        }
     }
 
     private static List<String> parseLabels(String resource) {

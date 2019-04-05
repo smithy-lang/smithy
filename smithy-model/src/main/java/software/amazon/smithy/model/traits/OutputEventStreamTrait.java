@@ -31,7 +31,9 @@ public final class OutputEventStreamTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, OutputEventStreamTrait::new);
+    public static final class Provider extends StringTrait.Provider<OutputEventStreamTrait> {
+        public Provider() {
+            super(TRAIT, OutputEventStreamTrait::new);
+        }
     }
 }

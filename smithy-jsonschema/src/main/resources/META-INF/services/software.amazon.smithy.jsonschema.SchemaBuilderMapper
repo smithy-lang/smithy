@@ -1,0 +1,2 @@
+software.amazon.smithy.jsonschema.mappers.DisableMapper
+software.amazon.smithy.jsonschema.mappers.TimestampMapper

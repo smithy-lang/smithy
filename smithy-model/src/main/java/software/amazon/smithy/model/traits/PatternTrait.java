@@ -37,8 +37,10 @@ public final class PatternTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, PatternTrait::new);
+    public static final class Provider extends StringTrait.Provider<PatternTrait> {
+        public Provider() {
+            super(TRAIT, PatternTrait::new);
+        }
     }
 
     /**

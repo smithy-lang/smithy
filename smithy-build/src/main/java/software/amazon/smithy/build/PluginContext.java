@@ -36,7 +36,6 @@ public final class PluginContext {
     private final ObjectNode settings;
     private final FileManifest fileManifest;
     private final ClassLoader pluginClassLoader;
-    private final ModuleLayer pluginModuleLayer;
 
     private PluginContext(Builder builder) {
         this.model = SmithyBuilder.requiredState("model", builder.model);
@@ -46,7 +45,6 @@ public final class PluginContext {
         this.events = Collections.unmodifiableList(builder.events);
         this.settings = builder.settings;
         this.pluginClassLoader = builder.pluginClassLoader;
-        this.pluginModuleLayer = builder.pluginModuleLayer;
     }
 
     /**
@@ -124,16 +122,6 @@ public final class PluginContext {
     }
 
     /**
-     * Gets the ModuleLayer that should be used in build plugins to load
-     * services.
-     *
-     * @return Returns the optionally set ModuleLayer.
-     */
-    public Optional<ModuleLayer> getPluginModuleLayer() {
-        return Optional.ofNullable(pluginModuleLayer);
-    }
-
-    /**
      * Builds a {@link PluginContext}.
      */
     public static final class Builder implements SmithyBuilder<PluginContext> {
@@ -144,7 +132,6 @@ public final class PluginContext {
         private ObjectNode settings = Node.objectNode();
         private FileManifest fileManifest;
         private ClassLoader pluginClassLoader;
-        private ModuleLayer pluginModuleLayer;
 
         private Builder() {}
 
@@ -230,18 +217,6 @@ public final class PluginContext {
          */
         public Builder pluginClassLoader(ClassLoader pluginClassLoader) {
             this.pluginClassLoader = pluginClassLoader;
-            return this;
-        }
-
-        /**
-         * Sets a ModuleLayer that should be used by build plugins when loading
-         * services.
-         *
-         * @param pluginModuleLayer ModuleLayer to use in build plugins.
-         * @return Retruns the builder.
-         */
-        public Builder pluginModuleLayer(ModuleLayer pluginModuleLayer) {
-            this.pluginModuleLayer = pluginModuleLayer;
             return this;
         }
     }

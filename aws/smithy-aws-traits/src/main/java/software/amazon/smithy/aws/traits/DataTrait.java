@@ -17,7 +17,6 @@ package software.amazon.smithy.aws.traits;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
-import software.amazon.smithy.model.traits.TraitService;
 
 public final class DataTrait extends StringTrait {
     private static final String TRAIT = "aws.api#data";
@@ -26,7 +25,9 @@ public final class DataTrait extends StringTrait {
         super(TRAIT, value, sourceLocation);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, DataTrait::new);
+    public static final class Provider extends StringTrait.Provider<DataTrait> {
+        public Provider() {
+            super(TRAIT, DataTrait::new);
+        }
     }
 }

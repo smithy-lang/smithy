@@ -87,17 +87,6 @@ public final class ModelTransformer {
     }
 
     /**
-     * Creates a ModelTransformer that finds {@link ModelTransformerPlugin}
-     * service providers using the given {@link ModuleLayer}.
-     *
-     * @param moduleLayer ModuleLayer used to find ModelTransformerPlugin instances.
-     * @return Returns the created ModelTransformer.
-     */
-    public static ModelTransformer createWithServiceProviders(ModuleLayer moduleLayer) {
-        return createWithServiceLoader(ServiceLoader.load(moduleLayer, ModelTransformerPlugin.class));
-    }
-
-    /**
      * Adds or replaces shapes into the model while ensuring that the model
      * is in a consistent state.
      *

@@ -19,7 +19,6 @@ plugins {
     checkstyle
     jacoco
     id("com.github.spotbugs") version "1.6.10"
-    id("org.javamodularity.moduleplugin") version "1.4.0"
 }
 
 // Set a global group ID and version on each project. This version might
@@ -31,6 +30,8 @@ allprojects {
 }
 
 subprojects {
+    val subproject = this
+
     /*
      * Java
      * ====================================================
@@ -86,20 +87,14 @@ subprojects {
         // Configure jars to include license related info
         tasks.jar {
             metaInf.with(licenseSpec)
+            inputs.property("moduleName", subproject.extra["moduleName"])
+            manifest {
+                attributes["Automatic-Module-Name"] = subproject.extra["moduleName"]
+            }
         }
 
         // Always run javadoc after build.
         tasks["build"].finalizedBy(tasks["javadoc"])
-    }
-
-    /*
-     * Java Modules
-     * ====================================================
-     *
-     * Build using Java modules.
-     */
-    if (plugins.hasPlugin("java")) {
-        apply(plugin = "org.javamodularity.moduleplugin")
     }
 
     /*

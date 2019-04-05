@@ -16,9 +16,12 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Abstract trait class for traits that contain only a string value.
@@ -46,5 +49,26 @@ public abstract class StringTrait extends AbstractTrait {
     @Override
     protected final Node createNode() {
         return new StringNode(value, getSourceLocation());
+    }
+
+    /**
+     * Trait provider that expects a string value.
+     */
+    public static class Provider<T extends StringTrait> extends AbstractTrait.Provider {
+        private final BiFunction<String, SourceLocation, T> traitFactory;
+
+        /**
+         * @param name The name of the trait being created.
+         * @param traitFactory The factory used to create the trait.
+         */
+        public Provider(String name, BiFunction<String, SourceLocation, T> traitFactory) {
+            super(name);
+            this.traitFactory = traitFactory;
+        }
+
+        @Override
+        public T createTrait(ShapeId id, Node value) {
+            return traitFactory.apply(value.expectStringNode().getValue(), value.getSourceLocation());
+        }
     }
 }

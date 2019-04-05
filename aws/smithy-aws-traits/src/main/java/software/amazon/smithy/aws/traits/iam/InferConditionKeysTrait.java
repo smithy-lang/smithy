@@ -17,7 +17,6 @@ package software.amazon.smithy.aws.traits.iam;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.BooleanTrait;
-import software.amazon.smithy.model.traits.TraitService;
 
 /**
  * Infers the condition keys of a resource.
@@ -33,7 +32,9 @@ public final class InferConditionKeysTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, InferConditionKeysTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<InferConditionKeysTrait> {
+        public Provider() {
+            super(TRAIT, InferConditionKeysTrait::new);
+        }
     }
 }

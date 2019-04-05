@@ -13,9 +13,11 @@
  * permissions and limitations under the License.
  */
 
+extra["moduleName"] = "software.amazon.smithy.cli"
+
 plugins {
     application
-    id("org.beryx.jlink") version "2.4.0"
+    id("org.beryx.runtime") version "1.1.6"
 }
 
 dependencies {
@@ -28,14 +30,12 @@ dependencies {
 }
 
 application {
-    mainClassName = "software.amazon.smithy.cli/software.amazon.smithy.cli.SmithyCli"
+    mainClassName = "software.amazon.smithy.cli.SmithyCli"
+    applicationName = "smithy"
+    applicationDefaultJvmArgs = listOf("-XX:TieredStopAtLevel=2", "-Xshare:auto", "-XX:SharedArchiveFile=app-cds.jsa")
 }
 
-jlink {
+runtime {
     addOptions("--compress", "0", "--strip-debug", "--no-header-files", "--no-man-pages")
-    launcher {
-        name = "smithy"
-        unixScriptTemplate = file("scripts/launcher.sh")
-        jvmArgs = listOf("-XX:TieredStopAtLevel=2", "-Xshare:auto", "-XX:SharedArchiveFile=app-cds.jsa")
-    }
+    addModules("java.logging")
 }

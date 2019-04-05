@@ -20,9 +20,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Contains abstract functionality to build traits that contain a list
@@ -133,6 +136,28 @@ public abstract class StringListTrait extends AbstractTrait {
         public BUILDER clearValues() {
             values.clear();
             return (BUILDER) this;
+        }
+    }
+
+    /**
+     * Trait provider that expects a list of string values.
+     */
+    public static class Provider<T extends StringListTrait> extends AbstractTrait.Provider {
+        private final BiFunction<List<String>, SourceLocation, T> traitFactory;
+
+        /**
+         * @param name The name of the trait being created.
+         * @param traitFactory The factory used to create the trait.
+         */
+        public Provider(String name, BiFunction<List<String>, SourceLocation, T> traitFactory) {
+            super(name);
+            this.traitFactory = traitFactory;
+        }
+
+        @Override
+        public T createTrait(ShapeId id, Node value) {
+            List<String> values = Node.loadArrayOfString(getTraitName(), value);
+            return traitFactory.apply(values, value.getSourceLocation());
         }
     }
 }

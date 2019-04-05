@@ -94,18 +94,18 @@ public final class GenerateCommand implements Command {
 
         System.err.println(String.format("Generating '%s' for Smithy models: %s", plugin, String.join(" ", models)));
 
-        var layer = SmithyCli.createModuleLayer();
-        var assembler = Model.assembler(layer);
+        var loader = SmithyCli.getConfiguredClassLoader();
+        var assembler = Model.assembler(loader);
 
         if (arguments.has("--discover")) {
             System.err.println("Enabling model discovery");
-            assembler.discoverModels(layer);
+            assembler.discoverModels(loader);
         }
 
         models.forEach(assembler::addImport);
         var model = assembler.assemble().unwrap();
 
-        var buildPlugin = loadSmithyBuildPlugin(layer, plugin);
+        var buildPlugin = loadSmithyBuildPlugin(loader, plugin);
         var manifest = FileManifest.create(Paths.get(output));
         System.err.println(String.format("Output directory set to: %s", output));
 
@@ -121,8 +121,8 @@ public final class GenerateCommand implements Command {
         manifest.getFiles().stream().sorted().forEach(System.out::println);
     }
 
-    private static SmithyBuildPlugin loadSmithyBuildPlugin(ModuleLayer layer, String pluginName) {
-        return SmithyBuildPlugin.createServiceFactory(layer).apply(pluginName).orElseThrow(() -> {
+    private static SmithyBuildPlugin loadSmithyBuildPlugin(ClassLoader loader, String pluginName) {
+        return SmithyBuildPlugin.createServiceFactory(loader).apply(pluginName).orElseThrow(() -> {
             return new RuntimeException(String.format(
                     "Unable to find SmithyBuildPlugin plugin named `%s`.%n%n"
                     + "Plugins are discovered by name using the Java Service Provider Interface.%n"

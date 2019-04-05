@@ -40,7 +40,6 @@ public final class Smithy2OpenApi implements SmithyBuildPlugin {
     public void execute(PluginContext context) {
         OpenApiConverter converter = OpenApiConverter.create();
         context.getSettings().getStringMap().forEach(converter::putSetting);
-        context.getPluginModuleLayer().ifPresent(converter::moduleLayer);
         context.getPluginClassLoader().ifPresent(converter::classLoader);
 
         var shapeId = ShapeId.from(context.getSettings()

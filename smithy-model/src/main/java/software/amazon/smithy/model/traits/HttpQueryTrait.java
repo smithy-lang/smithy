@@ -35,7 +35,9 @@ public final class HttpQueryTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, HttpQueryTrait::new);
+    public static final class Provider extends StringTrait.Provider<HttpQueryTrait> {
+        public Provider() {
+            super(TRAIT, HttpQueryTrait::new);
+        }
     }
 }

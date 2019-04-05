@@ -1,0 +1,3 @@
+software.amazon.smithy.mqtt.traits.PublishTrait$Provider
+software.amazon.smithy.mqtt.traits.SubscribeTrait$Provider
+software.amazon.smithy.mqtt.traits.TopicLabelTrait$Provider

@@ -34,7 +34,9 @@ public final class TimestampFormatTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, TimestampFormatTrait::new);
+    public static final class Provider extends StringTrait.Provider<TimestampFormatTrait> {
+        public Provider() {
+            super(TRAIT, TimestampFormatTrait::new);
+        }
     }
 }

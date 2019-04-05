@@ -31,7 +31,9 @@ public final class MediaTypeTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, MediaTypeTrait::new);
+    public static final class Provider extends StringTrait.Provider<MediaTypeTrait> {
+        public Provider() {
+            super(TRAIT, MediaTypeTrait::new);
+        }
     }
 }

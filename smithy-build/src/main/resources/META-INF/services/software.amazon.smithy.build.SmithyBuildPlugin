@@ -1,0 +1,2 @@
+software.amazon.smithy.build.plugins.BuildInfoPlugin
+software.amazon.smithy.build.plugins.ModelPlugin

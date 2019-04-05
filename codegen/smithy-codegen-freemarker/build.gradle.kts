@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+extra["moduleName"] = "software.amazon.smithy.codegen.freemarker"
+
 dependencies {
     implementation(project(":smithy-model"))
     api(project(":smithy-codegen-core"))

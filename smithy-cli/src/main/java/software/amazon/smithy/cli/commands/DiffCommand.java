@@ -55,13 +55,13 @@ public final class DiffCommand implements Command {
         var newModels = arguments.repeatedParameter("--new");
         System.err.println(String.format("Setting 'new' Smithy models: %s", String.join(" ", newModels)));
 
-        var layer = SmithyCli.createModuleLayer();
-        var assembler = Model.assembler(layer);
+        var loader = SmithyCli.getConfiguredClassLoader();
+        var assembler = Model.assembler(loader);
         var oldModel = loadModel("old", assembler, oldModels);
         assembler.reset();
         var newModel = loadModel("new", assembler, newModels);
 
-        var events = ModelDiff.compare(layer, oldModel, newModel);
+        var events = ModelDiff.compare(loader, oldModel, newModel);
         var hasError = events.stream().anyMatch(event -> event.getSeverity() == Severity.ERROR);
         var hasDanger = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);
         var hasWarning = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);

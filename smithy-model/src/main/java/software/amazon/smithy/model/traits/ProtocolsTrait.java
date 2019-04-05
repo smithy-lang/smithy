@@ -27,6 +27,7 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Defines the protocols supported by a service.
@@ -43,8 +44,13 @@ public final class ProtocolsTrait extends AbstractTrait implements ToSmithyBuild
         this.protocols = List.copyOf(builder.protocols);
     }
 
-    public static TraitService provider() {
-        return TraitService.createProvider(TRAIT, (target, value) -> {
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(TRAIT);
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
 
             for (var protocol : value.expectArrayNode().getElementsAs(ObjectNode.class)) {
@@ -64,7 +70,7 @@ public final class ProtocolsTrait extends AbstractTrait implements ToSmithyBuild
             }
 
             return builder.build();
-        });
+        }
     }
 
     /**

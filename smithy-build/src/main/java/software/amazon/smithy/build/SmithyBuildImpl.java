@@ -52,7 +52,6 @@ final class SmithyBuildImpl {
     private final Model model;
     private final BiFunction<String, SmithyBuildConfig, Path> importBasePathResolver;
     private final ClassLoader pluginClassLoader;
-    private final ModuleLayer pluginModuleLayer;
 
     SmithyBuildImpl(SmithyBuild builder) {
         SmithyBuildConfig baseConfig = SmithyBuilder.requiredState("config", builder.config);
@@ -112,7 +111,6 @@ final class SmithyBuildImpl {
             transformers.put(p.getName(), modelTransformer);
         });
 
-        pluginModuleLayer = builder.pluginModuleLayer;
         pluginClassLoader = builder.pluginClassLoader;
     }
 
@@ -226,7 +224,6 @@ final class SmithyBuildImpl {
                     .events(modelResult.getValidationEvents())
                     .settings(pluginSettings)
                     .fileManifest(manifest)
-                    .pluginModuleLayer(pluginModuleLayer)
                     .pluginClassLoader(pluginClassLoader)
                     .build());
             resultBuilder.addPluginManifest(pluginName, manifest);

@@ -73,15 +73,4 @@ public interface TraitFactory {
     static TraitFactory createServiceFactory(ClassLoader classLoader) {
         return createServiceFactory(ServiceLoader.load(TraitService.class, classLoader));
     }
-
-    /**
-     * Creates a TraitFactory that discovers service providers using
-     * the given ModuleLayer.
-     *
-     * @param moduleLayer ModuleLayer used to find ValidatorProviders.
-     * @return Returns the created TraitFactory.
-     */
-    static TraitFactory createServiceFactory(ModuleLayer moduleLayer) {
-        return createServiceFactory(ServiceLoader.load(moduleLayer, TraitService.class));
-    }
 }

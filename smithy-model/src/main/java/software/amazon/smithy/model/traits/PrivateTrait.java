@@ -32,7 +32,9 @@ public final class PrivateTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, PrivateTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<PrivateTrait> {
+        public Provider() {
+            super(TRAIT, PrivateTrait::new);
+        }
     }
 }

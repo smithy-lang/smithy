@@ -30,8 +30,10 @@ public final class AuthTrait extends StringListTrait implements ToSmithyBuilder<
         super(TRAIT, values, sourceLocation);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringListProvider(TRAIT, AuthTrait::new);
+    public static final class Provider extends StringListTrait.Provider<AuthTrait> {
+        public Provider() {
+            super(TRAIT, AuthTrait::new);
+        }
     }
 
     @Override

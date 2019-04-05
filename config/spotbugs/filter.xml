@@ -37,7 +37,7 @@
     <!-- This method is definitely called, so it might be a bug
          in spot bugs -->
     <Match>
-        <Class name="software.smithy.linters.ReservedWordsValidator$ReservedWords"/>
+        <Class name="ReservedWordsValidator$ReservedWords"/>
         <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
     </Match>
 

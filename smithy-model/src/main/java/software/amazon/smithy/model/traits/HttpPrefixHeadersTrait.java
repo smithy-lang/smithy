@@ -31,7 +31,9 @@ public final class HttpPrefixHeadersTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, HttpPrefixHeadersTrait::new);
+    public static final class Provider extends StringTrait.Provider<HttpPrefixHeadersTrait> {
+        public Provider() {
+            super(TRAIT, HttpPrefixHeadersTrait::new);
+        }
     }
 }

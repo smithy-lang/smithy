@@ -28,7 +28,9 @@ public class CollectionOperationTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, CollectionOperationTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<CollectionOperationTrait> {
+        public Provider() {
+            super(TRAIT, CollectionOperationTrait::new);
+        }
     }
 }

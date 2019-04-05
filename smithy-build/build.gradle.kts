@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+extra["moduleName"] = "software.amazon.smithy.build"
+
 dependencies {
     api(project(":smithy-model"))
 }

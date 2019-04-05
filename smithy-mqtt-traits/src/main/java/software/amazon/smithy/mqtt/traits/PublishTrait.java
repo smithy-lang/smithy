@@ -17,7 +17,6 @@ package software.amazon.smithy.mqtt.traits;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
-import software.amazon.smithy.model.traits.TraitService;
 
 /**
  * mqttPublish trait.
@@ -35,8 +34,10 @@ public final class PublishTrait extends StringTrait {
         this(topic, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, PublishTrait::new);
+    public static final class Provider extends StringTrait.Provider<PublishTrait> {
+        public Provider() {
+            super(TRAIT, PublishTrait::new);
+        }
     }
 
     /**

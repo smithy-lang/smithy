@@ -31,7 +31,9 @@ public final class ReadonlyTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, ReadonlyTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<ReadonlyTrait> {
+        public Provider() {
+            super(TRAIT, ReadonlyTrait::new);
+        }
     }
 }

@@ -31,7 +31,9 @@ public final class TitleTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, TitleTrait::new);
+    public static final class Provider extends StringTrait.Provider<TitleTrait> {
+        public Provider() {
+            super(TRAIT, TitleTrait::new);
+        }
     }
 }

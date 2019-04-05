@@ -28,7 +28,9 @@ public class XmlFlattenedTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, XmlFlattenedTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<XmlFlattenedTrait> {
+        public Provider() {
+            super(TRAIT, XmlFlattenedTrait::new);
+        }
     }
 }

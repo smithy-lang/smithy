@@ -31,7 +31,9 @@ public final class RetryableTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, RetryableTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<RetryableTrait> {
+        public Provider() {
+            super(TRAIT, RetryableTrait::new);
+        }
     }
 }

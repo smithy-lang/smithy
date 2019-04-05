@@ -23,7 +23,7 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
-import software.amazon.smithy.model.traits.TraitService;
+import software.amazon.smithy.model.traits.Trait;
 
 /**
  * Indicates that a string shape contains an ARN.
@@ -46,25 +46,27 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
         this.resource = builder.resource;
     }
 
-    public static TraitService provider() {
-        return TraitService.createProvider(TRAIT, (target, value) -> {
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(TRAIT);
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
             var objectNode = value.expectObjectNode();
             var builder = builder();
             objectNode.warnIfAdditionalProperties(PROPERTIES);
-            objectNode.getMember(TYPE)
-                    .map(Node::expectStringNode)
+            objectNode.getStringMember(TYPE)
                     .map(StringNode::getValue)
                     .ifPresent(builder::type);
-            objectNode.getMember(SERVICE)
-                    .map(Node::expectStringNode)
+            objectNode.getStringMember(SERVICE)
                     .map(stringNode -> stringNode.expectShapeId(target.getNamespace()))
-                    .ifPresent(id -> builder.service(id));
-            objectNode.getMember(RESOURCE)
-                    .map(Node::expectStringNode)
+                    .ifPresent(builder::service);
+            objectNode.getStringMember(RESOURCE)
                     .map(stringNode -> stringNode.expectShapeId(target.getNamespace()))
-                    .ifPresent(id -> builder.resource(id));
+                    .ifPresent(builder::resource);
             return builder.build();
-        });
+        }
     }
 
     public static Builder builder() {

@@ -40,7 +40,6 @@ public final class SmithyBuild {
     ModelTransformer modelTransformer;
     Model model;
     ClassLoader pluginClassLoader;
-    ModuleLayer pluginModuleLayer;
 
     public SmithyBuild() {}
 
@@ -77,37 +76,6 @@ public final class SmithyBuild {
                 .transformFactory(ProjectionTransformer.createServiceFactory(classLoader))
                 .pluginFactory(SmithyBuildPlugin.createServiceFactory(classLoader))
                 .pluginClassLoader(classLoader);
-    }
-
-    /**
-     * Creates a {@code SmithyBuild} implementation that is configured to
-     * discover various Smithy service providers using the given
-     * {@code ModuleLayer}.
-     *
-     * @param moduleLayer ModuleLayer used to discover service providers.
-     * @return Returns the created {@code SmithyBuild} object.
-     */
-    public static SmithyBuild create(ModuleLayer moduleLayer) {
-        ModelAssembler assembler = Model.assembler(moduleLayer);
-        return create(moduleLayer, assembler::copy);
-    }
-
-    /**
-     * Creates a {@code SmithyBuild} implementation that is configured to
-     * discover various Smithy service providers using the given
-     * {@code ModuleLayer}.
-     *
-     * @param moduleLayer ModuleLayer used to discover service providers.
-     * @param modelAssemblerSupplier Supplier used to create {@link ModelAssembler}s in each build.
-     * @return Returns the created {@code SmithyBuild} object.
-     */
-    public static SmithyBuild create(ModuleLayer moduleLayer, Supplier<ModelAssembler> modelAssemblerSupplier) {
-        return new SmithyBuild()
-                .modelAssemblerSupplier(modelAssemblerSupplier)
-                .modelTransformer(ModelTransformer.createWithServiceProviders(moduleLayer))
-                .transformFactory(ProjectionTransformer.createServiceFactory(moduleLayer))
-                .pluginFactory(SmithyBuildPlugin.createServiceFactory(moduleLayer))
-                .pluginModuleLayer(moduleLayer);
     }
 
     /**
@@ -317,18 +285,6 @@ public final class SmithyBuild {
      */
     public SmithyBuild pluginClassLoader(ClassLoader pluginClassLoader) {
         this.pluginClassLoader = pluginClassLoader;
-        return this;
-    }
-
-    /**
-     * Sets a ModuleLayer that should be used by SmithyBuild plugins when
-     * discovering services.
-     *
-     * @param pluginModuleLayer ModuleLayer plugins discover services with.
-     * @return Returns the builder.
-     */
-    public SmithyBuild pluginModuleLayer(ModuleLayer pluginModuleLayer) {
-        this.pluginModuleLayer = pluginModuleLayer;
         return this;
     }
 }

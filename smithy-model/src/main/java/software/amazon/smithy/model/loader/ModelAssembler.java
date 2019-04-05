@@ -379,17 +379,6 @@ public final class ModelAssembler {
         return discover(ServiceLoader.load(ModelDiscovery.class, loader));
     }
 
-    /**
-     * Discovers models by merging in all models returns by {@link ModelDiscovery}
-     * service providers.
-     *
-     * @param loader ModuleLayer to use to discover models.
-     * @return Returns the model assembler.
-     */
-    public ModelAssembler discoverModels(ModuleLayer loader) {
-        return discover(ServiceLoader.load(loader, ModelDiscovery.class));
-    }
-
     private ModelAssembler discover(Iterable<ModelDiscovery> iterable) {
         iterable.forEach(contributor -> contributor.getModels().forEach(model -> {
             if (model == null) {

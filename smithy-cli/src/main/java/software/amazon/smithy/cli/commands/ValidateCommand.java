@@ -60,12 +60,12 @@ public final class ValidateCommand implements Command {
 
         System.err.println(String.format("Validating Smithy models: %s", String.join(" ", models)));
 
-        var layer = SmithyCli.createModuleLayer();
-        var assembler = Model.assembler(layer);
+        var loader = SmithyCli.getConfiguredClassLoader();
+        var assembler = Model.assembler(loader);
 
         if (arguments.has("--discover")) {
             System.err.println("Enabling model discovery");
-            assembler.discoverModels(layer);
+            assembler.discoverModels(loader);
         }
 
         if (arguments.has("--ignore-unknown-traits")) {

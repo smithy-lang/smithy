@@ -31,7 +31,9 @@ public final class SyntheticTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, SyntheticTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<SyntheticTrait> {
+        public Provider() {
+            super(TRAIT, SyntheticTrait::new);
+        }
     }
 }
