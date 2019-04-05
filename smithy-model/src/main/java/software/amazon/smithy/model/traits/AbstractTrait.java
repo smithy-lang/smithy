@@ -96,4 +96,24 @@ public abstract class AbstractTrait implements Trait {
      * @return Returns the trait as a node.
      */
     protected abstract Node createNode();
+
+    /**
+     * Basic provider implementation that returns the name of the
+     * provided trait.
+     */
+    public abstract static class Provider implements TraitService {
+        private final String name;
+
+        /**
+         * @param name Name of the trait that the provider creates.
+         */
+        public Provider(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getTraitName() {
+            return name;
+        }
+    }
 }

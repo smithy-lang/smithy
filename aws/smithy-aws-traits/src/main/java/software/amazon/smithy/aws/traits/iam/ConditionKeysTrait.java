@@ -20,7 +20,6 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.traits.StringListTrait;
-import software.amazon.smithy.model.traits.TraitService;
 
 /**
  * Applies condition keys to an operation or resource.
@@ -40,8 +39,10 @@ public final class ConditionKeysTrait extends StringListTrait implements ToSmith
         return new Builder();
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringListProvider(TRAIT, ConditionKeysTrait::new);
+    public static final class Provider extends StringListTrait.Provider<ConditionKeysTrait> {
+        public Provider() {
+            super(TRAIT, ConditionKeysTrait::new);
+        }
     }
 
     @Override

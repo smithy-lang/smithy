@@ -22,9 +22,10 @@ import java.util.Optional;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
-import software.amazon.smithy.model.traits.TraitService;
+import software.amazon.smithy.model.traits.Trait;
 
 /**
  * Defines condition keys used in a service.
@@ -43,15 +44,20 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
         return new Builder();
     }
 
-    public static TraitService provider() {
-        return TraitService.createProvider(TRAIT, (target, value) -> {
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(TRAIT);
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder();
             for (var entry : value.expectObjectNode().getMembers().entrySet()) {
                 var definition = ConditionKeyDefinition.fromNode(entry.getValue().expectObjectNode());
                 builder.putConditionKey(entry.getKey().getValue(), definition);
             }
             return builder.build();
-        });
+        }
     }
 
     /**

@@ -33,11 +33,11 @@ public class TopicLabelTraitTest {
         ShapeId id = ShapeId.from("foo.bar#Baz$bam");
         Node node = Node.from(true);
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("smithy.api#mqttTopicLabel", id, node);
+        Optional<Trait> trait = provider.createTrait(TopicLabelTrait.TRAIT, id, node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(TopicLabelTrait.class));
         TopicLabelTrait labelTrait = (TopicLabelTrait) trait.get();
-        assertThat(TopicLabelTrait.provider().createTrait(id, labelTrait.toNode()), equalTo(labelTrait));
+        assertThat(new TopicLabelTrait.Provider().createTrait(id, labelTrait.toNode()), equalTo(labelTrait));
     }
 }

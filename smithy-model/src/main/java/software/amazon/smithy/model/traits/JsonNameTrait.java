@@ -32,7 +32,9 @@ public final class JsonNameTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, JsonNameTrait::new);
+    public static final class Provider extends StringTrait.Provider<JsonNameTrait> {
+        public Provider() {
+            super(TRAIT, JsonNameTrait::new);
+        }
     }
 }

@@ -18,20 +18,21 @@ package software.amazon.smithy.aws.traits.apigateway;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
-import software.amazon.smithy.model.traits.TraitService;
 
 public final class ApiKeySourceTrait extends StringTrait {
-    public static final String NAME = "aws.apigateway#apiKeySource";
+    public static final String TRAIT = "aws.apigateway#apiKeySource";
 
     public ApiKeySourceTrait(String value, FromSourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(TRAIT, value, sourceLocation);
     }
 
     public ApiKeySourceTrait(String value) {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(NAME, ApiKeySourceTrait::new);
+    public static final class Provider extends StringTrait.Provider<ApiKeySourceTrait> {
+        public Provider() {
+            super(TRAIT, ApiKeySourceTrait::new);
+        }
     }
 }

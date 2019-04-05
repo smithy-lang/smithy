@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+extra["moduleName"] = "software.amazon.smithy.aws.apigateway.openapi"
+
 dependencies {
     api(project(":smithy-model"))
     api(project(":smithy-openapi"))

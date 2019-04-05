@@ -32,7 +32,9 @@ public final class HttpLabelTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, HttpLabelTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<HttpLabelTrait> {
+        public Provider() {
+            super(TRAIT, HttpLabelTrait::new);
+        }
     }
 }

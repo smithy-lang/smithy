@@ -1,0 +1,5 @@
+software.amazon.smithy.openapi.fromsmithy.security.AwsV4
+software.amazon.smithy.openapi.fromsmithy.security.HttpBasic
+software.amazon.smithy.openapi.fromsmithy.security.HttpDigest
+software.amazon.smithy.openapi.fromsmithy.security.HttpBearer
+software.amazon.smithy.openapi.fromsmithy.security.XApiKey

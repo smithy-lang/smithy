@@ -20,7 +20,6 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.traits.StringListTrait;
-import software.amazon.smithy.model.traits.TraitService;
 
 public final class RequiredActionsTrait extends StringListTrait implements ToSmithyBuilder<RequiredActionsTrait> {
     private static final String TRAIT = "aws.iam#requiredActions";
@@ -33,8 +32,10 @@ public final class RequiredActionsTrait extends StringListTrait implements ToSmi
         this(actions, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringListProvider(TRAIT, RequiredActionsTrait::new);
+    public static final class Provider extends StringListTrait.Provider<RequiredActionsTrait> {
+        public Provider() {
+            super(TRAIT, RequiredActionsTrait::new);
+        }
     }
 
     public static Builder builder() {

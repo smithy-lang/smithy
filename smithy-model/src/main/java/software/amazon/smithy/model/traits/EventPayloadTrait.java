@@ -34,7 +34,9 @@ public final class EventPayloadTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, EventPayloadTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<EventPayloadTrait> {
+        public Provider() {
+            super(TRAIT, EventPayloadTrait::new);
+        }
     }
 }

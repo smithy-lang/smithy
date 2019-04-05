@@ -97,17 +97,4 @@ public interface ValidatorFactory {
                 ServiceLoader.load(Validator.class, classLoader),
                 ServiceLoader.load(ValidatorService.class, classLoader));
     }
-
-    /**
-     * Creates a ValidatorFactory that discovers service providers using
-     * the given ModuleLayer.
-     *
-     * @param moduleLayer ModuleLayer used to find ValidatorProviders.
-     * @return Returns the created factory.
-     */
-    static ValidatorFactory createServiceFactory(ModuleLayer moduleLayer) {
-        return createServiceFactory(
-                ServiceLoader.load(moduleLayer, Validator.class),
-                ServiceLoader.load(moduleLayer, ValidatorService.class));
-    }
 }

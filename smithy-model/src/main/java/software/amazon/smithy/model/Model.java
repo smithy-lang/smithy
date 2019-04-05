@@ -105,19 +105,6 @@ public final class Model implements ToSmithyBuilder<Model> {
     }
 
     /**
-     * Creates a {@link ModelAssembler} that is configured to discover traits,
-     * validators, and built-in validators using the given {@code ModuleLayer}.
-     *
-     * @param moduleLayer ModuleLayer used to discover services.
-     * @return Returns a model assembler.
-     */
-    public static ModelAssembler assembler(ModuleLayer moduleLayer) {
-        return new ModelAssembler()
-                .traitFactory(TraitFactory.createServiceFactory(moduleLayer))
-                .validatorFactory(ValidatorFactory.createServiceFactory(moduleLayer));
-    }
-
-    /**
      * Gets the {@link ShapeIndex} of the {@code Model}.
      *
      * @return Returns the index of shapes.

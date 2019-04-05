@@ -32,7 +32,9 @@ public final class SensitiveTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, SensitiveTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<SensitiveTrait> {
+        public Provider() {
+            super(TRAIT, SensitiveTrait::new);
+        }
     }
 }

@@ -27,9 +27,10 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
-import software.amazon.smithy.model.traits.TraitService;
+import software.amazon.smithy.model.traits.Trait;
 
 /**
  * API Gateway integration.
@@ -90,8 +91,13 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         responses = Map.copyOf(builder.responses);
     }
 
-    public static TraitService provider() {
-        return TraitService.createProvider(TRAIT, (target, value) -> {
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(TRAIT);
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder();
             builder.sourceLocation(value);
             ObjectNode node = value.expectObjectNode();
@@ -133,7 +139,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
                     .ifPresent(members -> members.forEach((k, v) -> builder.putResponse(
                             k.getValue(), IntegrationResponse.fromNode(v))));
             return builder.build();
-        });
+        }
     }
 
     public static Builder builder() {

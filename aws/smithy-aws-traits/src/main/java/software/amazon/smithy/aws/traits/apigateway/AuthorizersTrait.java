@@ -8,9 +8,10 @@ import java.util.Optional;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
-import software.amazon.smithy.model.traits.TraitService;
+import software.amazon.smithy.model.traits.Trait;
 
 /**
  * Defines a map of API Gateway {@code x-amazon-apigateway-authorizer}
@@ -26,29 +27,29 @@ import software.amazon.smithy.model.traits.TraitService;
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html">API Gateway Authorizers</a>
  */
 public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBuilder<AuthorizersTrait> {
-    public static final String NAME = "aws.apigateway#authorizers";
+    public static final String TRAIT = "aws.apigateway#authorizers";
 
     private final Map<String, Authorizer> authorizers;
 
     private AuthorizersTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(TRAIT, builder.getSourceLocation());
         authorizers = Map.copyOf(builder.authorizers);
     }
 
-    /**
-     * Service provider for the AuthorizersTrait.
-     *
-     * @return Returns the TraitService provider.
-     */
-    public static TraitService provider() {
-        return TraitService.createProvider(NAME, (target, value) -> {
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(TRAIT);
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             value.expectObjectNode().getMembers().forEach((key, node) -> {
                 var authorizer = Authorizer.fromNode(node.expectObjectNode());
                 builder.putAuthorizer(key.getValue(), authorizer);
             });
             return builder.build();
-        });
+        }
     }
 
     /**

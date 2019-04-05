@@ -31,7 +31,9 @@ public final class BoxTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, BoxTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<BoxTrait> {
+        public Provider() {
+            super(TRAIT, BoxTrait::new);
+        }
     }
 }

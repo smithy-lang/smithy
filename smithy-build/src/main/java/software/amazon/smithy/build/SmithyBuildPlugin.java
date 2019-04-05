@@ -107,17 +107,4 @@ public interface SmithyBuildPlugin {
     static Function<String, Optional<SmithyBuildPlugin>> createServiceFactory(ClassLoader classLoader) {
         return createServiceFactory(ServiceLoader.load(SmithyBuildPlugin.class, classLoader));
     }
-
-    /**
-     * Creates a SmithyBuildPlugin factory function using SPI.
-     *
-     * <p>This factory is used in {@link SmithyBuild} to create plugins
-     * from configuration names.
-     *
-     * @param moduleLayer Module layer used to find plugins.
-     * @return Returns the created factory function.
-     */
-    static Function<String, Optional<SmithyBuildPlugin>> createServiceFactory(ModuleLayer moduleLayer) {
-        return createServiceFactory(ServiceLoader.load(moduleLayer, SmithyBuildPlugin.class));
-    }
 }

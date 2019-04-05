@@ -31,7 +31,9 @@ public final class XmlAttributeTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, XmlAttributeTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<XmlAttributeTrait> {
+        public Provider() {
+            super(TRAIT, XmlAttributeTrait::new);
+        }
     }
 }

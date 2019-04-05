@@ -169,8 +169,7 @@ public final class JsonSchemaConverter {
     /**
      * Adds SchemaBuilderMapper instances discovered through SPI.
      *
-     * <p>If this method is not called nor is {@code discoverSchemaMappersWith}
-     * using a {@code ModuleLayer}, then {@link SchemaBuilderMapper} services
+     * <p>If this method is not called, then {@link SchemaBuilderMapper} services
      * will be discovered using the class loader of {@link JsonSchemaConverter}
      * and might only find the built-in service providers.
      *
@@ -179,21 +178,6 @@ public final class JsonSchemaConverter {
      */
     public JsonSchemaConverter discoverSchemaMappersWith(ClassLoader classLoader) {
         return loadMapperServices(ServiceLoader.load(SchemaBuilderMapper.class, classLoader));
-    }
-
-    /**
-     * Adds SchemaBuilderMapper instances discovered through SPI.
-     *
-     * <p>If this method is not called nor is {@code discoverSchemaMappersWith}
-     * using a {@code ClassLoader}, then {@link SchemaBuilderMapper} services
-     * will be discovered using the class loader of {@link JsonSchemaConverter}
-     * and might only find the built-in service providers.
-     *
-     * @param moduleLayer ModuleLayer used to discover implementations.
-     * @return Returns the converter.
-     */
-    public JsonSchemaConverter discoverSchemaMappersWith(ModuleLayer moduleLayer) {
-        return loadMapperServices(ServiceLoader.load(moduleLayer, SchemaBuilderMapper.class));
     }
 
     private JsonSchemaConverter loadMapperServices(Iterable<SchemaBuilderMapper> mappers) {

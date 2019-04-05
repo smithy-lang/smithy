@@ -31,7 +31,9 @@ public final class IdempotentTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, IdempotentTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<IdempotentTrait> {
+        public Provider() {
+            super(TRAIT, IdempotentTrait::new);
+        }
     }
 }

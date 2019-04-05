@@ -41,26 +41,23 @@ public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<Ht
         code = builder.code;
     }
 
-    public static TraitService provider() {
-        return new TraitService() {
-            @Override
-            public String getTraitName() {
-                return TRAIT;
-            }
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+                super(TRAIT);
+        }
 
-            @Override
-            public Trait createTrait(ShapeId target, Node value) {
-                HttpTrait.Builder builder = builder().sourceLocation(value);
-                ObjectNode members = value.expectObjectNode();
-                builder.uri(UriPattern.parse(members.expectMember("uri").expectStringNode().getValue()));
-                builder.method(members.expectMember("method").expectStringNode().getValue());
-                builder.code(members.getNumberMember("code")
-                                     .map(NumberNode::getValue)
-                                     .map(Number::intValue)
-                                     .orElse(200));
-                return builder.build();
-            }
-        };
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
+            HttpTrait.Builder builder = builder().sourceLocation(value);
+            ObjectNode members = value.expectObjectNode();
+            builder.uri(UriPattern.parse(members.expectMember("uri").expectStringNode().getValue()));
+            builder.method(members.expectMember("method").expectStringNode().getValue());
+            builder.code(members.getNumberMember("code")
+                                 .map(NumberNode::getValue)
+                                 .map(Number::intValue)
+                                 .orElse(200));
+            return builder.build();
+        }
     }
 
     public UriPattern getUri() {

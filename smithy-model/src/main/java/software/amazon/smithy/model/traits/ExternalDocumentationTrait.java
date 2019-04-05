@@ -35,8 +35,10 @@ public final class ExternalDocumentationTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, ExternalDocumentationTrait::new);
+    public static final class Provider extends StringTrait.Provider<ExternalDocumentationTrait> {
+        public Provider() {
+            super(TRAIT, ExternalDocumentationTrait::new);
+        }
     }
 
     private static String validateUrl(String url, SourceLocation location) {

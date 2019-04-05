@@ -36,7 +36,9 @@ public final class StreamingTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, StreamingTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<StreamingTrait> {
+        public Provider() {
+            super(TRAIT, StreamingTrait::new);
+        }
     }
 }

@@ -31,7 +31,9 @@ public final class SinceTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, SinceTrait::new);
+    public static final class Provider extends StringTrait.Provider<SinceTrait> {
+        public Provider() {
+            super(TRAIT, SinceTrait::new);
+        }
     }
 }

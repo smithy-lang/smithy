@@ -32,7 +32,9 @@ public final class XmlNameTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, XmlNameTrait::new);
+    public static final class Provider extends StringTrait.Provider<XmlNameTrait> {
+        public Provider() {
+            super(TRAIT, XmlNameTrait::new);
+        }
     }
 }

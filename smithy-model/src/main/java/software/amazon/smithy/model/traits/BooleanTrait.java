@@ -15,9 +15,12 @@
 
 package software.amazon.smithy.model.traits;
 
+import java.util.function.Function;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Trait implementation that expects a boolean value of true.
@@ -30,5 +33,31 @@ public abstract class BooleanTrait extends AbstractTrait {
     @Override
     protected final Node createNode() {
         return new BooleanNode(true, getSourceLocation());
+    }
+
+    /**
+     * Trait provider that expects a boolean value of true.
+     */
+    public static class Provider<T extends BooleanTrait> extends AbstractTrait.Provider {
+        private final Function<SourceLocation, T> traitFactory;
+
+        /**
+         * @param name Name of the trait being created.
+         * @param traitFactory Factory function used to create the trait.
+         */
+        public Provider(String name, Function<SourceLocation, T> traitFactory) {
+            super(name);
+            this.traitFactory = traitFactory;
+        }
+
+        @Override
+        public T createTrait(ShapeId id, Node value) {
+            BooleanNode booleanNode = value.expectBooleanNode();
+            if (!booleanNode.getValue()) {
+                throw new SourceException(String.format(
+                        "Boolean trait `%s` expects a value of `true`, but found `false`", getTraitName()), value);
+            }
+            return traitFactory.apply(value.getSourceLocation());
+        }
     }
 }

@@ -37,8 +37,10 @@ public final class ErrorTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, ErrorTrait::new);
+    public static final class Provider extends StringTrait.Provider<ErrorTrait> {
+        public Provider() {
+            super(TRAIT, ErrorTrait::new);
+        }
     }
 
     /**

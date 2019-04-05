@@ -89,23 +89,23 @@ public final class BuildCommand implements Command {
             }
         }
 
-        var layer = SmithyCli.createModuleLayer();
+        var loader = SmithyCli.getConfiguredClassLoader();
         SmithyBuild modelBuilder;
 
         // Resolve the config first to look for problems.
         if (arguments.has("--discover")) {
             System.err.println("Enabling model discovery");
-            ModelAssembler assembler = Model.assembler(layer).discoverModels(layer);
+            ModelAssembler assembler = Model.assembler(loader).discoverModels(loader);
             Supplier<ModelAssembler> supplier = assembler::copy;
-            modelBuilder = SmithyBuild.create(layer, supplier);
+            modelBuilder = SmithyBuild.create(loader, supplier);
         } else {
-            modelBuilder = SmithyBuild.create(layer);
+            modelBuilder = SmithyBuild.create(loader);
         }
 
         modelBuilder.config(configBuilder.build());
 
         // Build the model and fail if there are errors.
-        var sourceResult = buildModel(layer, models);
+        var sourceResult = buildModel(loader, models);
         var model = sourceResult.unwrap();
         modelBuilder.model(model);
         var smithyBuildResult = modelBuilder.build();
@@ -119,8 +119,8 @@ public final class BuildCommand implements Command {
         smithyBuildResult.allArtifacts().map(Path::toString).sorted().forEach(System.out::println);
     }
 
-    private ValidatedResult<Model> buildModel(ModuleLayer layer, List<String> models) {
-        var assembler = Model.assembler(layer);
+    private ValidatedResult<Model> buildModel(ClassLoader loader, List<String> models) {
+        var assembler = Model.assembler(loader);
         models.forEach(assembler::addImport);
         var result = assembler.assemble();
         Validator.validate(result, true);

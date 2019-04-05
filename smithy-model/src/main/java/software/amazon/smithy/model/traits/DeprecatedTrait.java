@@ -37,25 +37,22 @@ public final class DeprecatedTrait extends AbstractTrait implements ToSmithyBuil
         this.message = builder.message;
     }
 
-    public static TraitService provider() {
-        return new TraitService() {
-            @Override
-            public String getTraitName() {
-                return TRAIT;
-            }
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(TRAIT);
+        }
 
-            @Override
-            public Trait createTrait(ShapeId target, Node value) {
-                DeprecatedTrait.Builder builder = builder().sourceLocation(value);
-                ObjectNode objectNode = value.expectObjectNode();
-                String sinceValue = objectNode.getMember("since")
-                        .map(v -> v.expectStringNode().getValue()).orElse(null);
-                String messageValue = objectNode.getMember("message")
-                        .map(v -> v.expectStringNode().getValue()).orElse(null);
-                builder.since(sinceValue).message(messageValue);
-                return builder.build();
-            }
-        };
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
+            DeprecatedTrait.Builder builder = builder().sourceLocation(value);
+            ObjectNode objectNode = value.expectObjectNode();
+            String sinceValue = objectNode.getMember("since")
+                    .map(v -> v.expectStringNode().getValue()).orElse(null);
+            String messageValue = objectNode.getMember("message")
+                    .map(v -> v.expectStringNode().getValue()).orElse(null);
+            builder.since(sinceValue).message(messageValue);
+            return builder.build();
+        }
     }
 
     /**

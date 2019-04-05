@@ -14,9 +14,9 @@ public class RequestValidatorTraitTest {
     public void registersTrait() {
         TraitFactory factory = TraitFactory.createServiceFactory();
         var id = ShapeId.from("smithy.example#Foo");
-        var trait = factory.createTrait(RequestValidatorTrait.NAME, id, Node.from("full")).get();
+        var trait = factory.createTrait(RequestValidatorTrait.TRAIT, id, Node.from("full")).get();
 
         assertThat(trait, instanceOf(RequestValidatorTrait.class));
-        assertThat(factory.createTrait(RequestValidatorTrait.NAME, id, trait.toNode()).get(), equalTo(trait));
+        assertThat(factory.createTrait(RequestValidatorTrait.TRAIT, id, trait.toNode()).get(), equalTo(trait));
     }
 }

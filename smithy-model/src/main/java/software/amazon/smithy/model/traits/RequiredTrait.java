@@ -31,7 +31,9 @@ public final class RequiredTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, RequiredTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<RequiredTrait> {
+        public Provider() {
+            super(TRAIT, RequiredTrait::new);
+        }
     }
 }

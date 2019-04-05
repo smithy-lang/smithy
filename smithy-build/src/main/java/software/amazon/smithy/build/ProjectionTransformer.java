@@ -94,14 +94,4 @@ public interface ProjectionTransformer {
     static Function<String, Optional<ProjectionTransformer>> createServiceFactory(ClassLoader classLoader) {
         return createServiceFactory(ServiceLoader.load(ProjectionTransformer.class, classLoader));
     }
-
-    /**
-     * Creates a {@code ProjectionTransformer} factory function using SPI.
-     *
-     * @param moduleLayer Module layer used to find implementations.
-     * @return Returns the created factory function.
-     */
-    static Function<String, Optional<ProjectionTransformer>> createServiceFactory(ModuleLayer moduleLayer) {
-        return createServiceFactory(ServiceLoader.load(moduleLayer, ProjectionTransformer.class));
-    }
 }

@@ -17,7 +17,6 @@ package software.amazon.smithy.aws.traits.iam;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
-import software.amazon.smithy.model.traits.TraitService;
 
 /**
  * Defines the description of what providing access to an operation entails.
@@ -29,7 +28,9 @@ public final class ActionPermissionDescriptionTrait extends StringTrait {
         super(TRAIT, value, sourceLocation);
     }
 
-    public static TraitService provider() {
-        return TraitService.createStringProvider(TRAIT, ActionPermissionDescriptionTrait::new);
+    public static final class Provider extends StringTrait.Provider<ActionPermissionDescriptionTrait> {
+        public Provider() {
+            super(TRAIT, ActionPermissionDescriptionTrait::new);
+        }
     }
 }

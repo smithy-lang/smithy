@@ -28,7 +28,7 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
-import software.amazon.smithy.model.traits.TraitService;
+import software.amazon.smithy.model.traits.Trait;
 
 /**
  * Registers a service as an AWS service. This trait is required for all AWS
@@ -54,8 +54,13 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         this.abbreviation = builder.abbreviation;
     }
 
-    public static TraitService provider() {
-        return TraitService.createProvider(TRAIT, (target, value) -> {
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(TRAIT);
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
             var objectNode = value.expectObjectNode();
             objectNode.warnIfAdditionalProperties(Arrays.asList(
                     "sdkId", "arnNamespace", "cloudFormationName", "cloudTrailEventSource", "abbreviation"));
@@ -75,7 +80,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
             objectNode.getStringMember("abbreviation").map(StringNode::getValue)
                     .ifPresent(builder::abbreviation);
             return builder.build(target);
-        });
+        }
     }
 
     private static Optional<String> getOneStringValue(ObjectNode object, String key1, String key2) {

@@ -31,7 +31,9 @@ public final class HttpPayloadTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, HttpPayloadTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<HttpPayloadTrait> {
+        public Provider() {
+            super(TRAIT, HttpPayloadTrait::new);
+        }
     }
 }

@@ -74,7 +74,6 @@ public final class OpenApiConverter {
 
     private Map<String, Node> settings = new HashMap<>();
     private ClassLoader classLoader = OpenApiConverter.class.getClassLoader();
-    private ModuleLayer moduleLayer;
     private JsonSchemaConverter jsonSchemaConverter;
     private String protocolName;
     private List<OpenApiProtocol> customProtocols = new ArrayList<>();
@@ -146,33 +145,17 @@ public final class OpenApiConverter {
     }
 
     /**
-     * Sets a {@link ModuleLayer} to use to discover {@link SchemaBuilderMapper},
-     * {@link SmithyOpenApiPlugin}, and {@link OpenApiProtocol} service providers
-     * through SPI.
-     *
-     * @param moduleLayer ModuleLayer to use.
-     * @return Returns the OpenApiConverter.
-     */
-    public OpenApiConverter moduleLayer(ModuleLayer moduleLayer) {
-        this.moduleLayer = moduleLayer;
-        this.classLoader = null;
-        return this;
-    }
-
-    /**
      * Sets a {@link ClassLoader} to use to discover {@link SchemaBuilderMapper},
      * {@link SmithyOpenApiPlugin}, and {@link OpenApiProtocol} service providers
      * through SPI.
      *
-     * <p>The {@code OpenApiConverter} will use its own ClassLoader by default
-     * if no explicit ModuleLayer or ClassLoader is provided.
+     * <p>The {@code OpenApiConverter} will use its own ClassLoader by default.
      *
      * @param classLoader ClassLoader to use.
      * @return Returns the OpenApiConverter.
      */
     public OpenApiConverter classLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
-        this.moduleLayer = null;
         return this;
     }
 
@@ -235,7 +218,7 @@ public final class OpenApiConverter {
     }
 
     private ConversionEnvironment createConversionEnvironment(Model model, ShapeId serviceShapeId) {
-        setJsonSchemaDiscovery();
+        getJsonSchemaConverter().discoverSchemaMappersWith(classLoader);
 
         // Update the JSON schema config with the settings from this class and
         // configure it to use OpenAPI settings.
@@ -321,22 +304,13 @@ public final class OpenApiConverter {
         return jsonSchemaConverter;
     }
 
-    // Configures the JsonSchemaConverter to use the same moduleLayer or classloader.
-    private void setJsonSchemaDiscovery() {
-        if (moduleLayer != null) {
-            getJsonSchemaConverter().discoverSchemaMappersWith(moduleLayer);
-        } else {
-            getJsonSchemaConverter().discoverSchemaMappersWith(classLoader);
-        }
-    }
-
     private SmithyOpenApiPlugin loadPlugins() {
         return SmithyOpenApiPlugin.compose(discover(SmithyOpenApiPlugin.class));
     }
 
     // Determine which OpenApiProtocol service provider and which service trait protocol to use.
     private Pair<Protocol, OpenApiProtocol> resolveProtocol(ServiceShape service) {
-        var protocols = loadProtocols();
+        var protocols = discover(OpenApiProtocol.class);
         var protoTrait = service.getTrait(ProtocolsTrait.class)
                 .orElseThrow(() -> new OpenApiException("No `protocols` trait found on `" + service.getId() + "`"));
 
@@ -370,12 +344,6 @@ public final class OpenApiConverter {
                 .findFirst();
     }
 
-    // Discover protocol implementations and JSON schema mappers using the provided
-    // class loader or module layer.
-    private List<OpenApiProtocol> loadProtocols() {
-        return discover(OpenApiProtocol.class);
-    }
-
     // Loads all of the OpenAPI security scheme implementations that are referenced by a service.
     private List<SecuritySchemeConverter> loadSecuritySchemes(ServiceShape service) {
         var converters = discover(SecuritySchemeConverter.class);
@@ -400,14 +368,10 @@ public final class OpenApiConverter {
         return resolved;
     }
 
-    // Discovers implementations of a class using a moduleLayer or classLoader.
+    // Discovers implementations of a class using a classLoader.
     private <T> List<T> discover(Class<T> clazz) {
         List<T> result = new ArrayList<>();
-        if (moduleLayer != null) {
-            ServiceLoader.load(moduleLayer, clazz).forEach(result::add);
-        } else {
-            ServiceLoader.load(clazz, classLoader).forEach(result::add);
-        }
+        ServiceLoader.load(clazz, classLoader).forEach(result::add);
         return result;
     }
 

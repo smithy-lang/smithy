@@ -1,0 +1,4 @@
+software.amazon.smithy.aws.traits.ArnTemplateValidator
+software.amazon.smithy.aws.traits.SdkServiceIdValidator
+software.amazon.smithy.aws.traits.iam.ConditionKeysValidator
+software.amazon.smithy.aws.traits.apigateway.AuthorizersTraitValidator

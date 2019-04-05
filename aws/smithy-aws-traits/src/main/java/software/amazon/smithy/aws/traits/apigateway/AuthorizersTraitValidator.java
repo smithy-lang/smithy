@@ -36,6 +36,6 @@ public class AuthorizersTraitValidator extends AbstractValidator {
         return authorizerNames.stream().map(name -> error(service, String.format(
                 "Invalid `%s` entry `%s` does not match one of the `protocols` trait `auth` schemes defined "
                 + "on the service: [%s]",
-                AuthorizersTrait.NAME, name, ValidationUtils.tickedList(schemeNames))));
+                AuthorizersTrait.TRAIT, name, ValidationUtils.tickedList(schemeNames))));
     }
 }

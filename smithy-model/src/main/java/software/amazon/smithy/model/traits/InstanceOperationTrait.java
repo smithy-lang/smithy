@@ -28,7 +28,9 @@ public class InstanceOperationTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static TraitService provider() {
-        return TraitService.createAnnotationProvider(TRAIT, InstanceOperationTrait::new);
+    public static final class Provider extends BooleanTrait.Provider<InstanceOperationTrait> {
+        public Provider() {
+            super(TRAIT, InstanceOperationTrait::new);
+        }
     }
 }

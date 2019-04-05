@@ -74,21 +74,18 @@ public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilde
                 .build();
     }
 
-    public static TraitService provider() {
-        return new TraitService() {
-            @Override
-            public String getTraitName() {
-                return TRAIT;
-            }
+    public static final class Provider extends AbstractTrait.Provider {
+        public Provider() {
+            super(TRAIT);
+        }
 
-            @Override
-            public Trait createTrait(ShapeId target, Node value) {
-                EndpointTrait.Builder builder = builder().sourceLocation(value);
-                ObjectNode objectNode = value.expectObjectNode();
-                builder.hostPrefix(objectNode.expectMember("hostPrefix").expectStringNode().getValue());
-                return builder.build();
-            }
-        };
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
+            EndpointTrait.Builder builder = builder().sourceLocation(value);
+            ObjectNode objectNode = value.expectObjectNode();
+            builder.hostPrefix(objectNode.expectMember("hostPrefix").expectStringNode().getValue());
+            return builder.build();
+        }
     }
 
     public Pattern getHostPrefix() {

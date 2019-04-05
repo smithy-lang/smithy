@@ -16,6 +16,7 @@ import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.
  */
 
 description = "Smithy :: Model"
+extra["moduleName"] = "software.amazon.smithy.model"
 
 dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core:2.9.8")
