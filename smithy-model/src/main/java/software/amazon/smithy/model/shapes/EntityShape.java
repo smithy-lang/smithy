@@ -17,6 +17,7 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.HashSet;
 import java.util.Set;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Abstract class representing service and resource shapes.
@@ -29,8 +30,8 @@ public abstract class EntityShape extends Shape {
     @SuppressWarnings("unchecked")
     EntityShape(Builder builder, ShapeType type) {
         super(builder, type, false);
-        resources = Set.copyOf(builder.resources);
-        operations = Set.copyOf(builder.operations);
+        resources = SetUtils.copyOf(builder.resources);
+        operations = SetUtils.copyOf(builder.operations);
     }
 
     /**

@@ -26,6 +26,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates that the resource identifiers of children of a resource contain
@@ -42,15 +43,15 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
 
     private Stream<ValidationEvent> validateAgainstChildren(ResourceShape resource, ShapeIndex index) {
         return resource.getResources().stream()
-                .flatMap(shape -> index.getShape(shape).flatMap(Shape::asResourceShape).stream())
+                .flatMap(shape -> OptionalUtils.stream(index.getShape(shape).flatMap(Shape::asResourceShape)))
                 .flatMap(child -> Stream.concat(
-                        checkForMissing(child, resource).stream(),
-                        checkForMismatches(child, resource).stream()));
+                        OptionalUtils.stream(checkForMissing(child, resource)),
+                        OptionalUtils.stream(checkForMismatches(child, resource))));
     }
 
     private Optional<ValidationEvent> checkForMissing(ResourceShape resource, ResourceShape parent) {
         // Look for identifiers on the parent that are flat-out missing on the child.
-        var missingKeys = parent.getIdentifiers().entrySet().stream()
+        String missingKeys = parent.getIdentifiers().entrySet().stream()
                 .filter(entry -> resource.getIdentifiers().get(entry.getKey()) == null)
                 .map(Map.Entry::getKey)
                 .sorted()
@@ -68,7 +69,7 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
 
     private Optional<ValidationEvent> checkForMismatches(ResourceShape resource, ResourceShape parent) {
         // Look for identifiers on the child that have the same key but target different shapes.
-        var mismatchedTargets = parent.getIdentifiers().entrySet().stream()
+        String mismatchedTargets = parent.getIdentifiers().entrySet().stream()
                 .filter(entry -> resource.getIdentifiers().get(entry.getKey()) != null)
                 .filter(entry -> !resource.getIdentifiers().get(entry.getKey()).equals(entry.getValue()))
                 .map(entry -> String.format(

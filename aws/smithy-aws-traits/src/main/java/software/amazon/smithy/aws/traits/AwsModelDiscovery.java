@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.List;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.loader.ModelDiscovery;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * This is used to allow a {@link ModelAssembler} to discover the AWS
@@ -27,7 +28,7 @@ import software.amazon.smithy.model.loader.ModelDiscovery;
 public final class AwsModelDiscovery implements ModelDiscovery {
     @Override
     public List<URL> getModels() {
-        return List.of(
+        return ListUtils.of(
                 getClass().getResource("aws.api.json"),
                 getClass().getResource("aws.iam.json"),
                 getClass().getResource("aws.apigateway.json"));

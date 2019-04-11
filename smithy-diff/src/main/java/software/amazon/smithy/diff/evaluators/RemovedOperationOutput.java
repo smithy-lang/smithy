@@ -29,7 +29,7 @@ public class RemovedOperationOutput extends AbstractDiffEvaluator {
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(OperationShape.class)
                 .filter(change -> change.getOldShape().getOutput().isPresent()
-                                  && change.getNewShape().getOutput().isEmpty())
+                                  && !change.getNewShape().getOutput().isPresent())
                 .map(change -> error(change.getNewShape(), String.format(
                         "Output shape, `%s`, was removed from the `%s` operation",
                         change.getOldShape().getOutput().get(),

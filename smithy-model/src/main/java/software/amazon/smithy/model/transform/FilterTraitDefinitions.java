@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Filters trait definitions out of a model that do not match a predicate,
@@ -38,7 +39,7 @@ final class FilterTraitDefinitions {
 
     Model transform(ModelTransformer transformer, Model model) {
         return transformer.removeTraitDefinitions(model, model.getTraitDefinitions().stream()
-                .filter(Predicate.not(predicate))
+                .filter(FunctionalUtils.not(predicate))
                 .map(TraitDefinition::getFullyQualifiedName)
                 .collect(Collectors.toSet()));
     }

@@ -26,12 +26,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 
 public class SchemaDocumentTest {
     @Test
     public void canSetIdKeyword() {
-        var document = SchemaDocument.builder().idKeyword("foo").build();
-        var node = document.toNode().expectObjectNode();
+        SchemaDocument document = SchemaDocument.builder().idKeyword("foo").build();
+        ObjectNode node = document.toNode().expectObjectNode();
 
         assertThat(document.getIdKeyword().get(), equalTo("foo"));
         assertThat(node.size(), is(1));
@@ -41,8 +42,8 @@ public class SchemaDocumentTest {
 
     @Test
     public void canSetSchemaKeyword() {
-        var document = SchemaDocument.builder().schemaKeyword("foo").build();
-        var node = document.toNode().expectObjectNode();
+        SchemaDocument document = SchemaDocument.builder().schemaKeyword("foo").build();
+        ObjectNode node = document.toNode().expectObjectNode();
 
         assertThat(document.getSchemaKeyword().get(), equalTo("foo"));
         assertThat(node.size(), is(1));
@@ -52,10 +53,10 @@ public class SchemaDocumentTest {
 
     @Test
     public void canSetRootSchema() {
-        var document = SchemaDocument.builder()
+        SchemaDocument document = SchemaDocument.builder()
                 .rootSchema(Schema.builder().type("string").build())
                 .build();
-        var node = document.toNode().expectObjectNode();
+        ObjectNode node = document.toNode().expectObjectNode();
 
         assertThat(document.getRootSchema().getType().get(), equalTo("string"));
         assertThat(node.getStringMember("type").get().getValue(), equalTo("string"));
@@ -64,9 +65,9 @@ public class SchemaDocumentTest {
 
     @Test
     public void canAddExtensions() {
-        var extensions = Node.objectNode().withMember("foo", Node.from("bar"));
-        var document = SchemaDocument.builder().extensions(extensions).build();
-        var node = document.toNode().expectObjectNode();
+        ObjectNode extensions = Node.objectNode().withMember("foo", Node.from("bar"));
+        SchemaDocument document = SchemaDocument.builder().extensions(extensions).build();
+        ObjectNode node = document.toNode().expectObjectNode();
 
         assertThat(document.getExtensions(), equalTo(extensions));
         assertThat(document.getExtension("foo").get(), equalTo(Node.from("bar")));
@@ -76,11 +77,11 @@ public class SchemaDocumentTest {
 
     @Test
     public void canAddDefinitions() {
-        var document = SchemaDocument.builder()
+        SchemaDocument document = SchemaDocument.builder()
                 .putDefinition("#/definitions/foo", Schema.builder().type("string").build())
                 .putDefinition("#/definitions/bar", Schema.builder().type("string").build())
                 .build();
-        var node = document.toNode().expectObjectNode();
+        ObjectNode node = document.toNode().expectObjectNode();
 
         assertThat(document.getDefinitions().values(), hasSize(2));
         assertTrue(document.getDefinition("#/definitions/foo").isPresent());
@@ -92,10 +93,10 @@ public class SchemaDocumentTest {
 
     @Test
     public void skipsDefinitionsNotRelative() {
-        var document = SchemaDocument.builder()
+        SchemaDocument document = SchemaDocument.builder()
                 .putDefinition("http://foo.com/bar", Schema.builder().type("string").build())
                 .build();
-        var node = document.toNode().expectObjectNode();
+        ObjectNode node = document.toNode().expectObjectNode();
 
         assertThat(document.getDefinitions().values(), hasSize(1));
         assertFalse(node.getMember("definitions").isPresent());
@@ -105,7 +106,7 @@ public class SchemaDocumentTest {
     @Test
     public void requiresSegmentsWithMultipleSlashes() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            var document = SchemaDocument.builder()
+            SchemaDocument document = SchemaDocument.builder()
                     .putDefinition("#/definitions", Schema.builder().type("string").build())
                     .build();
             document.toNode().expectObjectNode();
@@ -116,7 +117,7 @@ public class SchemaDocumentTest {
     @Test
     public void detectsConflictingPointers() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            var document = SchemaDocument.builder()
+            SchemaDocument document = SchemaDocument.builder()
                     .putDefinition("#/definitions/foo", Schema.builder().type("string").build())
                     .putDefinition("#/definitions/foo/bar", Schema.builder().type("string").build())
                     .build();

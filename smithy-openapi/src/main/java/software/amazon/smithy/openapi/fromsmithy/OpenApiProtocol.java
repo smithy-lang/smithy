@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * An OpenAPI protocol is used to convert a Smithy protocol into
@@ -63,7 +64,7 @@ public interface OpenApiProtocol {
      * @return Returns a set of header names.
      */
     default Set<String> getProtocolRequestHeaders(Context context, OperationShape operationShape) {
-        return Set.of();
+        return SetUtils.of();
     }
 
     /**
@@ -78,7 +79,7 @@ public interface OpenApiProtocol {
      * @return Returns a set of header names.
      */
     default Set<String> getProtocolResponseHeaders(Context context, OperationShape operationShape) {
-        return Set.of();
+        return SetUtils.of();
     }
 
     /**

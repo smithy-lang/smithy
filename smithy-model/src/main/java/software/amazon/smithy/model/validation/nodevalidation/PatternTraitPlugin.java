@@ -21,6 +21,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.PatternTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates the pattern trait on string shapes or members that target them.
@@ -33,11 +34,11 @@ public final class PatternTraitPlugin extends MemberAndShapeTraitPlugin<StringSh
     @Override
     protected List<String> check(Shape shape, PatternTrait trait, StringNode node, ShapeIndex index) {
         if (!trait.getPattern().matcher(node.getValue()).find()) {
-            return List.of(String.format(
+            return ListUtils.of(String.format(
                     "String value provided for `%s` must match regular expression: %s",
                     shape.getId(), trait.getPattern().pattern()));
         }
 
-        return List.of();
+        return ListUtils.of();
     }
 }

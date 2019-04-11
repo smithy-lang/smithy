@@ -25,6 +25,7 @@ import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Represents a Smithy protocol.
@@ -37,8 +38,8 @@ public final class Protocol implements ToNode, ToSmithyBuilder<Protocol>, Tagged
 
     private Protocol(Builder builder) {
         name = SmithyBuilder.requiredState("name", builder.name);
-        auth = List.copyOf(builder.auth);
-        tags = List.copyOf(builder.tags);
+        auth = ListUtils.copyOf(builder.auth);
+        tags = ListUtils.copyOf(builder.tags);
     }
 
     public static Builder builder() {

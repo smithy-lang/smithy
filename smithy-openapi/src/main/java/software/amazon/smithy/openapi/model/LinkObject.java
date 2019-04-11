@@ -70,7 +70,7 @@ public final class LinkObject extends Component implements ToSmithyBuilder<LinkO
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withOptionalMember("operationRef", getOperationRef().map(Node::from))
                 .withOptionalMember("operationId", getOperationId().map(Node::from))
                 .withOptionalMember("requestBody", getRequestBody())

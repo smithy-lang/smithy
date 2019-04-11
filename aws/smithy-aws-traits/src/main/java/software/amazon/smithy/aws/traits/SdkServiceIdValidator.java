@@ -29,6 +29,8 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Validates that SDK service IDs are correct and do not match any
@@ -41,8 +43,8 @@ import software.amazon.smithy.model.validation.ValidationUtils;
  * </ul>
  */
 public final class SdkServiceIdValidator extends AbstractValidator {
-    private static final Set<String> COMPANY_NAMES = Set.of("AWS", "Aws", "Amazon");
-    private static final Set<String> DISALLOWED_ENDINGS = Set.of("service", "client", "api");
+    private static final Set<String> COMPANY_NAMES = SetUtils.of("AWS", "Aws", "Amazon");
+    private static final Set<String> DISALLOWED_ENDINGS = SetUtils.of("service", "client", "api");
     private static final Pattern SERVICE_ID_PATTERN = Pattern.compile("^[a-zA-Z][a-zA-Z0-9]*( [a-zA-Z0-9]+)*$");
 
     /**
@@ -50,7 +52,7 @@ public final class SdkServiceIdValidator extends AbstractValidator {
      *
      * No new serviceId's should be added to this list in the future.
      */
-    private static final Set<String> PREEXISTING_SERVICE_IDS = Set.of(
+    private static final Set<String> PREEXISTING_SERVICE_IDS = SetUtils.of(
             "ACM PCA",
             "Config Service",
             "Cost and Usage Report Service",
@@ -70,7 +72,7 @@ public final class SdkServiceIdValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         return model.getShapeIndex().shapes(ServiceShape.class)
                 .flatMap(service -> Trait.flatMapStream(service, ServiceTrait.class))
-                .flatMap(pair -> validateService(pair.getLeft(), pair.getRight()).stream())
+                .flatMap(pair -> OptionalUtils.stream(validateService(pair.getLeft(), pair.getRight())))
                 .collect(toList());
     }
 
@@ -125,7 +127,7 @@ public final class SdkServiceIdValidator extends AbstractValidator {
     }
 
     private Optional<ValidationEvent> validateService(ServiceShape service, ServiceTrait trait) {
-        var value = trait.getSdkId();
+        String value = trait.getSdkId();
 
         try {
             validateServiceId(value);
@@ -140,7 +142,7 @@ public final class SdkServiceIdValidator extends AbstractValidator {
     }
 
     private static Optional<String> endsWithForbiddenWord(String value) {
-        var lowercase = value.toLowerCase(Locale.US);
+        String lowercase = value.toLowerCase(Locale.US);
 
         return DISALLOWED_ENDINGS.stream()
                 .filter(lowercase::endsWith)

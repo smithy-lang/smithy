@@ -61,7 +61,7 @@ final class ModelUtils {
      * @return Returns the parameter object builder.
      */
     static ParameterObject.Builder createParameterMember(Context context, MemberShape member) {
-        var builder = ParameterObject.builder();
+        ParameterObject.Builder builder = ParameterObject.builder();
         builder.required(member.isRequired());
         builder.name(member.getMemberName());
         getMemberTrait(context, member, DocumentationTrait.class).map(DocumentationTrait::getValue)

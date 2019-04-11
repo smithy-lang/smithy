@@ -32,6 +32,8 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Class used to transform {@link Model}s.
@@ -40,7 +42,7 @@ public final class ModelTransformer {
     private final List<ModelTransformerPlugin> plugins;
 
     private ModelTransformer(List<ModelTransformerPlugin> plugins) {
-        this.plugins = List.copyOf(plugins);
+        this.plugins = ListUtils.copyOf(plugins);
     }
 
     /**
@@ -127,7 +129,7 @@ public final class ModelTransformer {
      * @return Returns the transformed model.base.
      */
     public Model removeShapesIf(Model model, Predicate<Shape> predicate) {
-        return filterShapes(model, Predicate.not(predicate));
+        return filterShapes(model, FunctionalUtils.not(predicate));
     }
 
     /**

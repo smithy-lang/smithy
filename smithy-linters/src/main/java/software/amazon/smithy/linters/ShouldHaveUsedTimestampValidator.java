@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -37,6 +38,8 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * <p>Validates that shapes that have names that appear to be time values are
@@ -63,8 +66,8 @@ import software.amazon.smithy.model.validation.ValidatorService;
  * lower-then-upper-cased characters, i.e. wordWord.</p>
  */
 public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
-    private static final List<String> ATTRIBUTES = List.of("additionalPatterns");
-    private static final List<Pattern> DEFAULT_PATTERNS = List.of(
+    private static final List<String> ATTRIBUTES = ListUtils.of("additionalPatterns");
+    private static final List<Pattern> DEFAULT_PATTERNS = ListUtils.of(
             Pattern.compile("^.*[Tt]imestamp.*$"), // contains the string "timestamp"
             Pattern.compile("^[Tt]ime([_A-Z].*)?$"), // begins with the word "time"
             Pattern.compile("^[Dd]ate([_A-Z].*)?$"), // begins with the word "date"
@@ -100,8 +103,8 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        var index = model.getShapeIndex();
-        var visitor = Shape.<List<ValidationEvent>>visitor()
+        ShapeIndex index = model.getShapeIndex();
+        ShapeVisitor<List<ValidationEvent>> visitor = Shape.<List<ValidationEvent>>visitor()
                 .when(StringShape.class, s -> validateSimpleShape(s, patterns))
                 .when(ShortShape.class, s -> validateSimpleShape(s, patterns))
                 .when(IntegerShape.class, s -> validateSimpleShape(s, patterns))
@@ -109,7 +112,7 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
                 .when(FloatShape.class, s -> validateSimpleShape(s, patterns))
                 .when(StructureShape.class, shape -> validateStructure(shape, index, patterns))
                 .when(UnionShape.class, shape -> validateUnion(shape, index, patterns))
-                .orElse(List.of());
+                .orElse(ListUtils.of());
         return index.shapes().flatMap(shape -> shape.accept(visitor).stream()).collect(Collectors.toList());
     }
 
@@ -145,9 +148,8 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
             ShapeIndex shapeIndex,
             List<Pattern> patterns
     ) {
-        return shapeIndex.getShape(target.getTarget())
-                .flatMap(shape -> validateName(name, shape.getType(), target, patterns))
-                .stream();
+        return OptionalUtils.stream(shapeIndex.getShape(target.getTarget())
+                .flatMap(shape -> validateName(name, shape.getType(), target, patterns)));
     }
 
     private List<ValidationEvent> validateSimpleShape(
@@ -155,8 +157,8 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
             List<Pattern> patterns
     ) {
         return validateName(shape.getId().getName(), shape.getType(), shape, patterns)
-                .map(List::of)
-                .orElse(List.of());
+                .map(ListUtils::of)
+                .orElse(ListUtils.of());
     }
 
     private Optional<ValidationEvent> validateName(

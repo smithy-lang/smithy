@@ -54,6 +54,8 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Adds shapes and definitions from a JSON file to a loader visitor.
@@ -64,15 +66,15 @@ public class NodeModelLoader implements ModelLoader {
     private static final String SHAPES = "shapes";
     private static final String TRAITS = "traits";
     private static final String TRAIT_DEFS = "traitDefs";
-    private static final List<String> NAMESPACE_PROPERTIES = List.of("shapes", "traits", "traitDefs");
-    private static final List<String> COLLECTION_PROPERTY_NAMES = List.of("type", "member");
-    private static final List<String> MAP_PROPERTY_NAMES = List.of("type", "key", "value");
-    private static final Set<String> MEMBER_PROPERTIES = Set.of("target");
-    private static final List<String> OPERATION_PROPERTY_NAMES = List.of("type", "input", "output", "errors");
-    private static final List<String> SIMPLE_PROPERTY_NAMES = List.of("type");
-    private static final List<String> STRUCTURE_PROPERTY_NAMES = List.of("type", "members");
-    private static final List<String> UNION_PROPERTY_NAMES = List.of("type", "members");
-    private static final Set<String> RESERVED_STRUCTURE_WORDS = Set.of("isa");
+    private static final List<String> NAMESPACE_PROPERTIES = ListUtils.of("shapes", "traits", "traitDefs");
+    private static final List<String> COLLECTION_PROPERTY_NAMES = ListUtils.of("type", "member");
+    private static final List<String> MAP_PROPERTY_NAMES = ListUtils.of("type", "key", "value");
+    private static final Set<String> MEMBER_PROPERTIES = SetUtils.of("target");
+    private static final List<String> OPERATION_PROPERTY_NAMES = ListUtils.of("type", "input", "output", "errors");
+    private static final List<String> SIMPLE_PROPERTY_NAMES = ListUtils.of("type");
+    private static final List<String> STRUCTURE_PROPERTY_NAMES = ListUtils.of("type", "members");
+    private static final List<String> UNION_PROPERTY_NAMES = ListUtils.of("type", "members");
+    private static final Set<String> RESERVED_STRUCTURE_WORDS = SetUtils.of("isa");
 
     private final NodeFactory nodeFactory;
 
@@ -258,7 +260,7 @@ public class NodeModelLoader implements ModelLoader {
     }
 
     private void loadTraitDefs(LoaderVisitor visitor, String namespace, ObjectNode members) {
-        for (var entry : members.getMembers().entrySet()) {
+        for (Map.Entry<StringNode, Node> entry : members.getMembers().entrySet()) {
             try {
                 LoaderUtils.loadTraitDefinition(namespace, entry.getKey().getValue(), entry.getValue(), visitor);
             } catch (SourceException e) {
@@ -298,7 +300,7 @@ public class NodeModelLoader implements ModelLoader {
             LoaderVisitor visitor
     ) {
         // Extracts traits from the node and adds them to the visitor.
-        for (var entry : shapeNode.getMembers().entrySet()) {
+        for (Map.Entry<StringNode, Node> entry : shapeNode.getMembers().entrySet()) {
             String traitName = entry.getKey().getValue();
             if (!propertyNames.contains(traitName)) {
                 visitor.onTrait(shapeId, shapeId.getNamespace(), traitName, entry.getValue());

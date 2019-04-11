@@ -65,7 +65,7 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
 
         if (!definitions.isEmpty()) {
             Map<StringNode, Object> nodes = new LinkedHashMap<>();
-            for (var entry : definitions.entrySet()) {
+            for (Map.Entry<String, Schema> entry : definitions.entrySet()) {
                 updateIn(nodes, entry.getKey(), entry.getValue().toNode());
             }
             definitionNode = Node.objectNode(convertMap(nodes));
@@ -97,8 +97,8 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
 
         // Iterate up to the second to last path segment to find the parent.
         Map<StringNode, Object> current = map;
-        for (var i = 0; i < paths.length - 1; i++) {
-            var pathNode = Node.from(paths[i]);
+        for (int i = 0; i < paths.length - 1; i++) {
+            StringNode pathNode = Node.from(paths[i]);
             if (!current.containsKey(pathNode)) {
                 Map<StringNode, Object> newEntry = new LinkedHashMap<>();
                 current.put(pathNode, newEntry);
@@ -119,11 +119,11 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
     private Map<StringNode, Node> convertMap(Map<StringNode, Object> map) {
         Map<StringNode, Node> result = new HashMap<>();
 
-        for (var entry : map.entrySet()) {
+        for (Map.Entry<StringNode, Object> entry : map.entrySet()) {
             if (entry.getValue() instanceof Node) {
                 result.put(entry.getKey(), (Node) entry.getValue());
             } else if (entry.getValue() instanceof Map) {
-                var valueResult = convertMap((Map<StringNode, Object>) entry.getValue());
+                Map<StringNode, Node> valueResult = convertMap((Map<StringNode, Object>) entry.getValue());
                 result.put(entry.getKey(), Node.objectNode(valueResult));
             }
         }

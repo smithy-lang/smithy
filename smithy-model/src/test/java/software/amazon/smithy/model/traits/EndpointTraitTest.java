@@ -47,7 +47,7 @@ public class EndpointTraitTest {
 
     @Test
     public void literalsMustNotContainAdjacentLabels() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             EndpointTrait.builder()
                     .hostPrefix("foo-{baz}{bar}")
                     .build();
@@ -58,7 +58,7 @@ public class EndpointTraitTest {
 
     @Test
     public void literalsMustNotContainOpenBrace() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             EndpointTrait.builder()
                     .hostPrefix("foo-{baz")
                     .build();
@@ -69,7 +69,7 @@ public class EndpointTraitTest {
 
     @Test
     public void literalsMustNotContainTrailingOpenBrace() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             EndpointTrait.builder()
                     .hostPrefix("foo-{")
                     .build();
@@ -80,7 +80,7 @@ public class EndpointTraitTest {
 
     @Test
     public void literalsMustNotContainCloseBrace() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             EndpointTrait.builder()
                     .hostPrefix("foo-}baz")
                     .build();

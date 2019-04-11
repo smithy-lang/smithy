@@ -19,6 +19,7 @@ import java.util.List;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.utils.ListUtils;
 
 abstract class FilteredPlugin<S extends Shape, N extends Node> implements NodeValidatorPlugin {
     private final Class<S> shapeClass;
@@ -34,7 +35,7 @@ abstract class FilteredPlugin<S extends Shape, N extends Node> implements NodeVa
         if (shapeClass.isInstance(shape) && nodeClass.isInstance(node)) {
             return check((S) shape, (N) node, index);
         } else {
-            return List.of();
+            return ListUtils.of();
         }
     }
 

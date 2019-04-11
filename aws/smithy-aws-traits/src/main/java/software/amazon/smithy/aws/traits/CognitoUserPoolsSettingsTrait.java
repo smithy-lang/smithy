@@ -21,11 +21,13 @@ import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Configures an Amazon Cognito User Pools auth scheme.
@@ -40,7 +42,7 @@ public final class CognitoUserPoolsSettingsTrait
 
     private CognitoUserPoolsSettingsTrait(Builder builder) {
         super(TRAIT, builder.getSourceLocation());
-        this.providerArns = List.copyOf(SmithyBuilder.requiredState("providerArns", builder.providerArns));
+        this.providerArns = ListUtils.copyOf(SmithyBuilder.requiredState("providerArns", builder.providerArns));
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -50,7 +52,7 @@ public final class CognitoUserPoolsSettingsTrait
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            var objectNode = value.expectObjectNode().warnIfAdditionalProperties(List.of(PROVIDER_ARNS));
+            ObjectNode objectNode = value.expectObjectNode().warnIfAdditionalProperties(ListUtils.of(PROVIDER_ARNS));
             return builder()
                     .providerArns(objectNode.expectMember(PROVIDER_ARNS)
                             .expectArrayNode()

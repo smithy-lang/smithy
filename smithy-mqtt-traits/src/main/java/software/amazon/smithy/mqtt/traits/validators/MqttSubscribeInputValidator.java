@@ -26,6 +26,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.SubscribeTrait;
 import software.amazon.smithy.mqtt.traits.TopicLabelTrait;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates {@code mqttSubscribe} operation input.
@@ -45,9 +46,8 @@ public final class MqttSubscribeInputValidator extends AbstractValidator {
     }
 
     private Stream<ValidationEvent> validateOperation(ShapeIndex index, OperationShape operation) {
-        return operation.getInput()
-                .flatMap(index::getShape)
-                .flatMap(Shape::asStructureShape).stream().flatMap(input -> input.getAllMembers().values().stream()
+        return OptionalUtils.stream(operation.getInput().flatMap(index::getShape).flatMap(Shape::asStructureShape))
+                .flatMap(input -> input.getAllMembers().values().stream()
                         .filter(member -> !member.hasTrait(TopicLabelTrait.class))
                         .map(member -> error(member, String.format(
                                 "All input members of an operation marked with the `mqttSubscribe` trait "

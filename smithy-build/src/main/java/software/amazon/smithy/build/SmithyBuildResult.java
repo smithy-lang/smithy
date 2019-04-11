@@ -24,6 +24,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.SmithyBuilder;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Encapsulates the result of running SmithyBuild.
@@ -32,7 +33,7 @@ public final class SmithyBuildResult {
     private final List<ProjectionResult> results;
 
     private SmithyBuildResult(Builder builder) {
-        results = List.copyOf(builder.results);
+        results = ListUtils.copyOf(builder.results);
     }
 
     /**

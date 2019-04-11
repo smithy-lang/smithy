@@ -31,6 +31,9 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * API Gateway integration.
@@ -52,7 +55,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     private static final String URI_KEY = "uri";
     private static final String CONNECTION_ID_KEY = "connectionId";
     private static final String CONNECTION_TYPE = "connectionType";
-    private static final Set<String> KEYS = Set.of(
+    private static final Set<String> KEYS = SetUtils.of(
             TYPE_KEY, PASS_THROUGH_BEHAVIOR_KEY, REQUEST_PARAMETERS_KEY,
             REQUEST_TEMPLATES_KEY, RESPONSES_KEY, CREDENTIALS_KEY, HTTP_METHOD_KEY,
             CACHE_KEY_PARAMETERS_KEY, CACHE_NAMESPACE_KEY, CONTENT_HANDLING_KEY,
@@ -85,10 +88,10 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         connectionId = builder.connectionId;
         connectionType = builder.connectionType;
         cacheNamespace = builder.cacheNamespace;
-        cacheKeyParameters = List.copyOf(builder.cacheKeyParameters);
-        requestParameters = Map.copyOf(builder.requestParameters);
-        requestTemplates = Map.copyOf(builder.requestTemplates);
-        responses = Map.copyOf(builder.responses);
+        cacheKeyParameters = ListUtils.copyOf(builder.cacheKeyParameters);
+        requestParameters = MapUtils.copyOf(builder.requestParameters);
+        requestTemplates = MapUtils.copyOf(builder.requestTemplates);
+        responses = MapUtils.copyOf(builder.responses);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -369,7 +372,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
 
     @Override
     public Builder toBuilder() {
-        var builder = builder()
+        Builder builder = builder()
                 .type(type)
                 .uri(uri)
                 .credentials(credentials)

@@ -54,20 +54,6 @@ public final class ModelDiff {
         return compare(evaluators, oldModel, newModel);
     }
 
-    /**
-     * Evaluates the differences between two models.
-     *
-     * @param moduleLayer ModuleLayer used to find {@link DiffEvaluator} service providers.
-     * @param oldModel Previous version of the model.
-     * @param newModel New model to compare.
-     * @return Returns the computed validation events.
-     */
-    public static List<ValidationEvent> compare(ModuleLayer moduleLayer, Model oldModel, Model newModel) {
-        List<DiffEvaluator> evaluators = new ArrayList<>();
-        ServiceLoader.load(moduleLayer, DiffEvaluator.class).forEach(evaluators::add);
-        return compare(evaluators, oldModel, newModel);
-    }
-
     private static List<ValidationEvent> compare(List<DiffEvaluator> evaluators, Model oldModel, Model newModel) {
         Differences differences = Differences.detect(oldModel, newModel);
         return evaluators.parallelStream()

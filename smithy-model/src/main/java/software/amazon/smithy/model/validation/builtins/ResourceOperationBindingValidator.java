@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates the {@code collectionOperation} and {@code instanceOperation}
@@ -35,8 +36,8 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public class ResourceOperationBindingValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        var index = model.getShapeIndex();
-        var identifierIndex = model.getKnowledge(IdentifierBindingIndex.class);
+        ShapeIndex index = model.getShapeIndex();
+        IdentifierBindingIndex identifierIndex = model.getKnowledge(IdentifierBindingIndex.class);
 
         return Stream.concat(
                 validateCollectionBindings(index, identifierIndex),
@@ -81,9 +82,10 @@ public class ResourceOperationBindingValidator extends AbstractValidator {
     ) {
         return resource.getAllOperations().stream()
                 // Find all operations bound to the resource.
-                .flatMap(id -> index.getShape(id).flatMap(Shape::asOperationShape).stream())
+                .flatMap(id -> OptionalUtils.stream(index.getShape(id).flatMap(Shape::asOperationShape)))
                 // Create a pair of the trait is found on the operation.
-                .flatMap(operation -> operation.findTrait(traitName).map(t -> Pair.of(operation, t)).stream())
+                .flatMap(operation -> OptionalUtils.stream(
+                        operation.findTrait(traitName).map(t -> Pair.of(operation, t))))
                 // Only emit events for operations bound using the incorrect binding type.
                 .filter(pair -> identifierIndex.getOperationBindingType(resource, pair.getLeft()) != expectedBinding)
                 .map(pair -> error(pair.getLeft(), pair.getRight(), errorMessage.get()));

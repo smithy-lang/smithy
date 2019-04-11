@@ -57,8 +57,8 @@ public abstract class Component implements ToNode {
     @Override
     public final Node toNode() {
         if (node == null) {
-            var builder = createNodeBuilder();
-            for (var entry : extensions.entrySet()) {
+            ObjectNode.Builder builder = createNodeBuilder();
+            for (Map.Entry<String, Node> entry : extensions.entrySet()) {
                 builder.withMember(entry.getKey(), entry.getValue().toNode());
             }
             node = builder.build();

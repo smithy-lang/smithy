@@ -61,12 +61,10 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
 
     @Override
     public void execute(PluginContext context) {
-        if (context.getOriginalModel().isEmpty() || context.getProjection().isEmpty()) {
-            return;
+        if (context.getOriginalModel().isPresent() && context.getProjection().isPresent()) {
+            context.getFileManifest().writeJson("smithy-build-info.json", serializeBuildInfo(
+                    context.getModel(), context.getProjection().get(), context.getEvents()));
         }
-
-        context.getFileManifest().writeJson("smithy-build-info.json", serializeBuildInfo(
-                context.getModel(), context.getProjection().get(), context.getEvents()));
     }
 
     private static Node serializeBuildInfo(Model model, Projection projection, List<ValidationEvent> events) {

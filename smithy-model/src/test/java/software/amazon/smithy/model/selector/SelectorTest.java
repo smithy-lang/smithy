@@ -84,14 +84,14 @@ public class SelectorTest {
 
     @Test
     public void requiresValidAttribute() {
-        var thrown = Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse("[id=-]"));
+        Throwable thrown = Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse("[id=-]"));
 
         assertThat(thrown.getMessage(), containsString("Invalid attribute start character"));
     }
 
     @Test
     public void detectsUnclosedQuote() {
-        var thrown = Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse("[id='foo]"));
+        Throwable thrown = Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse("[id='foo]"));
 
         assertThat(thrown.getMessage(), containsString("Expected ' to close"));
     }

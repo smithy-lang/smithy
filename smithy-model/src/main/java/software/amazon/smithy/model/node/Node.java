@@ -305,8 +305,8 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ExpectationNotMetException if the nodes are not equivalent.
      */
     public static void assertEquals(ToNode actual, ToNode expected) {
-        var actualNode = actual.toNode();
-        var expectedNode = expected.toNode();
+        Node actualNode = actual.toNode();
+        Node expectedNode = expected.toNode();
         if (!actualNode.equals(expectedNode)) {
             throw new ExpectationNotMetException(String.format(
                     "Actual node did not match expected Node.%nActual:%n%s%nExpected:%n%s%nDiff: %s",

@@ -31,15 +31,15 @@ public class IntegrationTraitIndexTest {
                 .assemble()
                 .unwrap();
 
-        var index = model.getKnowledge(IntegrationTraitIndex.class);
-        var service = ShapeId.from("ns.foo#Service");
-        var a = ShapeId.from("ns.foo#A");
-        var b = ShapeId.from("ns.foo#B");
-        var o1 = ShapeId.from("ns.foo#O1");
-        var o2 = ShapeId.from("ns.foo#O2");
-        var o3 = ShapeId.from("ns.foo#O3");
-        var o4 = ShapeId.from("ns.foo#O4");
-        var o5 = ShapeId.from("ns.foo#O5");
+        IntegrationTraitIndex index = model.getKnowledge(IntegrationTraitIndex.class);
+        ShapeId service = ShapeId.from("ns.foo#Service");
+        ShapeId a = ShapeId.from("ns.foo#A");
+        ShapeId b = ShapeId.from("ns.foo#B");
+        ShapeId o1 = ShapeId.from("ns.foo#O1");
+        ShapeId o2 = ShapeId.from("ns.foo#O2");
+        ShapeId o3 = ShapeId.from("ns.foo#O3");
+        ShapeId o4 = ShapeId.from("ns.foo#O4");
+        ShapeId o5 = ShapeId.from("ns.foo#O5");
 
         assertThat(getTrait(index, service, service).getUri(), equalTo("arn:Service"));
         assertThat(getTrait(index, service, a).getUri(), equalTo("arn:Service"));

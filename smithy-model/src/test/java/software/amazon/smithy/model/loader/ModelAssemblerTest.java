@@ -54,6 +54,7 @@ import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
+import software.amazon.smithy.utils.ListUtils;
 
 public class ModelAssemblerTest {
 
@@ -328,13 +329,13 @@ public class ModelAssemblerTest {
         ValidatorFactory factory = new ValidatorFactory() {
             @Override
             public List<Validator> loadBuiltinValidators() {
-                return List.of();
+                return ListUtils.of();
             }
 
             @Override
             public Optional<Validator> createValidator(String name, ObjectNode configuration) {
                 loaded.put(name, configuration);
-                return Optional.of(model -> List.of());
+                return Optional.of(model -> ListUtils.of());
             }
         };
 

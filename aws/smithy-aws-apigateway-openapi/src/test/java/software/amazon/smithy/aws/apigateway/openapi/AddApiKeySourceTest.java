@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
+import software.amazon.smithy.openapi.model.OpenApi;
 
 public class AddApiKeySourceTest {
     @Test
@@ -31,10 +32,10 @@ public class AddApiKeySourceTest {
                 .addImport(getClass().getResource("api-key-source.json"))
                 .assemble()
                 .unwrap();
-        var result = OpenApiConverter.create()
+        OpenApi result = OpenApiConverter.create()
                 .classLoader(getClass().getClassLoader())
                 .convert(model, ShapeId.from("example.smithy#MyService"));
-        var source = result.getExtension("x-amazon-apigateway-api-key-source")
+        String source = result.getExtension("x-amazon-apigateway-api-key-source")
                 .get()
                 .expectStringNode()
                 .getValue();

@@ -31,7 +31,7 @@ public class CheckForPrefixHeaders implements SmithyOpenApiPlugin {
 
     @Override
     public void before(Context context, OpenApi.Builder builder) {
-        var httpBindings = context.getModel().getKnowledge(HttpBindingIndex.class);
+        HttpBindingIndex httpBindings = context.getModel().getKnowledge(HttpBindingIndex.class);
         context.getModel().getShapeIndex().shapes(OperationShape.class).forEach(operation -> {
             check(context, httpBindings.getRequestBindings(operation, HttpBindingIndex.Location.PREFIX_HEADERS));
             checkForResponseHeaders(context, httpBindings, operation);
@@ -47,7 +47,7 @@ public class CheckForPrefixHeaders implements SmithyOpenApiPlugin {
         String setting = context.getConfig().getStringMemberOrDefault(
                 OpenApiConstants.ON_HTTP_PREFIX_HEADERS, OpenApiConstants.ON_HTTP_PREFIX_HEADERS_FAIL);
 
-        for (var binding : bindings) {
+        for (HttpBindingIndex.Binding binding : bindings) {
             switch (setting) {
                 case OpenApiConstants.ON_HTTP_PREFIX_HEADERS_WARN:
                     LOGGER.warning(createMessage(binding));

@@ -23,6 +23,7 @@ import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Computes the effective authentication schemes of an operation
@@ -52,8 +53,8 @@ public final class AuthIndex implements KnowledgeIndex {
                         .map(AuthTrait::getValues)
                         .or(() -> serviceShape.getTrait(ProtocolsTrait.class)
                                 .map(ProtocolsTrait::getAllAuthSchemes)
-                                .map(List::copyOf)))
-                .orElse(List.of());
+                                .map(ListUtils::copyOf)))
+                .orElse(ListUtils.of());
     }
 
     /**
@@ -78,7 +79,7 @@ public final class AuthIndex implements KnowledgeIndex {
                 .map(shape -> shape.getTrait(AuthTrait.class)
                         .map(AuthTrait::getValues)
                         .orElseGet(() -> getDefaultServiceSchemes(service)))
-                .orElse(List.of());
+                .orElse(ListUtils.of());
     }
 
     /**
@@ -96,13 +97,13 @@ public final class AuthIndex implements KnowledgeIndex {
      */
     public List<String> getOperationSchemes(ToShapeId service, ToShapeId operation, String protocolName) {
         // Get the authentication schemes of the protocol.
-        var protocolSchemes = index.getShape(service.toShapeId())
+        List<String> protocolSchemes = index.getShape(service.toShapeId())
                 .flatMap(serviceShape -> serviceShape.getTrait(ProtocolsTrait.class))
                 .flatMap(protocolsTrait -> protocolsTrait.getProtocol(protocolName))
                 .map(Protocol::getAuth)
-                .orElse(List.of());
+                .orElse(ListUtils.of());
         // Get the schemes of the operation or service.
-        var schemes = getOperationSchemes(service, operation);
+        List<String> schemes = getOperationSchemes(service, operation);
         return schemes.isEmpty()
                // Use the protocol schemes if the operation/service define no schemes.
                ? protocolSchemes
@@ -111,12 +112,12 @@ public final class AuthIndex implements KnowledgeIndex {
     }
 
     private static List<String> intersection(List<String> left, List<String> right) {
-        var leftCopy = new ArrayList<>(left);
+        List<String> leftCopy = new ArrayList<>(left);
 
         // The "none" scheme is special as it doesn't have to be explicitly
         // defined in the protocols list.
         if (left.contains(ProtocolsTrait.NONE_AUTH) && !right.contains(ProtocolsTrait.NONE_AUTH)) {
-            var copiedRight = new ArrayList<>(right);
+            List<String> copiedRight = new ArrayList<>(right);
             copiedRight.add(ProtocolsTrait.NONE_AUTH);
             leftCopy.retainAll(copiedRight);
         } else {

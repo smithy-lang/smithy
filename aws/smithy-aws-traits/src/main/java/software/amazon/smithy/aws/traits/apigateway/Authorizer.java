@@ -10,6 +10,7 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Represents an API Gateway authorizer.
@@ -24,7 +25,7 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
     private static final String IDENTITY_SOURCE_KEY = "identitySource";
     private static final String IDENTITY_VALIDATION_EXPRESSION_KEY = "identityValidationExpression";
     private static final String RESULT_TTL_IN_SECONDS = "resultTtlInSeconds";
-    private static final List<String> PROPERTIES = List.of(
+    private static final List<String> PROPERTIES = ListUtils.of(
             CLIENT_TYPE_KEY, TYPE_KEY, URI_KEY, CREDENTIALS_KEY, IDENTITY_SOURCE_KEY,
             IDENTITY_VALIDATION_EXPRESSION_KEY, RESULT_TTL_IN_SECONDS);
 

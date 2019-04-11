@@ -24,8 +24,10 @@ import software.amazon.smithy.build.ProjectionTransformer;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.AuthTrait;
+import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Removes authentication schemes from "auth" traits and from the "auth"
@@ -40,7 +42,7 @@ public final class IncludeAuth implements ProjectionTransformer {
 
     @Override
     public List<String> getAliases() {
-        return List.of("includeAuthentication");
+        return ListUtils.of("includeAuthentication");
     }
 
     @Override
@@ -48,7 +50,7 @@ public final class IncludeAuth implements ProjectionTransformer {
         Set<String> includeNames = new HashSet<>(arguments);
         return (transformer, model) -> transformer.mapShapes(model, shape -> {
             // First update the auth trait on all shapes.
-            var result = shape.getTrait(AuthTrait.class)
+            Shape result = shape.getTrait(AuthTrait.class)
                     .map(authTrait -> updateShapeAuth(shape, authTrait, includeNames))
                     .orElse(shape);
             // Next update the protocols trait on service shapes.
@@ -79,7 +81,7 @@ public final class IncludeAuth implements ProjectionTransformer {
     }
 
     private static Shape updateProtocolsTrait(Shape shape, ProtocolsTrait trait, Set<String> includeNames) {
-        var schemes = new HashSet<>(trait.getAllAuthSchemes());
+        Set<String> schemes = new HashSet<>(trait.getAllAuthSchemes());
         schemes.removeAll(includeNames);
 
         // Return the shape as-is if it doesn't contain any additional schemes.
@@ -88,13 +90,13 @@ public final class IncludeAuth implements ProjectionTransformer {
         }
 
         // Clear out and then re-add each updated protocol.
-        var protocolTraitBuilder = trait.toBuilder().clearProtocols();
+        ProtocolsTrait.Builder protocolTraitBuilder = trait.toBuilder().clearProtocols();
 
-        for (var protocol : trait.getProtocols()) {
-            var protocolBuilder = protocol.toBuilder();
+        for (Protocol protocol : trait.getProtocols()) {
+            Protocol.Builder protocolBuilder = protocol.toBuilder();
             // Clear out and re-add any auth schemes that are permitted.
             protocolBuilder.clearAuth();
-            for (var auth : protocol.getAuth()) {
+            for (String auth : protocol.getAuth()) {
                 if (includeNames.contains(auth)) {
                     protocolBuilder.addAuth(auth);
                 }

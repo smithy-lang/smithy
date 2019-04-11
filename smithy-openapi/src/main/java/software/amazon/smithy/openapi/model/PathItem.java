@@ -24,6 +24,8 @@ import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 public final class PathItem extends Component implements ToSmithyBuilder<PathItem> {
     private final String summary;
@@ -43,8 +45,8 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
         super(builder);
         summary = builder.summary;
         description = builder.description;
-        servers = List.copyOf(builder.servers);
-        parameters = List.copyOf(builder.parameters);
+        servers = ListUtils.copyOf(builder.servers);
+        parameters = ListUtils.copyOf(builder.parameters);
         get = builder.get;
         put = builder.put;
         post = builder.post;
@@ -109,20 +111,20 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
 
     public Stream<OperationObject> operations() {
         return Stream.of(
-                getGet().stream(),
-                getPut().stream(),
-                getPost().stream(),
-                getDelete().stream(),
-                getOptions().stream(),
-                getHead().stream(),
-                getPatch().stream(),
-                getTrace().stream()
+                OptionalUtils.stream(getGet()),
+                OptionalUtils.stream(getPut()),
+                OptionalUtils.stream(getPost()),
+                OptionalUtils.stream(getDelete()),
+                OptionalUtils.stream(getOptions()),
+                OptionalUtils.stream(getHead()),
+                OptionalUtils.stream(getPatch()),
+                OptionalUtils.stream(getTrace())
         ).flatMap(Function.identity());
     }
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withOptionalMember("description", getDescription().map(Node::from))
                 .withOptionalMember("summary", getSummary().map(Node::from))
                 .withOptionalMember("get", getGet())

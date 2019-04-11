@@ -11,6 +11,7 @@ import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Logs each instance of traits and features that are known to not
@@ -18,7 +19,7 @@ import software.amazon.smithy.openapi.model.OpenApi;
  */
 public final class UnsupportedTraitsPlugin implements SmithyOpenApiPlugin {
     private static final Logger LOGGER = Logger.getLogger(UnsupportedTraitsPlugin.class.getName());
-    private static final Set<String> TRAITS = Set.of(
+    private static final Set<String> TRAITS = SetUtils.of(
             "inputEventStream", "outputEventStream", "eventPayload", "eventHeader", "streaming");
 
     @Override
@@ -39,8 +40,8 @@ public final class UnsupportedTraitsPlugin implements SmithyOpenApiPlugin {
             return;
         }
 
-        var message = new StringBuilder("Encountered unsupported Smithy traits when converting to OpenAPI:");
-        for (var pair : violations) {
+        StringBuilder message = new StringBuilder("Encountered unsupported Smithy traits when converting to OpenAPI:");
+        for (Pair<ShapeId, List<String>> pair : violations) {
             message.append(String.format(" (`%s`: [%s])", pair.getLeft(), String.join(",", pair.getRight())));
         }
 

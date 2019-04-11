@@ -17,4 +17,5 @@ extra["moduleName"] = "software.amazon.smithy.linters"
 
 dependencies {
     api(project(":smithy-model"))
+    api(project(":smithy-utils"))
 }

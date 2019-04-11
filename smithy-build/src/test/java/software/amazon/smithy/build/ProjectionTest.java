@@ -20,9 +20,9 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.utils.ListUtils;
 
 public class ProjectionTest {
     @Test
@@ -41,7 +41,7 @@ public class ProjectionTest {
     public void buildsProjections() {
         TransformConfiguration t = TransformConfiguration.builder()
                 .name("foo")
-                .args(List.of("baz"))
+                .args(ListUtils.of("baz"))
                 .build();
         Projection p = Projection.builder()
                 .name("foo")

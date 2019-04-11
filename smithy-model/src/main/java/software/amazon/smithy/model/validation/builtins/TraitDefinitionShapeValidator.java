@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.validation.builtins;
 
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.Pair;
@@ -25,6 +24,7 @@ import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Validates that custom trait shapes target valid shapes.
@@ -38,7 +38,7 @@ public final class TraitDefinitionShapeValidator implements Validator {
         ShapeIndex index = model.getShapeIndex();
         return model.getTraitDefinitions()
                 .stream()
-                .filter(Predicate.not(TraitDefinition::isAnnotationTrait))
+                .filter(FunctionalUtils.not(TraitDefinition::isAnnotationTrait))
                 .flatMap(definition -> Pair.flatMapStream(definition, TraitDefinition::getShape))
                 .filter(pair -> index.getShape(pair.getRight()).isEmpty())
                 .map(pair -> ValidationEvent.builder()

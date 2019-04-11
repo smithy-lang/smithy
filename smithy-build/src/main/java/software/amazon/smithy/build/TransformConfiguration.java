@@ -20,6 +20,7 @@ import java.util.List;
 import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Transform configuration found in a projection.
@@ -30,7 +31,7 @@ public final class TransformConfiguration implements ToNode {
 
     private TransformConfiguration(Builder builder) {
         name = SmithyBuilder.requiredState("name", builder.name);
-        args = List.copyOf(builder.args);
+        args = ListUtils.copyOf(builder.args);
     }
 
     public static Builder builder() {

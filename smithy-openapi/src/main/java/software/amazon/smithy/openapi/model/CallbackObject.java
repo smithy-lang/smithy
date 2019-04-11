@@ -40,8 +40,8 @@ public final class CallbackObject extends Component implements ToSmithyBuilder<C
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder();
-        for (var entry : paths.entrySet()) {
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
+        for (Map.Entry<String, PathItem> entry : paths.entrySet()) {
             builder.withMember(entry.getKey(), entry.getValue());
         }
         return builder;

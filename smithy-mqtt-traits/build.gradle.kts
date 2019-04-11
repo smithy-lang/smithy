@@ -16,5 +16,6 @@
 extra["moduleName"] = "software.amazon.smithy.mqtt.traits"
 
 dependencies {
+    api(project(":smithy-utils"))
     api(project(":smithy-model"))
 }

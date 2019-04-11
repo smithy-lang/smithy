@@ -20,6 +20,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.ListUtils;
 
 abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T extends Trait>
         implements NodeValidatorPlugin {
@@ -42,7 +43,7 @@ abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T exte
             return check(shape, shape.getTrait(traitClass).get(), (N) value, index);
         }
 
-        return List.of();
+        return ListUtils.of();
     }
 
     private boolean isMatchingShape(Shape shape, ShapeIndex index) {

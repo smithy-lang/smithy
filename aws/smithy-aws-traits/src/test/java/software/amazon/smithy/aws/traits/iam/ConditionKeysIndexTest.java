@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.ValidatedResult;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -67,7 +68,7 @@ public class ConditionKeysIndexTest {
 
     @Test
     public void detectsUnkownConditionKeys() {
-        var result = Model.assembler()
+         ValidatedResult<Model> result = Model.assembler()
                 .addImport(getClass().getResource("invalid-condition-keys.smithy"))
                 .discoverModels(getClass().getClassLoader())
                 .assemble();

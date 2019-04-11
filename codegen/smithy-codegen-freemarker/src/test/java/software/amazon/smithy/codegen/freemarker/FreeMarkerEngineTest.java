@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.codegen.core.TemplateEngine;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.utils.MapUtils;
 
 public class FreeMarkerEngineTest {
     @Test
@@ -37,7 +38,7 @@ public class FreeMarkerEngineTest {
                 .classLoader(getClass().getClassLoader())
                 .putDefaultProperty("snake", "snake_man")
                 .build();
-        String result = engine.render("software/amazon/smithy/codegen/freemarker/stringUtils.ftl", Map.of());
+        String result = engine.render("software/amazon/smithy/codegen/freemarker/stringUtils.ftl", MapUtils.of());
 
         assertThat(result, containsString("snakeMan - SnakeMan"));
     }

@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Provides an index of {@link Shape}s in a Smithy model by {@link ShapeId}.
@@ -65,7 +66,7 @@ public final class ShapeIndex implements ToSmithyBuilder<ShapeIndex> {
     private int hash;
 
     private ShapeIndex(Builder builder) {
-        shapeMap = Map.copyOf(builder.shapeMap);
+        shapeMap = MapUtils.copyOf(builder.shapeMap);
 
         // Only cache the results of querying shapes by type if the number
         // of shapes in the index exceeds the threshold.

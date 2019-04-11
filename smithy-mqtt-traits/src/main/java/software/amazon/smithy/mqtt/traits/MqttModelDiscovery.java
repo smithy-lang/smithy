@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.List;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.loader.ModelDiscovery;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * This is used to allow a {@link ModelAssembler} to discover the MQTT model.
@@ -26,6 +27,6 @@ import software.amazon.smithy.model.loader.ModelDiscovery;
 public final class MqttModelDiscovery implements ModelDiscovery {
     @Override
     public List<URL> getModels() {
-        return List.of(getClass().getResource("mqtt.smithy"));
+        return ListUtils.of(getClass().getResource("mqtt.smithy"));
     }
 }

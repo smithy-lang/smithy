@@ -41,11 +41,7 @@ public interface PropertyNamingStrategy {
      * @return Returns the created strategy.
      */
     static PropertyNamingStrategy createMemberNameStrategy() {
-        return PropertyNamingStrategy::fromMemberName;
-    }
-
-    private static String fromMemberName(Shape containingShape, MemberShape member, ObjectNode config) {
-        return member.getMemberName();
+        return (containingShape, member, config) -> member.getMemberName();
     }
 
     /**
@@ -62,7 +58,7 @@ public interface PropertyNamingStrategy {
                 return member.getTrait(JsonNameTrait.class).get().getValue();
             }
 
-            return fromMemberName(containingShape, member, config);
+            return member.getMemberName();
         };
     }
 }

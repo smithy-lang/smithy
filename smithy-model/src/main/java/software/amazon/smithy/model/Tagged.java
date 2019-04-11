@@ -16,6 +16,7 @@
 package software.amazon.smithy.model;
 
 import java.util.List;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * A value that is in a Smithy model.
@@ -27,7 +28,7 @@ public interface Tagged {
      * @return Returns the tag values.
      */
     default List<String> getTags() {
-        return List.of();
+        return ListUtils.of();
     }
 
     /**

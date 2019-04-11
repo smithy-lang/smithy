@@ -27,6 +27,7 @@ import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates a model, including validators and suppressions loaded from
@@ -87,7 +88,7 @@ final class ModelValidator {
      * @return Returns the encountered validation events.
      */
     static List<ValidationEvent> validate(Model model, ValidatorFactory validatorFactory) {
-        return validate(model, validatorFactory, List.of(), List.of());
+        return validate(model, validatorFactory, ListUtils.of(), ListUtils.of());
     }
 
     private List<ValidationEvent> doValidate() {
@@ -142,10 +143,10 @@ final class ModelValidator {
      *  using the validator factory.
      */
     private void assembleValidators(List<ValidatorDefinition> definitions) {
-        var factory = new ValidatorFromDefinitionFactory(validatorFactory);
+        ValidatorFromDefinitionFactory factory = new ValidatorFromDefinitionFactory(validatorFactory);
 
         // Attempt to create the Validator instances and collect errors along the way.
-        for (var val : definitions) {
+        for (ValidatorDefinition val : definitions) {
             ValidatedResult<Validator> result = factory.loadValidator(val);
             result.getResult().ifPresent(validators::add);
             events.addAll(result.getValidationEvents());

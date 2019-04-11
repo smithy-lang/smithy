@@ -22,6 +22,7 @@ import java.util.Set;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Filters out members shapes that have a container shape that doesn't
@@ -49,7 +50,7 @@ final class OfSelector implements Selector {
         // resolve their parents.
         shapes.stream().filter(Shape::isMemberShape).forEach(shape -> {
             findParent(neighborProvider, shape).ifPresent(parent -> {
-                Set<Shape> parentSet = Set.of(parent);
+                Set<Shape> parentSet = SetUtils.of(parent);
                 // If the parent provides a result for the predicate, then the
                 // Shape is not filtered out.
                 boolean anyMatch = selectors.stream()

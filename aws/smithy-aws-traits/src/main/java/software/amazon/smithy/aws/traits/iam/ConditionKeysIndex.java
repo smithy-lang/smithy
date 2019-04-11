@@ -18,10 +18,8 @@ package software.amazon.smithy.aws.traits.iam;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import software.amazon.smithy.aws.traits.ArnReferenceTrait;
 import software.amazon.smithy.aws.traits.ServiceTrait;
 import software.amazon.smithy.model.Model;
@@ -33,6 +31,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Provides an index of condition keys for a service, including any condition
@@ -46,8 +48,8 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
     private final Map<ShapeId, Map<ShapeId, Set<String>>> resourceConditionKeys = new HashMap<>();
 
     public ConditionKeysIndex(Model model) {
-        var index = model.getShapeIndex();
-        var bindingIndex = model.getKnowledge(IdentifierBindingIndex.class);
+        ShapeIndex index = model.getShapeIndex();
+        IdentifierBindingIndex bindingIndex = model.getKnowledge(IdentifierBindingIndex.class);
 
         index.shapes(ServiceShape.class).forEach(service -> {
             service.getTrait(ServiceTrait.class).ifPresent(trait -> {
@@ -56,21 +58,25 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                 serviceConditionKeys.put(service.getId(), new HashMap<>(
                         service.getTrait(DefineConditionKeysTrait.class)
                                 .map(DefineConditionKeysTrait::getConditionKeys)
-                                .orElse(Map.of())));
+                                .orElse(MapUtils.of())));
                 resourceConditionKeys.put(service.getId(), new HashMap<>());
 
                 // Defines the scoping of any derived condition keys.
                 String arnRoot = trait.getArnNamespace();
 
                 // Compute the keys of child resources.
-                service.getResources().stream().flatMap(id -> index.getShape(id).stream()).forEach(resource -> {
-                    compute(index, bindingIndex, service.getId(), arnRoot, resource, null, Set.of());
-                });
+                service.getResources().stream()
+                        .flatMap(id -> OptionalUtils.stream(index.getShape(id)))
+                        .forEach(resource -> {
+                            compute(index, bindingIndex, service.getId(), arnRoot, resource, null, SetUtils.of());
+                        });
 
                 // Compute the keys of operations of the service.
-                service.getOperations().stream().flatMap(id -> index.getShape(id).stream()).forEach(operation -> {
-                    compute(index, bindingIndex, service.getId(), arnRoot, operation, null, Set.of());
-                });
+                service.getOperations().stream()
+                        .flatMap(id -> OptionalUtils.stream(index.getShape(id)))
+                        .forEach(operation -> {
+                            compute(index, bindingIndex, service.getId(), arnRoot, operation, null, SetUtils.of());
+                        });
             });
         });
     }
@@ -86,7 +92,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
      * @return Returns the conditions keys of the service or an empty map when not found.
      */
     public Map<String, ConditionKeyDefinition> getDefinedConditionKeys(ToShapeId service) {
-        return Collections.unmodifiableMap(serviceConditionKeys.getOrDefault(service.toShapeId(), Map.of()));
+        return Collections.unmodifiableMap(serviceConditionKeys.getOrDefault(service.toShapeId(), MapUtils.of()));
     }
 
     /**
@@ -96,10 +102,10 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
      * @return Returns the conditions keys of the service or an empty map when not found.
      */
     public Set<String> getConditionKeyNames(ToShapeId service) {
-        return resourceConditionKeys.getOrDefault(service.toShapeId(), Map.of())
+        return resourceConditionKeys.getOrDefault(service.toShapeId(), MapUtils.of())
                 .values().stream()
                 .flatMap(Set::stream)
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(SetUtils.toUnmodifiableSet());
     }
 
     /**
@@ -114,7 +120,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
         ShapeId serviceId = service.toShapeId();
         ShapeId subjectId = resourceOrOperation.toShapeId();
         return Collections.unmodifiableSet(
-                resourceConditionKeys.getOrDefault(serviceId, Map.of()).getOrDefault(subjectId, Set.of()));
+                resourceConditionKeys.getOrDefault(serviceId, MapUtils.of()).getOrDefault(subjectId, SetUtils.of()));
     }
 
     /**
@@ -133,10 +139,10 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             ToShapeId service,
             ToShapeId resourceOrOperation
     ) {
-        var serviceDefinitions = getDefinedConditionKeys(service);
+        Map<String, ConditionKeyDefinition> serviceDefinitions = getDefinedConditionKeys(service);
         Map<String, ConditionKeyDefinition> definitions = new HashMap<>();
 
-        for (var name : getConditionKeyNames(service, resourceOrOperation)) {
+        for (String name : getConditionKeyNames(service, resourceOrOperation)) {
             if (serviceDefinitions.containsKey(name)) {
                 definitions.put(name, serviceDefinitions.get(name));
             }
@@ -163,26 +169,27 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             // Add any inferred resource identifiers to the resource and to the service-wide definitions.
             Map<String, String> childIdentifiers = resource.hasTrait(InferConditionKeysTrait.class)
                     ? inferChildResourceIdentifiers(index, service, arnRoot, resource, parent)
-                    : Map.of();
+                    : MapUtils.of();
 
             // Compute the keys of each child operation.
-            resource.getAllOperations().stream().flatMap(id -> index.getShape(id).stream()).forEach(child -> {
-                // Only apply child identifiers to the operation if the operation binds them
-                // (for example, list operations omit one or more child identifiers).
-                Set<String> operationKeys = new HashSet<>(definitions);
-                for (var binding : bindingIndex.getOperationBindings(resource, child).keySet()) {
-                    if (childIdentifiers.containsKey(binding)) {
-                        operationKeys.add(childIdentifiers.get(binding));
-                    }
-                }
-                compute(index, bindingIndex, service, arnRoot, child, resource, operationKeys);
-            });
+            resource.getAllOperations().stream().flatMap(id -> OptionalUtils.stream(index.getShape(id)))
+                    .forEach(child -> {
+                        // Only apply child identifiers to the operation if the operation binds them
+                        // (for example, list operations omit one or more child identifiers).
+                        Set<String> operationKeys = new HashSet<>(definitions);
+                        for (String binding : bindingIndex.getOperationBindings(resource, child).keySet()) {
+                            if (childIdentifiers.containsKey(binding)) {
+                                operationKeys.add(childIdentifiers.get(binding));
+                            }
+                        }
+                        compute(index, bindingIndex, service, arnRoot, child, resource, operationKeys);
+                    });
 
             // Child resources always inherit the identifiers of the parent.
             definitions.addAll(childIdentifiers.values());
 
             // Compute the keys of each child resource.
-            resource.getResources().stream().flatMap(id -> index.getShape(id).stream()).forEach(child -> {
+            resource.getResources().stream().flatMap(id -> OptionalUtils.stream(index.getShape(id))).forEach(child -> {
                 compute(index, bindingIndex, service, arnRoot, child, resource, definitions);
             });
         });
@@ -199,15 +206,15 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
 
         // We want child resources to reuse parent resource context keys, so
         // extract out identifiers that were introduced by the child resource.
-        Set<String> parentIds = parent == null ? Set.of() : parent.getIdentifiers().keySet();
+        Set<String> parentIds = parent == null ? SetUtils.of() : parent.getIdentifiers().keySet();
         Set<String> childIds = new HashSet<>(resource.getIdentifiers().keySet());
         childIds.removeAll(parentIds);
 
-        for (var childId : childIds) {
+        for (String childId : childIds) {
             index.getShape(resource.getIdentifiers().get(childId)).ifPresent(shape -> {
                 // Only infer identifiers introduced by a child. Children should
                 // use their parent identifiers and not duplicate them.
-                var builder = ConditionKeyDefinition.builder();
+                ConditionKeyDefinition.Builder builder = ConditionKeyDefinition.builder();
                 if (shape.hasTrait(ArnReferenceTrait.class)) {
                     // Use an ARN type if the targeted shape has the arnReference trait.
                     builder.type(ARN_TYPE);
@@ -235,10 +242,6 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
     }
 
     private static String computeIdentifierName(String arnRoot, ResourceShape resource, String identifierName) {
-        return arnRoot + ":" + resource.getId().getName() + ucfirst(identifierName);
-    }
-
-    private static String ucfirst(String value) {
-        return value.isEmpty() ? value : value.substring(0, 1).toUpperCase(Locale.US) + value.substring(1);
+        return arnRoot + ":" + resource.getId().getName() + StringUtils.capitalize(identifierName);
     }
 }

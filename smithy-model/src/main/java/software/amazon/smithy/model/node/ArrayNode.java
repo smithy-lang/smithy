@@ -22,15 +22,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Represents an array of nodes.
  */
 public final class ArrayNode extends Node implements Iterable<Node> {
-    static final ArrayNode EMPTY = new ArrayNode(List.of(), SourceLocation.none(), false);
+    static final ArrayNode EMPTY = new ArrayNode(ListUtils.of(), SourceLocation.none(), false);
 
     /**
      * A regex used to extract the expected class in a ClassCastException.
@@ -52,7 +54,7 @@ public final class ArrayNode extends Node implements Iterable<Node> {
     ArrayNode(List<Node> elements, SourceLocation sourceLocation, boolean defensiveCopy) {
         super(sourceLocation);
         this.elements = defensiveCopy
-                ? List.copyOf(elements)
+                ? ListUtils.copyOf(elements)
                 : Collections.unmodifiableList(elements);
     }
 
@@ -166,17 +168,17 @@ public final class ArrayNode extends Node implements Iterable<Node> {
     @SuppressWarnings("unchecked")
     public <T, K extends Node> List<T> getElementsAs(Function<K, T> f) {
         List<T> result = new ArrayList<>(elements.size());
-        for (var i = 0; i < elements.size(); i++) {
+        for (int i = 0; i < elements.size(); i++) {
             try {
-                var k = (K) elements.get(i);
+                K k = (K) elements.get(i);
                 result.add(f.apply(k));
             } catch (ClassCastException e) {
                 // Attempt to present a more useful error message by parsing the class
                 // that was trying to be converted. The only reason this would ever
                 // fail is if the message is changed in the JDK, so just in case,
                 // there's a fallback code-path.
-                var message = e.getMessage();
-                var matcher = CAST_PATTERN_TYPE.matcher(message);
+                String message = e.getMessage();
+                Matcher matcher = CAST_PATTERN_TYPE.matcher(message);
                 String formatted = matcher.matches()
                         ? String.format(
                                 "Expected ArrayNode element %d to be a `%s` but found a `%s`.",

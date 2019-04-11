@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Finds shapes that are not connected to a service shape.
@@ -55,8 +56,8 @@ public final class UnreferencedShapes {
         Predicate<Shape> matchesFilters = createPredicate(model, shapeWalker);
         // Any shape that wasn't identified as connected to a service is considered unreferenced.
         return model.getShapeIndex().shapes()
-                .filter(Predicate.not(Shape::isMemberShape))
-                .filter(Predicate.not(connected::contains))
+                .filter(FunctionalUtils.not(Shape::isMemberShape))
+                .filter(FunctionalUtils.not(connected::contains))
                 .filter(matchesFilters)
                 .filter(keepFilter)
                 .collect(Collectors.toSet());
@@ -65,7 +66,7 @@ public final class UnreferencedShapes {
     private Predicate<Shape> createPredicate(Model model, Walker walker) {
         Map<String, Set<ShapeId>> traitShapes = findTraitShapes(model, walker);
         // Retain prelude shapes
-        Predicate<Shape> predicate = Predicate.not(Prelude::isPreludeShape);
+        Predicate<Shape> predicate = FunctionalUtils.not(Prelude::isPreludeShape);
         // Consider any shape used in a trait definition to be referenced.
         Set<ShapeId> allTraitShapes = traitShapes.values().stream()
                 .flatMap(Set::stream)

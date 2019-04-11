@@ -25,6 +25,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumConstantBody;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Emits a NOTE when a new enum value is added, emits an ERROR when an
@@ -34,7 +35,7 @@ public class ChangedEnumTrait extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes()
-                .flatMap(change -> change.getChangedTrait(EnumTrait.class).stream()
+                .flatMap(change -> OptionalUtils.stream(change.getChangedTrait(EnumTrait.class))
                         .map(p -> Pair.of(change, p)))
                 .flatMap(pair -> validateEnum(pair.getLeft(), pair.getRight()).stream())
                 .collect(Collectors.toList());

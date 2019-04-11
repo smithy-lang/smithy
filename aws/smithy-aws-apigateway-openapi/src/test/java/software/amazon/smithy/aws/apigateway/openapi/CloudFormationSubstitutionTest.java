@@ -36,7 +36,7 @@ public class CloudFormationSubstitutionTest {
                 LoaderUtils.readUtf8File(getClass().getResource("substitution-performed.json").getPath()))
                 .expectObjectNode();
 
-        var actual = OpenApiConverter.create()
+        ObjectNode actual = OpenApiConverter.create()
                 .classLoader(getClass().getClassLoader())
                 .convertToNode(model, ShapeId.from("example.smithy#MyService"));
 
@@ -55,7 +55,7 @@ public class CloudFormationSubstitutionTest {
                 LoaderUtils.readUtf8File(getClass().getResource("substitution-not-performed.json").getPath()))
                 .expectObjectNode();
 
-        var actual = OpenApiConverter.create()
+        ObjectNode actual = OpenApiConverter.create()
                 .classLoader(getClass().getClassLoader())
                 .putSetting(ApiGatewayConstants.DISABLE_CLOUDFORMATION_SUBSTITUTION, true)
                 .convertToNode(model, ShapeId.from("example.smithy#MyService"));

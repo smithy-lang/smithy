@@ -20,54 +20,55 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 public class RefStrategyTest {
     @Test
     public void defaultImplUsesDefaultPointer() {
-        var ref = RefStrategy.createDefaultStrategy();
-        var pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"), Node.objectNode());
+        RefStrategy ref = RefStrategy.createDefaultStrategy();
+        String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"), Node.objectNode());
 
         assertThat(pointer, equalTo("#/definitions/SmithyExampleFoo"));
     }
 
     @Test
     public void defaultImplUsesCustomPointerAndAppendsSlashWhenNecessary() {
-        var ref = RefStrategy.createDefaultStrategy();
-        var config = Node.objectNodeBuilder()
+        RefStrategy ref = RefStrategy.createDefaultStrategy();
+        ObjectNode config = Node.objectNodeBuilder()
                 .withMember(JsonSchemaConstants.DEFINITION_POINTER, Node.from("#/components/schemas"))
                 .build();
-        var pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"), config);
+        String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"), config);
 
         assertThat(pointer, equalTo("#/components/schemas/SmithyExampleFoo"));
     }
 
     @Test
     public void defaultImplUsesCustomPointerAndOmitsSlashWhenNecessary() {
-        var ref = RefStrategy.createDefaultStrategy();
-        var config = Node.objectNodeBuilder()
+        RefStrategy ref = RefStrategy.createDefaultStrategy();
+        ObjectNode config = Node.objectNodeBuilder()
                 .withMember(JsonSchemaConstants.DEFINITION_POINTER, Node.from("#/components/schemas"))
                 .build();
-        var pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"), config);
+        String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"), config);
 
         assertThat(pointer, equalTo("#/components/schemas/SmithyExampleFoo"));
     }
 
     @Test
     public void defaultImplStripsNamespacesWhenRequested() {
-        var ref = RefStrategy.createDefaultStrategy();
-        var config = Node.objectNodeBuilder()
+        RefStrategy ref = RefStrategy.createDefaultStrategy();
+        ObjectNode config = Node.objectNodeBuilder()
                 .withMember(JsonSchemaConstants.SMITHY_STRIP_NAMESPACES, true)
                 .build();
-        var pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"), config);
+        String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"), config);
 
         assertThat(pointer, equalTo("#/definitions/Foo"));
     }
 
     @Test
     public void defaultImplAddsRefWhenMember() {
-        var ref = RefStrategy.createDefaultStrategy();
-        var pointer = ref.toPointer(ShapeId.from("smithy.example#Foo$bar"), Node.objectNode());
+        RefStrategy ref = RefStrategy.createDefaultStrategy();
+        String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo$bar"), Node.objectNode());
 
         assertThat(pointer, equalTo("#/definitions/SmithyExampleFooBarMember"));
     }

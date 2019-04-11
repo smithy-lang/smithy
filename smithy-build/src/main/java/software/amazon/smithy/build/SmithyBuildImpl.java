@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -36,6 +35,7 @@ import software.amazon.smithy.model.ValidatedResult;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 final class SmithyBuildImpl {
     private static final Logger LOGGER = Logger.getLogger(SmithyBuild.class.getName());
@@ -118,7 +118,7 @@ final class SmithyBuildImpl {
         Model resolvedModel = createBaseModel();
         SmithyBuildResult.Builder builder = SmithyBuildResult.builder();
         config.getProjections().stream()
-                .filter(Predicate.not(Projection::isAbstract))
+                .filter(FunctionalUtils.not(Projection::isAbstract))
                 .sorted(Comparator.comparing(Projection::getName))
                 .parallel()
                 .map(projection -> applyProjection(projection, resolvedModel))
@@ -147,12 +147,12 @@ final class SmithyBuildImpl {
             LOGGER.fine(() -> String.format(
                     "Merging the following `%s` projection imports into the loaded model: %s",
                     projection.getName(), projection.getImports()));
-            var assembler = modelAssemblerSupplier.get().addModel(resolvedModel);
+            ModelAssembler assembler = modelAssemblerSupplier.get().addModel(resolvedModel);
             projection.getImports().forEach(path -> assembler.addImport(importBasePathResolver.apply(path, config)));
-            var resolvedResult = assembler.assemble();
+            ValidatedResult<Model> resolvedResult = assembler.assemble();
 
             // Fail if the model can't be merged with the imports.
-            if (resolvedResult.getResult().isEmpty()) {
+            if (!resolvedResult.getResult().isPresent()) {
                 LOGGER.severe(String.format(
                         "The model could not be merged with the following imports: [%s[",
                         projection.getImports()));

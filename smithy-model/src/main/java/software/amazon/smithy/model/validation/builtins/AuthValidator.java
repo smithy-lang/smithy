@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
@@ -31,6 +32,7 @@ import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates that service shapes and every operation bound within a service
@@ -46,7 +48,7 @@ import software.amazon.smithy.model.validation.ValidationUtils;
 public final class AuthValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        var topDownIndex = model.getKnowledge(TopDownIndex.class);
+        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
         return model.getShapeIndex().shapes(ServiceShape.class)
                 .flatMap(service -> validateService(topDownIndex, service).stream())
                 .collect(Collectors.toList());
@@ -56,9 +58,9 @@ public final class AuthValidator extends AbstractValidator {
             TopDownIndex topDownIndex,
             ServiceShape service
     ) {
-        var protocols = service.getTrait(ProtocolsTrait.class);
+        Optional<ProtocolsTrait> protocols = service.getTrait(ProtocolsTrait.class);
         if (protocols.isEmpty()) {
-            return List.of();
+            return ListUtils.of();
         }
 
         List<ValidationEvent> result = new ArrayList<>();
@@ -86,8 +88,8 @@ public final class AuthValidator extends AbstractValidator {
         // Validates that the authentication schemes resolved for an operation or
         // service are listed in the authentication schemes supported by the
         // service protocols to which it is bound.
-        var serviceSchemes = protocols.getAllAuthSchemes();
-        var copiedSchemes = new HashSet<>(trait.getValues());
+        Set<String> serviceSchemes = protocols.getAllAuthSchemes();
+        Set<String> copiedSchemes = new HashSet<>(trait.getValues());
         copiedSchemes.removeAll(serviceSchemes);
 
         // Remove the "none" scheme since it does not need to be explicitly
@@ -109,7 +111,7 @@ public final class AuthValidator extends AbstractValidator {
 
     private Optional<ValidationEvent> validateUniqueNames(ServiceShape shape, ProtocolsTrait protocols) {
         // Check for protocols with conflicting names.
-        var result = protocols.getProtocols().stream()
+        List<String> result = protocols.getProtocols().stream()
                 .collect(Collectors.groupingBy(Protocol::getName))
                 .entrySet()
                 .stream()

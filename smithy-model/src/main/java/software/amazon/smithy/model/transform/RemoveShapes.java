@@ -17,6 +17,7 @@ package software.amazon.smithy.model.transform;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,9 +27,11 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Removes shapes from a model while ensuring that relationships to/from
@@ -53,24 +56,24 @@ final class RemoveShapes {
 
     Model transform(ModelTransformer transformer, Model model) {
         Set<Shape> removed = new HashSet<>();
-        var index = model.getShapeIndex();
-        var queue = index.shapes()
+        ShapeIndex index = model.getShapeIndex();
+        Deque<Shape> queue = index.shapes()
                 .filter(toRemove::contains)
                 .collect(Collectors.toCollection(ArrayDeque::new));
-        var removalVisitor = new ShapeRemovalVisitor();
+        ShapeRemovalVisitor removalVisitor = new ShapeRemovalVisitor();
 
         // Iteratively add each shape that needs to be removed from the index using multiple rounds.
         while (!queue.isEmpty()) {
-            var shape = queue.pop();
+            Shape shape = queue.pop();
             if (!removed.contains(shape)) {
                 queue.addAll(shape.accept(removalVisitor));
             }
             removed.add(shape);
         }
 
-        var builder = index.toBuilder();
+        ShapeIndex.Builder builder = index.toBuilder();
         removed.forEach(shape -> builder.removeShape(shape.getId()));
-        var result = model.toBuilder().shapeIndex(builder.build()).build();
+        Model result = model.toBuilder().shapeIndex(builder.build()).build();
 
         for (ModelTransformerPlugin plugin : plugins) {
             result = plugin.onRemove(transformer, removed, result);
@@ -87,22 +90,22 @@ final class RemoveShapes {
 
         @Override
         public Collection<? extends Shape> getDefault(Shape shape) {
-            return List.of();
+            return ListUtils.of();
         }
 
         @Override
         public Collection<? extends Shape> listShape(ListShape shape) {
-            return List.of(shape.getMember());
+            return ListUtils.of(shape.getMember());
         }
 
         @Override
         public Collection<? extends Shape> setShape(SetShape shape) {
-            return List.of(shape.getMember());
+            return ListUtils.of(shape.getMember());
         }
 
         @Override
         public Collection<? extends Shape> mapShape(MapShape shape) {
-            return List.of(shape.getKey(), shape.getValue());
+            return ListUtils.of(shape.getKey(), shape.getValue());
         }
 
         @Override

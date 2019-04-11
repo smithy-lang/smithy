@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -27,6 +28,7 @@ import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates that trait values are valid for their trait definitions.
@@ -57,10 +59,10 @@ public final class TraitValueValidator implements Validator {
     ) {
         if (definition.isAnnotationTrait()) {
             if (trait.toNode().isBooleanNode() && trait.toNode().expectBooleanNode().getValue()) {
-                return List.of();
+                return ListUtils.of();
             }
 
-            return List.of(ValidationEvent.builder()
+            return ListUtils.of(ValidationEvent.builder()
                     .severity(Severity.ERROR)
                     .eventId(NAME)
                     .sourceLocation(trait)
@@ -70,14 +72,14 @@ public final class TraitValueValidator implements Validator {
                     .build());
         }
 
-        var shape = definition.getShape().get();
+        ShapeId shape = definition.getShape().get();
         if (index.getShape(shape).isEmpty()) {
             // This is validated in TraitDefinitionShapeValidator.
-            return List.of();
+            return ListUtils.of();
         }
 
-        var schema = index.getShape(definition.getShape().get()).get();
-        var cases = NodeValidationVisitor.builder()
+        Shape schema = index.getShape(definition.getShape().get()).get();
+        NodeValidationVisitor cases = NodeValidationVisitor.builder()
                 .index(index)
                 .value(trait.toNode())
                 .eventShapeId(targetShape.getId())

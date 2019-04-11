@@ -1,5 +1,3 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
-
 /*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -19,5 +17,6 @@ description = "Smithy :: Model"
 extra["moduleName"] = "software.amazon.smithy.model"
 
 dependencies {
+    compile(project(":smithy-utils"))
     implementation("com.fasterxml.jackson.core:jackson-core:2.9.8")
 }

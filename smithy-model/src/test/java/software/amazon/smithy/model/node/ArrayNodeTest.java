@@ -171,16 +171,16 @@ public class ArrayNodeTest {
 
     @Test
     public void getsValuesAsClass() {
-        var array = Node.fromStrings("a", "b", "c");
-        var list = array.getElementsAs(StringNode.class);
+        ArrayNode array = Node.fromStrings("a", "b", "c");
+        List<StringNode> list = array.getElementsAs(StringNode.class);
 
         assertThat(array.getElements(), equalTo(list));
     }
 
     @Test
     public void getsValuesUsingMapper() {
-        var array = Node.fromStrings("a", "b", "c");
-        var list = array.getElementsAs(StringNode::getValue);
+        ArrayNode array = Node.fromStrings("a", "b", "c");
+        List<String> list = array.getElementsAs(StringNode::getValue);
 
         assertThat(array.getElements().stream()
                            .map(Node::expectStringNode)

@@ -37,7 +37,7 @@ final class SmithyObjectWrapper extends DefaultObjectWrapper {
         } else if (obj instanceof ArrayNode) {
             return wrap(((ArrayNode) obj).getElements());
         } else if (obj instanceof ObjectNode) {
-            var objectNode = (ObjectNode) obj;
+            ObjectNode objectNode = (ObjectNode) obj;
             Map<String, Node> map = new HashMap<>(objectNode.size());
             objectNode.getMembers().forEach((k, v) -> map.put(k.getValue(), v));
             return wrap(map);

@@ -15,13 +15,13 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Constrains a shape to minimum and maximum number of elements or size.
@@ -61,7 +61,7 @@ public final class LengthTrait extends AbstractTrait implements ToSmithyBuilder<
 
     @Override
     protected Node createNode() {
-        return new ObjectNode(Map.of(), getSourceLocation())
+        return new ObjectNode(MapUtils.of(), getSourceLocation())
                 .withOptionalMember("min", getMin().map(Node::from))
                 .withOptionalMember("max", getMax().map(Node::from));
     }

@@ -38,6 +38,9 @@ import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Replaces shapes while ensuring that the transformed model is in a
@@ -163,7 +166,7 @@ final class ReplaceShapes {
     private Set<Shape> getUpdatedContainers(ShapeIndex index, List<Shape> shouldReplace) {
         // Account for multiple members being updated on the same container.
         Map<Shape, List<MemberShape>> containerToMemberMapping = shouldReplace.stream()
-                .flatMap(shape -> shape.asMemberShape().stream())
+                .flatMap(shape -> OptionalUtils.stream(shape.asMemberShape()))
                 .flatMap(member -> Pair.flatMapStream(
                         member, m -> findContainerShape(m.getContainer(), index, shouldReplace)))
                 .collect(Collectors.groupingBy(Pair::getRight, mapping(Pair::getLeft, toList())));
@@ -206,7 +209,7 @@ final class ReplaceShapes {
 
         @Override
         public Collection<Shape> getDefault(Shape shape) {
-            return Set.of();
+            return SetUtils.of();
         }
 
         @Override
@@ -233,7 +236,7 @@ final class ReplaceShapes {
                 Map<String, MemberShape> previousMembers
         ) {
             // Find members that were removed as a result of transforming the shape.
-            var removedMembers = new HashSet<>(previousMembers.keySet());
+            Set<String> removedMembers = new HashSet<>(previousMembers.keySet());
             removedMembers.removeAll(members.keySet());
             return removedMembers.stream().map(previousMembers::get).collect(Collectors.toSet());
         }
@@ -248,22 +251,22 @@ final class ReplaceShapes {
 
         @Override
         public Collection<? extends Shape> getDefault(Shape shape) {
-            return Set.of();
+            return SetUtils.of();
         }
 
         @Override
         public Collection<? extends Shape> listShape(ListShape shape) {
-            return List.of(shape.getMember());
+            return ListUtils.of(shape.getMember());
         }
 
         @Override
         public Collection<? extends Shape> setShape(SetShape shape) {
-            return List.of(shape.getMember());
+            return ListUtils.of(shape.getMember());
         }
 
         @Override
         public Collection<? extends Shape> mapShape(MapShape shape) {
-            return List.of(shape.getKey(), shape.getValue());
+            return ListUtils.of(shape.getKey(), shape.getValue());
         }
 
         @Override

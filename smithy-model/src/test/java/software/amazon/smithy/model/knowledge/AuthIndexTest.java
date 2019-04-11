@@ -18,7 +18,6 @@ package software.amazon.smithy.model.knowledge;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -27,6 +26,7 @@ import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 public class AuthIndexTest {
     @Test
@@ -43,7 +43,7 @@ public class AuthIndexTest {
         Model model = Model.builder().shapeIndex(index).build();
         AuthIndex authIndex = model.getKnowledge(AuthIndex.class);
 
-        assertThat(authIndex.getDefaultServiceSchemes(service), equalTo(List.of("foo", "baz", "qux")));
+        assertThat(authIndex.getDefaultServiceSchemes(service), equalTo(ListUtils.of("foo", "baz", "qux")));
     }
 
     @Test
@@ -74,14 +74,14 @@ public class AuthIndexTest {
         AuthIndex authIndex = model.getKnowledge(AuthIndex.class);
 
         // Use the schemes defined on the shape itself or the schemes of the service.
-        assertThat(authIndex.getOperationSchemes(service, operation1), equalTo(List.of("foo")));
-        assertThat(authIndex.getOperationSchemes(service, operation2), equalTo(List.of("foo")));
-        assertThat(authIndex.getOperationSchemes(service, operation3), equalTo(List.of("baz", "foo")));
+        assertThat(authIndex.getOperationSchemes(service, operation1), equalTo(ListUtils.of("foo")));
+        assertThat(authIndex.getOperationSchemes(service, operation2), equalTo(ListUtils.of("foo")));
+        assertThat(authIndex.getOperationSchemes(service, operation3), equalTo(ListUtils.of("baz", "foo")));
 
         // Get the intersection of the schemes of the shape and the protocol.
-        assertThat(authIndex.getOperationSchemes(service, operation1, "json"), equalTo(List.of("foo")));
-        assertThat(authIndex.getOperationSchemes(service, operation2, "json"), equalTo(List.of("foo")));
-        assertThat(authIndex.getOperationSchemes(service, operation3, "json"), equalTo(List.of("baz", "foo")));
+        assertThat(authIndex.getOperationSchemes(service, operation1, "json"), equalTo(ListUtils.of("foo")));
+        assertThat(authIndex.getOperationSchemes(service, operation2, "json"), equalTo(ListUtils.of("foo")));
+        assertThat(authIndex.getOperationSchemes(service, operation3, "json"), equalTo(ListUtils.of("baz", "foo")));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class AuthIndexTest {
         Model model = Model.builder().shapeIndex(index).build();
         AuthIndex authIndex = model.getKnowledge(AuthIndex.class);
 
-        assertThat(authIndex.getOperationSchemes(service, operation1), equalTo(List.of("none")));
-        assertThat(authIndex.getOperationSchemes(service, operation1, "json"), equalTo(List.of("none")));
+        assertThat(authIndex.getOperationSchemes(service, operation1), equalTo(ListUtils.of("none")));
+        assertThat(authIndex.getOperationSchemes(service, operation1, "json"), equalTo(ListUtils.of("none")));
     }
 }

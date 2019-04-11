@@ -33,7 +33,7 @@ public class CheckForGreedyLabelsTest {
 
     @Test
     public void keepsUnusedSchemas() {
-        var thrown = Assertions.assertThrows(OpenApiException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             OpenApiConverter.create()
                     .putSetting(OpenApiConstants.FORBID_GREEDY_LABELS, true)
                     .convert(model, ShapeId.from("smithy.example#Greedy"));

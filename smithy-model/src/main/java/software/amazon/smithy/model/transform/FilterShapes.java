@@ -21,6 +21,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Filters shapes out of a model that do not match a predicate.
@@ -42,7 +43,7 @@ final class FilterShapes {
     Model transform(ModelTransformer transformer, Model model) {
         return transformer.removeShapes(model, model.getShapeIndex().shapes()
                 .filter(shape -> canFilterShape(model.getShapeIndex(), shape))
-                .filter(Predicate.not(predicate))
+                .filter(FunctionalUtils.not(predicate))
                 .collect(Collectors.toSet()));
     }
 

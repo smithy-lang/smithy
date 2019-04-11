@@ -18,11 +18,13 @@ package software.amazon.smithy.aws.apigateway.openapi;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
+import software.amazon.smithy.openapi.model.OpenApi;
 
 public class AddBinaryTypesTest {
     @Test
@@ -33,11 +35,11 @@ public class AddBinaryTypesTest {
                 .assemble()
                 .unwrap();
 
-        var result = OpenApiConverter.create()
+        OpenApi result = OpenApiConverter.create()
                 .classLoader(getClass().getClassLoader())
                 .convert(model, ShapeId.from("example.smithy#MyService"));
 
-        var types = result.getExtension("x-amazon-apigateway-binary-media-types")
+        List<String> types = result.getExtension("x-amazon-apigateway-binary-media-types")
                 .get()
                 .expectArrayNode()
                 .getElementsAs(StringNode::getValue);

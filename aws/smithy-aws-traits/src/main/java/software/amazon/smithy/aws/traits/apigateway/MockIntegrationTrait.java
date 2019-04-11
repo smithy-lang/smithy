@@ -27,6 +27,8 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * API Gateway mock integration.
@@ -37,7 +39,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
     private static final String REQUEST_PARAMETERS_KEY = "requestParameters";
     private static final String REQUEST_TEMPLATES_KEY = "requestTemplates";
     private static final String RESPONSES_KEY = "responses";
-    private static final Set<String> KEYS = Set.of(
+    private static final Set<String> KEYS = SetUtils.of(
             PASS_THROUGH_BEHAVIOR_KEY, REQUEST_PARAMETERS_KEY, REQUEST_TEMPLATES_KEY, RESPONSES_KEY);
 
     private final String passThroughBehavior;
@@ -48,9 +50,9 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
     private MockIntegrationTrait(Builder builder) {
         super(TRAIT, builder.getSourceLocation());
         passThroughBehavior = builder.passThroughBehavior;
-        requestParameters = Map.copyOf(builder.requestParameters);
-        requestTemplates = Map.copyOf(builder.requestTemplates);
-        responses = Map.copyOf(builder.responses);
+        requestParameters = MapUtils.copyOf(builder.requestParameters);
+        requestTemplates = MapUtils.copyOf(builder.requestTemplates);
+        responses = MapUtils.copyOf(builder.responses);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -184,7 +186,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
 
     @Override
     public Builder toBuilder() {
-        var builder = builder().passThroughBehavior(passThroughBehavior);
+        Builder builder = builder().passThroughBehavior(passThroughBehavior);
         requestParameters.forEach(builder::putRequestParameter);
         requestTemplates.forEach(builder::putRequestTemplate);
         responses.forEach(builder::putResponse);

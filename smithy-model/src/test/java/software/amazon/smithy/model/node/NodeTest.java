@@ -51,7 +51,7 @@ public class NodeTest {
 
     @Test
     public void expectObjectNodeAcceptsAnErrorMessage() {
-        var thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             NullNode.nullNode().expectObjectNode("foo {type}");
         });
 
@@ -67,7 +67,7 @@ public class NodeTest {
 
     @Test
     public void expectArrayNodeAcceptsAnErrorMessage() {
-        var thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             Node.objectNode().expectArrayNode("foo {type}");
         });
 
@@ -83,7 +83,7 @@ public class NodeTest {
 
     @Test
     public void expectStringNodeAcceptsAnErrorMessage() {
-        var thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             Node.arrayNode().expectStringNode("foo {type}");
         });
 
@@ -99,7 +99,7 @@ public class NodeTest {
 
     @Test
     public void expectNumberNodeAcceptsAnErrorMessage() {
-        var thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             Node.from("").expectNumberNode("foo {type}");
         });
 
@@ -115,7 +115,7 @@ public class NodeTest {
 
     @Test
     public void expectBooleanNodeAcceptsAnErrorMessage() {
-        var thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             Node.from(0).expectBooleanNode("foo {type}");
         });
 
@@ -131,7 +131,7 @@ public class NodeTest {
 
     @Test
     public void expectNullNodeAcceptsAnErrorMessage() {
-        var thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             Node.from(true).expectNullNode("foo {type}");
         });
 
@@ -189,15 +189,15 @@ public class NodeTest {
 
     @Test
     public void ensuresNodesAreEqual() {
-        var node = Node.from(true);
+        Node node = Node.from(true);
 
         Node.assertEquals(node, node);
     }
 
     @Test
     public void throwsWhenNodesArentEqual() {
-        var a = Node.objectNodeBuilder().withMember("foo", "bar").withMember("baz", true).build();
-        var b = Node.objectNodeBuilder().withMember("foo", "bar").withMember("baz", false).build();
+        ObjectNode a = Node.objectNodeBuilder().withMember("foo", "bar").withMember("baz", true).build();
+        ObjectNode b = Node.objectNodeBuilder().withMember("foo", "bar").withMember("baz", false).build();
 
         Assertions.assertThrows(ExpectationNotMetException.class, () -> Node.assertEquals(a, b));
     }

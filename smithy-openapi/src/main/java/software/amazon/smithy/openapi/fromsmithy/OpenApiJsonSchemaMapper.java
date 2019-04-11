@@ -27,6 +27,7 @@ import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Applies OpenAPI extensions to a {@link Schema}.
@@ -50,7 +51,7 @@ public class OpenApiJsonSchemaMapper implements SchemaBuilderMapper {
     private static final String DEFAULT_BLOB_FORMAT = "byte";
 
     /** See https://swagger.io/docs/specification/data-models/keywords/. */
-    private static final Set<String> UNSUPPORTED_KEYWORD_DIRECTIVES = Set.of(
+    private static final Set<String> UNSUPPORTED_KEYWORD_DIRECTIVES = SetUtils.of(
             "disable.propertyNames",
             "disable.contentMediaType");
 

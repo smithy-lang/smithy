@@ -25,6 +25,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.Tagged;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * A {@code Shape} defines a model component.
@@ -55,7 +56,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     Shape(AbstractShapeBuilder builder, ShapeType type, boolean expectMemberSegments) {
         id = validateShapeId(getType(), SmithyBuilder.requiredState("id", builder.id), expectMemberSegments);
         source = builder.source;
-        traits = Map.copyOf(builder.traits);
+        traits = MapUtils.copyOf(builder.traits);
         this.type = type;
     }
 

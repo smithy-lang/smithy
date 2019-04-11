@@ -103,7 +103,7 @@ public class StringNodeTest {
 
     @Test
     public void expectValueThrowsOnUnexpectedValue() {
-        var thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             StringNode node = Node.from("hjk");
             node.expectOneOf("abc", "mno", "xyz");
         });

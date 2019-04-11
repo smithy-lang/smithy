@@ -42,7 +42,7 @@ public class RelationshipTest {
 
     @Test
     public void throwsOnMissMatchedNeighborShapeAndId() {
-        var thrown = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             Shape member = MemberShape.builder().id("ns.foo#List$member").target("ns.foo#String").build();
             Shape target = StringShape.builder().id("ns.foo#String").build();
             new Relationship(member, RelationshipType.MEMBER_TARGET, target.getId().withMember("bad"), target);

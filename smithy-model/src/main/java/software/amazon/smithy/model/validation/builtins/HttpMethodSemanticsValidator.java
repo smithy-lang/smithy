@@ -32,13 +32,14 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Validates that `http` traits applied to operation shapes use the most
  * semantically appropriate HTTP method according to RFC 7231.
  */
 public final class HttpMethodSemanticsValidator extends AbstractValidator {
-    private static final Map<String, HttpMethodSemantics> EXPECTED = Map.of(
+    private static final Map<String, HttpMethodSemantics> EXPECTED = MapUtils.of(
             "GET", new HttpMethodSemantics(true, false, false),
             "HEAD", new HttpMethodSemantics(true, false, false),
             "OPTIONS", new HttpMethodSemantics(true, false, false),

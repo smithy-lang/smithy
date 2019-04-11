@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.JsonNameTrait;
@@ -27,56 +28,56 @@ import software.amazon.smithy.model.traits.JsonNameTrait;
 public class PropertyNamingStrategyTest {
     @Test
     public void defaultStrategyUsesJsonNameTraitIfConfigured() {
-        var strategy = PropertyNamingStrategy.createDefaultStrategy();
-        var member = MemberShape.builder()
+        PropertyNamingStrategy strategy = PropertyNamingStrategy.createDefaultStrategy();
+        MemberShape member = MemberShape.builder()
                 .id("smithy.example#Structure$foo")
                 .target("a.b#C")
                 .addTrait(new JsonNameTrait("FOO"))
                 .build();
-        var struct = StructureShape.builder().id("smithy.example#Structure").addMember(member).build();
-        var config = Node.objectNodeBuilder().withMember(JsonSchemaConstants.SMITHY_USE_JSON_NAME, true).build();
-        var memberName = strategy.toPropertyName(struct, member, config);
+        StructureShape struct = StructureShape.builder().id("smithy.example#Structure").addMember(member).build();
+        ObjectNode config = Node.objectNodeBuilder().withMember(JsonSchemaConstants.SMITHY_USE_JSON_NAME, true).build();
+        String memberName = strategy.toPropertyName(struct, member, config);
 
         assertThat(memberName, equalTo("FOO"));
     }
 
     @Test
     public void defaultStrategyIgnoresJsonNameTraitIfNotConfigured() {
-        var strategy = PropertyNamingStrategy.createDefaultStrategy();
-        var member = MemberShape.builder()
+        PropertyNamingStrategy strategy = PropertyNamingStrategy.createDefaultStrategy();
+        MemberShape member = MemberShape.builder()
                 .id("smithy.example#Structure$foo")
                 .target("a.b#C")
                 .addTrait(new JsonNameTrait("FOO"))
                 .build();
-        var struct = StructureShape.builder().id("smithy.example#Structure").addMember(member).build();
-        var config = Node.objectNode();
-        var memberName = strategy.toPropertyName(struct, member, config);
+        StructureShape struct = StructureShape.builder().id("smithy.example#Structure").addMember(member).build();
+        ObjectNode config = Node.objectNode();
+        String memberName = strategy.toPropertyName(struct, member, config);
 
         assertThat(memberName, equalTo("foo"));
     }
 
     @Test
     public void defaultStrategyUsesMemberName() {
-        var strategy = PropertyNamingStrategy.createDefaultStrategy();
-        var member = MemberShape.builder().id("smithy.example#Structure$foo").target("a.b#C").build();
-        var struct = StructureShape.builder().id("smithy.example#Structure").addMember(member).build();
-        var config = Node.objectNode();
-        var memberName = strategy.toPropertyName(struct, member, config);
+        PropertyNamingStrategy strategy = PropertyNamingStrategy.createDefaultStrategy();
+        MemberShape member = MemberShape.builder().id("smithy.example#Structure$foo").target("a.b#C").build();
+        StructureShape struct = StructureShape.builder().id("smithy.example#Structure").addMember(member).build();
+        ObjectNode config = Node.objectNode();
+        String memberName = strategy.toPropertyName(struct, member, config);
 
         assertThat(memberName, equalTo("foo"));
     }
 
     @Test
     public void memberNameStrategyUsesMemberName() {
-        var strategy = PropertyNamingStrategy.createMemberNameStrategy();
-        var member = MemberShape.builder()
+        PropertyNamingStrategy strategy = PropertyNamingStrategy.createMemberNameStrategy();
+        MemberShape member = MemberShape.builder()
                 .id("smithy.example#Structure$foo")
                 .target("a.b#C")
                 .addTrait(new JsonNameTrait("FOO"))
                 .build();
-        var struct = StructureShape.builder().id("smithy.example#Structure").addMember(member).build();
-        var config = Node.objectNode();
-        var memberName = strategy.toPropertyName(struct, member, config);
+        StructureShape struct = StructureShape.builder().id("smithy.example#Structure").addMember(member).build();
+        ObjectNode config = Node.objectNode();
+        String memberName = strategy.toPropertyName(struct, member, config);
 
         assertThat(memberName, equalTo("foo"));
     }

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.SmithyBuildConfig;
+import software.amazon.smithy.build.SmithyBuildResult;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
@@ -58,9 +59,9 @@ public final class BuildCommand implements Command {
 
     @Override
     public void execute(Arguments arguments) {
-        var config = arguments.repeatedParameter("--config", null);
-        var output = arguments.parameter("--output", null);
-        var models = arguments.positionalArguments();
+        List<String> config = arguments.repeatedParameter("--config", null);
+        String output = arguments.parameter("--output", null);
+        List<String> models = arguments.positionalArguments();
 
         if (models.isEmpty()) {
             throw new CliError("No models were provided as positional arguments");
@@ -89,7 +90,7 @@ public final class BuildCommand implements Command {
             }
         }
 
-        var loader = SmithyCli.getConfiguredClassLoader();
+        ClassLoader loader = SmithyCli.getConfiguredClassLoader();
         SmithyBuild modelBuilder;
 
         // Resolve the config first to look for problems.
@@ -105,10 +106,10 @@ public final class BuildCommand implements Command {
         modelBuilder.config(configBuilder.build());
 
         // Build the model and fail if there are errors.
-        var sourceResult = buildModel(loader, models);
-        var model = sourceResult.unwrap();
+        ValidatedResult<Model> sourceResult = buildModel(loader, models);
+        Model model = sourceResult.unwrap();
         modelBuilder.model(model);
-        var smithyBuildResult = modelBuilder.build();
+        SmithyBuildResult smithyBuildResult = modelBuilder.build();
 
         // Fail if any projections failed to build, but build all projections.
         if (smithyBuildResult.anyBroken()) {
@@ -120,9 +121,9 @@ public final class BuildCommand implements Command {
     }
 
     private ValidatedResult<Model> buildModel(ClassLoader loader, List<String> models) {
-        var assembler = Model.assembler(loader);
+        ModelAssembler assembler = Model.assembler(loader);
         models.forEach(assembler::addImport);
-        var result = assembler.assemble();
+        ValidatedResult<Model> result = assembler.assemble();
         Validator.validate(result, true);
         return result;
     }

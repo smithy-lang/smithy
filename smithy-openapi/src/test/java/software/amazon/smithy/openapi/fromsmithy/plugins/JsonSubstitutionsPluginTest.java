@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
@@ -31,11 +32,11 @@ public class JsonSubstitutionsPluginTest {
                 .assemble()
                 .unwrap();
 
-        var openApi = OpenApiConverter.create()
+        ObjectNode openApi = OpenApiConverter.create()
                 .putSetting(OpenApiConstants.SUBSTITUTIONS, Node.objectNode()
                         .withMember("SUB_HELLO", Node.from("hello")))
                 .convertToNode(model, ShapeId.from("smithy.example#Service"));
-        var description = openApi.getObjectMember("info").get().getStringMember("description").get().getValue();
+        String description = openApi.getObjectMember("info").get().getStringMember("description").get().getValue();
 
         Assertions.assertEquals("hello", description);
     }

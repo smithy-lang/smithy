@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.validation.builtins;
 
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
@@ -28,6 +27,7 @@ import software.amazon.smithy.model.traits.EventPayloadTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Ensures that when an event structure contains an eventPayload member,
@@ -46,7 +46,7 @@ public class EventPayloadTraitValidator extends AbstractValidator {
 
     private Stream<ValidationEvent> validateEvent(StructureShape shape) {
         List<String> unmarked = shape.getAllMembers().values().stream()
-                .filter(Predicate.not(this::isMarked))
+                .filter(FunctionalUtils.not(this::isMarked))
                 .map(MemberShape::getMemberName)
                 .collect(Collectors.toList());
         boolean payloads = shape.getAllMembers().values().stream()

@@ -20,11 +20,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.aws.traits.apigateway.RequestValidatorTrait;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Adds the API Gateway x-amazon-apigateway-request-validators object
@@ -41,7 +44,7 @@ import software.amazon.smithy.openapi.model.OperationObject;
 public final class AddRequestValidators implements SmithyOpenApiPlugin {
     private static final String REQUEST_VALIDATOR = "x-amazon-apigateway-request-validator";
     private static final String REQUEST_VALIDATORS = "x-amazon-apigateway-request-validators";
-    private static final Map<String, Node> KNOWN_VALIDATORS = Map.of(
+    private static final Map<String, Node> KNOWN_VALIDATORS = MapUtils.of(
             "params-only",
             Node.objectNode().withMember("validateRequestParameters", Node.from(true)),
             "body-only",
@@ -64,7 +67,7 @@ public final class AddRequestValidators implements SmithyOpenApiPlugin {
     public OpenApi after(Context context, OpenApi openapi) {
         // Find each known request validator on operation shapes.
         Set<String> validators = context.getModel().getShapeIndex().shapes(OperationShape.class)
-                .flatMap(shape -> shape.getTrait(RequestValidatorTrait.class).stream())
+                .flatMap(shape -> OptionalUtils.stream(shape.getTrait(RequestValidatorTrait.class)))
                 .map(RequestValidatorTrait::getValue)
                 .filter(KNOWN_VALIDATORS::containsKey)
                 .collect(Collectors.toSet());
@@ -80,15 +83,15 @@ public final class AddRequestValidators implements SmithyOpenApiPlugin {
             return openapi;
         }
 
-        var builder = openapi.toBuilder();
+        OpenApi.Builder builder = openapi.toBuilder();
 
         if (serviceValidator != null) {
             builder.putExtension(REQUEST_VALIDATOR, serviceValidator);
         }
 
         // Add the known request validators to the OpenAPI model.
-        var objectBuilder = Node.objectNodeBuilder();
-        for (var validator : validators) {
+        ObjectNode.Builder objectBuilder = Node.objectNodeBuilder();
+        for (String validator : validators) {
             objectBuilder.withMember(validator, KNOWN_VALIDATORS.get(validator));
         }
 

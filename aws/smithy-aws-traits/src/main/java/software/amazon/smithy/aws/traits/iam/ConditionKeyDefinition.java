@@ -24,12 +24,13 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.ListUtils;
 
 public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<ConditionKeyDefinition> {
     private static final String TYPE = "type";
     private static final String DOCUMENTATION = "documentation";
     private static final String EXTERNAL_DOCUMENTATION = "externalDocumentation";
-    private static final List<String> SUPPORTED_PROPERTIES = List.of(TYPE, DOCUMENTATION, EXTERNAL_DOCUMENTATION);
+    private static final List<String> SUPPORTED_PROPERTIES = ListUtils.of(TYPE, DOCUMENTATION, EXTERNAL_DOCUMENTATION);
 
     private final String type;
     private final String documentation;

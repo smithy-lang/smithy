@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Computes the API Gateway integration for each operation,
@@ -55,7 +56,7 @@ public class IntegrationTraitIndex implements KnowledgeIndex {
      * @return The integration trait or an empty optional if none set
      */
     public Optional<Trait> getIntegrationTrait(ToShapeId service, ToShapeId shape) {
-        return Optional.ofNullable(traits.getOrDefault(service.toShapeId(), Map.of())
+        return Optional.ofNullable(traits.getOrDefault(service.toShapeId(), MapUtils.of())
                 .get(shape.toShapeId()));
     }
 
@@ -78,17 +79,17 @@ public class IntegrationTraitIndex implements KnowledgeIndex {
     }
 
     private void walk(ShapeIndex index, ShapeId service, EntityShape current, Trait trait) {
-        var updatedTrait = extractTrait(current, trait);
-        var serviceMapping = traits.get(service);
+        Trait updatedTrait = extractTrait(current, trait);
+        Map<ShapeId, Trait> serviceMapping = traits.get(service);
         serviceMapping.put(current.getId(), updatedTrait);
 
-        for (var resource : current.getResources()) {
+        for (ShapeId resource : current.getResources()) {
             index.getShape(resource)
                     .flatMap(Shape::asResourceShape)
                     .ifPresent(resourceShape -> walk(index, service, resourceShape, updatedTrait));
         }
 
-        for (var operation : current.getOperations()) {
+        for (ShapeId operation : current.getOperations()) {
             index.getShape(operation).ifPresent(op -> serviceMapping.put(operation, extractTrait(op, updatedTrait)));
         }
     }
@@ -96,7 +97,8 @@ public class IntegrationTraitIndex implements KnowledgeIndex {
     private static Trait extractTrait(Shape shape, Trait defaultValue) {
         return shape.getTrait(MockIntegrationTrait.class)
                 .map(trait -> (Trait) trait)
-                .or(() -> shape.getTrait(IntegrationTrait.class))
-                .orElse(defaultValue);
+                .orElseGet(() -> shape.getTrait(IntegrationTrait.class)
+                        .map(trait -> (Trait) trait)
+                        .orElse(defaultValue));
     }
 }

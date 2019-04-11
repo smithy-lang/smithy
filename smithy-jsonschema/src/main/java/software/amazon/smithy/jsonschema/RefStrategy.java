@@ -18,6 +18,7 @@ package software.amazon.smithy.jsonschema;
 import java.util.Locale;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Defines a strategy for converting Shape IDs to JSON schema $ref values.
@@ -73,8 +74,8 @@ public interface RefStrategy {
             if (!config.containsMember(JsonSchemaConstants.SMITHY_STRIP_NAMESPACES)) {
                 // Append each namespace part, capitalizing each segment.
                 // For example, "smithy.example" becomes "SmithyExample".
-                for (var part : id.getNamespace().split("\\.")) {
-                    builder.append(ucfirst(part));
+                for (String part : id.getNamespace().split("\\.")) {
+                    builder.append(StringUtils.capitalize(part));
                 }
             }
 
@@ -82,7 +83,7 @@ public interface RefStrategy {
             id.getMember().ifPresent(memberName -> {
                 // Append the capitalized member name followed by "Member" IFF
                 // the member name doesn't already end in "member".
-                builder.append(ucfirst(memberName));
+                builder.append(StringUtils.capitalize(memberName));
                 if (!memberName.toLowerCase(Locale.US).endsWith("member")) {
                     builder.append("Member");
                 }
@@ -90,10 +91,5 @@ public interface RefStrategy {
 
             return builder.toString();
         };
-    }
-
-    private static String ucfirst(String value) {
-        // Note: this method requires a non-empty string.
-        return value.substring(0, 1).toUpperCase(Locale.US) + value.substring(1);
     }
 }

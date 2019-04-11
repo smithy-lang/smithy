@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
@@ -58,17 +60,17 @@ public final class AwsRestJsonProtocol extends AbstractRestProtocol {
         // things like handling required properties, pattern, length, range,
         // documentation, jsonName, and passes the synthetic JSON schema
         // through any registered plugins.
-        var container = bindings.get(0).getMember().getContainer();
-        var tempShapeBuilder = StructureShape.builder().id(container);
+        ShapeId container = bindings.get(0).getMember().getContainer();
+        StructureShape.Builder tempShapeBuilder = StructureShape.builder().id(container);
 
-        for (var binding : bindings) {
+        for (HttpBindingIndex.Binding binding : bindings) {
             tempShapeBuilder.addMember(binding.getMember().toBuilder()
                     .id(container.withMember(binding.getMemberName()))
                     .build());
         }
 
-        var tempShape = tempShapeBuilder.build();
-        var index = context.getModel().getShapeIndex();
+        StructureShape tempShape = tempShapeBuilder.build();
+        ShapeIndex index = context.getModel().getShapeIndex();
 
         return context.getJsonSchemaConverter().convert(index, tempShape).getRootSchema();
     }

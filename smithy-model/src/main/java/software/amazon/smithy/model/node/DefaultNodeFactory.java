@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Default Node factory implementation.
@@ -101,7 +103,7 @@ public final class DefaultNodeFactory implements NodeFactory {
         String filename = sourceLocation.getFilename();
 
         if (parser.nextToken() == JsonToken.END_OBJECT) {
-            return new ObjectNode(Map.of(), sourceLocation, false);
+            return new ObjectNode(MapUtils.of(), sourceLocation, false);
         }
 
         Map<StringNode, Node> nodes = new LinkedHashMap<>();
@@ -122,7 +124,7 @@ public final class DefaultNodeFactory implements NodeFactory {
         String filename = sourceLocation.getFilename();
 
         if (parser.nextToken() == JsonToken.END_ARRAY) {
-            return new ArrayNode(List.of(), sourceLocation, false);
+            return new ArrayNode(ListUtils.of(), sourceLocation, false);
         }
 
         List<Node> nodes = new ArrayList<>();

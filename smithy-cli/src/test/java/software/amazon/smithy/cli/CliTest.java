@@ -21,14 +21,13 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.cli.commands.BuildCommand;
 import software.amazon.smithy.cli.commands.ValidateCommand;
 
 public class CliTest {
     @Test
-    public void noArgsPrintsMainHelp() {
+    public void noArgsPrintsMainHelp() throws Exception {
         Cli cli = new Cli("mytest");
         PrintStream out = System.out;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -36,14 +35,14 @@ public class CliTest {
         System.setOut(printStream);
         int exitCode = cli.run(new String[]{});
         System.setOut(out);
-        String help = outputStream.toString(Charset.forName("UTF-8"));
+        String help = outputStream.toString("UTF-8");
 
         assertThat(exitCode, equalTo(0));
         assertThat(help, containsString("mytest"));
     }
 
     @Test
-    public void printsMainHelp() {
+    public void printsMainHelp() throws Exception {
         Cli cli = new Cli("mytest");
         cli.addCommand(new BuildCommand());
         cli.addCommand(new ValidateCommand());
@@ -53,7 +52,7 @@ public class CliTest {
         System.setOut(printStream);
         int exitCode = cli.run(new String[]{"--help"});
         System.setOut(out);
-        String help = outputStream.toString(Charset.forName("UTF-8"));
+        String help = outputStream.toString("UTF-8");
 
         assertThat(exitCode, equalTo(0));
         assertThat(help, containsString("build"));
@@ -62,7 +61,7 @@ public class CliTest {
     }
 
     @Test
-    public void printsSubcommandHelp() {
+    public void printsSubcommandHelp() throws Exception {
         Cli cli = new Cli("mytest");
         cli.addCommand(new BuildCommand());
         cli.addCommand(new ValidateCommand());
@@ -72,7 +71,7 @@ public class CliTest {
         System.setOut(printStream);
         int exitCode = cli.run(new String[]{"validate", "--help"});
         System.setOut(out);
-        String help = outputStream.toString(Charset.forName("UTF-8"));
+        String help = outputStream.toString("UTF-8");
 
         assertThat(exitCode, equalTo(0));
         assertThat(help, containsString("validate"));
@@ -82,7 +81,7 @@ public class CliTest {
     }
 
     @Test
-    public void debugShowsStacktrace() {
+    public void debugShowsStacktrace() throws Exception {
         Cli cli = new Cli("mytest");
         PrintStream out = System.out;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -90,7 +89,7 @@ public class CliTest {
         System.setOut(printStream);
         int exitCode = cli.run(new String[]{"invalid", "--debug"});
         System.setOut(out);
-        String help = outputStream.toString(Charset.forName("UTF-8"));
+        String help = outputStream.toString("UTF-8");
 
         assertThat(exitCode, equalTo(1));
         assertThat(help, containsString("Unknown command or argument"));

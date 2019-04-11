@@ -21,23 +21,25 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.shapes.SetShape;
+import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Validates that set members target the appropriate type.
  */
 public class SetTargetValidator extends AbstractValidator {
-    private static final Set<ShapeType> VALID_TYPES = Set.of(
+    private static final Set<ShapeType> VALID_TYPES = SetUtils.of(
             ShapeType.STRING, ShapeType.BLOB,
             ShapeType.BYTE, ShapeType.SHORT, ShapeType.INTEGER, ShapeType.LONG,
             ShapeType.BIG_DECIMAL, ShapeType.BIG_INTEGER);
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        var index = model.getShapeIndex();
+        ShapeIndex index = model.getShapeIndex();
         return model.getShapeIndex().shapes(SetShape.class)
                 .flatMap(shape -> Pair.flatMapStream(shape, () -> index.getShape(shape.getMember().getTarget())))
                 .filter(pair -> !VALID_TYPES.contains(pair.getRight().getType()))

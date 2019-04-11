@@ -64,7 +64,7 @@ public final class EncodingObject extends Component implements ToSmithyBuilder<E
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withOptionalMember("contentType", getContentType().map(Node::from))
                 .withOptionalMember("style", getStyle().map(Node::from));
 

@@ -37,6 +37,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Emits validation events for a configuration of reserved words.
@@ -135,17 +136,15 @@ public final class ReservedWordsValidator extends AbstractValidator {
         }
 
         private Stream<ValidationEvent> validate(ShapeIndex shapeIndex) {
-            return selector.select(shapeIndex).stream().flatMap(shape -> validateShape(shape).stream());
+            return selector.select(shapeIndex).stream().flatMap(shape -> OptionalUtils.stream(validateShape(shape)));
         }
 
         private Optional<ValidationEvent> validateShape(Shape shape) {
-            var name = shape.asMemberShape()
+            String name = shape.asMemberShape()
                     .map(MemberShape::getMemberName)
                     .orElseGet(() -> shape.getId().getName());
-            if (isReservedWord(name)) {
-                return Optional.of(emit(shape, name, reason));
-            }
-            return Optional.empty();
+
+            return isReservedWord(name) ? Optional.of(emit(shape, name, reason)) : Optional.empty();
         }
 
         /**

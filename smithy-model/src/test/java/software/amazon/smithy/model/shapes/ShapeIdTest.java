@@ -226,7 +226,7 @@ public class ShapeIdTest {
             final String member,
             final String expectedResult
     ) {
-        var shapeId = ShapeId.fromParts(namespace, name, member);
+        ShapeId shapeId = ShapeId.fromParts(namespace, name, member);
 
         assertEquals(expectedResult, shapeId.toString());
     }

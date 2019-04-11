@@ -91,7 +91,7 @@ public class PatternTest {
 
     @Test
     public void labelsMustNotIncludeEmptySegments() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "//baz";
             Pattern.builder()
                     .segments(parser(target))
@@ -104,7 +104,7 @@ public class PatternTest {
 
     @Test
     public void labelsMustNotBeRepeated() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{foo}/{Foo}";
             Pattern.builder()
                     .segments(parser(target))
@@ -117,7 +117,7 @@ public class PatternTest {
 
     @Test
     public void restrictsGreedyLabels() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/foo/{baz+}";
             Pattern.builder()
                     .allowsGreedyLabels(false)
@@ -131,7 +131,7 @@ public class PatternTest {
 
     @Test
     public void noMoreThanOneGreedyLabel() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{foo+}/{baz+}";
             Pattern.builder()
                     .segments(parser(target))
@@ -144,7 +144,7 @@ public class PatternTest {
 
     @Test
     public void greedyLabelsMustBeLastLabelInPattern() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{foo+}/{baz}";
             Pattern.builder()
                     .segments(parser(target))
@@ -157,7 +157,7 @@ public class PatternTest {
 
     @Test
     public void noEmptyLabels() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{}";
             Pattern.builder()
                     .segments(parser(target))
@@ -170,7 +170,7 @@ public class PatternTest {
 
     @Test
     public void labelsMustMatchRegex() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{!}";
             Pattern.builder()
                     .segments(parser(target))
@@ -183,7 +183,7 @@ public class PatternTest {
 
     @Test
     public void labelsMustSpanEntireSegment() {
-        var thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{foo}baz";
             Pattern.builder()
                     .segments(parser(target))

@@ -6,15 +6,17 @@ import static org.hamcrest.Matchers.instanceOf;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
 
 public class AuthorizersTraitTest {
     @Test
     public void registersTrait() {
         TraitFactory factory = TraitFactory.createServiceFactory();
-        var id = ShapeId.from("smithy.example#Foo");
-        var node = Node.objectNodeBuilder()
+        ShapeId id = ShapeId.from("smithy.example#Foo");
+        ObjectNode node = Node.objectNodeBuilder()
                 .withMember("aws.v4", Node.objectNodeBuilder()
                         .withMember("clientType", "awsSigV4")
                         .withMember("type", "request")
@@ -25,7 +27,7 @@ public class AuthorizersTraitTest {
                         .withMember("resultTtlInSeconds", 100)
                         .build())
                 .build();
-        var trait = factory.createTrait(AuthorizersTrait.TRAIT, id, node).get();
+        Trait trait = factory.createTrait(AuthorizersTrait.TRAIT, id, node).get();
 
         assertThat(trait, instanceOf(AuthorizersTrait.class));
         assertThat(factory.createTrait(AuthorizersTrait.TRAIT, id, trait.toNode()).get(), equalTo(trait));

@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.ToSmithyBuilder;
@@ -25,6 +24,8 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.builtins.PaginatedTraitValidator;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Defines the pagination functionality of an operation.
@@ -33,7 +34,8 @@ import software.amazon.smithy.model.validation.builtins.PaginatedTraitValidator;
  */
 public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuilder<PaginatedTrait> {
     private static final String TRAIT = "smithy.api#paginated";
-    private static final List<String> PAGINATED_PROPERTIES = List.of("items", "inputToken", "outputToken", "pageSize");
+    private static final List<String> PAGINATED_PROPERTIES = ListUtils.of("items", "inputToken",
+            "outputToken", "pageSize");
 
     private final String items;
     private final String inputToken;
@@ -78,7 +80,7 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
 
     @Override
     protected Node createNode() {
-        return new ObjectNode(Map.of(), getSourceLocation())
+        return new ObjectNode(MapUtils.of(), getSourceLocation())
                 .withMember("inputToken", Node.from(inputToken))
                 .withMember("outputToken", Node.from(outputToken))
                 .withOptionalMember("items", getItems().map(Node::from))

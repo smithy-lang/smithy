@@ -32,6 +32,8 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.builtins.ReferencesTraitValidator;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Defines references to resources within a structure.
@@ -45,7 +47,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
     private ReferencesTrait(Builder builder) {
         super(TRAIT, builder.sourceLocation);
-        this.references = List.copyOf(builder.references);
+        this.references = ListUtils.copyOf(builder.references);
     }
 
     /**
@@ -83,7 +85,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
     @Override
     protected Node createNode() {
-        var builder = Node.objectNodeBuilder();
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
         references.forEach(reference -> builder.withMember(reference.getName(), reference.toNode()));
         return builder.build();
     }
@@ -215,7 +217,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
         public static final class Builder implements SmithyBuilder<Reference> {
             private ShapeId resource;
             private String rel;
-            private Map<String, String> ids = Map.of();
+            private Map<String, String> ids = MapUtils.of();
             private ShapeId service;
             private String name;
 

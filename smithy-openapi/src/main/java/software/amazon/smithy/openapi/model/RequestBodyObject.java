@@ -52,7 +52,7 @@ public final class RequestBodyObject extends Component implements ToSmithyBuilde
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withOptionalMember("description", getDescription().map(Node::from))
                 .withMember("content", content.entrySet().stream()
                         .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));

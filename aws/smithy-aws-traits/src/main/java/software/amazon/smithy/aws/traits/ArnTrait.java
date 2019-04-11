@@ -18,15 +18,18 @@ package software.amazon.smithy.aws.traits;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Configures the ARN template of a resource shape, relative to the
@@ -38,7 +41,7 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
     private static final String ABSOLUTE = "absolute";
     private static final String NO_REGION = "noRegion";
     private static final String NO_ACCOUNT = "noAccount";
-    private static final List<String> PROPERTIES = List.of(TEMPLATE, ABSOLUTE, NO_REGION, NO_ACCOUNT);
+    private static final List<String> PROPERTIES = ListUtils.of(TEMPLATE, ABSOLUTE, NO_REGION, NO_ACCOUNT);
     private static final Pattern PATTERN = Pattern.compile("\\{([^}]+)}");
 
     private final boolean noRegion;
@@ -68,8 +71,8 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            var builder = builder();
-            var objectNode = value.expectObjectNode();
+            Builder builder = builder();
+            ObjectNode objectNode = value.expectObjectNode();
             objectNode.warnIfAdditionalProperties(PROPERTIES);
             builder.template(objectNode.expectMember(TEMPLATE).expectStringNode().getValue());
             builder.absolute(objectNode.getBooleanMemberOrDefault(ABSOLUTE));
@@ -81,7 +84,7 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
 
     private static List<String> parseLabels(String resource) {
         List<String> result = new ArrayList<>();
-        var matcher = PATTERN.matcher(resource);
+        Matcher matcher = PATTERN.matcher(resource);
         while (matcher.find()) {
             result.add(matcher.group(1));
         }

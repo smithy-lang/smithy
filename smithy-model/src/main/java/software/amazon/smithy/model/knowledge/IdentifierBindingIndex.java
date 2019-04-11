@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
@@ -54,8 +55,8 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
     }
 
     public IdentifierBindingIndex(Model model) {
-        var index = model.getShapeIndex();
-        var operationIndex = model.getKnowledge(OperationIndex.class);
+        ShapeIndex index = model.getShapeIndex();
+        OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
         index.shapes(ResourceShape.class).forEach(resource -> processResource(resource, operationIndex, index));
     }
 
@@ -97,13 +98,13 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
         bindingTypes.put(resource.getId(), new HashMap<>());
         resource.getAllOperations().forEach(operationId -> {
             // Ignore broken models in this index.
-            var computedBindings = index.getShape(operationId).flatMap(Shape::asOperationShape)
+            Map<String, String> computedBindings = index.getShape(operationId).flatMap(Shape::asOperationShape)
                     .flatMap(operationIndex::getInput)
                     .map(inputShape -> computeBindings(resource, inputShape))
                     .orElseGet(HashMap::new);
             bindings.get(resource.getId()).put(operationId, computedBindings);
 
-            var remainingIdentifiers = new HashSet<>(resource.getIdentifiers().keySet());
+            Set<String> remainingIdentifiers = new HashSet<>(resource.getIdentifiers().keySet());
             remainingIdentifiers.removeAll(computedBindings.keySet());
             bindingTypes.get(resource.getId()).put(operationId, remainingIdentifiers.isEmpty()
                     ? BindingType.INSTANCE
