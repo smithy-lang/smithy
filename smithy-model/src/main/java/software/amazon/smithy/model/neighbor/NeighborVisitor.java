@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Finds all neighbors of a shape, returning them as a list of
@@ -57,7 +58,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> getDefault(Shape shape) {
-        return List.of();
+        return ListUtils.of();
     }
 
     @Override
@@ -123,12 +124,12 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
 
     @Override
     public List<Relationship> listShape(ListShape shape) {
-        return List.of(relationship(shape, RelationshipType.LIST_MEMBER, shape.getMember()));
+        return ListUtils.of(relationship(shape, RelationshipType.LIST_MEMBER, shape.getMember()));
     }
 
     @Override
     public List<Relationship> setShape(SetShape shape) {
-        return List.of(relationship(shape, RelationshipType.SET_MEMBER, shape.getMember()));
+        return ListUtils.of(relationship(shape, RelationshipType.SET_MEMBER, shape.getMember()));
     }
 
     @Override

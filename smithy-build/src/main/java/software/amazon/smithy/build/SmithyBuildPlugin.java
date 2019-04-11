@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Function;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Plugin extension class for SmithyBuild.
@@ -43,7 +44,7 @@ public interface SmithyBuildPlugin {
      * @return True if this plugin is responsible for the given name.
      */
     default Collection<String> getAliases() {
-        return List.of();
+        return ListUtils.of();
     }
 
     /**

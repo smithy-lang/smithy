@@ -23,6 +23,7 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.Protocol;
@@ -60,7 +61,7 @@ public class IncludeAuthTest {
                 .createTransformer(Collections.singletonList("foo"))
                 .apply(ModelTransformer.create(), model);
 
-        var updateService1 = result.getShapeIndex().getShape(service1.getId()).get();
+        Shape updateService1 = result.getShapeIndex().getShape(service1.getId()).get();
         assertThat(updateService1.getTrait(AuthTrait.class).get().getValues(), contains("foo"));
         assertThat(updateService1.getTrait(ProtocolsTrait.class).get().getAllAuthSchemes(), contains("foo"));
         assertThat(result.getShapeIndex().getShape(service2.getId()).get(), equalTo(service2));

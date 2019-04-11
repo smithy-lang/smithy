@@ -17,10 +17,12 @@ package software.amazon.smithy.aws.traits.iam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.aws.traits.ServiceTrait;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -38,17 +40,17 @@ import software.amazon.smithy.model.validation.ValidationUtils;
 public class ConditionKeysValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        var conditionIndex = model.getKnowledge(ConditionKeysIndex.class);
-        var topDownIndex = model.getKnowledge(TopDownIndex.class);
+        ConditionKeysIndex conditionIndex = model.getKnowledge(ConditionKeysIndex.class);
+        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
 
         return model.getShapeIndex().shapes(ServiceShape.class)
                 .filter(service -> service.hasTrait(ServiceTrait.class))
                 .flatMap(service -> {
                     List<ValidationEvent> results = new ArrayList<>();
-                    var knownKeys = conditionIndex.getDefinedConditionKeys(service).keySet();
+                    Set<String> knownKeys = conditionIndex.getDefinedConditionKeys(service).keySet();
 
-                    for (var operation : topDownIndex.getContainedOperations(service)) {
-                        for (var name : conditionIndex.getConditionKeyNames(service, operation)) {
+                    for (OperationShape operation : topDownIndex.getContainedOperations(service)) {
+                        for (String name : conditionIndex.getConditionKeyNames(service, operation)) {
                             if (!knownKeys.contains(name) && !name.startsWith("aws:")) {
                                 results.add(error(operation, String.format(
                                         "This operation scoped within the `%s` service refers to an undefined "

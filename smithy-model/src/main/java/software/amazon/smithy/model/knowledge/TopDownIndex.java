@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -30,7 +31,9 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Provides top-down access to all resources and operations contained within a
@@ -41,9 +44,9 @@ public final class TopDownIndex implements KnowledgeIndex {
     private final Map<ShapeId, Set<OperationShape>> operations = new HashMap<>();
 
     public TopDownIndex(Model model) {
-        var index = model.getShapeIndex();
-        var provider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
-        var walker = new Walker(provider);
+        ShapeIndex index = model.getShapeIndex();
+        NeighborProvider provider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
+        Walker walker = new Walker(provider);
 
         // Only traverse resource and operation bindings.
         Predicate<Relationship> filter = rel -> {
@@ -92,7 +95,7 @@ public final class TopDownIndex implements KnowledgeIndex {
      * @return Returns all operations in the service closure.
      */
     public Set<OperationShape> getContainedOperations(ToShapeId entity) {
-        return operations.getOrDefault(entity.toShapeId(), Set.of());
+        return operations.getOrDefault(entity.toShapeId(), SetUtils.of());
     }
 
     /**
@@ -102,6 +105,6 @@ public final class TopDownIndex implements KnowledgeIndex {
      * @return Returns all resources in the service closure.
      */
     public Set<ResourceShape> getContainedResources(ToShapeId entity) {
-        return resources.getOrDefault(entity.toShapeId(), Set.of());
+        return resources.getOrDefault(entity.toShapeId(), SetUtils.of());
     }
 }

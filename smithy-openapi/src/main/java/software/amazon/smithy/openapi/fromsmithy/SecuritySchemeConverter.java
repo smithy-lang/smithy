@@ -5,6 +5,8 @@ import java.util.Set;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.model.SecurityScheme;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Converts a Smithy authentication scheme to an OpenAPI security
@@ -64,7 +66,7 @@ public interface SecuritySchemeConverter {
      * @return The security requirements value.
      */
     default List<String> createSecurityRequirements(Context context, Shape shape) {
-        return List.of();
+        return ListUtils.of();
     }
 
     /**
@@ -76,7 +78,7 @@ public interface SecuritySchemeConverter {
      * @return A set of header names.
      */
     default Set<String> getAuthRequestHeaders() {
-        return Set.of();
+        return SetUtils.of();
     }
 
     /**
@@ -88,7 +90,7 @@ public interface SecuritySchemeConverter {
      * @return A set of header names.
      */
     default Set<String> getAuthResponseHeaders() {
-        return Set.of();
+        return SetUtils.of();
     }
 
     /**

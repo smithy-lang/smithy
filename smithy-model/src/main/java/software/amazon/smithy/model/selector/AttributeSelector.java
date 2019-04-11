@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Matches shapes with a specific attribute.
@@ -34,9 +35,9 @@ final class AttributeSelector implements Selector {
     static final Comparator STARTS_WITH = String::startsWith;
     static final Comparator ENDS_WITH = String::endsWith;
     static final Comparator CONTAINS = String::contains;
-    static final KeyGetter KEY_ID = (shape) -> List.of(shape.getId().toString());
-    static final KeyGetter KEY_ID_NAMESPACE = (shape) -> List.of(shape.getId().getNamespace());
-    static final KeyGetter KEY_ID_NAME = (shape) -> List.of(shape.getId().getName());
+    static final KeyGetter KEY_ID = (shape) -> ListUtils.of(shape.getId().toString());
+    static final KeyGetter KEY_ID_NAMESPACE = (shape) -> ListUtils.of(shape.getId().getNamespace());
+    static final KeyGetter KEY_ID_NAME = (shape) -> ListUtils.of(shape.getId().getName());
     static final KeyGetter KEY_ID_MEMBER = (shape) -> shape.getId().getMember()
             .map(Collections::singletonList)
             .orElseGet(Collections::emptyList);

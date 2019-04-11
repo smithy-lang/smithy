@@ -26,6 +26,8 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * The result of applying a projection to a model.
@@ -39,8 +41,8 @@ public final class ProjectionResult {
     private ProjectionResult(Builder builder) {
         this.projectionName = SmithyBuilder.requiredState("projectionName", builder.projectionName);
         this.model = SmithyBuilder.requiredState("model", builder.model);
-        this.events = List.copyOf(builder.events);
-        this.pluginManifests = Map.copyOf(builder.pluginManifests);
+        this.events = ListUtils.copyOf(builder.events);
+        this.pluginManifests = MapUtils.copyOf(builder.pluginManifests);
     }
 
     /**

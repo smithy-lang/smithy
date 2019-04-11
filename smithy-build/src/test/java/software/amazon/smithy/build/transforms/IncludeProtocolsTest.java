@@ -16,7 +16,6 @@
 package software.amazon.smithy.build.transforms;
 
 import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -25,6 +24,7 @@ import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.utils.ListUtils;
 
 public class IncludeProtocolsTest {
 
@@ -44,6 +44,6 @@ public class IncludeProtocolsTest {
                 .apply(ModelTransformer.create(), model);
         ServiceShape shape = result.getShapeIndex().getShape(service.getId()).get().asServiceShape().get();
 
-        Assertions.assertEquals(shape.getTrait(ProtocolsTrait.class).get().getProtocolNames(), List.of("qux"));
+        Assertions.assertEquals(shape.getTrait(ProtocolsTrait.class).get().getProtocolNames(), ListUtils.of("qux"));
     }
 }

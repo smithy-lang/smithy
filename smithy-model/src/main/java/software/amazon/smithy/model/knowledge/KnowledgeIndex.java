@@ -58,11 +58,11 @@ public interface KnowledgeIndex {
         try {
             return type.getConstructor(Model.class).newInstance(model);
         } catch (NoSuchMethodException e) {
-            var message = String.format(
+            String message = String.format(
                     "KnowledgeIndex for type `%s` does not expose a public constructor that accepts a Model", type);
             throw new RuntimeException(message, e);
         } catch (ReflectiveOperationException e) {
-            var message = String.format(
+            String message = String.format(
                     "Unable to create a KnowledgeIndex for type `%s`: %s", type, e.getMessage());
             throw new RuntimeException(message, e);
         }

@@ -82,7 +82,7 @@ public final class ComponentsObject extends Component implements ToSmithyBuilder
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder();
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
 
         if (!schemas.isEmpty()) {
             builder.withMember("schemas", schemas.entrySet().stream()

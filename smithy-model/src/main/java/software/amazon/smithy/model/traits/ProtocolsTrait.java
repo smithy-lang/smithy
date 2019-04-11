@@ -28,6 +28,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Defines the protocols supported by a service.
@@ -35,13 +36,13 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public final class ProtocolsTrait extends AbstractTrait implements ToSmithyBuilder<ProtocolsTrait> {
     public static final String TRAIT = "smithy.api#protocols";
     public static final String NONE_AUTH = "none";
-    private static final List<String> PROPERTIES = List.of("name", "auth", "tags");
+    private static final List<String> PROPERTIES = ListUtils.of("name", "auth", "tags");
 
     private final List<Protocol> protocols;
 
     private ProtocolsTrait(Builder builder) {
         super(TRAIT, builder.sourceLocation);
-        this.protocols = List.copyOf(builder.protocols);
+        this.protocols = ListUtils.copyOf(builder.protocols);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -53,7 +54,7 @@ public final class ProtocolsTrait extends AbstractTrait implements ToSmithyBuild
         public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
 
-            for (var protocol : value.expectArrayNode().getElementsAs(ObjectNode.class)) {
+            for (ObjectNode protocol : value.expectArrayNode().getElementsAs(ObjectNode.class)) {
                 protocol.warnIfAdditionalProperties(PROPERTIES);
                 Protocol.Builder protocolBuilder = Protocol.builder();
                 protocolBuilder.name(protocol.expectMember("name").expectStringNode().getValue());

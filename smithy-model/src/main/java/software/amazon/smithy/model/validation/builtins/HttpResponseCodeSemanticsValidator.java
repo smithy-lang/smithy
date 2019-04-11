@@ -30,6 +30,7 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Ensures that HTTP response codes are appropriate for operations and errors.
@@ -59,14 +60,14 @@ public final class HttpResponseCodeSemanticsValidator extends AbstractValidator 
     private List<ValidationEvent> validateErrors(ShapeIndex index) {
         return index.shapes(StructureShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, ErrorTrait.class))
-                .flatMap(pair -> validateError(pair.getLeft(), pair.getRight()).stream())
+                .flatMap(pair -> OptionalUtils.stream(validateError(pair.getLeft(), pair.getRight())))
                 .collect(Collectors.toList());
     }
 
     private Optional<ValidationEvent> validateError(StructureShape shape, ErrorTrait error) {
         return shape.getTrait(HttpErrorTrait.class).flatMap(httpErrorTrait -> {
             // Make sure that client errors are 4xx, and server errors are 5xx.
-            var code = httpErrorTrait.getCode();
+            int code = httpErrorTrait.getCode();
             if (error.isClientError() && (code < 400 || code >= 500)) {
                 return Optional.of(invalidError(shape, httpErrorTrait, code, "4xx", error.getValue()));
             } else if (error.isServerError() && (code < 500 || code >= 600)) {

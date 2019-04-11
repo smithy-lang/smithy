@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Maps input over a list of functions, passing the result of each to
@@ -43,7 +44,7 @@ final class AndSelector implements Selector {
         for (Selector selector : selectors) {
             shapes = selector.select(neighborProvider, shapes);
             if (shapes.isEmpty()) {
-                return Set.of();
+                return SetUtils.of();
             }
         }
 

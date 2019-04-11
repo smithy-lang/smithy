@@ -21,8 +21,11 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
+import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.openapi.model.SecurityScheme;
 
 public class AddAuthorizersTest {
     @Test
@@ -32,16 +35,16 @@ public class AddAuthorizersTest {
                 .addImport(getClass().getResource("authorizers.json"))
                 .assemble()
                 .unwrap();
-        var result = OpenApiConverter.create()
+        OpenApi result = OpenApiConverter.create()
                 .classLoader(getClass().getClassLoader())
                 .convert(model, ShapeId.from("ns.foo#SomeService"));
-        var sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
+        SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
 
         assertThat(sigV4.getType(), equalTo("apiKey"));
         assertThat(sigV4.getName().get(), equalTo("Authorization"));
         assertThat(sigV4.getIn().get(), equalTo("header"));
         assertThat(sigV4.getExtension("x-amazon-apigateway-authtype").get(), equalTo(Node.from("awsSigV4")));
-        var authorizer = sigV4.getExtension("x-amazon-apigateway-authorizer").get().expectObjectNode();
+        ObjectNode authorizer = sigV4.getExtension("x-amazon-apigateway-authorizer").get().expectObjectNode();
         assertThat(authorizer.getStringMember("type").get().getValue(), equalTo("request"));
         assertThat(authorizer.getStringMember("authorizerUri").get().getValue(), equalTo("arn:foo:baz"));
         assertThat(authorizer.getStringMember("authorizerCredentials").get().getValue(), equalTo("arn:foo:bar"));

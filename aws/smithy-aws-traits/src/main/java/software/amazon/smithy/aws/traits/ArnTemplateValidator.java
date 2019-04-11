@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
@@ -33,6 +34,7 @@ import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Ensures that all arn traits for a service are valid and that their templates
@@ -43,7 +45,7 @@ public final class ArnTemplateValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        var arnIndex = model.getKnowledge(ArnIndex.class);
+        ArnIndex arnIndex = model.getKnowledge(ArnIndex.class);
         return model.getShapeIndex().shapes(ServiceShape.class)
                 .flatMap(service -> Trait.flatMapStream(service, ServiceTrait.class))
                 .flatMap(pair -> validateService(model.getShapeIndex(), arnIndex, pair.getLeft()))
@@ -53,10 +55,9 @@ public final class ArnTemplateValidator extends AbstractValidator {
     private Stream<ValidationEvent> validateService(ShapeIndex index, ArnIndex arnIndex, ServiceShape service) {
         // Make sure each ARN template contains relevant identifiers.
         return arnIndex.getServiceResourceArns(service.getId()).entrySet().stream()
-                .flatMap(entry -> index.getShape(entry.getKey())
+                .flatMap(entry -> OptionalUtils.stream(index.getShape(entry.getKey())
                         .flatMap(Shape::asResourceShape)
-                        .map(resource -> Pair.of(resource, entry.getValue()))
-                        .stream())
+                        .map(resource -> Pair.of(resource, entry.getValue()))))
                 .flatMap(pair -> validateResourceArn(pair.getLeft(), pair.getRight()));
     }
 
@@ -64,14 +65,14 @@ public final class ArnTemplateValidator extends AbstractValidator {
         // Fail early on syntax error, otherwise, validate that the
         // template correspond to identifiers.
         return syntax(resource, template).map(Stream::of).orElseGet(() -> Stream.concat(
-                enough(resource.getIdentifiers().keySet(), resource, template).stream(),
-                tooMuch(resource.getIdentifiers().keySet(), resource, template).stream())
+                OptionalUtils.stream(enough(resource.getIdentifiers().keySet(), resource, template)),
+                OptionalUtils.stream(tooMuch(resource.getIdentifiers().keySet(), resource, template)))
         );
     }
 
     // Validates the syntax of each template.
     private Optional<ValidationEvent> syntax(Shape shape, ArnTrait trait) {
-        var invalid = trait.getLabels().stream()
+        List<String> invalid = trait.getLabels().stream()
                 .filter(expr -> !EXPRESSION_PATTERN.matcher(expr).find())
                 .collect(toList());
 
@@ -87,7 +88,7 @@ public final class ArnTemplateValidator extends AbstractValidator {
 
     // Ensures that a template does not contain extraneous resource identifiers.
     private Optional<ValidationEvent> tooMuch(Collection<String> names, Shape shape, ArnTrait trait) {
-        var templateCheck = new HashSet<>(trait.getLabels());
+        Set<String> templateCheck = new HashSet<>(trait.getLabels());
         templateCheck.removeAll(names);
         if (!templateCheck.isEmpty()) {
             return Optional.of(error(shape, trait, String.format(
@@ -100,7 +101,7 @@ public final class ArnTemplateValidator extends AbstractValidator {
 
     // Ensures that a template references all resource identifiers.
     private Optional<ValidationEvent> enough(Collection<String> names, Shape shape, ArnTrait trait) {
-        var identifierVars = new HashSet<>(names);
+        Set<String> identifierVars = new HashSet<>(names);
         identifierVars.removeAll(trait.getLabels());
         if (!identifierVars.isEmpty()) {
             return Optional.of(error(shape, trait, String.format(

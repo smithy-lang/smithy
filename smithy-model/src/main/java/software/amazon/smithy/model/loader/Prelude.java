@@ -38,6 +38,7 @@ import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Represents the prelude model available to every Smithy model.
@@ -50,7 +51,7 @@ public final class Prelude {
     /** The Smithy prelude namespace. */
     public static final String NAMESPACE = "smithy.api";
 
-    private static final List<AbstractShapeBuilder> PUBLIC_PRELUDE_SHAPES = List.of(
+    private static final List<AbstractShapeBuilder> PUBLIC_PRELUDE_SHAPES = ListUtils.of(
             StringShape.builder().id(NAMESPACE + "#String"),
             BlobShape.builder().id(NAMESPACE + "#Blob"),
             BigIntegerShape.builder().id(NAMESPACE + "#BigInteger"),
@@ -165,7 +166,7 @@ public final class Prelude {
             LoaderVisitor visitor = new LoaderVisitor(ModelAssembler.LazyTraitFactoryHolder.INSTANCE);
 
             // Register prelude shape definitions.
-            for (var builder : PUBLIC_PRELUDE_SHAPES) {
+            for (AbstractShapeBuilder builder : PUBLIC_PRELUDE_SHAPES) {
                 visitor.onShape(builder);
             }
 

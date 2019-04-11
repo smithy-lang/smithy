@@ -22,10 +22,12 @@ import java.util.Optional;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Defines condition keys used in a service.
@@ -37,7 +39,7 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
 
     private DefineConditionKeysTrait(Builder builder) {
         super(TRAIT, builder.getSourceLocation());
-        conditionKeys = Map.copyOf(builder.conditionKeys);
+        conditionKeys = MapUtils.copyOf(builder.conditionKeys);
     }
 
     public static Builder builder() {
@@ -52,8 +54,9 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder();
-            for (var entry : value.expectObjectNode().getMembers().entrySet()) {
-                var definition = ConditionKeyDefinition.fromNode(entry.getValue().expectObjectNode());
+            for (Map.Entry<StringNode, Node> entry : value.expectObjectNode().getMembers().entrySet()) {
+                ConditionKeyDefinition definition = ConditionKeyDefinition.fromNode(
+                        entry.getValue().expectObjectNode());
                 builder.putConditionKey(entry.getKey().getValue(), definition);
             }
             return builder.build();

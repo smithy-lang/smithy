@@ -16,6 +16,7 @@
 extra["moduleName"] = "software.amazon.smithy.codegen.core"
 
 dependencies {
+    api(project(":smithy-utils"))
     api(project(":smithy-model"))
     api(project(":smithy-build"))
 }

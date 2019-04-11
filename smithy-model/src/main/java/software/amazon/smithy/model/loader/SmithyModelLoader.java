@@ -82,13 +82,16 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Parses custom Smithy model IDL syntax and invokes a LoaderVisitor
  * to load a model.
  */
 public final class SmithyModelLoader implements ModelLoader {
-    private static final Collection<String> MAP_KEYS = List.of("key", "value");
+    private static final Collection<String> MAP_KEYS = ListUtils.of("key", "value");
 
     /** Top-level statements that can be encountered while parsing. */
     private static final Map<String, Consumer<State>> STATEMENTS = new HashMap<>();
@@ -329,7 +332,7 @@ public final class SmithyModelLoader implements ModelLoader {
 
         if (next.type == RPAREN) {
             // An open and closed "()" signals an empty object.
-            return new ObjectNode(Map.of(), sourceFromToken(state, next));
+            return new ObjectNode(MapUtils.of(), sourceFromToken(state, next));
         }
 
         // Test to see if this is just a string or if it's an object.
@@ -461,7 +464,7 @@ public final class SmithyModelLoader implements ModelLoader {
     }
 
     private static void parseStructuredBody(String shapeType, State state, ShapeId parent) {
-        parseStructuredContents(shapeType, state, parent, Set.of());
+        parseStructuredContents(shapeType, state, parent, SetUtils.of());
         state.expectNewline();
     }
 
@@ -473,7 +476,7 @@ public final class SmithyModelLoader implements ModelLoader {
     ) {
         state.expect(LBRACE);
         List<Pair<String, Node>> memberTraits = new ArrayList<>();
-        Set<String> remainingMembers = requiredMembers.isEmpty() ? Set.of() : new HashSet<>(requiredMembers);
+        Set<String> remainingMembers = requiredMembers.isEmpty() ? SetUtils.of() : new HashSet<>(requiredMembers);
 
         Token token = state.expect(ANNOTATION, SQUOTE, DQUOTE, UNQUOTED, RBRACE);
         while (token.type != RBRACE) {
@@ -527,7 +530,7 @@ public final class SmithyModelLoader implements ModelLoader {
         // list Foo { member: Bar }
         builder.source(currentSourceLocation(state));
         ShapeId id = parseShapeName(state);
-        parseStructuredContents(shapeType, state, id, Set.of("member"));
+        parseStructuredContents(shapeType, state, id, SetUtils.of("member"));
         state.visitor.onShape(builder.id(id));
         state.expectNewline();
     }

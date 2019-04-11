@@ -48,8 +48,8 @@ public final class EventStreamIndex implements KnowledgeIndex {
     private final Map<ShapeId, Info> outputInfo = new HashMap<>();
 
     public EventStreamIndex(Model model) {
-        var index = model.getShapeIndex();
-        var operationIndex = model.getKnowledge(OperationIndex.class);
+        ShapeIndex index = model.getShapeIndex();
+        OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
 
         model.getShapeIndex().shapes(OperationShape.class).forEach(operation -> {
             operation.getTrait(InputEventStreamTrait.class).ifPresent(trait -> {
@@ -101,9 +101,9 @@ public final class EventStreamIndex implements KnowledgeIndex {
             StructureShape structure,
             StringTrait trait
     ) {
-        var eventStreamMemberName = trait.getValue();
+        String eventStreamMemberName = trait.getValue();
 
-        var eventStreamMember = structure.getMember(eventStreamMemberName).orElse(null);
+        MemberShape eventStreamMember = structure.getMember(eventStreamMemberName).orElse(null);
         if (eventStreamMember == null) {
             LOGGER.severe(() -> String.format(
                     "Skipping event stream info for %s because the member %s does not exist",
@@ -111,7 +111,7 @@ public final class EventStreamIndex implements KnowledgeIndex {
             return Optional.empty();
         }
 
-        var eventStreamTarget = index.getShape(eventStreamMember.getTarget()).orElse(null);
+        Shape eventStreamTarget = index.getShape(eventStreamMember.getTarget()).orElse(null);
         if (eventStreamTarget == null) {
             LOGGER.severe(String.format(
                     "Skipping event stream info for %s because the %s member target %s does not exist",
@@ -328,7 +328,7 @@ public final class EventStreamIndex implements KnowledgeIndex {
                 return false;
             }
 
-            var that = (Info) o;
+            Info that = (Info) o;
             return operation.getId().equals(that.operation.getId())
                    && structure.getId().equals(that.structure.getId())
                    && eventStreamMember.getId().equals(that.eventStreamMember.getId())

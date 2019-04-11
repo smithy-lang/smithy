@@ -33,6 +33,8 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * <p>Validates that operation shape names start with standard verbs.
@@ -58,10 +60,11 @@ public final class StandardOperationVerbValidator extends AbstractValidator {
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
             super(StandardOperationVerbValidator.class, node -> {
-                var verbs = Node.loadArrayOfString("verbs", node.getMember("verbs").orElseGet(Node::arrayNode));
-                var prefixes = Node.loadArrayOfString(
+                List<String> verbs = Node.loadArrayOfString(
+                        "verbs", node.getMember("verbs").orElseGet(Node::arrayNode));
+                List<String> prefixes = Node.loadArrayOfString(
                         "prefixes", node.getMember("prefixes").orElseGet(Node::arrayNode));
-                var suggestAlternatives = extractAlternatives(node);
+                Map<String, List<String>> suggestAlternatives = extractAlternatives(node);
                 if (verbs.isEmpty() && suggestAlternatives.isEmpty()) {
                     throw new SourceException(
                             "Either verbs or suggestAlternatives must be set when configuring StandardOperationVerb",
@@ -79,13 +82,13 @@ public final class StandardOperationVerbValidator extends AbstractValidator {
                         .map(entry -> Pair.of(entry.getKey().getValue(), Node.loadArrayOfString(
                                 entry.getKey().getValue(), entry.getValue())))
                         .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)))
-                .orElse(Map.of());
+                .orElse(MapUtils.of());
     }
 
     @Override
     public List<ValidationEvent> validate(Model model) {
         return model.getShapeIndex().shapes(OperationShape.class)
-                .flatMap(shape -> validateShape(shape, verbs, prefixes, alts).stream())
+                .flatMap(shape -> OptionalUtils.stream(validateShape(shape, verbs, prefixes, alts)))
                 .collect(Collectors.toList());
     }
 
@@ -95,7 +98,7 @@ public final class StandardOperationVerbValidator extends AbstractValidator {
             List<String> prefixes,
             Map<String, List<String>> alts
     ) {
-        var words = splitCamelCaseWord(operation.getId().getName());
+        List<String> words = splitCamelCaseWord(operation.getId().getName());
         String name;
         String foundPrefix = null;
 
@@ -124,7 +127,7 @@ public final class StandardOperationVerbValidator extends AbstractValidator {
     }
 
     private static String createMessagePrefix(Shape shape, String name, String prefix) {
-        var builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         builder.append(format("Operation shape `%s` uses a non-standard verb, `%s`", shape.getId().getName(), name));
         if (prefix != null) {
             builder.append(format(", with a detected prefix of `%s`", prefix));

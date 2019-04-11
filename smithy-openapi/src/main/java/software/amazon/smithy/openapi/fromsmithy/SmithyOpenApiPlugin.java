@@ -178,13 +178,13 @@ public interface SmithyOpenApiPlugin {
      * @return Returns the composed plugin.
      */
     static SmithyOpenApiPlugin compose(List<SmithyOpenApiPlugin> plugins) {
-        var sorted = new ArrayList<>(plugins);
+        List<SmithyOpenApiPlugin> sorted = new ArrayList<>(plugins);
         sorted.sort(Comparator.comparingInt(SmithyOpenApiPlugin::getOrder));
 
         return new SmithyOpenApiPlugin() {
             @Override
             public OperationObject updateOperation(Context context, OperationShape shape, OperationObject operation) {
-                for (var plugin : sorted) {
+                for (SmithyOpenApiPlugin plugin : sorted) {
                     if (operation == null) {
                         return null;
                     }
@@ -195,7 +195,7 @@ public interface SmithyOpenApiPlugin {
 
             @Override
             public PathItem updatePathItem(Context context, PathItem pathItem) {
-                for (var plugin : sorted) {
+                for (SmithyOpenApiPlugin plugin : sorted) {
                     if (pathItem == null) {
                         return null;
                     }
@@ -210,7 +210,7 @@ public interface SmithyOpenApiPlugin {
                     OperationShape operation,
                     ParameterObject parameterObject
             ) {
-                for (var plugin : sorted) {
+                for (SmithyOpenApiPlugin plugin : sorted) {
                     if (parameterObject == null) {
                         return null;
                     }
@@ -225,7 +225,7 @@ public interface SmithyOpenApiPlugin {
                     OperationShape shape,
                     RequestBodyObject requestBody
             ) {
-                for (var plugin : sorted) {
+                for (SmithyOpenApiPlugin plugin : sorted) {
                     if (requestBody == null) {
                         return null;
                     }
@@ -236,7 +236,7 @@ public interface SmithyOpenApiPlugin {
 
             @Override
             public ResponseObject updateResponse(Context context, OperationShape shape, ResponseObject response) {
-                for (var plugin : sorted) {
+                for (SmithyOpenApiPlugin plugin : sorted) {
                     if (response == null) {
                         return null;
                     }
@@ -252,7 +252,7 @@ public interface SmithyOpenApiPlugin {
                     String securitySchemeName,
                     SecurityScheme securityScheme
             ) {
-                for (var plugin : sorted) {
+                for (SmithyOpenApiPlugin plugin : sorted) {
                     if (securityScheme == null) {
                         return null;
                     }
@@ -264,14 +264,14 @@ public interface SmithyOpenApiPlugin {
 
             @Override
             public void before(Context context, OpenApi.Builder builder) {
-                for (var plugin : sorted) {
+                for (SmithyOpenApiPlugin plugin : sorted) {
                     plugin.before(context, builder);
                 }
             }
 
             @Override
             public OpenApi after(Context context, OpenApi openapi) {
-                for (var plugin : sorted) {
+                for (SmithyOpenApiPlugin plugin : sorted) {
                     openapi = plugin.after(context, openapi);
                 }
                 return openapi;
@@ -279,7 +279,7 @@ public interface SmithyOpenApiPlugin {
 
             @Override
             public ObjectNode updateNode(Context context, OpenApi openapi, ObjectNode node) {
-                for (var plugin : sorted) {
+                for (SmithyOpenApiPlugin plugin : sorted) {
                     node = plugin.updateNode(context, openapi, node);
                 }
                 return node;

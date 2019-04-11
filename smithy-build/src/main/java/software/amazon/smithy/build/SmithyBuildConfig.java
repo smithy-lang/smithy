@@ -30,6 +30,8 @@ import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Filter configuration that contains a list of named projections that
@@ -45,9 +47,9 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
 
     private SmithyBuildConfig(Builder builder) {
         outputDirectory = builder.outputDirectory;
-        imports = List.copyOf(builder.imports);
-        projections = Map.copyOf(builder.projections);
-        plugins = Map.copyOf(builder.plugins);
+        imports = ListUtils.copyOf(builder.imports);
+        projections = MapUtils.copyOf(builder.projections);
+        plugins = MapUtils.copyOf(builder.plugins);
         importBasePath = builder.importBasePath;
     }
 

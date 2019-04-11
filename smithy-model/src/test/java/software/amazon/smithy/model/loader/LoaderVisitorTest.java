@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.ValidatedResult;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -43,6 +45,7 @@ import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.MapUtils;
 
 public class LoaderVisitorTest {
     private static final TraitFactory FACTORY = TraitFactory.createServiceFactory();
@@ -216,7 +219,7 @@ public class LoaderVisitorTest {
 
     @Test
     public void supportsCustomProperties() {
-        Map<String, Object> properties = Map.of("a", true, "b", new HashMap<>());
+        Map<String, Object> properties = MapUtils.of("a", true, "b", new HashMap<>());
         LoaderVisitor visitor = new LoaderVisitor(TraitFactory.createServiceFactory(), properties);
 
         assertThat(visitor.getProperty("a").get(), equalTo(true));
@@ -228,7 +231,7 @@ public class LoaderVisitorTest {
     @Test
     public void assertsCorrectPropertyType() {
         Assertions.assertThrows(ClassCastException.class, () -> {
-            Map<String, Object> properties = Map.of("a", true);
+            Map<String, Object> properties = MapUtils.of("a", true);
             LoaderVisitor visitor = new LoaderVisitor(TraitFactory.createServiceFactory(), properties);
 
             visitor.getProperty("a", Integer.class).get();
@@ -251,15 +254,15 @@ public class LoaderVisitorTest {
         Shape shape = StringShape.builder().id("smithy.foo#Baz").build();
         visitor.onShape(shape);
         visitor.onShape(shape);
-        var result = visitor.onEnd();
+        ValidatedResult<Model> result = visitor.onEnd();
 
         assertThat(result.getValidationEvents(), not(empty()));
     }
 
     @Test
     public void ignoresDuplicateFiles() {
-        var file = getClass().getResource("valid/trait-definitions.smithy");
-        var model = Model.assembler().addImport(file).assemble().unwrap();
+        URL file = getClass().getResource("valid/trait-definitions.smithy");
+        Model model = Model.assembler().addImport(file).assemble().unwrap();
         Model.assembler().addModel(model).addImport(file).assemble().unwrap();
     }
 }

@@ -18,7 +18,6 @@ package software.amazon.smithy.model.validation.builtins;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
@@ -31,6 +30,8 @@ import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates that operations bound to resource shapes have identifier
@@ -53,11 +54,12 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
             IdentifierBindingIndex bindingIndex
     ) {
         return parent.getResources().stream()
-                .flatMap(childId -> index.getShape(childId).flatMap(Shape::asResourceShape).stream())
+                .flatMap(childId -> OptionalUtils.stream(index.getShape(childId).flatMap(Shape::asResourceShape)))
                 .flatMap(child -> child.getAllOperations().stream()
-                        .flatMap(id -> index.getShape(id).flatMap(Shape::asOperationShape).stream())
+                        .flatMap(id -> OptionalUtils.stream(index.getShape(id).flatMap(Shape::asOperationShape)))
                         .map(operation -> Pair.of(child, operation)))
-                .flatMap(pair -> validateOperation(parent, pair.getLeft(), pair.getRight(), bindingIndex).stream());
+                .flatMap(pair -> OptionalUtils.stream(
+                        validateOperation(parent, pair.getLeft(), pair.getRight(), bindingIndex)));
     }
 
     private Optional<ValidationEvent> validateOperation(
@@ -69,7 +71,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
         if (bindingIndex.getOperationBindingType(child, operation) != IdentifierBindingIndex.BindingType.NONE) {
             Set<String> bindings = bindingIndex.getOperationBindings(child, operation).keySet();
             Set<String> missing = parent.getIdentifiers().keySet().stream()
-                    .filter(Predicate.not(bindings::contains))
+                    .filter(FunctionalUtils.not(bindings::contains))
                     .collect(Collectors.toSet());
             if (!missing.isEmpty()) {
                 return Optional.of(error(operation, String.format(

@@ -25,24 +25,26 @@ import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Parses a selector expression.
  */
 final class Parser {
-    private static final Set<Character> BREAK_TOKENS = Set.of(',', ']', ')');
-    private static final List<String> REL_TYPES = List.of(
+    private static final Set<Character> BREAK_TOKENS = SetUtils.of(',', ']', ')');
+    private static final List<String> REL_TYPES = ListUtils.of(
             "identifier", "create", "read", "update", "delete", "list", "member", "input", "output", "error",
             "operation", "resource", "bound");
-    private static final List<String> FUNCTIONS = List.of("test", "each", "of", "not");
-    private static final List<String> ATTRIBUTES = List.of(
+    private static final List<String> FUNCTIONS = ListUtils.of("test", "each", "of", "not");
+    private static final List<String> ATTRIBUTES = ListUtils.of(
             "trait|", "id|namespace", "id|name", "id|member", "id", "service|version");
-    private static final List<String> AFTER_ATTRIBUTE = List.of("=", "^=", "$=", "*=", "]");
-    private static final List<String> AFTER_ATTRIBUTE_RHS = List.of("i]", "]");
-    private static final List<String> START_FUNCTION = List.of("(");
-    private static final List<String> FUNCTION_ARG_NEXT_TOKEN = List.of(")", ",");
-    private static final List<String> MULTI_EDGE_NEXT_ARG_TOKEN = List.of(",", "]->");
-    private static final List<String> EXPRESSION_TOKENS = List.of(
+    private static final List<String> AFTER_ATTRIBUTE = ListUtils.of("=", "^=", "$=", "*=", "]");
+    private static final List<String> AFTER_ATTRIBUTE_RHS = ListUtils.of("i]", "]");
+    private static final List<String> START_FUNCTION = ListUtils.of("(");
+    private static final List<String> FUNCTION_ARG_NEXT_TOKEN = ListUtils.of(")", ",");
+    private static final List<String> MULTI_EDGE_NEXT_ARG_TOKEN = ListUtils.of(",", "]->");
+    private static final List<String> EXPRESSION_TOKENS = ListUtils.of(
             ":", "[", ">", "-[",
             "*", "blob", "boolean", "string", "byte", "short", "integer", "long", "float", "double", "bigDecimal",
             "bigInteger", "timestamp", "list", "map", "set", "structure", "union", "service", "operation",
@@ -122,7 +124,7 @@ final class Parser {
 
     private Selector createSelector(String token) {
         switch (token) {
-            case ">": return new NeighborSelector(List.of());
+            case ">": return new NeighborSelector(ListUtils.of());
             case "-[": return parseMultiEdgeDirectedNeighbor();
             case "[": return parseAttribute();
             case ":": return parseFunction();

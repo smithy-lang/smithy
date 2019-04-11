@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -43,8 +44,8 @@ public final class StutteredShapeNameValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        var index = model.getShapeIndex();
-        var visitor = Shape.<List<ValidationEvent>>visitor()
+        ShapeIndex index = model.getShapeIndex();
+        ShapeVisitor<List<ValidationEvent>> visitor = Shape.<List<ValidationEvent>>visitor()
                 .when(UnionShape.class, shape -> validateNames(index, shape, shape.getMemberNames()))
                 .when(StructureShape.class, shape -> validateNames(index, shape, shape.getMemberNames()))
                 .orElseGet(Collections::emptyList);

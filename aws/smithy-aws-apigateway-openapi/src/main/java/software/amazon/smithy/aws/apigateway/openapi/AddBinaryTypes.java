@@ -30,6 +30,7 @@ import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Adds API Gateway binary media types as a top-level key in the OpenAPI model
@@ -68,15 +69,17 @@ public final class AddBinaryTypes implements SmithyOpenApiPlugin {
         // Find the media types defined on all request and response bindings.
         return topDownIndex.getContainedOperations(context.getService()).stream()
                 .flatMap(operation -> Stream.concat(
-                        binaryMediaType(shapeIndex, httpBindingIndex.getRequestBindings(operation)).stream(),
-                        binaryMediaType(shapeIndex, httpBindingIndex.getResponseBindings(operation)).stream()));
+                        OptionalUtils.stream(
+                                binaryMediaType(shapeIndex, httpBindingIndex.getRequestBindings(operation))),
+                        OptionalUtils.stream(
+                                binaryMediaType(shapeIndex, httpBindingIndex.getResponseBindings(operation)))));
     }
 
     private Optional<String> binaryMediaType(ShapeIndex shapes, Map<String, HttpBindingIndex.Binding> httpBindings) {
         return httpBindings.values().stream()
                 .filter(binding -> binding.getLocation().equals(HttpBindingIndex.Location.PAYLOAD))
                 .map(HttpBindingIndex.Binding::getMember)
-                .flatMap(member -> member.getMemberTrait(shapes, MediaTypeTrait.class).stream())
+                .flatMap(member -> OptionalUtils.stream(member.getMemberTrait(shapes, MediaTypeTrait.class)))
                 .map(MediaTypeTrait::getValue)
                 .findFirst();
     }

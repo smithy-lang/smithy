@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -42,6 +43,7 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Model loading utility methods.
@@ -58,12 +60,12 @@ public final class LoaderUtils {
     private static final String IDENTIFIERS_KEY = "identifiers";
     private static final String TYPE_KEY = "type";
     private static final String VERSION_KEY = "version";
-    static final Collection<String> RESOURCE_PROPERTY_NAMES = List.of(
+    static final Collection<String> RESOURCE_PROPERTY_NAMES = ListUtils.of(
             TYPE_KEY, CREATE_KEY, READ_KEY, UPDATE_KEY, DELETE_KEY, LIST_KEY,
             IDENTIFIERS_KEY, RESOURCES_KEY, OPERATIONS_KEY);
-    static final List<String> SERVICE_PROPERTY_NAMES = List.of(
+    static final List<String> SERVICE_PROPERTY_NAMES = ListUtils.of(
             TYPE_KEY, VERSION_KEY, OPERATIONS_KEY, RESOURCES_KEY);
-    private static final List<String> TRAIT_DEFINITION_PROPERTY_NAMES = List.of(
+    private static final List<String> TRAIT_DEFINITION_PROPERTY_NAMES = ListUtils.of(
             TraitDefinition.SELECTOR_KEY, TraitDefinition.STRUCTURALLY_EXCLUSIVE_KEY, TraitDefinition.SHAPE_KEY,
             TraitDefinition.TAGS_KEY, TraitDefinition.CONFLICTS_KEY, TraitDefinition.DOCUMENTATION_KEY,
             TraitDefinition.EXTERNAL_DOCUMENTATION_KEY, TraitDefinition.DEPRECATED_KEY,
@@ -83,7 +85,7 @@ public final class LoaderUtils {
 
     private static String readFile(String path, Charset encoding) {
         try {
-            var encoded = Files.readAllBytes(Paths.get(path));
+            byte[] encoded = Files.readAllBytes(Paths.get(path));
             return new String(encoded, encoding);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -99,8 +101,8 @@ public final class LoaderUtils {
      * @throws RuntimeException if the stream can't be read or encoded.
      */
     public static String readInputStream(InputStream inputStream, String charSet) {
-        var result = new ByteArrayOutputStream();
-        var buffer = new byte[1024];
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
         int length;
 
         try {
@@ -140,7 +142,7 @@ public final class LoaderUtils {
 
         // Load identifiers and resolve forward references.
         shapeNode.getObjectMember(IDENTIFIERS_KEY).ifPresent(ids -> {
-            for (var entry : ids.getMembers().entrySet()) {
+            for (Map.Entry<StringNode, Node> entry : ids.getMembers().entrySet()) {
                 String name = entry.getKey().getValue();
                 String target = entry.getValue().expectStringNode().getValue();
                 visitor.onShapeTarget(shapeId.getNamespace(), target, id -> builder.addIdentifier(name, id));

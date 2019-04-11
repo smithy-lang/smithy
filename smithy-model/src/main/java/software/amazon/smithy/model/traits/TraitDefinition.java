@@ -28,9 +28,11 @@ import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Trait definition.
@@ -66,8 +68,8 @@ public final class TraitDefinition implements ToNode, FromSourceLocation, Tagged
         sourceLocation = builder.sourceLocation;
         shape = builder.shape;
         selector = builder.selector;
-        tags = List.copyOf(builder.tags);
-        conflicts = List.copyOf(builder.conflicts);
+        tags = ListUtils.copyOf(builder.tags);
+        conflicts = ListUtils.copyOf(builder.conflicts);
         structurallyExclusive = builder.structurallyExclusive;
         documentation = builder.documentation;
         externalDocumentation = builder.externalDocumentation;
@@ -210,7 +212,7 @@ public final class TraitDefinition implements ToNode, FromSourceLocation, Tagged
 
     @Override
     public Node toNode() {
-        var builder = Node.objectNodeBuilder().sourceLocation(getSourceLocation());
+        ObjectNode.Builder builder = Node.objectNodeBuilder().sourceLocation(getSourceLocation());
 
         if (selector != Selector.IDENTITY) {
             builder.withMember(SELECTOR_KEY, selector.toString());

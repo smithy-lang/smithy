@@ -25,6 +25,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates that timestamp shapes contain values that are compatible with their
@@ -46,7 +47,7 @@ public final class TimestampFormatPlugin implements NodeValidatorPlugin {
             return validate(shape, shape.getTrait(TimestampFormatTrait.class).get(), value);
         } else {
             // Ignore when not a timestamp or member that targets a timestamp.
-            return List.of();
+            return ListUtils.of();
         }
     }
 
@@ -61,17 +62,17 @@ public final class TimestampFormatPlugin implements NodeValidatorPlugin {
             case TimestampFormatTrait.EPOCH_SECONDS:
                 // Accepts any number including floats.
                 if (!value.isNumberNode()) {
-                    return List.of(String.format(
+                    return ListUtils.of(String.format(
                             "Invalid %s value provided for a timestamp with a `%s` format.",
                             value.getType(), trait.getValue()));
                 }
-                return List.of();
+                return ListUtils.of();
             case TimestampFormatTrait.HTTP_DATE:
                 return validateHttpDate(value);
             default:
                 // This validator plugin doesn't know this format, but other plugins might.
                 LOGGER.info(() -> "Unknown timestampFormat trait value: " + trait.getValue());
-                return List.of();
+                return ListUtils.of();
         }
     }
 
@@ -80,11 +81,11 @@ public final class TimestampFormatPlugin implements NodeValidatorPlugin {
         // validated by checking that the value is either a number or a
         // string that matches the date-time format.
         if (value.isNumberNode()) {
-            return List.of();
+            return ListUtils.of();
         } else if (value.isStringNode()) {
             return validateDatetime(shape, value);
         } else {
-            return List.of(
+            return ListUtils.of(
                     "Invalid " + value.getType() + " value provided for timestamp, `"
                     + shape.getId() + "`. Expected a number that contains epoch seconds with optional "
                     + "millisecond precision, or a string that contains an RFC 3339 formatted timestamp "
@@ -94,15 +95,15 @@ public final class TimestampFormatPlugin implements NodeValidatorPlugin {
 
     private List<String> validateDatetime(Shape shape, Node value) {
         if (!value.isStringNode()) {
-            return List.of(
+            return ListUtils.of(
                     "Expected a string value for a date-time timestamp (e.g., \"1985-04-12T23:20:50.52Z\")");
         }
 
         String timestamp = value.expectStringNode().getValue();
         if (isValidFormat(timestamp, DATE_TIME_Z)) {
-            return List.of();
+            return ListUtils.of();
         } else {
-            return List.of(
+            return ListUtils.of(
                     "Invalid string value, `" + timestamp + "`, provided for timestamp, `"
                     + shape.getId() + "`. Expected an RFC 3339 formatted timestamp "
                     + "(e.g., \"1985-04-12T23:20:50.52Z\")");
@@ -119,11 +120,11 @@ public final class TimestampFormatPlugin implements NodeValidatorPlugin {
             return createInvalidHttpDateMessage(dateValue);
         }
 
-        return List.of();
+        return ListUtils.of();
     }
 
     private List<String> createInvalidHttpDateMessage(String dateValue) {
-        return List.of(String.format(
+        return ListUtils.of(String.format(
                 "Invalid value provided for %s formatted timestamp. Expected a string value that "
                 + "matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: %s",
                 TimestampFormatTrait.HTTP_DATE, dateValue));

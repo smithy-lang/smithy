@@ -25,6 +25,7 @@ import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.ValidatedResult;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -50,28 +51,28 @@ public final class DiffCommand implements Command {
 
     @Override
     public void execute(Arguments arguments) {
-        var oldModels = arguments.repeatedParameter("--old");
+        List<String> oldModels = arguments.repeatedParameter("--old");
         System.err.println(String.format("Setting 'old' Smithy models: %s", String.join(" ", oldModels)));
-        var newModels = arguments.repeatedParameter("--new");
+        List<String> newModels = arguments.repeatedParameter("--new");
         System.err.println(String.format("Setting 'new' Smithy models: %s", String.join(" ", newModels)));
 
-        var loader = SmithyCli.getConfiguredClassLoader();
-        var assembler = Model.assembler(loader);
-        var oldModel = loadModel("old", assembler, oldModels);
+        ClassLoader loader = SmithyCli.getConfiguredClassLoader();
+        ModelAssembler assembler = Model.assembler(loader);
+        Model oldModel = loadModel("old", assembler, oldModels);
         assembler.reset();
-        var newModel = loadModel("new", assembler, newModels);
+        Model newModel = loadModel("new", assembler, newModels);
 
-        var events = ModelDiff.compare(loader, oldModel, newModel);
-        var hasError = events.stream().anyMatch(event -> event.getSeverity() == Severity.ERROR);
-        var hasDanger = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);
-        var hasWarning = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);
-        var result = events.stream().map(ValidationEvent::toString).collect(Collectors.joining("\n"));
+        List<ValidationEvent> events = ModelDiff.compare(loader, oldModel, newModel);
+        boolean hasError = events.stream().anyMatch(event -> event.getSeverity() == Severity.ERROR);
+        boolean hasDanger = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);
+        boolean hasWarning = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);
+        String result = events.stream().map(ValidationEvent::toString).collect(Collectors.joining("\n"));
 
         if (hasError) {
             throw new CliError(String.format("Model diff detected errors: %n%s", result));
         }
 
-        if (!result.isBlank()) {
+        if (!result.isEmpty()) {
             System.out.println(result);
         }
 
@@ -86,7 +87,7 @@ public final class DiffCommand implements Command {
 
     private Model loadModel(String descriptor, ModelAssembler assembler, List<String> models) {
         models.forEach(assembler::addImport);
-        var result = assembler.assemble();
+        ValidatedResult<Model> result = assembler.assemble();
         if (result.isBroken()) {
             throw new CliError("Error loading " + descriptor + " models: \n" + result.getValidationEvents().stream()
                     .map(ValidationEvent::toString)

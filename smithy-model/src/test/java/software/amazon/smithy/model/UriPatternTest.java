@@ -68,28 +68,28 @@ public class UriPatternTest {
 
     @Test
     public void labelsMustStartWithSlash() {
-        var thrown = Assertions.assertThrows(InvalidUriPatternException.class, () -> UriPattern.parse("foo"));
+        Throwable thrown = Assertions.assertThrows(InvalidUriPatternException.class, () -> UriPattern.parse("foo"));
 
         assertThat(thrown.getMessage(), containsString("URI pattern must start with '/'"));
     }
 
     @Test
     public void labelsMustNotEndWithQuestionMark() {
-        var thrown = Assertions.assertThrows(InvalidUriPatternException.class, () -> UriPattern.parse("/foo?"));
+        Throwable thrown = Assertions.assertThrows(InvalidUriPatternException.class, () -> UriPattern.parse("/foo?"));
 
         assertThat(thrown.getMessage(), containsString("URI patterns must not end with '?'"));
     }
 
     @Test
     public void patternsMustNotContainFragments() {
-        var thrown = Assertions.assertThrows(InvalidUriPatternException.class, () -> UriPattern.parse("/foo#bam"));
+        Throwable thrown = Assertions.assertThrows(InvalidUriPatternException.class, () -> UriPattern.parse("/foo#bam"));
 
         assertThat(thrown.getMessage(), containsString("URI pattern must not contain a fragment"));
     }
 
     @Test
     public void labelsMustNotAppearInQueryString() {
-        var thrown = Assertions.assertThrows(InvalidUriPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidUriPatternException.class, () -> {
             UriPattern.parse("/baz?bam={boozled}");
         });
 
@@ -98,7 +98,7 @@ public class UriPatternTest {
 
     @Test
     public void detectsCaseSensitiveDuplicateQueryStringLiterals() {
-        var thrown = Assertions.assertThrows(InvalidUriPatternException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(InvalidUriPatternException.class, () -> {
             UriPattern.parse("/foo?baz=bar&baz=bam");
         });
 

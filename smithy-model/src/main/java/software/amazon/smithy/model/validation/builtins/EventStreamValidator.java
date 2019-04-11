@@ -31,6 +31,7 @@ import software.amazon.smithy.model.traits.OutputEventStreamTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates inputEventStream and outputEventStream traits.
@@ -80,7 +81,7 @@ public class EventStreamValidator extends AbstractValidator {
 
         if (inputOutput == null) {
             // The operation has no input/output, so this is the only check.
-            return List.of(error(operation, trait, String.format(
+            return ListUtils.of(error(operation, trait, String.format(
                     "Operation has the `%s` but does not define an %s structure.",
                     trait.getRelativeName(), inputOrOutputName)));
         }
@@ -88,13 +89,13 @@ public class EventStreamValidator extends AbstractValidator {
         StructureShape struct = index.getShape(inputOutput).flatMap(Shape::asStructureShape).orElse(null);
         if (struct == null) {
             // Broken targets are validated elsewhere.
-            return List.of();
+            return ListUtils.of();
         }
 
         MemberShape actualMember = struct.getMember(member).orElse(null);
         if (actualMember == null) {
             // Stop because member-specific validation can't be performed.
-            return List.of(error(operation, trait, String.format(
+            return ListUtils.of(error(operation, trait, String.format(
                     "Operation %s member `%s` was not found for the `%s` trait.",
                     inputOrOutputName, member, trait.getRelativeName())));
         }
@@ -134,19 +135,19 @@ public class EventStreamValidator extends AbstractValidator {
                     .sorted()
                     .collect(Collectors.joining(", "));
             if (!invalidMembers.isEmpty()) {
-                return List.of(error(operation, trait, String.format(
+                return ListUtils.of(error(operation, trait, String.format(
                         "Operation %s member `%s` targets an invalid union `%s`; each member of an event "
                         + "stream union must target a structure shape, but the following union members do not: [%s]",
                         inputOrOutputName, member.getId(), referencedMember.getId(), invalidMembers)));
             }
         } else if (!referencedMember.isStructureShape()) {
-            return List.of(error(operation, trait, String.format(
+            return ListUtils.of(error(operation, trait, String.format(
                     "Operation %s member `%s` is referenced by the `%s` trait, so it must target a structure "
                     + "or union, but found %s, a %s.",
                     inputOrOutputName, member.getId(), trait.getRelativeName(),
                     referencedMember.getId(), referencedMember.getType())));
         }
 
-        return List.of();
+        return ListUtils.of();
     }
 }

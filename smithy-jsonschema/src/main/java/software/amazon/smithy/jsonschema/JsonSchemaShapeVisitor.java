@@ -51,6 +51,7 @@ import software.amazon.smithy.model.traits.PatternTrait;
 import software.amazon.smithy.model.traits.RangeTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
     private static final String UNION_STRATEGY_ONE_OF = "oneOf";
@@ -175,7 +176,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         Schema.Builder builder = createBuilder(container, "object");
 
         List<String> required = new ArrayList<>();
-        for (var member : memberShapes) {
+        for (MemberShape member : memberShapes) {
             String memberName = propertyNamingStrategy.toPropertyName(container, member, config);
             if (member.isRequired()) {
                 required.add(memberName);
@@ -199,11 +200,11 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
                 return structuredShape(shape, shape.getAllMembers().values());
             case UNION_STRATEGY_ONE_OF:
                 List<Schema> schemas = new ArrayList<>();
-                for (var member : shape.getAllMembers().values()) {
-                    var memberName = propertyNamingStrategy.toPropertyName(shape, member, config);
+                for (MemberShape member : shape.getAllMembers().values()) {
+                    String memberName = propertyNamingStrategy.toPropertyName(shape, member, config);
                     schemas.add(Schema.builder()
                             .type("object")
-                            .required(List.of(memberName))
+                            .required(ListUtils.of(memberName))
                             .putProperty(memberName, createRef(member))
                             .build());
                 }
@@ -301,7 +302,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
      * @return Returns the built schema.
      */
     private Schema buildSchema(Shape shape, Schema.Builder builder) {
-        for (var mapper : mappers) {
+        for (SchemaBuilderMapper mapper : mappers) {
             mapper.updateSchema(shape, builder, config);
         }
 

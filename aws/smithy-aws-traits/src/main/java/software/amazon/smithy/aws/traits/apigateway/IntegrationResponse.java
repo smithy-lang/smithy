@@ -11,6 +11,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * An API Gateway integration response object.
@@ -32,8 +33,8 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
     private IntegrationResponse(Builder builder) {
         statusCode = builder.statusCode;
         contentHandling = builder.contentHandling;
-        responseTemplates = Map.copyOf(builder.responseTemplates);
-        responseParameters = Map.copyOf(builder.responseParameters);
+        responseTemplates = MapUtils.copyOf(builder.responseTemplates);
+        responseParameters = MapUtils.copyOf(builder.responseParameters);
         sourceLocation = builder.sourceLocation;
     }
 

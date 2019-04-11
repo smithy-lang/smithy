@@ -25,6 +25,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates that if any operation in a service uses the http trait,
@@ -43,7 +44,7 @@ public final class HttpBindingsMissingValidator extends AbstractValidator {
         Set<OperationShape> operations = topDownIndex.getContainedOperations(service);
         // Stop early if there are no bindings at all in the model for any operation.
         if (operations.stream().noneMatch(this::hasBindings)) {
-            return List.of();
+            return ListUtils.of();
         }
 
         return operations.stream()

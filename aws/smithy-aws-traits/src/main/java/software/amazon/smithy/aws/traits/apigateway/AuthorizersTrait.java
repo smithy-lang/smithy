@@ -12,6 +12,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Defines a map of API Gateway {@code x-amazon-apigateway-authorizer}
@@ -33,7 +34,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
 
     private AuthorizersTrait(Builder builder) {
         super(TRAIT, builder.getSourceLocation());
-        authorizers = Map.copyOf(builder.authorizers);
+        authorizers = MapUtils.copyOf(builder.authorizers);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -45,7 +46,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
         public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             value.expectObjectNode().getMembers().forEach((key, node) -> {
-                var authorizer = Authorizer.fromNode(node.expectObjectNode());
+                Authorizer authorizer = Authorizer.fromNode(node.expectObjectNode());
                 builder.putAuthorizer(key.getValue(), authorizer);
             });
             return builder.build();

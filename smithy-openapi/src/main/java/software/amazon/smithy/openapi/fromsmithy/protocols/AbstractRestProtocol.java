@@ -33,6 +33,7 @@ import software.amazon.smithy.openapi.model.ParameterObject;
 import software.amazon.smithy.openapi.model.Ref;
 import software.amazon.smithy.openapi.model.RequestBodyObject;
 import software.amazon.smithy.openapi.model.ResponseObject;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Provides the shared functionality used across protocols that use Smithy's
@@ -83,10 +84,10 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     @Override
     public Optional<Operation> createOperation(Context context, OperationShape operation) {
         return operation.getTrait(HttpTrait.class).map(httpTrait -> {
-            var method = httpTrait.getMethod();
-            var uri = httpTrait.getUri().toString();
-            var builder = OperationObject.builder().operationId(operation.getId().getName());
-            var bindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
+            String method = httpTrait.getMethod();
+            String uri = httpTrait.getUri().toString();
+            OperationObject.Builder builder = OperationObject.builder().operationId(operation.getId().getName());
+            HttpBindingIndex bindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
             createPathParameters(context, operation).forEach(builder::addParameter);
             createQueryParameters(context, operation).forEach(builder::addParameter);
             createRequestHeaderParameters(context, operation).forEach(builder::addParameter);
@@ -100,17 +101,17 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         return context.getModel().getKnowledge(HttpBindingIndex.class)
                 .getRequestBindings(operation, HttpBindingIndex.Location.LABEL).stream()
                 .map(binding -> {
-                    var member = binding.getMember();
-                    var schema = context.createRef(binding.getMember());
-                    var paramBuilder = ModelUtils.createParameterMember(context, member).in("path");
+                    MemberShape member = binding.getMember();
+                    Schema schema = context.createRef(binding.getMember());
+                    ParameterObject.Builder paramBuilder = ModelUtils.createParameterMember(context, member).in("path");
                     // Timestamps sent in the URI are serialized as a date-time string by default.
-                    var needsInlineSchema = context.getModel().getShapeIndex().getShape(member.getTarget())
+                    boolean needsInlineSchema = context.getModel().getShapeIndex().getShape(member.getTarget())
                             .filter(Shape::isTimestampShape)
                             .isPresent()
                             && ModelUtils.getMemberTrait(context, member, TimestampFormatTrait.class).isEmpty();
                     if (needsInlineSchema) {
                         // Create a copy of the targeted schema and remove any possible numeric keywords.
-                        var copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
+                        Schema.Builder copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
                                 context.getSchema(context.getPointer(member)));
                         schema = copiedBuilder.format("date-time").build();
                     }
@@ -123,17 +124,17 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         return context.getModel().getKnowledge(HttpBindingIndex.class)
                 .getRequestBindings(operation, HttpBindingIndex.Location.QUERY).stream()
                 .map(binding -> {
-                    var param = ModelUtils.createParameterMember(context, binding.getMember())
+                    ParameterObject.Builder param = ModelUtils.createParameterMember(context, binding.getMember())
                             .in("query")
                             .name(binding.getLocationName());
-                    var target = context.getModel().getShapeIndex().getShape(binding.getMember().getTarget()).get();
+                    Shape target = context.getModel().getShapeIndex().getShape(binding.getMember().getTarget()).get();
 
                     // List and set shapes in the query string are repeated, so we need to "explode" them.
                     if (target instanceof CollectionShape) {
                         param.style("form").explode(true);
                     }
 
-                    var refSchema = context.createRef(binding.getMember());
+                    Schema refSchema = context.createRef(binding.getMember());
                     param.schema(target.accept(new QuerySchemaVisitor(context, refSchema, binding.getMember())));
                     return param.build();
                 })
@@ -141,7 +142,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     }
 
     private Collection<ParameterObject> createRequestHeaderParameters(Context context, OperationShape operation) {
-        var bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
+        List<HttpBindingIndex.Binding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
                 .getRequestBindings(operation, HttpBindingIndex.Location.HEADER);
         return createHeaderParameters(context, bindings, MessageType.REQUEST).values();
     }
@@ -153,15 +154,15 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     ) {
         return bindings.stream()
                 .map(binding -> {
-                    var param = ModelUtils.createParameterMember(context, binding.getMember());
+                    ParameterObject.Builder param = ModelUtils.createParameterMember(context, binding.getMember());
                     if (messageType == MessageType.REQUEST) {
                         param.in("header").name(binding.getLocationName());
                     } else {
                         // Response headers don't use "in" or "name".
                         param.in(null).name(null);
                     }
-                    var target = context.getModel().getShapeIndex().getShape(binding.getMember().getTarget()).get();
-                    var refSchema = context.createRef(binding.getMember());
+                    Shape target = context.getModel().getShapeIndex().getShape(binding.getMember().getTarget()).get();
+                    Schema refSchema = context.createRef(binding.getMember());
                     param.schema(target.accept(new HeaderSchemaVisitor(context, refSchema, binding.getMember())));
                     return Pair.of(binding.getLocationName(), param.build());
                 })
@@ -173,16 +174,19 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             HttpBindingIndex bindingIndex,
             OperationShape operation
     ) {
-        var payloadBindings = bindingIndex.getRequestBindings(operation, HttpBindingIndex.Location.PAYLOAD);
+        List<HttpBindingIndex.Binding> payloadBindings
+                = bindingIndex.getRequestBindings(operation, HttpBindingIndex.Location.PAYLOAD);
         return payloadBindings.isEmpty()
                ? createRequestDocument(context, bindingIndex, operation)
                : createRequestPayload(context, payloadBindings.get(0));
     }
 
     private Optional<RequestBodyObject> createRequestPayload(Context context, HttpBindingIndex.Binding binding) {
-        var mediaTypeObject = MediaTypeObject.builder().schema(context.createRef(binding.getMember())).build();
-        var mediaTypeRange = ModelUtils.getMediaType(context, binding.getMember());
-        var requestBuilder = RequestBodyObject.builder().putContent(mediaTypeRange, mediaTypeObject);
+        MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
+                .schema(context.createRef(binding.getMember())).build();
+        String mediaTypeRange = ModelUtils.getMediaType(context, binding.getMember());
+        RequestBodyObject.Builder requestBuilder = RequestBodyObject.builder()
+                .putContent(mediaTypeRange, mediaTypeObject);
         return Optional.of(requestBuilder.build());
     }
 
@@ -191,13 +195,14 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             HttpBindingIndex bindingIndex,
             OperationShape operation
     ) {
-        var bindings = bindingIndex.getRequestBindings(operation, HttpBindingIndex.Location.DOCUMENT);
+        List<HttpBindingIndex.Binding> bindings
+                = bindingIndex.getRequestBindings(operation, HttpBindingIndex.Location.DOCUMENT);
         if (bindings.isEmpty()) {
             return Optional.empty();
         }
 
-        var schema = createDocumentSchema(context, operation, bindings, MessageType.REQUEST);
-        var mediaType = getDocumentMediaType(context, operation, MessageType.REQUEST);
+        Schema schema = createDocumentSchema(context, operation, bindings, MessageType.REQUEST);
+        String mediaType = getDocumentMediaType(context, operation, MessageType.REQUEST);
         return Optional.of(RequestBodyObject.builder()
                 .putContent(mediaType, MediaTypeObject.builder().schema(schema).build())
                 .build());
@@ -208,16 +213,16 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             HttpBindingIndex bindingIndex,
             OperationShape operation
     ) {
-        var operationIndex = context.getModel().getKnowledge(OperationIndex.class);
+        OperationIndex operationIndex = context.getModel().getKnowledge(OperationIndex.class);
 
         // Add the successful response and errors. TODO: What about synthetic errors?
         return Stream.concat(
-                operationIndex.getOutput(operation).stream(),
+                OptionalUtils.stream(operationIndex.getOutput(operation)),
                 operationIndex.getErrors(operation).stream()
         ).map(shape -> {
             Shape operationOrError = shape.hasTrait(ErrorTrait.class) ? shape : operation;
             String statusCode = String.valueOf(bindingIndex.getResponseCode(operationOrError));
-            var response = createResponse(context, bindingIndex, statusCode, operation, operationOrError);
+            ResponseObject response = createResponse(context, bindingIndex, statusCode, operation, operationOrError);
             return Pair.of(statusCode, response);
         }).collect(Collectors.toMap(Pair::getLeft, Pair::getRight, (a, b) -> b, LinkedHashMap::new));
     }
@@ -229,7 +234,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             OperationShape operationShape,
             Shape operationOrError
     ) {
-        var responseBuilder = ResponseObject.builder();
+        ResponseObject.Builder responseBuilder = ResponseObject.builder();
         responseBuilder.description(String.format("%s %s response", operationOrError.getId().getName(), statusCode));
         createResponseHeaderParameters(context, operationShape)
                 .forEach((k, v) -> responseBuilder.putHeader(k, Ref.local(v)));
@@ -241,7 +246,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             Context context,
             OperationShape operation
     ) {
-        var bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
+        List<HttpBindingIndex.Binding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
                 .getResponseBindings(operation, HttpBindingIndex.Location.HEADER);
         return createHeaderParameters(context, bindings, MessageType.RESPONSE);
     }
@@ -252,7 +257,8 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             ResponseObject.Builder responseBuilder,
             Shape operationOrError
     ) {
-        var payloadBindings = bindingIndex.getResponseBindings(operationOrError, HttpBindingIndex.Location.PAYLOAD);
+        List<HttpBindingIndex.Binding> payloadBindings
+                = bindingIndex.getResponseBindings(operationOrError, HttpBindingIndex.Location.PAYLOAD);
         if (!payloadBindings.isEmpty()) {
             createResponsePayload(context, payloadBindings.get(0), responseBuilder);
         } else {
@@ -278,11 +284,14 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             ResponseObject.Builder responseBuilder,
             Shape operationOrError
     ) {
-        var bindings = bindingIndex.getResponseBindings(operationOrError, HttpBindingIndex.Location.DOCUMENT);
+        List<HttpBindingIndex.Binding> bindings
+                = bindingIndex.getResponseBindings(operationOrError, HttpBindingIndex.Location.DOCUMENT);
         if (!bindings.isEmpty()) {
-            var messageType = operationOrError instanceof OperationShape ? MessageType.RESPONSE : MessageType.ERROR;
-            var schema = createDocumentSchema(context, operationOrError, bindings, messageType);
-            var mediaType = getDocumentMediaType(context, operationOrError, messageType);
+            MessageType messageType = operationOrError instanceof OperationShape
+                    ? MessageType.RESPONSE
+                    : MessageType.ERROR;
+            Schema schema = createDocumentSchema(context, operationOrError, bindings, messageType);
+            String mediaType = getDocumentMediaType(context, operationOrError, messageType);
             responseBuilder.putContent(mediaType, MediaTypeObject.builder().schema(schema).build());
         }
     }
@@ -314,10 +323,10 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         }
 
         private Schema collection(CollectionShape collection) {
-            var memberTarget = context.getModel().getShapeIndex().getShape(collection.getMember().getTarget()).get();
-            var memberPointer = context.getPointer(collection.getMember());
-            var currentMemberSchema = context.getSchema(memberPointer);
-            var newMemberSchema = memberTarget.accept(
+            Shape memberTarget = context.getModel().getShapeIndex().getShape(collection.getMember().getTarget()).get();
+            String memberPointer = context.getPointer(collection.getMember());
+            Schema currentMemberSchema = context.getSchema(memberPointer);
+            Schema newMemberSchema = memberTarget.accept(
                     new QuerySchemaVisitor(context, currentMemberSchema, collection.getMember()));
             return schema.toBuilder().ref(null).type("array").items(newMemberSchema).build();
         }
@@ -332,7 +341,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                 return schema;
             }
 
-            var copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
+            Schema.Builder copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
                     context.getSchema(context.getPointer(member)));
             return copiedBuilder.format("date-time").build();
         }
@@ -373,10 +382,10 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         }
 
         private Schema collection(CollectionShape collection) {
-            var memberTarget = context.getModel().getShapeIndex().getShape(collection.getMember().getTarget()).get();
-            var memberPointer = context.getPointer(collection.getMember());
-            var currentMemberSchema = context.getSchema(memberPointer);
-            var newMemberSchema = memberTarget.accept(
+            Shape memberTarget = context.getModel().getShapeIndex().getShape(collection.getMember().getTarget()).get();
+            String memberPointer = context.getPointer(collection.getMember());
+            Schema currentMemberSchema = context.getSchema(memberPointer);
+            Schema newMemberSchema = memberTarget.accept(
                     new HeaderSchemaVisitor(context, currentMemberSchema, collection.getMember()));
             return schema.toBuilder().ref(null).type("array").items(newMemberSchema).build();
         }
@@ -391,7 +400,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             }
 
             // Uses an HTTP-date format by default.
-            var copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
+            Schema.Builder copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
                     context.getSchema(context.getPointer(member)));
             return copiedBuilder.format(null).build();
         }

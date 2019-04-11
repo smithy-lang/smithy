@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
+import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
@@ -34,6 +34,9 @@ import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Validates that neighbors target resolvable shapes of the correct type.
@@ -41,13 +44,13 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public class TargetValidator extends AbstractValidator {
 
     /** Valid member shape targets. */
-    private static final Set<ShapeType> INVALID_MEMBER_TARGETS = Set.of(
+    private static final Set<ShapeType> INVALID_MEMBER_TARGETS = SetUtils.of(
             ShapeType.SERVICE, ShapeType.RESOURCE, ShapeType.OPERATION, ShapeType.MEMBER);
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        var index = model.getShapeIndex();
-        var neighborProvider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
+        ShapeIndex index = model.getShapeIndex();
+        NeighborProvider neighborProvider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
         return index.shapes()
                 .flatMap(shape -> validateShape(index, shape, neighborProvider.getNeighbors(shape)))
                 .collect(Collectors.toList());
@@ -56,7 +59,8 @@ public class TargetValidator extends AbstractValidator {
     private Stream<ValidationEvent> validateShape(ShapeIndex index, Shape shape, List<Relationship> relationships) {
         return relationships.stream().flatMap(relationship -> {
             if (relationship.getNeighborShape().isPresent()) {
-                return validateTarget(index, shape, relationship.getNeighborShape().get(), relationship).stream();
+                return OptionalUtils.stream(
+                        validateTarget(index, shape, relationship.getNeighborShape().get(), relationship));
             } else {
                 return Stream.of(unresolvedTarget(shape, relationship));
             }
@@ -64,7 +68,7 @@ public class TargetValidator extends AbstractValidator {
     }
 
     private Optional<ValidationEvent> validateTarget(ShapeIndex index, Shape shape, Shape target, Relationship rel) {
-        var relType = rel.getRelationshipType();
+        RelationshipType relType = rel.getRelationshipType();
 
         switch (relType) {
             case MEMBER_TARGET:
@@ -125,7 +129,7 @@ public class TargetValidator extends AbstractValidator {
 
     private Optional<ValidationEvent> validateMapKey(Shape shape, ShapeId target, ShapeIndex index) {
         return index.getShape(target)
-                .filter(Predicate.not(Shape::isStringShape))
+                .filter(FunctionalUtils.not(Shape::isStringShape))
                 .map(resolved -> error(shape, format(
                         "Map key member targets %s, but is expected to target a string", resolved)));
     }

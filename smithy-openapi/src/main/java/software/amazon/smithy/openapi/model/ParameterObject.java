@@ -114,7 +114,7 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withOptionalMember("name", getName().map(Node::from))
                 .withOptionalMember("in", getIn().map(Node::from))
                 .withOptionalMember("description", getDescription().map(Node::from))

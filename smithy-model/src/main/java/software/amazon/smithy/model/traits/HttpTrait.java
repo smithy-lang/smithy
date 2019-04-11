@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.UriPattern;
@@ -23,6 +22,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Defines the HTTP request and response code bindings of an operation.
@@ -74,7 +74,7 @@ public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<Ht
 
     @Override
     protected Node createNode() {
-        return new ObjectNode(Map.of(), getSourceLocation())
+        return new ObjectNode(MapUtils.of(), getSourceLocation())
                 .withMember("method", Node.from(method))
                 .withMember("uri", Node.from(uri.toString()))
                 .withMember("code", Node.from(code));

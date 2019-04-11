@@ -20,6 +20,7 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.traits.StringListTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Indicates that the payload of an operation is not to be signed.
@@ -35,11 +36,11 @@ public final class UnsignedPayloadTrait extends StringListTrait implements ToSmi
     }
 
     public UnsignedPayloadTrait(FromSourceLocation sourceLocation) {
-        this(List.of(), sourceLocation);
+        this(ListUtils.of(), sourceLocation);
     }
 
     public UnsignedPayloadTrait() {
-        this(List.of(), SourceLocation.NONE);
+        this(ListUtils.of(), SourceLocation.NONE);
     }
 
     public static final class Provider extends StringListTrait.Provider<UnsignedPayloadTrait> {

@@ -27,6 +27,7 @@ import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.ListUtils;
 
 public final class OperationObject extends Component implements ToSmithyBuilder<OperationObject> {
     private final String summary;
@@ -44,18 +45,18 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
 
     private OperationObject(Builder builder) {
         super(builder);
-        tags = List.copyOf(builder.tags);
+        tags = ListUtils.copyOf(builder.tags);
         summary = builder.summary;
         description = builder.description;
         externalDocs = builder.externalDocs;
         operationId = builder.operationId;
-        parameters = List.copyOf(builder.parameters);
+        parameters = ListUtils.copyOf(builder.parameters);
         requestBody = builder.requestBody;
         responses = Collections.unmodifiableMap(new LinkedHashMap<>(builder.responses));
         deprecated = builder.deprecated;
         callbacks = Collections.unmodifiableMap(new LinkedHashMap<>(builder.callbacks));
-        security = List.copyOf(builder.security);
-        servers = List.copyOf(builder.servers);
+        security = ListUtils.copyOf(builder.security);
+        servers = ListUtils.copyOf(builder.servers);
     }
 
     public static Builder builder() {
@@ -112,7 +113,7 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withOptionalMember("description", getDescription().map(Node::from))
                 .withOptionalMember("summary", getSummary().map(Node::from))
                 .withOptionalMember("externalDocs", getExternalDocs())

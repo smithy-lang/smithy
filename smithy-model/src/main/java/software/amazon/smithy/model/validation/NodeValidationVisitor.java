@@ -60,6 +60,7 @@ import software.amazon.smithy.model.validation.nodevalidation.RangeTraitPlugin;
 import software.amazon.smithy.model.validation.nodevalidation.StringEnumPlugin;
 import software.amazon.smithy.model.validation.nodevalidation.StringLengthPlugin;
 import software.amazon.smithy.model.validation.nodevalidation.TimestampFormatPlugin;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates {@link Node} values provided for {@link Shape} definitions.
@@ -72,7 +73,7 @@ import software.amazon.smithy.model.validation.nodevalidation.TimestampFormatPlu
  * applied to the shape of the data.
  */
 public final class NodeValidationVisitor implements ShapeVisitor<List<ValidationEvent>> {
-    private static final List<NodeValidatorPlugin> PLUGINS = List.of(
+    private static final List<NodeValidatorPlugin> PLUGINS = ListUtils.of(
             new BlobLengthPlugin(),
             new CollectionLengthPlugin(),
             new IdRefPlugin(),
@@ -154,17 +155,17 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         return value.asNumberNode()
                 .map(number -> {
                     if (!number.isNaturalNumber()) {
-                        return List.of(event(
+                        return ListUtils.of(event(
                                 shape.getType() + " shapes must not have floating point values, but found `"
                                 + number.getValue() + "` provided for `" + shape.getId() + "`"));
                     }
 
                     Long numberValue = number.getValue().longValue();
                     if (min != null && numberValue < min) {
-                        return List.of(event(String.format(
+                        return ListUtils.of(event(String.format(
                                 "%s value must be > %d, but found %d", shape.getType(), min, numberValue)));
                     } else if (max != null && numberValue > max) {
-                        return List.of(event(String.format(
+                        return ListUtils.of(event(String.format(
                                 "%s value must be < %d, but found %d", shape.getType(), max, numberValue)));
                     } else {
                         return applyPlugins(shape);
@@ -349,11 +350,11 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         } else if (value.isBooleanNode()) {
             message += ", `" + value.expectBooleanNode().getValue() + "`";
         }
-        return List.of(event(message));
+        return ListUtils.of(event(message));
     }
 
     private List<ValidationEvent> invalidSchema(Shape shape) {
-        return List.of(event("Encountered invalid shape type: " + shape.getType()));
+        return ListUtils.of(event("Encountered invalid shape type: " + shape.getType()));
     }
 
     private ValidationEvent event(String message) {

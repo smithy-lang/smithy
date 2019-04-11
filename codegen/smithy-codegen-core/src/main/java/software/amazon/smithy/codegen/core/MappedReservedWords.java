@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import software.amazon.smithy.model.SmithyBuilder;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * A reserved words implementation that maps known words to other words.
@@ -62,8 +63,8 @@ public final class MappedReservedWords implements ReservedWords {
      * @param caseInsensitiveMappings Map of case-insensitive reserved word to replacement words.
      */
     public MappedReservedWords(Map<String, String> mappings, Map<String, String> caseInsensitiveMappings) {
-        this.mappings = Map.copyOf(mappings);
-        this.caseInsensitiveMappings = Map.copyOf(caseInsensitiveMappings);
+        this.mappings = MapUtils.copyOf(mappings);
+        this.caseInsensitiveMappings = MapUtils.copyOf(caseInsensitiveMappings);
     }
 
     /**

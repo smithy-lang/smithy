@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import software.amazon.smithy.aws.traits.apigateway.IntegrationTraitIndex;
 import software.amazon.smithy.aws.traits.apigateway.MockIntegrationTrait;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
@@ -33,10 +34,10 @@ public final class AddIntegrations implements SmithyOpenApiPlugin {
 
     @Override
     public OperationObject updateOperation(Context context, OperationShape shape, OperationObject operation) {
-        var index = context.getModel().getKnowledge(IntegrationTraitIndex.class);
+        IntegrationTraitIndex index = context.getModel().getKnowledge(IntegrationTraitIndex.class);
         return index.getIntegrationTrait(context.getService(), shape)
                 .map(trait -> {
-                    var node = trait.toNode().expectObjectNode();
+                    ObjectNode node = trait.toNode().expectObjectNode();
                     if (trait instanceof MockIntegrationTrait) {
                         node = node.withMember("type", Node.from("mock"));
                     }

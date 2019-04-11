@@ -34,6 +34,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates that httpLabel traits are applied correctly for operation inputs.
@@ -64,7 +65,7 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
     private List<ValidationEvent> validateStructure(ShapeIndex index, OperationShape operation, HttpTrait http) {
         // If the operation has labels then it must also have input.
         if (operation.getInput().isEmpty() && !http.getUri().getLabels().isEmpty()) {
-            return List.of(error(operation, http, String.format(
+            return ListUtils.of(error(operation, http, String.format(
                     "`http` trait uri contains labels (%s), but operation has no input.",
                     ValidationUtils.tickedList(http.getUri().getLabels().stream()
                                        .map(UriPattern.Segment::getContent).collect(Collectors.toSet())))));
@@ -74,7 +75,7 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
         // validation of the input is handled elsewhere.
         return operation.getInput().flatMap(index::getShape).flatMap(Shape::asStructureShape)
                 .map(input -> validateBindings(index, operation, http, input))
-                .orElse(List.of());
+                .orElse(ListUtils.of());
     }
 
     private List<ValidationEvent> validateBindings(

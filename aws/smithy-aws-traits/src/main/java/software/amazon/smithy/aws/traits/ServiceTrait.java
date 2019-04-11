@@ -29,6 +29,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Registers a service as an AWS service. This trait is required for all AWS
@@ -61,11 +62,11 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            var objectNode = value.expectObjectNode();
+            ObjectNode objectNode = value.expectObjectNode();
             objectNode.warnIfAdditionalProperties(Arrays.asList(
                     "sdkId", "arnNamespace", "cloudFormationName", "cloudTrailEventSource", "abbreviation"));
 
-            var builder = builder();
+            Builder builder = builder();
             String sdkId = getOneStringValue(objectNode, "sdkId", "sdkServiceId")
                     .orElseThrow(() -> new SourceException(String.format(
                             "No sdkId was provided. Perhaps you could set this to %s?",
@@ -84,16 +85,14 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     }
 
     private static Optional<String> getOneStringValue(ObjectNode object, String key1, String key2) {
-        return object.getStringMember(key1)
-                .or(() -> {
-                    var result = object.getStringMember(key2);
-                    if (result.isPresent()) {
-                        LOGGER.warning(() -> "The `" + TRAIT + "` property `" + key2 + "` is deprecated. Use `"
-                                             + key1 + "` instead.");
-                    }
-                    return result;
-                })
-                .map(StringNode::getValue);
+        return OptionalUtils.or(object.getStringMember(key1), () -> {
+            Optional<StringNode> result = object.getStringMember(key2);
+            if (result.isPresent()) {
+                LOGGER.warning(() -> "The `" + TRAIT + "` property `" + key2 + "` is deprecated. Use `"
+                                     + key1 + "` instead.");
+            }
+            return result;
+        }).map(StringNode::getValue);
     }
 
     /**

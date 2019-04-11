@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.build;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +27,7 @@ import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.utils.IoUtils;
 
 /**
  * Loads a {@link SmithyBuildConfig} from disk.
@@ -55,18 +54,10 @@ final class ConfigLoader {
 
     SmithyBuildConfig load(Path path) {
         try {
-            String content = loadFileContents(path);
+            String content = IoUtils.readUtf8File(path);
             return load(loadWithJson(path, content).expectObjectNode(), path);
         } catch (ModelSyntaxException e) {
             throw new SmithyBuildException(e);
-        }
-    }
-
-    private static String loadFileContents(Path path) {
-        try {
-            return Files.readString(path);
-        } catch (IOException e) {
-            throw new SmithyBuildException("Error loading `" + path + "`: " + e.getMessage(), e);
         }
     }
 

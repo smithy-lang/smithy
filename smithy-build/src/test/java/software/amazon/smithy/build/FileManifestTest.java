@@ -63,7 +63,7 @@ public class FileManifestTest {
 
     @Test
     public void pathsMustBeWithinBaseDir() {
-        var thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
+        Exception thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
             FileManifest a = FileManifest.create(outputDirectory);
             a.addFile(Paths.get("/not/within/parent"));
         });

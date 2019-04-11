@@ -40,7 +40,7 @@ public class SmithyBuildConfigTest {
 
     @Test
     public void throwsWithCorrectSyntaxErrorMessage() throws Exception {
-        var thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
+        Exception thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
             SmithyBuildConfig.load(Paths.get(getClass().getResource("bad-syntax.json").toURI()));
         });
 
@@ -49,7 +49,7 @@ public class SmithyBuildConfigTest {
 
     @Test
     public void requiresVersion() throws Exception {
-        var thrown = Assertions.assertThrows(SourceException.class, () -> {
+        Exception thrown = Assertions.assertThrows(SourceException.class, () -> {
             SmithyBuildConfig.load(Paths.get(getClass().getResource("missing-version.json").toURI()));
         });
 

@@ -16,6 +16,7 @@
 package software.amazon.smithy.cli.commands;
 
 import java.nio.file.Paths;
+import java.util.List;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
@@ -27,6 +28,7 @@ import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.LoaderUtils;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 
@@ -66,10 +68,10 @@ public final class GenerateCommand implements Command {
 
     @Override
     public void execute(Arguments arguments) {
-        var plugin = arguments.parameter("--plugin");
-        var settings = arguments.parameter("--settings", null);
-        var output = arguments.parameter("--output");
-        var models = arguments.positionalArguments();
+        String plugin = arguments.parameter("--plugin");
+        String settings = arguments.parameter("--settings", null);
+        String output = arguments.parameter("--output");
+        List<String> models = arguments.positionalArguments();
 
         if (models.isEmpty()) {
             throw new CliError("No models were provided as positional arguments");
@@ -94,8 +96,8 @@ public final class GenerateCommand implements Command {
 
         System.err.println(String.format("Generating '%s' for Smithy models: %s", plugin, String.join(" ", models)));
 
-        var loader = SmithyCli.getConfiguredClassLoader();
-        var assembler = Model.assembler(loader);
+        ClassLoader loader = SmithyCli.getConfiguredClassLoader();
+        ModelAssembler assembler = Model.assembler(loader);
 
         if (arguments.has("--discover")) {
             System.err.println("Enabling model discovery");
@@ -103,13 +105,13 @@ public final class GenerateCommand implements Command {
         }
 
         models.forEach(assembler::addImport);
-        var model = assembler.assemble().unwrap();
+        Model model = assembler.assemble().unwrap();
 
-        var buildPlugin = loadSmithyBuildPlugin(loader, plugin);
-        var manifest = FileManifest.create(Paths.get(output));
+        SmithyBuildPlugin buildPlugin = loadSmithyBuildPlugin(loader, plugin);
+        FileManifest manifest = FileManifest.create(Paths.get(output));
         System.err.println(String.format("Output directory set to: %s", output));
 
-        var context = PluginContext.builder()
+        PluginContext context = PluginContext.builder()
                 .model(model)
                 .settings(settingsObject)
                 .fileManifest(manifest)

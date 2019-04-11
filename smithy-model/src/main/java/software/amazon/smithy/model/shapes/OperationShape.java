@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Represents an API operation.
@@ -32,7 +33,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
 
     private OperationShape(Builder builder) {
         super(builder, ShapeType.OPERATION, false);
-        errors = List.copyOf(builder.errors);
+        errors = ListUtils.copyOf(builder.errors);
         input = builder.input;
         output = builder.output;
     }

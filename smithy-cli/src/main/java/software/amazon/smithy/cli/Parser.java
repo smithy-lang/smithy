@@ -38,7 +38,7 @@ public final class Parser {
         this.positionalName = builder.positionalName;
         this.positionalHelp = builder.positionalHelp;
 
-        for (var argument : argumentList) {
+        for (Parser.Argument argument : argumentList) {
             argument.getShortName().ifPresent(name -> argumentMap.put(name, argument));
             argument.getLongName().ifPresent(name -> argumentMap.put(name, argument));
         }

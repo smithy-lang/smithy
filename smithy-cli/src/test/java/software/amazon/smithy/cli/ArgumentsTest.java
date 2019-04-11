@@ -18,16 +18,16 @@ package software.amazon.smithy.cli;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 public class ArgumentsTest {
     @Test
     public void throwsIfParameterNotPresent() {
         Assertions.assertThrows(CliError.class, () -> {
-            Arguments arguments = new Arguments(Map.of(), List.of());
+            Arguments arguments = new Arguments(MapUtils.of(), ListUtils.of());
             arguments.parameter("foo");
         });
     }
@@ -35,28 +35,28 @@ public class ArgumentsTest {
     @Test
     public void throwsIfParameterIsOption() {
         Assertions.assertThrows(CliError.class, () -> {
-            Arguments arguments = new Arguments(Map.of("foo", List.of()), List.of());
+            Arguments arguments = new Arguments(MapUtils.of("foo", ListUtils.of()), ListUtils.of());
             arguments.parameter("foo");
         });
     }
 
     public void returnsDefaultParameterValue() {
-        Arguments arguments = new Arguments(Map.of("foo", List.of("baz")), List.of());
+        Arguments arguments = new Arguments(MapUtils.of("foo", ListUtils.of("baz")), ListUtils.of());
 
         assertThat(arguments.parameter("foo", "default"), equalTo("baz"));
         assertThat(arguments.parameter("not-foo", "default"), equalTo("default"));
     }
 
     public void returnsDefaultRepeatedParameterValue() {
-        Arguments arguments = new Arguments(Map.of("foo", List.of("a", "b")), List.of());
+        Arguments arguments = new Arguments(MapUtils.of("foo", ListUtils.of("a", "b")), ListUtils.of());
 
-        assertThat(arguments.repeatedParameter("foo", List.of("default")), equalTo(List.of("a", "b")));
-        assertThat(arguments.repeatedParameter("not-foo", List.of("default")), equalTo(List.of("default")));
+        assertThat(arguments.repeatedParameter("foo", ListUtils.of("default")), equalTo(ListUtils.of("a", "b")));
+        assertThat(arguments.repeatedParameter("not-foo", ListUtils.of("default")), equalTo(ListUtils.of("default")));
     }
 
     public void hasPositionalArguments() {
-        Arguments arguments = new Arguments(Map.of(), List.of("a", "b"));
+        Arguments arguments = new Arguments(MapUtils.of(), ListUtils.of("a", "b"));
 
-        assertThat(arguments.positionalArguments(), equalTo(List.of("a", "b")));
+        assertThat(arguments.positionalArguments(), equalTo(ListUtils.of("a", "b")));
     }
 }

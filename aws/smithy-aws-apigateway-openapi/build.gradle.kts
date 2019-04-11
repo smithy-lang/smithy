@@ -17,6 +17,7 @@ extra["moduleName"] = "software.amazon.smithy.aws.apigateway.openapi"
 
 dependencies {
     api(project(":smithy-model"))
+    api(project(":smithy-utils"))
     api(project(":smithy-openapi"))
     api(project(":smithy-aws-traits"))
 }

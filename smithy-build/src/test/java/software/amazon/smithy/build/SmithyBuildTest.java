@@ -45,6 +45,8 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 public class SmithyBuildTest {
     private Path outputDirectory;
@@ -177,7 +179,7 @@ public class SmithyBuildTest {
 
     @Test
     public void cannotSetFiltersOrMappersOnSourceProjection() {
-        var thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
             SmithyBuildConfig config = SmithyBuildConfig.builder()
                     .addProjection(Projection.builder()
                                            .name("source")
@@ -224,10 +226,10 @@ public class SmithyBuildTest {
 
     @Test
     public void appliesPlugins() throws Exception {
-        var plugins = Map.of("test1", new Test1Plugin(), "test2", new Test2Plugin());
-        var factory = SmithyBuildPlugin.createServiceFactory();
-        Function<String, Optional<SmithyBuildPlugin>> composed = name -> Optional.ofNullable(plugins.get(name))
-                .or(() -> factory.apply(name));
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of("test1", new Test1Plugin(), "test2", new Test2Plugin());
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
 
         SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
         builder.fileManifestFactory(MockManifest::new);
@@ -289,7 +291,7 @@ public class SmithyBuildTest {
 
     @Test
     public void detectsCyclesInApplyProjection() throws Exception {
-        var thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
             SmithyBuildConfig config = SmithyBuildConfig.builder()
                     .load(Paths.get(getClass().getResource("apply-cycle.json").toURI()))
                     .build();
@@ -301,7 +303,7 @@ public class SmithyBuildTest {
 
     @Test
     public void detectsMissingApplyProjection() throws Exception {
-        var thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
             SmithyBuildConfig config = SmithyBuildConfig.builder()
                     .load(Paths.get(getClass().getResource("apply-invalid-projection.json").toURI()))
                     .build();

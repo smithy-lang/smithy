@@ -28,6 +28,7 @@ import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates that each operation in the closure of a service resolves to a
@@ -39,14 +40,14 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class AuthProtocolsValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        var topDownIndex = model.getKnowledge(TopDownIndex.class);
+        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
         return model.getShapeIndex().shapes(ServiceShape.class)
                 .flatMap(service -> validateOperationAgainstProtocols(topDownIndex, service))
                 .collect(Collectors.toList());
     }
 
     private Stream<ValidationEvent> validateOperationAgainstProtocols(TopDownIndex index, ServiceShape service) {
-        var protocolsTrait = service.getTrait(ProtocolsTrait.class).orElse(null);
+        ProtocolsTrait protocolsTrait = service.getTrait(ProtocolsTrait.class).orElse(null);
         if (protocolsTrait == null) {
             return Stream.empty();
         }
@@ -54,8 +55,8 @@ public final class AuthProtocolsValidator extends AbstractValidator {
         // Ensure that every operation is valid for this protocol.
         return protocolsTrait.getProtocols().stream()
                 .flatMap(protocol -> index.getContainedOperations(service).stream()
-                        .flatMap(operation -> validateOperationSchemesAgainstProtocols(service, operation, protocol)
-                                .stream()));
+                        .flatMap(operation -> OptionalUtils.stream(
+                                validateOperationSchemesAgainstProtocols(service, operation, protocol))));
     }
 
     private Optional<ValidationEvent> validateOperationSchemesAgainstProtocols(
@@ -64,7 +65,8 @@ public final class AuthProtocolsValidator extends AbstractValidator {
             Protocol protocol
     ) {
         // Either the operation or the service has an "auth" trait.
-        var authTrait = operation.getTrait(AuthTrait.class).or(() -> service.getTrait(AuthTrait.class)).orElse(null);
+        AuthTrait authTrait = OptionalUtils.or(operation.getTrait(AuthTrait.class),
+                () -> service.getTrait(AuthTrait.class)).orElse(null);
 
         // If no auth trait was found, then assume the operation is
         // compatible with all auth schemes.
@@ -74,8 +76,8 @@ public final class AuthProtocolsValidator extends AbstractValidator {
 
         // Check if any of the schemes on the operation or service are also
         // supported by the protocol.
-        var supportedSchemes = protocol.getAuth();
-        var values = authTrait.getValues();
+        List<String> supportedSchemes = protocol.getAuth();
+        List<String> values = authTrait.getValues();
 
         // Each protocols trait is assumed to support "none".
         if (values.contains(ProtocolsTrait.NONE_AUTH) || values.stream().anyMatch(supportedSchemes::contains)) {

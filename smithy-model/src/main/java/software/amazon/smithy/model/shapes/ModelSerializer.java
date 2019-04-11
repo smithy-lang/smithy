@@ -37,6 +37,8 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Serializes a {@link Model} to an {@link ObjectNode}.
@@ -61,7 +63,7 @@ public final class ModelSerializer {
         metadataFilter = builder.metadataFilter;
         traitDefinitionFilter = builder.traitDefinitionFilter
                 .and(def -> !Prelude.isPreludeTraitDefinition(def.getFullyQualifiedName()));
-        shapeFilter = builder.shapeFilter.and(Predicate.not(Prelude::isPreludeShape));
+        shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
         traitFilter = builder.traitFilter;
     }
 
@@ -84,12 +86,12 @@ public final class ModelSerializer {
     }
 
     private ObjectNode createNamespaceNode(Namespace namespace) {
-        var builder = Node.objectNodeBuilder();
+        ObjectNode.Builder builder = Node.objectNodeBuilder();
 
         if (!namespace.shapes.isEmpty()) {
             builder.withMember("shapes", namespace.shapes.stream()
                     // Members are serialized inside of other shapes, so filter them out.
-                    .filter(Predicate.not(Shape::isMemberShape))
+                    .filter(FunctionalUtils.not(Shape::isMemberShape))
                     .map(shape -> Pair.of(shape, shape.accept(shapeSerializer)))
                     .sorted(Comparator.comparing(pair -> pair.getLeft().getId().getName()))
                     .collect(ObjectNode.collectStringKeys(pair -> pair.getLeft().getId().getName(), Pair::getRight)));
@@ -132,8 +134,8 @@ public final class ModelSerializer {
         final List<TraitDefinition> traitDefinitions;
 
         Namespace(List<Shape> shapes, List<TraitDefinition> traitDefinitions) {
-            this.shapes = shapes != null ? shapes : List.of();
-            this.traitDefinitions = traitDefinitions != null ? traitDefinitions : List.of();
+            this.shapes = shapes != null ? shapes : ListUtils.of();
+            this.traitDefinitions = traitDefinitions != null ? traitDefinitions : ListUtils.of();
         }
     }
 

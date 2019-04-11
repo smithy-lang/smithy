@@ -24,6 +24,7 @@ import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates that the value contained in a string shape is a valid shape ID
@@ -41,20 +42,20 @@ public final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, St
     @Override
     protected List<String> check(Shape shape, IdRefTrait trait, StringNode node, ShapeIndex index) {
         try {
-            var target = node.getValue();
-            var resolved = Prelude.resolveShapeId(index, shape.getId().getNamespace(), target).orElse(null);
+            String target = node.getValue();
+            Shape resolved = Prelude.resolveShapeId(index, shape.getId().getNamespace(), target).orElse(null);
             if (resolved == null) {
                 return trait.failWhenMissing()
                        ? failWhenNoMatch(trait, String.format("Shape ID `%s` was not found in the model", target))
-                       : List.of();
+                       : ListUtils.of();
             } else if (matchesSelector(trait, resolved.getId(), index)) {
-                return List.of();
+                return ListUtils.of();
             }
 
             return failWhenNoMatch(trait, String.format(
                     "Shape ID `%s` does not match selector `%s`", resolved.getId(), trait.getSelector()));
         } catch (ShapeIdSyntaxException e) {
-            return List.of(e.getMessage());
+            return ListUtils.of(e.getMessage());
         }
     }
 
@@ -65,6 +66,6 @@ public final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, St
     }
 
     private List<String> failWhenNoMatch(IdRefTrait trait, String message) {
-        return List.of(trait.getErrorMessage().orElse(message));
+        return ListUtils.of(trait.getErrorMessage().orElse(message));
     }
 }

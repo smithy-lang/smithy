@@ -16,6 +16,7 @@
 package software.amazon.smithy.codegen.core;
 
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Provides {@link Symbol} objects for shapes.

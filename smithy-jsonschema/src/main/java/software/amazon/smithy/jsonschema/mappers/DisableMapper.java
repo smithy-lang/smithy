@@ -32,7 +32,7 @@ public final class DisableMapper implements SchemaBuilderMapper {
 
     @Override
     public Schema.Builder updateSchema(Shape shape, Schema.Builder schema, ObjectNode config) {
-        for (var key : config.getMembersByPrefix("disable.").keySet()) {
+        for (String key : config.getMembersByPrefix("disable.").keySet()) {
             schema.disableProperty(key);
         }
 

@@ -22,12 +22,12 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.ListUtils;
 
 public class ProtocolsTraitTest {
     @Test
@@ -35,11 +35,11 @@ public class ProtocolsTraitTest {
         Node node = Node.arrayNode()
                 .withValue(Node.objectNode()
                         .withMember("name", Node.from("foo"))
-                        .withMember("auth", ArrayNode.fromStrings(List.of("foo"))))
+                        .withMember("auth", ArrayNode.fromStrings(ListUtils.of("foo"))))
                 .withValue(Node.objectNode()
                         .withMember("name", Node.from("baz"))
-                        .withMember("tags", ArrayNode.fromStrings(List.of("foo", "bar", "baz")))
-                        .withMember("auth", ArrayNode.fromStrings(List.of("abc", "def"))));
+                        .withMember("tags", ArrayNode.fromStrings(ListUtils.of("foo", "bar", "baz")))
+                        .withMember("auth", ArrayNode.fromStrings(ListUtils.of("abc", "def"))));
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait("smithy.api#protocols", ShapeId.from("ns.qux#foo"), node);
 

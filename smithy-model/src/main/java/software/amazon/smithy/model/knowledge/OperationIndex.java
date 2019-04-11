@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Index of operation IDs to their resolved input, output, and error
@@ -41,7 +42,7 @@ public final class OperationIndex implements KnowledgeIndex {
     private final Map<ShapeId, List<StructureShape>> errors = new HashMap<>();
 
     public OperationIndex(Model model) {
-        var index = model.getShapeIndex();
+        ShapeIndex index = model.getShapeIndex();
         index.shapes(OperationShape.class).forEach(operation -> {
             operation.getInput()
                     .flatMap(id -> getStructure(index, id))
@@ -68,7 +69,7 @@ public final class OperationIndex implements KnowledgeIndex {
     }
 
     public List<StructureShape> getErrors(ToShapeId operation) {
-        return errors.getOrDefault(operation.toShapeId(), List.of());
+        return errors.getOrDefault(operation.toShapeId(), ListUtils.of());
     }
 
     private Optional<StructureShape> getStructure(ShapeIndex index, ToShapeId id) {

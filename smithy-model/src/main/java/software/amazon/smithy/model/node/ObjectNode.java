@@ -34,12 +34,13 @@ import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Represents an object node.
  */
 public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode> {
-    static final ObjectNode EMPTY = new ObjectNode(Map.of(), SourceLocation.none(), false);
+    static final ObjectNode EMPTY = new ObjectNode(MapUtils.of(), SourceLocation.none(), false);
     private static final Logger LOGGER = Logger.getLogger(ObjectNode.class.getName());
 
     private final Map<StringNode, Node> nodeMap;
@@ -518,7 +519,7 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
         }
 
         public Builder merge(ObjectNode other) {
-            for (var entry : other.getMembers().entrySet()) {
+            for (Map.Entry<StringNode, Node> entry : other.getMembers().entrySet()) {
                 nodeMap.put(entry.getKey(), entry.getValue());
             }
             return this;

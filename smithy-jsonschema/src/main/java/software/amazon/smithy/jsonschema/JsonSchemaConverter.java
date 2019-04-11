@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.PrivateTrait;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Converts a Smithy model index to a JSON schema document.
@@ -60,7 +61,7 @@ public final class JsonSchemaConverter {
      * @return Returns the copied converter.
      */
     public JsonSchemaConverter copy() {
-        var copy = create();
+        JsonSchemaConverter copy = create();
         copy.config = config;
         copy.customMappers.addAll(customMappers);
         copy.discoveredMappers.addAll(discoveredMappers);
@@ -182,7 +183,7 @@ public final class JsonSchemaConverter {
 
     private JsonSchemaConverter loadMapperServices(Iterable<SchemaBuilderMapper> mappers) {
         alreadyDiscoveredMappers = true;
-        for (var mapper : mappers) {
+        for (SchemaBuilderMapper mapper : mappers) {
             discoveredMappers.add(mapper);
         }
         return this;
@@ -223,7 +224,7 @@ public final class JsonSchemaConverter {
         resolvedMappers.addAll(customMappers);
         resolvedMappers.sort(Comparator.comparing(SchemaBuilderMapper::getOrder));
 
-        var builder = SchemaDocument.builder();
+        SchemaDocument.Builder builder = SchemaDocument.builder();
         JsonSchemaShapeVisitor visitor = new JsonSchemaShapeVisitor(
                 shapeIndex, getConfig(), getRefStrategy(), getPropertyNamingStrategy(), resolvedMappers);
 
@@ -232,7 +233,7 @@ public final class JsonSchemaConverter {
         }
 
         addExtensions(builder);
-        var predicate = composePredicate(shapeIndex, rootShape);
+        Predicate<Shape> predicate = composePredicate(shapeIndex, rootShape);
         shapeIndex.shapes()
                 .filter(predicate)
                 // Don't include members if their container was excluded.
@@ -250,9 +251,9 @@ public final class JsonSchemaConverter {
         // Don't write the root shape to the definitions.
         Predicate<Shape> predicate = (shape -> rootShape == null || !shape.getId().equals(rootShape.getId()));
         // Ignore any shape defined by the prelude.
-        predicate = predicate.and(Predicate.not(Prelude::isPreludeShape));
+        predicate = predicate.and(FunctionalUtils.not(Prelude::isPreludeShape));
         // Don't convert unsupported shapes.
-        predicate = predicate.and(Predicate.not(this::isUnsupportedShapeType));
+        predicate = predicate.and(FunctionalUtils.not(this::isUnsupportedShapeType));
         // Don't convert excluded private shapes.
         predicate = predicate.and(shape -> !isExcludedPrivateShape(shapeIndex, shape));
         // Filter by the custom predicate.

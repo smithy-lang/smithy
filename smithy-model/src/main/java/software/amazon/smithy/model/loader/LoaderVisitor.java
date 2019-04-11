@@ -50,6 +50,8 @@ import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Visitor used to drive the creation of a Model.
@@ -60,7 +62,7 @@ import software.amazon.smithy.model.validation.Validator;
  * rather than logic around duplication detection, trait loading, etc.
  */
 public final class LoaderVisitor {
-    private static final List<String> SUPPORTED_VERSIONS = List.of("1.0");
+    private static final List<String> SUPPORTED_VERSIONS = ListUtils.of("1.0");
     private static final Logger LOGGER = Logger.getLogger(LoaderVisitor.class.getName());
 
     /** Whether or not a call to {@link #onEnd()} has been made. */
@@ -128,7 +130,7 @@ public final class LoaderVisitor {
      * @param traitFactory Trait factory to use when resolving traits.
      */
     public LoaderVisitor(TraitFactory traitFactory) {
-        this(traitFactory, Map.of());
+        this(traitFactory, MapUtils.of());
     }
 
     /**
@@ -277,7 +279,7 @@ public final class LoaderVisitor {
      */
     public void onShape(AbstractShapeBuilder shapeBuilder) {
         validateState();
-        var id = SmithyBuilder.requiredState("id", shapeBuilder.getId());
+        ShapeId id = SmithyBuilder.requiredState("id", shapeBuilder.getId());
         if (validateOnShape(id, shapeBuilder)) {
             pendingShapes.put(id, shapeBuilder);
         }
@@ -337,7 +339,7 @@ public final class LoaderVisitor {
      */
     public void onTrait(ShapeId target, String currentNamespace, String traitName, Node traitValue) {
         validateState();
-        var pendingTrait = new PendingTrait(currentNamespace, traitName, traitValue);
+        PendingTrait pendingTrait = new PendingTrait(currentNamespace, traitName, traitValue);
         pendingTraits.computeIfAbsent(target, id -> new ArrayList<>()).add(pendingTrait);
     }
 
@@ -404,10 +406,10 @@ public final class LoaderVisitor {
         if (!metadata.containsKey(key)) {
             metadata.put(key, value);
         } else if (metadata.get(key).isArrayNode() && value.isArrayNode()) {
-            var previous = metadata.get(key).expectArrayNode();
-            var merged = new ArrayList<>(previous.getElements());
+            ArrayNode previous = metadata.get(key).expectArrayNode();
+            List<Node> merged = new ArrayList<>(previous.getElements());
             merged.addAll(value.expectArrayNode().getElements());
-            var mergedArray = new ArrayNode(merged, value.getSourceLocation());
+            ArrayNode mergedArray = new ArrayNode(merged, value.getSourceLocation());
             metadata.put(key, mergedArray);
         } else if (!metadata.get(key).equals(value)) {
             onError(ValidationEvent.builder()
@@ -431,8 +433,8 @@ public final class LoaderVisitor {
     public ValidatedResult<Model> onEnd() {
         validateState();
         calledOnEnd = true;
-        var modelBuilder = Model.builder().smithyVersion(smithyVersion).metadata(metadata);
-        var shapeIndexBuilder = ShapeIndex.builder();
+        Model.Builder modelBuilder = Model.builder().smithyVersion(smithyVersion).metadata(metadata);
+        ShapeIndex.Builder shapeIndexBuilder = ShapeIndex.builder();
 
         finalizeShapeTargets();
         finalizePendingTraitDefinitions();
@@ -445,7 +447,7 @@ public final class LoaderVisitor {
         // pending shapes because a collection can't be modified while
         // iterating.
         List<ShapeId> needsConversion = new ArrayList<>();
-        for (var builder : pendingShapes.values()) {
+        for (AbstractShapeBuilder builder : pendingShapes.values()) {
             if (builder instanceof MemberShape.Builder) {
                 needsConversion.add(builder.getId().withoutMember());
             }
@@ -453,11 +455,11 @@ public final class LoaderVisitor {
         needsConversion.forEach(this::resolveShapeBuilder);
 
         // Build members and add them to their containing shape builders.
-        for (var shape : pendingShapes.values()) {
+        for (AbstractShapeBuilder shape : pendingShapes.values()) {
             if (shape.getClass() == MemberShape.Builder.class) {
-                var member = (MemberShape) buildShape(shapeIndexBuilder, shape);
+                MemberShape member = (MemberShape) buildShape(shapeIndexBuilder, shape);
                 if (member != null) {
-                    var container = pendingShapes.get(shape.getId().withoutMember());
+                    AbstractShapeBuilder container = pendingShapes.get(shape.getId().withoutMember());
                     if (container == null) {
                         throw new IllegalStateException(format(
                                 "Member shape `%s` added to non-existent shape", member.getId()));
@@ -469,7 +471,7 @@ public final class LoaderVisitor {
         }
 
         // Now that members were built, build all non-members.
-        for (var shape : pendingShapes.values()) {
+        for (AbstractShapeBuilder shape : pendingShapes.values()) {
             if (shape.getClass() != MemberShape.Builder.class) {
                 buildShape(shapeIndexBuilder, shape);
             }
@@ -483,7 +485,7 @@ public final class LoaderVisitor {
 
     private void finalizeShapeTargets() {
         // Run any finalizers used for things like forward reference resolution.
-        for (var resolver : forwardReferenceResolvers) {
+        for (ForwardReferenceResolver resolver : forwardReferenceResolvers) {
             // First, resolve to a shape in the current namespace if one exists.
             if (!hasDefinedShape(resolver.expectedId)) {
                 // Next resolve to a prelude shape if one exists and is public.
@@ -501,22 +503,22 @@ public final class LoaderVisitor {
     }
 
     private void finalizePendingTraitDefinitions() {
-        for (var definition : pendingTraitDefinitions.entrySet()) {
+        for (Map.Entry<String, TraitDefinition.Builder> definition : pendingTraitDefinitions.entrySet()) {
             builtTraitDefinitions.put(definition.getKey(), definition.getValue().build());
         }
     }
 
     private void finalizePendingTraits() {
         // Build trait nodes and add them to their shape builders.
-        for (var entry : pendingTraits.entrySet()) {
-            var target = entry.getKey();
-            var pendingTraits = entry.getValue();
-            var builder = resolveShapeBuilder(target);
+        for (Map.Entry<ShapeId, List<PendingTrait>> entry : pendingTraits.entrySet()) {
+            ShapeId target = entry.getKey();
+            List<PendingTrait> pendingTraits = entry.getValue();
+            AbstractShapeBuilder builder = resolveShapeBuilder(target);
             if (builder == null) {
                 // The shape was not found, so emit a validation event for every trait applied to it.
                 emitErrorsForEachInvalidTraitTarget(target, pendingTraits);
             } else {
-                for (var computedEntry : computeTraits(builder, pendingTraits).entrySet()) {
+                for (Map.Entry<String, Node> computedEntry : computeTraits(builder, pendingTraits).entrySet()) {
                     createAndApplyTraitToShape(builder, computedEntry.getKey(), computedEntry.getValue());
                 }
             }
@@ -529,7 +531,7 @@ public final class LoaderVisitor {
         } else if (builtShapes.containsKey(id)) {
             // If the shape is not a builder but rather a built shape, then convert into a builder.
             // Once converted, the shape is removed from builtShapes and added into pendingShapes.
-            var builder = (AbstractShapeBuilder) Shape.shapeToBuilder(builtShapes.remove(id));
+            AbstractShapeBuilder builder = (AbstractShapeBuilder) Shape.shapeToBuilder(builtShapes.remove(id));
             pendingShapes.put(id, builder);
             return builder;
         } else {
@@ -538,7 +540,7 @@ public final class LoaderVisitor {
     }
 
     private void emitErrorsForEachInvalidTraitTarget(ShapeId target, List<PendingTrait> pendingTraits) {
-        for (var pendingTrait : pendingTraits) {
+        for (PendingTrait pendingTrait : pendingTraits) {
             onError(ValidationEvent.builder()
                     .eventId(Validator.MODEL_ERROR)
                     .severity(Severity.ERROR)
@@ -552,7 +554,7 @@ public final class LoaderVisitor {
 
     private Shape buildShape(ShapeIndex.Builder shapeIndexBuilder, AbstractShapeBuilder shapeBuilder) {
         try {
-            var result = (Shape) shapeBuilder.build();
+            Shape result = (Shape) shapeBuilder.build();
             shapeIndexBuilder.addShape(result);
             return result;
         } catch (SourceException e) {
@@ -579,7 +581,7 @@ public final class LoaderVisitor {
      */
     private Map<String, Node> computeTraits(AbstractShapeBuilder shapeBuilder, List<PendingTrait> pending) {
         Map<String, Node> traits = new HashMap<>();
-        for (var trait : pending) {
+        for (PendingTrait trait : pending) {
             TraitDefinition definition = resolveTraitDefinition(trait);
             Node value = trait.value;
             String traitName;
@@ -635,16 +637,16 @@ public final class LoaderVisitor {
             } else if (pendingShapes.containsKey(target)) {
                 AbstractShapeBuilder builder = pendingShapes.get(target);
                 if (builder instanceof StructureShape.Builder || builder instanceof MapShape.Builder) {
-                    return new ObjectNode(Map.of(), value.getSourceLocation());
+                    return new ObjectNode(MapUtils.of(), value.getSourceLocation());
                 } else if (builder instanceof CollectionShape.Builder) {
-                    return new ArrayNode(List.of(), value.getSourceLocation());
+                    return new ArrayNode(ListUtils.of(), value.getSourceLocation());
                 }
             } else if (builtShapes.containsKey(target)) {
                 Shape shape = builtShapes.get(target);
                 if (shape.isStructureShape() || shape.isMapShape()) {
-                    return new ObjectNode(Map.of(), value.getSourceLocation());
+                    return new ObjectNode(MapUtils.of(), value.getSourceLocation());
                 } else if (shape instanceof CollectionShape) {
-                    return new ArrayNode(List.of(), value.getSourceLocation());
+                    return new ArrayNode(ListUtils.of(), value.getSourceLocation());
                 }
             }
         }
@@ -714,7 +716,7 @@ public final class LoaderVisitor {
     private void createAndApplyTraitToShape(AbstractShapeBuilder shapeBuilder, String traitName, Node traitValue) {
         try {
             // Create the trait using a factory, or default to an un-typed modeled trait.
-            var createdTrait = traitFactory.createTrait(traitName, shapeBuilder.getId(), traitValue)
+            Trait createdTrait = traitFactory.createTrait(traitName, shapeBuilder.getId(), traitValue)
                     .orElseGet(() -> new DynamicTrait(traitName, traitValue));
             shapeBuilder.addTrait(createdTrait);
         } catch (SourceException e) {

@@ -6,13 +6,14 @@ import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Adds AWS signature version in a way that"s compatible with AWS API Gateway.
  */
 public final class AwsV4 implements SecuritySchemeConverter {
     private static final String AUTH_HEADER = "Authorization";
-    private static final Set<String> REQUEST_HEADERS = Set.of(
+    private static final Set<String> REQUEST_HEADERS = SetUtils.of(
             AUTH_HEADER, "Date", "X-Amz-Date", "X-Amz-Target", "X-Amz-Security-Token");
 
     @Override

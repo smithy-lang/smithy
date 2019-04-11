@@ -15,12 +15,12 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Marks a shape as deprecated.
@@ -75,7 +75,7 @@ public final class DeprecatedTrait extends AbstractTrait implements ToSmithyBuil
 
     @Override
     protected Node createNode() {
-        return new ObjectNode(Map.of(), getSourceLocation())
+        return new ObjectNode(MapUtils.of(), getSourceLocation())
                        .withOptionalMember("since", getSince().map(Node::from))
                        .withOptionalMember("message", getMessage().map(Node::from));
     }

@@ -39,6 +39,8 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.model.validation.ValidatorService;
+import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Checks if an operation should be paginated but is not.
@@ -61,11 +63,11 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
     private static final String DISCLAIMER = "Paginating operations that can return potentially unbounded lists "
                                              + "of data helps to maintain a predictable SLA and helps to prevent "
                                              + "operational issues in the future.";
-    private static final Set<String> DEFAULT_VERBS_REQUIRE = Set.of("list", "search");
-    private static final Set<String> DEFAULT_VERBS_SUGGEST = Set.of("describe", "get");
-    private static final Set<String> DEFAULT_INPUT_MEMBERS = Set.of(
+    private static final Set<String> DEFAULT_VERBS_REQUIRE = SetUtils.of("list", "search");
+    private static final Set<String> DEFAULT_VERBS_SUGGEST = SetUtils.of("describe", "get");
+    private static final Set<String> DEFAULT_INPUT_MEMBERS = SetUtils.of(
             "maxresults", "pagesize", "limit", "nexttoken", "pagetoken", "token");
-    private static final Set<String> DEFAULT_OUTPUT_MEMBERS = Set.of(
+    private static final Set<String> DEFAULT_OUTPUT_MEMBERS = SetUtils.of(
             "nexttoken", "pagetoken", "token", "marker", "nextpage");
 
     private final Set<String> verbsRequirePagination;
@@ -88,11 +90,13 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
             super(MissingPaginatedTraitValidator.class, node -> {
-                var verbsRequirePagination = parseSetOfString(node, "verbsRequirePagination", DEFAULT_VERBS_REQUIRE);
-                var verbsSuggestPagination = parseSetOfString(node, "verbsSuggestPagination", DEFAULT_VERBS_SUGGEST);
-                var inputMembersRequirePagination = parseSetOfString(
+                Set<String> verbsRequirePagination = parseSetOfString(
+                        node, "verbsRequirePagination", DEFAULT_VERBS_REQUIRE);
+                Set<String> verbsSuggestPagination = parseSetOfString(
+                        node, "verbsSuggestPagination", DEFAULT_VERBS_SUGGEST);
+                Set<String> inputMembersRequirePagination = parseSetOfString(
                         node, "inputMembersRequirePagination", DEFAULT_INPUT_MEMBERS);
-                var outputMembersRequirePagination = parseSetOfString(
+                Set<String> outputMembersRequirePagination = parseSetOfString(
                         node, "outputMembersRequirePagination", DEFAULT_OUTPUT_MEMBERS);
                 return new MissingPaginatedTraitValidator(
                         verbsRequirePagination, verbsSuggestPagination,
@@ -119,9 +123,9 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        var operationIndex = model.getKnowledge(OperationIndex.class);
+        OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
         return model.getShapeIndex().shapes(OperationShape.class)
-                .filter(shape -> shape.getTrait(PaginatedTrait.class).isEmpty())
+                .filter(shape -> !shape.getTrait(PaginatedTrait.class).isPresent())
                 .flatMap(shape -> validateShape(model.getShapeIndex(), operationIndex, shape))
                 .collect(Collectors.toList());
     }
@@ -131,8 +135,8 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
             OperationIndex operationIndex,
             OperationShape operation
     ) {
-        var words = ValidationUtils.splitCamelCaseWord(operation.getId().getName());
-        var verb = words.get(0).toLowerCase(Locale.US);
+        List<String> words = ValidationUtils.splitCamelCaseWord(operation.getId().getName());
+        String verb = words.get(0).toLowerCase(Locale.US);
 
         // The presence of "verbsRequirePagination" immediately qualifies the operation as needing `paginated`.
         if (verbsRequirePagination.contains(verb)) {
@@ -175,9 +179,9 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
         }
 
         // We matched a verb, but only suggest pagination if there's a top-level output member that's a list.
-        var hasListMember = output.getAllMembers().values().stream()
+        boolean hasListMember = output.getAllMembers().values().stream()
                 .map(MemberShape::getTarget)
-                .flatMap(id -> index.getShape(id).stream())
+                .flatMap(id -> OptionalUtils.stream(index.getShape(id)))
                 .anyMatch(Shape::isListShape);
 
         if (!hasListMember) {

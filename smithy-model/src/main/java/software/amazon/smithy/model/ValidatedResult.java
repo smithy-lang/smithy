@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Represents the result of an operation and the {@link ValidationEvent}s
@@ -29,7 +30,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * @param <T> The type being created.
  */
 public final class ValidatedResult<T> {
-    private static final ValidatedResult<?> EMPTY = new ValidatedResult<>(null, List.of());
+    private static final ValidatedResult<?> EMPTY = new ValidatedResult<>(null, ListUtils.of());
 
     private final List<ValidationEvent> events;
     private final T result;
@@ -42,7 +43,7 @@ public final class ValidatedResult<T> {
      */
     public ValidatedResult(T result, Collection<ValidationEvent> events) {
         this.result = result;
-        this.events = List.copyOf(events);
+        this.events = ListUtils.copyOf(events);
     }
 
     /**
@@ -66,7 +67,7 @@ public final class ValidatedResult<T> {
      * @return Returns the created ValidatedResult.
      */
     public static <T> ValidatedResult<T> fromValue(T value) {
-        return new ValidatedResult<>(value, List.of());
+        return new ValidatedResult<>(value, ListUtils.of());
     }
 
     /**

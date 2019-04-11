@@ -27,6 +27,7 @@ import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates that httpHeader traits do not case-insensitively start with an
@@ -48,7 +49,7 @@ public final class HttpPrefixHeadersTraitValidator extends AbstractValidator {
                 .orElse(null);
 
         if (prefixPair == null) {
-            return List.of();
+            return ListUtils.of();
         }
 
         String prefix = prefixPair.getRight().getValue().toLowerCase(Locale.US);

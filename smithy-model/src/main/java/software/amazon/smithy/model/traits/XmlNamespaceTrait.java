@@ -16,20 +16,21 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
 * Defines the XML Namespace prefix and URI.
 */
 public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBuilder<XmlNamespaceTrait> {
     private static final String TRAIT = "smithy.api#xmlNamespace";
-    private static final List<String> XML_NAMESPACE_PROPERTIES = List.of("uri");
+    private static final List<String> XML_NAMESPACE_PROPERTIES = ListUtils.of("uri");
 
     private final String uri;
 
@@ -44,7 +45,7 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
 
     @Override
     protected Node createNode() {
-        return new ObjectNode(Map.of(), getSourceLocation())
+        return new ObjectNode(MapUtils.of(), getSourceLocation())
                 .withMember("uri", Node.from(uri));
     }
 

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 public class MockManifestTest {
     @Test
     public void pathsMustBeWithinBaseDir() {
-        var thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
+        Exception thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
             FileManifest a = new MockManifest(Paths.get("/foo"));
             a.addFile(Paths.get("/not/within/parent"));
         });

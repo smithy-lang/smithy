@@ -33,6 +33,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.SubscribeTrait;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates {@code mqttSubscribe} operation output.
@@ -87,7 +88,7 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
     }
 
     private Stream<StructureShape> getOutputEvents(EventStreamIndex.Info info, ShapeIndex index) {
-        return info.getEventStreamTarget().accept(new ShapeVisitor.Default<>() {
+        return info.getEventStreamTarget().accept(new ShapeVisitor.Default<Stream<StructureShape>>() {
             @Override
             public Stream<StructureShape> getDefault(Shape shape) {
                 return Stream.empty();
@@ -96,8 +97,8 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
             @Override
             public Stream<StructureShape> unionShape(UnionShape shape) {
                 return shape.getAllMembers().entrySet().stream()
-                        .flatMap(member -> index.getShape(member.getValue().getTarget())
-                                .flatMap(Shape::asStructureShape).stream());
+                        .flatMap(member -> OptionalUtils.stream(index.getShape(member.getValue().getTarget())
+                                .flatMap(Shape::asStructureShape)));
             }
 
             @Override

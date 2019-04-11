@@ -31,6 +31,7 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * For backward compatibility, this will load both smithy.validators and
@@ -38,9 +39,9 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  */
 final class ValidationLoader {
     private static final Logger LOGGER = Logger.getLogger(ValidationLoader.class.getName());
-    private static final List<String> SEVERITIES = List.of("DANGER", "WARNING", "NOTE");
-    private static final List<String> SUPPRESSION_PROPERTIES = List.of("ids", "shapes", "reason");
-    private static final List<String> VALIDATOR_PROPERTIES = List.of(
+    private static final List<String> SEVERITIES = ListUtils.of("DANGER", "WARNING", "NOTE");
+    private static final List<String> SUPPRESSION_PROPERTIES = ListUtils.of("ids", "shapes", "reason");
+    private static final List<String> VALIDATOR_PROPERTIES = ListUtils.of(
             "name", "id", "message", "severity", "namespaces", "configuration");
 
     private ValidationLoader() {}
@@ -70,9 +71,9 @@ final class ValidationLoader {
 
         ValidatedResult<List<T>> result1 = load(metadata, newKey, f);
         ValidatedResult<List<T>> result2 = load(metadata, oldKey, f);
-        List<T> merged = new ArrayList<>(result1.getResult().orElse(List.of()));
-        merged.addAll(result2.getResult().orElse(List.of()));
-        var events = new ArrayList<>(result1.getValidationEvents());
+        List<T> merged = new ArrayList<>(result1.getResult().orElse(ListUtils.of()));
+        merged.addAll(result2.getResult().orElse(ListUtils.of()));
+        List<ValidationEvent> events = new ArrayList<>(result1.getValidationEvents());
         events.addAll(result2.getValidationEvents());
         return new ValidatedResult<>(merged, events);
     }

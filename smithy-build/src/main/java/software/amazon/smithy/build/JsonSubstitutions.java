@@ -23,6 +23,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeVisitor;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Finds string set in a Node object string value and replaces them with a
@@ -56,7 +57,7 @@ public final class JsonSubstitutions {
     private final Map<String, Node> findAndReplace;
 
     private JsonSubstitutions(Map<String, Node> findAndReplace) {
-        for (var key : findAndReplace.keySet()) {
+        for (String key : findAndReplace.keySet()) {
             if (!SUBSTITUTIONS_KEY_PATTERN.matcher(key).find()) {
                 throw new SmithyBuildException(String.format(
                         "JSON substitution key found named `%s`, but each key must match the following regular "
@@ -64,7 +65,7 @@ public final class JsonSubstitutions {
             }
         }
 
-        this.findAndReplace = Map.copyOf(findAndReplace);
+        this.findAndReplace = MapUtils.copyOf(findAndReplace);
     }
 
     /**

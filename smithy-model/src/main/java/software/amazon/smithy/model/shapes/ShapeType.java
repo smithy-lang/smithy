@@ -60,7 +60,7 @@ public enum ShapeType {
      * @return Returns the Type in an Optional.
      */
     public static Optional<ShapeType> fromString(String text) {
-        for (var e : values()) {
+        for (ShapeType e : values()) {
             if (e.stringValue.equals(text)) {
                 return Optional.ofNullable(e);
             }

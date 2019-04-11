@@ -23,9 +23,9 @@ public class CheckForGreedyLabels implements SmithyOpenApiPlugin {
 
     @Override
     public OpenApi after(Context context, OpenApi openApi) {
-        var forbid = context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.FORBID_GREEDY_LABELS);
+        boolean forbid = context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.FORBID_GREEDY_LABELS);
 
-        for (var path : openApi.getPaths().keySet()) {
+        for (String path : openApi.getPaths().keySet()) {
             // Throw an exception or warning when greedy URI labels are found in the path.
             if (path.contains("+}")) {
                 String message = "Greedy URI path label found in path `" + path + "`. Not all OpenAPI "

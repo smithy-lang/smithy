@@ -43,6 +43,7 @@ import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Assembles and validates a {@link Model} from documents, files, shapes, and
@@ -440,7 +441,7 @@ public final class ModelAssembler {
         try {
             return doAssemble();
         } catch (SourceException e) {
-            return ValidatedResult.fromErrors(List.of(ValidationEvent.fromSourceException(e)));
+            return ValidatedResult.fromErrors(ListUtils.of(ValidationEvent.fromSourceException(e)));
         }
     }
 
@@ -449,7 +450,7 @@ public final class ModelAssembler {
             traitFactory = LazyTraitFactoryHolder.INSTANCE;
         }
 
-        var visitor = new LoaderVisitor(traitFactory, properties);
+        LoaderVisitor visitor = new LoaderVisitor(traitFactory, properties);
 
         if (!disablePrelude) {
             mergeModelIntoVisitor(Prelude.getPreludeModel(), visitor);
@@ -459,24 +460,24 @@ public final class ModelAssembler {
         traitDefinitions.forEach(visitor::onTraitDef);
         metadata.forEach(visitor::onMetadata);
 
-        for (var model : mergeModels) {
+        for (Model model : mergeModels) {
             mergeModelIntoVisitor(model, visitor);
         }
 
         if (!documentNodes.isEmpty()) {
             JsonModelLoader loader = new JsonModelLoader();
-            for (var node : documentNodes) {
+            for (Node node : documentNodes) {
                 loader.load(visitor, node);
             }
         }
 
-        for (var modelEntry : stringModels.entrySet()) {
+        for (Map.Entry<String, String> modelEntry : stringModels.entrySet()) {
             if (!modelLoader.load(modelEntry.getKey(), modelEntry.getValue(), visitor)) {
                 LOGGER.warning(() -> "No ModelLoader was able to load " + modelEntry.getKey());
             }
         }
 
-        var modelResult = visitor.onEnd();
+        ValidatedResult<Model> modelResult = visitor.onEnd();
         return modelResult.getResult().isEmpty()
                ? modelResult
                : validate(modelResult.getResult().get(), modelResult.getValidationEvents());
@@ -494,14 +495,15 @@ public final class ModelAssembler {
         }
 
         // Validate the model based on the explicit validators and model metadata.
-        var events = ModelValidator.validate(model, validatorFactory, assembleValidators(), suppressions);
+        List<ValidationEvent> events = ModelValidator.validate(model, validatorFactory,
+                assembleValidators(), suppressions);
         events.addAll(modelResultEvents);
         return new ValidatedResult<>(model, events);
     }
 
     private List<Validator> assembleValidators() {
         // Find and register built-in validators with the validator.
-        var copiedValidators = new ArrayList<>(validatorFactory.loadBuiltinValidators());
+        List<Validator> copiedValidators = new ArrayList<>(validatorFactory.loadBuiltinValidators());
         copiedValidators.addAll(validators);
         return copiedValidators;
     }

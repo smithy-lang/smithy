@@ -25,6 +25,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Creates a model transformer by name.
@@ -43,7 +44,7 @@ public interface ProjectionTransformer {
      * @return True if this transformer is responsible for the given name.
      */
     default Collection<String> getAliases() {
-        return List.of();
+        return ListUtils.of();
     }
 
     /**
@@ -78,7 +79,7 @@ public interface ProjectionTransformer {
             Iterable<ProjectionTransformer> transformers
     ) {
         Map<String, ProjectionTransformer> map = new HashMap<>();
-        for (var transformer : transformers) {
+        for (ProjectionTransformer transformer : transformers) {
             map.put(transformer.getName(), transformer);
             transformer.getAliases().forEach(alias -> map.put(alias, transformer));
         }

@@ -236,7 +236,7 @@ public class ObjectNodeTest {
 
     @Test
     public void throwsWhenAdditionalPropertiesAreFound() {
-        var thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+        Throwable thrown = Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             ObjectNode node = new ObjectNode(new HashMap<>(), SourceLocation.none());
             node.withMember(Node.from("a"), Node.from("value-1"))
                     .withMember(Node.from("b"), Node.from("value-2"))

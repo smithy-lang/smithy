@@ -28,6 +28,7 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Validates paginated traits.
@@ -48,9 +49,9 @@ import software.amazon.smithy.model.validation.ValidationUtils;
  * @see PaginatedIndex for more pagination validation.
  */
 public final class PaginatedTraitValidator extends AbstractValidator {
-    private static final Set<ShapeType> ITEM_SHAPES = Set.of(ShapeType.LIST, ShapeType.MAP);
-    private static final Set<ShapeType> PAGE_SHAPES = Set.of(ShapeType.INTEGER);
-    private static final Set<ShapeType> STRING_SET = Set.of(ShapeType.STRING);
+    private static final Set<ShapeType> ITEM_SHAPES = SetUtils.of(ShapeType.LIST, ShapeType.MAP);
+    private static final Set<ShapeType> PAGE_SHAPES = SetUtils.of(ShapeType.INTEGER);
+    private static final Set<ShapeType> STRING_SET = SetUtils.of(ShapeType.STRING);
 
     @Override
     public List<ValidationEvent> validate(Model model) {

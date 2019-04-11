@@ -125,7 +125,7 @@ public final class Cli {
     }
 
     private boolean hasArgument(String[] args, String name) {
-        for (var arg : args) {
+        for (String arg : args) {
             if (arg.equals(name)) {
                 return true;
             }
@@ -153,10 +153,10 @@ public final class Cli {
                    String.format("Usage: %s [-h | --help] <command> [<args>]%n", applicationName));
         System.out.println("commands:");
         Map<String, String> table = new LinkedHashMap<>();
-        for (var entry : commands.entrySet()) {
+        for (Map.Entry<String, Command> entry : commands.entrySet()) {
             table.put("  " + entry.getKey(), entry.getValue().getSummary());
         }
-        System.out.println(createTable(table).stripTrailing());
+        System.out.println(createTable(table).trim());
     }
 
     private String createTable(Map<String, String> table) {
@@ -164,7 +164,11 @@ public final class Cli {
         int longestLen = table.keySet().stream().map(String::length).mapToInt(v -> v).max().orElse(0) + 4;
         table.forEach((k, v) -> {
             int padding = longestLen - k.length();
-            builder.append(k).append(" ".repeat(padding)).append(v).append("\n");
+            builder.append(k);
+            for (int i = 0; i < padding; i++) {
+                builder.append(" ");
+            }
+            builder.append(v).append("\n");
         });
 
         return builder.toString();
@@ -178,7 +182,7 @@ public final class Cli {
         // In the example line, print each argument.
         parser.getArgs().forEach(arg -> {
             // Omit the built-in --help arguments.
-            if (arg.getLongName().filter(name -> name.equals("--help")).isEmpty()) {
+            if (!arg.getLongName().filter(name -> name.equals("--help")).isPresent()) {
                 example.append(" [");
                 arg.getShortName().ifPresent(example::append);
                 if (arg.getShortName().isPresent() && arg.getLongName().isPresent()) {
@@ -220,11 +224,11 @@ public final class Cli {
             table.put("  " + name + "  ", parser.getPositionalHelp().orElse(""));
         });
 
-        body.append(createTable(table).stripTrailing());
+        body.append(createTable(table).trim());
 
         String help = command.getHelp();
         if (!help.isEmpty()) {
-            body.append("\n\n").append(command.getHelp().stripTrailing());
+            body.append("\n\n").append(command.getHelp().trim());
         }
 
         System.out.println(body);

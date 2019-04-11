@@ -8,6 +8,7 @@ import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * An authentication scheme converter that adds Cognito User Pool based
@@ -20,7 +21,7 @@ import software.amazon.smithy.openapi.model.SecurityScheme;
 public class CognitoUserPoolsConverter implements SecuritySchemeConverter {
     private static final String SCHEME = "aws.cognito-user-pools";
     private static final String AUTH_HEADER = "Authorization";
-    private static final Set<String> REQUEST_HEADERS = Set.of(AUTH_HEADER);
+    private static final Set<String> REQUEST_HEADERS = SetUtils.of(AUTH_HEADER);
     private static final String AUTH_TYPE = "cognito_user_pools";
     private static final String PROVIDER_ARNS_PROPERTY = "providerARNs";
 
@@ -32,7 +33,7 @@ public class CognitoUserPoolsConverter implements SecuritySchemeConverter {
     @Override
     public SecurityScheme createSecurityScheme(Context context) {
         // Providers are provided in a required trait.
-        var providers = context.getService()
+        CognitoUserPoolsSettingsTrait providers = context.getService()
                 .getTrait(CognitoUserPoolsSettingsTrait.class)
                 .orElseThrow(() -> new OpenApiException(String.format(
                         "Missing required `%s` trait for the `%s` authentication scheme of `%s`.",

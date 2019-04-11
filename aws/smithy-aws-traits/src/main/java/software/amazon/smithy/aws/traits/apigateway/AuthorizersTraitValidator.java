@@ -11,6 +11,7 @@ import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Each authorizers must match one of the authentication schemes on the service.
@@ -24,10 +25,10 @@ public class AuthorizersTraitValidator extends AbstractValidator {
     }
 
     private Stream<ValidationEvent> validateService(ServiceShape service) {
-        var schemeNames = service.getTrait(ProtocolsTrait.class)
+        Set<String> schemeNames = service.getTrait(ProtocolsTrait.class)
                 .map(ProtocolsTrait::getAllAuthSchemes)
-                .orElse(Set.of());
-        var authorizerNames = service.getTrait(AuthorizersTrait.class)
+                .orElse(SetUtils.of());
+        Set<String> authorizerNames = service.getTrait(AuthorizersTrait.class)
                 .map(AuthorizersTrait::getAllAuthorizers)
                 .map(map -> new HashSet<>(map.keySet()))
                 .orElseGet(HashSet::new);

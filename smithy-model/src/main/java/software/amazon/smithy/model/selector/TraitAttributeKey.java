@@ -23,6 +23,7 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.ListUtils;
 
 final class TraitAttributeKey implements AttributeSelector.KeyGetter {
     private static final NodeToString NODE_TO_STRING = new NodeToString();
@@ -37,8 +38,8 @@ final class TraitAttributeKey implements AttributeSelector.KeyGetter {
     public List<String> apply(Shape shape) {
         return shape.findTrait(trait)
                 .map(Trait::toNode)
-                .map(node -> List.of(node.accept(NODE_TO_STRING)))
-                .orElse(List.of());
+                .map(node -> ListUtils.of(node.accept(NODE_TO_STRING)))
+                .orElse(ListUtils.of());
     }
 
     private static final class NodeToString extends NodeVisitor.Default<String> {

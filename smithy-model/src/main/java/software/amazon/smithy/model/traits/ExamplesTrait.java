@@ -138,7 +138,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
 
         @Override
         public Node toNode() {
-            var builder = Node.objectNodeBuilder()
+            ObjectNode.Builder builder = Node.objectNodeBuilder()
                     .withMember("title", Node.from(title))
                     .withOptionalMember("documentation", getDocumentation().map(Node::from));
 

@@ -25,6 +25,7 @@ import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.ListUtils;
 
 public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi> {
     private final String openapi;
@@ -40,11 +41,11 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         super(builder);
         openapi = SmithyBuilder.requiredState("openapi", builder.openapi);
         info = SmithyBuilder.requiredState("info", builder.info);
-        servers = List.copyOf(builder.servers);
+        servers = ListUtils.copyOf(builder.servers);
         paths.putAll(builder.paths);
         components = builder.components == null ? ComponentsObject.builder().build() : builder.components;
-        security = List.copyOf(builder.security);
-        tags = List.copyOf(builder.tags);
+        security = ListUtils.copyOf(builder.security);
+        tags = ListUtils.copyOf(builder.tags);
         externalDocs = builder.externalDocs;
     }
 
@@ -100,7 +101,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withMember("openapi", openapi)
                 .withMember("info", info)
                 .withOptionalMember("externalDocumentation", getExternalDocs());

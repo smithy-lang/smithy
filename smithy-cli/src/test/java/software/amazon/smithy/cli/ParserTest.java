@@ -18,9 +18,9 @@ package software.amazon.smithy.cli;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.utils.ListUtils;
 
 public class ParserTest {
     @Test
@@ -70,8 +70,8 @@ public class ParserTest {
         Assertions.assertTrue(arguments.has("--dry-run"));
         assertThat(arguments.parameter("--config"), equalTo("/foo"));
         assertThat(arguments.parameter("--file"), equalTo("1"));
-        assertThat(arguments.repeatedParameter("--file"), equalTo(List.of("1", "2")));
-        assertThat(arguments.positionalArguments(), equalTo(List.of("a", "b")));
+        assertThat(arguments.repeatedParameter("--file"), equalTo(ListUtils.of("1", "2")));
+        assertThat(arguments.positionalArguments(), equalTo(ListUtils.of("a", "b")));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class ParserTest {
         Arguments arguments = parser.parse(new String[]{"--hi", "hi", "--", "--hi", "there"});
 
         assertThat(arguments.parameter("--hi"), equalTo("hi"));
-        assertThat(arguments.positionalArguments(), equalTo(List.of("--hi", "there")));
+        assertThat(arguments.positionalArguments(), equalTo(ListUtils.of("--hi", "there")));
     }
 
     @Test

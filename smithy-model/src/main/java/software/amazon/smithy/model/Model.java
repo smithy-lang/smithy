@@ -34,6 +34,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidatorFactory;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * A Smithy model, including shapes, traits, custom traits, validators,
@@ -61,8 +62,8 @@ public final class Model implements ToSmithyBuilder<Model> {
     private Model(Builder builder) {
         smithyVersion = builder.smithyVersion;
         shapeIndex = builder.shapeIndex != null ? builder.shapeIndex : ShapeIndex.builder().build();
-        metadata = builder.metadata.isEmpty() ? Map.of() : Map.copyOf(builder.metadata);
-        traitDefinitions = builder.traitDefinitions.isEmpty() ? Map.of() : builder.traitDefinitions.stream()
+        metadata = builder.metadata.isEmpty() ? MapUtils.of() : MapUtils.copyOf(builder.metadata);
+        traitDefinitions = builder.traitDefinitions.isEmpty() ? MapUtils.of() : builder.traitDefinitions.stream()
                 .collect(toUnmodifiableMap(TraitDefinition::getFullyQualifiedName, identity(), (a, b) -> b));
     }
 

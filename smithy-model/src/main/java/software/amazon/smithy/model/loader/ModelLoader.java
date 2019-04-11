@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.loader;
 
 import java.util.List;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Used to load Smithy models.
@@ -61,7 +62,7 @@ public interface ModelLoader {
      * @return Returns the default model loader.
      */
     static ModelLoader createDefaultLoader() {
-        return ModelLoader.composeLoaders(List.of(
+        return ModelLoader.composeLoaders(ListUtils.of(
                 new JsonModelLoader(),
                 new SmithyModelLoader(),
                 new DefaultingJsonModelLoader()));

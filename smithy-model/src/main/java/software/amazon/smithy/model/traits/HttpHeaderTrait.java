@@ -19,13 +19,14 @@ import java.util.Locale;
 import java.util.Set;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Binds a member to an HTTP header.
  */
 public final class HttpHeaderTrait extends StringTrait {
     private static final String TRAIT = "smithy.api#httpHeader";
-    private static final Set<String> BLACKLIST = Set.of(
+    private static final Set<String> BLACKLIST = SetUtils.of(
             "authorization",
             "connection",
             "content-length",

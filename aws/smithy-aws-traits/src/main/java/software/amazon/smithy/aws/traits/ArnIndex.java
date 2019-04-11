@@ -46,7 +46,7 @@ public final class ArnIndex implements KnowledgeIndex {
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
 
         // Pre-compute all of the ArnTemplates in a service shape.
-        var topDownIndex = model.getKnowledge(TopDownIndex.class);
+        TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
         templates = unmodifiableMap(model.getShapeIndex().shapes(ServiceShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, ServiceTrait.class))
                 .map(pair -> compileServiceArns(topDownIndex, pair.getLeft()))

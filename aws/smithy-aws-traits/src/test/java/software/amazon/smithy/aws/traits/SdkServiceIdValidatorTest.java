@@ -47,7 +47,7 @@ public class SdkServiceIdValidatorTest {
 
     @Test
     public void doesNotAllowCompanyNames() {
-        var thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
+        IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
             SdkServiceIdValidator.validateServiceId("AWS Foo"));
 
         assertThat(thrown.getMessage(), containsString("company names"));
@@ -55,7 +55,7 @@ public class SdkServiceIdValidatorTest {
 
     @Test
     public void doesNotAllowBadSuffix() {
-        var thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
+        IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 SdkServiceIdValidator.validateServiceId("Foo Service"));
 
         assertThat(thrown.getMessage(), containsString("case-insensitively end with"));
@@ -75,7 +75,7 @@ public class SdkServiceIdValidatorTest {
 
     @Test
     public void doesNotAllowShortIds() {
-        var thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
+        IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 SdkServiceIdValidator.validateServiceId("F"));
 
         assertThat(thrown.getMessage(), containsString("2 and 50"));
@@ -83,7 +83,7 @@ public class SdkServiceIdValidatorTest {
 
     @Test
     public void doesNotAllowLongIds() {
-        var thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
+        IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 SdkServiceIdValidator.validateServiceId("Foobarbazqux Foobarbazqux Foobarbazqux Foobarbazqux"));
 
         assertThat(thrown.getMessage(), containsString("2 and 50"));

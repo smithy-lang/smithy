@@ -59,7 +59,7 @@ public final class MediaTypeObject extends Component implements ToSmithyBuilder<
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withOptionalMember("schema", getSchema())
                 .withOptionalMember("example", getExample());
 

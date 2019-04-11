@@ -42,6 +42,7 @@ import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Computes and indexes the explicit and implicit HTTP bindings of a model.
@@ -61,14 +62,14 @@ public final class HttpBindingIndex implements KnowledgeIndex {
 
     public HttpBindingIndex(Model model) {
         index = model.getShapeIndex();
-        var opIndex = model.getKnowledge(OperationIndex.class);
+        OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
         index.shapes(OperationShape.class).forEach(shape -> {
             if (shape.getTrait(HttpTrait.class).isPresent()) {
                 requestBindings.put(shape.getId(), computeRequestBindings(opIndex, shape));
                 responseBindings.put(shape.getId(), computeResponseBindings(opIndex, shape));
             } else {
-                requestBindings.put(shape.getId(), List.of());
-                responseBindings.put(shape.getId(), List.of());
+                requestBindings.put(shape.getId(), ListUtils.of());
+                responseBindings.put(shape.getId(), ListUtils.of());
             }
         });
 
@@ -124,8 +125,8 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      *  or an error structure.
      */
     public int getResponseCode(ToShapeId shapeOrId) {
-        var id = shapeOrId.toShapeId();
-        var shape = index.getShape(id).orElseThrow(() -> new IllegalArgumentException("Shape not found " + id));
+        ShapeId id = shapeOrId.toShapeId();
+        Shape shape = index.getShape(id).orElseThrow(() -> new IllegalArgumentException("Shape not found " + id));
 
         if (shape.isOperationShape()) {
             return getHttpTrait(id).getCode();
@@ -147,7 +148,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * @throws IllegalArgumentException if the given shape is not an operation.
      */
     public Map<String, Binding> getRequestBindings(ToShapeId operationShapeOrId) {
-        var id = operationShapeOrId.toShapeId();
+        ShapeId id = operationShapeOrId.toShapeId();
         validateRequestBindingShapeId(id);
         return requestBindings.get(id).stream().collect(Collectors.toMap(Binding::getMemberName, Function.identity()));
     }
@@ -168,7 +169,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * @throws IllegalArgumentException if the given shape is not an operation.
      */
     public List<Binding> getRequestBindings(ToShapeId operationShapeOrId, Location requestLocation) {
-        var id = operationShapeOrId.toShapeId();
+        ShapeId id = operationShapeOrId.toShapeId();
         validateRequestBindingShapeId(id);
         return requestBindings.get(id).stream()
                 .filter(binding -> binding.getLocation() == requestLocation)
@@ -185,7 +186,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      *  or error structure.
      */
     public Map<String, Binding> getResponseBindings(ToShapeId shapeOrId) {
-        var id = shapeOrId.toShapeId();
+        ShapeId id = shapeOrId.toShapeId();
         validateResponseBindingShapeId(id);
         return responseBindings.get(id).stream()
                 .collect(Collectors.toMap(Binding::getMemberName, Function.identity()));
@@ -208,7 +209,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      *  or error structure.
      */
     public List<Binding> getResponseBindings(ToShapeId shapeOrId, Location bindingLocation) {
-        var id = shapeOrId.toShapeId();
+        ShapeId id = shapeOrId.toShapeId();
         validateResponseBindingShapeId(id);
         return responseBindings.get(id).stream()
                 .filter(binding -> binding.getLocation() == bindingLocation)
@@ -265,7 +266,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
             if (!(other instanceof Binding)) {
                 return false;
             } else {
-                var otherBinding = (Binding) other;
+                Binding otherBinding = (Binding) other;
                 return getMember().equals(otherBinding.getMember())
                        && getLocation() == otherBinding.getLocation()
                        && getLocationName().equals(otherBinding.getLocationName());
@@ -293,24 +294,24 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     private List<Binding> createStructureBindings(StructureShape struct, boolean isRequest) {
         List<Binding> bindings = new ArrayList<>();
         List<MemberShape> unbound = new ArrayList<>();
-        var foundPayload = false;
+        boolean foundPayload = false;
 
         for (MemberShape member : struct.getAllMembers().values()) {
             if (member.getTrait(HttpHeaderTrait.class).isPresent()) {
-                var trait = member.getTrait(HttpHeaderTrait.class).get();
+                HttpHeaderTrait trait = member.getTrait(HttpHeaderTrait.class).get();
                 bindings.add(new Binding(member, Location.HEADER, trait.getValue(), trait));
             } else if (member.getTrait(HttpPrefixHeadersTrait.class).isPresent()) {
-                var trait = member.getTrait(HttpPrefixHeadersTrait.class).get();
+                HttpPrefixHeadersTrait trait = member.getTrait(HttpPrefixHeadersTrait.class).get();
                 bindings.add(new Binding(member, Location.PREFIX_HEADERS, trait.getValue(), trait));
             } else if (isRequest && member.getTrait(HttpQueryTrait.class).isPresent()) {
-                var trait = member.getTrait(HttpQueryTrait.class).get();
+                HttpQueryTrait trait = member.getTrait(HttpQueryTrait.class).get();
                 bindings.add(new Binding(member, Location.QUERY, trait.getValue(), trait));
             } else if (member.getTrait(HttpPayloadTrait.class).isPresent()) {
                 foundPayload = true;
-                var trait = member.getTrait(HttpPayloadTrait.class).get();
+                HttpPayloadTrait trait = member.getTrait(HttpPayloadTrait.class).get();
                 bindings.add(new Binding(member, Location.PAYLOAD, member.getMemberName(), trait));
             } else if (isRequest && member.getTrait(HttpLabelTrait.class).isPresent()) {
-                var trait = member.getTrait(HttpLabelTrait.class).get();
+                HttpLabelTrait trait = member.getTrait(HttpLabelTrait.class).get();
                 bindings.add(new Binding(member, Location.LABEL, member.getMemberName(), trait));
             } else {
                 unbound.add(member);

@@ -26,6 +26,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.PublishTrait;
 import software.amazon.smithy.mqtt.traits.SubscribeTrait;
 import software.amazon.smithy.mqtt.traits.TopicBinding;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates that {@code mqttPublish} and {@code mqttSubscribe}
@@ -39,7 +40,7 @@ public final class MqttUnsupportedErrorsValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         return model.getShapeIndex().shapes(OperationShape.class)
                 .filter(shape -> !shape.getErrors().isEmpty())
-                .flatMap(shape -> validateOperation(shape).stream())
+                .flatMap(shape -> OptionalUtils.stream(validateOperation(shape)))
                 .collect(Collectors.toList());
     }
 

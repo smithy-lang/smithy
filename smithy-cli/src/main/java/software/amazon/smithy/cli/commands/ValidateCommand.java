@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.cli.commands;
 
+import java.util.List;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
@@ -22,6 +23,7 @@ import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.ValidatedResult;
 import software.amazon.smithy.model.loader.ModelAssembler;
 
 public final class ValidateCommand implements Command {
@@ -47,12 +49,12 @@ public final class ValidateCommand implements Command {
 
     @Override
     public void execute(Arguments arguments) {
-        var format = arguments.parameter("--format", "text");
+        String format = arguments.parameter("--format", "text");
         if (!format.equals("text")) {
             throw new CliError("Invalid --format value `" + format + "`");
         }
 
-        var models = arguments.positionalArguments();
+        List<String> models = arguments.positionalArguments();
 
         if (models.isEmpty()) {
             throw new CliError("No models were provided as positional arguments");
@@ -60,8 +62,8 @@ public final class ValidateCommand implements Command {
 
         System.err.println(String.format("Validating Smithy models: %s", String.join(" ", models)));
 
-        var loader = SmithyCli.getConfiguredClassLoader();
-        var assembler = Model.assembler(loader);
+        ClassLoader loader = SmithyCli.getConfiguredClassLoader();
+        ModelAssembler assembler = Model.assembler(loader);
 
         if (arguments.has("--discover")) {
             System.err.println("Enabling model discovery");
@@ -74,7 +76,7 @@ public final class ValidateCommand implements Command {
         }
 
         models.forEach(assembler::addImport);
-        var modelResult = assembler.assemble();
+        ValidatedResult<Model> modelResult = assembler.assemble();
         Validator.validate(modelResult);
         Colors.out(Colors.GREEN, "Smithy validation complete");
     }

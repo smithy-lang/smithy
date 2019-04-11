@@ -35,7 +35,7 @@ final class RemoteRef<T extends ToNode> extends Ref<T> {
             throw new OpenApiException("Cannot deref a remove pointer: " + pointer);
         }
 
-        var paths = pointer.substring(2).split("/");
+        String[] paths = pointer.substring(2).split("/");
 
         if (!paths[0].equals("components")) {
             throw new OpenApiException(

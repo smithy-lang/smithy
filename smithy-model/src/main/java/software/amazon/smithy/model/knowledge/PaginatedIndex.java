@@ -29,6 +29,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.PaginatedTrait;
@@ -53,8 +54,8 @@ public final class PaginatedIndex implements KnowledgeIndex {
     private final List<ValidationEvent> events = new ArrayList<>();
 
     public PaginatedIndex(Model model) {
-        var index = model.getShapeIndex();
-        var opIndex = model.getKnowledge(OperationIndex.class);
+        ShapeIndex index = model.getShapeIndex();
+        OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
         idToTraits = Collections.unmodifiableMap(index.shapes(OperationShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, PaginatedTrait.class))
                 .flatMap(pair -> create(opIndex, pair.getLeft(), pair.getRight()).stream())
@@ -70,8 +71,8 @@ public final class PaginatedIndex implements KnowledgeIndex {
             return Optional.empty();
         }
 
-        var input = opIndex.getInput(operation.getId()).get();
-        var output = opIndex.getOutput(operation.getId()).get();
+        StructureShape input = opIndex.getInput(operation.getId()).get();
+        StructureShape output = opIndex.getOutput(operation.getId()).get();
         if (input.getMember(trait.getInputToken()).isEmpty()) {
             events.add(emit(operation, trait, format(
                     "`paginated` trait `inputToken` property references a non-existent member named `%s`",

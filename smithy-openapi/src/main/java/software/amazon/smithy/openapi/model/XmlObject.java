@@ -62,7 +62,7 @@ public final class XmlObject extends Component implements ToSmithyBuilder<XmlObj
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withOptionalMember("name", getName().map(Node::from))
                 .withOptionalMember("namespace", getNamespace().map(Node::from))
                 .withOptionalMember("prefix", getPrefix().map(Node::from));

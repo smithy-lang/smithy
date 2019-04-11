@@ -21,20 +21,19 @@ import static org.hamcrest.Matchers.is;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.cli.SmithyCli;
 
 public class ValidateCommandTest {
     @Test
-    public void hasValidateCommand() {
+    public void hasValidateCommand() throws Exception {
         PrintStream out = System.out;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         System.setOut(printStream);
         assertThat(SmithyCli.run(code -> {}, "validate", "--help"), is(0));
         System.setOut(out);
-        String help = outputStream.toString(Charset.forName("UTF-8"));
+        String help = outputStream.toString("UTF-8");
 
         assertThat(help, containsString("Validates"));
     }

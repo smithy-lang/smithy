@@ -36,7 +36,7 @@ public interface ModelDiscovery {
      * public final class MyModel implements ModelDiscovery {
      *     {@literal @}Override
      *     public List&lt;URL&gt; getModels() {
-     *         return List.of(getClass().getResource("resource/path/to/model.smithy"));
+     *         return ListUtils.of(getClass().getResource("resource/path/to/model.smithy"));
      *     }
      * }
      * }

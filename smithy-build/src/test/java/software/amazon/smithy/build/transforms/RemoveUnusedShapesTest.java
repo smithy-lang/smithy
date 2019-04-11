@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -31,6 +30,7 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 public class RemoveUnusedShapesTest {
 
@@ -44,7 +44,7 @@ public class RemoveUnusedShapesTest {
                 .createTransformer(Collections.singletonList("export"))
                 .apply(ModelTransformer.create(), model);
         List<String> ids = result.getShapeIndex().shapes()
-                .filter(Predicate.not(Prelude::isPreludeShape))
+                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
                 .map(Shape::getId)
                 .map(Object::toString)
                 .collect(Collectors.toList());

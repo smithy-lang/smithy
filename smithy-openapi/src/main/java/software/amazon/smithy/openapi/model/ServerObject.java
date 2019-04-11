@@ -21,6 +21,7 @@ import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.MapUtils;
 
 public final class ServerObject extends Component implements ToSmithyBuilder<ServerObject> {
     private final String url;
@@ -31,7 +32,7 @@ public final class ServerObject extends Component implements ToSmithyBuilder<Ser
         super(builder);
         url = SmithyBuilder.requiredState("url", builder.url);
         description = builder.description;
-        variables = Map.copyOf(builder.variables);
+        variables = MapUtils.copyOf(builder.variables);
     }
 
     public static Builder builder() {
@@ -65,7 +66,7 @@ public final class ServerObject extends Component implements ToSmithyBuilder<Ser
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withMember("url", getUrl())
                 .withOptionalMember("description", getDescription().map(Node::from));
 

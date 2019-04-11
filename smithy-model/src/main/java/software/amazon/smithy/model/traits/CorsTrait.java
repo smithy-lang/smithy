@@ -16,11 +16,9 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -29,6 +27,9 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<CorsTrait> {
     private static final String TRAIT = "smithy.api#cors";
@@ -48,8 +49,8 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
         super(TRAIT, builder.sourceLocation);
         origin = builder.origin;
         maxAge = builder.maxAge;
-        additionalAllowedHeaders = Set.copyOf(builder.additionalAllowedHeaders);
-        additionalExposedHeaders = Set.copyOf(builder.additionalExposedHeaders);
+        additionalAllowedHeaders = SetUtils.copyOf(builder.additionalAllowedHeaders);
+        additionalExposedHeaders = SetUtils.copyOf(builder.additionalExposedHeaders);
     }
 
     public String getOrigin() {
@@ -80,7 +81,7 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
 
     @Override
     protected Node createNode() {
-        return new ObjectNode(Map.of(), getSourceLocation())
+        return new ObjectNode(MapUtils.of(), getSourceLocation())
                 .withOptionalMember(ORIGIN_MEMBER_NAME, Optional.of(origin)
                         .filter(val -> !val.equals(DEFAULT_ORIGIN))
                         .map(Node::from))
@@ -88,10 +89,10 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
                         .filter(val -> !val.equals(DEFAULT_MAX_AGE))
                         .map(Node::from))
                 .withOptionalMember(ALLOWED_HEADERS_MEMBER_NAME, Optional.of(additionalAllowedHeaders)
-                        .filter(Predicate.not(Set::isEmpty))
+                        .filter(FunctionalUtils.not(Set::isEmpty))
                         .map(Node::fromStrings))
                 .withOptionalMember(EXPOSED_HEADERS_MEMBER_NAME, Optional.of(additionalExposedHeaders)
-                        .filter(Predicate.not(Set::isEmpty))
+                        .filter(FunctionalUtils.not(Set::isEmpty))
                         .map(Node::fromStrings));
     }
 
@@ -103,8 +104,8 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
 
         private String origin = DEFAULT_ORIGIN;
         private int maxAge = DEFAULT_MAX_AGE;
-        private Set<String> additionalAllowedHeaders = Set.of();
-        private Set<String> additionalExposedHeaders = Set.of();
+        private Set<String> additionalAllowedHeaders = SetUtils.of();
+        private Set<String> additionalExposedHeaders = SetUtils.of();
 
         private Builder() {}
 

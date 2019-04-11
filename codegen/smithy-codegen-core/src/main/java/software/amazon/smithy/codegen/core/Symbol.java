@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * A "symbol" is created by a {@link SymbolProvider}, and represents the
@@ -72,7 +73,7 @@ public final class Symbol implements ToSmithyBuilder<Symbol> {
         this.name = builder.name;
         this.declarationFile = builder.declarationFile;
         this.definitionFile = !builder.definitionFile.isEmpty() ? builder.definitionFile : declarationFile;
-        this.properties = Map.copyOf(builder.properties);
+        this.properties = MapUtils.copyOf(builder.properties);
     }
 
     /**

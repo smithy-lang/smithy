@@ -17,4 +17,5 @@ extra["moduleName"] = "software.amazon.smithy.aws.traits"
 
 dependencies {
     api(project(":smithy-model"))
+    api(project(":smithy-utils"))
 }

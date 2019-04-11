@@ -29,6 +29,8 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Defines a single JSON schema.
@@ -129,14 +131,14 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
         properties = builder.properties;
         additionalProperties = builder.additionalProperties;
-        required = List.copyOf(builder.required);
+        required = ListUtils.copyOf(builder.required);
         maxProperties = builder.maxProperties;
         minProperties = builder.minProperties;
         propertyNames = builder.propertyNames;
 
-        allOf = List.copyOf(builder.allOf);
-        oneOf = List.copyOf(builder.oneOf);
-        anyOf = List.copyOf(builder.anyOf);
+        allOf = ListUtils.copyOf(builder.allOf);
+        oneOf = ListUtils.copyOf(builder.oneOf);
+        anyOf = ListUtils.copyOf(builder.anyOf);
         not = builder.not;
 
         title = builder.title;
@@ -150,7 +152,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         contentEncoding = builder.contentEncoding;
         contentMediaType = builder.contentMediaType;
 
-        extensions = Map.copyOf(builder.extensions);
+        extensions = MapUtils.copyOf(builder.extensions);
     }
 
     public static Builder builder() {
@@ -390,7 +392,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
             result.withMember("writeOnly", Node.from(true));
         }
 
-        for (var entry : extensions.entrySet()) {
+        for (Map.Entry<String, ToNode> entry : extensions.entrySet()) {
             result.withMember(entry.getKey(), entry.getValue().toNode());
         }
 
@@ -470,7 +472,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
     public static final class Builder implements SmithyBuilder<Schema> {
         private String ref;
         private String type;
-        private Collection<String> enumValues = List.of();
+        private Collection<String> enumValues = ListUtils.of();
         private Node constValue;
         private Node defaultValue;
 
@@ -491,14 +493,14 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
         private Integer maxProperties;
         private Integer minProperties;
-        private Collection<String> required = List.of();
+        private Collection<String> required = ListUtils.of();
         private Map<String, Schema> properties = new HashMap<>();
         private Schema additionalProperties;
         private Schema propertyNames;
 
-        private List<Schema> allOf = List.of();
-        private List<Schema> anyOf = List.of();
-        private List<Schema> oneOf = List.of();
+        private List<Schema> allOf = ListUtils.of();
+        private List<Schema> anyOf = ListUtils.of();
+        private List<Schema> oneOf = ListUtils.of();
         private Schema not;
 
         private String title;
@@ -537,7 +539,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         }
 
         public Builder enumValues(Collection<String> enumValues) {
-            this.enumValues = enumValues == null ? List.of() : enumValues;
+            this.enumValues = enumValues == null ? ListUtils.of() : enumValues;
             return this;
         }
 
@@ -617,7 +619,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         }
 
         public Builder required(Collection<String> required) {
-            this.required = required == null ? List.of() : required;
+            this.required = required == null ? ListUtils.of() : required;
             return this;
         }
 
@@ -652,17 +654,17 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         }
 
         public Builder allOf(List<Schema> allOf) {
-            this.allOf = allOf == null ? List.of() : allOf;
+            this.allOf = allOf == null ? ListUtils.of() : allOf;
             return this;
         }
 
         public Builder anyOf(List<Schema> anyOf) {
-            this.anyOf = anyOf == null ? List.of() : anyOf;
+            this.anyOf = anyOf == null ? ListUtils.of() : anyOf;
             return this;
         }
 
         public Builder oneOf(List<Schema> oneOf) {
-            this.oneOf = oneOf == null ? List.of() : oneOf;
+            this.oneOf = oneOf == null ? ListUtils.of() : oneOf;
             return this;
         }
 

@@ -59,7 +59,7 @@ public final class ResponseObject extends Component implements ToSmithyBuilder<R
 
     @Override
     protected ObjectNode.Builder createNodeBuilder() {
-        var builder = Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withMember("description", description);
 
         if (!headers.isEmpty()) {

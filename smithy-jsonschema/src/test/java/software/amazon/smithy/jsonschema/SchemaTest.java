@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.not;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.utils.SetUtils;
 
 public class SchemaTest {
     /**
@@ -30,7 +31,7 @@ public class SchemaTest {
     @Test
     public void canRemoveSettings() {
         Schema.Builder builder = Schema.builder();
-        var values = Set.of(
+        Set<String> values = SetUtils.of(
                 JsonSchemaConstants.DISABLE_CONTENT_MEDIA_TYPE,
                 JsonSchemaConstants.DISABLE_ADDITIONAL_PROPERTIES,
                 JsonSchemaConstants.DISABLE_ALL_OF,
@@ -67,7 +68,7 @@ public class SchemaTest {
                 JsonSchemaConstants.DISABLE_WRITE_ONLY
         );
 
-        for (var value : values) {
+        for (String value : values) {
             builder.disableProperty(value);
         }
 

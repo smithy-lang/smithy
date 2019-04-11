@@ -17,7 +17,6 @@ package software.amazon.smithy.model.loader;
 
 import static java.lang.String.format;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
@@ -25,6 +24,7 @@ import software.amazon.smithy.model.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
+import software.amazon.smithy.utils.ListUtils;
 
 final class ValidatorFromDefinitionFactory {
 
@@ -40,7 +40,7 @@ final class ValidatorFromDefinitionFactory {
                     .map(validator -> ValidatedResult.fromValue(mapValidator(definition, validator)))
                     .orElseGet(ValidatedResult::empty);
         } catch (SourceException e) {
-            return ValidatedResult.fromErrors(List.of(ValidationEvent.fromSourceException(
+            return ValidatedResult.fromErrors(ListUtils.of(ValidationEvent.fromSourceException(
                     e, format("Error creating `%s` validator: ", definition.name))));
         }
     }

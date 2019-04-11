@@ -25,6 +25,8 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * Projection stored in a {@link SmithyBuildConfig}.
@@ -47,10 +49,10 @@ public final class Projection implements ToNode {
         }
 
         this.name = builder.name;
-        this.imports = List.copyOf(builder.imports);
-        this.transforms = List.copyOf(builder.transforms);
+        this.imports = ListUtils.copyOf(builder.imports);
+        this.transforms = ListUtils.copyOf(builder.transforms);
         this.isAbstract = builder.isAbstract;
-        this.plugins = Map.copyOf(builder.plugins);
+        this.plugins = MapUtils.copyOf(builder.plugins);
 
         if (isAbstract && (!plugins.isEmpty() || !imports.isEmpty())) {
             throw new SmithyBuildException(String.format(
@@ -102,7 +104,7 @@ public final class Projection implements ToNode {
 
     @Override
     public Node toNode() {
-        var result = Node.objectNodeBuilder();
+        ObjectNode.Builder result = Node.objectNodeBuilder();
         if (isAbstract) {
             result.withMember("abstract", Node.from(true));
         }

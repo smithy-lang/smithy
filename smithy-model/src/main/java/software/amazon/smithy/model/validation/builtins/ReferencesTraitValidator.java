@@ -26,10 +26,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -38,6 +41,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Validates that references are correct.
@@ -55,15 +59,15 @@ public final class ReferencesTraitValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateShape(ShapeIndex index, Shape shape, ReferencesTrait trait) {
         List<ValidationEvent> events = new ArrayList<>();
-        for (var reference : trait.getReferences()) {
+        for (ReferencesTrait.Reference reference : trait.getReferences()) {
             if (shape.isStringShape() && !reference.getIds().isEmpty()) {
                 events.add(error(shape, trait, format(
                         "Found an invalid references trait reference named `%s`. References applied to string shapes "
                         + "cannot contain 'ids'.", reference.getName())));
             }
 
-            var shapeId = reference.getResource();
-            var targetedShape = index.getShape(shapeId);
+            ShapeId shapeId = reference.getResource();
+            Optional<Shape> targetedShape = index.getShape(shapeId);
             if (targetedShape.isPresent()) {
                 if (!targetedShape.get().isResourceShape()) {
                     events.add(error(shape, trait, format(
@@ -89,7 +93,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
         return shape.accept(Shape.<List<ValidationEvent>>visitor()
                 .when(StructureShape.class, s -> validateStructureRef(index, reference, s, trait, target))
                 .when(StringShape.class, s -> validateStringShapeRef(reference, s, trait, target))
-                .orElse(List.of()));
+                .orElse(ListUtils.of()));
     }
 
     private List<ValidationEvent> validateStringShapeRef(
@@ -100,7 +104,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
     ) {
         // You can only reference a resource with a single ID on a string shape.
         if (target.getIdentifiers().size() != 1) {
-            return List.of(error(shape, trait, String.format(
+            return ListUtils.of(error(shape, trait, String.format(
                     "This string shape contains an invalid references trait reference named `%s` that targets the "
                     + "`%s` resource. References on a string shape can only refer to resource shapes with exactly one "
                     + "entry in its identifiers property, but this shape has the following identifiers: [%s]",
@@ -108,7 +112,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
                     ValidationUtils.tickedList(target.getIdentifiers().keySet()))));
         }
 
-        return List.of();
+        return ListUtils.of();
     }
 
     private enum ErrorReason { BAD_TARGET, NOT_FOUND, NOT_REQUIRED }
@@ -121,8 +125,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             ResourceShape target
     ) {
         List<ValidationEvent> events = new ArrayList<>();
-        var resolvedIds = resolveIds(reference, target);
-        var implicit = !resolvedIds.equals(reference.getIds());
+        Map<String, String> resolvedIds = resolveIds(reference, target);
+        boolean implicit = !resolvedIds.equals(reference.getIds());
 
         // Only validate the "ids" keys against the "identifiers" names
         // if it's an explicit reference.
@@ -135,7 +139,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             if (shape.getMember(memberName).isEmpty()) {
                 errors.put(memberName, ErrorReason.NOT_FOUND);
             } else {
-                var structMember = shape.getMember(memberName).get();
+                MemberShape structMember = shape.getMember(memberName).get();
                 if (!index.getShape(structMember.getTarget()).filter(Shape::isStringShape).isPresent()) {
                     errors.put(memberName, ErrorReason.BAD_TARGET);
                 } else if (!structMember.isRequired()) {
@@ -171,7 +175,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
         }
 
         // Make sure the keys of the "ids" are actually part of the identifiers of the resource.
-        var providedKeys = new HashSet<>(resolvedIds.keySet());
+        Set<String> providedKeys = new HashSet<>(resolvedIds.keySet());
         providedKeys.removeAll(target.getIdentifiers().keySet());
         if (!providedKeys.isEmpty()) {
             events.add(extraneousIdentifiers(shape, trait, reference, target, providedKeys));
@@ -184,7 +188,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             ReferencesTrait.Reference reference,
             Collection<String> expectedNames
     ) {
-        var prefix = expectedNames.size() < reference.getIds().size()
+        String prefix = expectedNames.size() < reference.getIds().size()
                         ? "Too many identifiers"
                         : "Not enough identifiers";
         return error(shape, trait, String.format(

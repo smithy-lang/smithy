@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Provides the neighbor relationships for a given shape.
@@ -66,7 +67,7 @@ public interface NeighborProvider {
     static NeighborProvider precomputed(ShapeIndex index, NeighborProvider provider) {
         Map<ShapeId, List<Relationship>> relationships = new HashMap<>();
         index.shapes().forEach(shape -> relationships.put(shape.getId(), provider.getNeighbors(shape)));
-        return shape -> relationships.getOrDefault(shape.getId(), List.of());
+        return shape -> relationships.getOrDefault(shape.getId(), ListUtils.of());
     }
 
     static NeighborProvider bottomUp(ShapeIndex index) {
@@ -80,6 +81,6 @@ public interface NeighborProvider {
                 .distinct()
                 .collect(Collectors.groupingBy(Relationship::getNeighborShapeId, Collectors.toUnmodifiableList()));
 
-        return shape -> targetedFrom.getOrDefault(shape.getId(), List.of());
+        return shape -> targetedFrom.getOrDefault(shape.getId(), ListUtils.of());
     }
 }

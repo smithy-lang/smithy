@@ -16,8 +16,10 @@
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.logging.Logger;
+import software.amazon.smithy.aws.traits.apigateway.Authorizer;
 import software.amazon.smithy.aws.traits.apigateway.AuthorizersTrait;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
 import software.amazon.smithy.openapi.model.SecurityScheme;
@@ -60,19 +62,19 @@ public final class AddAuthorizers implements SmithyOpenApiPlugin {
             return securityScheme;
         }
 
-        var authorizer = trait.getAllAuthorizers().get(authName);
+        Authorizer authorizer = trait.getAllAuthorizers().get(authName);
         LOGGER.fine(() -> String.format(
                 "Adding the `%s` OpenAPI extension to the `%s` security scheme based on the `%s` trait for the "
                 + "`%s` authentication scheme.",
                 EXTENSION_NAME, securitySchemeName, trait.getName(), authName));
 
-        var builder = securityScheme.toBuilder();
+        SecurityScheme.Builder builder = securityScheme.toBuilder();
 
         // The client authorization method is not contained within the authorizer in
         // the OpenAPI extension.
         authorizer.getClientType().ifPresent(type -> builder.putExtension(CLIENT_EXTENSION_NAME, type));
 
-        var authorizerNode = Node.objectNodeBuilder()
+        ObjectNode authorizerNode = Node.objectNodeBuilder()
                 .withMember("type", authorizer.getType())
                 .withMember("authorizerUri", authorizer.getUri())
                 .withOptionalMember("authorizerCredentials", authorizer.getCredentials().map(Node::from))
