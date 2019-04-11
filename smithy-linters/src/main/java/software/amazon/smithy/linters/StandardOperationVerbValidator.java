@@ -76,7 +76,7 @@ public final class StandardOperationVerbValidator extends AbstractValidator {
         return node.getObjectMember("suggestAlternatives")
                 .map(ObjectNode::getMembers)
                 .map(map ->  map.entrySet().stream()
-                        .map(entry -> new Pair<>(entry.getKey().getValue(), Node.loadArrayOfString(
+                        .map(entry -> Pair.of(entry.getKey().getValue(), Node.loadArrayOfString(
                                 entry.getKey().getValue(), entry.getValue())))
                         .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)))
                 .orElse(Map.of());

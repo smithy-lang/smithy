@@ -144,7 +144,7 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         if (!security.isEmpty()) {
             builder.withMember("security", getSecurity().stream()
                     .map(map -> map.entrySet().stream()
-                            .map(entry -> new Pair<>(entry.getKey(), entry.getValue().stream().map(Node::from)
+                            .map(entry -> Pair.of(entry.getKey(), entry.getValue().stream().map(Node::from)
                                     .collect(ArrayNode.collect())))
                             .collect(ObjectNode.collectStringKeys(Pair::getLeft, Pair::getRight)))
                     .collect(ArrayNode.collect()));

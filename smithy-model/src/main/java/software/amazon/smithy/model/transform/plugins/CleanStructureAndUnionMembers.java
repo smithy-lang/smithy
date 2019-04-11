@@ -110,7 +110,7 @@ public final class CleanStructureAndUnionMembers implements ModelTransformerPlug
                 .flatMap(shape -> shape.asMemberShape().stream())
                 .flatMap(member -> index.getShape(member.getContainer())
                         .flatMap(containerShapeMapper)
-                        .map(container -> new Pair<>(container, member))
+                        .map(container -> Pair.of(container, member))
                         .stream())
                 .collect(groupingBy(Pair::getLeft, mapping(Pair::getRight, Collectors.toList())))
                 .entrySet()

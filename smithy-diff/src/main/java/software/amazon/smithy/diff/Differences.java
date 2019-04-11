@@ -106,7 +106,7 @@ public final class Differences {
     public Stream<Pair<String, Node>> addedMetadata() {
         return newModel.getMetadata().entrySet().stream()
                 .filter(entry -> !oldModel.getMetadata().containsKey(entry.getKey()))
-                .map(entry -> new Pair<>(entry.getKey(), entry.getValue()));
+                .map(entry -> Pair.of(entry.getKey(), entry.getValue()));
     }
 
     /**
@@ -151,7 +151,7 @@ public final class Differences {
     public Stream<Pair<String, Node>> removedMetadata() {
         return oldModel.getMetadata().entrySet().stream()
                 .filter(entry -> !newModel.getMetadata().containsKey(entry.getKey()))
-                .map(entry -> new Pair<>(entry.getKey(), entry.getValue()));
+                .map(entry -> Pair.of(entry.getKey(), entry.getValue()));
     }
 
     /**

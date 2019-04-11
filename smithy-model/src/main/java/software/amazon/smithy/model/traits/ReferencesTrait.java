@@ -279,7 +279,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
                                       .expectShapeId(namespace))
                     .ids(referenceProperties.getObjectMember("ids")
                                  .map(obj -> obj.getMembers().entrySet().stream()
-                                         .map(entry -> new Pair<>(
+                                         .map(entry -> Pair.of(
                                                  entry.getKey().getValue(),
                                                  entry.getValue().expectStringNode().getValue()))
                                          .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)))

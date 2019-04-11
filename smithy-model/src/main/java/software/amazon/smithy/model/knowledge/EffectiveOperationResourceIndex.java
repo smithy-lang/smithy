@@ -39,7 +39,7 @@ public final class EffectiveOperationResourceIndex implements KnowledgeIndex {
         var identifierBindingIndex = model.getKnowledge(IdentifierBindingIndex.class);
 
         bindings = shapeIndex.shapes(ServiceShape.class)
-                .map(serviceShape -> new Pair<>(
+                .map(serviceShape -> Pair.of(
                         serviceShape.getId(),
                         compileEffectiveResources(topDownIndex, identifierBindingIndex, serviceShape)))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
@@ -54,7 +54,7 @@ public final class EffectiveOperationResourceIndex implements KnowledgeIndex {
                 .flatMap(resource -> resource.getAllOperations().stream()
                         .flatMap(operationId -> getEffectiveResourceTarget(
                                 ids, topDown, resource, operationId, service).stream())
-                        .map(pair -> new Pair<>(pair.getLeft(), new EffectiveResourceBindings(
+                        .map(pair -> Pair.of(pair.getLeft(), new EffectiveResourceBindings(
                                 pair.getRight(),
                                 ids.getOperationBindings(resource, pair.getLeft())))))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
@@ -72,10 +72,10 @@ public final class EffectiveOperationResourceIndex implements KnowledgeIndex {
             return topDownIndex.getContainedResources(serviceOrId).stream()
                     .filter(resourceShape -> resourceShape.getResources().contains(resource.getId()))
                     .findFirst()
-                    .map(parentResource -> new Pair<>(operationId, parentResource));
+                    .map(parentResource -> Pair.of(operationId, parentResource));
         }
 
-        return Optional.of(new Pair<>(operationId, resource));
+        return Optional.of(Pair.of(operationId, resource));
     }
 
     /**

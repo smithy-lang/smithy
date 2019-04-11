@@ -318,13 +318,13 @@ public final class OpenApiConverter {
             for (var protocolEntry : protoTrait.getProtocols()) {
                 var maybeProtocol = findProtocol(protocolEntry.getName(), protocols);
                 if (maybeProtocol.isPresent()) {
-                    return new Pair<>(protocolEntry, maybeProtocol.get());
+                    return Pair.of(protocolEntry, maybeProtocol.get());
                 }
             }
         } else if (protoTrait.getProtocol(protocolName).isPresent()) {
             var maybeProtocol = findProtocol(protocolName, protocols);
             if (maybeProtocol.isPresent()) {
-                return new Pair<>(protoTrait.getProtocol(protocolName).get(), maybeProtocol.get());
+                return Pair.of(protoTrait.getProtocol(protocolName).get(), maybeProtocol.get());
             }
         }
 

@@ -238,7 +238,7 @@ public final class JsonSchemaConverter {
                 // Don't include members if their container was excluded.
                 .filter(shape -> memberDefinitionPredicate(shapeIndex, shape, predicate))
                 // Create the pointer to the shape and schema object.
-                .map(shape -> new Pair<>(
+                .map(shape -> Pair.of(
                         getRefStrategy().toPointer(shape.getId(), getConfig()),
                         shape.accept(visitor)))
                 .forEach(pair -> builder.putDefinition(pair.getLeft(), pair.getRight()));

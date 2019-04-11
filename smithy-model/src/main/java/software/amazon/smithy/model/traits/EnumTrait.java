@@ -67,7 +67,7 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
                                 .map(Node::from)
                                 .collect(ArrayNode.collect()));
                     }
-                    return new Pair<>(entry.getKey(), value);
+                    return Pair.of(entry.getKey(), value);
                 })
                 .collect(ObjectNode.collectStringKeys(Pair::getLeft, Pair::getRight));
     }

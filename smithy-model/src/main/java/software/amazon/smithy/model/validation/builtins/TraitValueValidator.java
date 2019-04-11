@@ -40,7 +40,7 @@ public final class TraitValueValidator implements Validator {
         return model.getShapeIndex()
                 .shapes()
                 // Get pairs of <Shape, Trait>
-                .flatMap(shape -> shape.getAllTraits().values().stream().map(t -> new Pair<>(shape, t)))
+                .flatMap(shape -> shape.getAllTraits().values().stream().map(t -> Pair.of(shape, t)))
                 // Get pairs of <<Shape, Trait>, TraitDefinition>
                 .flatMap(pair -> Pair.flatMapStream(pair, p -> model.getTraitDefinition(p.getRight().getName())))
                 .flatMap(pair -> validateTrait(

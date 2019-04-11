@@ -83,7 +83,7 @@ public class ResourceOperationBindingValidator extends AbstractValidator {
                 // Find all operations bound to the resource.
                 .flatMap(id -> index.getShape(id).flatMap(Shape::asOperationShape).stream())
                 // Create a pair of the trait is found on the operation.
-                .flatMap(operation -> operation.findTrait(traitName).map(t -> new Pair<>(operation, t)).stream())
+                .flatMap(operation -> operation.findTrait(traitName).map(t -> Pair.of(operation, t)).stream())
                 // Only emit events for operations bound using the incorrect binding type.
                 .filter(pair -> identifierIndex.getOperationBindingType(resource, pair.getLeft()) != expectedBinding)
                 .map(pair -> error(pair.getLeft(), pair.getRight(), errorMessage.get()));

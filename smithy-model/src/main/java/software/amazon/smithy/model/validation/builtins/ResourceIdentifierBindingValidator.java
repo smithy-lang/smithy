@@ -56,7 +56,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
                 .flatMap(childId -> index.getShape(childId).flatMap(Shape::asResourceShape).stream())
                 .flatMap(child -> child.getAllOperations().stream()
                         .flatMap(id -> index.getShape(id).flatMap(Shape::asOperationShape).stream())
-                        .map(operation -> new Pair<>(child, operation)))
+                        .map(operation -> Pair.of(child, operation)))
                 .flatMap(pair -> validateOperation(parent, pair.getLeft(), pair.getRight(), bindingIndex).stream());
     }
 

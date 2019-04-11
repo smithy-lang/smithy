@@ -42,7 +42,7 @@ public final class ArnIndex implements KnowledgeIndex {
         // Pre-compute the ARN services.
         arnServices = unmodifiableMap(model.getShapeIndex().shapes(ServiceShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, ServiceTrait.class))
-                .map(pair -> new Pair<>(pair.getLeft().getId(), resolveServiceArn(pair)))
+                .map(pair -> Pair.of(pair.getLeft().getId(), resolveServiceArn(pair)))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
 
         // Pre-compute all of the ArnTemplates in a service shape.
@@ -61,9 +61,9 @@ public final class ArnIndex implements KnowledgeIndex {
             TopDownIndex index,
             ServiceShape service
     ) {
-        return new Pair<>(service.getId(), unmodifiableMap(index.getContainedResources(service.getId()).stream()
+        return Pair.of(service.getId(), unmodifiableMap(index.getContainedResources(service.getId()).stream()
                 .flatMap(resource -> Trait.flatMapStream(resource, ArnTrait.class))
-                .map(pair -> new Pair<>(pair.getLeft().getId(), pair.getRight()))
+                .map(pair -> Pair.of(pair.getLeft().getId(), pair.getRight()))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight))));
     }
 

@@ -131,7 +131,7 @@ public interface Trait extends FromSourceLocation, ToNode {
             S shape,
             Class<T> traitClass
     ) {
-        return shape.getTrait(traitClass).map(t -> new Pair<>(shape, t)).stream();
+        return shape.getTrait(traitClass).map(t -> Pair.of(shape, t)).stream();
     }
 
     /**

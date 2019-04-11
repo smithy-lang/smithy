@@ -312,7 +312,7 @@ public final class SmithyModelLoader implements ModelLoader {
         try {
             // Ensure that the trait forms a syntactically valid value.
             ShapeId.fromOptionalNamespace(state.namespace, token.lexeme);
-            return new Pair<>(token.lexeme, parseTraitValueBody(state));
+            return Pair.of(token.lexeme, parseTraitValueBody(state));
         } catch (ShapeIdSyntaxException e) {
             throw state.syntax("Invalid trait name syntax. Trait names must adhere to the same syntax as shape IDs.");
         }

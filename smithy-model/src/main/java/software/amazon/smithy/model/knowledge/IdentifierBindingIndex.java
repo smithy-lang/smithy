@@ -120,9 +120,9 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
     private Map<String, String> computeBindings(ResourceShape resource, StructureShape inputShape) {
         return inputShape.getAllMembers().entrySet().stream()
                 .flatMap(entry -> entry.getValue().getTrait(ResourceIdentifierTrait.class)
-                        .map(trait -> Stream.of(new Pair<>(trait.getValue(), entry.getKey())))
+                        .map(trait -> Stream.of(Pair.of(trait.getValue(), entry.getKey())))
                         .orElseGet(() -> isImplicitIdentifierBinding(entry, resource)
-                                ? Stream.of(new Pair<>(entry.getKey(), entry.getKey()))
+                                ? Stream.of(Pair.of(entry.getKey(), entry.getKey()))
                                 : Stream.empty()))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 

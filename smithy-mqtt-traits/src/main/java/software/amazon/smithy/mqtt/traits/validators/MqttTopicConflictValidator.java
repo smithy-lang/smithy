@@ -39,7 +39,7 @@ public final class MqttTopicConflictValidator extends AbstractValidator {
 
         // Find conflicting topic bindings for each resolved topic.
         return bindingIndex.topicBindings()
-                .map(binding -> new Pair<>(binding, bindingIndex.topicBindings()
+                .map(binding -> Pair.of(binding, bindingIndex.topicBindings()
                         .filter(other -> other.conflictsWith(binding))
                         .collect(Collectors.toList())))
                 // Only care when multiple entries are present.

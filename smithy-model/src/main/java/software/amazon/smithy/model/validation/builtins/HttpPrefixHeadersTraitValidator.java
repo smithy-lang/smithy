@@ -56,7 +56,7 @@ public final class HttpPrefixHeadersTraitValidator extends AbstractValidator {
         // Find all structure members that case-insensitively start with the same prefix.
         return structure.getAllMembers().values().stream()
                 .flatMap(member -> Trait.flatMapStream(member, HttpHeaderTrait.class))
-                .map(pair -> new Pair<>(pair.getLeft(), pair.getRight().getValue().toLowerCase(Locale.US)))
+                .map(pair -> Pair.of(pair.getLeft(), pair.getRight().getValue().toLowerCase(Locale.US)))
                 .filter(pair -> pair.getRight().startsWith(prefix))
                 .map(pair -> error(pair.getLeft(), String.format(
                         "`httpHeader` binding of `%s` conflicts with the `httpPrefixHeaders` binding of `%s` "

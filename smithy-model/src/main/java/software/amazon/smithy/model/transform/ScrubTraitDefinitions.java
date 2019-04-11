@@ -46,7 +46,7 @@ final class ScrubTraitDefinitions {
         // Find all shape to TraitDefinition groupings.
         Map<Shape, List<TraitDefinition>> remainingDefinitions = model.getTraitDefinitions().stream()
                 .flatMap(def -> def.getShape().flatMap(index::getShape)
-                        .map(shape -> new Pair<>(def, shape))
+                        .map(shape -> Pair.of(def, shape))
                         .stream())
                 .collect(Collectors.groupingBy(
                         Pair::getRight,

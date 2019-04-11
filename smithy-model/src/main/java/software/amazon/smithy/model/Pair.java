@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model;
 
+import java.util.AbstractMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -27,13 +29,25 @@ import java.util.stream.Stream;
  * @param <R> Right value type.
  */
 public final class Pair<L, R> {
-
-    private final L left;
-    private final R right;
+    public final L left;
+    public final R right;
 
     public Pair(L left, R right) {
         this.left = left;
         this.right = right;
+    }
+
+    /**
+     * Creates a Pair from the given values.
+     *
+     * @param left Left value.
+     * @param right Right value.
+     * @param <L> Left value type.
+     * @param <R> Right value type.
+     * @return Returns the created Pair.
+     */
+    public static <L, R> Pair<L, R> of(L left, R right) {
+        return new Pair<>(left, right);
     }
 
     /**
@@ -49,11 +63,32 @@ public final class Pair<L, R> {
      *  Optional is not empty, or an empty Stream.
      */
     public static <L, R> Stream<Pair<L, R>> flatMapStream(L left, Function<L, Optional<R>> f) {
-        return f.apply(left).map(right -> new Pair<>(left, right)).stream();
+        return f.apply(left).map(right -> Pair.of(left, right)).stream();
     }
 
     public static <L, R> Stream<Pair<L, R>> flatMapStream(L left, Supplier<Optional<R>> f) {
-        return f.get().map(right -> new Pair<>(left, right)).stream();
+        return f.get().map(right -> Pair.of(left, right)).stream();
+    }
+
+    /**
+     * Creates a Pair from a {@link Map.Entry}.
+     *
+     * @param entry Entry in which the key becomes L and value R.
+     * @param <L> Left value type.
+     * @param <R> Right value type.
+     * @return Returns the created Pair.
+     */
+    public static <L, R> Pair<L, R> fromEntry(Map.Entry<L, R> entry) {
+        return Pair.of(entry.getKey(), entry.getValue());
+    }
+
+    /**
+     * Creates a {@link Map.Entry} from the Pair.
+     *
+     * @return Returns the created entry.
+     */
+    public Map.Entry<L, R> toEntry() {
+        return new AbstractMap.SimpleImmutableEntry<>(left, right);
     }
 
     public L getLeft() {

@@ -148,7 +148,7 @@ final class ConfigLoader {
 
     private static Map<String, ObjectNode> loadPlugins(Node container) {
         return container.expectObjectNode().getMembers().entrySet().stream()
-                .map(entry -> new Pair<>(entry.getKey().getValue(), entry.getValue().expectObjectNode()))
+                .map(entry -> Pair.of(entry.getKey().getValue(), entry.getValue().expectObjectNode()))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 }

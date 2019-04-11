@@ -41,7 +41,7 @@ abstract class AbstractTraitRemoval implements ProjectionTransformer {
             }
         }
 
-        return new Pair<>(traitNames, traitNamespaces);
+        return Pair.of(traitNames, traitNamespaces);
     }
 
     boolean matchesTraitDefinition(

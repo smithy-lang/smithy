@@ -128,7 +128,7 @@ public class EventStreamValidator extends AbstractValidator {
             // Find members that don't reference a structure and combine
             // these member names into a comma separated list.
             String invalidMembers = referencedMember.asUnionShape().get().getAllMembers().values().stream()
-                    .map(em -> new Pair<>(em.getMemberName(), index.getShape(em.getTarget()).orElse(null)))
+                    .map(em -> Pair.of(em.getMemberName(), index.getShape(em.getTarget()).orElse(null)))
                     .filter(pair -> pair.getRight() != null && !(pair.getRight() instanceof StructureShape))
                     .map(Pair::getLeft)
                     .sorted()

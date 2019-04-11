@@ -163,7 +163,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                     var target = context.getModel().getShapeIndex().getShape(binding.getMember().getTarget()).get();
                     var refSchema = context.createRef(binding.getMember());
                     param.schema(target.accept(new HeaderSchemaVisitor(context, refSchema, binding.getMember())));
-                    return new Pair<>(binding.getLocationName(), param.build());
+                    return Pair.of(binding.getLocationName(), param.build());
                 })
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
@@ -218,7 +218,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             Shape operationOrError = shape.hasTrait(ErrorTrait.class) ? shape : operation;
             String statusCode = String.valueOf(bindingIndex.getResponseCode(operationOrError));
             var response = createResponse(context, bindingIndex, statusCode, operation, operationOrError);
-            return new Pair<>(statusCode, response);
+            return Pair.of(statusCode, response);
         }).collect(Collectors.toMap(Pair::getLeft, Pair::getRight, (a, b) -> b, LinkedHashMap::new));
     }
 

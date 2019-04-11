@@ -90,7 +90,7 @@ public final class ModelSerializer {
             builder.withMember("shapes", namespace.shapes.stream()
                     // Members are serialized inside of other shapes, so filter them out.
                     .filter(Predicate.not(Shape::isMemberShape))
-                    .map(shape -> new Pair<>(shape, shape.accept(shapeSerializer)))
+                    .map(shape -> Pair.of(shape, shape.accept(shapeSerializer)))
                     .sorted(Comparator.comparing(pair -> pair.getLeft().getId().getName()))
                     .collect(ObjectNode.collectStringKeys(pair -> pair.getLeft().getId().getName(), Pair::getRight)));
         }
@@ -298,7 +298,7 @@ public final class ModelSerializer {
         private ObjectNode createStructureAndUnion(Shape shape, Map<String, MemberShape> members) {
             ObjectNode result = createTypedNode(shape);
             result = result.withMember("members", members.entrySet().stream()
-                    .map(entry -> new Pair<>(entry.getKey(), entry.getValue().accept(this)))
+                    .map(entry -> Pair.of(entry.getKey(), entry.getValue().accept(this)))
                     // Sort by key to ensure a consistent member order.
                     .sorted(Comparator.comparing(Pair::getLeft))
                     .collect(ObjectNode.collectStringKeys(Pair::getLeft, Pair::getRight)));

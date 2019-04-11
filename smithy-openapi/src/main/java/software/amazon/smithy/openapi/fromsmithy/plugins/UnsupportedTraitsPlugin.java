@@ -29,7 +29,7 @@ public final class UnsupportedTraitsPlugin implements SmithyOpenApiPlugin {
     @Override
     public void before(Context context, OpenApi.Builder builder) {
         List<Pair<ShapeId, List<String>>> violations = context.getModel().getShapeIndex().shapes()
-                .map(shape -> new Pair<>(shape.getId(), TRAITS.stream()
+                .map(shape -> Pair.of(shape.getId(), TRAITS.stream()
                         .filter(trait -> shape.findTrait(trait).isPresent())
                         .collect(Collectors.toList())))
                 .filter(pair -> pair.getRight().size() > 0)

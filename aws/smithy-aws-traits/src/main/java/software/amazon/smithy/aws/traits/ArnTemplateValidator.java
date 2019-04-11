@@ -55,7 +55,7 @@ public final class ArnTemplateValidator extends AbstractValidator {
         return arnIndex.getServiceResourceArns(service.getId()).entrySet().stream()
                 .flatMap(entry -> index.getShape(entry.getKey())
                         .flatMap(Shape::asResourceShape)
-                        .map(resource -> new Pair<>(resource, entry.getValue()))
+                        .map(resource -> Pair.of(resource, entry.getValue()))
                         .stream())
                 .flatMap(pair -> validateResourceArn(pair.getLeft(), pair.getRight()));
     }

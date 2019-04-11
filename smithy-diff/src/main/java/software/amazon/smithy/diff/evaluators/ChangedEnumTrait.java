@@ -35,7 +35,7 @@ public class ChangedEnumTrait extends AbstractDiffEvaluator {
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes()
                 .flatMap(change -> change.getChangedTrait(EnumTrait.class).stream()
-                        .map(p -> new Pair<>(change, p)))
+                        .map(p -> Pair.of(change, p)))
                 .flatMap(pair -> validateEnum(pair.getLeft(), pair.getRight()).stream())
                 .collect(Collectors.toList());
     }

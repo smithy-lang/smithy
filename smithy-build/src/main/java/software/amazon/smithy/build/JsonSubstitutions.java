@@ -111,7 +111,7 @@ public final class JsonSubstitutions {
         @Override
         public Node objectNode(ObjectNode node) {
             return node.getMembers().entrySet().stream()
-                    .map(entry -> new Pair<>(entry.getKey(), entry.getValue().accept(this)))
+                    .map(entry -> Pair.of(entry.getKey(), entry.getValue().accept(this)))
                     .collect(ObjectNode.collect(Pair::getLeft, Pair::getRight));
         }
 

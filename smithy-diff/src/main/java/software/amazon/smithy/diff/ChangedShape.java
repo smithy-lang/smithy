@@ -150,15 +150,15 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
         for (Trait oldTrait : oldShape.getAllTraits().values()) {
             Trait newTrait = newShape.findTrait(oldTrait.getName()).orElse(null);
             if (newTrait == null) {
-                changes.put(oldTrait.getName(), (new Pair<>(oldTrait, null)));
+                changes.put(oldTrait.getName(), (Pair.of(oldTrait, null)));
             } else if (!newTrait.equals(oldTrait)) {
-                changes.put(newTrait.getName(), new Pair<>(oldTrait, newTrait));
+                changes.put(newTrait.getName(), Pair.of(oldTrait, newTrait));
             }
         }
         // Find traits that were added.
         newShape.getAllTraits().values().stream()
                 .filter(newTrait -> !oldShape.findTrait(newTrait.getName()).isPresent())
-                .forEach(newTrait -> changes.put(newTrait.getName(), new Pair<>(null, newTrait)));
+                .forEach(newTrait -> changes.put(newTrait.getName(), Pair.of(null, newTrait)));
 
         return changes;
     }
