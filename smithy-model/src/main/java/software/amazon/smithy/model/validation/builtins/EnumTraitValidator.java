@@ -67,7 +67,7 @@ public class EnumTraitValidator extends AbstractValidator {
 
         if (!names.isEmpty()) {
             for (Map.Entry<String, EnumConstantBody> entry : trait.getValues().entrySet()) {
-                if (entry.getValue().getName().isEmpty()) {
+                if (!entry.getValue().getName().isPresent()) {
                     events.add(error(shape, trait, String.format(
                             "`%s` enum value body is missing the `name` property; if any enum trait value contains a "
                             + "`name` property, then all values must contain the `name` property.", entry.getKey())));

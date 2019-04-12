@@ -27,6 +27,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.XmlNamespaceTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates that the xmlNamespace traits are applied correctly for structures.
@@ -41,7 +42,7 @@ public class XmlNamespaceTraitValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         return model.getShapeIndex().shapes(StructureShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, XmlNamespaceTrait.class))
-                .flatMap(pair -> validateTrait(pair.getLeft(), pair.getRight()).stream())
+                .flatMap(pair -> OptionalUtils.stream(validateTrait(pair.getLeft(), pair.getRight())))
                 .collect(Collectors.toList());
     }
 

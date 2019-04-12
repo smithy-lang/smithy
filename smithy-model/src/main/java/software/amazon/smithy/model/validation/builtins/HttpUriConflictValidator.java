@@ -28,6 +28,7 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates that no two URIs in a service conflict with each other.
@@ -49,7 +50,7 @@ public final class HttpUriConflictValidator extends AbstractValidator {
                 .collect(Collectors.toList());
         return operations.stream()
                 .flatMap(shape -> Trait.flatMapStream(shape, HttpTrait.class))
-                .flatMap(pair -> checkConflicts(pair, operations).stream())
+                .flatMap(pair -> OptionalUtils.stream(checkConflicts(pair, operations)))
                 .collect(Collectors.toList());
     }
 

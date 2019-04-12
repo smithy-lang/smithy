@@ -40,11 +40,10 @@ public final class UnsupportedTraitsPlugin implements SmithyOpenApiPlugin {
             return;
         }
 
-        StringBuilder message = new StringBuilder("Encountered unsupported Smithy traits when converting to OpenAPI:");
-        for (Pair<ShapeId, List<String>> pair : violations) {
-            message.append(String.format(" (`%s`: [%s])", pair.getLeft(), String.join(",", pair.getRight())));
-        }
-
+        StringBuilder message = new StringBuilder(
+                "Encountered unsupported Smithy traits when converting to OpenAPI:");
+        violations.forEach(pair -> message.append(String.format(
+                " (`%s`: [%s])", pair.getLeft(), String.join(",", pair.getRight()))));
         message.append(". While these traits may still be meaningful to clients and servers using the Smithy "
                        + "model directly, they have no direct corollary in OpenAPI and can not be included in "
                        + "the generated model.");

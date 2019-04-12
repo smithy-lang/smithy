@@ -37,6 +37,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.transform.ModelTransformerPlugin;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Cleans up structure and union shapes after shapes are removed.
@@ -107,11 +108,10 @@ public final class CleanStructureAndUnionMembers implements ModelTransformerPlug
             Function<Map.Entry<S, List<MemberShape>>, S> entryMapperAndFactory
     ) {
         return removed.stream()
-                .flatMap(shape -> shape.asMemberShape().stream())
-                .flatMap(member -> index.getShape(member.getContainer())
+                .flatMap(shape -> OptionalUtils.stream(shape.asMemberShape()))
+                .flatMap(member -> OptionalUtils.stream(index.getShape(member.getContainer())
                         .flatMap(containerShapeMapper)
-                        .map(container -> Pair.of(container, member))
-                        .stream())
+                        .map(container -> Pair.of(container, member))))
                 .collect(groupingBy(Pair::getLeft, mapping(Pair::getRight, Collectors.toList())))
                 .entrySet()
                 .stream()

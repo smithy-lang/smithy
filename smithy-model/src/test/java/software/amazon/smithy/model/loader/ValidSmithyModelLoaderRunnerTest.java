@@ -29,6 +29,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
+import software.amazon.smithy.utils.IoUtils;
 
 /**
  * Loads all of the ".smithy" files in idl/valid.
@@ -74,7 +75,7 @@ public class ValidSmithyModelLoaderRunnerTest {
 
     private static List<SmithyModelLexer.Token> getTokens(String smithyFilename) {
         List<SmithyModelLexer.Token> tokens = new ArrayList<>();
-        new SmithyModelLexer(LoaderUtils.readUtf8File(smithyFilename)).forEachRemaining(tokens::add);
+        new SmithyModelLexer(IoUtils.readUtf8File(smithyFilename)).forEachRemaining(tokens::add);
         return tokens;
     }
 

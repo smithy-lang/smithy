@@ -37,6 +37,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.builtins.PaginatedTraitValidator;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Index of operation shapes to paginated trait information.
@@ -58,27 +59,27 @@ public final class PaginatedIndex implements KnowledgeIndex {
         OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
         idToTraits = Collections.unmodifiableMap(index.shapes(OperationShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, PaginatedTrait.class))
-                .flatMap(pair -> create(opIndex, pair.getLeft(), pair.getRight()).stream())
+                .flatMap(pair -> OptionalUtils.stream(create(opIndex, pair.getLeft(), pair.getRight())))
                 .collect(Collectors.toMap(info -> info.getOperation().getId(), Function.identity())));
     }
 
     private Optional<PaginationInfo> create(OperationIndex opIndex, OperationShape operation, PaginatedTrait trait) {
-        if (opIndex.getInput(operation.getId()).isEmpty()) {
+        if (!opIndex.getInput(operation.getId()).isPresent()) {
             events.add(emit(operation, trait, "`paginated` operations require an input"));
             return Optional.empty();
-        } else if (opIndex.getOutput(operation.getId()).isEmpty()) {
+        } else if (!opIndex.getOutput(operation.getId()).isPresent()) {
             events.add(emit(operation, trait, "`paginated` operations require an output"));
             return Optional.empty();
         }
 
         StructureShape input = opIndex.getInput(operation.getId()).get();
         StructureShape output = opIndex.getOutput(operation.getId()).get();
-        if (input.getMember(trait.getInputToken()).isEmpty()) {
+        if (!input.getMember(trait.getInputToken()).isPresent()) {
             events.add(emit(operation, trait, format(
                     "`paginated` trait `inputToken` property references a non-existent member named `%s`",
                     trait.getInputToken())));
             return Optional.empty();
-        } else if (output.getMember(trait.getOutputToken()).isEmpty()) {
+        } else if (!output.getMember(trait.getOutputToken()).isPresent()) {
             events.add(emit(operation, trait, format(
                     "`paginated` trait `outputToken` property references a non-existent member named `%s`",
                     trait.getOutputToken())));

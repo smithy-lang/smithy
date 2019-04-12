@@ -110,9 +110,9 @@ final class ReplaceShapes {
                 // This prevents infinite recursion when this transformer and the
                 // RemoveShapes transformer recursively call each other. It also
                 // prevents unnecessary allocations.
-                .filter(shape -> model.getShapeIndex().getShape(shape.getId())
+                .filter(shape -> !model.getShapeIndex().getShape(shape.getId())
                         .filter(original -> original.equals(shape))
-                        .isEmpty())
+                        .isPresent())
                 // Sort the replacements to ensure that members come after container shapes.
                 // This ensures that updates to members take precedence over updates to containers.
                 .sorted((a, b) -> {

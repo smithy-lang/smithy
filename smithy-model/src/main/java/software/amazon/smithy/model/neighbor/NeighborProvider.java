@@ -79,7 +79,7 @@ public interface NeighborProvider {
                 .map(topDown::getNeighbors)
                 .flatMap(List::stream)
                 .distinct()
-                .collect(Collectors.groupingBy(Relationship::getNeighborShapeId, Collectors.toUnmodifiableList()));
+                .collect(Collectors.groupingBy(Relationship::getNeighborShapeId, ListUtils.toUnmodifiableList()));
 
         return shape -> targetedFrom.getOrDefault(shape.getId(), ListUtils.of());
     }

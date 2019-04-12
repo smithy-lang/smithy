@@ -22,6 +22,7 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Traits provide additional context and semantics to shapes.
@@ -131,7 +132,7 @@ public interface Trait extends FromSourceLocation, ToNode {
             S shape,
             Class<T> traitClass
     ) {
-        return shape.getTrait(traitClass).map(t -> Pair.of(shape, t)).stream();
+        return OptionalUtils.stream(shape.getTrait(traitClass).map(t -> Pair.of(shape, t)));
     }
 
     /**

@@ -24,6 +24,7 @@ import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Computes the effective authentication schemes of an operation
@@ -49,9 +50,9 @@ public final class AuthIndex implements KnowledgeIndex {
      */
     public List<String> getDefaultServiceSchemes(ToShapeId service) {
         return index.getShape(service.toShapeId())
-                .flatMap(serviceShape -> serviceShape.getTrait(AuthTrait.class)
-                        .map(AuthTrait::getValues)
-                        .or(() -> serviceShape.getTrait(ProtocolsTrait.class)
+                .flatMap(serviceShape -> OptionalUtils.or(serviceShape.getTrait(AuthTrait.class)
+                        .map(AuthTrait::getValues),
+                        () -> serviceShape.getTrait(ProtocolsTrait.class)
                                 .map(ProtocolsTrait::getAllAuthSchemes)
                                 .map(ListUtils::copyOf)))
                 .orElse(ListUtils.of());

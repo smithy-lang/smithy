@@ -43,6 +43,7 @@ import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -266,7 +267,7 @@ public final class ModelAssembler {
                 throw new RuntimeException("Error loading the contents of " + importPath, e);
             }
         } else if (Files.isRegularFile(importPath)) {
-            String contents = LoaderUtils.readUtf8File(importPath.toString());
+            String contents = IoUtils.readUtf8File(importPath.toString());
             stringModels.put(importPath.toString(), contents);
         } else {
             throw new InvalidPathException(importPath.toString(), "Cannot find import file");
@@ -293,7 +294,7 @@ public final class ModelAssembler {
     public ModelAssembler addImport(URL url) {
         Objects.requireNonNull(url, "The provided url to addImport was null");
         try {
-            String contents = LoaderUtils.readInputStream(url.openStream(), "utf-8");
+            String contents = IoUtils.toUtf8String(url.openStream());
             stringModels.put(url.toExternalForm(), contents);
             return this;
         } catch (IOException e) {
@@ -478,7 +479,7 @@ public final class ModelAssembler {
         }
 
         ValidatedResult<Model> modelResult = visitor.onEnd();
-        return modelResult.getResult().isEmpty()
+        return !modelResult.getResult().isPresent()
                ? modelResult
                : validate(modelResult.getResult().get(), modelResult.getValidationEvents());
     }

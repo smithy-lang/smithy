@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates that resource references do not introduce circular hierarchies.
@@ -37,7 +38,7 @@ public final class ResourceCycleValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         ShapeIndex shapeIndex = model.getShapeIndex();
         return shapeIndex.shapes(ResourceShape.class)
-                .flatMap(shape -> detectCycles(shapeIndex, shape, new LinkedHashSet<>()).stream())
+                .flatMap(shape -> OptionalUtils.stream(detectCycles(shapeIndex, shape, new LinkedHashSet<>())))
                 .collect(Collectors.toList());
     }
 

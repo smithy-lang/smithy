@@ -33,6 +33,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates that service shapes and every operation bound within a service
@@ -59,19 +60,20 @@ public final class AuthValidator extends AbstractValidator {
             ServiceShape service
     ) {
         Optional<ProtocolsTrait> protocols = service.getTrait(ProtocolsTrait.class);
-        if (protocols.isEmpty()) {
+        if (!protocols.isPresent()) {
             return ListUtils.of();
         }
 
         List<ValidationEvent> result = new ArrayList<>();
         // Validate the schemes on the service itself.
-        service.getTrait(AuthTrait.class).stream()
-                .flatMap(trait -> validateSchemes(protocols.get(), service, service, trait).stream())
+        OptionalUtils.stream(service.getTrait(AuthTrait.class))
+                .flatMap(trait -> OptionalUtils.stream(validateSchemes(protocols.get(), service, service, trait)))
                 .forEach(result::add);
         // Validate the schemes of each operation bound within the service.
         topDownIndex.getContainedOperations(service).stream()
-                .flatMap(operation -> operation.getTrait(AuthTrait.class).stream()
-                        .flatMap(trait -> validateSchemes(protocols.get(), service, operation, trait).stream()))
+                .flatMap(operation -> OptionalUtils.stream(operation.getTrait(AuthTrait.class))
+                        .flatMap(trait -> OptionalUtils.stream(
+                                validateSchemes(protocols.get(), service, operation, trait))))
                 .forEach(result::add);
         // Validate for unique protocol names.
         validateUniqueNames(service, protocols.get()).ifPresent(result::add);

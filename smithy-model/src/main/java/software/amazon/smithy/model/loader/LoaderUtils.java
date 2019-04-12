@@ -17,14 +17,6 @@ package software.amazon.smithy.model.loader;
 
 import static software.amazon.smithy.model.node.Node.loadArrayOfString;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -72,53 +64,6 @@ public final class LoaderUtils {
             TraitDefinition.DEPRECATION_REASON_KEY);
 
     private LoaderUtils() {}
-
-    /**
-     * Reads a file into a UTF-8 encoded string.
-     * @param path Path to the file to read.
-     * @return Returns the contents of the file.
-     * @throws RuntimeException if the file can't be read or encoded.
-     */
-    public static String readUtf8File(String path) {
-        return readFile(path, StandardCharsets.UTF_8);
-    }
-
-    private static String readFile(String path, Charset encoding) {
-        try {
-            byte[] encoded = Files.readAllBytes(Paths.get(path));
-            return new String(encoded, encoding);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Reads an InputStream into a string.
-     *
-     * @param inputStream Input stream to read.
-     * @param charSet Character encoding to read.
-     * @return Returns the input stream as a string.
-     * @throws RuntimeException if the stream can't be read or encoded.
-     */
-    public static String readInputStream(InputStream inputStream, String charSet) {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-
-        try {
-            while ((length = inputStream.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            return result.toString(charSet);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     static void loadServiceObject(ServiceShape.Builder builder, ShapeId shapeId, ObjectNode shapeNode) {
         builder.version(shapeNode.expectMember(VERSION_KEY).expectStringNode().getValue());

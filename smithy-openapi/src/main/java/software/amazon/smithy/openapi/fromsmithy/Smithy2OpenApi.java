@@ -18,7 +18,7 @@ package software.amazon.smithy.openapi.fromsmithy;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.jsonschema.JsonSchemaConstants;
-import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConstants;
 
@@ -49,7 +49,7 @@ public final class Smithy2OpenApi implements SmithyBuildPlugin {
                 .expectStringNode("`" + OpenApiConstants.SERVICE + "` must be a string value")
                 .getValue());
 
-        Node openApiNode = converter.convertToNode(context.getModel(), shapeId);
+        ObjectNode openApiNode = converter.convertToNode(context.getModel(), shapeId);
         context.getFileManifest().writeJson(shapeId.getName() + ".openapi.json", openApiNode);
     }
 }

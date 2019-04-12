@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.ValidatedResult;
-import software.amazon.smithy.model.loader.LoaderUtils;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.IoUtils;
 
 /**
  * Runs a single test case by loading a model and ensuring the resulting
@@ -136,7 +136,7 @@ public final class SmithyTestCase {
     }
 
     private static List<ValidationEvent> loadExpectedEvents(String errorsFileLocation) {
-        String contents = LoaderUtils.readUtf8File(errorsFileLocation);
+        String contents = IoUtils.readUtf8File(errorsFileLocation);
         return Arrays.stream(contents.split("\n"))
                 .filter(line -> !line.trim().isEmpty())
                 .map(SmithyTestCase::parseValidationEvent)

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.smithy.utils;
 
 import java.util.ArrayList;
@@ -14,117 +29,49 @@ import java.util.stream.Collectors;
 public final class ListUtils {
     private ListUtils() {}
 
+    /**
+     * Creates an immutable copy of the given list.
+     *
+     * @param values The collection to make an immutable list of.
+     * @param <T> the List's value type.
+     * @return An immutable List copy.
+     */
     public static <T> List<T> copyOf(Collection<? extends T> values) {
         return values.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(values));
     }
 
+    /**
+     * Returns an unmodifiable list containing zero entries.
+     *
+     * @param <T> the List's value type.
+     * @return an empty List.
+     */
     public static <T> List<T> of() {
         return Collections.emptyList();
     }
 
+    /**
+     * Returns an unmodifiable list containing a single entry.
+     *
+     * @param value the List's value.
+     * @param <T> the List's value type.
+     * @return a List containing the specified value.
+     * @throws NullPointerException if the value is {@code null}.
+     */
     public static <T> List<T> of(T value) {
         return Collections.singletonList(value);
     }
 
-    public static <T> List<T> of(T v1, T v2) {
-        List<T> result = new ArrayList<>(2);
-        result.add(v1);
-        result.add(v2);
-        return Collections.unmodifiableList(result);
-    }
-
-    public static <T> List<T> of(T v1, T v2, T v3) {
-        List<T> result = new ArrayList<>(3);
-        result.add(v1);
-        result.add(v2);
-        result.add(v3);
-        return Collections.unmodifiableList(result);
-    }
-
-    public static <T> List<T> of(T v1, T v2, T v3, T v4) {
-        List<T> result = new ArrayList<>(4);
-        result.add(v1);
-        result.add(v2);
-        result.add(v3);
-        result.add(v4);
-        return Collections.unmodifiableList(result);
-    }
-
-    public static <T> List<T> of(T v1, T v2, T v3, T v4, T v5) {
-        List<T> result = new ArrayList<>(5);
-        result.add(v1);
-        result.add(v2);
-        result.add(v3);
-        result.add(v4);
-        result.add(v5);
-        return Collections.unmodifiableList(result);
-    }
-
-    public static <T> List<T> of(T v1, T v2, T v3, T v4, T v5, T v6) {
-        List<T> result = new ArrayList<>(6);
-        result.add(v1);
-        result.add(v2);
-        result.add(v3);
-        result.add(v4);
-        result.add(v5);
-        result.add(v6);
-        return Collections.unmodifiableList(result);
-    }
-
-    public static <T> List<T> of(T v1, T v2, T v3, T v4, T v5, T v6, T v7) {
-        List<T> result = new ArrayList<>(7);
-        result.add(v1);
-        result.add(v2);
-        result.add(v3);
-        result.add(v4);
-        result.add(v5);
-        result.add(v6);
-        result.add(v7);
-        return Collections.unmodifiableList(result);
-    }
-
-    public static <T> List<T> of(T v1, T v2, T v3, T v4, T v5, T v6, T v7, T v8) {
-        List<T> result = new ArrayList<>(8);
-        result.add(v1);
-        result.add(v2);
-        result.add(v3);
-        result.add(v4);
-        result.add(v5);
-        result.add(v6);
-        result.add(v7);
-        result.add(v8);
-        return Collections.unmodifiableList(result);
-    }
-
-    public static <T> List<T> of(T v1, T v2, T v3, T v4, T v5, T v6, T v7, T v8, T v9) {
-        List<T> result = new ArrayList<>(9);
-        result.add(v1);
-        result.add(v2);
-        result.add(v3);
-        result.add(v4);
-        result.add(v5);
-        result.add(v6);
-        result.add(v7);
-        result.add(v8);
-        result.add(v9);
-        return Collections.unmodifiableList(result);
-    }
-
-    public static <T> List<T> of(T v1, T v2, T v3, T v4, T v5, T v6, T v7, T v8, T v9, T v10) {
-        List<T> result = new ArrayList<>(10);
-        result.add(v1);
-        result.add(v2);
-        result.add(v3);
-        result.add(v4);
-        result.add(v5);
-        result.add(v6);
-        result.add(v7);
-        result.add(v8);
-        result.add(v9);
-        result.add(v10);
-        return Collections.unmodifiableList(result);
-    }
-
+    /**
+     * Returns an unmodifiable list containing any number of entries.
+     *
+     * @param values the List's values.
+     * @param <T> the List's value type.
+     * @return a List containing the specified values.
+     * @throws NullPointerException if any value is {@code null}.
+     */
+    @SafeVarargs
+    @SuppressWarnings("varargs")
     public static <T> List<T> of(T... values) {
         return Collections.unmodifiableList(Arrays.asList(values));
     }
@@ -136,6 +83,7 @@ public final class ListUtils {
      * {@code Collectors#toUnmodifiableList}.
      *
      * @param <T> Type of value to expect.
+     * @return a Collector that accumulates the entries into an unmodifiable List.
      */
     public static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
         return Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList);

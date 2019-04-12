@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.LoaderUtils;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -33,6 +32,7 @@ import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.PathItem;
+import software.amazon.smithy.utils.IoUtils;
 
 public class OpenApiConverterTest {
     @Test
@@ -42,8 +42,8 @@ public class OpenApiConverterTest {
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("example.rest#RestService"));
-        Node expectedNode = Node.parse(LoaderUtils.readInputStream(
-                getClass().getResourceAsStream("test-service.openapi.json"), "UTF-8"));
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("test-service.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
     }
@@ -58,15 +58,15 @@ public class OpenApiConverterTest {
                 .putSetting(OpenApiConstants.OPEN_API_TAGS, true)
                 .putSetting(OpenApiConstants.OPEN_API_SUPPORTED_TAGS, Node.fromStrings("foo", "baz"))
                 .convert(model, ShapeId.from("smithy.example#Service"));
-        Node expectedNode = Node.parse(LoaderUtils.readInputStream(
-                getClass().getResourceAsStream("tagged-service.openapi.json"), "UTF-8"));
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("tagged-service.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
     }
 
     @Test
     public void requiresProtocolsTrait() {
-        Throwable thrown = Assertions.assertThrows(OpenApiException.class, () -> {
+        Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             Model model = Model.assembler()
                     .addImport(getClass().getResource("missing-protocols-trait.json"))
                     .assemble()
@@ -80,7 +80,7 @@ public class OpenApiConverterTest {
 
     @Test
     public void mustBeAbleToResolveProtocol() {
-        Throwable thrown = Assertions.assertThrows(OpenApiException.class, () -> {
+        Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             Model model = Model.assembler()
                     .addImport(getClass().getResource("unable-to-resolve-protocol.json"))
                     .assemble()
@@ -94,7 +94,7 @@ public class OpenApiConverterTest {
 
     @Test
     public void mustBeAbleToResolveExplicitProtocol() {
-        Throwable thrown = Assertions.assertThrows(OpenApiException.class, () -> {
+        Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             Model model = Model.assembler()
                     .addImport(getClass().getResource("unable-to-resolve-protocol.json"))
                     .assemble()
@@ -114,8 +114,8 @@ public class OpenApiConverterTest {
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
-        Node expectedNode = Node.parse(LoaderUtils.readInputStream(
-                getClass().getResourceAsStream("unsupported-http-method.openapi.json"), "UTF-8"));
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("unsupported-http-method.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
     }
@@ -143,14 +143,14 @@ public class OpenApiConverterTest {
                 .convert(model, ShapeId.from("example.rest#RestService"));
 
         for (PathItem pathItem : result.getPaths().values()) {
-            Assertions.assertTrue(pathItem.getGet().isEmpty());
-            Assertions.assertTrue(pathItem.getHead().isEmpty());
-            Assertions.assertTrue(pathItem.getDelete().isEmpty());
-            Assertions.assertTrue(pathItem.getPatch().isEmpty());
-            Assertions.assertTrue(pathItem.getPost().isEmpty());
-            Assertions.assertTrue(pathItem.getPut().isEmpty());
-            Assertions.assertTrue(pathItem.getTrace().isEmpty());
-            Assertions.assertTrue(pathItem.getOptions().isEmpty());
+            Assertions.assertFalse(pathItem.getGet().isPresent());
+            Assertions.assertFalse(pathItem.getHead().isPresent());
+            Assertions.assertFalse(pathItem.getDelete().isPresent());
+            Assertions.assertFalse(pathItem.getPatch().isPresent());
+            Assertions.assertFalse(pathItem.getPost().isPresent());
+            Assertions.assertFalse(pathItem.getPut().isPresent());
+            Assertions.assertFalse(pathItem.getTrace().isPresent());
+            Assertions.assertFalse(pathItem.getOptions().isPresent());
         }
     }
 
@@ -172,8 +172,8 @@ public class OpenApiConverterTest {
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
-        Node expectedNode = Node.parse(LoaderUtils.readInputStream(
-                getClass().getResourceAsStream("mixed-security-service.openapi.json"), "UTF-8"));
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("mixed-security-service.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
     }

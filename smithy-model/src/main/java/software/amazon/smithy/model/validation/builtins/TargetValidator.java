@@ -103,7 +103,7 @@ public class TargetValidator extends AbstractValidator {
                 // Errors must target a structure with the error trait.
                 if (target.getType() != ShapeType.STRUCTURE) {
                     return Optional.of(badType(shape, target, relType, ShapeType.STRUCTURE));
-                } else if (target.findTrait("error").isEmpty()) {
+                } else if (!target.findTrait("error").isPresent()) {
                     return Optional.of(errorNoTrait(shape, target.getId()));
                 } else {
                     return Optional.empty();

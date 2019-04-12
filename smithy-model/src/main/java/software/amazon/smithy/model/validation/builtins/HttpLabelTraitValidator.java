@@ -64,7 +64,7 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateStructure(ShapeIndex index, OperationShape operation, HttpTrait http) {
         // If the operation has labels then it must also have input.
-        if (operation.getInput().isEmpty() && !http.getUri().getLabels().isEmpty()) {
+        if (!operation.getInput().isPresent() && !http.getUri().getLabels().isEmpty()) {
             return ListUtils.of(error(operation, http, String.format(
                     "`http` trait uri contains labels (%s), but operation has no input.",
                     ValidationUtils.tickedList(http.getUri().getLabels().stream()
@@ -105,7 +105,7 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
                     }
 
                     // Emit an error if the member is not a valid label.
-                    if (http.getUri().getLabel(member.getMemberName()).isEmpty()) {
+                    if (!http.getUri().getLabel(member.getMemberName()).isPresent()) {
                         events.add(error(member, trait, format(
                                 "This `%s` structure member is marked with the `httpLabel` trait, but no "
                                 + "corresponding `http` URI label could be found when used as the input of "

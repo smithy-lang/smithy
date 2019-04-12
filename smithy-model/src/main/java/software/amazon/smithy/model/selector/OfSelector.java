@@ -22,6 +22,7 @@ import java.util.Set;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
@@ -67,7 +68,7 @@ final class OfSelector implements Selector {
     private Optional<Shape> findParent(NeighborProvider neighborProvider, Shape shape) {
         return neighborProvider.getNeighbors(shape).stream()
                 .filter(rel -> rel.getRelationshipType() == RelationshipType.MEMBER_CONTAINER)
-                .flatMap(rel -> rel.getNeighborShape().stream())
+                .flatMap(rel -> OptionalUtils.stream(rel.getNeighborShape()))
                 .findFirst();
     }
 }

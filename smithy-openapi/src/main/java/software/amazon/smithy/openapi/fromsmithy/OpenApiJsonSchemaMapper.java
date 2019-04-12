@@ -79,7 +79,7 @@ public class OpenApiJsonSchemaMapper implements SchemaBuilderMapper {
 
         if (enabled || config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_USE_FORMATS)) {
             // Don't overwrite an existing format setting.
-            if (builder.getFormat().isEmpty()) {
+            if (!builder.getFormat().isPresent()) {
                 if (shape.isIntegerShape()) {
                     builder.format("int32");
                 } else if (shape.isLongShape()) {

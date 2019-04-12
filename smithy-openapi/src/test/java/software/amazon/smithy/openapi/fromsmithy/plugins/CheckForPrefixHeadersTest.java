@@ -35,7 +35,7 @@ public class CheckForPrefixHeadersTest {
 
     @Test
     public void throwsOnPrefixHeadersByDefault() {
-        Throwable thrown = Assertions.assertThrows(OpenApiException.class, () -> {
+        Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#PrefixHeaders"));
         });
 

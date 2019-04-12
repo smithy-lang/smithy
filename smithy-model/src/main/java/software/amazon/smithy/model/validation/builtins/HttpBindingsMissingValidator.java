@@ -48,7 +48,7 @@ public final class HttpBindingsMissingValidator extends AbstractValidator {
         }
 
         return operations.stream()
-                .filter(shape -> shape.getTrait(HttpTrait.class).isEmpty())
+                .filter(shape -> !shape.getTrait(HttpTrait.class).isPresent())
                 .map(shape -> createEvent(service, shape))
                 .collect(Collectors.toList());
     }

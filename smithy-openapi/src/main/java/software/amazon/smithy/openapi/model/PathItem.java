@@ -18,7 +18,6 @@ package software.amazon.smithy.openapi.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -111,15 +110,15 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
 
     public Stream<OperationObject> operations() {
         return Stream.of(
-                OptionalUtils.stream(getGet()),
-                OptionalUtils.stream(getPut()),
-                OptionalUtils.stream(getPost()),
-                OptionalUtils.stream(getDelete()),
-                OptionalUtils.stream(getOptions()),
-                OptionalUtils.stream(getHead()),
-                OptionalUtils.stream(getPatch()),
-                OptionalUtils.stream(getTrace())
-        ).flatMap(Function.identity());
+                getGet(),
+                getPut(),
+                getPost(),
+                getDelete(),
+                getOptions(),
+                getHead(),
+                getPatch(),
+                getTrace()
+        ).flatMap(OptionalUtils::stream);
     }
 
     @Override

@@ -67,8 +67,8 @@ public class ConditionKeysIndexTest {
     }
 
     @Test
-    public void detectsUnkownConditionKeys() {
-         ValidatedResult<Model> result = Model.assembler()
+    public void detectsUnknownConditionKeys() {
+        ValidatedResult<Model> result = Model.assembler()
                 .addImport(getClass().getResource("invalid-condition-keys.smithy"))
                 .discoverModels(getClass().getClassLoader())
                 .assemble();
@@ -77,6 +77,6 @@ public class ConditionKeysIndexTest {
         assertThat(result.getValidationEvents(Severity.ERROR).stream()
                            .map(ValidationEvent::getEventId)
                            .collect(Collectors.toSet()),
-                   contains("ConditionKeys"));
+                contains("ConditionKeys"));
     }
 }

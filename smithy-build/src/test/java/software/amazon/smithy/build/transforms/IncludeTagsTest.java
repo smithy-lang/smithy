@@ -56,7 +56,7 @@ public class IncludeTagsTest {
     @Test
     public void removesTagsFromTraitDefsNotInList() {
         TraitDefinition foo = TraitDefinition.builder()
-                .name("ns#baz")
+                .name("ns#foo")
                 .addTag("foo")
                 .addTag("baz")
                 .build();

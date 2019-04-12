@@ -15,22 +15,13 @@
 
 package software.amazon.smithy.utils;
 
-import java.util.function.Predicate;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Utilities for working with functions, predicates, etc.
- */
-public final class FunctionalUtils {
-    private FunctionalUtils() {}
+import org.junit.jupiter.api.Test;
 
-    /**
-     * Negates a {@link Predicate}.
-     *
-     * @param predicate Predicate to negate.
-     * @param <T> Value type of the predicate.
-     * @return Returns a predicate that negates the given predicate.
-     */
-    public static <T> Predicate<T> not(Predicate<T> predicate) {
-        return predicate.negate();
+public class FunctionalUtilsTest {
+    @Test
+    public void negatesPredicate() {
+        assertTrue(FunctionalUtils.not(test -> false).test(""));
     }
 }
