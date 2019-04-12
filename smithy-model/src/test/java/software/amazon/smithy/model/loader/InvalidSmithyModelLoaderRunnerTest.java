@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.utils.IoUtils;
 
 /**
  * Loads all of the ".smithy" files contained in idl/invalid.
@@ -38,7 +39,7 @@ public class InvalidSmithyModelLoaderRunnerTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testParserRunner(String file) {
-        String contents = LoaderUtils.readUtf8File(file);
+        String contents = IoUtils.readUtf8File(file);
         String expectedError = contents.split("\\R")[0].substring(3);
 
         try {

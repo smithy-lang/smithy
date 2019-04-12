@@ -70,7 +70,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      */
     private static ShapeId validateShapeId(ShapeType type, ShapeId shapeId, boolean expectMember) {
         if (expectMember) {
-            if (shapeId.getMember().isEmpty()) {
+            if (!shapeId.getMember().isPresent()) {
                 throw new IllegalArgumentException(String.format(
                         "Shapes of type `%s` must contain a member in their shape ID. Found `%s`", type, shapeId));
             }

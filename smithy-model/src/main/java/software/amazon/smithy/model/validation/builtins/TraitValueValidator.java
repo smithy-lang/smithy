@@ -73,7 +73,7 @@ public final class TraitValueValidator implements Validator {
         }
 
         ShapeId shape = definition.getShape().get();
-        if (index.getShape(shape).isEmpty()) {
+        if (!index.getShape(shape).isPresent()) {
             // This is validated in TraitDefinitionShapeValidator.
             return ListUtils.of();
         }

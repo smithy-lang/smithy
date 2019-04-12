@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.smithy.utils;
 
 import java.io.UncheckedIOException;
@@ -11,62 +26,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <p>Operations on {@link java.lang.String} that are
- * {@code null} safe.</p>
+ * <p>Operations on {@link java.lang.String} that are {@code null} safe.</p>
  *
  * <ul>
  *  <li><b>IsEmpty/IsBlank</b>
  *      - checks if a String contains text</li>
- *  <li><b>Trim/Strip</b>
+ *  <li><b>Trim</b>
  *      - removes leading and trailing whitespace</li>
  *  <li><b>Equals/Compare</b>
  *      - compares two strings null-safe</li>
- *  <li><b>startsWith</b>
- *      - check if a String starts with a prefix null-safe</li>
- *  <li><b>endsWith</b>
- *      - check if a String ends with a suffix null-safe</li>
- *  <li><b>IndexOf/LastIndexOf/Contains</b>
- *      - null-safe index-of checks
- *  <li><b>IndexOfAny/LastIndexOfAny/IndexOfAnyBut/LastIndexOfAnyBut</b>
- *      - index-of any of a set of Strings</li>
- *  <li><b>ContainsOnly/ContainsNone/ContainsAny</b>
- *      - does String contains only/none/any of these characters</li>
- *  <li><b>Substring/Left/Right/Mid</b>
- *      - null-safe substring extractions</li>
- *  <li><b>SubstringBefore/SubstringAfter/SubstringBetween</b>
- *      - substring extraction relative to other strings</li>
- *  <li><b>Split/Join</b>
- *      - splits a String into an array of substrings and vice versa</li>
- *  <li><b>Remove/Delete</b>
- *      - removes part of a String</li>
- *  <li><b>Replace/Overlay</b>
- *      - Searches a String and replaces one String with another</li>
- *  <li><b>Chomp/Chop</b>
- *      - removes the last part of a String</li>
- *  <li><b>AppendIfMissing</b>
- *      - appends a suffix to the end of the String if not present</li>
- *  <li><b>PrependIfMissing</b>
- *      - prepends a prefix to the start of the String if not present</li>
- *  <li><b>LeftPad/RightPad/Center/Repeat</b>
- *      - pads a String</li>
- *  <li><b>UpperCase/LowerCase/SwapCase/Capitalize/Uncapitalize</b>
+ *  <li><b>Substring</b>
+ *      - null-safe substring extraction</li>
+ *  <li><b>UpperCase/LowerCase/Capitalize/Uncapitalize</b>
  *      - changes the case of a String</li>
- *  <li><b>CountMatches</b>
- *      - counts the number of occurrences of one String in another</li>
- *  <li><b>IsAlpha/IsNumeric/IsWhitespace/IsAsciiPrintable</b>
- *      - checks the characters in a String</li>
- *  <li><b>DefaultString</b>
- *      - protects against a null input String</li>
- *  <li><b>Rotate</b>
- *      - rotate (circular shift) a String</li>
- *  <li><b>Reverse/ReverseDelimited</b>
- *      - reverses a String</li>
- *  <li><b>Abbreviate</b>
- *      - abbreviates a string using ellipsis or another given String</li>
- *  <li><b>Difference</b>
- *      - compares Strings and reports on their differences</li>
- *  <li><b>LevenshteinDistance</b>
- *      - the number of changes needed to change one String into another</li>
  * </ul>
  *
  * <p>The {@code StringUtils} class defines certain words related to
@@ -92,9 +64,9 @@ import java.util.regex.Pattern;
  * <p>This class's source was modified from the Apache commons-lang library: https://github.com/apache/commons-lang/</p>
  *
  * <p>#ThreadSafe#</p>
+ *
  * @see java.lang.String
- * TODO: Fill in more javadoc for added methods.
- * TODO: Cite Java SDK.
+ * @see <a href="https://github.com/aws/aws-sdk-java-v2/blob/master/utils/src/main/java/software/amazon/awssdk/utils/StringUtils.java">AWS SDK for Java V2 StringUtils</a>
  */
 public final class StringUtils {
     // Performance testing notes (JDK 1.4, Jul03, scolebourne)
@@ -566,9 +538,11 @@ public final class StringUtils {
     /**
      * Encode the given bytes as a string using the given charset.
      *
+     * @param bytes the bytes to convert.
+     * @param charset the Charset to use for encoding.
+     * @return the encoded String.
      * @throws UncheckedIOException with a {@link CharacterCodingException} as the cause if the bytes
-     *  cannot be encoded using the
-     * provided charset.
+     *  cannot be encoded using the provided charset.
      */
     public static String fromBytes(byte[] bytes, Charset charset) throws UncheckedIOException {
         try {

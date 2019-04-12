@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.smithy.utils;
 
 import java.util.AbstractMap;
@@ -21,7 +36,7 @@ public final class MapUtils {
      * @param map The map to make an immutable copy of
      * @param <K> the Map's key type
      * @param <V> the Map's value type
-     * @return An immutable map copy
+     * @return An immutable Map copy
      */
     public static <K, V> Map<K, V>  copyOf(Map<? extends K, ? extends V> map) {
         return map.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(new HashMap<>(map));
@@ -385,10 +400,12 @@ public final class MapUtils {
      * <p>This is a polyfill equivalent of Java 10's
      * {@code Collectors#toUnmodifiableMap}.
      *
-     * @param keyMapper Function that retrieves the key
-     * @param valueMapper Function that retrieves the value
-     * @param <K> the Map's key type
-     * @param <U> the Map's value type
+     * @param <T> the type to retrieve keys and values from.
+     * @param <K> the Map's key type.
+     * @param <U> the Map's value type.
+     * @param keyMapper Function that retrieves the key.
+     * @param valueMapper Function that retrieves the value.
+     * @return a Collector that accumulates the entries into an unmodifiable Map.
      */
     @SuppressWarnings("unchecked")
     public static <T, K, U> Collector<T, ?, Map<K, U>> toUnmodifiableMap(

@@ -16,7 +16,6 @@
 package software.amazon.smithy.model;
 
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toUnmodifiableMap;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -64,7 +63,7 @@ public final class Model implements ToSmithyBuilder<Model> {
         shapeIndex = builder.shapeIndex != null ? builder.shapeIndex : ShapeIndex.builder().build();
         metadata = builder.metadata.isEmpty() ? MapUtils.of() : MapUtils.copyOf(builder.metadata);
         traitDefinitions = builder.traitDefinitions.isEmpty() ? MapUtils.of() : builder.traitDefinitions.stream()
-                .collect(toUnmodifiableMap(TraitDefinition::getFullyQualifiedName, identity(), (a, b) -> b));
+                .collect(MapUtils.toUnmodifiableMap(TraitDefinition::getFullyQualifiedName, identity()));
     }
 
     /**

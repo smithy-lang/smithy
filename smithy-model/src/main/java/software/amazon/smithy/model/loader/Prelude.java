@@ -18,7 +18,6 @@ package software.amazon.smithy.model.loader;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
@@ -38,7 +37,10 @@ import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Represents the prelude model available to every Smithy model.
@@ -77,7 +79,7 @@ public final class Prelude {
     static {
         PUBLIC_PRELUDE_SHAPE_IDS = PUBLIC_PRELUDE_SHAPES.stream()
                 .map(AbstractShapeBuilder::getId)
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(SetUtils.toUnmodifiableSet());
     }
 
     private Prelude() {}
@@ -147,9 +149,9 @@ public final class Prelude {
      */
     public static Optional<Shape> resolveShapeId(ShapeIndex index, String fromNamespace, String target) {
         // First check shapes in the same namespace.
-        return index.getShape(ShapeId.fromOptionalNamespace(fromNamespace, target))
+        return OptionalUtils.or(index.getShape(ShapeId.fromOptionalNamespace(fromNamespace, target)),
                 // Then check shapes in the prelude that are public.
-                .or(() -> index.getShape(ShapeId.fromParts(NAMESPACE, target))
+                () -> index.getShape(ShapeId.fromParts(NAMESPACE, target))
                         .filter(Prelude::isPublicPreludeShape));
     }
 
@@ -172,7 +174,7 @@ public final class Prelude {
 
             // Register prelude trait definitions.
             String filename = "smithy-prelude-traits.json";
-            String contents = LoaderUtils.readInputStream(Prelude.class.getResourceAsStream(filename), "utf-8");
+            String contents = IoUtils.toUtf8String(Prelude.class.getResourceAsStream(filename));
             new JsonModelLoader().load(filename, contents, visitor);
             return visitor.onEnd().unwrap();
         }

@@ -26,6 +26,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Computes and indexes the resources on which a service's operations may be thought to act.
@@ -54,8 +55,8 @@ public final class EffectiveOperationResourceIndex implements KnowledgeIndex {
     ) {
         return topDown.getContainedResources(service).stream()
                 .flatMap(resource -> resource.getAllOperations().stream()
-                        .flatMap(operationId -> getEffectiveResourceTarget(
-                                ids, topDown, resource, operationId, service).stream())
+                        .flatMap(operationId -> OptionalUtils.stream(getEffectiveResourceTarget(
+                                ids, topDown, resource, operationId, service)))
                         .map(pair -> Pair.of(pair.getLeft(), new EffectiveResourceBindings(
                                 pair.getRight(),
                                 ids.getOperationBindings(resource, pair.getLeft())))))

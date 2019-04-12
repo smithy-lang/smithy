@@ -19,6 +19,7 @@ import java.util.Optional;
 import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Represents a member that targets another shape by ID.
@@ -109,8 +110,8 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
      * @return Returns the optionally found trait on the shape or member.
      */
     public <T extends Trait> Optional<T> getMemberTrait(ShapeIndex index, Class<T> trait) {
-        return getTrait(trait)
-                .or(() -> index.getShape(getTarget()).flatMap(targetedShape -> targetedShape.getTrait(trait)));
+        return OptionalUtils.or(getTrait(trait),
+                () -> index.getShape(getTarget()).flatMap(targetedShape -> targetedShape.getTrait(trait)));
     }
 
     /**
@@ -122,8 +123,8 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
      * @return Returns the optionally found trait on the shape or member.
      */
     public Optional<Trait> findMemberTrait(ShapeIndex index, String traitName) {
-        return findTrait(traitName)
-                .or(() -> index.getShape(getTarget()).flatMap(targetedShape -> targetedShape.findTrait(traitName)));
+        return OptionalUtils.or(findTrait(traitName),
+                () -> index.getShape(getTarget()).flatMap(targetedShape -> targetedShape.findTrait(traitName)));
     }
 
     /**

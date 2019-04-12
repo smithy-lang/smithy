@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -175,7 +176,7 @@ public class ModelSerializerTest {
         ModelSerializer serializer = ModelSerializer.builder().build();
         ObjectNode serialized = serializer.serialize(model);
 
-        assertTrue(serialized.getMember("smithy.api").isEmpty());
+        assertFalse(serialized.getMember("smithy.api").isPresent());
     }
 
     @Test
@@ -192,7 +193,7 @@ public class ModelSerializerTest {
         ObjectNode smithyApi = serialized.expectMember("smithy.api").expectObjectNode();
 
         assertTrue(smithyApi.getMember("traitDefs").isPresent());
-        assertTrue(smithyApi.getMember("shapes").isEmpty());
+        assertFalse(smithyApi.getMember("shapes").isPresent());
         ObjectNode traitDefs = smithyApi.expectMember("traitDefs").expectObjectNode();
 
         assertTrue(traitDefs.getMember("foo").isPresent());

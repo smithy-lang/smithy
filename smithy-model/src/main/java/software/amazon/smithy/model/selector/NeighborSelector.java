@@ -25,6 +25,7 @@ import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Traverses into the neighbors of shapes with an optional list of
@@ -45,9 +46,8 @@ final class NeighborSelector implements Selector {
     }
 
     private Stream<Shape> mapNeighbor(Relationship rel) {
-        return rel.getNeighborShape()
-                .flatMap(target -> createNeighbor(rel, target))
-                .stream();
+        return OptionalUtils.stream(rel.getNeighborShape()
+                .flatMap(target -> createNeighbor(rel, target)));
     }
 
     private Optional<Shape> createNeighbor(Relationship rel, Shape target) {

@@ -1,8 +1,24 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.smithy.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,26 +35,31 @@ public final class IoUtils {
     /**
      * Reads and returns the rest of the given input stream as a byte array.
      * Caller is responsible for closing the given input stream.
+     *
+     * @param is The input stream to convert.
+     * @return The converted bytes.
      */
-    public static byte[] toByteArray(InputStream is) throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        try {
+    public static byte[] toByteArray(InputStream is) {
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             byte[] b = new byte[BUFFER_SIZE];
-            int n = 0;
+            int n;
             while ((n = is.read(b)) != -1) {
                 output.write(b, 0, n);
             }
             return output.toByteArray();
-        } finally {
-            output.close();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
     /**
      * Reads and returns the rest of the given input stream as a string.
      * Caller is responsible for closing the given input stream.
+     *
+     * @param is The input stream to convert.
+     * @return The converted string.
      */
-    public static String toUtf8String(InputStream is) throws IOException {
+    public static String toUtf8String(InputStream is) {
         return new String(toByteArray(is), StandardCharsets.UTF_8);
     }
 
@@ -64,7 +85,7 @@ public final class IoUtils {
         try {
             return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 }

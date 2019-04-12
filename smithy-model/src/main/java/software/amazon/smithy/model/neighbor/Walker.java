@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Walks connected shapes within a shape index.
@@ -71,7 +72,7 @@ public final class Walker {
     public Set<Shape> walkShapes(Shape shape, Predicate<Relationship> predicate) {
         Set<Shape> connectedShapes = walk(shape, predicate)
                 .stream()
-                .flatMap(rel -> rel.getNeighborShape().stream())
+                .flatMap(rel -> OptionalUtils.stream(rel.getNeighborShape()))
                 .collect(Collectors.toSet());
         connectedShapes.add(shape);
         return connectedShapes;

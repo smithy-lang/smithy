@@ -17,11 +17,11 @@ package software.amazon.smithy.aws.apigateway.openapi;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.LoaderUtils;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
+import software.amazon.smithy.utils.IoUtils;
 
 public class CloudFormationSubstitutionTest {
     @Test
@@ -33,7 +33,7 @@ public class CloudFormationSubstitutionTest {
                 .unwrap();
 
         ObjectNode expected = Node.parse(
-                LoaderUtils.readUtf8File(getClass().getResource("substitution-performed.json").getPath()))
+                IoUtils.readUtf8File(getClass().getResource("substitution-performed.json").getPath()))
                 .expectObjectNode();
 
         ObjectNode actual = OpenApiConverter.create()
@@ -52,7 +52,7 @@ public class CloudFormationSubstitutionTest {
                 .unwrap();
 
         ObjectNode expected = Node.parse(
-                LoaderUtils.readUtf8File(getClass().getResource("substitution-not-performed.json").getPath()))
+                IoUtils.readUtf8File(getClass().getResource("substitution-not-performed.json").getPath()))
                 .expectObjectNode();
 
         ObjectNode actual = OpenApiConverter.create()

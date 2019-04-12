@@ -109,9 +109,9 @@ final class ModelValidator {
         // This prevents custom validators from unnecessarily needing to
         // worry about prelude shapes and trait definitions, but still
         // allows for validation events when the prelude is broken.
-        return event.getSeverity() == Severity.ERROR || event.getShapeId()
+        return event.getSeverity() == Severity.ERROR || !event.getShapeId()
                 .filter(Prelude::isPreludeShape)
-                .isEmpty();
+                .isPresent();
     }
 
     /**
@@ -150,7 +150,7 @@ final class ModelValidator {
             ValidatedResult<Validator> result = factory.loadValidator(val);
             result.getResult().ifPresent(validators::add);
             events.addAll(result.getValidationEvents());
-            if (result.getValidationEvents().isEmpty() && result.getResult().isEmpty()) {
+            if (result.getValidationEvents().isEmpty() && !result.getResult().isPresent()) {
                 events.add(unknownValidatorError(val.name, val.sourceLocation));
             }
         }

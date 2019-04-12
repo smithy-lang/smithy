@@ -262,7 +262,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                     });
                     members.forEach((memberName, member) -> {
                         if (member.isRequired()
-                                && object.getMember(memberName).isEmpty()
+                                && !object.getMember(memberName).isPresent()
                                 // Ignore missing required primitive members because they have a default value.
                                 && !isMemberPrimitive(member)) {
                             events.add(event("Missing required structure member `" + memberName + "` for `"
@@ -320,7 +320,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         List<ValidationEvent> events = applyPlugins(shape);
         events.addAll(index.getShape(shape.getTarget())
                               .map(member -> member.accept(this))
-                              .orElseGet(List::of));
+                              .orElse(ListUtils.of()));
         return events;
     }
 

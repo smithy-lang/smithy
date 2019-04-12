@@ -25,6 +25,7 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Finds trait definitions that are not connected to a service shape.
@@ -62,7 +63,7 @@ public final class UnreferencedTraitDefinitions {
                 .map(Map::keySet)
                 .flatMap(Set::stream)
                 .distinct()
-                .flatMap(traitName -> model.getTraitDefinition(traitName).stream())
+                .flatMap(traitName -> OptionalUtils.stream(model.getTraitDefinition(traitName)))
                 .filter(keepFilter)
                 .forEach(unused::remove);
         return unused;

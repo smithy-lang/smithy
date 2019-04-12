@@ -136,7 +136,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
 
         Map<String, ErrorReason> errors = new HashMap<>();
         for (String memberName : resolvedIds.values()) {
-            if (shape.getMember(memberName).isEmpty()) {
+            if (!shape.getMember(memberName).isPresent()) {
                 errors.put(memberName, ErrorReason.NOT_FOUND);
             } else {
                 MemberShape structMember = shape.getMember(memberName).get();

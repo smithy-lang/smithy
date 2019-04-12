@@ -27,10 +27,10 @@ import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.LoaderUtils;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.IoUtils;
 
 public final class GenerateCommand implements Command {
     @Override
@@ -85,10 +85,10 @@ public final class GenerateCommand implements Command {
             String settingsFileContents;
             if (settings.equals("-")) {
                 System.err.println("Loading plugin settings from STD_IN");
-                settingsFileContents = LoaderUtils.readInputStream(System.in, "UTF-8");
+                settingsFileContents = IoUtils.toUtf8String(System.in);
             } else {
                 System.err.println(String.format("Loading plugin settings file: %s", settings));
-                settingsFileContents = LoaderUtils.readUtf8File(settings);
+                settingsFileContents = IoUtils.readUtf8File(settings);
             }
             settingsObject = Node.parse(settingsFileContents)
                     .expectObjectNode("--settings must reference a JSON encoded object");

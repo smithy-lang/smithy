@@ -40,7 +40,7 @@ public final class TraitDefinitionShapeValidator implements Validator {
                 .stream()
                 .filter(FunctionalUtils.not(TraitDefinition::isAnnotationTrait))
                 .flatMap(definition -> Pair.flatMapStream(definition, TraitDefinition::getShape))
-                .filter(pair -> index.getShape(pair.getRight()).isEmpty())
+                .filter(pair -> !index.getShape(pair.getRight()).isPresent())
                 .map(pair -> ValidationEvent.builder()
                         .severity(Severity.ERROR)
                         .eventId(NAME)

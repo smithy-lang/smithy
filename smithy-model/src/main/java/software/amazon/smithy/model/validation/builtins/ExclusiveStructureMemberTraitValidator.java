@@ -28,6 +28,7 @@ import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates traits that can only be applied to a single structure member.
@@ -47,7 +48,7 @@ public class ExclusiveStructureMemberTraitValidator extends AbstractValidator {
         return shape.getAllMembers().values().stream()
                 .flatMap(member -> member.getAllTraits().values().stream())
                 .filter(trait -> isExclusive(model, trait))
-                .flatMap(t -> validateExclusiveTrait(shape, t.getName()).stream())
+                .flatMap(t -> OptionalUtils.stream(validateExclusiveTrait(shape, t.getName())))
                 .collect(Collectors.toList());
     }
 

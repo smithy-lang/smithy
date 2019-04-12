@@ -44,7 +44,7 @@ public class FilterShapesTest {
         StringShape b = StringShape.builder().id(bId).build();
         Model model = Model.builder().shapeIndex(ShapeIndex.builder().addShapes(a, b).build()).build();
         Model result = ModelTransformer.create()
-                .filterShapes(model, shape -> shape.getTrait(SensitiveTrait.class).isEmpty());
+                .filterShapes(model, shape -> !shape.getTrait(SensitiveTrait.class).isPresent());
         ShapeIndex index = result.getShapeIndex();
 
         assertThat(index.shapes().count(), Matchers.is(1L));

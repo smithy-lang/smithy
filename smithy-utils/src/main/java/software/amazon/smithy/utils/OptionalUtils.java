@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.smithy.utils;
 
 import java.util.Optional;
@@ -14,6 +29,15 @@ public final class OptionalUtils {
      */
     private OptionalUtils() {}
 
+    /**
+     * Retrieves the value of the optional if present or invokes the supplier
+     * for a value.
+     *
+     * @param value Value to check.
+     * @param supplier Supplier for a value if no value is present.
+     * @param <T> Type of value.
+     * @return A value of type T.
+     */
     @SuppressWarnings("unchecked")
     public static <T> Optional<T> or(Optional<T> value, Supplier<Optional<? extends T>> supplier) {
         return value.isPresent() ? value : (Optional<T>) supplier.get();

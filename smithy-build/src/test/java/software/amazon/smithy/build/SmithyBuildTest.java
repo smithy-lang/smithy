@@ -45,6 +45,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 
@@ -150,7 +151,7 @@ public class SmithyBuildTest {
         assertThat(Files.isDirectory(outputDirectory.resolve("invalid/model")), is(false));
         assertThat(Files.isDirectory(outputDirectory.resolve("invalid/build-info")), is(true));
 
-        String contents = Files.readString(outputDirectory.resolve("source/build-info/smithy-build-info.json"));
+        String contents = IoUtils.readUtf8File(outputDirectory.resolve("source/build-info/smithy-build-info.json"));
         ObjectNode badBuildInfo = Node.parse(contents).expectObjectNode();
         assertTrue(badBuildInfo.expectMember("version").isStringNode());
         assertTrue(badBuildInfo.expectMember("smithyVersion").isStringNode());

@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Generic immutable pair of values.
@@ -63,11 +64,11 @@ public final class Pair<L, R> {
      *  Optional is not empty, or an empty Stream.
      */
     public static <L, R> Stream<Pair<L, R>> flatMapStream(L left, Function<L, Optional<R>> f) {
-        return f.apply(left).map(right -> Pair.of(left, right)).stream();
+        return OptionalUtils.stream(f.apply(left).map(right -> Pair.of(left, right)));
     }
 
     public static <L, R> Stream<Pair<L, R>> flatMapStream(L left, Supplier<Optional<R>> f) {
-        return f.get().map(right -> Pair.of(left, right)).stream();
+        return OptionalUtils.stream(f.get().map(right -> Pair.of(left, right)));
     }
 
     /**

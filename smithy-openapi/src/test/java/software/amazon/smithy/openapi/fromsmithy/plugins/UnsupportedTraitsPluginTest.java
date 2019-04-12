@@ -35,7 +35,7 @@ public class UnsupportedTraitsPluginTest {
 
     @Test
     public void throwsWhenUnsupportedTraitsAreFound() {
-        Throwable thrown = Assertions.assertThrows(OpenApiException.class, () -> {
+        Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Streaming"));
         });
 

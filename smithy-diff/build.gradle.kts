@@ -16,6 +16,6 @@
 extra["moduleName"] = "software.amazon.smithy.diff"
 
 dependencies {
-    compile(project(":smithy-utils"))
-    compile(project(":smithy-model"))
+    api(project(":smithy-utils"))
+    api(project(":smithy-model"))
 }

@@ -111,7 +111,7 @@ public final class TimestampFormatPlugin implements NodeValidatorPlugin {
     }
 
     private List<String> validateHttpDate(Node value) {
-        if (value.asStringNode().isEmpty()) {
+        if (!value.asStringNode().isPresent()) {
             return createInvalidHttpDateMessage(value.getType().toString());
         }
 

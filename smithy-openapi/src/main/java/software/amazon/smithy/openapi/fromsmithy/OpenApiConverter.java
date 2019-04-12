@@ -590,18 +590,22 @@ public final class OpenApiConverter {
             ComponentsObject.Builder components,
             SmithyOpenApiPlugin plugin
     ) {
-        OptionalUtils.ifPresentOrElse(context.getService().getTrait(ProtocolsTrait.class), trait -> {
-            for (SecuritySchemeConverter converter : context.getSecuritySchemeConverters()) {
-                String securityName = converter.getSecurityName(context);
-                String authName = converter.getAuthSchemeName();
-                SecurityScheme createdScheme = converter.createSecurityScheme(context);
-                SecurityScheme securityScheme = plugin.updateSecurityScheme(context, authName,
-                        securityName, createdScheme);
-                if (securityScheme != null) {
-                    components.putSecurityScheme(securityName, securityScheme);
-                }
-            }
-        }, () -> LOGGER.warning("No `protocols` trait found on service while converting to OpenAPI"));
+        OptionalUtils.ifPresentOrElse(
+                context.getService().getTrait(ProtocolsTrait.class),
+                trait -> {
+                    for (SecuritySchemeConverter converter : context.getSecuritySchemeConverters()) {
+                        String securityName = converter.getSecurityName(context);
+                        String authName = converter.getAuthSchemeName();
+                        SecurityScheme createdScheme = converter.createSecurityScheme(context);
+                        SecurityScheme securityScheme = plugin.updateSecurityScheme(
+                                context, authName, securityName, createdScheme);
+                        if (securityScheme != null) {
+                            components.putSecurityScheme(securityName, securityScheme);
+                        }
+                    }
+                },
+                () -> LOGGER.warning("No `protocols` trait found on service while converting to OpenAPI")
+        );
 
         // Add service-wide security requirements.
         AuthIndex authIndex = context.getModel().getKnowledge(AuthIndex.class);

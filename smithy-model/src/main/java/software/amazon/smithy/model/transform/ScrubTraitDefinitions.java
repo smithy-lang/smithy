@@ -26,6 +26,7 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Removes all trait definitions from a model and all shapes that are only
@@ -45,9 +46,8 @@ final class ScrubTraitDefinitions {
         ShapeIndex index = model.getShapeIndex();
         // Find all shape to TraitDefinition groupings.
         Map<Shape, List<TraitDefinition>> remainingDefinitions = model.getTraitDefinitions().stream()
-                .flatMap(def -> def.getShape().flatMap(index::getShape)
-                        .map(shape -> Pair.of(def, shape))
-                        .stream())
+                .flatMap(def -> OptionalUtils.stream(def.getShape().flatMap(index::getShape)
+                        .map(shape -> Pair.of(def, shape))))
                 .collect(Collectors.groupingBy(
                         Pair::getRight,
                         Collectors.mapping(Pair::getLeft, Collectors.toList())));
