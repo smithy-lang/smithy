@@ -1156,8 +1156,8 @@ public final class StringUtils {
 
         while (offset < inputLineLength) {
             int spaceToWrapAt = -1;
-            Matcher matcher = patternToWrapOn.matcher(str.substring(offset,
-                                                                    Math.min((int) Math.min(Integer.MAX_VALUE, offset + wrapLength + 1L), inputLineLength)));
+            Matcher matcher = patternToWrapOn.matcher(str.substring(
+                    offset, Math.min((int) Math.min(Integer.MAX_VALUE, offset + wrapLength + 1L), inputLineLength)));
             if (matcher.find()) {
                 if (matcher.start() == 0) {
                     matcherSize = matcher.end() - matcher.start();
@@ -1364,7 +1364,7 @@ public final class StringUtils {
      * as the default value. The generated hash set provides O(1) lookup time.</p>
      *
      * @param delimiters  set of characters to determine capitalization, null means whitespace
-     * @return Set<Integer>
+     * @return Set of Integer
      * @see <a href="https://github.com/apache/commons-text/blob/c3b30de7352f8af85455d9b18778c9cd609ceb1d/src/main/java/org/apache/commons/text/CaseUtils.java">Source</a>
      */
     private static Set<Integer> generateDelimiterSet(final char[] delimiters) {
