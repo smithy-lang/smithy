@@ -15,10 +15,6 @@
 
 package software.amazon.smithy.utils;
 
-import java.io.UncheckedIOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -61,14 +57,19 @@ import java.util.regex.Pattern;
  * {@code NullPointerException} should be considered a bug in
  * {@code StringUtils}.</p>
  *
- * <p>This class's source was modified from the Apache commons-lang library: https://github.com/apache/commons-lang/</p>
+ * <p>This class's source was modified from the Apache commons-lang and
+ * Apache commons-text libraries: https://github.com/apache/commons-lang/,
+ * https://github.com/apache/commons-text/</p>
  *
  * <p>#ThreadSafe#</p>
  *
  * @see java.lang.String
- * @see <a href="https://github.com/aws/aws-sdk-java-v2/blob/master/utils/src/main/java/software/amazon/awssdk/utils/StringUtils.java">AWS SDK for Java V2 StringUtils</a>
+ * @see <a href="https://github.com/apache/commons-lang">Apache Commons Lang</a>
+ * @see <a href="https://github.com/apache/commons-text">Apache Commons Text </a>
+ * @see <a href="https://github.com/twitter/elephant-bird/blob/master/LICENSE">Elephant bird license</a>
  */
 public final class StringUtils {
+
     // Performance testing notes (JDK 1.4, Jul03, scolebourne)
     // Whitespace:
     // Character.isWhitespace() is faster than WHITESPACE.indexOf()
@@ -86,9 +87,22 @@ public final class StringUtils {
     // (not sure who tested this)
 
     /**
+     * A String for a space character.
+     *
+     * @since 3.2
+     */
+    private static final String SPACE = " ";
+
+    /**
      * The empty String {@code ""}.
+     * @since 2.0
      */
     private static final String EMPTY = "";
+
+    /**
+     * <p>The maximum size to which the padding constant(s) can expand.</p>
+     */
+    private static final int PAD_LIMIT = 8192;
 
     /**
      * <p>{@code StringUtils} instances should NOT be constructed in
@@ -119,6 +133,7 @@ public final class StringUtils {
      * @param cs  the CharSequence to check, may be null
      * @return {@code true} if the CharSequence is empty or null
      * @since 3.0 Changed signature from isEmpty(String) to isEmpty(CharSequence)
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static boolean isEmpty(final CharSequence cs) {
         return cs == null || cs.length() == 0;
@@ -141,6 +156,7 @@ public final class StringUtils {
      * @return {@code true} if the CharSequence is null, empty or whitespace only
      * @since 2.0
      * @since 3.0 Changed signature from isBlank(String) to isBlank(CharSequence)
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static boolean isBlank(final CharSequence cs) {
         if (cs == null || cs.length() == 0) {
@@ -171,6 +187,7 @@ public final class StringUtils {
      * @return {@code true} if the CharSequence is not empty and not null and not whitespace only
      * @since 2.0
      * @since 3.0 Changed signature from isNotBlank(String) to isNotBlank(CharSequence)
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static boolean isNotBlank(final CharSequence cs) {
         return !isBlank(cs);
@@ -197,6 +214,7 @@ public final class StringUtils {
      *
      * @param str  the String to be trimmed, may be null
      * @return the trimmed string, {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static String trim(final String str) {
         return str == null ? null : str.trim();
@@ -222,6 +240,7 @@ public final class StringUtils {
      * @return the trimmed String,
      *  {@code null} if only chars &lt;= 32, empty or null String input
      * @since 2.0
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static String trimToNull(final String str) {
         String ts = trim(str);
@@ -247,6 +266,7 @@ public final class StringUtils {
      * @param str  the String to be trimmed, may be null
      * @return the trimmed String, or an empty String if {@code null} input
      * @since 2.0
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static String trimToEmpty(final String str) {
         return str == null ? EMPTY : str.trim();
@@ -274,6 +294,7 @@ public final class StringUtils {
      * @param cs1  the first String, may be {@code null}
      * @param cs2  the second String, may be {@code null}
      * @return {@code true} if the Strings are equal (case-sensitive), or both {@code null}
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static boolean equals(final String cs1, final String cs2) {
         if (cs1 == null || cs2 == null) {
@@ -311,6 +332,7 @@ public final class StringUtils {
      * @param start the position to start from, negative means count back from the end of the String by this many
      *  characters
      * @return substring from start position, {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static String substring(final String str, int start) {
         if (str == null) {
@@ -366,6 +388,7 @@ public final class StringUtils {
      *  scharacters
      * @return substring from start position to end position,
      *  {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static String substring(final String str, int start, int end) {
         if (str == null) {
@@ -418,6 +441,7 @@ public final class StringUtils {
      *
      * @param str  the String to upper case, may be null
      * @return the upper cased String, {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static String upperCase(final String str) {
         if (str == null) {
@@ -441,6 +465,7 @@ public final class StringUtils {
      *
      * @param str  the String to lower case, may be null
      * @return the lower cased String, {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static String lowerCase(final String str) {
         if (str == null) {
@@ -465,6 +490,7 @@ public final class StringUtils {
      * @return the capitalized String, {@code null} if null String input
      * @see #uncapitalize(String)
      * @since 2.0
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static String capitalize(final String str) {
         if (str == null || str.length() == 0) {
@@ -508,6 +534,7 @@ public final class StringUtils {
      * @return the uncapitalized String, {@code null} if null String input
      * @see #capitalize(String)
      * @since 2.0
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
     public static String uncapitalize(final String str) {
         if (str == null || str.length() == 0) {
@@ -536,23 +563,6 @@ public final class StringUtils {
     }
 
     /**
-     * Encode the given bytes as a string using the given charset.
-     *
-     * @param bytes the bytes to convert.
-     * @param charset the Charset to use for encoding.
-     * @return the encoded String.
-     * @throws UncheckedIOException with a {@link CharacterCodingException} as the cause if the bytes
-     *  cannot be encoded using the provided charset.
-     */
-    public static String fromBytes(byte[] bytes, Charset charset) throws UncheckedIOException {
-        try {
-            return charset.newDecoder().decode(ByteBuffer.wrap(bytes)).toString();
-        } catch (CharacterCodingException e) {
-            throw new UncheckedIOException("Cannot encode string.", e);
-        }
-    }
-
-    /**
      * Tests if this string starts with the specified prefix ignoring case considerations.
      *
      * @param str the string to be tested
@@ -563,52 +573,333 @@ public final class StringUtils {
         return str.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 
-    /**
-     * Replace the prefix of the string provided ignoring case considerations.
-     *
-     * <p>
-     * The unmatched part is unchanged.
-     *
-     *
-     * @param str the string to replace
-     * @param prefix the prefix to find
-     * @param replacement the replacement
-     * @return the replaced string
-     */
-    public static String replacePrefixIgnoreCase(String str, String prefix, String replacement) {
-        return str.replaceFirst("(?i)" + prefix, replacement);
-    }
-
+    // Padding
+    //-----------------------------------------------------------------------
 
     /**
-     * Escapes a given value to convert double quotes (") to (\").
+     * <p>Repeat a String {@code repeat} times to form a
+     * new String.</p>
      *
-     * <p>Any backslash (\) is converted to double blackslashes (\\).
+     * <pre>
+     * StringUtils.repeat(null, 2) = null
+     * StringUtils.repeat("", 0)   = ""
+     * StringUtils.repeat("", 2)   = ""
+     * StringUtils.repeat("a", 3)  = "aaa"
+     * StringUtils.repeat("ab", 2) = "abab"
+     * StringUtils.repeat("a", -2) = ""
+     * </pre>
      *
-     * @param value Value to escape.
-     * @return Returns the escaped value.
+     * @param str  the String to repeat, may be null
+     * @param repeat  number of times to repeat str, negative treated as zero
+     * @return a new String consisting of the original String repeated,
+     *  {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
-    public static String escapeDoubleQuote(String value) {
-        return escapeDelimited(value, "\"");
+    public static String repeat(final String str, final int repeat) {
+        // Performance tuned for 2.0 (JDK1.4)
+
+        if (str == null) {
+            return null;
+        }
+        if (repeat <= 0) {
+            return EMPTY;
+        }
+        final int inputLength = str.length();
+        if (repeat == 1 || inputLength == 0) {
+            return str;
+        }
+        if (inputLength == 1 && repeat <= PAD_LIMIT) {
+            return repeat(str.charAt(0), repeat);
+        }
+
+        final int outputLength = inputLength * repeat;
+        switch (inputLength) {
+            case 1 :
+                return repeat(str.charAt(0), repeat);
+            case 2 :
+                final char ch0 = str.charAt(0);
+                final char ch1 = str.charAt(1);
+                final char[] output2 = new char[outputLength];
+                for (int i = repeat * 2 - 2; i >= 0; i--, i--) {
+                    output2[i] = ch0;
+                    output2[i + 1] = ch1;
+                }
+                return new String(output2);
+            default :
+                final StringBuilder buf = new StringBuilder(outputLength);
+                for (int i = 0; i < repeat; i++) {
+                    buf.append(str);
+                }
+                return buf.toString();
+        }
     }
 
     /**
-     * Escapes a given value to convert single quotes (') to (\').
+     * <p>Returns padding using the specified delimiter repeated
+     * to a given length.</p>
      *
-     * <p>Any backslash (\) is converted to double blackslashes (\\).
+     * <pre>
+     * StringUtils.repeat('e', 0)  = ""
+     * StringUtils.repeat('e', 3)  = "eee"
+     * StringUtils.repeat('e', -2) = ""
+     * </pre>
      *
-     * @param value Value to escape.
-     * @return Returns the escaped value.
+     * <p>Note: this method does not support padding with
+     * <a href="http://www.unicode.org/glossary/#supplementary_character">Unicode Supplementary Characters</a>
+     * as they require a pair of {@code char}s to be represented.
+     * If you are needing to support full I18N of your applications
+     * consider using {@link #repeat(String, int)} instead.
+     * </p>
+     *
+     * @param ch  character to repeat
+     * @param repeat  number of times to repeat char, negative treated as zero
+     * @return String with repeated character
+     * @see #repeat(String, int)
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
      */
-    public static String escapeSingleQuote(String value) {
-        return escapeDelimited(value, "'");
+    public static String repeat(final char ch, final int repeat) {
+        if (repeat <= 0) {
+            return EMPTY;
+        }
+        final char[] buf = new char[repeat];
+        for (int i = repeat - 1; i >= 0; i--) {
+            buf[i] = ch;
+        }
+        return new String(buf);
     }
 
-    private static String escapeDelimited(String value, String delimiter) {
-        value = value.replace("\\", "\\\\");
-        value = value.replace(delimiter, "\\" + delimiter);
-        return value;
+    /**
+     * <p>Right pad a String with spaces (' ').</p>
+     *
+     * <p>The String is padded to the size of {@code size}.</p>
+     *
+     * <pre>
+     * StringUtils.rightPad(null, *)   = null
+     * StringUtils.rightPad("", 3)     = "   "
+     * StringUtils.rightPad("bat", 3)  = "bat"
+     * StringUtils.rightPad("bat", 5)  = "bat  "
+     * StringUtils.rightPad("bat", 1)  = "bat"
+     * StringUtils.rightPad("bat", -1) = "bat"
+     * </pre>
+     *
+     * @param str  the String to pad out, may be null
+     * @param size  the size to pad to
+     * @return right padded String or original String if no padding is necessary,
+     *  {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
+     */
+    public static String rightPad(final String str, final int size) {
+        return rightPad(str, size, ' ');
     }
+
+    /**
+     * <p>Right pad a String with a specified character.</p>
+     *
+     * <p>The String is padded to the size of {@code size}.</p>
+     *
+     * <pre>
+     * StringUtils.rightPad(null, *, *)     = null
+     * StringUtils.rightPad("", 3, 'z')     = "zzz"
+     * StringUtils.rightPad("bat", 3, 'z')  = "bat"
+     * StringUtils.rightPad("bat", 5, 'z')  = "batzz"
+     * StringUtils.rightPad("bat", 1, 'z')  = "bat"
+     * StringUtils.rightPad("bat", -1, 'z') = "bat"
+     * </pre>
+     *
+     * @param str  the String to pad out, may be null
+     * @param size  the size to pad to
+     * @param padChar  the character to pad with
+     * @return right padded String or original String if no padding is necessary,
+     *  {@code null} if null String input
+     * @since 2.0
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
+     */
+    public static String rightPad(final String str, final int size, final char padChar) {
+        if (str == null) {
+            return null;
+        }
+        final int pads = size - str.length();
+        if (pads <= 0) {
+            return str; // returns original String when possible
+        }
+        if (pads > PAD_LIMIT) {
+            return rightPad(str, size, String.valueOf(padChar));
+        }
+        return str.concat(repeat(padChar, pads));
+    }
+
+    /**
+     * <p>Right pad a String with a specified String.</p>
+     *
+     * <p>The String is padded to the size of {@code size}.</p>
+     *
+     * <pre>
+     * StringUtils.rightPad(null, *, *)      = null
+     * StringUtils.rightPad("", 3, "z")      = "zzz"
+     * StringUtils.rightPad("bat", 3, "yz")  = "bat"
+     * StringUtils.rightPad("bat", 5, "yz")  = "batyz"
+     * StringUtils.rightPad("bat", 8, "yz")  = "batyzyzy"
+     * StringUtils.rightPad("bat", 1, "yz")  = "bat"
+     * StringUtils.rightPad("bat", -1, "yz") = "bat"
+     * StringUtils.rightPad("bat", 5, null)  = "bat  "
+     * StringUtils.rightPad("bat", 5, "")    = "bat  "
+     * </pre>
+     *
+     * @param str  the String to pad out, may be null
+     * @param size  the size to pad to
+     * @param padStr  the String to pad with, null or empty treated as single space
+     * @return right padded String or original String if no padding is necessary,
+     *  {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
+     */
+    public static String rightPad(final String str, final int size, String padStr) {
+        if (str == null) {
+            return null;
+        }
+        if (isEmpty(padStr)) {
+            padStr = SPACE;
+        }
+        final int padLen = padStr.length();
+        final int strLen = str.length();
+        final int pads = size - strLen;
+        if (pads <= 0) {
+            return str; // returns original String when possible
+        }
+        if (padLen == 1 && pads <= PAD_LIMIT) {
+            return rightPad(str, size, padStr.charAt(0));
+        }
+
+        if (pads == padLen) {
+            return str.concat(padStr);
+        } else if (pads < padLen) {
+            return str.concat(padStr.substring(0, pads));
+        } else {
+            final char[] padding = new char[pads];
+            final char[] padChars = padStr.toCharArray();
+            for (int i = 0; i < pads; i++) {
+                padding[i] = padChars[i % padLen];
+            }
+            return str.concat(new String(padding));
+        }
+    }
+
+    /**
+     * <p>Left pad a String with spaces (' ').</p>
+     *
+     * <p>The String is padded to the size of {@code size}.</p>
+     *
+     * <pre>
+     * StringUtils.leftPad(null, *)   = null
+     * StringUtils.leftPad("", 3)     = "   "
+     * StringUtils.leftPad("bat", 3)  = "bat"
+     * StringUtils.leftPad("bat", 5)  = "  bat"
+     * StringUtils.leftPad("bat", 1)  = "bat"
+     * StringUtils.leftPad("bat", -1) = "bat"
+     * </pre>
+     *
+     * @param str  the String to pad out, may be null
+     * @param size  the size to pad to
+     * @return left padded String or original String if no padding is necessary,
+     *  {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
+     */
+    public static String leftPad(final String str, final int size) {
+        return leftPad(str, size, ' ');
+    }
+
+    /**
+     * <p>Left pad a String with a specified character.</p>
+     *
+     * <p>Pad to a size of {@code size}.</p>
+     *
+     * <pre>
+     * StringUtils.leftPad(null, *, *)     = null
+     * StringUtils.leftPad("", 3, 'z')     = "zzz"
+     * StringUtils.leftPad("bat", 3, 'z')  = "bat"
+     * StringUtils.leftPad("bat", 5, 'z')  = "zzbat"
+     * StringUtils.leftPad("bat", 1, 'z')  = "bat"
+     * StringUtils.leftPad("bat", -1, 'z') = "bat"
+     * </pre>
+     *
+     * @param str  the String to pad out, may be null
+     * @param size  the size to pad to
+     * @param padChar  the character to pad with
+     * @return left padded String or original String if no padding is necessary,
+     *  {@code null} if null String input
+     * @since 2.0
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
+     */
+    public static String leftPad(final String str, final int size, final char padChar) {
+        if (str == null) {
+            return null;
+        }
+        final int pads = size - str.length();
+        if (pads <= 0) {
+            return str; // returns original String when possible
+        }
+        if (pads > PAD_LIMIT) {
+            return leftPad(str, size, String.valueOf(padChar));
+        }
+        return repeat(padChar, pads).concat(str);
+    }
+
+    /**
+     * <p>Left pad a String with a specified String.</p>
+     *
+     * <p>Pad to a size of {@code size}.</p>
+     *
+     * <pre>
+     * StringUtils.leftPad(null, *, *)      = null
+     * StringUtils.leftPad("", 3, "z")      = "zzz"
+     * StringUtils.leftPad("bat", 3, "yz")  = "bat"
+     * StringUtils.leftPad("bat", 5, "yz")  = "yzbat"
+     * StringUtils.leftPad("bat", 8, "yz")  = "yzyzybat"
+     * StringUtils.leftPad("bat", 1, "yz")  = "bat"
+     * StringUtils.leftPad("bat", -1, "yz") = "bat"
+     * StringUtils.leftPad("bat", 5, null)  = "  bat"
+     * StringUtils.leftPad("bat", 5, "")    = "  bat"
+     * </pre>
+     *
+     * @param str  the String to pad out, may be null
+     * @param size  the size to pad to
+     * @param padStr  the String to pad with, null or empty treated as single space
+     * @return left padded String or original String if no padding is necessary,
+     *  {@code null} if null String input
+     * @see <a href="https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java">Source</a>
+     */
+    public static String leftPad(final String str, final int size, String padStr) {
+        if (str == null) {
+            return null;
+        }
+        if (isEmpty(padStr)) {
+            padStr = SPACE;
+        }
+        final int padLen = padStr.length();
+        final int strLen = str.length();
+        final int pads = size - strLen;
+        if (pads <= 0) {
+            return str; // returns original String when possible
+        }
+        if (padLen == 1 && pads <= PAD_LIMIT) {
+            return leftPad(str, size, padStr.charAt(0));
+        }
+
+        if (pads == padLen) {
+            return padStr.concat(str);
+        } else if (pads < padLen) {
+            return padStr.substring(0, pads).concat(str);
+        } else {
+            final char[] padding = new char[pads];
+            final char[] padChars = padStr.toCharArray();
+            for (int i = 0; i < pads; i++) {
+                padding[i] = padChars[i % padLen];
+            }
+            return new String(padding).concat(str);
+        }
+    }
+
+    // Wrapping
+    //-----------------------------------------------------------------------
 
     /**
      * <p>Wraps a single line of text, identifying words by <code>' '</code>.</p>
@@ -658,19 +949,193 @@ public final class StringUtils {
      * @param str  the String to be word wrapped, may be null
      * @param wrapLength  the column to wrap the words at, less than 1 is treated as 1
      * @return a line with newlines inserted, <code>null</code> if null input
-     * @see <a href="https://github.com/apache/commons-text/blob/f0ae79e46e3923562168df9c03023587eafc4d69/src/main/java/org/apache/commons/text/WordUtils.java#L105">Source</a>
+     * @see <a href="https://github.com/apache/commons-text/blob/c3b30de7352f8af85455d9b18778c9cd609ceb1d/src/main/java/org/apache/commons/text/WordUtils.java">Source</a>
      */
     public static String wrap(final String str, final int wrapLength) {
-        return wrap(str, wrapLength, null, false, " ");
+        return wrap(str, wrapLength, null, false);
     }
 
-    // https://github.com/apache/commons-text/blob/f0ae79e46e3923562168df9c03023587eafc4d69/src/main/java/org/apache/commons/text/WordUtils.java#L283
-    private static String wrap(final String str,
+    /**
+     * <p>Wraps a single line of text, identifying words by <code>' '</code>.</p>
+     *
+     * <p>Leading spaces on a new line are stripped.
+     * Trailing spaces are not stripped.</p>
+     *
+     * <table border="1">
+     *  <caption>Examples</caption>
+     *  <tr>
+     *   <th>input</th>
+     *   <th>wrapLength</th>
+     *   <th>newLineString</th>
+     *   <th>wrapLongWords</th>
+     *   <th>result</th>
+     *  </tr>
+     *  <tr>
+     *   <td>null</td>
+     *   <td>*</td>
+     *   <td>*</td>
+     *   <td>true/false</td>
+     *   <td>null</td>
+     *  </tr>
+     *  <tr>
+     *   <td>""</td>
+     *   <td>*</td>
+     *   <td>*</td>
+     *   <td>true/false</td>
+     *   <td>""</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Here is one line of text that is going to be wrapped after 20 columns."</td>
+     *   <td>20</td>
+     *   <td>"\n"</td>
+     *   <td>true/false</td>
+     *   <td>"Here is one line of\ntext that is going\nto be wrapped after\n20 columns."</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Here is one line of text that is going to be wrapped after 20 columns."</td>
+     *   <td>20</td>
+     *   <td>"&lt;br /&gt;"</td>
+     *   <td>true/false</td>
+     *   <td>"Here is one line of&lt;br /&gt;text that is going&lt;
+     *   br /&gt;to be wrapped after&lt;br /&gt;20 columns."</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Here is one line of text that is going to be wrapped after 20 columns."</td>
+     *   <td>20</td>
+     *   <td>null</td>
+     *   <td>true/false</td>
+     *   <td>"Here is one line of" + systemNewLine + "text that is going"
+     *   + systemNewLine + "to be wrapped after" + systemNewLine + "20 columns."</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>20</td>
+     *   <td>"\n"</td>
+     *   <td>false</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apache.org"</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>20</td>
+     *   <td>"\n"</td>
+     *   <td>true</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apach\ne.org"</td>
+     *  </tr>
+     * </table>
+     *
+     * @param str  the String to be word wrapped, may be null
+     * @param wrapLength  the column to wrap the words at, less than 1 is treated as 1
+     * @param newLineStr  the string to insert for a new line,
+     *  <code>null</code> uses the system property line separator
+     * @param wrapLongWords  true if long words (such as URLs) should be wrapped
+     * @return a line with newlines inserted, <code>null</code> if null input
+     * @see <a href="https://github.com/apache/commons-text/blob/c3b30de7352f8af85455d9b18778c9cd609ceb1d/src/main/java/org/apache/commons/text/WordUtils.java">Source</a>
+     */
+    public static String wrap(final String str,
+            final int wrapLength,
+            final String newLineStr,
+            final boolean wrapLongWords) {
+        return wrap(str, wrapLength, newLineStr, wrapLongWords, " ");
+    }
+
+    /**
+     * <p>Wraps a single line of text, identifying words by <code>wrapOn</code>.</p>
+     *
+     * <p>Leading spaces on a new line are stripped.
+     * Trailing spaces are not stripped.</p>
+     *
+     * <table border="1">
+     *  <caption>Examples</caption>
+     *  <tr>
+     *   <th>input</th>
+     *   <th>wrapLength</th>
+     *   <th>newLineString</th>
+     *   <th>wrapLongWords</th>
+     *   <th>wrapOn</th>
+     *   <th>result</th>
+     *  </tr>
+     *  <tr>
+     *   <td>null</td>
+     *   <td>*</td>
+     *   <td>*</td>
+     *   <td>true/false</td>
+     *   <td>*</td>
+     *   <td>null</td>
+     *  </tr>
+     *  <tr>
+     *   <td>""</td>
+     *   <td>*</td>
+     *   <td>*</td>
+     *   <td>true/false</td>
+     *   <td>*</td>
+     *   <td>""</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Here is one line of text that is going to be wrapped after 20 columns."</td>
+     *   <td>20</td>
+     *   <td>"\n"</td>
+     *   <td>true/false</td>
+     *   <td>" "</td>
+     *   <td>"Here is one line of\ntext that is going\nto be wrapped after\n20 columns."</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Here is one line of text that is going to be wrapped after 20 columns."</td>
+     *   <td>20</td>
+     *   <td>"&lt;br /&gt;"</td>
+     *   <td>true/false</td>
+     *   <td>" "</td>
+     *   <td>"Here is one line of&lt;br /&gt;text that is going&lt;br /&gt;
+     *   to be wrapped after&lt;br /&gt;20 columns."</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Here is one line of text that is going to be wrapped after 20 columns."</td>
+     *   <td>20</td>
+     *   <td>null</td>
+     *   <td>true/false</td>
+     *   <td>" "</td>
+     *   <td>"Here is one line of" + systemNewLine + "text that is going"
+     *   + systemNewLine + "to be wrapped after" + systemNewLine + "20 columns."</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>20</td>
+     *   <td>"\n"</td>
+     *   <td>false</td>
+     *   <td>" "</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apache.org"</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"Click here to jump to the commons website - http://commons.apache.org"</td>
+     *   <td>20</td>
+     *   <td>"\n"</td>
+     *   <td>true</td>
+     *   <td>" "</td>
+     *   <td>"Click here to jump\nto the commons\nwebsite -\nhttp://commons.apach\ne.org"</td>
+     *  </tr>
+     *  <tr>
+     *   <td>"flammable/inflammable"</td>
+     *   <td>20</td>
+     *   <td>"\n"</td>
+     *   <td>true</td>
+     *   <td>"/"</td>
+     *   <td>"flammable\ninflammable"</td>
+     *  </tr>
+     * </table>
+     * @param str  the String to be word wrapped, may be null
+     * @param wrapLength  the column to wrap the words at, less than 1 is treated as 1
+     * @param newLineStr  the string to insert for a new line,
+     *  <code>null</code> uses the system property line separator
+     * @param wrapLongWords  true if long words (such as URLs) should be wrapped
+     * @param wrapOn regex expression to be used as a breakable characters,
+     *               if blank string is provided a space character will be used
+     * @return a line with newlines inserted, <code>null</code> if null input
+     * @see <a href="https://github.com/apache/commons-text/blob/c3b30de7352f8af85455d9b18778c9cd609ceb1d/src/main/java/org/apache/commons/text/WordUtils.java">Source</a>
+     */
+    public static String wrap(final String str,
             int wrapLength,
             String newLineStr,
             final boolean wrapLongWords,
-            String wrapOn
-    ) {
+            String wrapOn) {
         if (str == null) {
             return null;
         }
@@ -680,22 +1145,28 @@ public final class StringUtils {
         if (wrapLength < 1) {
             wrapLength = 1;
         }
-        if (isBlank(wrapOn)) {
+        if (StringUtils.isBlank(wrapOn)) {
             wrapOn = " ";
         }
         final Pattern patternToWrapOn = Pattern.compile(wrapOn);
         final int inputLineLength = str.length();
         int offset = 0;
         final StringBuilder wrappedLine = new StringBuilder(inputLineLength + 32);
+        int matcherSize = -1;
 
         while (offset < inputLineLength) {
             int spaceToWrapAt = -1;
-            Matcher matcher = patternToWrapOn.matcher(str.substring(
-                    offset, Math.min((int) Math.min(Integer.MAX_VALUE, offset + wrapLength + 1L), inputLineLength)));
+            Matcher matcher = patternToWrapOn.matcher(str.substring(offset,
+                                                                    Math.min((int) Math.min(Integer.MAX_VALUE, offset + wrapLength + 1L), inputLineLength)));
             if (matcher.find()) {
                 if (matcher.start() == 0) {
-                    offset += matcher.end();
-                    continue;
+                    matcherSize = matcher.end() - matcher.start();
+                    if (matcherSize != 0) {
+                        offset += matcher.end();
+                        continue;
+                    } else {
+                        offset += 1;
+                    }
                 }
                 spaceToWrapAt = matcher.start() + offset;
             }
@@ -718,27 +1189,43 @@ public final class StringUtils {
             } else {
                 // really long word or URL
                 if (wrapLongWords) {
+                    if (matcherSize == 0) {
+                        offset--;
+                    }
                     // wrap really long word one line at a time
                     wrappedLine.append(str, offset, wrapLength + offset);
                     wrappedLine.append(newLineStr);
                     offset += wrapLength;
+                    matcherSize = -1;
                 } else {
                     // do not wrap really long word, just extend beyond limit
                     matcher = patternToWrapOn.matcher(str.substring(offset + wrapLength));
                     if (matcher.find()) {
+                        matcherSize = matcher.end() - matcher.start();
                         spaceToWrapAt = matcher.start() + offset + wrapLength;
                     }
 
                     if (spaceToWrapAt >= 0) {
+                        if (matcherSize == 0 && offset != 0) {
+                            offset--;
+                        }
                         wrappedLine.append(str, offset, spaceToWrapAt);
                         wrappedLine.append(newLineStr);
                         offset = spaceToWrapAt + 1;
                     } else {
+                        if (matcherSize == 0 && offset != 0) {
+                            offset--;
+                        }
                         wrappedLine.append(str, offset, str.length());
                         offset = inputLineLength;
+                        matcherSize = -1;
                     }
                 }
             }
+        }
+
+        if (matcherSize == 0 && offset < inputLineLength) {
+            offset--;
         }
 
         // Whatever is left in line is short enough to just pass through
@@ -747,13 +1234,16 @@ public final class StringUtils {
         return wrappedLine.toString();
     }
 
+    // Inflection / casing
+    //-----------------------------------------------------------------------
+
     /**
-     * <p>Converts all the delimiter separated words in a String into PascalCase,
-     * that is each word is made up of a titlecase character and then a series of
+     * <p>Converts all words separated by "_" into PascalCase, that is each
+     * word is made up of a titlecase character and then a series of
      * lowercase characters.</p>
      *
      * <p>PacalCase is just like CamelCase, except the first character is an
-     * uppercase letter.
+     * uppercase letter.</p>
      *
      * @param str  the String to be converted to PascalCase, may be null
      * @return camelCase of String, <code>null</code> if null String input
@@ -776,14 +1266,66 @@ public final class StringUtils {
         return toCamelCase(str, false, '_');
     }
 
-    // https://github.com/apache/commons-text/blob/f0ae79e46e3923562168df9c03023587eafc4d69/src/main/java/org/apache/commons/text/CaseUtils.java#L76
-    private static String toCamelCase(String str, final boolean capitalizeFirstLetter, final char... delimiters) {
-        // Begin modification
-        if (str == null || str.isEmpty()) {
+    /**
+     * <p>Converts all words separated by " ", "-", and "_" to CamelCase.
+     *
+     * <p>The first character is always converted to lowercase.</p>
+     *
+     * @param str the String to be converted to camelCase, may be null
+     * @return camelCase of String, <code>null</code> if null String input
+     */
+    public static String toCamelCase(String str) {
+        return toCamelCase(str, false, '_', '-', ' ');
+    }
+
+    /**
+     * <p>Converts all words separated by " ", "-", and "_" to CamelCase.</p>
+     *
+     * <p>PacalCase is just like CamelCase, except the first character is an
+     * uppercase letter.</p>
+     *
+     * @param str  the String to be converted to PascalCase, may be null
+     * @return camelCase of String, <code>null</code> if null String input
+     */
+    public static String toPascalCase(String str) {
+        return toCamelCase(str, true, '_', '-', ' ');
+    }
+
+    /**
+     * <p>Converts all the delimiter separated words in a String into camelCase,
+     * that is each word is made up of a titlecase character and then a series of
+     * lowercase characters.</p>
+     *
+     * <p>The delimiters represent a set of characters understood to separate words.
+     * The first non-delimiter character after a delimiter will be capitalized. The first String
+     * character may or may not be capitalized and it's determined by the user input for capitalizeFirstLetter
+     * variable.</p>
+     *
+     * <p>A <code>null</code> input String returns <code>null</code>.
+     * Capitalization uses the Unicode title case, normally equivalent to
+     * upper case and cannot perform locale-sensitive mappings.</p>
+     *
+     * <pre>
+     * CaseUtils.toCamelCase(null, false)                                 = null
+     * CaseUtils.toCamelCase("", false, *)                                = ""
+     * CaseUtils.toCamelCase(*, false, null)                              = *
+     * CaseUtils.toCamelCase(*, true, new char[0])                        = *
+     * CaseUtils.toCamelCase("To.Camel.Case", false, new char[]{'.'})     = "toCamelCase"
+     * CaseUtils.toCamelCase(" to @ Camel case", true, new char[]{'@'})   = "ToCamelCase"
+     * CaseUtils.toCamelCase(" @to @ Camel case", false, new char[]{'@'}) = "toCamelCase"
+     * </pre>
+     *
+     * @param str  the String to be converted to camelCase, may be null
+     * @param capitalizeFirstLetter boolean that determines if the first character of first word should be title case.
+     * @param delimiters  set of characters to determine capitalization, null and/or empty array means whitespace
+     * @return camelCase of String, <code>null</code> if null String input
+     * @see <a href="https://github.com/apache/commons-text/blob/c3b30de7352f8af85455d9b18778c9cd609ceb1d/src/main/java/org/apache/commons/text/CaseUtils.java">Source</a>
+     */
+    public static String toCamelCase(String str, final boolean capitalizeFirstLetter, final char... delimiters) {
+        if (StringUtils.isEmpty(str)) {
             return str;
         }
-        str = str.toLowerCase(Locale.US);
-        // End modification
+        str = str.toLowerCase();
         final int strLen = str.length();
         final int[] newCodePoints = new int[strLen];
         int outOffset = 0;
@@ -817,7 +1359,14 @@ public final class StringUtils {
         return str;
     }
 
-    // https://github.com/apache/commons-text/blob/f0ae79e46e3923562168df9c03023587eafc4d69/src/main/java/org/apache/commons/text/WordUtils.java#L887
+    /**
+     * <p>Converts an array of delimiters to a hash set of code points. Code point of space(32) is added
+     * as the default value. The generated hash set provides O(1) lookup time.</p>
+     *
+     * @param delimiters  set of characters to determine capitalization, null means whitespace
+     * @return Set<Integer>
+     * @see <a href="https://github.com/apache/commons-text/blob/c3b30de7352f8af85455d9b18778c9cd609ceb1d/src/main/java/org/apache/commons/text/CaseUtils.java">Source</a>
+     */
     private static Set<Integer> generateDelimiterSet(final char[] delimiters) {
         final Set<Integer> delimiterHashSet = new HashSet<>();
         delimiterHashSet.add(Character.codePointAt(new char[]{' '}, 0));
@@ -843,9 +1392,12 @@ public final class StringUtils {
      * @param word The word to convert.
      * @return The underscored version of the word
      * @see <a href="https://github.com/twitter/elephant-bird/blob/master/core/src/main/java/com/twitter/elephantbird/util/Strings.java">Elephant bird</a>
-     * @see <a href="https://github.com/twitter/elephant-bird/blob/master/LICENSE">Elephant bird license</a>
      */
     public static String toSnakeCase(String word) {
+        if (isEmpty(word)) {
+            return word;
+        }
+
         String firstPattern = "([A-Z]+)([A-Z][a-z])";
         String secondPattern = "([a-z\\d])([A-Z])";
         String replacementPattern = "$1_$2";
@@ -857,5 +1409,74 @@ public final class StringUtils {
         word = word.toLowerCase(Locale.US);
         // End modification
         return word;
+    }
+
+    // Escaping
+    //-----------------------------------------------------------------------
+
+    /**
+     * Escapes a given value to convert double quotes (") to (\").
+     *
+     * <p>Blackslash (\) is escaped to (\\).
+     *
+     * @param value Value to escape.
+     * @return Returns the escaped value.
+     */
+    public static String escapeDoubleQuote(String value) {
+        return escapeChars(value, '\\', '"');
+    }
+
+    /**
+     * Escapes a given value to convert single quotes (') to (\').
+     *
+     * <p>Blackslash (\) is escaped to (\\).
+     *
+     * @param value Value to escape.
+     * @return Returns the escaped value.
+     */
+    public static String escapeSingleQuote(String value) {
+        return escapeChars(value, '\\', '\'');
+    }
+
+    /**
+     * Escapes a given value to convert backslash (\) to (\\).
+     *
+     * @param value Value to escape.
+     * @return Returns the escaped value.
+     */
+    public static String escapeBackslash(String value) {
+        return escapeChars(value, '\\');
+    }
+
+    /**
+     * Escapes the given chars inside of a string by placing a
+     * backslash in front of them when found.
+     *
+     * @param value Value to escape.
+     * @param chars Characters to escape.
+     * @return Returns the escaped value.
+     */
+    public static String escapeChars(String value, char... chars) {
+        if (isEmpty(value)) {
+            return EMPTY;
+        } else if (value.isEmpty()) {
+            return value;
+        } else if (chars.length == 1) {
+            return value.replace(String.valueOf(chars[0]), "\\" + chars[0]);
+        }
+
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            for (char replace : chars) {
+                if (c == replace) {
+                    result.append('\\');
+                    break;
+                }
+            }
+            result.append(c);
+        }
+
+        return result.toString();
     }
 }

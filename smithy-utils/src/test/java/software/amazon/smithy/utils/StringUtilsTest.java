@@ -85,6 +85,18 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void escapesMultipleChars() {
+        assertThat(StringUtils.escapeChars("foo \\ ' *", '\\', '\'', '*'), equalTo("foo \\\\ \\' \\*"));
+    }
+
+    @Test
+    public void escapesWhenEmpty() {
+        assertThat(StringUtils.escapeChars(null), equalTo(""));
+        assertThat(StringUtils.escapeChars(""), equalTo(""));
+        assertThat(StringUtils.escapeChars("foo"), equalTo("foo"));
+    }
+
+    @Test
     public void capitalizesAndUncapitalizes() {
         assertThat(StringUtils.capitalize(null), equalTo(null));
         assertThat(StringUtils.uncapitalize(null), equalTo(null));
