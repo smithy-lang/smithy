@@ -18,7 +18,7 @@ package software.amazon.smithy.openapi.fromsmithy.protocols;
 import java.util.List;
 import java.util.regex.Pattern;
 import software.amazon.smithy.jsonschema.Schema;
-import software.amazon.smithy.model.knowledge.HttpBindingIndex;
+import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
@@ -46,7 +46,7 @@ public final class AwsRestJsonProtocol extends AbstractRestProtocol {
     Schema createDocumentSchema(
             Context context,
             Shape operationOrError,
-            List<HttpBindingIndex.Binding> bindings,
+            List<HttpBinding> bindings,
             MessageType message
     ) {
         if (bindings.isEmpty()) {
@@ -63,7 +63,7 @@ public final class AwsRestJsonProtocol extends AbstractRestProtocol {
         ShapeId container = bindings.get(0).getMember().getContainer();
         StructureShape.Builder tempShapeBuilder = StructureShape.builder().id(container);
 
-        for (HttpBindingIndex.Binding binding : bindings) {
+        for (HttpBinding binding : bindings) {
             tempShapeBuilder.addMember(binding.getMember().toBuilder()
                     .id(container.withMember(binding.getMemberName()))
                     .build());

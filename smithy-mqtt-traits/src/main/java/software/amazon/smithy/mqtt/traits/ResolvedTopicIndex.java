@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.EventStreamIndex;
+import software.amazon.smithy.model.knowledge.EventStreamInfo;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -55,7 +56,7 @@ import software.amazon.smithy.model.traits.Trait;
 public final class ResolvedTopicIndex implements KnowledgeIndex {
     private final Map<ShapeId, TopicBinding<PublishTrait>> publishBindings = new HashMap<>();
     private final Map<ShapeId, TopicBinding<SubscribeTrait>> subscribeBindings = new HashMap<>();
-    private final Map<ShapeId, EventStreamIndex.Info> subscribeInfo = new HashMap<>();
+    private final Map<ShapeId, EventStreamInfo> subscribeInfo = new HashMap<>();
 
     public ResolvedTopicIndex(Model model) {
         // Find all the MQTT topic bindings in the model.
@@ -127,7 +128,7 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
      * @param operation Operation to get the event stream info o.
      * @return Returns the optionally found event stream info.
      */
-    public Optional<EventStreamIndex.Info> getSubcribeEventStreamInfo(ToShapeId operation) {
+    public Optional<EventStreamInfo> getSubcribeEventStreamInfo(ToShapeId operation) {
         return Optional.ofNullable(subscribeInfo.get(operation.toShapeId()));
     }
 
@@ -151,7 +152,7 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
             OperationShape operation,
             SubscribeTrait trait
     ) {
-        EventStreamIndex.Info outputInfo = eventStreamIndex.getOutputInfo(operation).orElse(null);
+        EventStreamInfo outputInfo = eventStreamIndex.getOutputInfo(operation).orElse(null);
 
         // Subscribe operations must have an event stream. Omit the bindings
         // if an event stream is not found.

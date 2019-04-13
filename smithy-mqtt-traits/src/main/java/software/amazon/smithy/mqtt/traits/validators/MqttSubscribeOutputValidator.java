@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.EventStreamIndex;
+import software.amazon.smithy.model.knowledge.EventStreamInfo;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
@@ -60,7 +61,7 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
             OperationShape shape,
             EventStreamIndex eventStreamIndex
     ) {
-        EventStreamIndex.Info info = eventStreamIndex.getOutputInfo(shape).orElse(null);
+        EventStreamInfo info = eventStreamIndex.getOutputInfo(shape).orElse(null);
 
         if (info == null) {
             // This is validated in the trait selector.
@@ -87,7 +88,7 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
         return events;
     }
 
-    private Stream<StructureShape> getOutputEvents(EventStreamIndex.Info info, ShapeIndex index) {
+    private Stream<StructureShape> getOutputEvents(EventStreamInfo info, ShapeIndex index) {
         return info.getEventStreamTarget().accept(new ShapeVisitor.Default<Stream<StructureShape>>() {
             @Override
             public Stream<StructureShape> getDefault(Shape shape) {

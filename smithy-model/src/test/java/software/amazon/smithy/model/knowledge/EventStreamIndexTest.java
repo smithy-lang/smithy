@@ -84,9 +84,9 @@ public class EventStreamIndexTest {
 
         assertTrue(index.getInputInfo(ShapeId.from("example.smithy#EventStreamOperation")).isPresent());
         assertTrue(index.getOutputInfo(ShapeId.from("example.smithy#EventStreamOperation")).isPresent());
-        EventStreamIndex.Info input = index.getInputInfo(
+        EventStreamInfo input = index.getInputInfo(
                 ShapeId.from("example.smithy#EventStreamOperation")).get();
-        EventStreamIndex.Info output = index.getOutputInfo(
+        EventStreamInfo output = index.getOutputInfo(
                 ShapeId.from("example.smithy#EventStreamOperation")).get();
 
         assertThat(input.getOperation().getId(), equalTo(ShapeId.from("example.smithy#EventStreamOperation")));

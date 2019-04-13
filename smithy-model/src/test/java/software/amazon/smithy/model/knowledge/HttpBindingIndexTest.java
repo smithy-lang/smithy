@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static software.amazon.smithy.model.knowledge.HttpBindingIndex.Binding;
 
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
@@ -101,50 +100,50 @@ public class HttpBindingIndexTest {
     public void returnsResponseMemberBindingsWithDefaults() {
         HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
         ShapeId id = ShapeId.from("ns.foo#ServiceOperationExplicitMembers");
-        Map<String, Binding> responseBindings = index.getResponseBindings(id);
+        Map<String, HttpBinding> responseBindings = index.getResponseBindings(id);
 
         assertThat(responseBindings.size(), is(5));
-        assertThat(responseBindings.get("foo"), equalTo(new Binding(
+        assertThat(responseBindings.get("foo"), equalTo(new HttpBinding(
                 expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$foo"),
-                HttpBindingIndex.Location.HEADER,
+                HttpBinding.Location.HEADER,
                 "X-Foo",
                 new HttpHeaderTrait("X-Foo", SourceLocation.NONE))));
-        assertThat(responseBindings.get("qux"), equalTo(new Binding(
+        assertThat(responseBindings.get("qux"), equalTo(new HttpBinding(
                 expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$qux"),
-                HttpBindingIndex.Location.PREFIX_HEADERS,
+                HttpBinding.Location.PREFIX_HEADERS,
                 "X-Prefix-",
                 new HttpPrefixHeadersTrait("X-Prefix-", SourceLocation.NONE))));
-        assertThat(responseBindings.get("baz"), equalTo(new Binding(
+        assertThat(responseBindings.get("baz"), equalTo(new HttpBinding(
                 expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$baz"),
-                HttpBindingIndex.Location.DOCUMENT, "baz", null)));
-        assertThat(responseBindings.get("bar"), equalTo(new Binding(
+                HttpBinding.Location.DOCUMENT, "baz", null)));
+        assertThat(responseBindings.get("bar"), equalTo(new HttpBinding(
                 expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$bar"),
-                HttpBindingIndex.Location.DOCUMENT, "bar", null)));
-        assertThat(responseBindings.get("bam"), equalTo(new Binding(
+                HttpBinding.Location.DOCUMENT, "bar", null)));
+        assertThat(responseBindings.get("bam"), equalTo(new HttpBinding(
                 expectMember(model, "ns.foo#ServiceOperationExplicitMembersOutput$bam"),
-                HttpBindingIndex.Location.DOCUMENT, "bam", null)));
+                HttpBinding.Location.DOCUMENT, "bam", null)));
     }
 
     @Test
     public void returnsResponseMemberBindingsWithExplicitBody() {
         HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
         ShapeId id = ShapeId.from("ns.foo#ServiceOperationExplicitBody");
-        Map<String, Binding> responseBindings = index.getResponseBindings(id);
+        Map<String, HttpBinding> responseBindings = index.getResponseBindings(id);
 
         assertThat(responseBindings.entrySet(), hasSize(3));
-        assertThat(responseBindings.get("foo"), equalTo(new Binding(
+        assertThat(responseBindings.get("foo"), equalTo(new HttpBinding(
                 expectMember(model, "ns.foo#ServiceOperationExplicitBodyOutput$foo"),
-                HttpBindingIndex.Location.HEADER,
+                HttpBinding.Location.HEADER,
                 "X-Foo",
                 new HttpHeaderTrait("X-Foo", SourceLocation.NONE))));
-        assertThat(responseBindings.get("qux"), equalTo(new Binding(
+        assertThat(responseBindings.get("qux"), equalTo(new HttpBinding(
                 expectMember(model, "ns.foo#ServiceOperationExplicitBodyOutput$qux"),
-                HttpBindingIndex.Location.PREFIX_HEADERS,
+                HttpBinding.Location.PREFIX_HEADERS,
                 "X-Prefix-",
                 new HttpPrefixHeadersTrait("X-Prefix-", SourceLocation.NONE))));
-        assertThat(responseBindings.get("baz"), equalTo(new Binding(
+        assertThat(responseBindings.get("baz"), equalTo(new HttpBinding(
                 expectMember(model, "ns.foo#ServiceOperationExplicitBodyOutput$baz"),
-                HttpBindingIndex.Location.PAYLOAD,
+                HttpBinding.Location.PAYLOAD,
                 "baz",
                 new HttpPayloadTrait(SourceLocation.NONE))));
     }
@@ -161,12 +160,12 @@ public class HttpBindingIndexTest {
     public void findsLabelBindings() {
         HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
         ShapeId id = ShapeId.from("ns.foo#WithLabels");
-        Map<String, Binding> bindings = index.getRequestBindings(id);
+        Map<String, HttpBinding> bindings = index.getRequestBindings(id);
 
         assertThat(bindings.entrySet(), hasSize(1));
-        assertThat(bindings.get("baz"), equalTo(new Binding(
+        assertThat(bindings.get("baz"), equalTo(new HttpBinding(
                 expectMember(model, "ns.foo#WithLabelsInput$baz"),
-                HttpBindingIndex.Location.LABEL, "baz", null)));
+                HttpBinding.Location.LABEL, "baz", null)));
     }
 
     @Test
@@ -200,10 +199,10 @@ public class HttpBindingIndexTest {
                 .getResult()
                 .get();
         HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
-        Map<String, Binding> requestBindings = index.getRequestBindings(operation.getId());
+        Map<String, HttpBinding> requestBindings = index.getRequestBindings(operation.getId());
 
-        assertThat(requestBindings.get("bar").getLocation(), is(HttpBindingIndex.Location.PAYLOAD));
-        assertThat(requestBindings.get("baz").getLocation(), is(HttpBindingIndex.Location.UNBOUND));
+        assertThat(requestBindings.get("bar").getLocation(), is(HttpBinding.Location.PAYLOAD));
+        assertThat(requestBindings.get("baz").getLocation(), is(HttpBinding.Location.UNBOUND));
     }
 
     @Test

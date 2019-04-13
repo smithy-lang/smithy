@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.Pair;
+import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -78,7 +79,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     abstract Schema createDocumentSchema(
             Context context,
             Shape operationOrError,
-            List<HttpBindingIndex.Binding> bindings,
+            List<HttpBinding> bindings,
             MessageType messageType);
 
     @Override
@@ -99,7 +100,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
 
     private List<ParameterObject> createPathParameters(Context context, OperationShape operation) {
         return context.getModel().getKnowledge(HttpBindingIndex.class)
-                .getRequestBindings(operation, HttpBindingIndex.Location.LABEL).stream()
+                .getRequestBindings(operation, HttpBinding.Location.LABEL).stream()
                 .map(binding -> {
                     MemberShape member = binding.getMember();
                     Schema schema = context.createRef(binding.getMember());
@@ -123,7 +124,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
 
     private List<ParameterObject> createQueryParameters(Context context, OperationShape operation) {
         return context.getModel().getKnowledge(HttpBindingIndex.class)
-                .getRequestBindings(operation, HttpBindingIndex.Location.QUERY).stream()
+                .getRequestBindings(operation, HttpBinding.Location.QUERY).stream()
                 .map(binding -> {
                     ParameterObject.Builder param = ModelUtils.createParameterMember(context, binding.getMember())
                             .in("query")
@@ -144,14 +145,14 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     }
 
     private Collection<ParameterObject> createRequestHeaderParameters(Context context, OperationShape operation) {
-        List<HttpBindingIndex.Binding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
-                .getRequestBindings(operation, HttpBindingIndex.Location.HEADER);
+        List<HttpBinding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
+                .getRequestBindings(operation, HttpBinding.Location.HEADER);
         return createHeaderParameters(context, bindings, MessageType.REQUEST).values();
     }
 
     private Map<String, ParameterObject> createHeaderParameters(
             Context context,
-            List<HttpBindingIndex.Binding> bindings,
+            List<HttpBinding> bindings,
             MessageType messageType
     ) {
         return bindings.stream()
@@ -176,14 +177,14 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             HttpBindingIndex bindingIndex,
             OperationShape operation
     ) {
-        List<HttpBindingIndex.Binding> payloadBindings = bindingIndex.getRequestBindings(
-                operation, HttpBindingIndex.Location.PAYLOAD);
+        List<HttpBinding> payloadBindings = bindingIndex.getRequestBindings(
+                operation, HttpBinding.Location.PAYLOAD);
         return payloadBindings.isEmpty()
                ? createRequestDocument(context, bindingIndex, operation)
                : createRequestPayload(context, payloadBindings.get(0));
     }
 
-    private Optional<RequestBodyObject> createRequestPayload(Context context, HttpBindingIndex.Binding binding) {
+    private Optional<RequestBodyObject> createRequestPayload(Context context, HttpBinding binding) {
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(context.createRef(binding.getMember()))
                 .build();
@@ -199,8 +200,8 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             HttpBindingIndex bindingIndex,
             OperationShape operation
     ) {
-        List<HttpBindingIndex.Binding> bindings = bindingIndex.getRequestBindings(
-                operation, HttpBindingIndex.Location.DOCUMENT);
+        List<HttpBinding> bindings = bindingIndex.getRequestBindings(
+                operation, HttpBinding.Location.DOCUMENT);
         if (bindings.isEmpty()) {
             return Optional.empty();
         }
@@ -250,8 +251,8 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             Context context,
             OperationShape operation
     ) {
-        List<HttpBindingIndex.Binding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
-                .getResponseBindings(operation, HttpBindingIndex.Location.HEADER);
+        List<HttpBinding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
+                .getResponseBindings(operation, HttpBinding.Location.HEADER);
         return createHeaderParameters(context, bindings, MessageType.RESPONSE);
     }
 
@@ -261,8 +262,8 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             ResponseObject.Builder responseBuilder,
             Shape operationOrError
     ) {
-        List<HttpBindingIndex.Binding> payloadBindings = bindingIndex.getResponseBindings(
-                operationOrError, HttpBindingIndex.Location.PAYLOAD);
+        List<HttpBinding> payloadBindings = bindingIndex.getResponseBindings(
+                operationOrError, HttpBinding.Location.PAYLOAD);
         if (!payloadBindings.isEmpty()) {
             createResponsePayload(context, payloadBindings.get(0), responseBuilder);
         } else {
@@ -272,7 +273,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
 
     private void createResponsePayload(
             Context context,
-            HttpBindingIndex.Binding binding,
+            HttpBinding binding,
             ResponseObject.Builder responseBuilder
     ) {
         String mediaType = ModelUtils.getMediaType(context, binding.getMember());
@@ -288,8 +289,8 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             ResponseObject.Builder responseBuilder,
             Shape operationOrError
     ) {
-        List<HttpBindingIndex.Binding> bindings = bindingIndex.getResponseBindings(
-                operationOrError, HttpBindingIndex.Location.DOCUMENT);
+        List<HttpBinding> bindings = bindingIndex.getResponseBindings(
+                operationOrError, HttpBinding.Location.DOCUMENT);
         if (!bindings.isEmpty()) {
             MessageType messageType = operationOrError instanceof OperationShape
                     ? MessageType.RESPONSE

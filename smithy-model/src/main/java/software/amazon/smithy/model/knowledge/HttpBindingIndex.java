@@ -19,10 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -49,7 +46,7 @@ import software.amazon.smithy.utils.ListUtils;
  *
  * <p>This index makes it easy to understand how members of the input or output
  * of a request/response are bound to an HTTP message by providing all of the
- * bindings in the model as a normalized {@link Binding} object. This can be
+ * bindings in the model as a normalized {@link HttpBinding} object. This can be
  * used to validate the bindings of an operation, generate code to [de]serialize
  * shapes, diff models to ensure backward compatibility at the wire level, etc.
  *
@@ -57,8 +54,8 @@ import software.amazon.smithy.utils.ListUtils;
  */
 public final class HttpBindingIndex implements KnowledgeIndex {
     private final ShapeIndex index;
-    private final Map<ShapeId, List<Binding>> requestBindings = new HashMap<>();
-    private final Map<ShapeId, List<Binding>> responseBindings = new HashMap<>();
+    private final Map<ShapeId, List<HttpBinding>> requestBindings = new HashMap<>();
+    private final Map<ShapeId, List<HttpBinding>> responseBindings = new HashMap<>();
 
     public HttpBindingIndex(Model model) {
         index = model.getShapeIndex();
@@ -147,10 +144,11 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * @return Map of unmodifiable bindings.
      * @throws IllegalArgumentException if the given shape is not an operation.
      */
-    public Map<String, Binding> getRequestBindings(ToShapeId operationShapeOrId) {
+    public Map<String, HttpBinding> getRequestBindings(ToShapeId operationShapeOrId) {
         ShapeId id = operationShapeOrId.toShapeId();
         validateRequestBindingShapeId(id);
-        return requestBindings.get(id).stream().collect(Collectors.toMap(Binding::getMemberName, Function.identity()));
+        return requestBindings.get(id).stream()
+                .collect(Collectors.toMap(HttpBinding::getMemberName, Function.identity()));
     }
 
     private void validateRequestBindingShapeId(ShapeId id) {
@@ -168,7 +166,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * @return Map of unmodifiable bindings.
      * @throws IllegalArgumentException if the given shape is not an operation.
      */
-    public List<Binding> getRequestBindings(ToShapeId operationShapeOrId, Location requestLocation) {
+    public List<HttpBinding> getRequestBindings(ToShapeId operationShapeOrId, HttpBinding.Location requestLocation) {
         ShapeId id = operationShapeOrId.toShapeId();
         validateRequestBindingShapeId(id);
         return requestBindings.get(id).stream()
@@ -185,11 +183,11 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * @throws IllegalArgumentException if the given shape is not an operation
      *  or error structure.
      */
-    public Map<String, Binding> getResponseBindings(ToShapeId shapeOrId) {
+    public Map<String, HttpBinding> getResponseBindings(ToShapeId shapeOrId) {
         ShapeId id = shapeOrId.toShapeId();
         validateResponseBindingShapeId(id);
         return responseBindings.get(id).stream()
-                .collect(Collectors.toMap(Binding::getMemberName, Function.identity()));
+                .collect(Collectors.toMap(HttpBinding::getMemberName, Function.identity()));
     }
 
     private void validateResponseBindingShapeId(ShapeId id) {
@@ -208,7 +206,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * @throws IllegalArgumentException if the given shape is not an operation
      *  or error structure.
      */
-    public List<Binding> getResponseBindings(ToShapeId shapeOrId, Location bindingLocation) {
+    public List<HttpBinding> getResponseBindings(ToShapeId shapeOrId, HttpBinding.Location bindingLocation) {
         ShapeId id = shapeOrId.toShapeId();
         validateResponseBindingShapeId(id);
         return responseBindings.get(id).stream()
@@ -216,103 +214,40 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                 .collect(Collectors.toList());
     }
 
-    /** HTTP binding types. */
-    public enum Location { LABEL, DOCUMENT, PAYLOAD, HEADER, PREFIX_HEADERS, QUERY, UNBOUND }
-
-    /**
-     * Defines an HTTP message member binding.
-     */
-    public static final class Binding {
-
-        private final MemberShape member;
-        private final Location location;
-        private final String locationName;
-        private final Trait bindingTrait;
-
-        Binding(MemberShape member, Location location, String locationName, Trait bindingTrait) {
-            this.member = Objects.requireNonNull(member);
-            this.location = Objects.requireNonNull(location);
-            this.locationName = Objects.requireNonNull(locationName);
-            this.bindingTrait = bindingTrait;
-        }
-
-        public MemberShape getMember() {
-            return member;
-        }
-
-        public String getMemberName() {
-            return member.getMemberName();
-        }
-
-        public Location getLocation() {
-            return location;
-        }
-
-        public String getLocationName() {
-            return locationName;
-        }
-
-        public Optional<Trait> getBindingTrait() {
-            return Optional.ofNullable(bindingTrait);
-        }
-
-        @Override
-        public String toString() {
-            return member.getId() + " @ " + location.toString().toLowerCase(Locale.US) + " (" + locationName + ")";
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (!(other instanceof Binding)) {
-                return false;
-            } else {
-                Binding otherBinding = (Binding) other;
-                return getMember().equals(otherBinding.getMember())
-                       && getLocation() == otherBinding.getLocation()
-                       && getLocationName().equals(otherBinding.getLocationName());
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(location, member, locationName);
-        }
-    }
-
-    private List<Binding> computeRequestBindings(OperationIndex opIndex, OperationShape shape) {
+    private List<HttpBinding> computeRequestBindings(OperationIndex opIndex, OperationShape shape) {
         return opIndex.getInput(shape.getId())
                 .map(input -> createStructureBindings(input, true))
                 .orElseGet(Collections::emptyList);
     }
 
-    private List<Binding> computeResponseBindings(OperationIndex opIndex, OperationShape shape) {
+    private List<HttpBinding> computeResponseBindings(OperationIndex opIndex, OperationShape shape) {
         return opIndex.getOutput(shape.getId())
                 .map(output -> createStructureBindings(output, false))
                 .orElseGet(Collections::emptyList);
     }
 
-    private List<Binding> createStructureBindings(StructureShape struct, boolean isRequest) {
-        List<Binding> bindings = new ArrayList<>();
+    private List<HttpBinding> createStructureBindings(StructureShape struct, boolean isRequest) {
+        List<HttpBinding> bindings = new ArrayList<>();
         List<MemberShape> unbound = new ArrayList<>();
         boolean foundPayload = false;
 
         for (MemberShape member : struct.getAllMembers().values()) {
             if (member.getTrait(HttpHeaderTrait.class).isPresent()) {
                 HttpHeaderTrait trait = member.getTrait(HttpHeaderTrait.class).get();
-                bindings.add(new Binding(member, Location.HEADER, trait.getValue(), trait));
+                bindings.add(new HttpBinding(member, HttpBinding.Location.HEADER, trait.getValue(), trait));
             } else if (member.getTrait(HttpPrefixHeadersTrait.class).isPresent()) {
                 HttpPrefixHeadersTrait trait = member.getTrait(HttpPrefixHeadersTrait.class).get();
-                bindings.add(new Binding(member, Location.PREFIX_HEADERS, trait.getValue(), trait));
+                bindings.add(new HttpBinding(member, HttpBinding.Location.PREFIX_HEADERS, trait.getValue(), trait));
             } else if (isRequest && member.getTrait(HttpQueryTrait.class).isPresent()) {
                 HttpQueryTrait trait = member.getTrait(HttpQueryTrait.class).get();
-                bindings.add(new Binding(member, Location.QUERY, trait.getValue(), trait));
+                bindings.add(new HttpBinding(member, HttpBinding.Location.QUERY, trait.getValue(), trait));
             } else if (member.getTrait(HttpPayloadTrait.class).isPresent()) {
                 foundPayload = true;
                 HttpPayloadTrait trait = member.getTrait(HttpPayloadTrait.class).get();
-                bindings.add(new Binding(member, Location.PAYLOAD, member.getMemberName(), trait));
+                bindings.add(new HttpBinding(member, HttpBinding.Location.PAYLOAD, member.getMemberName(), trait));
             } else if (isRequest && member.getTrait(HttpLabelTrait.class).isPresent()) {
                 HttpLabelTrait trait = member.getTrait(HttpLabelTrait.class).get();
-                bindings.add(new Binding(member, Location.LABEL, member.getMemberName(), trait));
+                bindings.add(new HttpBinding(member, HttpBinding.Location.LABEL, member.getMemberName(), trait));
             } else {
                 unbound.add(member);
             }
@@ -321,10 +256,10 @@ public final class HttpBindingIndex implements KnowledgeIndex {
         if (!unbound.isEmpty()) {
             if (foundPayload) {
                 unbound.forEach(member -> bindings.add(
-                        new Binding(member, Location.UNBOUND, member.getMemberName(), null)));
+                        new HttpBinding(member, HttpBinding.Location.UNBOUND, member.getMemberName(), null)));
             } else {
                 unbound.forEach(member -> bindings.add(
-                        new Binding(member, Location.DOCUMENT, member.getMemberName(), null)));
+                        new HttpBinding(member, HttpBinding.Location.DOCUMENT, member.getMemberName(), null)));
             }
         }
 
