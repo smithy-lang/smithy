@@ -21,8 +21,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
-import software.amazon.smithy.model.knowledge.HttpBindingIndex.Binding;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.HttpTrait;
@@ -86,8 +86,8 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
                     method, isIdempotent ? "is" : "is not")));
         }
 
-        List<Binding> payloadBindings = bindingIndex.getRequestBindings(shape, HttpBindingIndex.Location.PAYLOAD);
-        List<Binding> documentBindings = bindingIndex.getRequestBindings(shape, HttpBindingIndex.Location.DOCUMENT);
+        List<HttpBinding> payloadBindings = bindingIndex.getRequestBindings(shape, HttpBinding.Location.PAYLOAD);
+        List<HttpBinding> documentBindings = bindingIndex.getRequestBindings(shape, HttpBinding.Location.DOCUMENT);
         if (!semantics.allowsRequestPayload && (!payloadBindings.isEmpty() || !documentBindings.isEmpty())) {
             // Detect location and combine to one list for messages
             String document = payloadBindings.isEmpty() ? "document" : "payload";
@@ -95,7 +95,7 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
             events.add(danger(shape, trait, String.format(
                     "This operation uses the `%s` method in the `http` trait, but "
                     + "has the following members bound to the %s: %s", method, document,
-                    ValidationUtils.tickedList(payloadBindings.stream().map(Binding::getMemberName)))));
+                    ValidationUtils.tickedList(payloadBindings.stream().map(HttpBinding::getMemberName)))));
         }
 
         return events;

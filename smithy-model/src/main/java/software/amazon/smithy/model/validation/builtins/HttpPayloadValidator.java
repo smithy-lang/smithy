@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -84,11 +85,11 @@ public final class HttpPayloadValidator extends AbstractValidator {
             HttpBindingIndex bindings,
             boolean request
     ) {
-        Map<String, HttpBindingIndex.Binding> resolved = request
+        Map<String, HttpBinding> resolved = request
                 ? bindings.getRequestBindings(subject)
                 : bindings.getResponseBindings(subject);
         Set<String> unbound = resolved.entrySet().stream()
-                .filter(binding -> binding.getValue().getLocation() == HttpBindingIndex.Location.UNBOUND)
+                .filter(binding -> binding.getValue().getLocation() == HttpBinding.Location.UNBOUND)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
 

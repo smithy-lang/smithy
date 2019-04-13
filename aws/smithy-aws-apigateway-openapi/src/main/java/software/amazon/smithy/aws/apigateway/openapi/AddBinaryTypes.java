@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -75,10 +76,10 @@ public final class AddBinaryTypes implements SmithyOpenApiPlugin {
                                 binaryMediaType(shapeIndex, httpBindingIndex.getResponseBindings(operation)))));
     }
 
-    private Optional<String> binaryMediaType(ShapeIndex shapes, Map<String, HttpBindingIndex.Binding> httpBindings) {
+    private Optional<String> binaryMediaType(ShapeIndex shapes, Map<String, HttpBinding> httpBindings) {
         return httpBindings.values().stream()
-                .filter(binding -> binding.getLocation().equals(HttpBindingIndex.Location.PAYLOAD))
-                .map(HttpBindingIndex.Binding::getMember)
+                .filter(binding -> binding.getLocation().equals(HttpBinding.Location.PAYLOAD))
+                .map(HttpBinding::getMember)
                 .flatMap(member -> OptionalUtils.stream(member.getMemberTrait(shapes, MediaTypeTrait.class)))
                 .map(MediaTypeTrait::getValue)
                 .findFirst();

@@ -38,7 +38,7 @@ public class PaginatedIndexTest {
 
         assertThat(index.getValidationEvents(), not(empty()));
         assertThat(index.getPaginationInfo(ShapeId.from("ns.foo#Valid2")).isPresent(), is(true));
-        PaginatedIndex.PaginationInfo info = index.getPaginationInfo(ShapeId.from("ns.foo#Valid2")).get();
+        PaginationInfo info = index.getPaginationInfo(ShapeId.from("ns.foo#Valid2")).get();
         assertThat(info.getOperation().getId(), is(ShapeId.from("ns.foo#Valid2")));
         assertThat(info.getInput().getId(), is(ShapeId.from("ns.foo#ValidInput")));
         assertThat(info.getOutput().getId(), is(ShapeId.from("ns.foo#ValidOutput")));

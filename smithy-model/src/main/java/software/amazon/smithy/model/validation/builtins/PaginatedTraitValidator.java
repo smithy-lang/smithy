@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.PaginatedIndex;
+import software.amazon.smithy.model.knowledge.PaginationInfo;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -64,7 +65,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         return events;
     }
 
-    private List<ValidationEvent> validateInfo(ShapeIndex index, PaginatedIndex.PaginationInfo info) {
+    private List<ValidationEvent> validateInfo(ShapeIndex index, PaginationInfo info) {
         List<ValidationEvent> events = new ArrayList<>();
 
         checkType(info, index, "input", "inputToken", info.getInputTokenMember(), STRING_SET).ifPresent(events::add);
@@ -92,7 +93,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     }
 
     private Optional<ValidationEvent> checkType(
-            PaginatedIndex.PaginationInfo info,
+            PaginationInfo info,
             ShapeIndex index,
             String inputOrOutput,
             String propertyName,
@@ -112,7 +113,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     }
 
     private ValidationEvent mustBeOptional(
-            PaginatedIndex.PaginationInfo info,
+            PaginationInfo info,
             String struct, String prop,
             MemberShape member
     ) {
