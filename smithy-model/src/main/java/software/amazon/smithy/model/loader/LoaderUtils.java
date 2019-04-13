@@ -41,7 +41,7 @@ import software.amazon.smithy.utils.ListUtils;
  * Model loading utility methods.
  */
 @SuppressWarnings("checkstyle:declarationorder")
-public final class LoaderUtils {
+final class LoaderUtils {
     private static final String CREATE_KEY = "create";
     private static final String READ_KEY = "read";
     private static final String UPDATE_KEY = "update";
