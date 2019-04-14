@@ -20,13 +20,15 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static software.amazon.smithy.model.Pattern.Segment;
+import static software.amazon.smithy.model.pattern.Pattern.Segment;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.pattern.InvalidPatternException;
+import software.amazon.smithy.model.pattern.Pattern;
 
 public class PatternTest {
 

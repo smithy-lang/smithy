@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model;
+package software.amazon.smithy.model.pattern;
 
 import static java.lang.String.format;
 
@@ -188,7 +188,8 @@ public class Pattern {
 
         public enum Type { LITERAL, LABEL, GREEDY_LABEL }
 
-        private static final java.util.regex.Pattern LABEL_PATTERN = java.util.regex.Pattern.compile("^[a-zA-Z0-9_]+$");
+        private static final java.util.regex.Pattern LABEL_PATTERN = java.util.regex.Pattern.compile(
+                "^[a-zA-Z0-9_]+$");
 
         private final String asString;
         private final String content;

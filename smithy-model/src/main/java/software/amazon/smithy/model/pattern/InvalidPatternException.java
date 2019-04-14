@@ -13,14 +13,14 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model;
+package software.amazon.smithy.model.pattern;
 
 /**
- * Exception thrown for invalid HTTP URI patterns.
+ * Exception thrown for invalid patterns.
  */
-public final class InvalidUriPatternException extends InvalidPatternException {
+public class InvalidPatternException extends IllegalArgumentException {
 
-    InvalidUriPatternException(String message) {
+    public InvalidPatternException(String message) {
         super(message);
     }
 }

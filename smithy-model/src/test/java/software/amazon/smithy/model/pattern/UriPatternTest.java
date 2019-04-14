@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static software.amazon.smithy.model.Pattern.Segment;
+import static software.amazon.smithy.model.pattern.Pattern.Segment;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import software.amazon.smithy.model.pattern.InvalidUriPatternException;
+import software.amazon.smithy.model.pattern.UriPattern;
 
 public class UriPatternTest {
     @Test

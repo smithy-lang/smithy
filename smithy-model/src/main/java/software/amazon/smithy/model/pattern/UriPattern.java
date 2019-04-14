@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model;
+package software.amazon.smithy.model.pattern;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -161,12 +161,11 @@ public final class UriPattern extends Pattern {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !(other instanceof UriPattern)) {
+        if (!(other instanceof UriPattern)) {
             return false;
         }
         UriPattern otherPattern = (UriPattern) other;
-        return super.equals(other)
-               && queryLiterals.equals(otherPattern.queryLiterals);
+        return super.equals(other) && queryLiterals.equals(otherPattern.queryLiterals);
     }
 
     @Override
