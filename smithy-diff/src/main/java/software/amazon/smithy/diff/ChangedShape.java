@@ -21,11 +21,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Represents a changed shape.

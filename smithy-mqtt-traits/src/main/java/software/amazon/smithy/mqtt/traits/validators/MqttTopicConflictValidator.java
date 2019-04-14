@@ -18,13 +18,13 @@ package software.amazon.smithy.mqtt.traits.validators;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.ResolvedTopicIndex;
 import software.amazon.smithy.mqtt.traits.TopicBinding;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that no two MQTT topics conflict.

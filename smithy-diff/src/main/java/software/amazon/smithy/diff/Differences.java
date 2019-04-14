@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Queryable container for detected structural differences between two models.

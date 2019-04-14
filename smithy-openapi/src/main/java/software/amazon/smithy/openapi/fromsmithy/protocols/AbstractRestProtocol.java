@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.jsonschema.Schema;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
@@ -35,6 +34,7 @@ import software.amazon.smithy.openapi.model.Ref;
 import software.amazon.smithy.openapi.model.RequestBodyObject;
 import software.amazon.smithy.openapi.model.ResponseObject;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Provides the shared functionality used across protocols that use Smithy's

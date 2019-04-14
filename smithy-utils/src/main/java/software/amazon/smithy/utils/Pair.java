@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model;
+package software.amazon.smithy.utils;
 
 import java.util.AbstractMap;
 import java.util.Map;
@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Generic immutable pair of values.
