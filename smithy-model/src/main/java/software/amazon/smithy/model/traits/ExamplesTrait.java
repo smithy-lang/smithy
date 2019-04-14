@@ -25,7 +25,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.validation.builtins.ExamplesTraitValidator;
+import software.amazon.smithy.model.validation.validators.ExamplesTraitValidator;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
