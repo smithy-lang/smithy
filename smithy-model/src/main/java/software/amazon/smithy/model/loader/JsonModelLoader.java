@@ -20,8 +20,8 @@ import software.amazon.smithy.model.node.DefaultNodeFactory;
 /**
  * Loads JSON models that have a filename ending with ".json".
  */
-public final class JsonModelLoader extends NodeModelLoader {
-    public JsonModelLoader() {
+final class JsonModelLoader extends NodeModelLoader {
+    JsonModelLoader() {
         super(new DefaultNodeFactory());
     }
 

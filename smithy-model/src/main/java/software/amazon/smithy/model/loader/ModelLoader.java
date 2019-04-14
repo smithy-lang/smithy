@@ -27,7 +27,7 @@ import software.amazon.smithy.utils.ListUtils;
  * false if it is not responsible for loading the given content.
  */
 @FunctionalInterface
-public interface ModelLoader {
+interface ModelLoader {
     /**
      * Attempts to load the given filename and mutate the loader visitor.
      *

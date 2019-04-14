@@ -90,7 +90,7 @@ import software.amazon.smithy.utils.SetUtils;
  * Parses custom Smithy model IDL syntax and invokes a LoaderVisitor
  * to load a model.
  */
-public final class SmithyModelLoader implements ModelLoader {
+final class SmithyModelLoader implements ModelLoader {
     private static final Collection<String> MAP_KEYS = ListUtils.of("key", "value");
 
     /** Top-level statements that can be encountered while parsing. */

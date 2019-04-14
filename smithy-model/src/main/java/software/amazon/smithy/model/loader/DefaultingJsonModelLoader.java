@@ -22,8 +22,8 @@ import software.amazon.smithy.model.node.DefaultNodeFactory;
  * Loads the contents of a file if the file has a source location
  * of "N/A", isn't empty, and the first character is "{".
  */
-public final class DefaultingJsonModelLoader extends NodeModelLoader {
-    public DefaultingJsonModelLoader() {
+final class DefaultingJsonModelLoader extends NodeModelLoader {
+    DefaultingJsonModelLoader() {
         super(new DefaultNodeFactory());
     }
 

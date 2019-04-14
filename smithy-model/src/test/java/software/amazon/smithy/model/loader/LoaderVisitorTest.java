@@ -179,7 +179,6 @@ public class LoaderVisitorTest {
     @Test
     public void coercesNullTraitValues() {
         Model model = Model.assembler()
-                .modelLoader(new JsonModelLoader())
                 .addImport(getClass().getResource("null-coerce-traits.json"))
                 .assemble()
                 .unwrap();
