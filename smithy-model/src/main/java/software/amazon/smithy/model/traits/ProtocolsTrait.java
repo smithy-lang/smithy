@@ -22,13 +22,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Defines the protocols supported by a service.

@@ -20,11 +20,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.Tagged;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -33,6 +30,9 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.Tagged;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Trait definition.

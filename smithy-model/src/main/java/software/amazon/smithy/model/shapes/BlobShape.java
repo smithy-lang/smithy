@@ -16,7 +16,7 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Optional;
-import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Represents a {@code blob} shape.

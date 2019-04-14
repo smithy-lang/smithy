@@ -18,8 +18,8 @@ package software.amazon.smithy.codegen.core;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * A reserved words implementation that maps known words to other words.

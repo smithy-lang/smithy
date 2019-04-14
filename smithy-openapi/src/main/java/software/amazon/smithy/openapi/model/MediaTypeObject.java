@@ -19,9 +19,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.jsonschema.Schema;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class MediaTypeObject extends Component implements ToSmithyBuilder<MediaTypeObject> {
     private final Schema schema;

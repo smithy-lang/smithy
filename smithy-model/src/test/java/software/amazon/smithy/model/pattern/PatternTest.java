@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model;
+package software.amazon.smithy.model.pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.pattern.InvalidPatternException;
-import software.amazon.smithy.model.pattern.Pattern;
 
 public class PatternTest {
 

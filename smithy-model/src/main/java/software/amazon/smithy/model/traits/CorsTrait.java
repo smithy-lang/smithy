@@ -20,7 +20,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
@@ -30,6 +29,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<CorsTrait> {
     private static final String TRAIT = "smithy.api#cors";

@@ -17,7 +17,7 @@ package software.amazon.smithy.model.traits;
 
 import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Represents the Smithy {@code auth} trait, used to specify the auth

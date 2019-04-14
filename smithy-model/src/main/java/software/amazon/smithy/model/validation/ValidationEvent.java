@@ -21,15 +21,15 @@ import static software.amazon.smithy.model.validation.Validator.MODEL_ERROR;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * A validation event created when validating a model.

@@ -34,6 +34,8 @@ import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * A Smithy model, including shapes, traits, custom traits, validators,

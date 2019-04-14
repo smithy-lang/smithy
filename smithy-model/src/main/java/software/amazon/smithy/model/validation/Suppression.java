@@ -27,12 +27,12 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Validator suppression.

@@ -16,8 +16,8 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Provides the shared logic that all trait builders need.

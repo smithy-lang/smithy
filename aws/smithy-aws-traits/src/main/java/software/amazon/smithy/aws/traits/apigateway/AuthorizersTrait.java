@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -13,6 +12,7 @@ import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Defines a map of API Gateway {@code x-amazon-apigateway-authorizer}

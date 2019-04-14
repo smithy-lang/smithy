@@ -23,8 +23,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Encapsulates the result of running SmithyBuild.

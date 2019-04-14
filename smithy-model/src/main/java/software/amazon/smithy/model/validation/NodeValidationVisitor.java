@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeType;
 import software.amazon.smithy.model.node.StringNode;
@@ -61,6 +60,7 @@ import software.amazon.smithy.model.validation.nodevalidation.StringEnumPlugin;
 import software.amazon.smithy.model.validation.nodevalidation.StringLengthPlugin;
 import software.amazon.smithy.model.validation.nodevalidation.TimestampFormatPlugin;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Validates {@link Node} values provided for {@link Shape} definitions.

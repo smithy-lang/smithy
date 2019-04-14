@@ -19,9 +19,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Logger;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -30,6 +28,8 @@ import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Registers a service as an AWS service. This trait is required for all AWS

@@ -30,11 +30,11 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Represents an object node.

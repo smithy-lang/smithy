@@ -23,14 +23,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
-import software.amazon.smithy.model.SmithyBuilder;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Defines a single JSON schema.

@@ -27,7 +27,6 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -52,6 +51,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Visitor used to drive the creation of a Model.

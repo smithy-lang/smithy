@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Tagged union shape that maps member names to member definitions.

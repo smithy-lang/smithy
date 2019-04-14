@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Represents an API operation.

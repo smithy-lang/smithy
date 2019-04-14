@@ -17,8 +17,8 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.Objects;
 import java.util.Optional;
-import software.amazon.smithy.model.SmithyBuilder;
-import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Represents a {@code map} shape.

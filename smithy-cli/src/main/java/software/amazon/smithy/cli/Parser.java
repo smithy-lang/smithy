@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import software.amazon.smithy.model.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Defines the CLI argument parser of a {@link Command}.

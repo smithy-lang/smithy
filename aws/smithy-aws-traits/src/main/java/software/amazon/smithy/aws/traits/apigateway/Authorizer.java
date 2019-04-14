@@ -3,14 +3,14 @@ package software.amazon.smithy.aws.traits.apigateway;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import software.amazon.smithy.model.SmithyBuilder;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Represents an API Gateway authorizer.

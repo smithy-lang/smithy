@@ -20,9 +20,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import software.amazon.smithy.model.SmithyBuilder;
-import software.amazon.smithy.model.Tagged;
-import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.Tagged;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * An enum definition for the enum trait.

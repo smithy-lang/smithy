@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Context object used in plugin execution.

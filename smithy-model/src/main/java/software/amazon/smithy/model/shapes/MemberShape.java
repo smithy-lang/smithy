@@ -16,10 +16,10 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Optional;
-import software.amazon.smithy.model.SmithyBuilder;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Represents a member that targets another shape by ID.

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import software.amazon.smithy.model.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Shape visitor pattern.

@@ -17,11 +17,11 @@ package software.amazon.smithy.model.traits;
 
 import java.util.Optional;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Constrains a shape to minimum and maximum number of elements or size.

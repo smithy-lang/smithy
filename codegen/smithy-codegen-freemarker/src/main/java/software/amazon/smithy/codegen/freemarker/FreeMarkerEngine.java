@@ -18,13 +18,13 @@ import java.util.stream.Stream;
 import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.DefaultDataTemplateEngine;
 import software.amazon.smithy.codegen.core.TemplateEngine;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
 /**

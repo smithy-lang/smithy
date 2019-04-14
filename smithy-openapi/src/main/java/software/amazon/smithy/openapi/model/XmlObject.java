@@ -16,9 +16,9 @@
 package software.amazon.smithy.openapi.model;
 
 import java.util.Optional;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class XmlObject extends Component implements ToSmithyBuilder<XmlObject> {
     private final String name;

@@ -17,13 +17,13 @@ package software.amazon.smithy.model.traits;
 
 import java.util.List;
 import java.util.Objects;
-import software.amazon.smithy.model.SmithyBuilder;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
 * Defines the XML Namespace prefix and URI.

@@ -20,12 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.Tagged;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.Tagged;
 
 /**
  * A {@code Shape} defines a model component.
