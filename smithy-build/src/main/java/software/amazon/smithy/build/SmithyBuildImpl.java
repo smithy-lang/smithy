@@ -31,10 +31,10 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SmithyBuilder;
-import software.amazon.smithy.model.ValidatedResult;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 final class SmithyBuildImpl {

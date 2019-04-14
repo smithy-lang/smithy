@@ -23,13 +23,13 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.ValidatedResult;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.Suppression;
+import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.ListUtils;
 

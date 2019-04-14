@@ -13,11 +13,10 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model;
+package software.amazon.smithy.model.validation;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
  * Thrown when {@link ValidatedResult#validate} is called and the result contains

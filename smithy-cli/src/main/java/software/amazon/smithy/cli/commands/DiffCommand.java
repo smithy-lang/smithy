@@ -25,9 +25,9 @@ import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.ValidatedResult;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 public final class DiffCommand implements Command {
