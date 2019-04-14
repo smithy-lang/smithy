@@ -29,6 +29,13 @@
         <property name="fileNamePattern" value="(module\-info\.java$|Test.java$|src/test/java)"/>
     </module>
 
+    <!-- Files must contain a copyright header. -->
+    <module name="Header">
+        <property name="header"
+                  value="/*\n * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.\n"/>
+        <property name="fileExtensions" value="java"/>
+    </module>
+
     <module name="NewlineAtEndOfFile"/>
 
     <!-- Checks for whitespace                               -->
