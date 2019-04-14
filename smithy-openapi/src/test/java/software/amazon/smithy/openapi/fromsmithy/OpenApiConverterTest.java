@@ -123,24 +123,11 @@ public class OpenApiConverterTest {
     @Test
     public void protocolsCanOmitOperations() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("test-service.json"))
+                .addImport(getClass().getResource("missing-http-bindings.json"))
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create()
-                .addCustomProtocol(new OpenApiProtocol() {
-                    @Override
-                    public Pattern getProtocolNamePattern() {
-                        // Intercepts every protocol.
-                        return Pattern.compile(".+");
-                    }
-
-                    @Override
-                    public Optional<Operation> createOperation(Context context, OperationShape operation) {
-                        // Passes on every operation.
-                        return Optional.empty();
-                    }
-                })
-                .convert(model, ShapeId.from("example.rest#RestService"));
+                .convert(model, ShapeId.from("smithy.example#Service"));
 
         for (PathItem pathItem : result.getPaths().values()) {
             Assertions.assertFalse(pathItem.getGet().isPresent());

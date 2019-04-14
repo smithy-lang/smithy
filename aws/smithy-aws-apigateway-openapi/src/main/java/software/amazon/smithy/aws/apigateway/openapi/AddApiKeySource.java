@@ -18,10 +18,10 @@ package software.amazon.smithy.aws.apigateway.openapi;
 import java.util.logging.Logger;
 import software.amazon.smithy.aws.traits.apigateway.ApiKeySourceTrait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
 
-public final class AddApiKeySource implements SmithyOpenApiPlugin {
+public final class AddApiKeySource implements OpenApiMapper {
     private static final String EXTENSION_NAME = "x-amazon-apigateway-api-key-source";
     private static final Logger LOGGER = Logger.getLogger(AddApiKeySource.class.getName());
 

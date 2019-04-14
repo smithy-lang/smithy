@@ -22,13 +22,13 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OperationObject;
 
 /**
  * Adds API Gateway integrations to operations.
  */
-public final class AddIntegrations implements SmithyOpenApiPlugin {
+public final class AddIntegrations implements OpenApiMapper {
     private static final String EXTENSION_NAME = "x-amazon-apigateway-integration";
     private static final Logger LOGGER = Logger.getLogger(AddIntegrations.class.getName());
 

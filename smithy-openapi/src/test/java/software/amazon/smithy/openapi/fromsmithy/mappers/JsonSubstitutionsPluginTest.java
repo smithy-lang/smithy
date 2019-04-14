@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.openapi.fromsmithy.plugins;
+package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

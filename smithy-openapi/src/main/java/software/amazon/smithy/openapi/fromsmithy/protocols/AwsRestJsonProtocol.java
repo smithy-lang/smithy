@@ -59,7 +59,7 @@ public final class AwsRestJsonProtocol extends AbstractRestProtocol {
         // Creating this kind of synthetic shape takes advantage of generic
         // things like handling required properties, pattern, length, range,
         // documentation, jsonName, and passes the synthetic JSON schema
-        // through any registered plugins.
+        // through any registered mappers.
         ShapeId container = bindings.get(0).getMember().getContainer();
         StructureShape.Builder tempShapeBuilder = StructureShape.builder().id(container);
 

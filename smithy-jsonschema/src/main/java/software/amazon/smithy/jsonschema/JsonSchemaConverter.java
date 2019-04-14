@@ -18,9 +18,10 @@ package software.amazon.smithy.jsonschema;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.Predicate;
+import software.amazon.smithy.jsonschema.mappers.DisableMapper;
+import software.amazon.smithy.jsonschema.mappers.TimestampMapper;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
@@ -36,15 +37,19 @@ import software.amazon.smithy.utils.Pair;
  * Converts a Smithy model index to a JSON schema document.
  */
 public final class JsonSchemaConverter {
-    private final List<SchemaBuilderMapper> customMappers = new ArrayList<>();
-    private final List<SchemaBuilderMapper> discoveredMappers = new ArrayList<>();
-    private boolean alreadyDiscoveredMappers;
+
+    /** All converters use the built-in mappers. */
+    private final List<JsonSchemaMapper> mappers = new ArrayList<>();
+
     private PropertyNamingStrategy propertyNamingStrategy;
     private ObjectNode config = Node.objectNode();
     private RefStrategy refStrategy;
     private Predicate<Shape> shapePredicate = shape -> true;
 
-    private JsonSchemaConverter() {}
+    private JsonSchemaConverter() {
+        mappers.add(new DisableMapper());
+        mappers.add(new TimestampMapper());
+    }
 
     /**
      * Creates a new JsonSchemaConverter.
@@ -63,9 +68,7 @@ public final class JsonSchemaConverter {
     public JsonSchemaConverter copy() {
         JsonSchemaConverter copy = create();
         copy.config = config;
-        copy.customMappers.addAll(customMappers);
-        copy.discoveredMappers.addAll(discoveredMappers);
-        copy.alreadyDiscoveredMappers = alreadyDiscoveredMappers;
+        copy.mappers.addAll(mappers);
         copy.propertyNamingStrategy = propertyNamingStrategy;
         copy.refStrategy = refStrategy;
         copy.shapePredicate = shapePredicate;
@@ -159,33 +162,11 @@ public final class JsonSchemaConverter {
     /**
      * Adds a mapper used to update schema builders.
      *
-     * @param schemaBuilderMapper Mapper to add.
+     * @param jsonSchemaMapper Mapper to add.
      * @return Returns the converter.
      */
-    public JsonSchemaConverter addSchemaMapper(SchemaBuilderMapper schemaBuilderMapper) {
-        customMappers.add(schemaBuilderMapper);
-        return this;
-    }
-
-    /**
-     * Adds SchemaBuilderMapper instances discovered through SPI.
-     *
-     * <p>If this method is not called, then {@link SchemaBuilderMapper} services
-     * will be discovered using the class loader of {@link JsonSchemaConverter}
-     * and might only find the built-in service providers.
-     *
-     * @param classLoader ClassLoader used to discover implementations.
-     * @return Returns the converter.
-     */
-    public JsonSchemaConverter discoverSchemaMappersWith(ClassLoader classLoader) {
-        return loadMapperServices(ServiceLoader.load(SchemaBuilderMapper.class, classLoader));
-    }
-
-    private JsonSchemaConverter loadMapperServices(Iterable<SchemaBuilderMapper> mappers) {
-        alreadyDiscoveredMappers = true;
-        for (SchemaBuilderMapper mapper : mappers) {
-            discoveredMappers.add(mapper);
-        }
+    public JsonSchemaConverter addMapper(JsonSchemaMapper jsonSchemaMapper) {
+        mappers.add(jsonSchemaMapper);
         return this;
     }
 
@@ -214,19 +195,12 @@ public final class JsonSchemaConverter {
     }
 
     private SchemaDocument doConversion(ShapeIndex shapeIndex, Shape rootShape) {
-        // If no mapper discovery was already invoked, then just use the current class loader.
-        if (!alreadyDiscoveredMappers) {
-            discoverSchemaMappersWith(getClass().getClassLoader());
-        }
-
         // Combine custom mappers with the discovered mappers and sort them.
-        List<SchemaBuilderMapper> resolvedMappers = new ArrayList<>(discoveredMappers);
-        resolvedMappers.addAll(customMappers);
-        resolvedMappers.sort(Comparator.comparing(SchemaBuilderMapper::getOrder));
+        mappers.sort(Comparator.comparing(JsonSchemaMapper::getOrder));
 
         SchemaDocument.Builder builder = SchemaDocument.builder();
         JsonSchemaShapeVisitor visitor = new JsonSchemaShapeVisitor(
-                shapeIndex, getConfig(), getRefStrategy(), getPropertyNamingStrategy(), resolvedMappers);
+                shapeIndex, getConfig(), getRefStrategy(), getPropertyNamingStrategy(), mappers);
 
         if (rootShape != null && !(rootShape instanceof ServiceShape)) {
             builder.rootSchema(rootShape.accept(visitor));

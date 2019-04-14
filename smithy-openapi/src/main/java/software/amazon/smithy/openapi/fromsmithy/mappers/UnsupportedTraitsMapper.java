@@ -1,4 +1,4 @@
-package software.amazon.smithy.openapi.fromsmithy.plugins;
+package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.util.List;
 import java.util.Set;
@@ -8,7 +8,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
@@ -17,8 +17,8 @@ import software.amazon.smithy.utils.SetUtils;
  * Logs each instance of traits and features that are known to not
  * work in OpenAPI.
  */
-public final class UnsupportedTraitsPlugin implements SmithyOpenApiPlugin {
-    private static final Logger LOGGER = Logger.getLogger(UnsupportedTraitsPlugin.class.getName());
+public final class UnsupportedTraitsMapper implements OpenApiMapper {
+    private static final Logger LOGGER = Logger.getLogger(UnsupportedTraitsMapper.class.getName());
     private static final Set<String> TRAITS = SetUtils.of(
             "inputEventStream", "outputEventStream", "eventPayload", "eventHeader", "streaming");
 

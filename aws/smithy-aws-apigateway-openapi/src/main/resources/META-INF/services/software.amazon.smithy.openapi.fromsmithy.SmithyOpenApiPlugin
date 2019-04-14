@@ -1,6 +1,0 @@
-software.amazon.smithy.aws.apigateway.openapi.AddApiKeySource
-software.amazon.smithy.aws.apigateway.openapi.AddAuthorizers
-software.amazon.smithy.aws.apigateway.openapi.AddBinaryTypes
-software.amazon.smithy.aws.apigateway.openapi.AddIntegrations
-software.amazon.smithy.aws.apigateway.openapi.AddRequestValidators
-software.amazon.smithy.aws.apigateway.openapi.CloudFormationSubstitution

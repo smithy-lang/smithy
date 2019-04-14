@@ -21,7 +21,7 @@ import software.amazon.smithy.aws.traits.apigateway.AuthorizersTrait;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.SecurityScheme;
 
 /**
@@ -35,7 +35,7 @@ import software.amazon.smithy.openapi.model.SecurityScheme;
  * OpenAPI security scheme that corresponds to the referenced authentication
  * scheme.
  */
-public final class AddAuthorizers implements SmithyOpenApiPlugin {
+public final class AddAuthorizers implements OpenApiMapper {
     private static final String EXTENSION_NAME = "x-amazon-apigateway-authorizer";
     private static final String CLIENT_EXTENSION_NAME = "x-amazon-apigateway-authtype";
     private static final Logger LOGGER = Logger.getLogger(AddApiKeySource.class.getName());

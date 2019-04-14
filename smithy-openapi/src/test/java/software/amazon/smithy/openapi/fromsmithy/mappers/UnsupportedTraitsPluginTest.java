@@ -1,4 +1,4 @@
-package software.amazon.smithy.openapi.fromsmithy.plugins;
+package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -10,13 +10,13 @@ import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 
-public class CheckForPrefixHeadersTest {
+public class UnsupportedTraitsPluginTest {
     private static Model model;
 
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(RemoveUnusedComponentsTest.class.getResource("prefix-headers.smithy"))
+                .addImport(UnsupportedTraitsPluginTest.class.getResource("streaming-service.smithy"))
                 .assemble()
                 .unwrap();
     }
@@ -27,18 +27,18 @@ public class CheckForPrefixHeadersTest {
     }
 
     @Test
-    public void canIgnorePrefixHeaders() {
+    public void logsWhenUnsupportedTraitsAreFound() {
         OpenApiConverter.create()
-                .putSetting(OpenApiConstants.ON_HTTP_PREFIX_HEADERS, OpenApiConstants.ON_HTTP_PREFIX_HEADERS_WARN)
-                .convert(model, ShapeId.from("smithy.example#PrefixHeaders"));
+                .putSetting(OpenApiConstants.IGNORE_UNSUPPORTED_TRAIT, true)
+                .convert(model, ShapeId.from("smithy.example#Streaming"));
     }
 
     @Test
-    public void throwsOnPrefixHeadersByDefault() {
+    public void throwsWhenUnsupportedTraitsAreFound() {
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
-            OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#PrefixHeaders"));
+            OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Streaming"));
         });
 
-        Assertions.assertTrue(thrown.getMessage().contains("httpPrefixHeaders"));
+        Assertions.assertTrue(thrown.getMessage().contains("streaming"));
     }
 }

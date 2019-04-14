@@ -13,20 +13,20 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.openapi.fromsmithy.plugins;
+package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import software.amazon.smithy.build.JsonSubstitutions;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
 
 /**
  * Substitutes JSON string values using the mapping defined in
  * {@code openapi.substitutions}.
  */
-public final class JsonSubstitutionsPlugin implements SmithyOpenApiPlugin {
+public final class JsonSubstitutionsMapper implements OpenApiMapper {
     @Override
     public byte getOrder() {
         return 120;

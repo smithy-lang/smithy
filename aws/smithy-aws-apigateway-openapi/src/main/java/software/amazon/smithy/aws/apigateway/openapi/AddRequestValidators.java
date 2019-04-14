@@ -23,7 +23,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.utils.MapUtils;
@@ -41,7 +41,7 @@ import software.amazon.smithy.utils.OptionalUtils;
  *
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html">Request validators</a>
  */
-public final class AddRequestValidators implements SmithyOpenApiPlugin {
+public final class AddRequestValidators implements OpenApiMapper {
     private static final String REQUEST_VALIDATOR = "x-amazon-apigateway-request-validator";
     private static final String REQUEST_VALIDATORS = "x-amazon-apigateway-request-validators";
     private static final Map<String, Node> KNOWN_VALIDATORS = MapUtils.of(

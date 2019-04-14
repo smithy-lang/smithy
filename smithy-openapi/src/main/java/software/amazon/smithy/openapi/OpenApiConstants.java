@@ -82,7 +82,7 @@ public final class OpenApiConstants {
      * in a model. OpenAPI does not support httpPrefixHeaders. By default, the
      * conversion will fail. This setting must be set to a string. The following
      * string values are supported generally, though additional values may be
-     * supported by other plugins or protocols.
+     * supported by other mappers or protocols.
      *
      * <ul>
      *     <li>FAIL: The default setting that causes the build to fail.</li>
