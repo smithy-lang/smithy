@@ -27,7 +27,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.Prelude;
@@ -39,6 +38,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Serializes a {@link Model} to an {@link ObjectNode}.

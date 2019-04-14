@@ -21,12 +21,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Removes all trait definitions from a model and all shapes that are only

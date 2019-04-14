@@ -22,12 +22,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.Pair;
 
 public final class OperationObject extends Component implements ToSmithyBuilder<OperationObject> {
     private final String summary;

@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
@@ -34,6 +33,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.builtins.ReferencesTraitValidator;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Defines references to resources within a structure.

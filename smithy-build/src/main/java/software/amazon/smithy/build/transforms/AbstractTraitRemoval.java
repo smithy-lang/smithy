@@ -19,10 +19,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.build.ProjectionTransformer;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.Pair;
 
 abstract class AbstractTraitRemoval implements ProjectionTransformer {
     Pair<Set<String>, Set<String>> parseTraits(List<String> arguments) {

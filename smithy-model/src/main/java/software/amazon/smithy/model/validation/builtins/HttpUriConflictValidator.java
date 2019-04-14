@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.UriPattern;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -29,6 +28,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that no two URIs in a service conflict with each other.

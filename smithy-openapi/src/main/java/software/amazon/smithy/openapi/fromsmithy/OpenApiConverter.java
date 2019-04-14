@@ -35,7 +35,6 @@ import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.jsonschema.SchemaBuilderMapper;
 import software.amazon.smithy.jsonschema.SchemaDocument;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.Tagged;
 import software.amazon.smithy.model.knowledge.AuthIndex;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
@@ -71,6 +70,7 @@ import software.amazon.smithy.openapi.model.TagObject;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
 
 /**

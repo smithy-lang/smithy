@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
@@ -35,6 +34,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Checks if a structure is used as both input and output and if the same

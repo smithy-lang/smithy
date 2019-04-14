@@ -20,9 +20,9 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Removes trait definitions when a trait name does not match one of the

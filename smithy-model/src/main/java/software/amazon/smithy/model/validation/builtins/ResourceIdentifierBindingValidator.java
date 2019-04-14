@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
@@ -32,6 +31,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that operations bound to resource shapes have identifier

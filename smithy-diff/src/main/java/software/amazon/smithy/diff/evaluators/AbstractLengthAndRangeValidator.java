@@ -23,10 +23,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Implements the shared logic for length and range trait validation.

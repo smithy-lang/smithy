@@ -47,7 +47,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -84,6 +83,7 @@ import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
 
 /**

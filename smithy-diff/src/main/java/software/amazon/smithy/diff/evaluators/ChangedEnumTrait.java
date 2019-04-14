@@ -20,12 +20,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumConstantBody;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Emits a NOTE when a new enum value is added, emits an ERROR when an

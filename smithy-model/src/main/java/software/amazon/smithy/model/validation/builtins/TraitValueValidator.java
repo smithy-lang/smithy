@@ -18,7 +18,6 @@ package software.amazon.smithy.model.validation.builtins;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
@@ -29,6 +28,7 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that trait values are valid for their trait definitions.

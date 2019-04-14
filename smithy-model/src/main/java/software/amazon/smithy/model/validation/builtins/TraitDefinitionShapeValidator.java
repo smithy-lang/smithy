@@ -18,13 +18,13 @@ package software.amazon.smithy.model.validation.builtins;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that custom trait shapes target valid shapes.

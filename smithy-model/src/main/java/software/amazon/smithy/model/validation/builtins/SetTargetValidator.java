@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
 
 /**

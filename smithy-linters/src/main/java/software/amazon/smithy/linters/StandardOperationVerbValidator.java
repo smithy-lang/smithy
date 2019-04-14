@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -35,6 +34,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * <p>Validates that operation shape names start with standard verbs.

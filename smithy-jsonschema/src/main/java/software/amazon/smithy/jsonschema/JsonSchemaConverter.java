@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.Predicate;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
@@ -31,6 +30,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Converts a Smithy model index to a JSON schema document.

@@ -21,13 +21,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Loads a {@link SmithyBuildConfig} from disk.

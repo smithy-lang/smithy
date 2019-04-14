@@ -17,13 +17,13 @@ package software.amazon.smithy.build;
 
 import java.util.Map;
 import java.util.regex.Pattern;
-import software.amazon.smithy.model.Pair;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeVisitor;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Finds string set in a Node object string value and replaces them with a
