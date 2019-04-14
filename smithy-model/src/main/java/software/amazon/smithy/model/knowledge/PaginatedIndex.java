@@ -35,7 +35,7 @@ import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.model.validation.builtins.PaginatedTraitValidator;
+import software.amazon.smithy.model.validation.validators.PaginatedTraitValidator;
 import software.amazon.smithy.utils.OptionalUtils;
 
 /**
