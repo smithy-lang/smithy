@@ -28,7 +28,9 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.Triple;
 
 /**
  * Validates that trait values are valid for their trait definitions.
@@ -43,11 +45,10 @@ public final class TraitValueValidator implements Validator {
                 .shapes()
                 // Get pairs of <Shape, Trait>
                 .flatMap(shape -> shape.getAllTraits().values().stream().map(t -> Pair.of(shape, t)))
-                // Get pairs of <<Shape, Trait>, TraitDefinition>
-                .flatMap(pair -> Pair.flatMapStream(pair, p -> model.getTraitDefinition(p.getRight().getName())))
-                .flatMap(pair -> validateTrait(
-                        model.getShapeIndex(), pair.getLeft().getLeft(), pair.getLeft().getRight(), pair.getRight())
-                        .stream())
+                // Get a triple of Shape, Trait, TraitDefinition.
+                .flatMap(pair -> OptionalUtils.stream(model.getTraitDefinition(pair.getRight().getName())
+                        .map(traitDefinition -> Triple.fromPair(pair, traitDefinition))))
+                .flatMap(triple -> validateTrait(model.getShapeIndex(), triple.a, triple.b, triple.c).stream())
                 .collect(Collectors.toList());
     }
 
