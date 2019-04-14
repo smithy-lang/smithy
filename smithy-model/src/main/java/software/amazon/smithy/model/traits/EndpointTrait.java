@@ -16,18 +16,18 @@
 package software.amazon.smithy.model.traits;
 
 import static java.lang.String.format;
-import static software.amazon.smithy.model.Pattern.Segment;
+import static software.amazon.smithy.model.pattern.Pattern.Segment;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
-import software.amazon.smithy.model.InvalidPatternException;
-import software.amazon.smithy.model.Pattern;
 import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.pattern.InvalidPatternException;
+import software.amazon.smithy.model.pattern.Pattern;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**

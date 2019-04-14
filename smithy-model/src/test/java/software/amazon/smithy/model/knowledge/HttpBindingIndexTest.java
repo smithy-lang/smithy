@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.UriPattern;
+import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;

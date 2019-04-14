@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.InvalidPatternException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.pattern.InvalidPatternException;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 public class EndpointTraitTest {

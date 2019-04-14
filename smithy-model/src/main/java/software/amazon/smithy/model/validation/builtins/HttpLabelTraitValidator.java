@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.UriPattern;
+import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
