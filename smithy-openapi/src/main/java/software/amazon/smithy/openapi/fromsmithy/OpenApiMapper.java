@@ -30,17 +30,14 @@ import software.amazon.smithy.openapi.model.SecurityScheme;
 
 /**
  * Provides a plugin infrastructure used to hook into the Smithy to OpenAPI
- * conversion process.
+ * conversion process and map over the result.
  *
  * <p>The methods of a plugin are invoked by {@link OpenApiConverter} during
  * the conversion of a model. There is no need to invoke these manually.
- *
- * <p>All implementations of SmithyOpenApiPlugin are discovered using SPI
- * and applied to the model. Plugin implementations may choose to leverage
- * configuration options of the provided context to determine whether or
- * not to enact the plugin.
+ * Implementations may choose to leverage configuration options of the
+ * provided context to determine whether or not to enact the plugin.
  */
-public interface SmithyOpenApiPlugin {
+public interface OpenApiMapper {
     /**
      * Gets the sort order of the plugin from -128 to 127.
      *
@@ -172,19 +169,19 @@ public interface SmithyOpenApiPlugin {
     }
 
     /**
-     * Creates a ProtocolPlugin that is composed of multiple plugins.
+     * Creates an OpenApiMapper that is composed of multiple mappers.
      *
-     * @param plugins Protocol plugins to compose.
-     * @return Returns the composed plugin.
+     * @param mappers Mappers to compose.
+     * @return Returns the composed mapper.
      */
-    static SmithyOpenApiPlugin compose(List<SmithyOpenApiPlugin> plugins) {
-        List<SmithyOpenApiPlugin> sorted = new ArrayList<>(plugins);
-        sorted.sort(Comparator.comparingInt(SmithyOpenApiPlugin::getOrder));
+    static OpenApiMapper compose(List<OpenApiMapper> mappers) {
+        List<OpenApiMapper> sorted = new ArrayList<>(mappers);
+        sorted.sort(Comparator.comparingInt(OpenApiMapper::getOrder));
 
-        return new SmithyOpenApiPlugin() {
+        return new OpenApiMapper() {
             @Override
             public OperationObject updateOperation(Context context, OperationShape shape, OperationObject operation) {
-                for (SmithyOpenApiPlugin plugin : sorted) {
+                for (OpenApiMapper plugin : sorted) {
                     if (operation == null) {
                         return null;
                     }
@@ -195,7 +192,7 @@ public interface SmithyOpenApiPlugin {
 
             @Override
             public PathItem updatePathItem(Context context, PathItem pathItem) {
-                for (SmithyOpenApiPlugin plugin : sorted) {
+                for (OpenApiMapper plugin : sorted) {
                     if (pathItem == null) {
                         return null;
                     }
@@ -210,7 +207,7 @@ public interface SmithyOpenApiPlugin {
                     OperationShape operation,
                     ParameterObject parameterObject
             ) {
-                for (SmithyOpenApiPlugin plugin : sorted) {
+                for (OpenApiMapper plugin : sorted) {
                     if (parameterObject == null) {
                         return null;
                     }
@@ -225,7 +222,7 @@ public interface SmithyOpenApiPlugin {
                     OperationShape shape,
                     RequestBodyObject requestBody
             ) {
-                for (SmithyOpenApiPlugin plugin : sorted) {
+                for (OpenApiMapper plugin : sorted) {
                     if (requestBody == null) {
                         return null;
                     }
@@ -236,7 +233,7 @@ public interface SmithyOpenApiPlugin {
 
             @Override
             public ResponseObject updateResponse(Context context, OperationShape shape, ResponseObject response) {
-                for (SmithyOpenApiPlugin plugin : sorted) {
+                for (OpenApiMapper plugin : sorted) {
                     if (response == null) {
                         return null;
                     }
@@ -252,7 +249,7 @@ public interface SmithyOpenApiPlugin {
                     String securitySchemeName,
                     SecurityScheme securityScheme
             ) {
-                for (SmithyOpenApiPlugin plugin : sorted) {
+                for (OpenApiMapper plugin : sorted) {
                     if (securityScheme == null) {
                         return null;
                     }
@@ -264,14 +261,14 @@ public interface SmithyOpenApiPlugin {
 
             @Override
             public void before(Context context, OpenApi.Builder builder) {
-                for (SmithyOpenApiPlugin plugin : sorted) {
+                for (OpenApiMapper plugin : sorted) {
                     plugin.before(context, builder);
                 }
             }
 
             @Override
             public OpenApi after(Context context, OpenApi openapi) {
-                for (SmithyOpenApiPlugin plugin : sorted) {
+                for (OpenApiMapper plugin : sorted) {
                     openapi = plugin.after(context, openapi);
                 }
                 return openapi;
@@ -279,7 +276,7 @@ public interface SmithyOpenApiPlugin {
 
             @Override
             public ObjectNode updateNode(Context context, OpenApi openapi, ObjectNode node) {
-                for (SmithyOpenApiPlugin plugin : sorted) {
+                for (OpenApiMapper plugin : sorted) {
                     node = plugin.updateNode(context, openapi, node);
                 }
                 return node;

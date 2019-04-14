@@ -62,14 +62,14 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
     private final ObjectNode config;
     private final RefStrategy refStrategy;
     private final PropertyNamingStrategy propertyNamingStrategy;
-    private final List<SchemaBuilderMapper> mappers;
+    private final List<JsonSchemaMapper> mappers;
 
     JsonSchemaShapeVisitor(
             ShapeIndex index,
             ObjectNode config,
             RefStrategy refStrategy,
             PropertyNamingStrategy propertyNamingStrategy,
-            List<SchemaBuilderMapper> mappers
+            List<JsonSchemaMapper> mappers
     ) {
         this.index = index;
         this.config = config;
@@ -302,7 +302,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
      * @return Returns the built schema.
      */
     private Schema buildSchema(Shape shape, Schema.Builder builder) {
-        for (SchemaBuilderMapper mapper : mappers) {
+        for (JsonSchemaMapper mapper : mappers) {
             mapper.updateSchema(shape, builder, config);
         }
 

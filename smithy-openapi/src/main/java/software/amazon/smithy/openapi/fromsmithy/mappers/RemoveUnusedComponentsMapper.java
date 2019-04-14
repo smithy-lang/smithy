@@ -1,4 +1,4 @@
-package software.amazon.smithy.openapi.fromsmithy.plugins;
+package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,7 +11,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.ComponentsObject;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.SetUtils;
@@ -25,8 +25,8 @@ import software.amazon.smithy.utils.SetUtils;
  *
  * <p>TODO: This plugin currently only supports the removal of schemas.
  */
-public class RemoveUnusedComponentsPlugin implements SmithyOpenApiPlugin {
-    private static final Logger LOGGER = Logger.getLogger(RemoveUnusedComponentsPlugin.class.getName());
+public class RemoveUnusedComponentsMapper implements OpenApiMapper {
+    private static final Logger LOGGER = Logger.getLogger(RemoveUnusedComponentsMapper.class.getName());
 
     @Override
     public byte getOrder() {

@@ -34,13 +34,13 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
 
 /**
  * Finds and replaces CloudFormation variables into Fn::Sub intrinsic functions.
  */
-public final class CloudFormationSubstitution implements SmithyOpenApiPlugin {
+public final class CloudFormationSubstitution implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(CloudFormationSubstitution.class.getName());
     private static final String SUBSTITUTION_KEY = "Fn::Sub";
     private static final Pattern SUBSTITUTION_PATTERN = Pattern.compile("\\$\\{.+}");

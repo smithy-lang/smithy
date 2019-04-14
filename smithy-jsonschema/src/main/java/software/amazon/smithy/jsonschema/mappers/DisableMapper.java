@@ -15,8 +15,8 @@
 
 package software.amazon.smithy.jsonschema.mappers;
 
+import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.Schema;
-import software.amazon.smithy.jsonschema.SchemaBuilderMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -24,10 +24,10 @@ import software.amazon.smithy.model.shapes.Shape;
  * Removes keywords from a Schema builder that have been disabled using
  * the settings object {@code disable.*} flags.
  */
-public final class DisableMapper implements SchemaBuilderMapper {
+public final class DisableMapper implements JsonSchemaMapper {
     @Override
-    public GroupOrder getOrder() {
-        return GroupOrder.THIRD;
+    public byte getOrder() {
+        return 120;
     }
 
     @Override

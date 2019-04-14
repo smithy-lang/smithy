@@ -156,8 +156,8 @@ public class JsonSchemaConverterTest {
     @Test
     public void canAddCustomSchemaMapper() {
         ShapeIndex index = ShapeIndex.builder().addShape(StringShape.builder().id("smithy.example#Foo").build()).build();
-        SchemaBuilderMapper mapper = (shape, builder, conf) -> builder.putExtension("Hi", Node.from("There"));
-        SchemaDocument doc = JsonSchemaConverter.create().addSchemaMapper(mapper).convert(index);
+        JsonSchemaMapper mapper = (shape, builder, conf) -> builder.putExtension("Hi", Node.from("There"));
+        SchemaDocument doc = JsonSchemaConverter.create().addMapper(mapper).convert(index);
 
         assertTrue(doc.getDefinition("#/definitions/SmithyExampleFoo").isPresent());
         assertTrue(doc.getDefinition("#/definitions/SmithyExampleFoo").get().getExtension("Hi").isPresent());

@@ -17,8 +17,8 @@ package software.amazon.smithy.openapi.fromsmithy;
 
 import java.util.Set;
 import java.util.logging.Logger;
+import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.Schema;
-import software.amazon.smithy.jsonschema.SchemaBuilderMapper;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
@@ -46,7 +46,7 @@ import software.amazon.smithy.utils.SetUtils;
  *     place OpenAPI XML definitions on schemas.</li>
  * </ul>
  */
-public class OpenApiJsonSchemaMapper implements SchemaBuilderMapper {
+public class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
     private static final Logger LOGGER = Logger.getLogger(OpenApiJsonSchemaMapper.class.getName());
     private static final String DEFAULT_BLOB_FORMAT = "byte";
 

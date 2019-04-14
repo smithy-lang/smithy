@@ -1,4 +1,4 @@
-package software.amazon.smithy.openapi.fromsmithy.plugins;
+package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;

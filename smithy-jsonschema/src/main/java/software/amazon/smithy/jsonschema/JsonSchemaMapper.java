@@ -21,13 +21,20 @@ import software.amazon.smithy.model.shapes.Shape;
 /**
  * Updates a schema builder before converting a shape to a schema.
  */
-public interface SchemaBuilderMapper {
+public interface JsonSchemaMapper {
     /**
-     * Defines the order a mapper is applied to a builder.
+     * Gets the sort order of the plugin from -128 to 127.
      *
-     * <p>Mappers in FIRST applied applied before SECOND, and so on.
+     * <p>Plugins are applied according to this sort order. Lower values
+     * are executed before higher values (for example, -128 comes before 0,
+     * comes before 127). Plugins default to 0, which is the middle point
+     * between the minimum and maximum order values.
+     *
+     * @return Returns the sort order, defaulting to 0.
      */
-    enum GroupOrder { FIRST, SECOND, THIRD }
+    default byte getOrder() {
+        return 0;
+    }
 
     /**
      * Updates a schema builder.
@@ -38,13 +45,4 @@ public interface SchemaBuilderMapper {
      * @return Returns an updated schema builder.
      */
     Schema.Builder updateSchema(Shape shape, Schema.Builder schemaBuilder, ObjectNode config);
-
-    /**
-     * Gets the order in which this strategy should be applied to a builder.
-     *
-     * @return Returns the order group.
-     */
-    default GroupOrder getOrder() {
-        return GroupOrder.SECOND;
-    }
 }

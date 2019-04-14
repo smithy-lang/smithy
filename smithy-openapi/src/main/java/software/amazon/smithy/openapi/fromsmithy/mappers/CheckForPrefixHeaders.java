@@ -1,4 +1,4 @@
-package software.amazon.smithy.openapi.fromsmithy.plugins;
+package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -10,8 +10,8 @@ import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol;
-import software.amazon.smithy.openapi.fromsmithy.SmithyOpenApiPlugin;
 import software.amazon.smithy.openapi.model.OpenApi;
 
 /**
@@ -22,7 +22,7 @@ import software.amazon.smithy.openapi.model.OpenApi;
  * <p>Custom values for this setting need to be handled in a
  * {@link OpenApiProtocol}.
  */
-public class CheckForPrefixHeaders implements SmithyOpenApiPlugin {
+public class CheckForPrefixHeaders implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(CheckForGreedyLabels.class.getName());
 
     @Override

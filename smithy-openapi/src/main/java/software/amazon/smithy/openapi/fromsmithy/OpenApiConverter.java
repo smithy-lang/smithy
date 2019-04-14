@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.jsonschema.JsonSchemaConstants;
 import software.amazon.smithy.jsonschema.JsonSchemaConverter;
+import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.Schema;
-import software.amazon.smithy.jsonschema.SchemaBuilderMapper;
 import software.amazon.smithy.jsonschema.SchemaDocument;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.AuthIndex;
@@ -83,7 +83,6 @@ public final class OpenApiConverter {
     private ClassLoader classLoader = OpenApiConverter.class.getClassLoader();
     private JsonSchemaConverter jsonSchemaConverter;
     private String protocolName;
-    private List<OpenApiProtocol> customProtocols = new ArrayList<>();
 
     private OpenApiConverter() {}
 
@@ -152,8 +151,8 @@ public final class OpenApiConverter {
     }
 
     /**
-     * Sets a {@link ClassLoader} to use to discover {@link SchemaBuilderMapper},
-     * {@link SmithyOpenApiPlugin}, and {@link OpenApiProtocol} service providers
+     * Sets a {@link ClassLoader} to use to discover {@link JsonSchemaMapper},
+     * {@link OpenApiMapper}, and {@link OpenApiProtocol} service providers
      * through SPI.
      *
      * <p>The {@code OpenApiConverter} will use its own ClassLoader by default.
@@ -178,17 +177,6 @@ public final class OpenApiConverter {
     }
 
     /**
-     * Registers a custom protocol that is not registered through service discovery.
-     *
-     * @param protocol Protocol implementation to register.
-     * @return Returns the OpenApiConverter.
-     */
-    public OpenApiConverter addCustomProtocol(OpenApiProtocol protocol) {
-        customProtocols.add(protocol);
-        return this;
-    }
-
-    /**
      * Converts the given service shape to OpenAPI model using the given
      * Smithy model.
      *
@@ -206,8 +194,8 @@ public final class OpenApiConverter {
      *
      * <p>The result of this method may differ from the result of calling
      * {@link OpenApi#toNode()} because this method will pass the Node
-     * representation of the OpenAPI through the {@link SmithyOpenApiPlugin#updateNode}
-     * method of each registered {@link SmithyOpenApiPlugin}. This may cause
+     * representation of the OpenAPI through the {@link OpenApiMapper#updateNode}
+     * method of each registered {@link OpenApiMapper}. This may cause
      * the returned value to no longer be a valid OpenAPI model but still
      * representative of the desired artifact (for example, an OpenAPI model
      * used with Amazon CloudFormation might used intrinsic JSON functions or
@@ -221,12 +209,10 @@ public final class OpenApiConverter {
         ConversionEnvironment environment = createConversionEnvironment(model, serviceShapeId);
         OpenApi openApi = convertWithEnvironment(environment);
         ObjectNode node = openApi.toNode().expectObjectNode();
-        return environment.plugin.updateNode(environment.context, openApi, node);
+        return environment.mapper.updateNode(environment.context, openApi, node);
     }
 
     private ConversionEnvironment createConversionEnvironment(Model model, ShapeId serviceShapeId) {
-        getJsonSchemaConverter().discoverSchemaMappersWith(classLoader);
-
         // Update the JSON schema config with the settings from this class and
         // configure it to use OpenAPI settings.
         ObjectNode.Builder configBuilder = getJsonSchemaConverter()
@@ -234,6 +220,7 @@ public final class OpenApiConverter {
                 .toBuilder()
                 .withMember(OpenApiConstants.OPEN_API_MODE, true)
                 .withMember(JsonSchemaConstants.DEFINITION_POINTER, OpenApiConstants.SCHEMA_COMPONENTS_POINTER);
+
         settings.forEach(configBuilder::withMember);
         ObjectNode config = configBuilder.build();
         getJsonSchemaConverter().config(config);
@@ -245,46 +232,63 @@ public final class OpenApiConverter {
                 .orElseThrow(() -> new IllegalArgumentException(String.format(
                         "Shape `%s` is not a service shape", serviceShapeId)));
 
-        Pair<Protocol, OpenApiProtocol> protocolPair = resolveProtocol(service);
+        // Discover OpenAPI extensions.
+        List<Smithy2OpenApiExtension> extensions = new ArrayList<>();
+        ServiceLoader.load(Smithy2OpenApiExtension.class, classLoader).forEach(extensions::add);
+
+        // Add JSON schema mappers from found extensions.
+        extensions.forEach(extension -> extension.getJsonSchemaMappers().forEach(jsonSchemaConverter::addMapper));
+
+        Pair<Protocol, OpenApiProtocol> protocolPair = resolveProtocol(service, extensions);
         Protocol resolvedProtocol = protocolPair.getLeft();
         OpenApiProtocol openApiProtocol = protocolPair.getRight();
         // Set a protocol name if one wasn't set but instead derived.
         protocolName = protocolName != null ? protocolName : resolvedProtocol.getName();
         ComponentsObject.Builder components = ComponentsObject.builder();
         SchemaDocument schemas = addSchemas(components, model.getShapeIndex(), service);
-        List<SecuritySchemeConverter> securitySchemeConverters = loadSecuritySchemes(service);
+
+        // Load security scheme converters.
+        List<SecuritySchemeConverter> securitySchemeConverters = loadSecuritySchemes(service, extensions);
+
         Context context = new Context(
                 model, service, getJsonSchemaConverter(),
                 resolvedProtocol, openApiProtocol, schemas, securitySchemeConverters);
 
-        SmithyOpenApiPlugin plugin = loadPlugins();
-        return new ConversionEnvironment(context, plugin, components);
+        return new ConversionEnvironment(context, extensions, components);
     }
 
     private static final class ConversionEnvironment {
         private final Context context;
-        private final SmithyOpenApiPlugin plugin;
+        private final List<Smithy2OpenApiExtension> extensions;
         private final ComponentsObject.Builder components;
+        private final OpenApiMapper mapper;
 
         private ConversionEnvironment(
                 Context context,
-                SmithyOpenApiPlugin plugin,
+                List<Smithy2OpenApiExtension> extensions,
                 ComponentsObject.Builder components
         ) {
             this.context = context;
-            this.plugin = plugin;
+            this.extensions = extensions;
             this.components = components;
+            this.mapper = createMapper();
+        }
+
+        private OpenApiMapper createMapper() {
+            return OpenApiMapper.compose(extensions.stream()
+                    .flatMap(extension -> extension.getOpenApiMappers().stream())
+                    .collect(Collectors.toList()));
         }
     }
 
     private OpenApi convertWithEnvironment(ConversionEnvironment environment) {
         ServiceShape service = environment.context.getService();
         Context context = environment.context;
-        SmithyOpenApiPlugin plugin = environment.plugin;
+        OpenApiMapper mapper = environment.mapper;
         OpenApiProtocol openApiProtocol = environment.context.getOpenApiProtocol();
         OpenApi.Builder openapi = OpenApi.builder().openapi(OpenApiConstants.VERSION).info(createInfo(service));
 
-        plugin.before(context, openapi);
+        mapper.before(context, openapi);
 
         // The externalDocumentation trait of the service maps to externalDocs.
         service.getTrait(ExternalDocumentationTrait.class)
@@ -296,11 +300,11 @@ public final class OpenApiConverter {
             getSupportedTags(service).forEach(tag -> openapi.addTag(TagObject.builder().name(tag).build()));
         }
 
-        addPaths(context, openapi, openApiProtocol, plugin);
-        addSecurityComponents(context, openapi, environment.components, plugin);
+        addPaths(context, openapi, openApiProtocol, mapper);
+        addSecurityComponents(context, openapi, environment.components, mapper);
         openapi.components(environment.components.build());
 
-        return plugin.after(context, openapi.build());
+        return mapper.after(context, openapi.build());
     }
 
     private JsonSchemaConverter getJsonSchemaConverter() {
@@ -311,13 +315,15 @@ public final class OpenApiConverter {
         return jsonSchemaConverter;
     }
 
-    private SmithyOpenApiPlugin loadPlugins() {
-        return SmithyOpenApiPlugin.compose(discover(SmithyOpenApiPlugin.class));
-    }
-
     // Determine which OpenApiProtocol service provider and which service trait protocol to use.
-    private Pair<Protocol, OpenApiProtocol> resolveProtocol(ServiceShape service) {
-        List<OpenApiProtocol> protocols = discover(OpenApiProtocol.class);
+    private Pair<Protocol, OpenApiProtocol> resolveProtocol(
+            ServiceShape service,
+            List<Smithy2OpenApiExtension> extensions
+    ) {
+        List<OpenApiProtocol> protocols = extensions.stream()
+                .flatMap(extension -> extension.getProtocols().stream())
+                .collect(Collectors.toList());
+
         ProtocolsTrait protoTrait = service.getTrait(ProtocolsTrait.class)
                 .orElseThrow(() -> new OpenApiException("No `protocols` trait found on `" + service.getId() + "`"));
 
@@ -346,14 +352,20 @@ public final class OpenApiConverter {
 
     // Finds an OpenAPI protocol matching the given protocol name.
     private Optional<OpenApiProtocol> findProtocol(String protocolName, List<OpenApiProtocol> protocols) {
-        return Stream.concat(customProtocols.stream(), protocols.stream())
+        return protocols.stream()
                 .filter(protocol -> protocol.getProtocolNamePattern().matcher(protocolName).find())
                 .findFirst();
     }
 
     // Loads all of the OpenAPI security scheme implementations that are referenced by a service.
-    private List<SecuritySchemeConverter> loadSecuritySchemes(ServiceShape service) {
-        List<SecuritySchemeConverter> converters = discover(SecuritySchemeConverter.class);
+    private List<SecuritySchemeConverter> loadSecuritySchemes(
+            ServiceShape service,
+            List<Smithy2OpenApiExtension> extensions
+    ) {
+        List<SecuritySchemeConverter> converters = extensions.stream()
+                .flatMap(extension -> extension.getSecuritySchemeConverters().stream())
+                .collect(Collectors.toList());
+
         // Get auth schemes of a specific protocol.
         Set<String> schemes = new HashSet<>(service.getTrait(ProtocolsTrait.class)
                 .flatMap(trait -> trait.getProtocol(protocolName))
@@ -373,13 +385,6 @@ public final class OpenApiConverter {
         }
 
         return resolved;
-    }
-
-    // Discovers implementations of a class using a classLoader.
-    private <T> List<T> discover(Class<T> clazz) {
-        List<T> result = new ArrayList<>();
-        ServiceLoader.load(clazz, classLoader).forEach(result::add);
-        return result;
     }
 
     // Gets the tags of a shape that are allowed in the OpenAPI model.
@@ -422,7 +427,7 @@ public final class OpenApiConverter {
             Context context,
             OpenApi.Builder openApiBuilder,
             OpenApiProtocol protocolService,
-            SmithyOpenApiPlugin plugin
+            OpenApiMapper plugin
     ) {
         TopDownIndex topDownIndex = context.getModel().getKnowledge(TopDownIndex.class);
         Map<String, PathItem.Builder> paths = new HashMap<>();
@@ -520,12 +525,12 @@ public final class OpenApiConverter {
         return operation;
     }
 
-    // Applies plugins to parameters and updates the operation if parameters change.
+    // Applies mappers to parameters and updates the operation if parameters change.
     private OperationObject updateParameters(
             Context context,
             OperationShape shape,
             OperationObject operation,
-            SmithyOpenApiPlugin plugin
+            OpenApiMapper plugin
     ) {
         List<ParameterObject> parameters = new ArrayList<>();
         for (ParameterObject parameter : operation.getParameters()) {
@@ -537,12 +542,12 @@ public final class OpenApiConverter {
                : operation;
     }
 
-    // Applies plugins to each request body and update the operation if the body changes.
+    // Applies mappers to each request body and update the operation if the body changes.
     private OperationObject updateRequestBody(
             Context context,
             OperationShape shape,
             OperationObject operation,
-            SmithyOpenApiPlugin plugin
+            OpenApiMapper plugin
     ) {
         return operation.getRequestBody()
                 .map(body -> {
@@ -554,13 +559,13 @@ public final class OpenApiConverter {
                 .orElse(operation);
     }
 
-    // Ensures that responses have at least one entry, and applies plugins to
+    // Ensures that responses have at least one entry, and applies mappers to
     // responses and updates the operation is a response changes.
     private OperationObject updateResponses(
             Context context,
             OperationShape shape,
             OperationObject operation,
-            SmithyOpenApiPlugin plugin
+            OpenApiMapper plugin
     ) {
         Map<String, ResponseObject> newResponses = new LinkedHashMap<>();
 
@@ -588,7 +593,7 @@ public final class OpenApiConverter {
             Context context,
             OpenApi.Builder openApiBuilder,
             ComponentsObject.Builder components,
-            SmithyOpenApiPlugin plugin
+            OpenApiMapper plugin
     ) {
         OptionalUtils.ifPresentOrElse(
                 context.getService().getTrait(ProtocolsTrait.class),
