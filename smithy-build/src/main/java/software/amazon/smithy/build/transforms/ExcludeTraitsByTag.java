@@ -22,9 +22,9 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.ProjectionTransformer;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.Tagged;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.utils.Tagged;
 
 /**
  * Removes traits and trait definitions from a model if the trait definition

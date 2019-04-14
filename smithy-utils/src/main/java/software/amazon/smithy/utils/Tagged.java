@@ -13,23 +13,30 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model;
+package software.amazon.smithy.utils;
+
+import java.util.List;
 
 /**
- * Provides a way to get from an instance of T to a {@link SmithyBuilder}.
- *
- * <p>This allows modification of an otherwise immutable object using
- * the source object as a base.
- *
- * @param <T> the type that the builder will build (this)
+ * A type that contains tags.
  */
-public interface ToSmithyBuilder<T> {
+public interface Tagged {
+    /**
+     * Gets the tags applied to an object.
+     *
+     * @return Returns the tag values.
+     */
+    default List<String> getTags() {
+        return ListUtils.of();
+    }
 
     /**
-     * Take this object and create a builder that contains all of the
-     * current property values of this object.
+     * Checks if the value has the given tag by name.
      *
-     * @return a builder for type T
+     * @param tag Tag value to search for.
+     * @return Returns true if the tag is present.
      */
-    SmithyBuilder<T> toBuilder();
+    default boolean hasTag(String tag) {
+        return getTags().contains(tag);
+    }
 }

@@ -16,11 +16,11 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.Optional;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Marks a shape as deprecated.

@@ -23,12 +23,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.pattern.InvalidPatternException;
 import software.amazon.smithy.model.pattern.Pattern;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Defines custom endpoint bindings of an operation.

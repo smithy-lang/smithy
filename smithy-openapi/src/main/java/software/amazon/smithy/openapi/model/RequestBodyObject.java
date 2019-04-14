@@ -18,9 +18,9 @@ package software.amazon.smithy.openapi.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class RequestBodyObject extends Component implements ToSmithyBuilder<RequestBodyObject> {
     private final String description;

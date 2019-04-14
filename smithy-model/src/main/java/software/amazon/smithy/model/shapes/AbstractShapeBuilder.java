@@ -19,9 +19,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Abstract builder used to create {@link Shape}s.

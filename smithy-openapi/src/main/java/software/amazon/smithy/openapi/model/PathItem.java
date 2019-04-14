@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class PathItem extends Component implements ToSmithyBuilder<PathItem> {
     private final String summary;

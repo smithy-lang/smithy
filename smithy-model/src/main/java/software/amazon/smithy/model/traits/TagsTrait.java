@@ -17,8 +17,8 @@ package software.amazon.smithy.model.traits;
 
 import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.Tagged;
-import software.amazon.smithy.model.ToSmithyBuilder;
+import software.amazon.smithy.utils.Tagged;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Applies tags to a shape.

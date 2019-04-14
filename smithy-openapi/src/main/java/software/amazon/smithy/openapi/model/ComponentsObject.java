@@ -18,9 +18,9 @@ package software.amazon.smithy.openapi.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import software.amazon.smithy.jsonschema.Schema;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class ComponentsObject extends Component implements ToSmithyBuilder<ComponentsObject> {
     private final Map<String, Schema> schemas = new LinkedHashMap<>();

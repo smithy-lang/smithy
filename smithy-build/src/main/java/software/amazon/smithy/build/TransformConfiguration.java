@@ -17,10 +17,10 @@ package software.amazon.smithy.build;
 
 import java.util.Collections;
 import java.util.List;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Transform configuration found in a projection.

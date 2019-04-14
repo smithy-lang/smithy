@@ -16,8 +16,8 @@
 package software.amazon.smithy.codegen.core;
 
 import java.util.logging.Logger;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Decorates a {@link SymbolProvider} by passing values through context

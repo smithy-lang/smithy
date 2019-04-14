@@ -16,7 +16,7 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Objects;
-import software.amazon.smithy.model.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Abstract class representing Set and List shapes.

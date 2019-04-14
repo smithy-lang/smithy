@@ -17,7 +17,6 @@ package software.amazon.smithy.aws.traits;
 
 import java.util.List;
 import java.util.Optional;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -26,6 +25,7 @@ import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Indicates that a string shape contains an ARN.

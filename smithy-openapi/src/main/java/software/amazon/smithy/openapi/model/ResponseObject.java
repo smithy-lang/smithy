@@ -18,10 +18,10 @@ package software.amazon.smithy.openapi.model;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import software.amazon.smithy.model.SmithyBuilder;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class ResponseObject extends Component implements ToSmithyBuilder<ResponseObject> {
     private final String description;

@@ -18,10 +18,10 @@ package software.amazon.smithy.openapi.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import software.amazon.smithy.model.SmithyBuilder;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Abstract class used for most OpenAPI model components.

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model;
+package software.amazon.smithy.utils;
 
 /**
  * A mutable object that can be used to create an immutable object of type T.

@@ -18,8 +18,8 @@ package software.amazon.smithy.aws.traits.iam;
 import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.traits.StringListTrait;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Applies condition keys to an operation or resource.

@@ -21,13 +21,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.ToSmithyBuilder;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Constrains string values to one of the predefined enum constants.
