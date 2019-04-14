@@ -61,7 +61,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * deserialization code to focus on just extracting data from the model
  * rather than logic around duplication detection, trait loading, etc.
  */
-public final class LoaderVisitor {
+final class LoaderVisitor {
     private static final List<String> SUPPORTED_VERSIONS = ListUtils.of("1.0");
     private static final Logger LOGGER = Logger.getLogger(LoaderVisitor.class.getName());
 
@@ -129,7 +129,7 @@ public final class LoaderVisitor {
     /**
      * @param traitFactory Trait factory to use when resolving traits.
      */
-    public LoaderVisitor(TraitFactory traitFactory) {
+    LoaderVisitor(TraitFactory traitFactory) {
         this(traitFactory, MapUtils.of());
     }
 
@@ -137,7 +137,7 @@ public final class LoaderVisitor {
      * @param traitFactory Trait factory to use when resolving traits.
      * @param properties Map of loader visitor properties.
      */
-    public LoaderVisitor(TraitFactory traitFactory, Map<String, Object> properties) {
+    LoaderVisitor(TraitFactory traitFactory, Map<String, Object> properties) {
         this.traitFactory = traitFactory;
         this.properties = properties;
     }

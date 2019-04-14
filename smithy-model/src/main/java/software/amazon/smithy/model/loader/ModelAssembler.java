@@ -147,17 +147,6 @@ public final class ModelAssembler {
     }
 
     /**
-     * Uses a custom {@link ModelLoader} for loading different file types.
-     *
-     * @param modelLoader Model loader to use instead of the default.
-     * @return Returns the assembler.
-     */
-    public ModelAssembler modelLoader(ModelLoader modelLoader) {
-        this.modelLoader = Objects.requireNonNull(modelLoader);
-        return this;
-    }
-
-    /**
      * Uses a custom {@link TraitFactory} to resolve and configure traits.
      *
      * @param traitFactory Trait factory to use instead of the default.

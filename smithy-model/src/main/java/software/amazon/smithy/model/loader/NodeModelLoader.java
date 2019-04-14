@@ -60,7 +60,7 @@ import software.amazon.smithy.utils.SetUtils;
 /**
  * Adds shapes and definitions from a JSON file to a loader visitor.
  */
-public class NodeModelLoader implements ModelLoader {
+class NodeModelLoader implements ModelLoader {
     private static final String SMITHY = "smithy";
     private static final String METADATA = "metadata";
     private static final String SHAPES = "shapes";
@@ -78,7 +78,7 @@ public class NodeModelLoader implements ModelLoader {
 
     private final NodeFactory nodeFactory;
 
-    public NodeModelLoader(NodeFactory nodeFactory) {
+    NodeModelLoader(NodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
     }
 
