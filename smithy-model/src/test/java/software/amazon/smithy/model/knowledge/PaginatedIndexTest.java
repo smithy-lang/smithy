@@ -23,8 +23,8 @@ import static org.hamcrest.Matchers.not;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.ValidatedResult;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.ValidatedResult;
 
 public class PaginatedIndexTest {
     @Test

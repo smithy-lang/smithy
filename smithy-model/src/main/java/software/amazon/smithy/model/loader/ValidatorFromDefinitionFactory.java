@@ -20,7 +20,7 @@ import static java.lang.String.format;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.ValidatedResult;
+import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
