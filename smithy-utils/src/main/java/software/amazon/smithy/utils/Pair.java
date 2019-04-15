@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.utils;
 
-import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -28,7 +27,7 @@ import java.util.stream.Stream;
  * @param <L> Left value type.
  * @param <R> Right value type.
  */
-public final class Pair<L, R> {
+public final class Pair<L, R> implements Map.Entry<L, R> {
     public final L left;
     public final R right;
 
@@ -70,33 +69,27 @@ public final class Pair<L, R> {
         return OptionalUtils.stream(f.get().map(right -> Pair.of(left, right)));
     }
 
-    /**
-     * Creates a Pair from a {@link Map.Entry}.
-     *
-     * @param entry Entry in which the key becomes L and value R.
-     * @param <L> Left value type.
-     * @param <R> Right value type.
-     * @return Returns the created Pair.
-     */
-    public static <L, R> Pair<L, R> fromEntry(Map.Entry<L, R> entry) {
-        return Pair.of(entry.getKey(), entry.getValue());
-    }
-
-    /**
-     * Creates a {@link Map.Entry} from the Pair.
-     *
-     * @return Returns the created entry.
-     */
-    public Map.Entry<L, R> toEntry() {
-        return new AbstractMap.SimpleImmutableEntry<>(left, right);
-    }
-
     public L getLeft() {
         return left;
     }
 
     public R getRight() {
         return right;
+    }
+
+    @Override
+    public L getKey() {
+        return getLeft();
+    }
+
+    @Override
+    public R getValue() {
+        return getRight();
+    }
+
+    @Override
+    public R setValue(R value) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

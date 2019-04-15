@@ -48,7 +48,8 @@ public final class TraitValueValidator implements Validator {
                 // Get a triple of Shape, Trait, TraitDefinition.
                 .flatMap(pair -> OptionalUtils.stream(model.getTraitDefinition(pair.getRight().getName())
                         .map(traitDefinition -> Triple.fromPair(pair, traitDefinition))))
-                .flatMap(triple -> validateTrait(model.getShapeIndex(), triple.a, triple.b, triple.c).stream())
+                .flatMap(triple -> validateTrait(model.getShapeIndex(), triple.left, triple.middle, triple.right)
+                        .stream())
                 .collect(Collectors.toList());
     }
 
