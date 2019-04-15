@@ -94,8 +94,7 @@ h7 {
 
 #splash {
   padding: 2em 0;
-  background-color: #1a1919;
-  background: linear-gradient(-45deg, #590940, #1a1919, #1a1919);
+  background: {{ theme_color }};
   color: #fff;
 }
 
@@ -109,8 +108,8 @@ h7 {
 }
 
 .headline {
-  font-weight: 200;
-  color: #eee;
+  font-weight: 400;
+  color: #fff;
   font-size: 24px;
 }
 
@@ -138,6 +137,7 @@ h7 {
   color: #fff;
   text-align: center;
   margin-bottom: 1em;
+  font-weight: 500;
 }
 
 .splash-links a:hover {
@@ -168,12 +168,6 @@ h7 {
   text-align: center;
   font-size: 2em;
   margin: 1em 0;
-}
-
-.blue-wrapper {
-  margin: 0 0 4em 0;
-  padding: 1em 0 2em 0;
-  background-color: #e1eaf1;
 }
 
 .list-header {
@@ -272,7 +266,8 @@ header {
   display: block;
   width: 100%;
   background-color: #fff;
-  border-bottom: 1px solid {{ theme_color }};
+  box-shadow: 0 1px 2px #ccc;
+  z-index: 1;
   flex: none;
 }
 
@@ -309,13 +304,15 @@ header {
 }
 
 #header-nav .site-logo .logo-icon {
-  padding: 5px 2px 0px 2px;
+  padding: 2px 3px 2px 4px;
   border-radius: 6px;
   color: transparent;
   text-shadow: 0 0 0 #fff;
   position: absolute;
-  top: -2px;
-  background: #2090cd;
+  top: -1px;
+  background: #1F73D7;
+  font-size: 18px;
+  background: {{ theme_color }};
 }
 
 #header-nav .site-page.first {
