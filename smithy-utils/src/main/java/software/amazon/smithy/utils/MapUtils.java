@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.utils;
 
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -363,26 +362,26 @@ public final class MapUtils {
     }
 
     /**
-     * Creates a {@link Map.Entry} from the given key and value.
+     * Creates an immutable {@link Map.Entry} from the given key and value.
      *
-     * @param key Key to set.
-     * @param value Value to set.
+     * @param key Key to set in the {@code Map.Entry}.
+     * @param value Value to set in the {@code Map.Entry}.
      * @param <K> Key type.
      * @param <V> Value type.
      * @return Returns the created entry.
      * @throws NullPointerException if the key or value are null.
      */
     public static <K, V> Map.Entry<K, V> entry(K key, V value) {
-        return new AbstractMap.SimpleImmutableEntry<>(Objects.requireNonNull(key), Objects.requireNonNull(value));
+        return Pair.of(Objects.requireNonNull(key), Objects.requireNonNull(value));
     }
 
     /**
-     * Creates an unmodifiable Map from an array of pairs.
+     * Creates an unmodifiable Map from an array of {@code Map.Entry} values.
      *
-     * @param entries Map entries to set.
+     * @param entries Map entries to add to the created {@code Map}.
      * @param <K> Map key type.
      * @param <V> Map value type.
-     * @return Returns an unmodifiable map of the given pairs.
+     * @return Returns an unmodifiable map of the given entries.
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
