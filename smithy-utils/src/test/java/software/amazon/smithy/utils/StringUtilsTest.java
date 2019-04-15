@@ -22,33 +22,6 @@ import org.junit.jupiter.api.Test;
 
 public class StringUtilsTest {
     @Test
-    public void convertsSnakeToLowerCamelCase() {
-        assertThat(StringUtils.snakeToCamelCase("foo_bar"), equalTo("fooBar"));
-        assertThat(StringUtils.snakeToCamelCase("Foo_bar"), equalTo("fooBar"));
-        assertThat(StringUtils.snakeToCamelCase("__foo_bar"), equalTo("fooBar"));
-    }
-
-    @Test
-    public void convertsSnakeToPascalCase() {
-        assertThat(StringUtils.snakeToPascalCase("foo_bar"), equalTo("FooBar"));
-        assertThat(StringUtils.snakeToPascalCase("Foo_bar"), equalTo("FooBar"));
-        assertThat(StringUtils.snakeToPascalCase("__foo_bar"), equalTo("FooBar"));
-    }
-
-    @Test
-    public void convertsToSnakeCase() {
-        assertThat(StringUtils.toSnakeCase("foo"), equalTo("foo"));
-        assertThat(StringUtils.toSnakeCase(" foo"), equalTo("_foo"));
-        assertThat(StringUtils.toSnakeCase(" fooBar"), equalTo("_foo_bar"));
-        assertThat(StringUtils.toSnakeCase("10-foo"), equalTo("10_foo"));
-        assertThat(StringUtils.toSnakeCase("_foo"), equalTo("_foo"));
-        assertThat(StringUtils.toSnakeCase("FooBar"), equalTo("foo_bar"));
-        assertThat(StringUtils.toSnakeCase("FooAPI"), equalTo("foo_api"));
-        assertThat(StringUtils.toSnakeCase("Ec2Foo"), equalTo("ec2_foo"));
-        assertThat(StringUtils.toSnakeCase("foo_bar"), equalTo("foo_bar"));
-    }
-
-    @Test
     public void uppercaseFirst() {
         assertThat(StringUtils.capitalize("foo"), equalTo("Foo"));
         assertThat(StringUtils.capitalize(" foo"), equalTo(" foo"));
@@ -66,34 +39,6 @@ public class StringUtilsTest {
         assertThat(StringUtils.uncapitalize(" Foo"), equalTo(" Foo"));
         assertThat(StringUtils.uncapitalize("10-Foo"), equalTo("10-Foo"));
         assertThat(StringUtils.uncapitalize("_Foo"), equalTo("_Foo"));
-    }
-
-    @Test
-    public void escapesSingleQuotes() {
-        assertThat(StringUtils.escapeSingleQuote("foo"), equalTo("foo"));
-        assertThat(StringUtils.escapeSingleQuote("fo'o"), equalTo("fo\\'o"));
-        assertThat(StringUtils.escapeSingleQuote("fo\\o"), equalTo("fo\\\\o"));
-        assertThat(StringUtils.escapeSingleQuote("\"foo\""), equalTo("\"foo\""));
-    }
-
-    @Test
-    public void escapesDoubleQuotes() {
-        assertThat(StringUtils.escapeDoubleQuote("foo"), equalTo("foo"));
-        assertThat(StringUtils.escapeDoubleQuote("fo'o"), equalTo("fo'o"));
-        assertThat(StringUtils.escapeDoubleQuote("fo\\o"), equalTo("fo\\\\o"));
-        assertThat(StringUtils.escapeDoubleQuote("\"foo\""), equalTo("\\\"foo\\\""));
-    }
-
-    @Test
-    public void escapesMultipleChars() {
-        assertThat(StringUtils.escapeChars("foo \\ ' *", '\\', '\'', '*'), equalTo("foo \\\\ \\' \\*"));
-    }
-
-    @Test
-    public void escapesWhenEmpty() {
-        assertThat(StringUtils.escapeChars(null), equalTo(""));
-        assertThat(StringUtils.escapeChars(""), equalTo(""));
-        assertThat(StringUtils.escapeChars("foo"), equalTo("foo"));
     }
 
     @Test

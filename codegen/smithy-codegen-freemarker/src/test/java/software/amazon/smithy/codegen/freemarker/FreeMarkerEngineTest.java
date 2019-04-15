@@ -33,12 +33,12 @@ public class FreeMarkerEngineTest {
     }
 
     @Test
-    public void rendersTemplatesWithStringUtils() {
+    public void rendersTemplatesWithUtils() {
         TemplateEngine engine = FreeMarkerEngine.builder()
                 .classLoader(getClass().getClassLoader())
                 .putDefaultProperty("snake", "snake_man")
                 .build();
-        String result = engine.render("software/amazon/smithy/codegen/freemarker/stringUtils.ftl", MapUtils.of());
+        String result = engine.render("software/amazon/smithy/codegen/freemarker/utils.ftl", MapUtils.of());
 
         assertThat(result, containsString("snakeMan - SnakeMan"));
     }
