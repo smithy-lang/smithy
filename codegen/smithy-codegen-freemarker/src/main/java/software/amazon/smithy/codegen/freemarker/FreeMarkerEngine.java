@@ -39,6 +39,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -60,9 +61,9 @@ public final class FreeMarkerEngine implements TemplateEngine {
     /**
      * Creates a FreeMarker template engine builder.
      *
-     * <p>The builder by default will automatically register a "StringUtils"
-     * variable that provides access to all of the static methods defined in
-     * {@link StringUtils}.
+     * <p>The builder by default will automatically register the "StringUtils"
+     * "CaseUtils" variables to provides access to all of the static methods
+     * defined in {@link StringUtils} and {@link CaseUtils} respectively.
      *
      * @return Returns the builder.
      */
@@ -87,7 +88,7 @@ public final class FreeMarkerEngine implements TemplateEngine {
     public static final class Builder implements SmithyBuilder<TemplateEngine> {
         private Configuration config;
         private boolean disableObjectWrapper;
-        private boolean disableStringUtils;
+        private boolean disableHelpers;
         private TemplateLoader templateLoader;
         private ClassLoader classLoader;
         private Class classLoaderClass;
@@ -117,8 +118,9 @@ public final class FreeMarkerEngine implements TemplateEngine {
                         "No ClassLoader, Class, or TemplateLoader set on FreeMarkerTemplate.Builder");
             }
 
-            if (!disableStringUtils) {
-                putDefaultProperty("StringUtils", loadStringUtilsIntoTemplateModel());
+            if (!disableHelpers) {
+                putDefaultProperty("StringUtils", loadUtilsIntoTemplateModel(StringUtils.class));
+                putDefaultProperty("CaseUtils", loadUtilsIntoTemplateModel(CaseUtils.class));
             }
 
             return DefaultDataTemplateEngine.builder()
@@ -159,13 +161,13 @@ public final class FreeMarkerEngine implements TemplateEngine {
         }
 
         /**
-         * Disables the automatic registering of the StringUtils variable in
-         * every template.
+         * Disables the automatic registering of the StringUtils and
+         * CaseUtils variables in every template.
          *
          * @return Returns the builder.
          */
-        public Builder disableStringUtils() {
-            this.disableStringUtils = true;
+        public Builder disableHelpers() {
+            this.disableHelpers = true;
             return this;
         }
 
@@ -231,11 +233,11 @@ public final class FreeMarkerEngine implements TemplateEngine {
             return this;
         }
 
-        private static TemplateModel loadStringUtilsIntoTemplateModel() {
+        private static TemplateModel loadUtilsIntoTemplateModel(Class klass) {
             try {
                 BeansWrapper wrapper = new BeansWrapper(Configuration.VERSION_2_3_28);
                 TemplateHashModel statics = wrapper.getStaticModels();
-                return statics.get(StringUtils.class.getName());
+                return statics.get(klass.getName());
             } catch (TemplateException e) {
                 throw new RuntimeException(e);
             }
