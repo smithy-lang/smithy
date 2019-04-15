@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.codegen.core;
+package software.amazon.smithy.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -128,7 +128,7 @@ public class CodeWriterTest {
 
     @Test
     public void cannotDedentPastRoot() {
-        Assertions.assertThrows(CodegenException.class, () -> {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
             CodeWriter writer = CodeWriter.createDefault();
             writer.dedent(10);
         });
@@ -197,7 +197,7 @@ public class CodeWriterTest {
 
     @Test
     public void cannotPopMoreStatesThanExist() {
-        Assertions.assertThrows(CodegenException.class, () -> {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
             CodeWriter.createDefault()
                     .pushState()
                     .popState()
@@ -227,5 +227,15 @@ public class CodeWriterTest {
         assertThat(
                 writer.toString(),
                 equalTo("0: Hi\n        2: there,\n                4: guy\n        2: Foo\n0: baz\n"));
+    }
+
+    @Test
+    public void canChangeFormatter() {
+        String result = CodeWriter.createDefault()
+                .setFormatter((text, args) -> text.replace("{}", "hi"))
+                .write("lorem {} dolor {}", "ipsum", "qux")
+                .toString();
+
+        assertThat(result, equalTo("lorem hi dolor hi\n"));
     }
 }

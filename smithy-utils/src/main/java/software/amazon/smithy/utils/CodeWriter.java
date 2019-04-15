@@ -13,30 +13,31 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.codegen.core;
+package software.amazon.smithy.utils;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Formatter;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * Helper class for generating code inside of a string.
+ * Helper class for generating code.
  *
  * <p>A CodeWriter should be used for more advanced code generation than
  * what is possible inside of templates. A CodeWriter can be used to write
  * basically any kind of code, including whitespace sensitive and brace-based.
- * Inserting and closing braces is not handled automatically by this class.
+ * However, note that inserting and closing braces is not handled
+ * automatically by this class.
  *
- * <p>The CodeWriter can maintain a stack of transformation state, including
+ * <p>The CodeWriter can maintain a stack of transformation states, including
  * the character used for newlines, the text used to indent, a prefix to add
  * before each line, the number of times to indent, whether or not whitespace
- * is trimmed from the end of newlines, and whether or not N number of
- * newlines are combined into a single newline. State can be pushed onto the
- * stack using {@link #pushState} which copies the current state. Mutations
- * can then be made to the top-most state of the CodeWriter and do not affect
- * previous states. The previous transformation state of the CodeWriter can
- * later be restored using {@link #popState}.
+ * is trimmed from the end of newlines, whether or not N number of newlines
+ * are combined into a single newline, and how messages are formatted. State
+ * can be pushed onto the stack using {@link #pushState} which copies the
+ * current state. Mutations can then be made to the top-most state of the
+ * CodeWriter and do not affect previous states. The previous transformation
+ * state of the CodeWriter can later be restored using {@link #popState}.
  *
  * <p>The following example writes out some Python code:
  *
@@ -51,7 +52,7 @@ import java.util.regex.Pattern;
  * </pre>
  *
  * The CodeWriter is stateful, and a prefix can be added before each line.
- * This is useful for doing things like create javadoc strings:
+ * This is useful for doing things like create Javadoc strings:
  *
  * <pre>
  * {@code
@@ -119,6 +120,21 @@ public final class CodeWriter {
     }
 
     /**
+     * Handles the formatting of text written by a {@code CodeWriter}.
+     */
+    @FunctionalInterface
+    public interface Formatter {
+        /**
+         * Formats the given string by detecting and replacing special tokens.
+         *
+         * @param text Text to parse and format.
+         * @param args Variadic arguments to inject into the text.
+         * @return Returns the formatted text.
+         */
+        String format(String text, Object... args);
+    }
+
+    /**
      * Gets the contents of the generated code.
      *
      * <p>The result will have an appended newline if the CodeWriter is
@@ -127,6 +143,7 @@ public final class CodeWriter {
      *
      * @return Returns the generated code.
      */
+    @Override
     public String toString() {
         String result = builder.toString();
         // Insert a new line if one is pending or if trailing new lines are to be
@@ -164,11 +181,11 @@ public final class CodeWriter {
      * before the last preceding {@code pushState} call.
      *
      * @return Returns the CodeWriter.
-     * @throws CodegenException if there a no states to pop.
+     * @throws IllegalStateException if there a no states to pop.
      */
     public CodeWriter popState() {
         if (states.size() == 1) {
-            throw new CodegenException("Cannot pop CodeWriter state because at the root state");
+            throw new IllegalStateException("Cannot pop CodeWriter state because at the root state");
         }
 
         states.pop();
@@ -208,6 +225,35 @@ public final class CodeWriter {
      */
     public CodeWriter setIndentText(String indentText) {
         currentState.indentText = indentText;
+        return this;
+    }
+
+    /**
+     * Sets the message formatter to use for formatting CodeWriter strings.
+     *
+     * <p>Every call to {@link #write} and {@link #writeInline} are passed to
+     * the {@code Formatter} configured for the {@code CodeWriter}. The
+     * {@code Formatter} is responsible for parsing the given string and
+     * injecting the provided variadic arguments into the string if necessary.
+     * For example, a simple formatter might be {@link String#format} to
+     * inject values into the string when {@code %s} is found.
+     *
+     * <p>Changes to the the formatter <strong>are</strong> affected by
+     * {@link #pushState()} and {@link #popState()}.
+     *
+     * <pre>
+     * {@code
+     * CodeWriter writer = CodeWriter.createDefault();
+     * writer.setFormatter(String::format);
+     *       .write("print '%s';", "Hello!");
+     * }
+     * </pre>
+     *
+     * @param formatter Formatter to use.s
+     * @return Returns the CodeWriter.
+     */
+    public CodeWriter setFormatter(Formatter formatter) {
+        currentState.formatter = Objects.requireNonNull(formatter);
         return this;
     }
 
@@ -318,12 +364,13 @@ public final class CodeWriter {
      *
      * @param levels Number of levels to remove.
      * @return Returns the CodeWriter.
+     * @throws IllegalStateException when trying to dedent too far.
      */
     public CodeWriter dedent(int levels) {
         if (levels == -1) {
             currentState.indentation = 0;
         } else if (levels < 1 || currentState.indentation - levels < 0) {
-            throw new CodegenException(String.format("Cannot dedent CodeWriter %d levels", levels));
+            throw new IllegalStateException(String.format("Cannot dedent CodeWriter %d levels", levels));
         } else {
             currentState.indentation -= levels;
         }
@@ -342,7 +389,7 @@ public final class CodeWriter {
      * @return Returns the CodeWriter.
      */
     public CodeWriter write(Object content, Object... args) {
-        writeInline(String.format(String.valueOf(content), args));
+        writeInline(content, args);
         pendingNewline = true;
         return this;
     }
@@ -350,11 +397,16 @@ public final class CodeWriter {
     /**
      * Writes text to the CodeWriter and does not append a newline.
      *
+     * <p>The provided text is automatically formatted using a
+     * {@link Formatter} and variadic arguments.
+     *
      * @param content Content to write.
+     * @param args String {@link Formatter} arguments to use for formatting.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter writeInline(Object content) {
-        String[] lines = content.toString().split(currentState.newlineRegexQuoted, -1);
+    public CodeWriter writeInline(Object content, Object... args) {
+        String formatted = currentState.formatter.format(String.valueOf(content), args);
+        String[] lines = formatted.split(currentState.newlineRegexQuoted, -1);
 
         // Indent the given text.
         for (int lineNumber = 0; lineNumber < lines.length; lineNumber++) {
@@ -436,6 +488,7 @@ public final class CodeWriter {
         private int indentation;
         private boolean trimTrailingSpaces;
         private int trimBlankLines = -1;
+        private Formatter formatter = String::format;
 
         State() {}
 
@@ -447,6 +500,7 @@ public final class CodeWriter {
             this.indentation = copy.indentation;
             this.trimTrailingSpaces = copy.trimTrailingSpaces;
             this.trimBlankLines = copy.trimBlankLines;
+            this.formatter = copy.formatter;
         }
     }
 }
