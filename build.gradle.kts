@@ -26,7 +26,7 @@ plugins {
 // of band with the rest of the projects.
 allprojects {
     group = "software.amazon.smithy"
-    version = "0.2.0"
+    version = "0.2.1"
 }
 
 subprojects {

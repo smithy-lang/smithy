@@ -16,16 +16,22 @@
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyCollectionOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.traits.PrivateTrait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 
 public class PreludeTest {
     @Test
@@ -50,6 +56,20 @@ public class PreludeTest {
         assertTrue(Prelude.isPreludeTraitDefinition("smithy.api#box"));
         assertFalse(Prelude.isPreludeTraitDefinition("smithy.api#mqttPublish"));
         assertFalse(Prelude.isPreludeTraitDefinition("foo.baz#Bar"));
+    }
+
+    @Test
+    public void checkIfPrivateShapesAreReferenced() {
+        Model model = Prelude.getPreludeModel();
+
+        ModelTransformer transformer = ModelTransformer.create();
+        Model result = transformer.scrubTraitDefinitions(model);
+        Set<ShapeId> unreferencedPrivateShapes = result.getShapeIndex().shapes()
+                .filter(shape -> shape.hasTrait(PrivateTrait.class))
+                .map(Shape::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(unreferencedPrivateShapes, emptyCollectionOf(ShapeId.class));
     }
 
     @Test

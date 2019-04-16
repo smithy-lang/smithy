@@ -292,16 +292,6 @@
         },
         "private": true
       },
-      "StringMap": {
-        "type": "map",
-        "key": {
-          "target": "String"
-        },
-        "value": {
-          "target": "String"
-        },
-        "private": true
-      },
       "NonEmptyStringMap": {
         "type": "map",
         "key": {
