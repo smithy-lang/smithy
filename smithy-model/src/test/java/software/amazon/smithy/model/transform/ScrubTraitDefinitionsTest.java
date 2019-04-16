@@ -45,7 +45,7 @@ public class ScrubTraitDefinitionsTest {
         assertThat(index.getShape(ShapeId.from("ns.foo#IpsumList")), Matchers.not(Optional.empty()));
         assertThat(index.getShape(ShapeId.from("ns.foo#KeepStructure")), Matchers.not(Optional.empty()));
 
-        // Make sure public prelude shapes were'nt removed.
+        // Make sure public prelude shapes weren't removed.
         assertThat(index.getShape(ShapeId.from("smithy.api#String")), Matchers.not(Optional.empty()));
         assertThat(index.getShape(ShapeId.from("smithy.api#Blob")), Matchers.not(Optional.empty()));
         assertThat(index.getShape(ShapeId.from("smithy.api#Boolean")), Matchers.not(Optional.empty()));
