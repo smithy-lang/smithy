@@ -98,6 +98,11 @@ h7 {
   color: #fff;
 }
 
+#splash > .width-wrapper > p {
+  margin: 1em auto;
+  max-width: 800px;
+}
+
 #splash h1 {
   font-size: 2.5em;
   font-weight: bold;
@@ -105,6 +110,7 @@ h7 {
   color: #fff;
   border: none;
   padding: 0;
+  text-align: center;
 }
 
 .headline {
@@ -127,6 +133,7 @@ h7 {
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 2em;
   width: 500px;
+  margin: auto;
 }
 
 .splash-links a {
@@ -156,12 +163,6 @@ h7 {
   .splash-links a {
     margin-right: 18px;
   }
-}
-
-#landing-container .width-wrapper  {
-  max-width: 900px;
-  margin: auto;
-  padding: 0 14px
 }
 
 #landing-container h2 {
@@ -328,7 +329,7 @@ header {
 #header-nav .site-page a {
   display: block;
   padding: 0 1em;
-  color: #777;
+  color: #333;
   border-radius: 12px;
 }
 
