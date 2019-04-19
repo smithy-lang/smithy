@@ -13,20 +13,15 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.mqtt.traits;
+package software.amazon.smithy.model.loader;
 
-import java.net.URL;
-import java.util.List;
-import software.amazon.smithy.model.loader.ModelAssembler;
-import software.amazon.smithy.model.loader.ModelDiscovery;
-import software.amazon.smithy.utils.ListUtils;
+public class ModelManifestException extends RuntimeException {
 
-/**
- * This is used to allow a {@link ModelAssembler} to discover the MQTT model.
- */
-public final class MqttModelDiscovery implements ModelDiscovery {
-    @Override
-    public List<URL> getModels() {
-        return ListUtils.of(getClass().getResource("mqtt.smithy"));
+    public ModelManifestException(String message, Throwable parent) {
+        super(message, parent);
+    }
+
+    public ModelManifestException(String message) {
+        super(message);
     }
 }

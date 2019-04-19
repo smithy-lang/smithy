@@ -27,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
@@ -52,6 +51,11 @@ import software.amazon.smithy.utils.ListUtils;
  *
  * <p>Validation vents are aggregated into a {@link Set} to ensure that
  * duplicate events are not emitted.
+ *
+ * <p>Smithy models found on the class path can be discovered using
+ * <em>model discovery</em>. Model discovery must be explicitly requested of
+ * a {@code ModelAssembler} by invoking {@link #discoverModels()} or
+ * {@link #discoverModels(ClassLoader)}.
  *
  * @see Model#assembler()
  */
@@ -361,26 +365,24 @@ public final class ModelAssembler {
 
     /**
      * Discovers models by merging in all models returns by {@link ModelDiscovery}
-     * service providers.
+     * manifests using the provided {@code ClassLoader}.
      *
      * @param loader Class loader to use to discover models.
      * @return Returns the model assembler.
      */
     public ModelAssembler discoverModels(ClassLoader loader) {
-        return discover(ServiceLoader.load(ModelDiscovery.class, loader));
+        ModelDiscovery.findModels(loader).forEach(this::addImport);
+        return this;
     }
 
-    private ModelAssembler discover(Iterable<ModelDiscovery> iterable) {
-        iterable.forEach(contributor -> contributor.getModels().forEach(model -> {
-            if (model == null) {
-                throw new RuntimeException(String.format(
-                        "Smithy ModelDiscovery implementation %s was unable to find one or more model resources",
-                        contributor.getClass().getName()));
-            }
-            LOGGER.finest(() -> String.format(
-                    "Discovered model %s with %s" + model, contributor.getClass().getName()));
-            addImport(model);
-        }));
+    /**
+     * Discovers models by merging in all models returns by {@link ModelDiscovery}
+     * manifests using the thread context {@code ClassLoader}.
+     *
+     * @return Returns the model assembler.
+     */
+    public ModelAssembler discoverModels() {
+        ModelDiscovery.findModels().forEach(this::addImport);
         return this;
     }
 
