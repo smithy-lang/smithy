@@ -167,14 +167,6 @@
         },
         "private": true
       },
-      "LambdaFunctionArn": {
-        "type": "string",
-        "documentation": "<p>The ARN of the Lambda function to invoke via a LambdaIntegration.</p><p>This string MAY contain the literal string <code>{serviceName}</code> and/or the literal string <code>{operationName}</code>, which will be replaced with the name of the Smithy service shape and the name of the Smithy operation shape, respectively.</p>",
-        "aws.api#arnReference": {
-          "type": "AWS::Lambda::Function"
-        },
-        "private": true
-      },
       "Arn": {
         "type": "string",
         "documentation": "<p>The ARN of an AWS integration target.</p><p>This string MAY contain the literal string <code>{serviceName}</code> and/or the literal string <code>{operationName}</code>, which will be replaced with the name of the Smithy service shape and the name of the Smithy operation shape, respectively.</p>",
