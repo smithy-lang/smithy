@@ -26,7 +26,7 @@ import software.amazon.smithy.openapi.model.OpenApi;
  * Substitutes JSON string values using the mapping defined in
  * {@code openapi.substitutions}.
  */
-public final class JsonSubstitutionsMapper implements OpenApiMapper {
+public final class OpenApiJsonSubstitutions implements OpenApiMapper {
     @Override
     public byte getOrder() {
         return 120;

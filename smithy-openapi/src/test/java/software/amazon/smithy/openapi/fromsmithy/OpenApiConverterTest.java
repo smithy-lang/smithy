@@ -20,13 +20,11 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 
-import java.util.Optional;
-import java.util.regex.Pattern;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
@@ -41,9 +39,24 @@ public class OpenApiConverterTest {
                 .addImport(getClass().getResource("test-service.json"))
                 .assemble()
                 .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("example.rest#RestService"));
+        ObjectNode result = OpenApiConverter.create().convertToNode(model, ShapeId.from("example.rest#RestService"));
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("test-service.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void convertsModelsToOpenApiAndDisablesInlining() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("test-service.json"))
+                .assemble()
+                .unwrap();
+        ObjectNode result = OpenApiConverter.create()
+                .putSetting(OpenApiConstants.DISABLE_PRIMITIVE_INLINING, true)
+                .convertToNode(model, ShapeId.from("example.rest#RestService"));
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("test-service.openapi.not-inlined.json")));
 
         Node.assertEquals(result, expectedNode);
     }

@@ -5,28 +5,26 @@
     "version": "2006-03-01"
   },
   "paths": {
-    "/": {
+    "/{timestamp1}/{timestamp2}": {
       "post": {
         "operationId": "Operation",
         "parameters": [
           {
-            "name": "X-String1",
-            "in": "header",
+            "name": "timestamp1",
+            "in": "path",
             "schema": {
               "type": "string",
-              "format": "byte"
-            }
+              "format": "date-time"
+            },
+            "required": true
           },
           {
-            "name": "X-String2",
-            "in": "header",
+            "name": "timestamp2",
+            "in": "path",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "format": "byte"
-              }
-            }
+              "type": "number"
+            },
+            "required": true
           }
         ],
         "responses": {

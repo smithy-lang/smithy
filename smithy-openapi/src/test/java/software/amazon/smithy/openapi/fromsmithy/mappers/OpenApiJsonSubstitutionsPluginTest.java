@@ -24,7 +24,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 
-public class JsonSubstitutionsPluginTest {
+public class OpenApiJsonSubstitutionsPluginTest {
     @Test
     public void removesBySubstitution() {
         Model model = Model.assembler()

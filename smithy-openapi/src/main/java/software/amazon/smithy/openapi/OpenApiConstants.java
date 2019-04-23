@@ -17,6 +17,8 @@ package software.amazon.smithy.openapi;
 
 import software.amazon.smithy.build.JsonSubstitutions;
 import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 
 public final class OpenApiConstants {
     /** The supported version of OpenAPI. */
@@ -122,6 +124,32 @@ public final class OpenApiConstants {
      * @see JsonSubstitutions
      */
     public static final String SUBSTITUTIONS = "openapi.substitutions";
+
+    /**
+     * Disables the automatic inlining of primitive {@code $ref} targets when
+     * serializing an OpenAPI model as a {@link ObjectNode} via
+     * {@link OpenApiConverter#convertToNode}.
+     *
+     * <p>Inlining these primitive references helps to make the generated
+     * OpenAPI models more idiomatic while leaving complex types as-is so that
+     * they support recursive types.
+     *
+     * <p>A <em>primitive reference</em> is considered one of the following
+     * OpenAPI types:
+     *
+     * <ul>
+     *     <li>integer</li>
+     *     <li>number</li>
+     *     <li>boolean</li>
+     *     <li>string</li>
+     * </ul>
+     *
+     * <p>A <em>primitive collection</em> is an array that has an "items"
+     * property that targets a primitive reference, or an object with no
+     * "properties" and an "additionalProperties" reference that targets a
+     * primitive type.
+     */
+    public static final String DISABLE_PRIMITIVE_INLINING = "openapi.disablePrimitiveInlining";
 
     private OpenApiConstants() {}
 }

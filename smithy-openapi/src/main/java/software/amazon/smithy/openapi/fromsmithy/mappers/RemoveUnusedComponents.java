@@ -32,7 +32,7 @@ import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
- * Removes unused components from the Swagger artifact.
+ * Removes unused components from the OpenAPI model.
  *
  * <p>This plugin will take effect by default, but can be disabled by setting
  * "openapi.keepUnusedComponents" to true. Refs are removed in rounds until
@@ -40,8 +40,8 @@ import software.amazon.smithy.utils.SetUtils;
  *
  * <p>TODO: This plugin currently only supports the removal of schemas.
  */
-public class RemoveUnusedComponentsMapper implements OpenApiMapper {
-    private static final Logger LOGGER = Logger.getLogger(RemoveUnusedComponentsMapper.class.getName());
+public class RemoveUnusedComponents implements OpenApiMapper {
+    private static final Logger LOGGER = Logger.getLogger(RemoveUnusedComponents.class.getName());
 
     @Override
     public byte getOrder() {

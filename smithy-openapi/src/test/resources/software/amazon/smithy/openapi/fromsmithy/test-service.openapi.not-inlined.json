@@ -15,23 +15,16 @@
                 "type": "object",
                 "properties": {
                   "abc": {
-                    "type": "string",
-                    "format": "password"
+                    "$ref": "#/components/schemas/ExampleRestCreateDocumentInputAbcMember"
                   },
                   "def": {
-                    "type": "number",
-                    "format": "int32"
+                    "$ref": "#/components/schemas/ExampleRestCreateDocumentInputDefMember"
                   },
                   "hij": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string",
-                      "format": "password"
-                    }
+                    "$ref": "#/components/schemas/ExampleRestCreateDocumentInputHijMember"
                   },
                   "stringDateTime": {
-                    "type": "string",
-                    "format": "date-time"
+                    "$ref": "#/components/schemas/ExampleRestCreateDocumentInputStringDateTimeMember"
                   }
                 }
               }
@@ -66,22 +59,16 @@
                       "$ref": "#/components/schemas/ExampleRestCreateDocumentOutputTaggedUnionMember"
                     },
                     "foo": {
-                      "type": "string"
+                      "$ref": "#/components/schemas/ExampleRestCreateDocumentOutputFooMember"
                     },
                     "baz": {
-                      "type": "string"
+                      "$ref": "#/components/schemas/ExampleRestCreateDocumentOutputBazMember"
                     },
                     "time": {
-                      "type": "string",
-                      "format": "date-time"
+                      "$ref": "#/components/schemas/ExampleRestCreateDocumentOutputTimeMember"
                     },
                     "list": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "maxItems": 10,
-                      "minItems": 0
+                      "$ref": "#/components/schemas/ExampleRestCreateDocumentOutputListMember"
                     }
                   },
                   "required": [
@@ -101,8 +88,7 @@
           "content": {
             "*/*": {
               "schema": {
-                "type": "string",
-                "format": "byte"
+                "$ref": "#/components/schemas/ExampleRestPutPayloadInputBodyMember"
               }
             }
           }
@@ -112,7 +98,7 @@
             "name": "path",
             "in": "path",
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/ExampleRestPutPayloadInputPathMember"
             },
             "required": true
           },
@@ -128,26 +114,21 @@
             "name": "query",
             "in": "query",
             "schema": {
-              "type": "number",
-              "format": "int32"
+              "$ref": "#/components/schemas/ExampleRestPutPayloadInputQueryMember"
             }
           },
           {
             "name": "X-Foo-Header",
             "in": "header",
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/ExampleRestPutPayloadInputHeaderMember"
             }
           },
           {
             "name": "X-EnumString",
             "in": "header",
             "schema": {
-              "type": "string",
-              "enum": [
-                "a",
-                "c"
-              ]
+              "$ref": "#/components/schemas/ExampleRestPutPayloadInputEnumMember"
             }
           }
         ],
@@ -157,15 +138,14 @@
             "headers": {
               "X-Foo-Header": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/ExampleRestPutPayloadOutputHeaderMember"
                 }
               }
             },
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "string",
-                  "format": "byte"
+                  "$ref": "#/components/schemas/ExampleRestPutPayloadOutputBodyMember"
                 }
               }
             }
@@ -175,7 +155,7 @@
             "headers": {
               "X-Foo-Header": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/ExampleRestPutPayloadOutputHeaderMember"
                 }
               }
             }
@@ -186,13 +166,27 @@
   },
   "components": {
     "schemas": {
+      "ExampleRestListMember": {
+        "type": "string"
+      },
+      "ExampleRestMapValueMember": {
+        "type": "string",
+        "format": "password"
+      },
+      "ExampleRestPutPayloadOutputHeaderMember": {
+        "type": "string"
+      },
+      "ExampleRestPutPayloadOutputBodyMember": {
+        "type": "string",
+        "format": "byte"
+      },
       "ExampleRestCreateDocumentOutputTaggedUnionMember": {
         "oneOf": [
           {
             "type": "object",
             "properties": {
               "a": {
-                "type": "string"
+                "$ref": "#/components/schemas/ExampleRestTaggedUnionAMember"
               }
             },
             "required": [
@@ -203,7 +197,7 @@
             "type": "object",
             "properties": {
               "b": {
-                "type": "string"
+                "$ref": "#/components/schemas/ExampleRestTaggedUnionBMember"
               }
             },
             "required": [
@@ -211,6 +205,69 @@
             ]
           }
         ]
+      },
+      "ExampleRestPutPayloadInputEnumMember": {
+        "type": "string",
+        "enum": [
+          "a",
+          "c"
+        ]
+      },
+      "ExampleRestCreateDocumentInputAbcMember": {
+        "type": "string",
+        "format": "password"
+      },
+      "ExampleRestPutPayloadInputBodyMember": {
+        "type": "string",
+        "format": "byte"
+      },
+      "ExampleRestPutPayloadInputHeaderMember": {
+        "type": "string"
+      },
+      "ExampleRestPutPayloadInputPathMember": {
+        "type": "string"
+      },
+      "ExampleRestTaggedUnionAMember": {
+        "type": "string"
+      },
+      "ExampleRestTaggedUnionBMember": {
+        "type": "string"
+      },
+      "ExampleRestCreateDocumentOutputListMember": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ExampleRestListMember"
+        },
+        "maxItems": 10,
+        "minItems": 0
+      },
+      "ExampleRestCreateDocumentOutputFooMember": {
+        "type": "string"
+      },
+      "ExampleRestCreateDocumentOutputTimeMember": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "ExampleRestPutPayloadInputQueryMember": {
+        "type": "number",
+        "format": "int32"
+      },
+      "ExampleRestCreateDocumentInputStringDateTimeMember": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "ExampleRestCreateDocumentOutputBazMember": {
+        "type": "string"
+      },
+      "ExampleRestCreateDocumentInputHijMember": {
+        "type": "object",
+        "additionalProperties": {
+          "$ref": "#/components/schemas/ExampleRestMapValueMember"
+        }
+      },
+      "ExampleRestCreateDocumentInputDefMember": {
+        "type": "number",
+        "format": "int32"
       }
     }
   }
