@@ -10,22 +10,27 @@
         "operationId": "Operation",
         "parameters": [
           {
-            "name": "X-String1",
-            "in": "header",
-            "schema": {
-              "type": "string",
-              "format": "byte"
-            }
-          },
-          {
-            "name": "X-String2",
+            "name": "X-Timestamp3",
             "in": "header",
             "schema": {
               "type": "array",
               "items": {
-                "type": "string",
-                "format": "byte"
+                "type": "string"
               }
+            }
+          },
+          {
+            "name": "X-Timestamp1",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Timestamp2",
+            "in": "header",
+            "schema": {
+              "type": "number"
             }
           }
         ],

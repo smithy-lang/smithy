@@ -10,22 +10,31 @@
         "operationId": "Operation",
         "parameters": [
           {
-            "name": "X-String1",
-            "in": "header",
+            "name": "query1",
+            "in": "query",
             "schema": {
               "type": "string",
-              "format": "byte"
+              "format": "date-time"
             }
           },
           {
-            "name": "X-String2",
-            "in": "header",
+            "name": "query3",
+            "in": "query",
+            "style": "form",
             "schema": {
               "type": "array",
               "items": {
                 "type": "string",
-                "format": "byte"
+                "format": "date-time"
               }
+            },
+            "explode": true
+          },
+          {
+            "name": "query2",
+            "in": "query",
+            "schema": {
+              "type": "number"
             }
           }
         ],

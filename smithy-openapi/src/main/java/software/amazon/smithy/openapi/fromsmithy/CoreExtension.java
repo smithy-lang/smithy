@@ -19,9 +19,11 @@ import java.util.List;
 import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.openapi.fromsmithy.mappers.CheckForGreedyLabels;
 import software.amazon.smithy.openapi.fromsmithy.mappers.CheckForPrefixHeaders;
-import software.amazon.smithy.openapi.fromsmithy.mappers.JsonSubstitutionsMapper;
-import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveUnusedComponentsMapper;
-import software.amazon.smithy.openapi.fromsmithy.mappers.UnsupportedTraitsMapper;
+import software.amazon.smithy.openapi.fromsmithy.mappers.InlineReferencesToPrimitiveTypes;
+import software.amazon.smithy.openapi.fromsmithy.mappers.OpenApiJsonSubstitutions;
+import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveEmptyComponents;
+import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveUnusedComponents;
+import software.amazon.smithy.openapi.fromsmithy.mappers.UnsupportedTraits;
 import software.amazon.smithy.openapi.fromsmithy.protocols.AwsRestJsonProtocol;
 import software.amazon.smithy.openapi.fromsmithy.security.AwsV4;
 import software.amazon.smithy.openapi.fromsmithy.security.HttpBasic;
@@ -55,9 +57,11 @@ public final class CoreExtension implements Smithy2OpenApiExtension {
         return ListUtils.of(
                 new CheckForGreedyLabels(),
                 new CheckForPrefixHeaders(),
-                new JsonSubstitutionsMapper(),
-                new RemoveUnusedComponentsMapper(),
-                new UnsupportedTraitsMapper()
+                new OpenApiJsonSubstitutions(),
+                new RemoveUnusedComponents(),
+                new UnsupportedTraits(),
+                new InlineReferencesToPrimitiveTypes(),
+                new RemoveEmptyComponents()
         );
     }
 

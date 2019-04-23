@@ -32,8 +32,8 @@ import software.amazon.smithy.utils.SetUtils;
  * Logs each instance of traits and features that are known to not
  * work in OpenAPI.
  */
-public final class UnsupportedTraitsMapper implements OpenApiMapper {
-    private static final Logger LOGGER = Logger.getLogger(UnsupportedTraitsMapper.class.getName());
+public final class UnsupportedTraits implements OpenApiMapper {
+    private static final Logger LOGGER = Logger.getLogger(UnsupportedTraits.class.getName());
     private static final Set<String> TRAITS = SetUtils.of(
             "inputEventStream", "outputEventStream", "eventPayload", "eventHeader", "streaming");
 

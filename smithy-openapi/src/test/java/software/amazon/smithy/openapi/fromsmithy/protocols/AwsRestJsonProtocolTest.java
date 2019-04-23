@@ -1,9 +1,13 @@
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
+import java.io.InputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
@@ -11,18 +15,46 @@ import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
 
 public class AwsRestJsonProtocolTest {
-    @Test
-    public void addsJsonDocumentBodies() {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "adds-json-document-bodies.json",
+            "adds-path-timestamp-format.json",
+            "adds-query-timestamp-format.json",
+            "adds-query-blob-format.json",
+            "adds-header-timestamp-format.json",
+            "adds-header-mediatype-format.json",
+            "supports-payloads.json"
+    })
+    public void testProtocolResult(String smithy) {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("adds-json-document-bodies.json"))
+                .addImport(getClass().getResource(smithy))
                 .assemble()
                 .unwrap();
-        OpenApi result = OpenApiConverter.create()
-                .convert(model, ShapeId.from("smithy.example#Service"));
-        Node expectedNode = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("adds-json-document-bodies.openapi.json")));
+        ObjectNode result = OpenApiConverter.create()
+                .putSetting(OpenApiConstants.DISABLE_PRIMITIVE_INLINING, true)
+                .convertToNode(model, ShapeId.from("smithy.example#Service"));
+        String openApiModel = smithy.replace(".json", ".openapi.json");
+        InputStream openApiStream = getClass().getResourceAsStream(openApiModel);
 
+        if (openApiStream == null) {
+            throw new RuntimeException("OpenAPI model not found for test case: " + openApiModel);
+        }
+
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
         Node.assertEquals(result, expectedNode);
+
+        // Attempt to compare the inlined model variant if available.
+        {
+            String inlinedOpenApiModel = smithy.replace(".json", ".openapi.inlined.json");
+            InputStream inlinedOpenApiStream = getClass().getResourceAsStream(inlinedOpenApiModel);
+            if (inlinedOpenApiStream != null) {
+                ObjectNode inlinedResult = OpenApiConverter.create()
+                        .convertToNode(model, ShapeId.from("smithy.example#Service"));
+                Node.assertEquals(inlinedResult, Node.parse(IoUtils.toUtf8String(inlinedOpenApiStream)));
+            } else {
+                System.out.println("No .inlined.json test case found for " + smithy);
+            }
+        }
     }
 
     @Test
@@ -36,83 +68,5 @@ public class AwsRestJsonProtocolTest {
                 .convert(model, ShapeId.from("smithy.example#Service"));
 
         Assertions.assertTrue(Node.printJson(result.toNode()).contains("application/x-amz-json-1.0"));
-    }
-
-    @Test
-    public void addsProperFormatForPathTimestamps() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("adds-path-timestamp-format.json"))
-                .assemble()
-                .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
-        Node expectedNode = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("adds-path-timestamp-format.openapi.json")));
-
-        Node.assertEquals(result, expectedNode);
-    }
-
-    @Test
-    public void addsProperFormatForQueryTimestamps() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("adds-query-timestamp-format.json"))
-                .assemble()
-                .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
-        Node expectedNode = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("adds-query-timestamp-format.openapi.json")));
-
-        Node.assertEquals(result, expectedNode);
-    }
-
-    @Test
-    public void addsProperFormatForQueryBlobs() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("adds-query-blob-format.json"))
-                .assemble()
-                .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
-        Node expectedNode = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("adds-query-blob-format.openapi.json")));
-
-        Node.assertEquals(result, expectedNode);
-    }
-
-    @Test
-    public void addsProperFormatForHeaderTimestamps() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("adds-header-timestamp-format.json"))
-                .assemble()
-                .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
-        Node expectedNode = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("adds-header-timestamp-format.openapi.json")));
-
-        Node.assertEquals(result, expectedNode);
-    }
-
-    @Test
-    public void addsProperFormatForHeaderMediaTypeStrings() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("adds-header-mediatype-format.json"))
-                .assemble()
-                .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
-        Node expectedNode = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("adds-header-mediatype-format.openapi.json")));
-
-        Node.assertEquals(result, expectedNode);
-    }
-
-    @Test
-    public void supportsRequestAndResponsePaylaods() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("supports-payloads.json"))
-                .assemble()
-                .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
-        Node expectedNode = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("supports-payloads.openapi.json")));
-
-        Node.assertEquals(result, expectedNode);
     }
 }
