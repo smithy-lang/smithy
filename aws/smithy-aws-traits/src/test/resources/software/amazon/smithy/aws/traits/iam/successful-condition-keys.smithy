@@ -25,7 +25,7 @@ resource Resource1 {
 resource Resource2 {
   identifiers: {
     id1: ArnString,
-    id2: String,
+    id2: FooString,
   },
   read: GetResource2,
   list: ListResource2,
@@ -40,8 +40,11 @@ structure GetResource2Input {
   id1: ArnString,
 
   @required
-  id2: String
+  id2: FooString
 }
+
+@documentation("This is Foo")
+string FooString
 
 @readonly
 @collectionOperation

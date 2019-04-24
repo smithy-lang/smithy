@@ -23,7 +23,6 @@ import java.util.Set;
 import software.amazon.smithy.aws.traits.ArnReferenceTrait;
 import software.amazon.smithy.aws.traits.ServiceTrait;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -31,6 +30,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
@@ -49,7 +49,6 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
 
     public ConditionKeysIndex(Model model) {
         ShapeIndex index = model.getShapeIndex();
-        IdentifierBindingIndex bindingIndex = model.getKnowledge(IdentifierBindingIndex.class);
 
         index.shapes(ServiceShape.class).forEach(service -> {
             service.getTrait(ServiceTrait.class).ifPresent(trait -> {
@@ -68,14 +67,14 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                 service.getResources().stream()
                         .flatMap(id -> OptionalUtils.stream(index.getShape(id)))
                         .forEach(resource -> {
-                            compute(index, bindingIndex, service.getId(), arnRoot, resource, null, SetUtils.of());
+                            compute(index, service.getId(), arnRoot, resource, null);
                         });
 
                 // Compute the keys of operations of the service.
                 service.getOperations().stream()
                         .flatMap(id -> OptionalUtils.stream(index.getShape(id)))
                         .forEach(operation -> {
-                            compute(index, bindingIndex, service.getId(), arnRoot, operation, null, SetUtils.of());
+                            compute(index, service.getId(), arnRoot, operation, null);
                         });
             });
         });
@@ -153,7 +152,16 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
 
     private void compute(
             ShapeIndex index,
-            IdentifierBindingIndex bindingIndex,
+            ShapeId service,
+            String arnRoot,
+            Shape subject,
+            ResourceShape parent
+    ) {
+        compute(index, service, arnRoot, subject, parent, SetUtils.of());
+    }
+
+    private void compute(
+            ShapeIndex index,
             ShapeId service,
             String arnRoot,
             Shape subject,
@@ -171,26 +179,16 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                     ? inferChildResourceIdentifiers(index, service, arnRoot, resource, parent)
                     : MapUtils.of();
 
-            // Compute the keys of each child operation.
+            // Compute the keys of each child operation, passing no keys.
             resource.getAllOperations().stream().flatMap(id -> OptionalUtils.stream(index.getShape(id)))
-                    .forEach(child -> {
-                        // Only apply child identifiers to the operation if the operation binds them
-                        // (for example, list operations omit one or more child identifiers).
-                        Set<String> operationKeys = new HashSet<>(definitions);
-                        for (String binding : bindingIndex.getOperationBindings(resource, child).keySet()) {
-                            if (childIdentifiers.containsKey(binding)) {
-                                operationKeys.add(childIdentifiers.get(binding));
-                            }
-                        }
-                        compute(index, bindingIndex, service, arnRoot, child, resource, operationKeys);
-                    });
+                    .forEach(child -> compute(index, service, arnRoot, child, resource));
 
             // Child resources always inherit the identifiers of the parent.
             definitions.addAll(childIdentifiers.values());
 
             // Compute the keys of each child resource.
             resource.getResources().stream().flatMap(id -> OptionalUtils.stream(index.getShape(id))).forEach(child -> {
-                compute(index, bindingIndex, service, arnRoot, child, resource, definitions);
+                compute(index, service, arnRoot, child, resource, definitions);
             });
         });
     }
@@ -223,8 +221,10 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                     builder.type(STRING_TYPE);
                 }
 
-                // Compute a simple doc string: "[NAME] resource [NAME] identifier"
-                builder.documentation(computeIdentifierDocs(resource.getId(), childId));
+                // Inline provided documentation or compute a simple string.
+                builder.documentation(shape.getTrait(DocumentationTrait.class)
+                        .map(DocumentationTrait::getValue)
+                        .orElse(computeIdentifierDocs(resource.getId(), childId)));
                 // The identifier name is comprised of "[arn service]:[Resource name][uppercase identifier name]
                 String computeIdentifierName = computeIdentifierName(arnRoot, resource, childId);
                 // Add the computed identifier binding and resolved context key to the result map.
