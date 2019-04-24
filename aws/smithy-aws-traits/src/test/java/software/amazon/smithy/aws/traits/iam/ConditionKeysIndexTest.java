@@ -18,7 +18,10 @@ package software.amazon.smithy.aws.traits.iam;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -51,19 +54,16 @@ public class ConditionKeysIndexTest {
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource2")),
                    containsInAnyOrder("aws:accountId", "foo:baz",
                                       "myservice:Resource1Id1", "myservice:Resource2Id2"));
-        // Note that this operation does bind all identifiers, so it includes both ID1 and 2.
-        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#GetResource2")),
-                   containsInAnyOrder("aws:accountId", "foo:baz",
-                                      "myservice:Resource1Id1", "myservice:Resource2Id2"));
-        // Note that this operation does not bind all identifiers, so it does not include ID2.
-        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#ListResource2")),
-                   containsInAnyOrder("aws:accountId", "foo:baz", "myservice:Resource1Id1"));
+        // Note that while this operation binds identifiers, it contains no unique ConditionKeys to bind.
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#GetResource2")), is(empty()));
 
         // Defined context keys are assembled from the names and mapped with the definitions.
         assertThat(index.getDefinedConditionKeys(service).get("myservice:Resource1Id1").getDocumentation(),
                    not(Optional.empty()));
+        assertEquals(index.getDefinedConditionKeys(service).get("myservice:Resource2Id2").getDocumentation().get(),
+                "This is Foo");
         assertThat(index.getDefinedConditionKeys(service, ShapeId.from("smithy.example#GetResource2")).keySet(),
-                   containsInAnyOrder("foo:baz", "myservice:Resource1Id1", "myservice:Resource2Id2"));
+                   is(empty()));
     }
 
     @Test
