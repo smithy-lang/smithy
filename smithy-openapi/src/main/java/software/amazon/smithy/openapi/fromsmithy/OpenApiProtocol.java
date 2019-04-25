@@ -18,7 +18,10 @@ package software.amazon.smithy.openapi.fromsmithy;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
+import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.traits.HttpTrait;
+import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.utils.SetUtils;
@@ -44,13 +47,54 @@ public interface OpenApiProtocol {
      * object builder.
      *
      * <p>The operation is returned as an empty Optional if the operation is
-     * not supported by the protocol.
+     * not supported by the protocol. This method should make calls to
+     * {@link #getOperationUri} and {@link #getOperationMethod} when creating
+     * the Operation object.
      *
      * @param context The build context.
      * @param operation The operation shape to create.
      * @return Returns the optionally created operation entry.
      */
     Optional<Operation> createOperation(Context context, OperationShape operation);
+
+    /**
+     * Gets the URI of an operation.
+     *
+     * <p>The default implementation will attempt to get the HTTP URI
+     * defined by the {@link HttpTrait} trait. If no HTTP trait can be
+     * found, the default implementation will throw an exception.
+     *
+     * @param context The build context.
+     * @param operation The operation to get the URI of.
+     * @return Returns the operation URI.
+     */
+    default String getOperationUri(Context context, OperationShape operation) {
+        return operation.getTrait(HttpTrait.class)
+                .map(HttpTrait::getUri)
+                .map(UriPattern::toString)
+                .orElseThrow(() -> new OpenApiException(
+                        "The `" + operation.getId() + "` operation has no `http` binding trait, which is "
+                        + "required to compute a URI (using the default protocol implementation)"));
+    }
+
+    /**
+     * Gets the HTTP method of an operation.
+     *
+     * <p>The default implementation will attempt to get the HTTP method
+     * defined by the {@link HttpTrait} trait. If no HTTP trait can be
+     * found, the default implementation will throw an exception.
+     *
+     * @param context The build context.
+     * @param operation The operation to get the method of.
+     * @return Returns the method.
+     */
+    default String getOperationMethod(Context context, OperationShape operation) {
+        return operation.getTrait(HttpTrait.class)
+                .map(HttpTrait::getMethod)
+                .orElseThrow(() -> new OpenApiException(
+                        "The `" + operation.getId() + "` operation has no `http` binding trait, which is "
+                        + "required to compute a method (using the default protocol implementation)"));
+    }
 
     /**
      * Gets the unmodeled protocol-specific HTTP headers of a request that are

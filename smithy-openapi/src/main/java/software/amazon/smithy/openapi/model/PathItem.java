@@ -16,14 +16,15 @@
 package software.amazon.smithy.openapi.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class PathItem extends Component implements ToSmithyBuilder<PathItem> {
@@ -108,17 +109,21 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
         return Optional.ofNullable(trace);
     }
 
+    public Map<String, OperationObject> getOperations() {
+        Map<String, OperationObject> operations = new HashMap<>();
+        getGet().ifPresent(operation -> operations.put("GET", operation));
+        getPut().ifPresent(operation -> operations.put("PUT", operation));
+        getPost().ifPresent(operation -> operations.put("POST", operation));
+        getDelete().ifPresent(operation -> operations.put("DELETE", operation));
+        getOptions().ifPresent(operation -> operations.put("OPTIONS", operation));
+        getHead().ifPresent(operation -> operations.put("HEAD", operation));
+        getPatch().ifPresent(operation -> operations.put("PATCH", operation));
+        getTrace().ifPresent(operation -> operations.put("TRACE", operation));
+        return operations;
+    }
+
     public Stream<OperationObject> operations() {
-        return Stream.of(
-                getGet(),
-                getPut(),
-                getPost(),
-                getDelete(),
-                getOptions(),
-                getHead(),
-                getPatch(),
-                getTrace()
-        ).flatMap(OptionalUtils::stream);
+        return getOperations().values().stream();
     }
 
     @Override

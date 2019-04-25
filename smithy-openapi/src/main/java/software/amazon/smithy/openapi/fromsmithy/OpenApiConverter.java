@@ -488,7 +488,7 @@ public final class OpenApiConverter {
         for (Map.Entry<String, PathItem.Builder> entry : paths.entrySet()) {
             String pathName = entry.getKey();
             // Enact the plugin infrastructure to update the PathItem if necessary.
-            PathItem pathItem = plugin.updatePathItem(context, entry.getValue().build());
+            PathItem pathItem = plugin.updatePathItem(context, pathName, entry.getValue().build());
             openApiBuilder.putPath(pathName, pathItem);
         }
     }
@@ -580,7 +580,7 @@ public final class OpenApiConverter {
 
         for (Map.Entry<String, ResponseObject> entry : originalResponses.entrySet()) {
             String status = entry.getKey();
-            ResponseObject responseObject = plugin.updateResponse(context, shape, entry.getValue());
+            ResponseObject responseObject = plugin.updateResponse(context, status, shape, entry.getValue());
             newResponses.put(status, responseObject);
         }
 

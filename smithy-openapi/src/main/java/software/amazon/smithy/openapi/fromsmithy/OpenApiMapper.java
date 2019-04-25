@@ -68,10 +68,11 @@ public interface OpenApiMapper {
      * Updates a path item.
      *
      * @param context Conversion context.
+     * @param path Path of the PathItem.
      * @param pathItem Path item being converted.
      * @return Returns the updated path item.
      */
-    default PathItem updatePathItem(Context context, PathItem pathItem) {
+    default PathItem updatePathItem(Context context, String path, PathItem pathItem) {
         return pathItem;
     }
 
@@ -111,11 +112,17 @@ public interface OpenApiMapper {
      * Updates a response object.
      *
      * @param context Conversion context.
+     * @param status HTTP status of this response.
      * @param shape Operation shape being converted.
      * @param response Response object being updated.
      * @return Returns the updated response object.
      */
-    default ResponseObject updateResponse(Context context, OperationShape shape, ResponseObject response) {
+    default ResponseObject updateResponse(
+            Context context,
+            String status,
+            OperationShape shape,
+            ResponseObject response
+    ) {
         return response;
     }
 
@@ -191,12 +198,12 @@ public interface OpenApiMapper {
             }
 
             @Override
-            public PathItem updatePathItem(Context context, PathItem pathItem) {
+            public PathItem updatePathItem(Context context, String path, PathItem pathItem) {
                 for (OpenApiMapper plugin : sorted) {
                     if (pathItem == null) {
                         return null;
                     }
-                    pathItem = plugin.updatePathItem(context, pathItem);
+                    pathItem = plugin.updatePathItem(context, path, pathItem);
                 }
                 return pathItem;
             }
@@ -232,12 +239,17 @@ public interface OpenApiMapper {
             }
 
             @Override
-            public ResponseObject updateResponse(Context context, OperationShape shape, ResponseObject response) {
+            public ResponseObject updateResponse(
+                    Context context,
+                    String status,
+                    OperationShape shape,
+                    ResponseObject response
+            ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (response == null) {
                         return null;
                     }
-                    response = plugin.updateResponse(context, shape, response);
+                    response = plugin.updateResponse(context, status, shape, response);
                 }
                 return response;
             }

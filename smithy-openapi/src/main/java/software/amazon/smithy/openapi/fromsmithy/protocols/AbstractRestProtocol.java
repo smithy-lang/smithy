@@ -100,8 +100,8 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     @Override
     public Optional<Operation> createOperation(Context context, OperationShape operation) {
         return operation.getTrait(HttpTrait.class).map(httpTrait -> {
-            String method = httpTrait.getMethod();
-            String uri = httpTrait.getUri().toString();
+            String method = context.getOpenApiProtocol().getOperationMethod(context, operation);
+            String uri = context.getOpenApiProtocol().getOperationUri(context, operation);
             OperationObject.Builder builder = OperationObject.builder().operationId(operation.getId().getName());
             HttpBindingIndex bindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
             createPathParameters(context, operation).forEach(builder::addParameter);
