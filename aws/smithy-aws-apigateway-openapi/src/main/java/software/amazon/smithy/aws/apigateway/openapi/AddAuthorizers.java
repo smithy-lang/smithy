@@ -35,7 +35,7 @@ import software.amazon.smithy.openapi.model.SecurityScheme;
  * OpenAPI security scheme that corresponds to the referenced authentication
  * scheme.
  */
-public final class AddAuthorizers implements OpenApiMapper {
+final class AddAuthorizers implements OpenApiMapper {
     private static final String EXTENSION_NAME = "x-amazon-apigateway-authorizer";
     private static final String CLIENT_EXTENSION_NAME = "x-amazon-apigateway-authtype";
     private static final Logger LOGGER = Logger.getLogger(AddApiKeySource.class.getName());

@@ -21,7 +21,7 @@ import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
 
-public final class AddApiKeySource implements OpenApiMapper {
+final class AddApiKeySource implements OpenApiMapper {
     private static final String EXTENSION_NAME = "x-amazon-apigateway-api-key-source";
     private static final Logger LOGGER = Logger.getLogger(AddApiKeySource.class.getName());
 

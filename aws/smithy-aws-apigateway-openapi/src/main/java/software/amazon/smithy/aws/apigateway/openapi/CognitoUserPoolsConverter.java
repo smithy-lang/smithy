@@ -33,7 +33,7 @@ import software.amazon.smithy.utils.SetUtils;
  *
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-enable-cognito-user-pool.html">Integrate a REST API with a User Pool </a>
  */
-public class CognitoUserPoolsConverter implements SecuritySchemeConverter {
+final class CognitoUserPoolsConverter implements SecuritySchemeConverter {
     private static final String SCHEME = "aws.cognito-user-pools";
     private static final String AUTH_HEADER = "Authorization";
     private static final Set<String> REQUEST_HEADERS = SetUtils.of(AUTH_HEADER);

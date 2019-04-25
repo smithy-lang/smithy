@@ -40,7 +40,7 @@ import software.amazon.smithy.utils.OptionalUtils;
  * <p>This data is used by API Gateway to determine which content-types do
  * not contain UTF-8 data.
  */
-public final class AddBinaryTypes implements OpenApiMapper {
+final class AddBinaryTypes implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(AddBinaryTypes.class.getName());
     private static final String EXTENSION_NAME = "x-amazon-apigateway-binary-media-types";
     private static final String DEFAULT_BINARY_TYPE = "application/octet-stream";
