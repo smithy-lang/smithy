@@ -13,13 +13,14 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.jsonschema.mappers;
+package software.amazon.smithy.jsonschema;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.jsonschema.DisableMapper;
 import software.amazon.smithy.jsonschema.JsonSchemaConstants;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;

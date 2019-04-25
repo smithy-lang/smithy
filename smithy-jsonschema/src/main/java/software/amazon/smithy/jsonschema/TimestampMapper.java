@@ -13,11 +13,8 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.jsonschema.mappers;
+package software.amazon.smithy.jsonschema;
 
-import software.amazon.smithy.jsonschema.JsonSchemaConstants;
-import software.amazon.smithy.jsonschema.JsonSchemaMapper;
-import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
@@ -26,7 +23,7 @@ import software.amazon.smithy.model.traits.TimestampFormatTrait;
  * Updates builders based on timestamp shapes, timestampFormat traits, and
  * the value of {@link JsonSchemaConstants#SMITHY_DEFAULT_TIMESTAMP_FORMAT}.
  */
-public final class TimestampMapper implements JsonSchemaMapper {
+final class TimestampMapper implements JsonSchemaMapper {
     private static final String DEFAULT_TIMESTAMP_FORMAT = TimestampFormatTrait.DATE_TIME;
 
     @Override

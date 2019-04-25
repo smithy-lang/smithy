@@ -20,8 +20,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
-import software.amazon.smithy.jsonschema.mappers.DisableMapper;
-import software.amazon.smithy.jsonschema.mappers.TimestampMapper;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
