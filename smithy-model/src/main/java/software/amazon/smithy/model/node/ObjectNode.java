@@ -111,6 +111,39 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
     }
 
     /**
+     * Constructs a new object node with the given member added.
+     *
+     * @param key Name of the member to add as a string.
+     * @param value Value of the member to add.
+     * @return Returns a new object node.
+     */
+    public ObjectNode withMember(String key, String value) {
+        return withMember(from(key), from(value));
+    }
+
+    /**
+     * Constructs a new object node with the given member added.
+     *
+     * @param key Name of the member to add as a string.
+     * @param value Value of the member to add.
+     * @return Returns a new object node.
+     */
+    public ObjectNode withMember(String key, boolean value) {
+        return withMember(from(key), from(value));
+    }
+
+    /**
+     * Constructs a new object node with the given member added.
+     *
+     * @param key Name of the member to add as a string.
+     * @param value Value of the member to add.
+     * @return Returns a new object node.
+     */
+    public ObjectNode withMember(String key, Number value) {
+        return withMember(from(key), from(value));
+    }
+
+    /**
      * Adds a member to a new ObjectNode if the provided value is present.
      *
      * @param key Key to set if value is present.
