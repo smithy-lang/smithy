@@ -1,0 +1,57 @@
+{
+  "smithy": "1.0",
+  "example.smithy": {
+    "shapes": {
+      "MyService": {
+        "type": "service",
+        "version": "2006-03-01",
+        "protocols": [{"name": "aws.rest-json-1.1", "auth": ["http-basic"]}],
+        "operations": [
+          "Foo",
+          "FooOptions"
+        ],
+        "cors": {
+          "origin": "https://foo.com"
+        }
+      },
+      "Foo": {
+        "type": "operation",
+        "http": {
+          "uri": "/foo",
+          "method": "PUT",
+          "code": 201
+        },
+        "aws.apigateway#integration": {
+          "type": "aws_proxy",
+          "credentials": "arn:aws:iam::123456789012:role/Foo",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:bar/invocations",
+          "httpMethod": "POST"
+        }
+      },
+      "FooOptions": {
+        "type": "operation",
+        "output": "FooOptionsOutput",
+        "http": {
+          "uri": "/foo",
+          "method": "OPTIONS",
+          "code": 200
+        },
+        "aws.apigateway#integration": {
+          "type": "aws",
+          "credentials": "arn:aws:iam::123456789012:role/FooOptions",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:baz/invocations",
+          "httpMethod": "POST"
+        }
+      },
+      "FooOptionsOutput": {
+        "type": "structure",
+        "members": {
+          "hd": {
+            "target": "String",
+            "httpHeader": "X-Hd"
+          }
+        }
+      }
+    }
+  }
+}

@@ -73,11 +73,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
         return Optional.of(this);
     }
 
-    /**
-     * Gets all operations, including lifecycle operations and non-lifecycle.
-     *
-     * @return Returns all bound operations.
-     */
+    @Override
     public Set<ShapeId> getAllOperations() {
         Set<ShapeId> result = new HashSet<>(getOperations());
         getCreate().ifPresent(result::add);

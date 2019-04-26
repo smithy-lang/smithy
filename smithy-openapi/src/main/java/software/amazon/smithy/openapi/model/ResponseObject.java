@@ -18,6 +18,7 @@ package software.amazon.smithy.openapi.model;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -43,6 +44,22 @@ public final class ResponseObject extends Component implements ToSmithyBuilder<R
 
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Gets a header by case-insensitive header name.
+     *
+     * @param header Header to retrieve.
+     * @return Returns the optionally found header.
+     */
+    public Optional<Ref<ParameterObject>> getHeader(String header) {
+        for (Map.Entry<String, Ref<ParameterObject>> entry : headers.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(header)) {
+                return Optional.of(entry.getValue());
+            }
+        }
+
+        return Optional.empty();
     }
 
     public Map<String, Ref<ParameterObject>> getHeaders() {

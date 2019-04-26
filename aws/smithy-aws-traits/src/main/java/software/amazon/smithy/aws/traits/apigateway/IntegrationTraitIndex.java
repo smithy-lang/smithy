@@ -89,7 +89,7 @@ public class IntegrationTraitIndex implements KnowledgeIndex {
                     .ifPresent(resourceShape -> walk(index, service, resourceShape, updatedTrait));
         }
 
-        for (ShapeId operation : current.getOperations()) {
+        for (ShapeId operation : current.getAllOperations()) {
             index.getShape(operation).ifPresent(op -> serviceMapping.put(operation, extractTrait(op, updatedTrait)));
         }
     }

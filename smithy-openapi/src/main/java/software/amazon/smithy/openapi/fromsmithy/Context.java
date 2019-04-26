@@ -163,4 +163,18 @@ public final class Context {
     public List<SecuritySchemeConverter> getSecuritySchemeConverters() {
         return securitySchemeConverters;
     }
+
+    /**
+     * Reports if any authentication mechanisms in the entire model use HTTP
+     * credentials, such as cookies, browser-managed usernames and passwords,
+     * or TLS client certificates.
+     *
+     * <p>This is useful when integrating with things like CORS.</p>
+     *
+     * @return Whether any authentication mechanism relies on browser-managed credentials.
+     * @see <a href="https://fetch.spec.whatwg.org/#credentials" target="_blank">Browser-managed credentials</a>
+     */
+    public boolean usesHttpCredentials() {
+        return getSecuritySchemeConverters().stream().anyMatch(SecuritySchemeConverter::usesHttpCredentials);
+    }
 }

@@ -30,7 +30,10 @@ public final class ApiGatewayExtension implements Smithy2OpenApiExtension {
                 new AddBinaryTypes(),
                 new AddIntegrations(),
                 new AddRequestValidators(),
-                new CloudFormationSubstitution()
+                new CloudFormationSubstitution(),
+                new AddCorsResponseHeaders(),
+                new AddCorsPreflightIntegration(),
+                new AddCorsToGatewayResponses()
         );
     }
 
