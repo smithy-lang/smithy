@@ -15,11 +15,11 @@
       "conditionKeys": {
         "selector": ":test(resource, operation)",
         "shape": "aws.iam#IdentifierList",
-        "documentation": "Applies condition keys by name to a resource or operation"
+        "documentation": "Applies condition keys by name to a resource or operation."
       },
-      "inferConditionKeys": {
+      "disableConditionKeyInference": {
         "selector": "resource",
-        "documentation": "Infers the condition keys of a resource"
+        "documentation": "Disables the automatic inference of condition keys of a resource."
       },
       "requiredActions": {
         "selector": "operation",

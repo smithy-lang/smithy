@@ -16,13 +16,13 @@ See the Smithy specification for details on how these traits are used.
 
 * `aws.iam#actionPermissionDescription`: Defines the description of what
   providing access to an operation entails.
-* `aws.iam#conditionKeyDefinition`: Defines the condition keys used in
-  a service.
 * `aws.iam#conditionKeys`: Applies condition keys to an operation or resource.
-* `aws.iam#inferConditionKeys`: Infers the condition keys of a resource.
-  Each operation bound to the resource also uses these condition keys.
+* `aws.iam#defineConditionKeys`: Defines the condition keys used in
+  a service.
+* `aws.iam#disableConditionKeyInference`: Disables the automatic inference of
+  condition keys of a resource.
 * `aws.iam#requiredActions`: Defines the actions that a principal must be
-  authorized to invoke in addition to the targetd operation order to invoke
+  authorized to invoke in addition to the targeted operation order to invoke
   an operation
 
 ## Example usage
