@@ -26,6 +26,7 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
@@ -41,6 +42,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class IntegrationTrait extends AbstractTrait implements ToSmithyBuilder<IntegrationTrait> {
     public static final String TRAIT = "aws.apigateway#integration";
 
+    private static final String SERVICE_NAME_LABEL = "{serviceName}";
+    private static final String OPERATION_NAME_LABEL = "{operationName}";
     private static final String TYPE_KEY = "type";
     private static final String PASS_THROUGH_BEHAVIOR_KEY = "passThroughBehavior";
     private static final String REQUEST_PARAMETERS_KEY = "requestParameters";
@@ -339,6 +342,38 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
      */
     public Optional<IntegrationResponse> getResponse(String statusCode) {
         return Optional.ofNullable(responses.get(statusCode));
+    }
+
+    /**
+     * Converts the trait an ObjectNode that finds and replaces the templated
+     * serviceName and operationName labels in the "uri" and "credentials"
+     * key-value pairs.
+     *
+     * @param service Service shape ID to use when replacing {@code {serviceName}}.
+     * @param operation Operation shape ID to use when replacing {@code {operationName}}.
+     * @return Returns the expanded Node.
+     */
+    public ObjectNode toExpandedNode(ToShapeId service, ToShapeId operation) {
+        ObjectNode result = toNode().expectObjectNode();
+        result = result.withMember(URI_KEY, formatComponent(
+                service, operation, result.expectMember(URI_KEY).expectStringNode().getValue()));
+        result = result.withMember(CREDENTIALS_KEY, formatComponent(
+                service, operation, result.expectMember(CREDENTIALS_KEY).expectStringNode().getValue()));
+        return result;
+    }
+
+    /**
+     * Replaces templated placeholders in an Integration trait.
+     *
+     * @param service Service shape ID to use when replacing {@code {serviceName}}.
+     * @param operation Operation shape ID to use when replacing {@code {operationName}}.
+     * @param component Templatized component to expand.
+     * @return Returns the expanded string.
+     */
+    public static String formatComponent(ToShapeId service, ToShapeId operation, String component) {
+        return component
+                .replace(SERVICE_NAME_LABEL, service.toShapeId().getName())
+                .replace(OPERATION_NAME_LABEL, operation.toShapeId().getName());
     }
 
     @Override

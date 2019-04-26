@@ -1,0 +1,429 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "MyService",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/payload/{id}": {
+      "get": {
+        "operationId": "GetPayload",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GetPayload 200 response",
+            "headers": {
+              "X-Foo-Header": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Expose-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServiceGetPayload/invocations",
+          "httpMethod": "POST",
+          "credentials": "arn:aws:iam::123456789012:role/MyServiceGetPayloadLambdaRole",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+                "method.response.header.Access-Control-Expose-Headers": "'X-Service-Output-Metadata'"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "PutPayload",
+        "requestBody": {
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "int32",
+              "nullable": true
+            }
+          },
+          {
+            "name": "X-Foo-Header",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-EnumString",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "a",
+                "c"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "PutPayload response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Expose-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServicePutPayload/invocations",
+          "httpMethod": "POST",
+          "credentials": "arn:aws:iam::123456789012:role/MyServicePutPayloadLambdaRole",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+                "method.response.header.Access-Control-Expose-Headers": "'X-Service-Output-Metadata'"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "DeletePayload",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "DeletePayload response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Expose-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServiceDeletePayload/invocations",
+          "httpMethod": "POST",
+          "credentials": "arn:aws:iam::123456789012:role/MyServiceDeletePayloadLambdaRole",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+                "method.response.header.Access-Control-Expose-Headers": "'X-Service-Output-Metadata'"
+              }
+            }
+          }
+        }
+      },
+      "options": {
+        "description": "Handles CORS-preflight requests",
+        "operationId": "CorsPayloadId",
+        "tags": [
+          "CORS"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Canned response for CORS-preflight requests",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Max-Age": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "passThroughBehavior": "when_no_match",
+          "requestTemplates": {
+            "200": "{\"statusCode\":200}",
+            "201": "{\"statusCode\":200}",
+            "application/json": "{\"statusCode\":200}",
+            "204": "{\"statusCode\":200}"
+          },
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Max-Age": "'86400'",
+                "method.response.header.Access-Control-Allow-Headers": "'Authorization,Date,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-EnumString,X-Foo-Header,X-Service-Input-Metadata'",
+                "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+                "method.response.header.Access-Control-Allow-Methods": "'DELETE,GET,PUT'"
+              }
+            }
+          },
+          "type": "mock"
+        }
+      }
+    },
+    "/payload": {
+      "get": {
+        "operationId": "ListPayloads",
+        "responses": {
+          "200": {
+            "description": "ListPayloads 200 response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Expose-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "$ref": "#/components/schemas/ExampleSmithyListPayloadsOutputItemsMember"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:MyServiceListPayloads/invocations",
+          "httpMethod": "POST",
+          "credentials": "arn:aws:iam::123456789012:role/MyServiceListPayloadsLambdaRole",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+                "method.response.header.Access-Control-Expose-Headers": "'X-Service-Output-Metadata'"
+              }
+            }
+          }
+        }
+      },
+      "options": {
+        "description": "Handles CORS-preflight requests",
+        "operationId": "CorsPayload",
+        "tags": [
+          "CORS"
+        ],
+        "responses": {
+          "200": {
+            "description": "Canned response for CORS-preflight requests",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Max-Age": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "passThroughBehavior": "when_no_match",
+          "requestTemplates": {
+            "application/json": "{\"statusCode\":200}",
+            "200": "{\"statusCode\":200}"
+          },
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Max-Age": "'86400'",
+                "method.response.header.Access-Control-Allow-Headers": "'Authorization,Date,X-Amz-Date,X-Amz-Security-Token,X-Amz-Target,X-Service-Input-Metadata'",
+                "method.response.header.Access-Control-Allow-Origin": "'https://www.example.com'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET'"
+              }
+            }
+          },
+          "type": "mock"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExampleSmithyPayloadDescriptionsMember": {
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "createdAt",
+          "id"
+        ]
+      },
+      "ExampleSmithyListPayloadsOutputItemsMember": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ExampleSmithyPayloadDescriptionsMember"
+        }
+      }
+    },
+    "securitySchemes": {
+      "sigv4": {
+        "type": "apiKey",
+        "description": "AWS Signature Version 4 authentication",
+        "name": "Authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "awsSigv4"
+      },
+      "http-basic": {
+        "type": "http",
+        "description": "HTTP Basic authentication",
+        "scheme": "Basic"
+      }
+    }
+  },
+  "security": [
+    {
+      "sigv4": [ ]
+    },
+    {
+      "http-basic": [ ]
+    }
+  ],
+  "x-amazon-apigateway-gateway-responses": {
+    "DEFAULT_4XX": {
+      "responseTemplates": {
+        "application/json": "{\"message\":$context.error.messageString}"
+      },
+      "responseParameters": {
+        "gatewayresponse.header.Access-Control-Allow-Origin": "'https://www.example.com'"
+      }
+    },
+    "DEFAULT_5XX": {
+      "responseTemplates": {
+        "application/json": "{\"message\":$context.error.messageString}"
+      },
+      "responseParameters": {
+        "gatewayresponse.header.Access-Control-Allow-Origin": "'https://www.example.com'"
+      }
+    }
+  }
+}

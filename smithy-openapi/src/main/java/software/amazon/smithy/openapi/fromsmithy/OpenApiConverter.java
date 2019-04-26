@@ -83,6 +83,7 @@ public final class OpenApiConverter {
     private ClassLoader classLoader = OpenApiConverter.class.getClassLoader();
     private JsonSchemaConverter jsonSchemaConverter;
     private String protocolName;
+    private final List<OpenApiMapper> mappers = new ArrayList<>();
 
     private OpenApiConverter() {}
 
@@ -98,6 +99,21 @@ public final class OpenApiConverter {
      */
     public OpenApiConverter jsonSchemaConverter(JsonSchemaConverter jsonSchemaConverter) {
         this.jsonSchemaConverter = jsonSchemaConverter;
+        return this;
+    }
+
+    /**
+     * Adds an {@link OpenApiMapper} to the converter.
+     *
+     * <p>This method is used to add custom OpenApiMappers to a converter that
+     * are not automatically added by {@link Smithy2OpenApiExtension} objects
+     * detected through Java SPI.
+     *
+     * @param mapper Mapper to add.
+     * @return Returns the converter.
+     */
+    public OpenApiConverter addOpenApiMapper(OpenApiMapper mapper) {
+        mappers.add(mapper);
         return this;
     }
 
@@ -254,7 +270,7 @@ public final class OpenApiConverter {
                 model, service, getJsonSchemaConverter(),
                 resolvedProtocol, openApiProtocol, schemas, securitySchemeConverters);
 
-        return new ConversionEnvironment(context, extensions, components);
+        return new ConversionEnvironment(context, extensions, components, mappers);
     }
 
     private static final class ConversionEnvironment {
@@ -266,18 +282,20 @@ public final class OpenApiConverter {
         private ConversionEnvironment(
                 Context context,
                 List<Smithy2OpenApiExtension> extensions,
-                ComponentsObject.Builder components
+                ComponentsObject.Builder components,
+                List<OpenApiMapper> mappers
         ) {
             this.context = context;
             this.extensions = extensions;
             this.components = components;
-            this.mapper = createMapper();
+            this.mapper = createMapper(mappers);
         }
 
-        private OpenApiMapper createMapper() {
-            return OpenApiMapper.compose(extensions.stream()
-                    .flatMap(extension -> extension.getOpenApiMappers().stream())
-                    .collect(Collectors.toList()));
+        private OpenApiMapper createMapper(List<OpenApiMapper> mappers) {
+            return OpenApiMapper.compose(Stream.concat(
+                    extensions.stream().flatMap(extension -> extension.getOpenApiMappers().stream()),
+                    mappers.stream()
+            ).collect(Collectors.toList()));
         }
     }
 

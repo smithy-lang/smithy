@@ -1,0 +1,106 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "MyService",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/foo": {
+      "put": {
+        "operationId": "Foo",
+        "responses": {
+          "201": {
+            "description": "Foo response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:bar/invocations",
+          "httpMethod": "POST",
+          "credentials": "arn:aws:iam::123456789012:role/Foo",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'https://foo.com'"
+              }
+            }
+          }
+        }
+      },
+      "options": {
+        "operationId": "FooOptions",
+        "responses": {
+          "200": {
+            "description": "FooOptions 200 response",
+            "headers": {
+              "X-Hd": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:baz/invocations",
+          "httpMethod": "POST",
+          "credentials": "arn:aws:iam::123456789012:role/FooOptions",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'https://foo.com'"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "http-basic": {
+        "type": "http",
+        "description": "HTTP Basic authentication",
+        "scheme": "Basic"
+      }
+    }
+  },
+  "security": [
+    {
+      "http-basic": [ ]
+    }
+  ],
+  "x-amazon-apigateway-gateway-responses": {
+    "DEFAULT_4XX": {
+      "responseTemplates": {
+        "application/json": "{\"message\":$context.error.messageString}"
+      },
+      "responseParameters": {
+        "gatewayresponse.header.Access-Control-Allow-Origin": "'https://foo.com'"
+      }
+    },
+    "DEFAULT_5XX": {
+      "responseTemplates": {
+        "application/json": "{\"message\":$context.error.messageString}"
+      },
+      "responseParameters": {
+        "gatewayresponse.header.Access-Control-Allow-Origin": "'https://foo.com'"
+      }
+    }
+  }
+}

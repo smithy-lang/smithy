@@ -42,10 +42,25 @@ public abstract class EntityShape extends Shape {
     }
 
     /**
+     * Gets operations bound only through the "operations" property.
+     *
+     * <p>This will not include operations bound to resources using
+     * a lifecycle operation binding.
+     *
      * @return Get the "operations" directly bound to this shape.
+     * @see #getAllOperations()
      */
-    public Set<ShapeId> getOperations() {
+    public final Set<ShapeId> getOperations() {
         return operations;
+    }
+
+    /**
+     * Get all operations directly bound to this shape.
+     *
+     * @return Returns all operations bound to the shape.
+     */
+    public Set<ShapeId> getAllOperations() {
+        return getOperations();
     }
 
     @Override
@@ -55,7 +70,7 @@ public abstract class EntityShape extends Shape {
         }
 
         EntityShape o = (EntityShape) other;
-        return resources.equals(o.resources) && operations.equals(o.operations);
+        return getResources().equals(o.getResources()) && getAllOperations().equals(o.getAllOperations());
     }
 
     /**

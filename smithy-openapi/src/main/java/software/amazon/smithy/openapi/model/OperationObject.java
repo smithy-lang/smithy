@@ -229,7 +229,7 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
             return this;
         }
 
-        public Builder parameters(List<ParameterObject> parameters) {
+        public Builder parameters(Collection<ParameterObject> parameters) {
             this.parameters.clear();
             this.parameters.addAll(parameters);
             return this;
@@ -272,7 +272,7 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
             return this;
         }
 
-        public Builder security(List<Map<String, List<String>>> security) {
+        public Builder security(Collection<Map<String, List<String>>> security) {
             this.security.clear();
             this.security.addAll(security);
             return this;
@@ -283,7 +283,7 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
             return this;
         }
 
-        public Builder servers(List<ServerObject> servers) {
+        public Builder servers(Collection<ServerObject> servers) {
             this.servers.clear();
             this.servers.addAll(servers);
             return this;
