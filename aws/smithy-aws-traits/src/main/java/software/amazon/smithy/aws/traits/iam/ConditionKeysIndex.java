@@ -175,7 +175,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
         // Continue recursing into resources and computing keys.
         subject.asResourceShape().ifPresent(resource -> {
             // Add any inferred resource identifiers to the resource and to the service-wide definitions.
-            Map<String, String> childIdentifiers = resource.hasTrait(InferConditionKeysTrait.class)
+            Map<String, String> childIdentifiers = !resource.hasTrait(DisableConditionKeyInferenceTrait.class)
                     ? inferChildResourceIdentifiers(index, service, arnRoot, resource, parent)
                     : MapUtils.of();
 

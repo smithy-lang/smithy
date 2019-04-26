@@ -19,22 +19,22 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.BooleanTrait;
 
 /**
- * Infers the condition keys of a resource.
+ * Disables the automatic inference of condition keys of a resource.
  */
-public final class InferConditionKeysTrait extends BooleanTrait {
-    private static final String TRAIT = "aws.iam#inferConditionKeys";
+public final class DisableConditionKeyInferenceTrait extends BooleanTrait {
+    private static final String TRAIT = "aws.iam#disableConditionKeyInference";
 
-    public InferConditionKeysTrait(SourceLocation sourceLocation) {
+    public DisableConditionKeyInferenceTrait(SourceLocation sourceLocation) {
         super(TRAIT, sourceLocation);
     }
 
-    public InferConditionKeysTrait() {
+    public DisableConditionKeyInferenceTrait() {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<InferConditionKeysTrait> {
+    public static final class Provider extends BooleanTrait.Provider<DisableConditionKeyInferenceTrait> {
         public Provider() {
-            super(TRAIT, InferConditionKeysTrait::new);
+            super(TRAIT, DisableConditionKeyInferenceTrait::new);
         }
     }
 }

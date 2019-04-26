@@ -13,7 +13,6 @@ service MyService {
 operation Operation1()
 
 @aws.iam#conditionKeys(["aws:accountId", "foo:baz"])
-@aws.iam#inferConditionKeys
 resource Resource1 {
   identifiers: {
     id1: ArnString,
@@ -21,7 +20,6 @@ resource Resource1 {
   resources: [Resource2]
 }
 
-@aws.iam#inferConditionKeys
 resource Resource2 {
   identifiers: {
     id1: ArnString,
