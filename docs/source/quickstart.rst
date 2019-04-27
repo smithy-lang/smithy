@@ -221,7 +221,6 @@ Each ``City`` has a single ``Forecast``. This can be defined by adding the
         }
 
         resource Forecast {
-          type: resource,
           identifiers: { cityId: CityId },
           read: GetForecast,
         }
@@ -617,7 +616,6 @@ Complete example
         }
 
         resource Forecast {
-          type: resource,
           identifiers: { cityId: CityId },
           read: GetForecast,
         }
