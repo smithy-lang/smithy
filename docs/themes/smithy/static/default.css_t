@@ -36,7 +36,7 @@ blockquote {
 }
 
 .width-wrapper  {
-  max-width: 1100px;
+  max-width: 1120px;
   margin: auto;
   position: relative;
   padding: 0 1em;
@@ -637,11 +637,12 @@ table.highlighttable pre {
 }
 
 .side-column a {
-  border-bottom: 1px solid rgba(0, 0, 0, 0);
+  padding-left: 6px;
+  border-left: 2px solid rgba(0, 0, 0, 0);
 }
 
 .side-column a.current {
-  border-bottom: 1px solid {{ theme_color }};
+  border-left: 2px solid {{ theme_color }};
   font-weight: bold;
 }
 
