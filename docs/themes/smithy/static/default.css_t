@@ -132,7 +132,7 @@ h7 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 2em;
-  width: 500px;
+  width: 400px;
   margin: auto;
 }
 
