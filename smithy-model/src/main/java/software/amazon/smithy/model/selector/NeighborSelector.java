@@ -59,7 +59,13 @@ final class NeighborSelector implements Selector {
         return Optional.empty();
     }
 
-    private static String getRelType(RelationshipType rel) {
+    /**
+     * Gets the name that appears in a selector for a relationship type.
+     *
+     * @param rel Relationship type to convert to a selector relationship.
+     * @return Returns the converted name.
+     */
+    static String getRelType(RelationshipType rel) {
         switch (rel) {
             case STRUCTURE_MEMBER:
             case UNION_MEMBER:
@@ -68,7 +74,7 @@ final class NeighborSelector implements Selector {
             case MAP_VALUE:
                 return "member";
             default:
-                return rel.toString().toLowerCase(Locale.US);
+                return rel.toString().toLowerCase(Locale.ENGLISH);
         }
     }
 }
