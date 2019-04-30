@@ -169,7 +169,7 @@ public final class PathFinder {
         public Shape getEndShape() {
             Relationship last = relationships.get(relationships.size() - 1);
             return last.getNeighborShape().orElseThrow(() -> new SourceException(
-                    "Relationship points to a shape that is invalid: "+ last,
+                    "Relationship points to a shape that is invalid: " + last,
                     last.getShape()));
         }
 
