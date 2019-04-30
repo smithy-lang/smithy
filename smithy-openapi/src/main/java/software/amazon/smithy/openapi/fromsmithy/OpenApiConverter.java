@@ -36,7 +36,6 @@ import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.jsonschema.SchemaDocument;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.AuthIndex;
-import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -591,8 +590,8 @@ public final class OpenApiConverter {
         // responses vs new/mutated responses.
         Map<String, ResponseObject> originalResponses = operation.getResponses();
         if (operation.getResponses().isEmpty()) {
-            int code = context.getModel().getKnowledge(HttpBindingIndex.class).getResponseCode(shape);
-            originalResponses = MapUtils.of(String.valueOf(code), ResponseObject.builder()
+            String code = context.getOpenApiProtocol().getOperationResponseStatusCode(context, shape);
+            originalResponses = MapUtils.of(code, ResponseObject.builder()
                     .description(shape.getId().getName() + " response").build());
         }
 
