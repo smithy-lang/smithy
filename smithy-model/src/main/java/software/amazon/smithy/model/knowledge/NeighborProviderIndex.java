@@ -23,12 +23,28 @@ import software.amazon.smithy.model.neighbor.NeighborProvider;
  */
 public final class NeighborProviderIndex implements KnowledgeIndex {
     private final NeighborProvider provider;
+    private volatile NeighborProvider reversed;
 
     public NeighborProviderIndex(Model model) {
         provider = NeighborProvider.precomputed(model.getShapeIndex());
+        reversed = NeighborProvider.reverse(model.getShapeIndex(), provider);
     }
 
+    /**
+     * Gets the precomputed neighbor provider.
+     *
+     * @return Returns the provider.
+     */
     public NeighborProvider getProvider() {
         return provider;
+    }
+
+    /**
+     * Gets a reversed, bottom up neighbor provider.
+     *
+     * @return Returns the reversed neighbor provider.
+     */
+    public NeighborProvider getReverseProvider() {
+        return reversed;
     }
 }
