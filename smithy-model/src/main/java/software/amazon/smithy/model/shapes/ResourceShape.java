@@ -34,6 +34,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
     private final ShapeId update;
     private final ShapeId delete;
     private final ShapeId list;
+    private final Set<ShapeId> allOperations = new HashSet<>();
 
     private ResourceShape(Builder builder) {
         super(builder, ShapeType.RESOURCE);
@@ -43,6 +44,14 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
         update = builder.update;
         delete = builder.delete;
         list = builder.list;
+
+        // Compute all operations bound to the resource.
+        allOperations.addAll(getOperations());
+        getCreate().ifPresent(allOperations::add);
+        getRead().ifPresent(allOperations::add);
+        getUpdate().ifPresent(allOperations::add);
+        getDelete().ifPresent(allOperations::add);
+        getList().ifPresent(allOperations::add);
     }
 
     public static Builder builder() {
@@ -75,13 +84,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
 
     @Override
     public Set<ShapeId> getAllOperations() {
-        Set<ShapeId> result = new HashSet<>(getOperations());
-        getCreate().ifPresent(result::add);
-        getRead().ifPresent(result::add);
-        getUpdate().ifPresent(result::add);
-        getDelete().ifPresent(result::add);
-        getList().ifPresent(result::add);
-        return result;
+        return Collections.unmodifiableSet(allOperations);
     }
 
     /**
