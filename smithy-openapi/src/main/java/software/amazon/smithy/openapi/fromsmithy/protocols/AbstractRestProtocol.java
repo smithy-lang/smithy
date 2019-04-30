@@ -241,7 +241,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                 operationIndex.getErrors(operation).stream()
         ).map(shape -> {
             Shape operationOrError = shape.hasTrait(ErrorTrait.class) ? shape : operation;
-            String statusCode = String.valueOf(bindingIndex.getResponseCode(operationOrError));
+            String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, operationOrError);
             ResponseObject response = createResponse(context, bindingIndex, statusCode, operation, operationOrError);
             return Pair.of(statusCode, response);
         }).collect(Collectors.toMap(Pair::getLeft, Pair::getRight, (a, b) -> b, LinkedHashMap::new));

@@ -18,8 +18,10 @@ package software.amazon.smithy.openapi.fromsmithy;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
+import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.model.OpenApi;
@@ -94,6 +96,22 @@ public interface OpenApiProtocol {
                 .orElseThrow(() -> new OpenApiException(
                         "The `" + operation.getId() + "` operation has no `http` binding trait, which is "
                         + "required to compute a method (using the default protocol implementation)"));
+    }
+
+    /**
+     * Gets the response status code of an operation or error shape.
+     *
+     * <p>The default implementation will attempt to use HTTP binding traits
+     * to determine the HTTP status code of an operation or error structure.
+     *
+     * @param context The build context.
+     * @param operationOrError Operation or error shape ID.
+     * @return Returns the status code as a string.
+     */
+    default String getOperationResponseStatusCode(Context context, ToShapeId operationOrError) {
+        return String.valueOf(context.getModel()
+                .getKnowledge(HttpBindingIndex.class)
+                .getResponseCode(operationOrError));
     }
 
     /**
