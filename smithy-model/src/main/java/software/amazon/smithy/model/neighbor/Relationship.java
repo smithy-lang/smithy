@@ -17,6 +17,7 @@ package software.amazon.smithy.model.neighbor;
 
 import java.util.Objects;
 import java.util.Optional;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -32,6 +33,33 @@ public final class Relationship {
     private final RelationshipType relationshipType;
     private final ShapeId neighborShapeId;
     private final Shape neighborShape;
+
+    /**
+     * Constructs a shape relationship where the neighbor is not present.
+     *
+     * @param shape The shape the relationship originates from.
+     * @param relationshipType The relationshipType of relationship.
+     * @param neighborShapeId The id of the missing shape the relationship targets.
+     */
+    public Relationship(Shape shape, RelationshipType relationshipType, ShapeId neighborShapeId) {
+        this(shape, relationshipType, neighborShapeId, null);
+    }
+
+    /**
+     * Constructs a shape relationship where the neighbor is present.
+     *
+     * @param shape The shape the relationship originates from.
+     * @param relationshipType The relationshipType of relationship.
+     * @param neighborShape The shape the relationship targets.
+     */
+    public Relationship(Shape shape, RelationshipType relationshipType, Shape neighborShape) {
+        this(
+                shape,
+                relationshipType,
+                Objects.requireNonNull(neighborShape, "Neighbor shape must not be null").getId(),
+                shape
+        );
+    }
 
     /**
      * Constructs a shape relationship.
@@ -60,10 +88,8 @@ public final class Relationship {
         this.neighborShapeId = Objects.requireNonNull(neighborShapeId);
         this.neighborShape = neighborShape;
 
-        if (neighborShape != null) {
-            if (!neighborShapeId.equals(neighborShape.getId())) {
-                throw new IllegalArgumentException("neighborShapeId must be the same as neighborShape#getId()");
-            }
+        if (neighborShape != null && !neighborShapeId.equals(neighborShape.getId())) {
+            throw new IllegalArgumentException("neighborShapeId must be the same as neighborShape#getId()");
         }
     }
 
@@ -102,6 +128,20 @@ public final class Relationship {
      */
     public Optional<Shape> getNeighborShape() {
         return Optional.ofNullable(neighborShape);
+    }
+
+    /**
+     * Gets the neighbor shape or throws if it doesn't exist.
+     *
+     * @return Returns the neighbor shape.
+     * @throws ExpectationNotMetException if the neighbor is missing.
+     */
+    public Shape expectNeighborShape() {
+        if (neighborShape == null) {
+            throw new ExpectationNotMetException("Neighbor does not exist: " + neighborShapeId, shape);
+        }
+
+        return neighborShape;
     }
 
     @Override

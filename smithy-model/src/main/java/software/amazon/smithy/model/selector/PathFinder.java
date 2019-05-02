@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
@@ -29,9 +30,12 @@ import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -126,12 +130,72 @@ public final class PathFinder {
     }
 
     /**
+     * Creates a {@code Path} to an operation input member if it exists.
+     *
+     * @param operationId Operation to start from.
+     * @param memberName Input member name to find in the operation input.
+     * @return Returns the optionally found {@code Path} to the member.
+     */
+    public Optional<Path> createPathToInputMember(ToShapeId operationId, String memberName) {
+        return createPathTo(operationId, memberName, RelationshipType.INPUT);
+    }
+
+    /**
+     * Creates a {@code Path} to an operation output member if it exists.
+     *
+     * @param operationId Operation to start from.
+     * @param memberName Output member name to find in the operation output.
+     * @return Returns the optionally found {@code Path} to the member.
+     */
+    public Optional<Path> createPathToOutputMember(ToShapeId operationId, String memberName) {
+        return createPathTo(operationId, memberName, RelationshipType.OUTPUT);
+    }
+
+    private Optional<Path> createPathTo(ToShapeId operationId, String memberName, RelationshipType rel) {
+        OperationShape operation = index.getShape(operationId.toShapeId())
+                .flatMap(Shape::asOperationShape)
+                .orElse(null);
+
+        if (operation == null) {
+            return Optional.empty();
+        }
+
+        Optional<ShapeId> structId = rel == RelationshipType.INPUT ? operation.getInput() : operation.getOutput();
+        StructureShape struct = structId
+                .flatMap(index::getShape)
+                .flatMap(Shape::asStructureShape)
+                .orElse(null);
+
+        if (struct == null) {
+            return Optional.empty();
+        }
+
+        MemberShape member = struct.getMember(memberName).orElse(null);
+
+        if (member == null) {
+            return Optional.empty();
+        }
+
+        Shape target = index.getShape(member.getTarget()).orElse(null);
+
+        if (target == null) {
+            return Optional.empty();
+        }
+
+        List<Relationship> relationships = new ArrayList<>();
+        relationships.add(new Relationship(operation, rel, struct.getId(), struct));
+        relationships.add(new Relationship(struct, RelationshipType.STRUCTURE_MEMBER, member.getId(), member));
+        relationships.add(new Relationship(member, RelationshipType.MEMBER_TARGET, member.getTarget(), target));
+        return Optional.of(new Path(relationships));
+    }
+
+    /**
      * An immutable {@code Relationship} path from a starting shape to an end shape.
      */
     public static final class Path extends AbstractList<Relationship> {
         private List<Relationship> relationships;
 
-        Path(List<Relationship> relationships) {
+        public Path(List<Relationship> relationships) {
             if (relationships.isEmpty()) {
                 throw new IllegalArgumentException("Relationships cannot be empty!");
             }
