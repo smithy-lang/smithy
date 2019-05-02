@@ -21,10 +21,13 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -128,5 +131,25 @@ public class PathFinderTest {
         assertThat(result.get(0).getStartShape(), equalTo(list));
         assertThat(result.get(0).getEndShape(), equalTo(list));
         assertThat(result.get(0).size(), equalTo(2));
+    }
+
+    @Test
+    public void createsPathToInputAndOutputMember() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("path-to-member.smithy"))
+                .assemble()
+                .unwrap();
+        PathFinder finder = PathFinder.create(model);
+        ShapeId operation = ShapeId.from("smithy.example#Operation");
+
+        Optional<PathFinder.Path> input = finder.createPathToInputMember(operation, "foo");
+        assertThat(input.isPresent(), is(true));
+        assertThat(input.get().toString(),
+                   equalTo("[id|smithy.example#Operation] -[input]-> [id|smithy.example#Input] -[member]-> [id|smithy.example#Input$foo] > [id|smithy.api#String]"));
+
+        Optional<PathFinder.Path> output = finder.createPathToOutputMember(operation, "foo");
+        assertThat(output.isPresent(), is(true));
+        assertThat(output.get().toString(),
+                   equalTo("[id|smithy.example#Operation] -[output]-> [id|smithy.example#Output] -[member]-> [id|smithy.example#Output$foo] > [id|smithy.api#String]"));
     }
 }
