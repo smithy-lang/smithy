@@ -22,10 +22,10 @@ import software.amazon.smithy.model.SourceLocation;
  * trait on an operation.
  */
 public final class HostLabelTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#hostLabel";
+    public static final String NAME = "smithy.api#hostLabel";
 
     public HostLabelTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public HostLabelTrait() {
@@ -34,7 +34,7 @@ public final class HostLabelTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<HostLabelTrait> {
         public Provider() {
-            super(TRAIT, HostLabelTrait::new);
+            super(NAME, HostLabelTrait::new);
         }
     }
 }

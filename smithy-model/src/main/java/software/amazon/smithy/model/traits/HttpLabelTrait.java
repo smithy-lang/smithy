@@ -22,10 +22,10 @@ import software.amazon.smithy.model.SourceLocation;
  * the member name.
  */
 public final class HttpLabelTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#httpLabel";
+    public static final String NAME = "smithy.api#httpLabel";
 
     public HttpLabelTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public HttpLabelTrait() {
@@ -34,7 +34,7 @@ public final class HttpLabelTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<HttpLabelTrait> {
         public Provider() {
-            super(TRAIT, HttpLabelTrait::new);
+            super(NAME, HttpLabelTrait::new);
         }
     }
 }

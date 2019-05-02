@@ -35,19 +35,19 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class CognitoUserPoolsSettingsTrait
         extends AbstractTrait implements ToSmithyBuilder<CognitoUserPoolsSettingsTrait> {
 
-    public static final String TRAIT = "aws.api#cognitoUserPoolsSettings";
+    public static final String NAME = "aws.api#cognitoUserPoolsSettings";
     private static final String PROVIDER_ARNS = "providerArns";
 
     private final List<String> providerArns;
 
     private CognitoUserPoolsSettingsTrait(Builder builder) {
-        super(TRAIT, builder.getSourceLocation());
+        super(NAME, builder.getSourceLocation());
         this.providerArns = ListUtils.copyOf(SmithyBuilder.requiredState("providerArns", builder.providerArns));
     }
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(TRAIT);
+            super(NAME);
         }
 
         @Override

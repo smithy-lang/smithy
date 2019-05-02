@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Binds a map structure member to prefixed HTTP headers.
  */
 public final class HttpPrefixHeadersTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#httpPrefixHeaders";
+    public static final String NAME = "smithy.api#httpPrefixHeaders";
 
     public HttpPrefixHeadersTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public HttpPrefixHeadersTrait(String value) {
@@ -33,7 +33,7 @@ public final class HttpPrefixHeadersTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<HttpPrefixHeadersTrait> {
         public Provider() {
-            super(TRAIT, HttpPrefixHeadersTrait::new);
+            super(NAME, HttpPrefixHeadersTrait::new);
         }
     }
 }

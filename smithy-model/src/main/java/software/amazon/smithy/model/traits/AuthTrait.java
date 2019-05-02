@@ -24,15 +24,15 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * schemes supported by default for operations bound to a service.
  */
 public final class AuthTrait extends StringListTrait implements ToSmithyBuilder<AuthTrait> {
-    private static final String TRAIT = "smithy.api#auth";
+    public static final String NAME = "smithy.api#auth";
 
     private AuthTrait(List<String> values, FromSourceLocation sourceLocation) {
-        super(TRAIT, values, sourceLocation);
+        super(NAME, values, sourceLocation);
     }
 
     public static final class Provider extends StringListTrait.Provider<AuthTrait> {
         public Provider() {
-            super(TRAIT, AuthTrait::new);
+            super(NAME, AuthTrait::new);
         }
     }
 

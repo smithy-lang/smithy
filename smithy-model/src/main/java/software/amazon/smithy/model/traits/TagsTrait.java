@@ -24,15 +24,15 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Applies tags to a shape.
  */
 public final class TagsTrait extends StringListTrait implements ToSmithyBuilder<TagsTrait>, Tagged {
-    private static final String TRAIT = "smithy.api#tags";
+    public static final String NAME = "smithy.api#tags";
 
     private TagsTrait(List<String> values, FromSourceLocation sourceLocation) {
-        super(TRAIT, values, sourceLocation);
+        super(NAME, values, sourceLocation);
     }
 
     public static final class Provider extends StringListTrait.Provider<TagsTrait> {
         public Provider() {
-            super(TRAIT, TagsTrait::new);
+            super(NAME, TagsTrait::new);
         }
     }
 

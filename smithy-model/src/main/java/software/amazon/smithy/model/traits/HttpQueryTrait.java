@@ -22,10 +22,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Binds a member to an HTTP query string.
  */
 public final class HttpQueryTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#httpQuery";
+    public static final String NAME = "smithy.api#httpQuery";
 
     public HttpQueryTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
         if (getValue().isEmpty()) {
             throw new SourceException("httpQuery parameter name binding must not be empty", getSourceLocation());
         }
@@ -37,7 +37,7 @@ public final class HttpQueryTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<HttpQueryTrait> {
         public Provider() {
-            super(TRAIT, HttpQueryTrait::new);
+            super(NAME, HttpQueryTrait::new);
         }
     }
 }

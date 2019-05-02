@@ -22,10 +22,10 @@ import software.amazon.smithy.model.SourceLocation;
  * replayed requests.
  */
 public final class IdempotencyTokenTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#idempotencyToken";
+    public static final String NAME = "smithy.api#idempotencyToken";
 
     public IdempotencyTokenTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public IdempotencyTokenTrait() {
@@ -34,7 +34,7 @@ public final class IdempotencyTokenTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<IdempotencyTokenTrait> {
         public Provider() {
-            super(TRAIT, IdempotencyTokenTrait::new);
+            super(NAME, IdempotencyTokenTrait::new);
         }
     }
 }

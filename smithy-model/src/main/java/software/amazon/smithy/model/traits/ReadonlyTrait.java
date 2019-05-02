@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Indicates that an operation is read-only.
  */
 public final class ReadonlyTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#readonly";
+    public static final String NAME = "smithy.api#readonly";
 
     public ReadonlyTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public ReadonlyTrait() {
@@ -33,7 +33,7 @@ public final class ReadonlyTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<ReadonlyTrait> {
         public Provider() {
-            super(TRAIT, ReadonlyTrait::new);
+            super(NAME, ReadonlyTrait::new);
         }
     }
 }

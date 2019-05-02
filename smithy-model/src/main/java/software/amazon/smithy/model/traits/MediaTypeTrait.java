@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Documents the media type of a blob shape.
  */
 public final class MediaTypeTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#mediaType";
+    public static final String NAME = "smithy.api#mediaType";
 
     public MediaTypeTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public MediaTypeTrait(String value) {
@@ -33,7 +33,7 @@ public final class MediaTypeTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<MediaTypeTrait> {
         public Provider() {
-            super(TRAIT, MediaTypeTrait::new);
+            super(NAME, MediaTypeTrait::new);
         }
     }
 }

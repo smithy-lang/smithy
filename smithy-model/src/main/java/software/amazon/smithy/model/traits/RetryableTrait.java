@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Marks an error structure as retryable.
  */
 public final class RetryableTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#retryable";
+    public static final String NAME = "smithy.api#retryable";
 
     public RetryableTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public RetryableTrait() {
@@ -33,7 +33,7 @@ public final class RetryableTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<RetryableTrait> {
         public Provider() {
-            super(TRAIT, RetryableTrait::new);
+            super(NAME, RetryableTrait::new);
         }
     }
 }

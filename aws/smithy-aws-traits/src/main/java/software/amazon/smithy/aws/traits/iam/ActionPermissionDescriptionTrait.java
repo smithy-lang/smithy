@@ -22,15 +22,15 @@ import software.amazon.smithy.model.traits.StringTrait;
  * Defines the description of what providing access to an operation entails.
  */
 public final class ActionPermissionDescriptionTrait extends StringTrait {
-    private static final String TRAIT = "aws.iam#actionPermissionDescription";
+    public static final String NAME = "aws.iam#actionPermissionDescription";
 
     private ActionPermissionDescriptionTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public static final class Provider extends StringTrait.Provider<ActionPermissionDescriptionTrait> {
         public Provider() {
-            super(TRAIT, ActionPermissionDescriptionTrait::new);
+            super(NAME, ActionPermissionDescriptionTrait::new);
         }
     }
 }

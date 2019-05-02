@@ -29,10 +29,10 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * only specific authentication schemes by name.
  */
 public final class UnsignedPayloadTrait extends StringListTrait implements ToSmithyBuilder<UnsignedPayloadTrait> {
-    private static final String TRAIT = "aws.api#unsignedPayload";
+    public static final String NAME = "aws.api#unsignedPayload";
 
     public UnsignedPayloadTrait(List<String> values, FromSourceLocation sourceLocation) {
-        super(TRAIT, values, sourceLocation);
+        super(NAME, values, sourceLocation);
     }
 
     public UnsignedPayloadTrait(FromSourceLocation sourceLocation) {
@@ -45,7 +45,7 @@ public final class UnsignedPayloadTrait extends StringListTrait implements ToSmi
 
     public static final class Provider extends StringListTrait.Provider<UnsignedPayloadTrait> {
         public Provider() {
-            super(TRAIT, UnsignedPayloadTrait::new);
+            super(NAME, UnsignedPayloadTrait::new);
         }
     }
 

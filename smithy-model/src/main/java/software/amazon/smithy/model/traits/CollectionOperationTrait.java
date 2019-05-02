@@ -18,10 +18,10 @@ package software.amazon.smithy.model.traits;
 import software.amazon.smithy.model.SourceLocation;
 
 public class CollectionOperationTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#collectionOperation";
+    public static final String NAME = "smithy.api#collectionOperation";
 
     public CollectionOperationTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public CollectionOperationTrait() {
@@ -30,7 +30,7 @@ public class CollectionOperationTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<CollectionOperationTrait> {
         public Provider() {
-            super(TRAIT, CollectionOperationTrait::new);
+            super(NAME, CollectionOperationTrait::new);
         }
     }
 }

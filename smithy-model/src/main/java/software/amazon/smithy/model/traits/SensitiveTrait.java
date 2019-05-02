@@ -22,10 +22,10 @@ import software.amazon.smithy.model.SourceLocation;
  * should be handled with care.
  */
 public final class SensitiveTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#sensitive";
+    public static final String NAME = "smithy.api#sensitive";
 
     public SensitiveTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public SensitiveTrait() {
@@ -34,7 +34,7 @@ public final class SensitiveTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<SensitiveTrait> {
         public Provider() {
-            super(TRAIT, SensitiveTrait::new);
+            super(NAME, SensitiveTrait::new);
         }
     }
 }

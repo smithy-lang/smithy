@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Indicates that an operation is idempotent.
  */
 public final class IdempotentTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#idempotent";
+    public static final String NAME = "smithy.api#idempotent";
 
     public IdempotentTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public IdempotentTrait() {
@@ -33,7 +33,7 @@ public final class IdempotentTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<IdempotentTrait> {
         public Provider() {
-            super(TRAIT, IdempotentTrait::new);
+            super(NAME, IdempotentTrait::new);
         }
     }
 }

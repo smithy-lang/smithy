@@ -24,10 +24,10 @@ import software.amazon.smithy.model.SourceLocation;
  * trait that targets blob, boolean, integer, long, string, or timestamp.
  */
 public final class EventHeaderTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#eventHeader";
+    public static final String NAME = "smithy.api#eventHeader";
 
     public EventHeaderTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public EventHeaderTrait() {
@@ -36,7 +36,7 @@ public final class EventHeaderTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<EventHeaderTrait> {
         public Provider() {
-            super(TRAIT, EventHeaderTrait::new);
+            super(NAME, EventHeaderTrait::new);
         }
     }
 }

@@ -22,10 +22,10 @@ import software.amazon.smithy.model.traits.BooleanTrait;
  * Disables the automatic inference of condition keys of a resource.
  */
 public final class DisableConditionKeyInferenceTrait extends BooleanTrait {
-    private static final String TRAIT = "aws.iam#disableConditionKeyInference";
+    public static final String NAME = "aws.iam#disableConditionKeyInference";
 
     public DisableConditionKeyInferenceTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public DisableConditionKeyInferenceTrait() {
@@ -34,7 +34,7 @@ public final class DisableConditionKeyInferenceTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<DisableConditionKeyInferenceTrait> {
         public Provider() {
-            super(TRAIT, DisableConditionKeyInferenceTrait::new);
+            super(NAME, DisableConditionKeyInferenceTrait::new);
         }
     }
 }

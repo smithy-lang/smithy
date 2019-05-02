@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Binds a single structure member to the payload of an HTTP request.
  */
 public final class HttpPayloadTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#httpPayload";
+    public static final String NAME = "smithy.api#httpPayload";
 
     public HttpPayloadTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public HttpPayloadTrait() {
@@ -33,7 +33,7 @@ public final class HttpPayloadTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<HttpPayloadTrait> {
         public Provider() {
-            super(TRAIT, HttpPayloadTrait::new);
+            super(NAME, HttpPayloadTrait::new);
         }
     }
 }

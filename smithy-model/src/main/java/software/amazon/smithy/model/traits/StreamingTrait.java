@@ -26,10 +26,10 @@ import software.amazon.smithy.model.SourceLocation;
  * TODO: Ensure that there is only one streaming blob per operation in/out.
  */
 public final class StreamingTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#streaming";
+    public static final String NAME = "smithy.api#streaming";
 
     public StreamingTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public StreamingTrait() {
@@ -38,7 +38,7 @@ public final class StreamingTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<StreamingTrait> {
         public Provider() {
-            super(TRAIT, StreamingTrait::new);
+            super(NAME, StreamingTrait::new);
         }
     }
 }

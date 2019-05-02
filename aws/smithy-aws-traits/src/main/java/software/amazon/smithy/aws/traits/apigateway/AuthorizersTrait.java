@@ -43,18 +43,18 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html">API Gateway Authorizers</a>
  */
 public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBuilder<AuthorizersTrait> {
-    public static final String TRAIT = "aws.apigateway#authorizers";
+    public static final String NAME = "aws.apigateway#authorizers";
 
     private final Map<String, Authorizer> authorizers;
 
     private AuthorizersTrait(Builder builder) {
-        super(TRAIT, builder.getSourceLocation());
+        super(NAME, builder.getSourceLocation());
         authorizers = MapUtils.copyOf(builder.authorizers);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(TRAIT);
+            super(NAME);
         }
 
         @Override

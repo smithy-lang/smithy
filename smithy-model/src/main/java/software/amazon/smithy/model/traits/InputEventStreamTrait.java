@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Trait implementation of inputEventStream.
  */
 public final class InputEventStreamTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#inputEventStream";
+    public static final String NAME = "smithy.api#inputEventStream";
 
     public InputEventStreamTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public InputEventStreamTrait(String value) {
@@ -33,7 +33,7 @@ public final class InputEventStreamTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<InputEventStreamTrait> {
         public Provider() {
-            super(TRAIT, InputEventStreamTrait::new);
+            super(NAME, InputEventStreamTrait::new);
         }
     }
 }

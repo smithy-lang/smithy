@@ -27,9 +27,9 @@ public class AuthorizersTraitTest {
                         .withMember("resultTtlInSeconds", 100)
                         .build())
                 .build();
-        Trait trait = factory.createTrait(AuthorizersTrait.TRAIT, id, node).get();
+        Trait trait = factory.createTrait(AuthorizersTrait.NAME, id, node).get();
 
         assertThat(trait, instanceOf(AuthorizersTrait.class));
-        assertThat(factory.createTrait(AuthorizersTrait.TRAIT, id, trait.toNode()).get(), equalTo(trait));
+        assertThat(factory.createTrait(AuthorizersTrait.NAME, id, trait.toNode()).get(), equalTo(trait));
     }
 }

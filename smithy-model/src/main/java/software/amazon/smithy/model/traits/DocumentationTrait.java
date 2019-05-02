@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Adds documentation to a model.
  */
 public final class DocumentationTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#documentation";
+    public static final String NAME = "smithy.api#documentation";
 
     public DocumentationTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public DocumentationTrait(String value) {
@@ -33,7 +33,7 @@ public final class DocumentationTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<DocumentationTrait> {
         public Provider() {
-            super(TRAIT, DocumentationTrait::new);
+            super(NAME, DocumentationTrait::new);
         }
     }
 }

@@ -18,10 +18,10 @@ package software.amazon.smithy.model.traits;
 import software.amazon.smithy.model.SourceLocation;
 
 public class XmlFlattenedTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#xmlFlattened";
+    public static final String NAME = "smithy.api#xmlFlattened";
 
     public XmlFlattenedTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public XmlFlattenedTrait() {
@@ -30,7 +30,7 @@ public class XmlFlattenedTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<XmlFlattenedTrait> {
         public Provider() {
-            super(TRAIT, XmlFlattenedTrait::new);
+            super(NAME, XmlFlattenedTrait::new);
         }
     }
 }

@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Defines when a shape or member was added to the model.
  */
 public final class SinceTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#since";
+    public static final String NAME = "smithy.api#since";
 
     public SinceTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public SinceTrait(String value) {
@@ -33,7 +33,7 @@ public final class SinceTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<SinceTrait> {
         public Provider() {
-            super(TRAIT, SinceTrait::new);
+            super(NAME, SinceTrait::new);
         }
     }
 }

@@ -39,7 +39,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * defaults to "*" when not set.
  */
 public final class IdRefTrait extends AbstractTrait implements ToSmithyBuilder<IdRefTrait> {
-    private static final String TRAIT = "smithy.api#idRef";
+    public static final String NAME = "smithy.api#idRef";
     private static final String SELECTOR_MEMBER_NAME = "selector";
     private static final String FAIL_WHEN_MISSING_MEMBER = "failWhenMissing";
     private static final String ERROR_MESSAGE = "errorMessage";
@@ -49,7 +49,7 @@ public final class IdRefTrait extends AbstractTrait implements ToSmithyBuilder<I
     private final String errorMessage;
 
     private IdRefTrait(Builder builder) {
-        super(TRAIT, builder.sourceLocation);
+        super(NAME, builder.sourceLocation);
         selector = builder.selector;
         failWhenMissing = builder.failWhenMissing;
         errorMessage = builder.errorMessage;
@@ -123,7 +123,7 @@ public final class IdRefTrait extends AbstractTrait implements ToSmithyBuilder<I
     public static final class Provider implements TraitService {
         @Override
         public String getTraitName() {
-            return TRAIT;
+            return NAME;
         }
 
         @Override

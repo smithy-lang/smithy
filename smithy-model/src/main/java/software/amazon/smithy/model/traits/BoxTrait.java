@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Indicates that a shape is boxed, meaning a value may or may not be present.
  */
 public final class BoxTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#box";
+    public static final String NAME = "smithy.api#box";
 
     public BoxTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public BoxTrait() {
@@ -33,7 +33,7 @@ public final class BoxTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<BoxTrait> {
         public Provider() {
-            super(TRAIT, BoxTrait::new);
+            super(NAME, BoxTrait::new);
         }
     }
 }

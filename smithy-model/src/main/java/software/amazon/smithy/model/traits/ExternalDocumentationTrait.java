@@ -24,10 +24,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Provides a link to external documentation of a service or operation.
  */
 public final class ExternalDocumentationTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#externalDocumentation";
+    public static final String NAME = "smithy.api#externalDocumentation";
 
     public ExternalDocumentationTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
         validateUrl(value, sourceLocation);
     }
 
@@ -37,7 +37,7 @@ public final class ExternalDocumentationTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<ExternalDocumentationTrait> {
         public Provider() {
-            super(TRAIT, ExternalDocumentationTrait::new);
+            super(NAME, ExternalDocumentationTrait::new);
         }
     }
 

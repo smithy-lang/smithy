@@ -22,10 +22,10 @@ import software.amazon.smithy.model.SourceLocation;
 * name as a XML object property.
 */
 public final class XmlNameTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#xmlName";
+    public static final String NAME = "smithy.api#xmlName";
 
     public XmlNameTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public XmlNameTrait(String value) {
@@ -34,7 +34,7 @@ public final class XmlNameTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<XmlNameTrait> {
         public Provider() {
-            super(TRAIT, XmlNameTrait::new);
+            super(NAME, XmlNameTrait::new);
         }
     }
 }

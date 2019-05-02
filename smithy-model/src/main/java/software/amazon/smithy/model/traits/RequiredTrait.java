@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Indicates that a structure member is required.
  */
 public final class RequiredTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#required";
+    public static final String NAME = "smithy.api#required";
 
     public RequiredTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public RequiredTrait() {
@@ -33,7 +33,7 @@ public final class RequiredTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<RequiredTrait> {
         public Provider() {
-            super(TRAIT, RequiredTrait::new);
+            super(NAME, RequiredTrait::new);
         }
     }
 }
