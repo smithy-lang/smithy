@@ -99,4 +99,20 @@ public class ArnIndexTest {
         assertThat(arnIndex.getServiceArnNamespace(ShapeId.from("ns.foo#EmptyAwsService")),
                    equalTo("emptyawsservice"));
     }
+
+    @Test
+    public void findsEffectiveArns() {
+        Model m = Model.assembler()
+                .discoverModels(ArnIndexTest.class.getClassLoader())
+                .addImport(ArnIndexTest.class.getResource("effective-arns.json"))
+                .assemble()
+                .unwrap();
+        ArnIndex index = m.getKnowledge(ArnIndex.class);
+        ShapeId service = ShapeId.from("ns.foo#SomeService");
+
+        assertThat(index.getEffectiveOperationArn(service, ShapeId.from("ns.foo#InstanceOperation")).map(ArnTrait::getTemplate),
+                   equalTo(Optional.of("foo/{id}")));
+        assertThat(index.getEffectiveOperationArn(service, ShapeId.from("ns.foo#CollectionOperation")).map(ArnTrait::getTemplate),
+                   equalTo(Optional.of("foo")));
+    }
 }

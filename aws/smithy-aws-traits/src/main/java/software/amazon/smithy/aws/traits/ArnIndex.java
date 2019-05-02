@@ -16,15 +16,21 @@
 package software.amazon.smithy.aws.traits;
 
 import static java.util.Collections.unmodifiableMap;
+import static software.amazon.smithy.model.knowledge.IdentifierBindingIndex.BindingType;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
@@ -37,6 +43,7 @@ import software.amazon.smithy.utils.Pair;
 public final class ArnIndex implements KnowledgeIndex {
     private final Map<ShapeId, String> arnServices;
     private final Map<ShapeId, Map<ShapeId, ArnTrait>> templates;
+    private final Map<ShapeId, Map<ShapeId, ArnTrait>> effectiveArns = new HashMap<>();
 
     public ArnIndex(Model model) {
         // Pre-compute the ARN services.
@@ -47,24 +54,58 @@ public final class ArnIndex implements KnowledgeIndex {
 
         // Pre-compute all of the ArnTemplates in a service shape.
         TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
-        templates = unmodifiableMap(model.getShapeIndex().shapes(ServiceShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, ServiceTrait.class))
-                .map(pair -> compileServiceArns(topDownIndex, pair.getLeft()))
+        List<ServiceShape> services = model.getShapeIndex().shapes(ServiceShape.class)
+                .filter(shape -> shape.hasTrait(ServiceTrait.class))
+                .collect(Collectors.toList());
+
+        templates = unmodifiableMap(services.stream()
+                .map(service -> compileServiceArns(topDownIndex, service))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
+
+        // Pre-compute all effective ARNs in each service.
+        IdentifierBindingIndex bindingIndex = model.getKnowledge(IdentifierBindingIndex.class);
+        for (ServiceShape service : services) {
+            compileEffectiveArns(topDownIndex, bindingIndex, service);
+        }
     }
 
     private static String resolveServiceArn(Pair<ServiceShape, ServiceTrait> pair) {
         return pair.getRight().getArnNamespace();
     }
 
-    private Pair<ShapeId, Map<ShapeId, ArnTrait>> compileServiceArns(
-            TopDownIndex index,
-            ServiceShape service
-    ) {
+    private Pair<ShapeId, Map<ShapeId, ArnTrait>> compileServiceArns(TopDownIndex index, ServiceShape service) {
         return Pair.of(service.getId(), unmodifiableMap(index.getContainedResources(service.getId()).stream()
                 .flatMap(resource -> Trait.flatMapStream(resource, ArnTrait.class))
                 .map(pair -> Pair.of(pair.getLeft().getId(), pair.getRight()))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight))));
+    }
+
+    private void compileEffectiveArns(
+            TopDownIndex index, IdentifierBindingIndex bindings, ServiceShape service) {
+        Map<ShapeId, ArnTrait> operationMappings = new HashMap<>();
+        effectiveArns.put(service.getId(), operationMappings);
+
+        // Iterate over every resource that has an ARN trait.
+        for (Map.Entry<ShapeId, ArnTrait> entry : templates.get(service.getId()).entrySet()) {
+            ShapeId resourceId = entry.getKey();
+            ArnTrait arnTrait = entry.getValue();
+            // Find all of the operations contained within the resource and determine the
+            // kind of identifier binding of the operation. This dictates if the effective
+            // ARN is the ARN on the resource or the parent of the resource.
+            for (OperationShape operation : index.getContainedOperations(resourceId)) {
+                BindingType bindingType = bindings.getOperationBindingType(resourceId, operation);
+                if (bindingType == BindingType.INSTANCE) {
+                    operationMappings.put(operation.getId(), arnTrait);
+                } else if (bindingType == BindingType.COLLECTION) {
+                    for (ResourceShape resource : index.getContainedResources(service)) {
+                        if (resource.getResources().contains(entry.getKey())) {
+                            resource.getTrait(ArnTrait.class)
+                                    .ifPresent(trait -> operationMappings.put(operation.getId(), trait));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -89,6 +130,24 @@ public final class ArnIndex implements KnowledgeIndex {
      */
     public Map<ShapeId, ArnTrait> getServiceResourceArns(ToShapeId service) {
         return templates.getOrDefault(service.toShapeId(), Collections.emptyMap());
+    }
+
+    /**
+     * Gets the effective ARN of an operation based on the identifier bindings
+     * of the operation bound to a resource contained within a service.
+     *
+     * <p>An operation bound to a resource using a collection binding has an
+     * effective ARN of the parent of the resource. An operation bound to a
+     * resource using an instance binding uses the ARN of the resource as
+     * its effective ARN.
+     *
+     * @param service Service the operation is bound within.
+     * @param operation Operation shape for which to find the effective ARN.
+     * @return Returns the optionally found effective ARN.
+     */
+    public Optional<ArnTrait> getEffectiveOperationArn(ToShapeId service, ToShapeId operation) {
+        return Optional.ofNullable(effectiveArns.get(service.toShapeId()))
+                .flatMap(operationArns -> Optional.ofNullable(operationArns.get(operation.toShapeId())));
     }
 
     /**

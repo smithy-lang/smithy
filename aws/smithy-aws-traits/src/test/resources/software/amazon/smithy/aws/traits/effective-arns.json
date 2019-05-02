@@ -1,0 +1,44 @@
+{
+  "smithy": "1.0",
+  "ns.foo": {
+    "shapes": {
+      "SomeService": {
+        "type": "service",
+        "version": "2018-03-17",
+        "aws.api#service": {"sdkServiceId": "Some Value"},
+        "resources": ["Resource1"]
+      },
+      "Resource1": {
+        "type": "resource",
+        "aws.api#arn": {"template": "foo"},
+        "resources": ["Resource2"]
+      },
+      "Resource2": {
+        "type": "resource",
+        "identifiers": {"id": "String"},
+        "aws.api#arn": {"template": "foo/{id}"},
+        "operations": ["InstanceOperation", "CollectionOperation"]
+      },
+      "InstanceOperation": {
+        "type": "operation",
+        "input": "InstanceOperationInput"
+      },
+      "InstanceOperationInput": {
+        "type": "structure",
+        "members": {
+          "id": {
+            "required": true,
+            "target": "String"
+          }
+        }
+      },
+      "CollectionOperation": {
+        "type": "operation",
+        "input": "CollectionOperationInput"
+      },
+      "CollectionOperationInput": {
+        "type": "structure"
+      }
+    }
+  }
+}
