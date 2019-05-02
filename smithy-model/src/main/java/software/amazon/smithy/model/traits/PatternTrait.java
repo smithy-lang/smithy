@@ -25,11 +25,11 @@ import software.amazon.smithy.model.SourceLocation;
  * Restricts string values to a specified regular expression.
  */
 public final class PatternTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#pattern";
+    public static final String NAME = "smithy.api#pattern";
     private final Pattern pattern;
 
     public PatternTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
         this.pattern = compilePattern(value, sourceLocation);
     }
 
@@ -39,7 +39,7 @@ public final class PatternTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<PatternTrait> {
         public Provider() {
-            super(TRAIT, PatternTrait::new);
+            super(NAME, PatternTrait::new);
         }
     }
 

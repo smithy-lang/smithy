@@ -22,10 +22,10 @@ import software.amazon.smithy.model.SourceLocation;
  * which the operation is bound.
  */
 public final class ResourceIdentifierTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#resourceIdentifier";
+    public static final String NAME = "smithy.api#resourceIdentifier";
 
     public ResourceIdentifierTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public ResourceIdentifierTrait(String value) {
@@ -34,7 +34,7 @@ public final class ResourceIdentifierTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<ResourceIdentifierTrait> {
         public Provider() {
-            super(TRAIT, ResourceIdentifierTrait::new);
+            super(NAME, ResourceIdentifierTrait::new);
         }
     }
 }

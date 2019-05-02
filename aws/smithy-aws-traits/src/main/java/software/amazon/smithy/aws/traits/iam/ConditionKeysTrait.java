@@ -25,10 +25,10 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Applies condition keys to an operation or resource.
  */
 public final class ConditionKeysTrait extends StringListTrait implements ToSmithyBuilder<ConditionKeysTrait> {
-    private static final String TRAIT = "aws.iam#conditionKeys";
+    public static final String NAME = "aws.iam#conditionKeys";
 
     public ConditionKeysTrait(List<String> keys, FromSourceLocation sourceLocation) {
-        super(TRAIT, keys, sourceLocation);
+        super(NAME, keys, sourceLocation);
     }
 
     public ConditionKeysTrait(List<String> keys) {
@@ -41,7 +41,7 @@ public final class ConditionKeysTrait extends StringListTrait implements ToSmith
 
     public static final class Provider extends StringListTrait.Provider<ConditionKeysTrait> {
         public Provider() {
-            super(TRAIT, ConditionKeysTrait::new);
+            super(NAME, ConditionKeysTrait::new);
         }
     }
 

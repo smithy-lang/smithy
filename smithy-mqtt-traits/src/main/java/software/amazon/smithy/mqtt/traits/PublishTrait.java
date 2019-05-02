@@ -22,11 +22,11 @@ import software.amazon.smithy.model.traits.StringTrait;
  * mqttPublish trait.
  */
 public final class PublishTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#mqttPublish";
+    public static final String NAME = "smithy.api#mqttPublish";
     private final Topic topic;
 
     public PublishTrait(String topic, SourceLocation sourceLocation) {
-        super(TRAIT, topic, sourceLocation);
+        super(NAME, topic, sourceLocation);
         this.topic = Topic.parse(topic);
     }
 
@@ -36,7 +36,7 @@ public final class PublishTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<PublishTrait> {
         public Provider() {
-            super(TRAIT, PublishTrait::new);
+            super(NAME, PublishTrait::new);
         }
     }
 

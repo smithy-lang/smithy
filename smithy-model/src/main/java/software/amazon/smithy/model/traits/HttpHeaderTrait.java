@@ -25,7 +25,7 @@ import software.amazon.smithy.utils.SetUtils;
  * Binds a member to an HTTP header.
  */
 public final class HttpHeaderTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#httpHeader";
+    public static final String NAME = "smithy.api#httpHeader";
     private static final Set<String> BLACKLIST = SetUtils.of(
             "authorization",
             "connection",
@@ -44,7 +44,7 @@ public final class HttpHeaderTrait extends StringTrait {
             "x-forwarded-for");
 
     public HttpHeaderTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
 
         if (getValue().isEmpty()) {
             throw new SourceException("httpHeader field name binding must not be empty", getSourceLocation());
@@ -61,7 +61,7 @@ public final class HttpHeaderTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<HttpHeaderTrait> {
         public Provider() {
-            super(TRAIT, HttpHeaderTrait::new);
+            super(NAME, HttpHeaderTrait::new);
         }
     }
 }

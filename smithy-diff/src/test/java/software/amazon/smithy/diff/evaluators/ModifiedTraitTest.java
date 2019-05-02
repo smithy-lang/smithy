@@ -35,7 +35,7 @@ import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class ModifiedTraitTest {
-    private static final String TRAIT_NAME = "com.foo#baz";
+    private static final String NAME = "com.foo#baz";
 
     private static final class TestCaseData {
         private Shape oldShape;
@@ -44,13 +44,13 @@ public class ModifiedTraitTest {
         public TestCaseData(String oldValue, String newValue) {
             StringShape.Builder builder1 = StringShape.builder().id("com.foo#String");
             if (oldValue != null) {
-                builder1.addTrait(new DynamicTrait(TRAIT_NAME, Node.from(oldValue)));
+                builder1.addTrait(new DynamicTrait(NAME, Node.from(oldValue)));
             }
             oldShape = builder1.build();
 
             StringShape.Builder builder2 = StringShape.builder().id("com.foo#String");
             if (newValue != null) {
-                builder2.addTrait(new DynamicTrait(TRAIT_NAME, Node.from(newValue)));
+                builder2.addTrait(new DynamicTrait(NAME, Node.from(newValue)));
             }
             newShape = builder2.build();
         }
@@ -92,7 +92,7 @@ public class ModifiedTraitTest {
 
     private static TraitDefinition createDefinition(String tag) {
         return TraitDefinition.builder()
-                .name(TRAIT_NAME)
+                .name(NAME)
                 .addTag(tag)
                 .shape(ShapeId.from("smithy.api#String"))
                 .build();

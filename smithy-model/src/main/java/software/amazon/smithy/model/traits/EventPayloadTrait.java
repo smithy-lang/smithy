@@ -24,10 +24,10 @@ import software.amazon.smithy.model.SourceLocation;
  * that targets a blob or structure.
  */
 public final class EventPayloadTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#eventPayload";
+    public static final String NAME = "smithy.api#eventPayload";
 
     public EventPayloadTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public EventPayloadTrait() {
@@ -36,7 +36,7 @@ public final class EventPayloadTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<EventPayloadTrait> {
         public Provider() {
-            super(TRAIT, EventPayloadTrait::new);
+            super(NAME, EventPayloadTrait::new);
         }
     }
 }

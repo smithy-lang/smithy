@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
 * Marks a structure member to be serialized to/from an XML attribute.
 */
 public final class XmlAttributeTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#xmlAttribute";
+    public static final String NAME = "smithy.api#xmlAttribute";
 
     public XmlAttributeTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public XmlAttributeTrait() {
@@ -33,7 +33,7 @@ public final class XmlAttributeTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<XmlAttributeTrait> {
         public Provider() {
-            super(TRAIT, XmlAttributeTrait::new);
+            super(NAME, XmlAttributeTrait::new);
         }
     }
 }

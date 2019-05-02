@@ -20,10 +20,10 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
 
 public final class RequestValidatorTrait extends StringTrait {
-    public static final String TRAIT = "aws.apigateway#requestValidator";
+    public static final String NAME = "aws.apigateway#requestValidator";
 
     public RequestValidatorTrait(String value, FromSourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public RequestValidatorTrait(String value) {
@@ -32,7 +32,7 @@ public final class RequestValidatorTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<RequestValidatorTrait> {
         public Provider() {
-            super(TRAIT, RequestValidatorTrait::new);
+            super(NAME, RequestValidatorTrait::new);
         }
     }
 }

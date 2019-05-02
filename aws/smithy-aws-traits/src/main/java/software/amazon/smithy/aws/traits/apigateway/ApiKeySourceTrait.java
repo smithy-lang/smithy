@@ -20,10 +20,10 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
 
 public final class ApiKeySourceTrait extends StringTrait {
-    public static final String TRAIT = "aws.apigateway#apiKeySource";
+    public static final String NAME = "aws.apigateway#apiKeySource";
 
     public ApiKeySourceTrait(String value, FromSourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public ApiKeySourceTrait(String value) {
@@ -32,7 +32,7 @@ public final class ApiKeySourceTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<ApiKeySourceTrait> {
         public Provider() {
-            super(TRAIT, ApiKeySourceTrait::new);
+            super(NAME, ApiKeySourceTrait::new);
         }
     }
 }

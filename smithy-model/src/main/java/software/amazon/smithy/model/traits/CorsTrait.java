@@ -32,7 +32,7 @@ import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<CorsTrait> {
-    private static final String TRAIT = "smithy.api#cors";
+    public static final String NAME = "smithy.api#cors";
     private static final String DEFAULT_ORIGIN = "*";
     private static final int DEFAULT_MAX_AGE = 600;
     private static final String ORIGIN_MEMBER_NAME = "origin";
@@ -46,7 +46,7 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
     private final Set<String> additionalExposedHeaders;
 
     private CorsTrait(Builder builder) {
-        super(TRAIT, builder.sourceLocation);
+        super(NAME, builder.sourceLocation);
         origin = builder.origin;
         maxAge = builder.maxAge;
         additionalAllowedHeaders = SetUtils.copyOf(builder.additionalAllowedHeaders);
@@ -138,7 +138,7 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
     public static final class Provider implements TraitService {
         @Override
         public String getTraitName() {
-            return TRAIT;
+            return NAME;
         }
 
         @Override

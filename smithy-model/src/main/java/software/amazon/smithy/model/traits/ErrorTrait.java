@@ -22,10 +22,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Indicates that a structure can be used as an error.
  */
 public final class ErrorTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#error";
+    public static final String NAME = "smithy.api#error";
 
     public ErrorTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
 
         if (!isClientError() && !isServerError()) {
             throw new SourceException(String.format(
@@ -39,7 +39,7 @@ public final class ErrorTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<ErrorTrait> {
         public Provider() {
-            super(TRAIT, ErrorTrait::new);
+            super(NAME, ErrorTrait::new);
         }
     }
 

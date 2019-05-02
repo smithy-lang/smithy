@@ -22,10 +22,10 @@ import software.amazon.smithy.model.SourceLocation;
  * name as a JSON object property.
  */
 public final class JsonNameTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#jsonName";
+    public static final String NAME = "smithy.api#jsonName";
 
     public JsonNameTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public JsonNameTrait(String value) {
@@ -34,7 +34,7 @@ public final class JsonNameTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<JsonNameTrait> {
         public Provider() {
-            super(TRAIT, JsonNameTrait::new);
+            super(NAME, JsonNameTrait::new);
         }
     }
 }

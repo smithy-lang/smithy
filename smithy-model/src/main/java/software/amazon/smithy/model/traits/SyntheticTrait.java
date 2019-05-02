@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Indicates that an error can be returned from any operation in the model.
  */
 public final class SyntheticTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#synthetic";
+    public static final String NAME = "smithy.api#synthetic";
 
     public SyntheticTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public SyntheticTrait() {
@@ -33,7 +33,7 @@ public final class SyntheticTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<SyntheticTrait> {
         public Provider() {
-            super(TRAIT, SyntheticTrait::new);
+            super(NAME, SyntheticTrait::new);
         }
     }
 }

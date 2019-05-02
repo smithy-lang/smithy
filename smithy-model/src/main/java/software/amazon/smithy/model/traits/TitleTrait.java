@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Provides a human-readable proper noun title to services and resources.
  */
 public final class TitleTrait extends StringTrait {
-    private static final String TRAIT = "smithy.api#title";
+    public static final String NAME = "smithy.api#title";
 
     public TitleTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public TitleTrait(String value) {
@@ -33,7 +33,7 @@ public final class TitleTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<TitleTrait> {
         public Provider() {
-            super(TRAIT, TitleTrait::new);
+            super(NAME, TitleTrait::new);
         }
     }
 }

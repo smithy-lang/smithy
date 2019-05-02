@@ -22,10 +22,10 @@ import software.amazon.smithy.model.SourceLocation;
  * which it was defined.
  */
 public final class PrivateTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#private";
+    public static final String NAME = "smithy.api#private";
 
     public PrivateTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public PrivateTrait() {
@@ -34,7 +34,7 @@ public final class PrivateTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<PrivateTrait> {
         public Provider() {
-            super(TRAIT, PrivateTrait::new);
+            super(NAME, PrivateTrait::new);
         }
     }
 }

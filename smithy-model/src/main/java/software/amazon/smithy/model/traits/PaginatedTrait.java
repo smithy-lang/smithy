@@ -33,7 +33,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * @see PaginatedTraitValidator
  */
 public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuilder<PaginatedTrait> {
-    private static final String TRAIT = "smithy.api#paginated";
+    public static final String NAME = "smithy.api#paginated";
     private static final List<String> PAGINATED_PROPERTIES = ListUtils.of("items", "inputToken",
             "outputToken", "pageSize");
 
@@ -43,7 +43,7 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
     private final String pageSize;
 
     private PaginatedTrait(Builder builder) {
-        super(TRAIT, builder.sourceLocation);
+        super(NAME, builder.sourceLocation);
         inputToken = Objects.requireNonNull(builder.inputToken, "inputToken is required");
         outputToken = Objects.requireNonNull(builder.outputToken, "outputToken is required");
         items = builder.items;
@@ -142,7 +142,7 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
     public static final class Provider implements TraitService {
         @Override
         public String getTraitName() {
-            return TRAIT;
+            return NAME;
         }
 
         @Override

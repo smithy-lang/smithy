@@ -21,10 +21,10 @@ import software.amazon.smithy.model.SourceLocation;
  * Indicates that the members of a list must be unique.
  */
 public final class UniqueItemsTrait extends BooleanTrait {
-    private static final String TRAIT = "smithy.api#uniqueItems";
+    public static final String NAME = "smithy.api#uniqueItems";
 
     public UniqueItemsTrait(SourceLocation sourceLocation) {
-        super(TRAIT, sourceLocation);
+        super(NAME, sourceLocation);
     }
 
     public UniqueItemsTrait() {
@@ -33,7 +33,7 @@ public final class UniqueItemsTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<UniqueItemsTrait> {
         public Provider() {
-            super(TRAIT, UniqueItemsTrait::new);
+            super(NAME, UniqueItemsTrait::new);
         }
     }
 }

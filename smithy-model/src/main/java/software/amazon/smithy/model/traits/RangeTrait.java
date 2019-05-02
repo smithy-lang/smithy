@@ -28,13 +28,13 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Constrains a shape to minimum and maximum numeric range.
  */
 public final class RangeTrait extends AbstractTrait implements ToSmithyBuilder<RangeTrait> {
-    private static final String TRAIT = "smithy.api#range";
+    public static final String NAME = "smithy.api#range";
 
     private final BigDecimal min;
     private final BigDecimal max;
 
     private RangeTrait(Builder builder) {
-        super(TRAIT, builder.sourceLocation);
+        super(NAME, builder.sourceLocation);
         this.min = builder.min;
         this.max = builder.max;
         if (max == null && min == null) {
@@ -105,7 +105,7 @@ public final class RangeTrait extends AbstractTrait implements ToSmithyBuilder<R
     public static final class Provider implements TraitService {
         @Override
         public String getTraitName() {
-            return TRAIT;
+            return NAME;
         }
 
         @Override

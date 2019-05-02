@@ -52,7 +52,7 @@ final class CognitoUserPoolsConverter implements SecuritySchemeConverter {
                 .getTrait(CognitoUserPoolsSettingsTrait.class)
                 .orElseThrow(() -> new OpenApiException(String.format(
                         "Missing required `%s` trait for the `%s` authentication scheme of `%s`.",
-                        CognitoUserPoolsSettingsTrait.TRAIT, SCHEME, context.getService().getId())));
+                        CognitoUserPoolsSettingsTrait.NAME, SCHEME, context.getService().getId())));
 
         return SecurityScheme.builder()
                 .type("apiKey")

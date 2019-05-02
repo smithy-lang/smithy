@@ -24,10 +24,10 @@ public final class TimestampFormatTrait extends StringTrait {
     public static final String EPOCH_SECONDS = "epoch-seconds";
     public static final String DATE_TIME = "date-time";
     public static final String HTTP_DATE = "http-date";
-    private static final String TRAIT = "smithy.api#timestampFormat";
+    public static final String NAME = "smithy.api#timestampFormat";
 
     public TimestampFormatTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public TimestampFormatTrait(String value) {
@@ -36,7 +36,7 @@ public final class TimestampFormatTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<TimestampFormatTrait> {
         public Provider() {
-            super(TRAIT, TimestampFormatTrait::new);
+            super(NAME, TimestampFormatTrait::new);
         }
     }
 }

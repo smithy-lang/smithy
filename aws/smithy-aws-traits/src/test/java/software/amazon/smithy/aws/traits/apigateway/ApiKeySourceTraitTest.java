@@ -15,9 +15,9 @@ public class ApiKeySourceTraitTest {
     public void registersTrait() {
         TraitFactory factory = TraitFactory.createServiceFactory();
         ShapeId id = ShapeId.from("smithy.example#Foo");
-        Trait trait = factory.createTrait(ApiKeySourceTrait.TRAIT, id, Node.from("HEADER")).get();
+        Trait trait = factory.createTrait(ApiKeySourceTrait.NAME, id, Node.from("HEADER")).get();
 
         assertThat(trait, instanceOf(ApiKeySourceTrait.class));
-        assertThat(factory.createTrait(ApiKeySourceTrait.TRAIT, id, trait.toNode()).get(), equalTo(trait));
+        assertThat(factory.createTrait(ApiKeySourceTrait.NAME, id, trait.toNode()).get(), equalTo(trait));
     }
 }

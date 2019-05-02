@@ -19,15 +19,15 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
 
 public final class DataTrait extends StringTrait {
-    private static final String TRAIT = "aws.api#data";
+    public static final String NAME = "aws.api#data";
 
     public DataTrait(String value, SourceLocation sourceLocation) {
-        super(TRAIT, value, sourceLocation);
+        super(NAME, value, sourceLocation);
     }
 
     public static final class Provider extends StringTrait.Provider<DataTrait> {
         public Provider() {
-            super(TRAIT, DataTrait::new);
+            super(NAME, DataTrait::new);
         }
     }
 }
