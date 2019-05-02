@@ -17,7 +17,6 @@ package software.amazon.smithy.openapi.fromsmithy;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -34,15 +33,15 @@ import software.amazon.smithy.utils.SetUtils;
  *
  * <p>Instances of {@code OpenApiProtocol} are discovered using SPI and
  * matched with configuration settings based on the result of matching
- * a protocol against {@link #getProtocolNamePattern()}.
+ * a protocol against {@link #getProtocolNames()}.
  */
 public interface OpenApiProtocol {
     /**
-     * Gets a pattern used to match protocol names.
+     * Gets the names of the protocol that this implementation supports.
      *
-     * @return Returns the protocol name pattern.
+     * @return Returns the supported protocol names.
      */
-    Pattern getProtocolNamePattern();
+    Set<String> getProtocolNames();
 
     /**
      * Creates an operation entry, including the method, URI, and operation
