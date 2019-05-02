@@ -5,7 +5,7 @@
       "Service": {
         "type": "service",
         "version": "2006-03-01",
-        "protocols": [{"name": "aws.rest-json"}],
+        "protocols": [{"name": "aws.rest-json-1.1"}],
         "operations": [
           "Operation"
         ]

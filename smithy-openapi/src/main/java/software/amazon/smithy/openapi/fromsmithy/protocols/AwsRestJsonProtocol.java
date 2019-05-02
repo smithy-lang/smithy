@@ -16,7 +16,7 @@
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Set;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.shapes.Shape;
@@ -25,6 +25,7 @@ import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Provides the conversion from Smithy aws.rest-json-1.0 and
@@ -32,8 +33,8 @@ import software.amazon.smithy.openapi.fromsmithy.Context;
  */
 public final class AwsRestJsonProtocol extends AbstractRestProtocol {
     @Override
-    public Pattern getProtocolNamePattern() {
-        return Pattern.compile("^aws\\.rest-json(?:-1\\.[0|1])?$");
+    public Set<String> getProtocolNames() {
+        return SetUtils.of("aws.rest-json", "aws.rest-json-1.0", "aws.rest-json-1.1");
     }
 
     @Override

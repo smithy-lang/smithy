@@ -360,17 +360,17 @@ public final class OpenApiConverter {
 
         throw new OpenApiException(String.format(
                 "Unable to resolve a supported protocol for service: `%s`. Protocol service providers were "
-                + "found for the following protocol patterns: [%s]. This service supports the following "
+                + "found for the following protocols: [%s]. But this service supports the following "
                 + "protocols: [%s]",
                 service.getId(),
-                ValidationUtils.tickedList(protocols.stream().map(OpenApiProtocol::getProtocolNamePattern)),
+                ValidationUtils.tickedList(protocols.stream().flatMap(p -> p.getProtocolNames().stream())),
                 ValidationUtils.tickedList(protoTrait.getProtocolNames())));
     }
 
     // Finds an OpenAPI protocol matching the given protocol name.
     private Optional<OpenApiProtocol> findProtocol(String protocolName, List<OpenApiProtocol> protocols) {
         return protocols.stream()
-                .filter(protocol -> protocol.getProtocolNamePattern().matcher(protocolName).find())
+                .filter(protocol -> protocol.getProtocolNames().contains(protocolName))
                 .findFirst();
     }
 

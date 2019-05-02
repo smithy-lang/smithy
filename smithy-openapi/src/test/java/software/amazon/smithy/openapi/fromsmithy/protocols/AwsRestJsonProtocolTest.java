@@ -25,6 +25,7 @@ public class AwsRestJsonProtocolTest {
             "adds-header-mediatype-format.json",
             "supports-payloads.json"
     })
+
     public void testProtocolResult(String smithy) {
         Model model = Model.assembler()
                 .addImport(getClass().getResource(smithy))
