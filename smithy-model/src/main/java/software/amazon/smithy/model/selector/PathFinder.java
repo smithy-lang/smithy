@@ -307,8 +307,9 @@ public final class PathFinder {
                         // Don't traverse up through containers.
                         continue;
                     default:
-                        LinkedList<Relationship> newPath = new LinkedList<>(path);
-                        newPath.addFirst(relationship);
+                        List<Relationship> newPath = new ArrayList<>(path.size() + 1);
+                        newPath.add(relationship);
+                        newPath.addAll(path);
                         traverseUp(relationship.getShape(), newPath, newVisited);
                 }
             }
