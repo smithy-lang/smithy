@@ -59,7 +59,17 @@ final class ModelUtils {
     static String getMediaType(Context context, MemberShape member) {
         return getMemberTrait(context, member, MediaTypeTrait.class)
                 .map(MediaTypeTrait::getValue)
-                .orElse("*/*");
+                .orElseGet(() -> context.getModel().getShapeIndex().getShape(member.getTarget())
+                        .map(target -> {
+                            if (target.isStringShape()) {
+                                return "text/plain";
+                            } else if (target.isBlobShape()) {
+                                return "application/octet-stream";
+                            } else {
+                                return "application/octet-stream";
+                            }
+                        })
+                        .orElse("application/octet-stream"));
     }
 
     /**

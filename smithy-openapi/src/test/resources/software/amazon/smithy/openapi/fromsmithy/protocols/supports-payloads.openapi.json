@@ -10,7 +10,7 @@
         "operationId": "Operation",
         "requestBody": {
           "content": {
-            "*/*": {
+            "application/octet-stream": {
               "schema": {
                 "$ref": "#/components/schemas/SmithyExampleOperationInputBodyMember"
               }
@@ -37,7 +37,7 @@
               }
             },
             "content": {
-              "*/*": {
+              "application/octet-stream": {
                 "schema": {
                   "$ref": "#/components/schemas/SmithyExampleOperationOutputBodyMember"
                 }
@@ -54,7 +54,7 @@
               }
             },
             "content": {
-              "*/*": {
+              "text/plain": {
                 "schema": {
                   "$ref": "#/components/schemas/SmithyExampleErrorFooMember"
                 }
