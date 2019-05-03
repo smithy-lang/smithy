@@ -15,15 +15,15 @@
 
 package software.amazon.smithy.openapi.model;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class LinkObject extends Component implements ToSmithyBuilder<LinkObject> {
-    private final Map<String, Node> parameters = new LinkedHashMap<>();
+    private final Map<String, Node> parameters = new TreeMap<>();
     private final String operationRef;
     private final String operationId;
     private final Node requestBody;
@@ -98,7 +98,7 @@ public final class LinkObject extends Component implements ToSmithyBuilder<LinkO
     }
 
     public static final class Builder extends Component.Builder<Builder, LinkObject> {
-        private final Map<String, Node> parameters = new LinkedHashMap<>();
+        private final Map<String, Node> parameters = new TreeMap<>();
         private String operationRef;
         private String operationId;
         private Node requestBody;

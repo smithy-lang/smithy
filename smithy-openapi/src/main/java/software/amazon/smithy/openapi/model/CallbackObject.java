@@ -16,8 +16,8 @@
 package software.amazon.smithy.openapi.model;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -27,7 +27,7 @@ public final class CallbackObject extends Component implements ToSmithyBuilder<C
 
     private CallbackObject(Builder builder) {
         super(builder);
-        paths = Collections.unmodifiableMap(new LinkedHashMap<>(builder.paths));
+        paths = Collections.unmodifiableMap(new TreeMap<>(builder.paths));
     }
 
     public static Builder builder() {
@@ -53,7 +53,7 @@ public final class CallbackObject extends Component implements ToSmithyBuilder<C
     }
 
     public static final class Builder extends Component.Builder<Builder, CallbackObject> {
-        private Map<String, PathItem> paths = new LinkedHashMap<>();
+        private Map<String, PathItem> paths = new TreeMap<>();
 
         private Builder() {}
 

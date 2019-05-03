@@ -15,9 +15,9 @@
 
 package software.amazon.smithy.openapi.model;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
@@ -35,7 +35,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  */
 public abstract class Component implements ToNode {
     private Node node;
-    private final Map<String, Node> extensions = new LinkedHashMap<>();
+    private final Map<String, Node> extensions = new TreeMap<>();
 
     protected Component(Builder<?, ?> builder) {
         extensions.putAll(builder.getExtensions());
@@ -86,7 +86,7 @@ public abstract class Component implements ToNode {
     }
 
     public abstract static class Builder<B extends Builder, C extends Component> implements SmithyBuilder<C> {
-        private final Map<String, Node> extensions = new LinkedHashMap<>();
+        private final Map<String, Node> extensions = new TreeMap<>();
 
         public Map<String, Node> getExtensions() {
             return extensions;

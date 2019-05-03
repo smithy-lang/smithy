@@ -15,9 +15,9 @@
 
 package software.amazon.smithy.openapi.model;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -26,8 +26,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class MediaTypeObject extends Component implements ToSmithyBuilder<MediaTypeObject> {
     private final Schema schema;
     private final Node example;
-    private final Map<String, Node> examples = new LinkedHashMap<>();
-    private final Map<String, EncodingObject> encoding = new LinkedHashMap<>();
+    private final Map<String, Node> examples = new TreeMap<>();
+    private final Map<String, EncodingObject> encoding = new TreeMap<>();
 
     private MediaTypeObject(Builder builder) {
         super(builder);
@@ -89,8 +89,8 @@ public final class MediaTypeObject extends Component implements ToSmithyBuilder<
     public static final class Builder extends Component.Builder<Builder, MediaTypeObject> {
         private Schema schema;
         private Node example;
-        private final Map<String, Node> examples = new LinkedHashMap<>();
-        private final Map<String, EncodingObject> encoding = new LinkedHashMap<>();
+        private final Map<String, Node> examples = new TreeMap<>();
+        private final Map<String, EncodingObject> encoding = new TreeMap<>();
 
         private Builder() {}
 

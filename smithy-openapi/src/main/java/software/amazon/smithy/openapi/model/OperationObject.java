@@ -18,10 +18,11 @@ package software.amazon.smithy.openapi.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -52,9 +53,9 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         operationId = builder.operationId;
         parameters = ListUtils.copyOf(builder.parameters);
         requestBody = builder.requestBody;
-        responses = Collections.unmodifiableMap(new LinkedHashMap<>(builder.responses));
+        responses = Collections.unmodifiableMap(new TreeMap<>(builder.responses));
         deprecated = builder.deprecated;
-        callbacks = Collections.unmodifiableMap(new LinkedHashMap<>(builder.callbacks));
+        callbacks = Collections.unmodifiableMap(new TreeMap<>(builder.callbacks));
         security = ListUtils.copyOf(builder.security);
         servers = ListUtils.copyOf(builder.servers);
     }
@@ -124,10 +125,6 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
             builder.withMember("deprecated", Node.from(true));
         }
 
-        if (!tags.isEmpty()) {
-            builder.withMember("tags", getTags().stream().map(Node::from).collect(ArrayNode.collect()));
-        }
-
         if (!parameters.isEmpty()) {
             builder.withMember("parameters", getParameters().stream().collect(ArrayNode.collect()));
         }
@@ -145,6 +142,7 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         if (!security.isEmpty()) {
             builder.withMember("security", getSecurity().stream()
                     .map(map -> map.entrySet().stream()
+                            .sorted(Comparator.comparing(Map.Entry::getKey))
                             .map(entry -> Pair.of(entry.getKey(), entry.getValue().stream().map(Node::from)
                                     .collect(ArrayNode.collect())))
                             .collect(ObjectNode.collectStringKeys(Pair::getLeft, Pair::getRight)))
@@ -154,6 +152,10 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         if (!servers.isEmpty()) {
             builder.withMember("servers", getServers().stream()
                     .map(ServerObject::toNode).collect(ArrayNode.collect()));
+        }
+
+        if (!tags.isEmpty()) {
+            builder.withMember("tags", getTags().stream().sorted().map(Node::from).collect(ArrayNode.collect()));
         }
 
         return builder;
@@ -180,8 +182,8 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
     public static final class Builder extends Component.Builder<Builder, OperationObject> {
         private final List<String> tags = new ArrayList<>();
         private final List<ParameterObject> parameters = new ArrayList<>();
-        private final Map<String, ResponseObject> responses = new LinkedHashMap<>();
-        private final Map<String, CallbackObject> callbacks = new LinkedHashMap<>();
+        private final Map<String, ResponseObject> responses = new TreeMap<>();
+        private final Map<String, CallbackObject> callbacks = new TreeMap<>();
         private final List<Map<String, List<String>>> security = new ArrayList<>();
         private final List<ServerObject> servers = new ArrayList<>();
         private String summary;
