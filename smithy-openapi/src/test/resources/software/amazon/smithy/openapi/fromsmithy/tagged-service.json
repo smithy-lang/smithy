@@ -11,7 +11,7 @@
       },
       "Operation1": {
         "type": "operation",
-        "tags": ["foo", "bar", "baz", "qux"],
+        "tags": ["bar", "baz", "foo", "qux"],
         "http": {"uri": "/operation1", "method": "GET"}
       },
       "Operation2": {

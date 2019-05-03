@@ -16,9 +16,9 @@
 package software.amazon.smithy.openapi.model;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -52,8 +52,8 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
         allowReserved = builder.allowReserved;
         schema = builder.schema;
         example = builder.example;
-        examples = Collections.unmodifiableMap(new LinkedHashMap<>(builder.examples));
-        content = Collections.unmodifiableMap(new LinkedHashMap<>(builder.content));
+        examples = Collections.unmodifiableMap(new TreeMap<>(builder.examples));
+        content = Collections.unmodifiableMap(new TreeMap<>(builder.content));
     }
 
     public static Builder builder() {
@@ -186,8 +186,8 @@ public final class ParameterObject extends Component implements ToSmithyBuilder<
         private boolean allowReserved;
         private Schema schema;
         private Node example;
-        private final Map<String, Node> examples = new LinkedHashMap<>();
-        private final Map<String, MediaTypeObject> content = new LinkedHashMap<>();
+        private final Map<String, Node> examples = new TreeMap<>();
+        private final Map<String, MediaTypeObject> content = new TreeMap<>();
 
         private Builder() {}
 

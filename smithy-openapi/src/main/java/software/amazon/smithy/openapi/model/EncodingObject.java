@@ -15,15 +15,15 @@
 
 package software.amazon.smithy.openapi.model;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class EncodingObject extends Component implements ToSmithyBuilder<EncodingObject> {
-    private final Map<String, ParameterObject> headers = new LinkedHashMap<>();
+    private final Map<String, ParameterObject> headers = new TreeMap<>();
     private final String contentType;
     private final String style;
     private final boolean explode;
@@ -96,7 +96,7 @@ public final class EncodingObject extends Component implements ToSmithyBuilder<E
     }
 
     public static final class Builder extends Component.Builder<Builder, EncodingObject> {
-        private final Map<String, ParameterObject> headers = new LinkedHashMap<>();
+        private final Map<String, ParameterObject> headers = new TreeMap<>();
         private String contentType;
         private String style;
         private boolean explode;

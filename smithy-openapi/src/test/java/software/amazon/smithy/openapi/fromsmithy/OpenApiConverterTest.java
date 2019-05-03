@@ -69,7 +69,7 @@ public class OpenApiConverterTest {
                 .unwrap();
         OpenApi result = OpenApiConverter.create()
                 .putSetting(OpenApiConstants.OPEN_API_TAGS, true)
-                .putSetting(OpenApiConstants.OPEN_API_SUPPORTED_TAGS, Node.fromStrings("foo", "baz"))
+                .putSetting(OpenApiConstants.OPEN_API_SUPPORTED_TAGS, Node.fromStrings("baz", "foo"))
                 .convert(model, ShapeId.from("smithy.example#Service"));
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("tagged-service.openapi.json")));

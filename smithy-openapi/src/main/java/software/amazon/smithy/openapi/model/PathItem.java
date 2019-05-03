@@ -131,17 +131,17 @@ public final class PathItem extends Component implements ToSmithyBuilder<PathIte
         ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withOptionalMember("description", getDescription().map(Node::from))
                 .withOptionalMember("summary", getSummary().map(Node::from))
-                .withOptionalMember("get", getGet())
-                .withOptionalMember("put", getPut())
-                .withOptionalMember("post", getPost())
                 .withOptionalMember("delete", getDelete())
-                .withOptionalMember("options", getOptions())
+                .withOptionalMember("get", getGet())
                 .withOptionalMember("head", getHead())
+                .withOptionalMember("options", getOptions())
                 .withOptionalMember("patch", getPatch())
+                .withOptionalMember("post", getPost())
+                .withOptionalMember("put", getPut())
                 .withOptionalMember("trace", getTrace());
 
         if (!parameters.isEmpty()) {
-            builder.withMember("tags", getParameters().stream().map(Ref::toNode).collect(ArrayNode.collect()));
+            builder.withMember("parameters", getParameters().stream().map(Ref::toNode).collect(ArrayNode.collect()));
         }
 
         if (!servers.isEmpty()) {

@@ -16,10 +16,11 @@
 package software.amazon.smithy.openapi.model;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -31,7 +32,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
     private final String openapi;
     private final InfoObject info;
     private final List<ServerObject> servers;
-    private final Map<String, PathItem> paths = new LinkedHashMap<>();
+    private final Map<String, PathItem> paths = new TreeMap<>();
     private final ComponentsObject components;
     private final List<Map<String, List<String>>> security;
     private final List<TagObject> tags;
@@ -120,6 +121,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         if (!security.isEmpty()) {
             builder.withMember("security", security.stream()
                     .map(mapping -> mapping.entrySet().stream()
+                            .sorted(Comparator.comparing(Map.Entry::getKey))
                             .collect(ObjectNode.collectStringKeys(
                                     Map.Entry::getKey,
                                     entry -> entry.getValue().stream().map(Node::from).collect(ArrayNode.collect()))))
@@ -127,7 +129,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         }
 
         if (!tags.isEmpty()) {
-            builder.withMember("tags", tags.stream().collect(ArrayNode.collect()));
+            builder.withMember("tags", tags.stream().sorted().collect(ArrayNode.collect()));
         }
 
         return builder;
@@ -137,7 +139,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         private String openapi;
         private InfoObject info;
         private final List<ServerObject> servers = new ArrayList<>();
-        private Map<String, PathItem> paths = new LinkedHashMap<>();
+        private Map<String, PathItem> paths = new TreeMap<>();
         private ComponentsObject components;
         private final List<Map<String, List<String>>> security = new ArrayList<>();
         private final List<TagObject> tags = new ArrayList<>();

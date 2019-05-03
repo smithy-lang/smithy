@@ -15,22 +15,22 @@
 
 package software.amazon.smithy.openapi.model;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class ComponentsObject extends Component implements ToSmithyBuilder<ComponentsObject> {
-    private final Map<String, Schema> schemas = new LinkedHashMap<>();
-    private final Map<String, ResponseObject> responses = new LinkedHashMap<>();
-    private final Map<String, ParameterObject> parameters = new LinkedHashMap<>();
-    private final Map<String, RequestBodyObject> requestBodies = new LinkedHashMap<>();
-    private final Map<String, ParameterObject> headers = new LinkedHashMap<>();
-    private final Map<String, SecurityScheme> securitySchemes = new LinkedHashMap<>();
-    private final Map<String, LinkObject> links = new LinkedHashMap<>();
-    private final Map<String, CallbackObject> callbacks = new LinkedHashMap<>();
+    private final Map<String, Schema> schemas = new TreeMap<>();
+    private final Map<String, ResponseObject> responses = new TreeMap<>();
+    private final Map<String, ParameterObject> parameters = new TreeMap<>();
+    private final Map<String, RequestBodyObject> requestBodies = new TreeMap<>();
+    private final Map<String, ParameterObject> headers = new TreeMap<>();
+    private final Map<String, SecurityScheme> securitySchemes = new TreeMap<>();
+    private final Map<String, LinkObject> links = new TreeMap<>();
+    private final Map<String, CallbackObject> callbacks = new TreeMap<>();
 
     private ComponentsObject(Builder builder) {
         super(builder);
@@ -142,14 +142,14 @@ public final class ComponentsObject extends Component implements ToSmithyBuilder
     }
 
     public static final class Builder extends Component.Builder<Builder, ComponentsObject> {
-        private final Map<String, Schema> schemas = new LinkedHashMap<>();
-        private final Map<String, ResponseObject> responses = new LinkedHashMap<>();
-        private final Map<String, ParameterObject> parameters = new LinkedHashMap<>();
-        private final Map<String, RequestBodyObject> requestBodies = new LinkedHashMap<>();
-        private final Map<String, ParameterObject> headers = new LinkedHashMap<>();
-        private final Map<String, SecurityScheme> securitySchemes = new LinkedHashMap<>();
-        private final Map<String, LinkObject> links = new LinkedHashMap<>();
-        private final Map<String, CallbackObject> callbacks = new LinkedHashMap<>();
+        private final Map<String, Schema> schemas = new TreeMap<>();
+        private final Map<String, ResponseObject> responses = new TreeMap<>();
+        private final Map<String, ParameterObject> parameters = new TreeMap<>();
+        private final Map<String, RequestBodyObject> requestBodies = new TreeMap<>();
+        private final Map<String, ParameterObject> headers = new TreeMap<>();
+        private final Map<String, SecurityScheme> securitySchemes = new TreeMap<>();
+        private final Map<String, LinkObject> links = new TreeMap<>();
+        private final Map<String, CallbackObject> callbacks = new TreeMap<>();
 
         private Builder() {}
 
