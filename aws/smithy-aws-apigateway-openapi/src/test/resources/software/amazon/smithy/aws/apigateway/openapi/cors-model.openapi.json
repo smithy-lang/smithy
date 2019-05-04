@@ -39,7 +39,7 @@
               }
             },
             "content": {
-              "*/*": {
+              "application/octet-stream": {
                 "schema": {
                   "type": "string",
                   "format": "byte"
@@ -68,7 +68,7 @@
         "operationId": "PutPayload",
         "requestBody": {
           "content": {
-            "*/*": {
+            "application/octet-stream": {
               "schema": {
                 "type": "string",
                 "format": "byte"
