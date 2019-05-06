@@ -14,7 +14,6 @@
       },
       "ValidResourceOperation1": {
         "type": "operation",
-        "instanceOperation": true,
         "input": "ValidResourceOperation1Input"
       },
       "ValidResourceOperation1Input": {
@@ -28,7 +27,7 @@
       },
       "ValidResourceOperation2": {
         "type": "operation",
-        "collectionOperation": true,
+        "collection": true,
         "input": "ValidResourceOperation2Input"
       },
       "ValidResourceOperation2Input": {
@@ -43,7 +42,6 @@
       },
       "InvalidResourceOperation1": {
         "type": "operation",
-        "instanceOperation": true,
         "input": "InvalidResourceOperation1Input"
       },
       "InvalidResourceOperation1Input": {
@@ -52,7 +50,7 @@
       },
       "InvalidResourceOperation2": {
         "type": "operation",
-        "collectionOperation": true,
+        "collection": true,
         "input": "InvalidResourceOperation2Input"
       },
       "InvalidResourceOperation2Input": {

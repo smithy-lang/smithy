@@ -15,6 +15,7 @@
             },
             "CreateResource": {
                 "type": "operation",
+                "collection": true,
                 "readonly": true
             },
             "GetResource": {
@@ -32,7 +33,8 @@
                 "input": "ResourceInput"
             },
             "ListResource": {
-                "type": "operation"
+                "type": "operation",
+                "collection": true
             },
             "ResourceInput": {
                 "type": "structure",

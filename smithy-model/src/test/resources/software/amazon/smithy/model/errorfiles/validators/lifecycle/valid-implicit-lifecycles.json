@@ -17,7 +17,8 @@
                 "type": "string"
             },
             "CreateValidA": {
-                "type": "operation"
+                "type": "operation",
+                "collection": true
             },
             "GetValidA": {
                 "type": "operation",
@@ -35,6 +36,7 @@
             },
             "ListValidA": {
                 "type": "operation",
+                "collection": true,
                 "readonly": true
             },
             "ResourceInput": {
@@ -112,7 +114,8 @@
             },
             "CreateValidD": {
                 "type": "operation",
-                "input": "CreateValidDInput"
+                "input": "CreateValidDInput",
+                "collection": true
             },
             "CreateValidDInput": {
                 "type": "structure",
@@ -126,6 +129,7 @@
             "ListValidD": {
                 "type": "operation",
                 "readonly": true,
+                "collection": true,
                 "input": "ListValidDInput"
             },
             "ListValidDInput": {

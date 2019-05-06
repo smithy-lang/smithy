@@ -402,7 +402,7 @@ cities, so there's no way we could provide a City identifier.
 
         // The paginated trait indicates that the operation may
         // return truncated results.
-        @readonly
+        @readonly @collection
         @paginated(inputToken: nextToken, outputToken: nextToken,
                   pageSize: pageSize, items: items)
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
@@ -663,7 +663,7 @@ Complete example
 
         // The paginated trait indicates that the operation may
         // return truncated results.
-        @readonly
+        @readonly @collection
         @paginated(inputToken: nextToken, outputToken: nextToken,
                   pageSize: pageSize, items: items)
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
@@ -861,7 +861,8 @@ Complete example
                             "items":"items",
                             "pageSize":"pageSize"
                         },
-                        "readonly":true
+                        "readonly":true,
+                        "collection":true
                     },
                     "ListCitiesInput":{
                         "type":"structure",

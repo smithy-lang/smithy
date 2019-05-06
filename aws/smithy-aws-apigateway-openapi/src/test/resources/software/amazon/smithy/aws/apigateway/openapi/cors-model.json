@@ -69,6 +69,7 @@
       "ListPayloads": {
         "type": "operation",
         "readonly": true,
+        "collection": true,
         "output": "ListPayloadsOutput",
         "http": {
           "uri": "/payload",

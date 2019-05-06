@@ -1,6 +1,6 @@
 software.amazon.smithy.model.traits.AuthTrait$Provider
 software.amazon.smithy.model.traits.BoxTrait$Provider
-software.amazon.smithy.model.traits.CollectionOperationTrait$Provider
+software.amazon.smithy.model.traits.CollectionTrait$Provider
 software.amazon.smithy.model.traits.CorsTrait$Provider
 software.amazon.smithy.model.traits.DeprecatedTrait$Provider
 software.amazon.smithy.model.traits.DocumentationTrait$Provider
@@ -23,7 +23,6 @@ software.amazon.smithy.model.traits.IdempotencyTokenTrait$Provider
 software.amazon.smithy.model.traits.IdempotentTrait$Provider
 software.amazon.smithy.model.traits.IdRefTrait$Provider
 software.amazon.smithy.model.traits.InputEventStreamTrait$Provider
-software.amazon.smithy.model.traits.InstanceOperationTrait$Provider
 software.amazon.smithy.model.traits.JsonNameTrait$Provider
 software.amazon.smithy.model.traits.LengthTrait$Provider
 software.amazon.smithy.model.traits.MediaTypeTrait$Provider

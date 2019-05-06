@@ -26,6 +26,7 @@
             "ListValidA": {
                 "type": "operation",
                 "readonly": true,
+                "collection": true,
                 "input": "ResourceAInput"
             },
             "ResourceAInput": {
