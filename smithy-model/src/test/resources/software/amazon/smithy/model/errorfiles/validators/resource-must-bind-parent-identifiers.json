@@ -23,7 +23,8 @@
             },
             "InvokeB": {
                 "type": "operation",
-                "input": "InvokeBInput"
+                "input": "InvokeBInput",
+                "collection": true
             },
             "InvokeBInput": {
                 "type": "structure"

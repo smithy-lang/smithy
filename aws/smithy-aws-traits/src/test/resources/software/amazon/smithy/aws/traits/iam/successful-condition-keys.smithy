@@ -29,7 +29,6 @@ resource Resource2 {
   list: ListResource2,
 }
 
-@instanceOperation
 @readonly
 operation GetResource2(GetResource2Input)
 
@@ -44,8 +43,7 @@ structure GetResource2Input {
 @documentation("This is Foo")
 string FooString
 
-@readonly
-@collectionOperation
+@readonly @collection
 operation ListResource2(ListResource2Input) -> ListResource2Output
 
 structure ListResource2Input {

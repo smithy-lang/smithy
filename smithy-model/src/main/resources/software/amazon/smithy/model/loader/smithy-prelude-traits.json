@@ -7,9 +7,10 @@
         "documentation": "Indicates that a shape is boxed. When a boxed shape is the target of a member, the member may or may not contain a value, and the member has no default value.",
         "tags": ["diff.error.const"]
       },
-      "collectionOperation": {
+      "collection": {
         "selector": "operation",
-        "documentation": "Indicates that an operation is intended to be used as a resource collection operation."
+        "documentation": "Indicates that an operation is intended to be used as a resource collection operation.",
+        "tags": ["diff.error.const"]
       },
       "deprecated": {
         "selector": "*",
@@ -61,10 +62,6 @@
         "selector": ":test(member:of(structure) > string)",
         "documentation": "Defines the input member of an operation that is used by the sever to identify and discard replayed requests.",
         "structurallyExclusive": true
-      },
-      "instanceOperation": {
-        "selector": "operation",
-        "documentation": "Indicates that an operation is intended to be used as a resource instance operation."
       },
       "jsonName": {
         "selector": "member:of(structure)",

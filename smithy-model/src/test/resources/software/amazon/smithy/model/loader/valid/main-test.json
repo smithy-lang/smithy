@@ -150,7 +150,8 @@
           "outputToken": "nextToken",
           "pageSize": "pageSize"
         },
-        "readonly": true
+        "readonly": true,
+        "collection": true
       },
       "ListCitiesInput": {
         "type": "structure",

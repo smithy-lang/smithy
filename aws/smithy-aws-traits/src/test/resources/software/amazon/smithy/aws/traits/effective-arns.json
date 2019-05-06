@@ -34,7 +34,8 @@
       },
       "CollectionOperation": {
         "type": "operation",
-        "input": "CollectionOperationInput"
+        "input": "CollectionOperationInput",
+        "collection": true
       },
       "CollectionOperationInput": {
         "type": "structure"

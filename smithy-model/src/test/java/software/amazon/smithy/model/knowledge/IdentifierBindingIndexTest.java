@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.CollectionTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 
@@ -74,10 +75,14 @@ public class IdentifierBindingIndexTest {
     }
 
     @Test
-    public void findsImplicitCollectionBindings() {
+    public void findsCollectionBindings() {
         StringShape id = StringShape.builder().id("ns.foo#Id").build();
         StructureShape input = StructureShape.builder().id("ns.foo#Input").build();
-        OperationShape operation = OperationShape.builder().id("ns.foo#Operation").input(input.getId()).build();
+        OperationShape operation = OperationShape.builder()
+                .id("ns.foo#Operation")
+                .input(input.getId())
+                .addTrait(new CollectionTrait())
+                .build();
         ResourceShape resource = ResourceShape.builder()
                 .id("ns.foo#Resource")
                 .addIdentifier("abc", "ns.foo#Id")

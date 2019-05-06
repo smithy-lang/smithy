@@ -15,9 +15,13 @@
 
 package software.amazon.smithy.model.validation.validators;
 
+import static java.lang.String.format;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
@@ -26,6 +30,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.traits.CollectionTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -35,7 +40,10 @@ import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that operations bound to resource shapes have identifier
- * bindings for all of the identifiers of the parent of the binding resource.
+ * bindings for all of the identifiers of the parent of the binding resource,
+ * that operations bound to a resource with the {@code collection}
+ * trait are bound using a collection binding, and operations bound with
+ * no {@code collection} trait are bound using an instance binding.
  */
 public final class ResourceIdentifierBindingValidator extends AbstractValidator {
 
@@ -43,9 +51,15 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     public List<ValidationEvent> validate(Model model) {
         IdentifierBindingIndex bindingIndex = model.getKnowledge(IdentifierBindingIndex.class);
         ShapeIndex index = model.getShapeIndex();
-        return index.shapes(ResourceShape.class)
-                .flatMap(resource -> validateResource(index, resource, bindingIndex))
-                .collect(Collectors.toList());
+
+        return Stream.of(
+                index.shapes(ResourceShape.class)
+                        .flatMap(resource -> validateResource(index, resource, bindingIndex)),
+                index.shapes(ResourceShape.class)
+                        .flatMap(resource -> validateCollectionBindings(index, resource, bindingIndex)),
+                index.shapes(ResourceShape.class)
+                        .flatMap(resource -> validateInstanceBindings(index, resource, bindingIndex))
+        ).flatMap(Function.identity()).collect(Collectors.toList());
     }
 
     private Stream<ValidationEvent> validateResource(
@@ -82,5 +96,58 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
         }
 
         return Optional.empty();
+    }
+
+    private Stream<ValidationEvent> validateCollectionBindings(
+            ShapeIndex index,
+            ResourceShape resource,
+            IdentifierBindingIndex identifierIndex
+    ) {
+        return resource.getAllOperations().stream()
+                // Find all operations bound to the resource.
+                .flatMap(id -> OptionalUtils.stream(index.getShape(id).flatMap(Shape::asOperationShape)))
+                // Create a pair of the operation and collection trait if it's found on the operation.
+                .flatMap(operation -> OptionalUtils.stream(
+                        operation.getTrait(CollectionTrait.class).map(t -> Pair.of(operation, t))))
+                // Only emit events for operations bound using the incorrect binding type.
+                .filter(pair -> identifierIndex.getOperationBindingType(resource, pair.getLeft())
+                                != IdentifierBindingIndex.BindingType.COLLECTION)
+                .map(pair -> error(pair.getLeft(), pair.getRight(), String.format(
+                        "This operation is marked with the `collection` trait but is bound to "
+                        + "the `%s` resource using an instance binding, meaning that all of the "
+                        + "identifiers of the resource are bound to members of the operation input.",
+                        resource.getId())));
+    }
+
+    private Stream<ValidationEvent> validateInstanceBindings(
+            ShapeIndex index,
+            ResourceShape resource,
+            IdentifierBindingIndex bindingIndex
+    ) {
+        return resource.getAllOperations().stream()
+                // Find all operations bound to the resource with the collection trait.
+                .flatMap(id -> OptionalUtils.stream(index.getShape(id).flatMap(Shape::asOperationShape)))
+                .filter(operation -> !operation.hasTrait(CollectionTrait.class))
+                // Only emit events for operations bound using the incorrect binding type.
+                .filter(operation -> bindingIndex.getOperationBindingType(resource, operation)
+                                != IdentifierBindingIndex.BindingType.INSTANCE)
+                .map(operation -> {
+                    String expectedIdentifiers = createBindingMessage(resource.getIdentifiers());
+                    String boundIds = createBindingMessage(bindingIndex.getOperationBindings(resource, operation));
+                    return error(operation, format(
+                            "This operation does not form a valid instance operation when bound to resource `%s`. "
+                            + "All of the identifiers of the resource were not implicitly or explicitly bound to "
+                            + "the input of the operation. Expected the following identifier bindings: [%s]. "
+                            + "Found the following identifier bindings: [%s]",
+                            resource.getId(), expectedIdentifiers, boundIds));
+                });
+    }
+
+    private String createBindingMessage(Map<String, ?> bindings) {
+        return bindings.entrySet().stream()
+                .map(entry -> format("required member named `%s` that targets `%s`",
+                                     entry.getKey(), entry.getValue().toString()))
+                .sorted()
+                .collect(Collectors.joining(", "));
     }
 }

@@ -1456,16 +1456,18 @@ of an operation provide values for the identifiers of a resource.
 .. _instance-operations:
 
 :dfn:`Instance operations` are formed when all of the identifiers of a resource
-are are bound to the input structure of an operation or when a resource has no
+are bound to the input structure of an operation or when a resource has no
 identifiers. The :ref:`read <read-lifecycle>` , :ref:`update <update-lifecycle>`,
 and :ref:`delete <delete-lifecycle>` lifecycle operations are examples
-of instance operations.
+of instance operations. An operation bound to a resource MUST form a valid
+instance operation if it is not marked with the :ref:`collection-trait`.
 
 .. _collection-operations:
 
 :dfn:`Collection operations` are used when an operation is meant to operate on
 a collection of resources rather than a specific resource. Collection
-operations are formed when one or more of the child identifiers of a resource
+operations are formed when an operation bound to a resource is marked with the
+``collectionTrait`` and one or more of the child identifiers of a resource
 are not bound to the input structure of an operation. The
 :ref:`list <list-lifecycle>` lifecycle operation is an example of a collection
 operation.
@@ -1547,13 +1549,15 @@ For example, given the following model,
             }
         }
 
-``GetForecast`` forms a valid instance operation. ``GetForecastInput`` provides
+``GetForecast`` forms a valid instance operation because the operation is
+not marked with the ``collection`` trait and ``GetForecastInput`` provides
 *implicit identifier bindings* by defining a required "forecastId" member
 that targets the same shape as the "forecastId" identifier of the resource.
 
-Implicit identifier bindings for collection operations are created in the same
-way as an instance operation, but a collection operation MUST NOT contain
-identifier bindings for *all* child identifiers of the resource.
+Implicit identifier bindings for collection operations are created in a
+similar way to an instance operation, but a collection operation is marked
+with the ``collection`` trait and MUST NOT contain identifier bindings for
+*all* child identifiers of the resource.
 
 Given the following model,
 
@@ -1568,6 +1572,7 @@ Given the following model,
           operations: [BatchPutForecasts],
         }
 
+        @collection
         operation BatchPutForecasts(BatchPutForecastsInput) -> BatchPutForecastsOutput
 
         structure BatchPutForecastsInput {
@@ -1590,6 +1595,7 @@ Given the following model,
                     },
                     "BatchPutForecasts": {
                         "type": "operation",
+                        "collection": true,
                         "input": "BatchPutForecastsInput",
                         "output": "BatchPutForecastsOutput"
                     },
@@ -1607,8 +1613,9 @@ Given the following model,
         }
 
 ``BatchPutForecasts`` forms a valid collection operation with implicit
-identifier bindings because ``BatchPutForecastsInput`` does not require an
-input member named "forecastId" that targets ``ForecastId``.
+identifier bindings because the operation is marked with the ``collection``
+trait and ``BatchPutForecastsInput`` does not require an input member named
+"forecastId" that targets ``ForecastId``.
 
 
 Explicit identifier bindings
@@ -1706,7 +1713,7 @@ The following snippet defines the ``CreateForecast`` operation.
 
 A create operation can be defined as an :ref:`instance operation <instance-operations>`
 such that the client is responsible for providing the identifiers of the
-resource when it is created. This kind of create operation MUST be marked with
+resource when it is created. This kind of create operation SHOULD be marked with
 the :ref:`idempotent-trait`. For example:
 
 .. code-block:: smithy
@@ -1720,12 +1727,14 @@ the :ref:`idempotent-trait`. For example:
     }
 
 A create operation can be defined as a :ref:`collection operation <collection-operations>`
-such that the identifier of a resource is defined by the service when a
-resource is created. This kind of create operation is formed when the
-identifiers of every parent resource are bound on the input members of an
-operation, but the child identifers of the resource are omitted. For example:
+such that the identifier(s) of a resource are defined by the service when a
+resource is created. This kind of create operation is formed when the operation
+is marked with the :ref:`collection-trait`. For example:
 
 .. code-block:: smithy
+
+    @collection
+    operation CreateForecast(CreateForecastInput) -> CreateForecastOutput
 
     structure CreateForecastInput {
       // No identifier is provided by the client, so the service is
@@ -1823,7 +1832,8 @@ collection of resources.
 
 **Validation**
 
-- List operations MUST form valid :ref:`collection operations <collection-operations>`.
+- List operations MUST be marked with the :ref:`collection-trait` and MUST
+  form valid :ref:`collection operations <collection-operations>`.
 - List operations MUST be marked as :ref:`readonly-trait`.
 - The output of a list operation SHOULD contain references to the resource
   being listed.
@@ -1833,7 +1843,7 @@ For example:
 
 .. code-block:: smithy
 
-    @readonly
+    @collection @readonly
     @paginated(inputToken: nextToken, pageSize: maxResults,
                outputToken: nextToken, items: "forecasts")
     operation ListForecasts(ListForecastsInput) -> ListForecastsOutput
@@ -3721,7 +3731,7 @@ In the example below, a resource defines a paginated operation.
 
         namespace smithy.example
 
-        @readonly
+        @collection @readonly
         @paginated(inputToken: nextToken, outputToken: nextToken,
                   pageSize: maxResults, items: foos)
         operation GetFoos(GetFoosInput) -> GetFoosOutput
@@ -3751,6 +3761,8 @@ In the example below, a resource defines a paginated operation.
                         "type": "operation",
                         "input" :"GetFoosInput",
                         "output": "GetFoosOutput",
+                        "readonly": true,
+                        "collection": true,
                         "paginated": {
                             "inputToken": "nextToken",
                             "outputToken": "nextToken",
@@ -3905,10 +3917,10 @@ Resource traits
 ===============
 
 
-.. _collectionOperation-trait:
+.. _collection-trait:
 
-``collectionOperation`` trait
------------------------------
+``collection`` trait
+--------------------
 
 Summary
     Indicates that when an operation is bound to a resource, it MUST use a
@@ -3917,35 +3929,12 @@ Trait selector
     ``operation``
 Value type
     Annotation trait
-Conflicts with
-  :ref:`instanceOperation-trait`
 
-Applying this trait is useful to explicitly indicate the intent of an
-operation. For example, batch-style operations that operate on many
-resources should be bound to resources through a collection operation
-binding, meaning that one or more of the identifiers of the resource
-should not appear as required members of the operation's input.
-
-
-.. _instanceOperation-trait:
-
-``instanceOperation`` trait
----------------------------
-
-Summary
-    Indicates that when an operation is bound to a resource, it MUST use an
-    :ref:`instance operation binding <instance-operations>`.
-Trait selector
-    ``operation``
-Value type
-    Annotation trait
-Conflicts with
-  :ref:`collectionOperation-trait`
-
-Applying this trait is useful to explicitly indicate the intent of an
-operation is to operate on a single resource using an instance binding,
-meaning that all of the identifiers of a resource are bound to required
-operation input members.
+Applying this trait is required in order to bind an operation to a resource
+using a collection binding, meaning that one or more of the identifiers of
+the resource should not appear as required members of the operation's input.
+For example, the list lifecycle operation of a resource MUST be marked with
+this trait.
 
 
 .. _references-trait:

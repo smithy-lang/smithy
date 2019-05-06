@@ -17,20 +17,20 @@ package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
 
-public class InstanceOperationTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#instanceOperation";
+public class CollectionTrait extends BooleanTrait {
+    public static final String NAME = "smithy.api#collection";
 
-    public InstanceOperationTrait(SourceLocation sourceLocation) {
+    public CollectionTrait(SourceLocation sourceLocation) {
         super(NAME, sourceLocation);
     }
 
-    public InstanceOperationTrait() {
+    public CollectionTrait() {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<InstanceOperationTrait> {
+    public static final class Provider extends BooleanTrait.Provider<CollectionTrait> {
         public Provider() {
-            super(NAME, InstanceOperationTrait::new);
+            super(NAME, CollectionTrait::new);
         }
     }
 }
