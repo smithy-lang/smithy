@@ -371,8 +371,7 @@ public final class ModelAssembler {
      * @return Returns the model assembler.
      */
     public ModelAssembler discoverModels(ClassLoader loader) {
-        ModelDiscovery.findModels(loader).forEach(this::addImport);
-        return this;
+        return addDiscoveredModels(ModelDiscovery.findModels(loader));
     }
 
     /**
@@ -382,7 +381,15 @@ public final class ModelAssembler {
      * @return Returns the model assembler.
      */
     public ModelAssembler discoverModels() {
-        ModelDiscovery.findModels().forEach(this::addImport);
+        return addDiscoveredModels(ModelDiscovery.findModels());
+    }
+
+    private ModelAssembler addDiscoveredModels(List<URL> urls) {
+        for (URL url : urls) {
+            LOGGER.fine(() -> "Discovered Smithy model: " + url);
+            addImport(url);
+        }
+
         return this;
     }
 
