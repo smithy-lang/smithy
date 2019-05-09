@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.SmithyBuildConfig;
 import software.amazon.smithy.build.SmithyBuildResult;
@@ -35,6 +36,7 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.ValidatedResult;
 
 public final class BuildCommand implements Command {
+    private static final Logger LOGGER = Logger.getLogger(BuildCommand.class.getName());
     private ClassLoader classLoader;
 
     public BuildCommand(ClassLoader classLoader) {
@@ -68,7 +70,7 @@ public final class BuildCommand implements Command {
         String output = arguments.parameter("--output", null);
         List<String> models = arguments.positionalArguments();
 
-        System.err.println(String.format("Building Smithy models: %s", String.join(" ", models)));
+        LOGGER.info(String.format("Building Smithy models: [%s]", String.join(" ", models)));
         SmithyBuildConfig.Builder configBuilder = SmithyBuildConfig.builder();
 
         // Try to find a smithy-build.json file.
@@ -77,7 +79,7 @@ public final class BuildCommand implements Command {
         }
 
         if (config != null) {
-            System.err.println(String.format("Loading Smithy configs: %s", String.join(" ", config)));
+            LOGGER.info(String.format("Loading Smithy configs: [%s]", String.join(" ", config)));
             config.forEach(file -> configBuilder.load(Paths.get(file)));
         }
 
@@ -85,9 +87,9 @@ public final class BuildCommand implements Command {
             configBuilder.outputDirectory(output);
             try {
                 Files.createDirectories(Paths.get(output));
-                System.err.println(String.format("Output directory set to: %s", output));
+                LOGGER.fine(String.format("Output directory set to: %s", output));
             } catch (IOException e) {
-                throw new CliError("Unable to create output directory: " + e.getMessage());
+                throw new CliError("Unable to create Smithy output directory: " + e.getMessage());
             }
         }
 
@@ -95,7 +97,7 @@ public final class BuildCommand implements Command {
 
         // Resolve the config first to look for problems.
         if (arguments.has("--discover")) {
-            System.err.println("Enabling model discovery");
+            LOGGER.fine("Enabling model discovery");
             ModelAssembler assembler = Model.assembler(classLoader).discoverModels(classLoader);
             Supplier<ModelAssembler> supplier = assembler::copy;
             modelBuilder = SmithyBuild.create(classLoader, supplier);

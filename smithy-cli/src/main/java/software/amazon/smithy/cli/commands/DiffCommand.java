@@ -16,6 +16,7 @@
 package software.amazon.smithy.cli.commands;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
@@ -30,6 +31,7 @@ import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 public final class DiffCommand implements Command {
+    private static final Logger LOGGER = Logger.getLogger(DiffCommand.class.getName());
     private final ClassLoader classLoader;
 
     public DiffCommand(ClassLoader classLoader) {
@@ -57,9 +59,9 @@ public final class DiffCommand implements Command {
     @Override
     public void execute(Arguments arguments) {
         List<String> oldModels = arguments.repeatedParameter("--old");
-        System.err.println(String.format("Setting 'old' Smithy models: %s", String.join(" ", oldModels)));
+        LOGGER.info(String.format("Setting 'old' Smithy models: %s", String.join(" ", oldModels)));
         List<String> newModels = arguments.repeatedParameter("--new");
-        System.err.println(String.format("Setting 'new' Smithy models: %s", String.join(" ", newModels)));
+        LOGGER.info(String.format("Setting 'new' Smithy models: %s", String.join(" ", newModels)));
 
         ModelAssembler assembler = Model.assembler(classLoader);
         Model oldModel = loadModel("old", assembler, oldModels);

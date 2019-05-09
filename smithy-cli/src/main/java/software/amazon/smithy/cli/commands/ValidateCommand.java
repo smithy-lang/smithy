@@ -16,6 +16,7 @@
 package software.amazon.smithy.cli.commands;
 
 import java.util.List;
+import java.util.logging.Logger;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
@@ -26,6 +27,7 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.ValidatedResult;
 
 public final class ValidateCommand implements Command {
+    private static final Logger LOGGER = Logger.getLogger(ValidateCommand.class.getName());
     private ClassLoader classLoader;
 
     public ValidateCommand(ClassLoader classLoader) {
@@ -60,17 +62,17 @@ public final class ValidateCommand implements Command {
         }
 
         List<String> models = arguments.positionalArguments();
-        System.err.println(String.format("Validating Smithy models: %s", String.join(" ", models)));
+        LOGGER.info(String.format("Validating Smithy models: %s", String.join(" ", models)));
 
         ModelAssembler assembler = Model.assembler(classLoader);
 
         if (arguments.has("--discover")) {
-            System.err.println("Enabling model discovery");
+            LOGGER.fine("Enabling model discovery");
             assembler.discoverModels(classLoader);
         }
 
         if (arguments.has("--ignore-unknown-traits")) {
-            System.err.println("Ignoring unknown traits");
+            LOGGER.fine("Ignoring unknown traits");
             assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
         }
 

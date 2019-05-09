@@ -17,6 +17,7 @@ package software.amazon.smithy.cli.commands;
 
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
@@ -31,6 +32,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.IoUtils;
 
 public final class GenerateCommand implements Command {
+    private static final Logger LOGGER = Logger.getLogger(GenerateCommand.class.getName());
     private final ClassLoader classLoader;
 
     public GenerateCommand(ClassLoader classLoader) {
@@ -79,27 +81,27 @@ public final class GenerateCommand implements Command {
 
         ObjectNode settingsObject;
         if (settings == null) {
-            System.err.println("No plugin settings specified");
+            LOGGER.fine("No plugin settings specified");
             settingsObject = Node.objectNode();
         } else {
             String settingsFileContents;
             if (settings.equals("-")) {
-                System.err.println("Loading plugin settings from STD_IN");
+                LOGGER.fine("Loading plugin settings from STDIN");
                 settingsFileContents = IoUtils.toUtf8String(System.in);
             } else {
-                System.err.println(String.format("Loading plugin settings file: %s", settings));
+                LOGGER.fine(String.format("Loading plugin settings file: %s", settings));
                 settingsFileContents = IoUtils.readUtf8File(settings);
             }
             settingsObject = Node.parse(settingsFileContents)
                     .expectObjectNode("--settings must reference a JSON encoded object");
         }
 
-        System.err.println(String.format("Generating '%s' for Smithy models: %s", plugin, String.join(" ", models)));
+        LOGGER.info(String.format("Generating '%s' for Smithy models: %s", plugin, String.join(" ", models)));
 
         ModelAssembler assembler = Model.assembler(classLoader);
 
         if (arguments.has("--discover")) {
-            System.err.println("Enabling model discovery");
+            LOGGER.fine("Enabling model discovery");
             assembler.discoverModels(classLoader);
         }
 
@@ -108,7 +110,7 @@ public final class GenerateCommand implements Command {
 
         SmithyBuildPlugin buildPlugin = loadSmithyBuildPlugin(classLoader, plugin);
         FileManifest manifest = FileManifest.create(Paths.get(output));
-        System.err.println(String.format("Output directory set to: %s", output));
+        LOGGER.finer(String.format("Output directory set to: %s", output));
 
         PluginContext context = PluginContext.builder()
                 .model(model)
