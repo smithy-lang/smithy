@@ -17,7 +17,6 @@ package software.amazon.smithy.cli;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,7 +48,6 @@ import java.util.logging.SimpleFormatter;
  * event a different language.
  */
 public final class Cli {
-    private static final String LOG_FORMAT = "[%1$tF %1$tT] [%2$s] %3$s%n";
     private final String applicationName;
     private final ClassLoader classLoader;
     private Map<String, Command> commands = new TreeMap<>();
@@ -135,8 +133,7 @@ public final class Cli {
         handler.setFormatter(new SimpleFormatter() {
             @Override
             public synchronized String format(LogRecord r) {
-                return String.format(
-                        LOG_FORMAT, new Date(r.getMillis()), r.getLevel().getLocalizedName(), r.getMessage());
+                return "[" + r.getLevel().getLocalizedName() + "] " + r.getMessage() + System.lineSeparator();
             }
         });
 
