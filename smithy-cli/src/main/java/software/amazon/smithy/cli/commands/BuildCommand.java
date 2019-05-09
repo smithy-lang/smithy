@@ -37,11 +37,6 @@ import software.amazon.smithy.model.validation.ValidatedResult;
 
 public final class BuildCommand implements Command {
     private static final Logger LOGGER = Logger.getLogger(BuildCommand.class.getName());
-    private ClassLoader classLoader;
-
-    public BuildCommand(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
 
     @Override
     public String getName() {
@@ -65,7 +60,7 @@ public final class BuildCommand implements Command {
     }
 
     @Override
-    public void execute(Arguments arguments) {
+    public void execute(Arguments arguments, ClassLoader classLoader) {
         List<String> config = arguments.repeatedParameter("--config", null);
         String output = arguments.parameter("--output", null);
         List<String> models = arguments.positionalArguments();

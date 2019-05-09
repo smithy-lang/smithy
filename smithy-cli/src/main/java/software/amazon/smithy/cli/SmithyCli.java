@@ -51,11 +51,11 @@ public final class SmithyCli {
     }
 
     public int run(String... args) {
-        Cli cli = new Cli("smithy");
-        cli.addCommand(new ValidateCommand(classLoader));
-        cli.addCommand(new BuildCommand(classLoader));
-        cli.addCommand(new DiffCommand(classLoader));
-        cli.addCommand(new GenerateCommand(classLoader));
+        Cli cli = new Cli("smithy", classLoader);
+        cli.addCommand(new ValidateCommand());
+        cli.addCommand(new BuildCommand());
+        cli.addCommand(new DiffCommand());
+        cli.addCommand(new GenerateCommand());
         cli.addCommand(new OptimizeCommand());
 
         int code = cli.run(args);

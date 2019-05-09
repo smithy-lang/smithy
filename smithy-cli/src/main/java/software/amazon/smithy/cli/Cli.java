@@ -51,6 +51,7 @@ import java.util.logging.SimpleFormatter;
 public final class Cli {
     private static final String LOG_FORMAT = "[%1$tF %1$tT] [%2$s] %3$s%n";
     private final String applicationName;
+    private final ClassLoader classLoader;
     private Map<String, Command> commands = new TreeMap<>();
 
     /**
@@ -59,7 +60,18 @@ public final class Cli {
      * @param applicationName Name of the CLI application.
      */
     public Cli(String applicationName) {
+        this(applicationName, Cli.class.getClassLoader());
+    }
+
+    /**
+     * Creates a new CLI with the given name.
+     *
+     * @param applicationName Name of the CLI application.
+     * @param classLoader ClassLoader to use when invoking commands.
+     */
+    public Cli(String applicationName, ClassLoader classLoader) {
         this.applicationName = applicationName;
+        this.classLoader = classLoader;
     }
 
     /**
@@ -102,7 +114,7 @@ public final class Cli {
                     printHelp(command, parser);
                 } else {
                     configureLogging(args);
-                    command.execute(parsedArguments);
+                    command.execute(parsedArguments, classLoader);
                 }
             } else {
                 throw new CliError("Unknown command or argument: '" + argument + "'", 1);

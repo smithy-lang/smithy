@@ -32,11 +32,6 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 
 public final class DiffCommand implements Command {
     private static final Logger LOGGER = Logger.getLogger(DiffCommand.class.getName());
-    private final ClassLoader classLoader;
-
-    public DiffCommand(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
 
     @Override
     public String getName() {
@@ -57,7 +52,7 @@ public final class DiffCommand implements Command {
     }
 
     @Override
-    public void execute(Arguments arguments) {
+    public void execute(Arguments arguments, ClassLoader classLoader) {
         List<String> oldModels = arguments.repeatedParameter("--old");
         LOGGER.info(String.format("Setting 'old' Smithy models: %s", String.join(" ", oldModels)));
         List<String> newModels = arguments.repeatedParameter("--new");

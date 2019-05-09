@@ -28,11 +28,6 @@ import software.amazon.smithy.model.validation.ValidatedResult;
 
 public final class ValidateCommand implements Command {
     private static final Logger LOGGER = Logger.getLogger(ValidateCommand.class.getName());
-    private ClassLoader classLoader;
-
-    public ValidateCommand(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
 
     @Override
     public String getName() {
@@ -55,7 +50,7 @@ public final class ValidateCommand implements Command {
     }
 
     @Override
-    public void execute(Arguments arguments) {
+    public void execute(Arguments arguments, ClassLoader classLoader) {
         String format = arguments.parameter("--format", "text");
         if (!format.equals("text")) {
             throw new CliError("Invalid --format value `" + format + "`");

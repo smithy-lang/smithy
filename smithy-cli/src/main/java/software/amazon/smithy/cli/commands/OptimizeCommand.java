@@ -50,7 +50,7 @@ public final class OptimizeCommand implements Command {
     }
 
     @Override
-    public void execute(Arguments arguments) {
+    public void execute(Arguments arguments, ClassLoader classLoader) {
         throw new UnsupportedOperationException("Expected the CLI runner to perform optimizations");
     }
 }

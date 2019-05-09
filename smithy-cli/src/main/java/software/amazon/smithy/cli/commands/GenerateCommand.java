@@ -33,11 +33,6 @@ import software.amazon.smithy.utils.IoUtils;
 
 public final class GenerateCommand implements Command {
     private static final Logger LOGGER = Logger.getLogger(GenerateCommand.class.getName());
-    private final ClassLoader classLoader;
-
-    public GenerateCommand(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
 
     @Override
     public String getName() {
@@ -73,7 +68,7 @@ public final class GenerateCommand implements Command {
     }
 
     @Override
-    public void execute(Arguments arguments) {
+    public void execute(Arguments arguments, ClassLoader classLoader) {
         String plugin = arguments.parameter("--plugin");
         String settings = arguments.parameter("--settings", null);
         String output = arguments.parameter("--output");

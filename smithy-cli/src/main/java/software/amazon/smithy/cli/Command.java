@@ -57,6 +57,7 @@ public interface Command {
      * Executes the command using the provided arguments.
      *
      * @param arguments CLI arguments.
+     * @param classLoader ClassLoader to use in the command.
      */
-    void execute(Arguments arguments);
+    void execute(Arguments arguments, ClassLoader classLoader);
 }
