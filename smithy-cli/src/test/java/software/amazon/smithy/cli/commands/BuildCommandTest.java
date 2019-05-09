@@ -31,7 +31,7 @@ public class BuildCommandTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         System.setOut(printStream);
-        assertThat(SmithyCli.run(code -> {}, "build", "--help"), is(0));
+        assertThat(SmithyCli.create().exitFunction(code -> {}).run("build", "--help"), is(0));
         System.setOut(out);
         String help = outputStream.toString("UTF-8");
 

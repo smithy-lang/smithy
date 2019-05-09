@@ -21,12 +21,17 @@ import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
-import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.ValidatedResult;
 
 public final class ValidateCommand implements Command {
+    private ClassLoader classLoader;
+
+    public ValidateCommand(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
     @Override
     public String getName() {
         return "validate";
@@ -55,19 +60,13 @@ public final class ValidateCommand implements Command {
         }
 
         List<String> models = arguments.positionalArguments();
-
-        if (models.isEmpty()) {
-            throw new CliError("No models were provided as positional arguments");
-        }
-
         System.err.println(String.format("Validating Smithy models: %s", String.join(" ", models)));
 
-        ClassLoader loader = SmithyCli.getConfiguredClassLoader();
-        ModelAssembler assembler = Model.assembler(loader);
+        ModelAssembler assembler = Model.assembler(classLoader);
 
         if (arguments.has("--discover")) {
             System.err.println("Enabling model discovery");
-            assembler.discoverModels(loader);
+            assembler.discoverModels(classLoader);
         }
 
         if (arguments.has("--ignore-unknown-traits")) {

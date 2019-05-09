@@ -26,28 +26,43 @@ import software.amazon.smithy.cli.commands.ValidateCommand;
  * Entry point of the Smithy CLI.
  */
 public final class SmithyCli {
+
+    private Consumer<Integer> exitFunction = System::exit;
+    private ClassLoader classLoader = getClass().getClassLoader();
+
     private SmithyCli() {}
 
-    public static void main(String... args) {
-        run(System::exit, args);
+    public static SmithyCli create() {
+        return new SmithyCli();
     }
 
-    public static int run(Consumer<Integer> exitFunction, String... args) {
+    public SmithyCli exitFunction(Consumer<Integer> exitFunction) {
+        this.exitFunction = exitFunction;
+        return this;
+    }
+
+    public SmithyCli classLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+        return this;
+    }
+
+    public static void main(String... args) {
+        SmithyCli.create().run(args);
+    }
+
+    public int run(String... args) {
         Cli cli = new Cli("smithy");
-        cli.addCommand(new ValidateCommand());
-        cli.addCommand(new BuildCommand());
-        cli.addCommand(new DiffCommand());
-        cli.addCommand(new GenerateCommand());
+        cli.addCommand(new ValidateCommand(classLoader));
+        cli.addCommand(new BuildCommand(classLoader));
+        cli.addCommand(new DiffCommand(classLoader));
+        cli.addCommand(new GenerateCommand(classLoader));
         cli.addCommand(new OptimizeCommand());
+
         int code = cli.run(args);
         if (code != 0) {
             exitFunction.accept(code);
         }
 
         return 0;
-    }
-
-    public static ClassLoader getConfiguredClassLoader() {
-        return SmithyCli.class.getClassLoader();
     }
 }
