@@ -22,7 +22,6 @@ import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
-import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -31,6 +30,12 @@ import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 public final class DiffCommand implements Command {
+    private final ClassLoader classLoader;
+
+    public DiffCommand(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
     @Override
     public String getName() {
         return "diff";
@@ -56,13 +61,12 @@ public final class DiffCommand implements Command {
         List<String> newModels = arguments.repeatedParameter("--new");
         System.err.println(String.format("Setting 'new' Smithy models: %s", String.join(" ", newModels)));
 
-        ClassLoader loader = SmithyCli.getConfiguredClassLoader();
-        ModelAssembler assembler = Model.assembler(loader);
+        ModelAssembler assembler = Model.assembler(classLoader);
         Model oldModel = loadModel("old", assembler, oldModels);
         assembler.reset();
         Model newModel = loadModel("new", assembler, newModels);
 
-        List<ValidationEvent> events = ModelDiff.compare(loader, oldModel, newModel);
+        List<ValidationEvent> events = ModelDiff.compare(classLoader, oldModel, newModel);
         boolean hasError = events.stream().anyMatch(event -> event.getSeverity() == Severity.ERROR);
         boolean hasDanger = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);
         boolean hasWarning = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);

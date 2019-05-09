@@ -25,8 +25,6 @@ dependencies {
     implementation(project(":smithy-build"))
     implementation(project(":smithy-linters"))
     implementation(project(":smithy-diff"))
-    implementation(project(":smithy-codegen-core"))
-    implementation(project(":smithy-codegen-freemarker"))
 }
 
 application {

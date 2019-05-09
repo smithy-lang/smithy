@@ -17,12 +17,16 @@ package software.amazon.smithy.cli;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * This class provides a very basic CLI abstraction.
@@ -45,6 +49,7 @@ import java.util.logging.Logger;
  * event a different language.
  */
 public final class Cli {
+    private static final String LOG_FORMAT = "[%1$tF %1$tT] [%2$s] %3$s%n";
     private final String applicationName;
     private Map<String, Command> commands = new TreeMap<>();
 
@@ -96,7 +101,7 @@ public final class Cli {
                 if (parsedArguments.has("--help")) {
                     printHelp(command, parser);
                 } else {
-                    setDebugLoggingIfRequested(args);
+                    configureLogging(args);
                     command.execute(parsedArguments);
                 }
             } else {
@@ -113,15 +118,33 @@ public final class Cli {
         }
     }
 
-    private void setDebugLoggingIfRequested(String[] args) {
+    private void configureLogging(String[] args) {
+        Handler handler = getConsoleHandler();
+        handler.setFormatter(new SimpleFormatter() {
+            @Override
+            public synchronized String format(LogRecord r) {
+                return String.format(
+                        LOG_FORMAT, new Date(r.getMillis()), r.getLevel().getLocalizedName(), r.getMessage());
+            }
+        });
+
         if (hasArgument(args, "--debug")) {
-            System.setProperty("java.util.logging.SimpleFormatter.format", "[%4$s] %5$s%n");
-            Logger root = Logger.getLogger("");
-            root.setLevel(Level.FINEST);
-            for (Handler handler : root.getHandlers()) {
-                handler.setLevel(Level.FINEST);
+            handler.setLevel(Level.FINEST);
+        }
+    }
+
+    private static Handler getConsoleHandler() {
+        Logger rootLogger = Logger.getLogger("");
+
+        for (Handler handler : rootLogger.getHandlers()) {
+            if (handler instanceof ConsoleHandler) {
+                return handler;
             }
         }
+
+        Handler consoleHandler = new ConsoleHandler();
+        rootLogger.addHandler(consoleHandler);
+        return consoleHandler;
     }
 
     private boolean hasArgument(String[] args, String name) {

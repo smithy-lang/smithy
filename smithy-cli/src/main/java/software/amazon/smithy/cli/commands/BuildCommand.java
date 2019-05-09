@@ -30,12 +30,17 @@ import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
-import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.ValidatedResult;
 
 public final class BuildCommand implements Command {
+    private ClassLoader classLoader;
+
+    public BuildCommand(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
     @Override
     public String getName() {
         return "build";
@@ -63,10 +68,6 @@ public final class BuildCommand implements Command {
         String output = arguments.parameter("--output", null);
         List<String> models = arguments.positionalArguments();
 
-        if (models.isEmpty()) {
-            throw new CliError("No models were provided as positional arguments");
-        }
-
         System.err.println(String.format("Building Smithy models: %s", String.join(" ", models)));
         SmithyBuildConfig.Builder configBuilder = SmithyBuildConfig.builder();
 
@@ -90,23 +91,22 @@ public final class BuildCommand implements Command {
             }
         }
 
-        ClassLoader loader = SmithyCli.getConfiguredClassLoader();
         SmithyBuild modelBuilder;
 
         // Resolve the config first to look for problems.
         if (arguments.has("--discover")) {
             System.err.println("Enabling model discovery");
-            ModelAssembler assembler = Model.assembler(loader).discoverModels(loader);
+            ModelAssembler assembler = Model.assembler(classLoader).discoverModels(classLoader);
             Supplier<ModelAssembler> supplier = assembler::copy;
-            modelBuilder = SmithyBuild.create(loader, supplier);
+            modelBuilder = SmithyBuild.create(classLoader, supplier);
         } else {
-            modelBuilder = SmithyBuild.create(loader);
+            modelBuilder = SmithyBuild.create(classLoader);
         }
 
         modelBuilder.config(configBuilder.build());
 
         // Build the model and fail if there are errors.
-        ValidatedResult<Model> sourceResult = buildModel(loader, models);
+        ValidatedResult<Model> sourceResult = buildModel(classLoader, models);
         Model model = sourceResult.unwrap();
         modelBuilder.model(model);
         SmithyBuildResult smithyBuildResult = modelBuilder.build();

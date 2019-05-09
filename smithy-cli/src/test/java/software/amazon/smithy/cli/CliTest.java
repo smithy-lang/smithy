@@ -44,8 +44,8 @@ public class CliTest {
     @Test
     public void printsMainHelp() throws Exception {
         Cli cli = new Cli("mytest");
-        cli.addCommand(new BuildCommand());
-        cli.addCommand(new ValidateCommand());
+        cli.addCommand(new BuildCommand(getClass().getClassLoader()));
+        cli.addCommand(new ValidateCommand(getClass().getClassLoader()));
         PrintStream out = System.out;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
@@ -63,8 +63,8 @@ public class CliTest {
     @Test
     public void printsSubcommandHelp() throws Exception {
         Cli cli = new Cli("mytest");
-        cli.addCommand(new BuildCommand());
-        cli.addCommand(new ValidateCommand());
+        cli.addCommand(new BuildCommand(getClass().getClassLoader()));
+        cli.addCommand(new ValidateCommand(getClass().getClassLoader()));
         PrintStream out = System.out;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);

@@ -21,11 +21,9 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.cli.Arguments;
-import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
-import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.Node;
@@ -33,6 +31,12 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.IoUtils;
 
 public final class GenerateCommand implements Command {
+    private final ClassLoader classLoader;
+
+    public GenerateCommand(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
     @Override
     public String getName() {
         return "generate";
@@ -73,10 +77,6 @@ public final class GenerateCommand implements Command {
         String output = arguments.parameter("--output");
         List<String> models = arguments.positionalArguments();
 
-        if (models.isEmpty()) {
-            throw new CliError("No models were provided as positional arguments");
-        }
-
         ObjectNode settingsObject;
         if (settings == null) {
             System.err.println("No plugin settings specified");
@@ -96,18 +96,17 @@ public final class GenerateCommand implements Command {
 
         System.err.println(String.format("Generating '%s' for Smithy models: %s", plugin, String.join(" ", models)));
 
-        ClassLoader loader = SmithyCli.getConfiguredClassLoader();
-        ModelAssembler assembler = Model.assembler(loader);
+        ModelAssembler assembler = Model.assembler(classLoader);
 
         if (arguments.has("--discover")) {
             System.err.println("Enabling model discovery");
-            assembler.discoverModels(loader);
+            assembler.discoverModels(classLoader);
         }
 
         models.forEach(assembler::addImport);
         Model model = assembler.assemble().unwrap();
 
-        SmithyBuildPlugin buildPlugin = loadSmithyBuildPlugin(loader, plugin);
+        SmithyBuildPlugin buildPlugin = loadSmithyBuildPlugin(classLoader, plugin);
         FileManifest manifest = FileManifest.create(Paths.get(output));
         System.err.println(String.format("Output directory set to: %s", output));
 
