@@ -43,16 +43,16 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  */
 public class ModifiedTrait extends AbstractDiffEvaluator {
     /** Tags that indicates a breaking change if a trait is added. */
-public static final String DIFF_ERROR_ADD = "diff.error.add";
+    public static final String DIFF_ERROR_ADD = "diff.error.add";
 
     /** Tags that indicates a breaking change if a trait is removed. */
-public static final String DIFF_ERROR_REMOVE = "diff.error.remove";
+    public static final String DIFF_ERROR_REMOVE = "diff.error.remove";
 
     /** Tags that indicates a breaking change if a trait is updated. */
-public static final String DIFF_ERROR_UPDATE = "diff.error.update";
+    public static final String DIFF_ERROR_UPDATE = "diff.error.update";
 
     /** Tags that indicates a breaking change if a trait is added, removed, or changed. */
-public static final String DIFF_ERROR_CONST = "diff.error.const";
+    public static final String DIFF_ERROR_CONST = "diff.error.const";
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {

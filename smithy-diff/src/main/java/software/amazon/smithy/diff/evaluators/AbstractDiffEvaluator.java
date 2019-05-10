@@ -33,7 +33,7 @@ public abstract class AbstractDiffEvaluator implements DiffEvaluator {
      *
      * @return Returns the computed event ID.
      */
-protected String getEventId() {
+    protected String getEventId() {
         return getClass().getSimpleName();
     }
 
