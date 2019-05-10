@@ -17,10 +17,10 @@ package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.cli.commands.BuildCommand;
 import software.amazon.smithy.cli.commands.ValidateCommand;
@@ -33,11 +33,10 @@ public class CliTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         System.setOut(printStream);
-        int exitCode = cli.run(new String[]{});
+        cli.run(new String[]{});
         System.setOut(out);
         String help = outputStream.toString("UTF-8");
 
-        assertThat(exitCode, equalTo(0));
         assertThat(help, containsString("mytest"));
     }
 
@@ -50,11 +49,10 @@ public class CliTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         System.setOut(printStream);
-        int exitCode = cli.run(new String[]{"--help"});
+        cli.run(new String[]{"--help"});
         System.setOut(out);
         String help = outputStream.toString("UTF-8");
 
-        assertThat(exitCode, equalTo(0));
         assertThat(help, containsString("build"));
         assertThat(help, containsString("validate"));
         assertThat(help, containsString("mytest"));
@@ -69,11 +67,10 @@ public class CliTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         System.setOut(printStream);
-        int exitCode = cli.run(new String[]{"validate", "--help"});
+        cli.run(new String[]{"validate", "--help"});
         System.setOut(out);
         String help = outputStream.toString("UTF-8");
 
-        assertThat(exitCode, equalTo(0));
         assertThat(help, containsString("validate"));
         assertThat(help, containsString("--help"));
         assertThat(help, containsString("--debug"));
@@ -81,17 +78,22 @@ public class CliTest {
     }
 
     @Test
-    public void debugShowsStacktrace() throws Exception {
+    public void showsStacktrace() throws Exception {
         Cli cli = new Cli("mytest");
         PrintStream out = System.out;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         System.setOut(printStream);
-        int exitCode = cli.run(new String[]{"invalid", "--debug"});
+
+        try {
+            cli.run(new String[]{"invalid", "--stacktrace"});
+            Assertions.fail("Expected to throw");
+        } catch (RuntimeException e) {
+        }
+
         System.setOut(out);
         String help = outputStream.toString("UTF-8");
 
-        assertThat(exitCode, equalTo(1));
         assertThat(help, containsString("Unknown command or argument"));
     }
 }

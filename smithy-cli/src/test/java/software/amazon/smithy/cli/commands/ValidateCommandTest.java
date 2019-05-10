@@ -17,7 +17,6 @@ package software.amazon.smithy.cli.commands;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -31,7 +30,7 @@ public class ValidateCommandTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         System.setOut(printStream);
-        assertThat(SmithyCli.create().exitFunction(code -> {}).run("validate", "--help"), is(0));
+        SmithyCli.create().run("validate", "--help");
         System.setOut(out);
         String help = outputStream.toString("UTF-8");
 
