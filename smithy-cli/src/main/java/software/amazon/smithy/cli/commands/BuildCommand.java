@@ -21,7 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.SmithyBuildConfig;
@@ -31,6 +30,7 @@ import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
+import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -88,25 +88,16 @@ public final class BuildCommand implements Command {
             }
         }
 
-        SmithyBuild modelBuilder;
-
-        // Resolve the config first to look for problems.
-        if (arguments.has("--discover")) {
-            LOGGER.fine("Enabling model discovery");
-            ModelAssembler assembler = Model.assembler(classLoader).discoverModels(classLoader);
-            Supplier<ModelAssembler> supplier = assembler::copy;
-            modelBuilder = SmithyBuild.create(classLoader, supplier);
-        } else {
-            modelBuilder = SmithyBuild.create(classLoader);
-        }
-
-        modelBuilder.config(configBuilder.build());
+        SmithyBuildConfig smithyBuildConfig = configBuilder.build();
 
         // Build the model and fail if there are errors.
-        ValidatedResult<Model> sourceResult = buildModel(classLoader, models);
+        ValidatedResult<Model> sourceResult = buildModel(classLoader, models, arguments.has(SmithyCli.DISCOVER));
         Model model = sourceResult.unwrap();
-        modelBuilder.model(model);
-        SmithyBuildResult smithyBuildResult = modelBuilder.build();
+
+        SmithyBuildResult smithyBuildResult = SmithyBuild.create(classLoader)
+                .config(smithyBuildConfig)
+                .model(model)
+                .build();
 
         // Fail if any projections failed to build, but build all projections.
         if (smithyBuildResult.anyBroken()) {
@@ -117,8 +108,14 @@ public final class BuildCommand implements Command {
         smithyBuildResult.allArtifacts().map(Path::toString).sorted().forEach(System.out::println);
     }
 
-    private ValidatedResult<Model> buildModel(ClassLoader loader, List<String> models) {
-        ModelAssembler assembler = Model.assembler(loader);
+    private ValidatedResult<Model> buildModel(ClassLoader classLoader, List<String> models, boolean discoverModels) {
+        ModelAssembler assembler = Model.assembler(classLoader);
+
+        if (discoverModels) {
+            LOGGER.fine("Enabling model discovery");
+            assembler.discoverModels(classLoader);
+        }
+
         models.forEach(assembler::addImport);
         ValidatedResult<Model> result = assembler.assemble();
         Validator.validate(result, true);

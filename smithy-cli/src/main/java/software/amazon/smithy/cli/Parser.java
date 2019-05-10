@@ -245,9 +245,10 @@ public final class Parser {
         private List<Argument> arguments = new ArrayList<>();
 
         private Builder() {
-            // Always include --help, --debug, and --no-color options.
+            // Always include --help, --debug, --stacktrace, and --no-color options.
             option("--help", "-h", "Print this help");
             option("--debug", "Display debug information");
+            option("--stacktrace", "Display a stacktrace on error");
             option("--no-color", "Explicitly disable ANSI colors");
         }
 

@@ -25,6 +25,7 @@ import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
+import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.Node;
@@ -95,7 +96,7 @@ public final class GenerateCommand implements Command {
 
         ModelAssembler assembler = Model.assembler(classLoader);
 
-        if (arguments.has("--discover")) {
+        if (arguments.has(SmithyCli.DISCOVER)) {
             LOGGER.fine("Enabling model discovery");
             assembler.discoverModels(classLoader);
         }

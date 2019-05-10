@@ -17,6 +17,8 @@ package software.amazon.smithy.cli;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,6 +41,7 @@ import java.util.logging.SimpleFormatter;
  *     <li>--help | -h: Prints subcommand help text.</li>
  *     <li>--debug: Prints debug information, including exception stack traces.</li>
  *     <li>--no-color: Explicitly disables ANSI colors.</li>
+ *     <li>--stacktrace: Prints the stacktrace of any CLI exception that is thrown.</li>
  * </ul>
  *
  * <p>Why are we not using a library for this? Because parsing command line
@@ -48,8 +51,15 @@ import java.util.logging.SimpleFormatter;
  * event a different language.
  */
 public final class Cli {
+    public static final String HELP = "--help";
+    public static final String NO_COLOR = "--no-color";
+    public static final String DEBUG = "--debug";
+    public static final String STACKTRACE = "--stacktrace";
+    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("HH:mm:ss.SSS");
+
     private final String applicationName;
     private final ClassLoader classLoader;
+    private boolean configureLogging;
     private Map<String, Command> commands = new TreeMap<>();
 
     /**
@@ -82,33 +92,41 @@ public final class Cli {
     }
 
     /**
+     * Calling this method ensures that logging is configured for the CLI.
+     *
+     * @param configureLogging Set to true to configure log formats and levels.
+     */
+    public void configureLogging(boolean configureLogging) {
+        this.configureLogging = configureLogging;
+    }
+
+    /**
      * Execute the command line using the given arguments.
      *
      * @param args Arguments to parse.
-     * @return Returns the exit code.
      */
-    public int run(String[] args) {
+    public void run(String[] args) {
         try {
             // No args is not a valid use of the command, so
             // print help and exit with an error code.
             if (args.length == 0) {
                 printMainHelp();
-                return 0;
+                return;
             }
 
             String argument = args[0];
-            if (argument.equals("-h") || argument.equals("--help")) {
+            if (argument.equals("-h") || argument.equals(HELP)) {
                 printMainHelp();
             } else if (commands.containsKey(argument)) {
                 Command command = commands.get(argument);
                 Parser parser = command.getParser();
                 Arguments parsedArguments = parser.parse(args, 1);
                 // Use the --no-color argument to globally disable ANSI colors.
-                if (parsedArguments.has("--no-color")) {
+                if (parsedArguments.has(NO_COLOR)) {
                     Colors.setUseAnsiColors(false);
                 }
                 // Automatically handle --help output for subcommands.
-                if (parsedArguments.has("--help")) {
+                if (parsedArguments.has(HELP)) {
                     printHelp(command, parser);
                 } else {
                     configureLogging(args);
@@ -117,28 +135,22 @@ public final class Cli {
             } else {
                 throw new CliError("Unknown command or argument: '" + argument + "'", 1);
             }
-
-            return 0;
-        } catch (CliError e) {
-            printException(args, e);
-            return e.code;
         } catch (Exception e) {
             printException(args, e);
-            return 1;
+            throw e;
         }
     }
 
     private void configureLogging(String[] args) {
-        Handler handler = getConsoleHandler();
-        handler.setFormatter(new SimpleFormatter() {
-            @Override
-            public synchronized String format(LogRecord r) {
-                return "[" + r.getLevel().getLocalizedName() + "] " + r.getMessage() + System.lineSeparator();
+        if (configureLogging) {
+            Handler handler = getConsoleHandler();
+            if (hasArgument(args, DEBUG)) {
+                handler.setFormatter(new DebugFormatter());
+                handler.setLevel(Level.FINEST);
+            } else {
+                handler.setFormatter(new BasicFormatter());
+                handler.setLevel(Level.WARNING);
             }
-        });
-
-        if (hasArgument(args, "--debug")) {
-            handler.setLevel(Level.FINEST);
         }
     }
 
@@ -167,12 +179,12 @@ public final class Cli {
     }
 
     private void printException(String[] args, Throwable throwable) {
-        if (hasArgument(args, "--no-color")) {
+        if (hasArgument(args, NO_COLOR)) {
             Colors.setUseAnsiColors(false);
         }
 
         Colors.out(Colors.RED, throwable.getMessage());
-        if (hasArgument(args, "--debug")) {
+        if (hasArgument(args, STACKTRACE)) {
             StringWriter sw = new StringWriter();
             throwable.printStackTrace(new PrintWriter(sw));
             String trace = sw.toString();
@@ -214,7 +226,7 @@ public final class Cli {
         // In the example line, print each argument.
         parser.getArgs().forEach(arg -> {
             // Omit the built-in --help arguments.
-            if (!arg.getLongName().filter(name -> name.equals("--help")).isPresent()) {
+            if (!arg.getLongName().filter(name -> name.equals(HELP)).isPresent()) {
                 example.append(" [");
                 arg.getShortName().ifPresent(example::append);
                 if (arg.getShortName().isPresent() && arg.getLongName().isPresent()) {
@@ -264,5 +276,24 @@ public final class Cli {
         }
 
         System.out.println(body);
+    }
+
+    private static final class BasicFormatter extends SimpleFormatter {
+        @Override
+        public synchronized String format(LogRecord r) {
+            return FORMAT.format(new Date(r.getMillis()))
+                   + " [" + r.getLevel().getLocalizedName() + "] "
+                   + r.getMessage() + System.lineSeparator();
+        }
+    }
+
+    private static final class DebugFormatter extends SimpleFormatter {
+        @Override
+        public synchronized String format(LogRecord r) {
+            return FORMAT.format(new Date(r.getMillis()))
+                   + " [" + r.getLevel().getLocalizedName() + "] ["
+                   + r.getLoggerName() + "] "
+                   + r.getMessage() + System.lineSeparator();
+        }
     }
 }
