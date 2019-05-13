@@ -28,6 +28,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -122,6 +123,7 @@ final class SmithyBuildImpl {
                 .sorted(Comparator.comparing(Projection::getName))
                 .parallel()
                 .map(projection -> applyProjection(projection, resolvedModel))
+                .collect(Collectors.toList())
                 .forEach(builder::addProjectionResult);
         return builder.build();
     }
