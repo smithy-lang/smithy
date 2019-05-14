@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -102,5 +103,14 @@ public class SmithyBuildConfigTest {
         Assertions.assertThrows(SmithyBuildException.class, () -> {
             SmithyBuildConfig.builder().addPlugin("!invalid", Node.objectNode()).build();
         });
+    }
+
+    @Test
+    public void addsBuiltinPlugins() {
+        SmithyBuildConfig config = SmithyBuildConfig.builder().build();
+
+        assertThat(config.getPlugins(), hasKey("build-info"));
+        assertThat(config.getPlugins(), hasKey("model"));
+        assertThat(config.getPlugins(), hasKey("sources"));
     }
 }

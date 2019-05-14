@@ -183,7 +183,7 @@ public final class Cli {
             Colors.setUseAnsiColors(false);
         }
 
-        Colors.out(Colors.RED, throwable.getMessage());
+        Colors.out(Colors.BOLD_RED, throwable.getMessage());
         if (hasArgument(args, STACKTRACE)) {
             StringWriter sw = new StringWriter();
             throwable.printStackTrace(new PrintWriter(sw));

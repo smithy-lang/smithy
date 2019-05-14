@@ -53,6 +53,7 @@ final class SmithyBuildImpl {
     private final Model model;
     private final BiFunction<String, SmithyBuildConfig, Path> importBasePathResolver;
     private final ClassLoader pluginClassLoader;
+    private final Set<Path> sources;
 
     SmithyBuildImpl(SmithyBuild builder) {
         SmithyBuildConfig baseConfig = SmithyBuilder.requiredState("config", builder.config);
@@ -70,6 +71,7 @@ final class SmithyBuildImpl {
             throw new SmithyBuildException("The source projection cannot contain any transforms");
         }
 
+        sources = builder.sources;
         fileManifestFactory = builder.fileManifestFactory != null
                 ? builder.fileManifestFactory
                 : FileManifest::create;
@@ -227,6 +229,7 @@ final class SmithyBuildImpl {
                     .settings(pluginSettings)
                     .fileManifest(manifest)
                     .pluginClassLoader(pluginClassLoader)
+                    .sources(sources)
                     .build());
             resultBuilder.addPluginManifest(pluginName, manifest);
         }

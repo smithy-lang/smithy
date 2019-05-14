@@ -1,0 +1,18 @@
+{
+  "smithy": "1.0",
+  "metadata": {
+    "c": "metadata-c"
+  },
+  "smithy.example": {
+    "shapes": {
+      "CString": {
+        "type": "string"
+      }
+    },
+    "traitDefs": {
+      "Ctrait": {
+        "selector": "*"
+      }
+    }
+  }
+}

@@ -20,7 +20,9 @@ import static org.hamcrest.Matchers.containsString;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.SmithyCli;
 
 public class ValidateCommandTest {
@@ -35,5 +37,37 @@ public class ValidateCommandTest {
         String help = outputStream.toString("UTF-8");
 
         assertThat(help, containsString("Validates"));
+    }
+
+    @Test
+    public void usesModelDiscoveryWithCustomValidClasspath() {
+        String dir = getClass().getResource("valid.jar").getPath();
+        SmithyCli.create().configureLogging(true).run("validate", "--debug", "--discover-classpath", dir);
+    }
+
+    @Test
+    public void usesModelDiscoveryWithCustomInvalidClasspath() {
+        CliError e = Assertions.assertThrows(CliError.class, () -> {
+            String dir = getClass().getResource("invalid.jar").getPath();
+            SmithyCli.create().configureLogging(true).run("validate", "--debug", "--discover-classpath", dir);
+        });
+
+        assertThat(e.getMessage(), containsString("1 ERROR(s)"));
+    }
+
+    @Test
+    public void failsOnUnknownTrait() {
+        CliError e = Assertions.assertThrows(CliError.class, () -> {
+            String model = getClass().getResource("unknown-trait.smithy").getPath();
+            SmithyCli.create().configureLogging(true).run("validate", model);
+        });
+
+        assertThat(e.getMessage(), containsString("1 ERROR(s)"));
+    }
+
+    @Test
+    public void allowsUnknownTrait() {
+        String model = getClass().getResource("unknown-trait.smithy").getPath();
+        SmithyCli.create().configureLogging(true).run("validate", "--allow-unknown-traits", model);
     }
 }

@@ -15,14 +15,20 @@
 
 package software.amazon.smithy.build;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -36,6 +42,7 @@ public final class PluginContext {
     private final ObjectNode settings;
     private final FileManifest fileManifest;
     private final ClassLoader pluginClassLoader;
+    private final Set<Path> sources;
 
     private PluginContext(Builder builder) {
         this.model = SmithyBuilder.requiredState("model", builder.model);
@@ -45,6 +52,7 @@ public final class PluginContext {
         this.events = Collections.unmodifiableList(builder.events);
         this.settings = builder.settings;
         this.pluginClassLoader = builder.pluginClassLoader;
+        this.sources = SetUtils.copyOf(builder.sources);
     }
 
     /**
@@ -122,6 +130,32 @@ public final class PluginContext {
     }
 
     /**
+     * Gets the name of the projection being applied.
+     *
+     * <p>If no projection could be found, "source" is assumed.
+     *
+     * @return Returns the explicit or assumed projection name.
+     */
+    public String getProjectionName() {
+        return getProjection().map(Projection::getName).orElse("source");
+    }
+
+    /**
+     * Gets the source models, or models that are considered the subject
+     * of the build.
+     *
+     * <p>This does not return an exhaustive set of model paths! There are
+     * typically two kinds of models that are added to a build: source
+     * models and discovered models. Discovered models are someone else's
+     * models. Source models are the models owned by the package being built.
+     *
+     * @return Returns the source models.
+     */
+    public Set<Path> getSources() {
+        return Collections.unmodifiableSet(sources);
+    }
+
+    /**
      * Builds a {@link PluginContext}.
      */
     public static final class Builder implements SmithyBuilder<PluginContext> {
@@ -132,6 +166,7 @@ public final class PluginContext {
         private ObjectNode settings = Node.objectNode();
         private FileManifest fileManifest;
         private ClassLoader pluginClassLoader;
+        private Set<Path> sources = Collections.emptySet();
 
         private Builder() {}
 
@@ -217,6 +252,26 @@ public final class PluginContext {
          */
         public Builder pluginClassLoader(ClassLoader pluginClassLoader) {
             this.pluginClassLoader = pluginClassLoader;
+            return this;
+        }
+
+        /**
+         * Sets the path to models that are considered "source" models of the
+         * package being built.
+         *
+         * @param sources Source models to set.
+         * @return Returns the builder.
+         */
+        public Builder sources(Collection<Path> sources) {
+            Set<Path> result = new HashSet<>();
+            for (Path source : sources) {
+                if (Files.isRegularFile(source)) {
+                    Optional.ofNullable(source.getParent()).ifPresent(result::add);
+                } else {
+                    result.add(source);
+                }
+            }
+            this.sources = result;
             return this;
         }
     }

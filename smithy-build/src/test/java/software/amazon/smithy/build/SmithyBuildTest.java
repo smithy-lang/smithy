@@ -284,8 +284,12 @@ public class SmithyBuildTest {
         assertThat(files, containsInAnyOrder(
                 outputDirectory.resolve("source/model/model.json"),
                 outputDirectory.resolve("source/build-info/smithy-build-info.json"),
+                outputDirectory.resolve("a/sources/manifest"),
+                outputDirectory.resolve("a/sources/model.json"),
                 outputDirectory.resolve("a/model/model.json"),
                 outputDirectory.resolve("a/build-info/smithy-build-info.json"),
+                outputDirectory.resolve("b/sources/manifest"),
+                outputDirectory.resolve("b/sources/model.json"),
                 outputDirectory.resolve("b/model/model.json"),
                 outputDirectory.resolve("b/build-info/smithy-build-info.json")));
     }
