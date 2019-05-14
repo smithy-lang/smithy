@@ -21,7 +21,9 @@ package software.amazon.smithy.cli;
 public enum Colors {
     BLACK(30),
     RED(31),
+    BOLD_RED(31, true),
     GREEN(32),
+    BOLD_GREEN(32, true),
     YELLOW(33),
     BLUE(34),
     MAGENTA(35),
@@ -29,8 +31,11 @@ public enum Colors {
     WHITE(37),
     BRIGHT_BLACK(90),
     BRIGHT_RED(91),
+    BRIGHT_BOLD_RED(91, true),
     BRIGHT_GREEN(92),
+    BRIGHT_BOLD_GREEN(92, true),
     BRIGHT_YELLOW(93),
+    BRIGHT_BOLD_YELLOW(93, true),
     BRIGHT_BLUE(94),
     BRIGHT_MAGENTA(95),
     BRIGHT_CYAN(96),
@@ -40,9 +45,15 @@ public enum Colors {
     private static boolean useAnsiColors = useAnsi();
 
     private int escape;
+    private boolean bold;
 
     Colors(int escape) {
+        this(escape, false);
+    }
+
+    Colors(int escape, boolean bold) {
         this.escape = escape;
+        this.bold = bold;
     }
 
     /**
@@ -71,7 +82,7 @@ public enum Colors {
      */
     public static void out(Colors color, String message) {
         if (useAnsiColors) {
-            System.out.println("\u001b[" + color.escape + "m" + message + "\u001b[0m");
+            System.out.println(format(color, message));
         } else {
             System.out.println(message);
         }
@@ -85,9 +96,14 @@ public enum Colors {
      */
     public static void err(Colors color, String message) {
         if (useAnsiColors) {
-            System.err.println("\u001b[" + color.escape + "m" + message + "\u001b[0m");
+            System.err.println(format(color, message));
         } else {
             System.err.println(message);
         }
+    }
+
+    private static String format(Colors color, String message) {
+        String colored = String.format("\u001b[%dm%s\u001b[0m", color.escape, message);
+        return color.bold ? String.format("\033[1m%s\033[0m", colored) : colored;
     }
 }

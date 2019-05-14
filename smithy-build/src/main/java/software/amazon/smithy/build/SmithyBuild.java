@@ -17,7 +17,10 @@ package software.amazon.smithy.build;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -40,6 +43,7 @@ public final class SmithyBuild {
     ModelTransformer modelTransformer;
     Model model;
     ClassLoader pluginClassLoader;
+    Set<Path> sources = new HashSet<>();
 
     public SmithyBuild() {}
 
@@ -285,6 +289,34 @@ public final class SmithyBuild {
      */
     public SmithyBuild pluginClassLoader(ClassLoader pluginClassLoader) {
         this.pluginClassLoader = pluginClassLoader;
+        return this;
+    }
+
+    /**
+     * Registers the given paths as sources of the model being built.
+     *
+     * <p>There are typically two kinds of models that are added to a build:
+     * source models and discovered models. Discovered models are someone
+     * else's models. Source models are the models owned by the package
+     * being built.
+     *
+     * <p>Source models are copied into the automatically executed "manifest"
+     * plugin. If no transformations were applied to the sources, then the
+     * source models are copied literally into the manifest directory output.
+     * Otherwise, a modified version of the source models are copied.
+     *
+     * <p>When a directory is provided, all of the files in the directory are
+     * treated as sources, and they are relativized to remove the directory.
+     * When a file is provided, the directory that contains that file is used
+     * as a source. All of the relativized files resolved in sources must be
+     * unique across the entire set of files. The sources directories are
+     * essentially flattened into a single directory.
+     *
+     * @param pathToSources Path to source directories to mark.
+     * @return Returns the builder.
+     */
+    public SmithyBuild registerSources(Path... pathToSources) {
+        Collections.addAll(sources, pathToSources);
         return this;
     }
 }

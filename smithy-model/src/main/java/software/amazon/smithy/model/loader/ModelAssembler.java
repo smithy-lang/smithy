@@ -60,7 +60,7 @@ import software.amazon.smithy.utils.ListUtils;
  * @see Model#assembler()
  */
 public final class ModelAssembler {
-    public static final String ALLOW_UNKNOWN_TRAITS = "assembler.allowsUnknownTraits";
+    public static final String ALLOW_UNKNOWN_TRAITS = "assembler.allowUnknownTraits";
     private static final Logger LOGGER = Logger.getLogger(ModelAssembler.class.getName());
     private static final ModelLoader DEFAULT_LOADER = ModelLoader.createDefaultLoader();
 

@@ -15,10 +15,10 @@
 
 package software.amazon.smithy.cli;
 
+import java.util.List;
 import software.amazon.smithy.cli.commands.BuildCommand;
 import software.amazon.smithy.cli.commands.DiffCommand;
 import software.amazon.smithy.cli.commands.GenerateCommand;
-import software.amazon.smithy.cli.commands.OptimizeCommand;
 import software.amazon.smithy.cli.commands.ValidateCommand;
 
 /**
@@ -26,6 +26,9 @@ import software.amazon.smithy.cli.commands.ValidateCommand;
  */
 public final class SmithyCli {
     public static final String DISCOVER = "--discover";
+    public static final String DISCOVER_CLASSPATH = "--discover-classpath";
+    public static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
+
     private ClassLoader classLoader = getClass().getClassLoader();
     private boolean configureLogging;
 
@@ -38,6 +41,21 @@ public final class SmithyCli {
      */
     public static SmithyCli create() {
         return new SmithyCli();
+    }
+
+    /**
+     * Executes the CLI.
+     *
+     * @param args Arguments to parse and execute.
+     */
+    public static void main(String... args) {
+        try {
+            SmithyCli.create().configureLogging(true).run(args);
+        } catch (CliError e) {
+            System.exit(e.code);
+        } catch (Exception e) {
+            System.exit(1);
+        }
     }
 
     /**
@@ -63,20 +81,12 @@ public final class SmithyCli {
     }
 
     /**
-     * Executes the CLI.
+     * Runs the CLI using a list of arguments.
      *
      * @param args Arguments to parse and execute.
      */
-    public static void main(String... args) {
-        try {
-            SmithyCli.create().configureLogging(true).run(args);
-        } catch (CliError e) {
-            System.err.println(e.getMessage());
-            System.exit(e.code);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
+    public void run(List<String> args) {
+        run(args.toArray(new String[0]));
     }
 
     /**
@@ -91,7 +101,6 @@ public final class SmithyCli {
         cli.addCommand(new BuildCommand());
         cli.addCommand(new DiffCommand());
         cli.addCommand(new GenerateCommand());
-        cli.addCommand(new OptimizeCommand());
         cli.run(args);
     }
 }

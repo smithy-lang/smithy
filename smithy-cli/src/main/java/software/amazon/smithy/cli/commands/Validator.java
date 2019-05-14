@@ -60,9 +60,12 @@ final class Validator {
                     result.getValidationEvents(Severity.NOTE).size());
             System.out.println(String.join("", Collections.nCopies(line.length(), "-")));
             System.out.println(line);
+            result.getResult().ifPresent(model -> System.out.println(String.format(
+                    "Validated %d shapes in model", model.getShapeIndex().shapes().count())));
         }
 
         if (errors + dangers > 0) {
+            // Show the error and danger severity events.
             throw new CliError(format("The model is invalid: %s ERROR(s), %d DANGER(s)", errors, dangers));
         }
     }

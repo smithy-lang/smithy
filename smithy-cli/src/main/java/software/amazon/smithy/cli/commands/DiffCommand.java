@@ -78,11 +78,11 @@ public final class DiffCommand implements Command {
         }
 
         if (hasDanger) {
-            Colors.out(Colors.BRIGHT_RED, "Smithy diff detected danger");
+            Colors.out(Colors.BRIGHT_BOLD_RED, "Smithy diff detected danger");
         } else if (hasWarning) {
-            Colors.out(Colors.BRIGHT_YELLOW, "Smithy diff complete with warnings");
+            Colors.out(Colors.BRIGHT_BOLD_YELLOW, "Smithy diff complete with warnings");
         } else {
-            Colors.out(Colors.BRIGHT_GREEN, "Smithy diff complete");
+            Colors.out(Colors.BRIGHT_BOLD_GREEN, "Smithy diff complete");
         }
     }
 

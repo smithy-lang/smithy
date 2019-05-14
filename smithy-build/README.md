@@ -508,7 +508,16 @@ SmithyBuild DOES NOT attempt to automatically download and install plugins.
 Plugins MUST be available in the Java class path or module path in order for
 them to be discovered.
 
-The ``model`` and ``build-info`` plugin are plugins that are always run in
-every non-abstract projection. The ``model`` plugin serializes the filtered
-version of the model, and the ``build-info`` plugin produces a JSON document
-that contains information about the projection and model.
+The `model`, `build-info`, and `sources` plugins are plugins that are
+always run in every non-abstract projection.
+
+- `model`: Serializes the filtered version of the model as a single file.
+- `build-info`: Produces a JSON document that contains information about
+  the projection and model.
+- `sources`: Copies the source models and creates a manifest. When using the
+  `source` projection, the source models are copied over literally. When
+  using a projection, a new model file is created that contains only the
+  shapes, trait definitions, and metadata that were defined in a source model
+  *and* all of the newly add shapes, traits, and metadata. The manifest file
+  is a newline (`\n`) separated file that contains the relative path from the
+  manifest file to each model file created by the sources plugin.

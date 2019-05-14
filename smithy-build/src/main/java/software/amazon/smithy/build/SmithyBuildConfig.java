@@ -195,6 +195,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         static {
             BUILTIN_PLUGINS.put("build-info", Node.objectNode());
             BUILTIN_PLUGINS.put("model", Node.objectNode());
+            BUILTIN_PLUGINS.put("sources", Node.objectNode());
         }
 
         private final List<String> imports = new ArrayList<>();

@@ -18,7 +18,6 @@ package software.amazon.smithy.cli.commands;
 import java.util.List;
 import java.util.logging.Logger;
 import software.amazon.smithy.cli.Arguments;
-import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
@@ -43,38 +42,25 @@ public final class ValidateCommand implements Command {
     @Override
     public Parser getParser() {
         return Parser.builder()
-                .option("--allow-unknown-traits", "Ignores unknown traits when validating models")
-                .option("--discover", "-d", "Enables model discovery, merging in models found inside of jars")
-                .parameter("--format", "-f", "Format to use for the out. Can currently only be set to 'text'")
+                .option(SmithyCli.ALLOW_UNKNOWN_TRAITS, "Ignores unknown traits when validating models")
+                .option(SmithyCli.DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars")
+                .parameter(SmithyCli.DISCOVER_CLASSPATH, "Enables model discovery using a custom classpath for models")
                 .positional("<MODELS>", "Path to Smithy models or directories")
                 .build();
     }
 
     @Override
     public void execute(Arguments arguments, ClassLoader classLoader) {
-        String format = arguments.parameter("--format", "text");
-        if (!format.equals("text")) {
-            throw new CliError("Invalid --format value `" + format + "`");
-        }
-
         List<String> models = arguments.positionalArguments();
-        LOGGER.info(String.format("Validating Smithy models: %s", String.join(" ", models)));
+        LOGGER.info(String.format("Validating Smithy model sources: %s", models));
 
         ModelAssembler assembler = Model.assembler(classLoader);
-
-        if (arguments.has(SmithyCli.DISCOVER)) {
-            LOGGER.fine("Enabling model discovery");
-            assembler.discoverModels(classLoader);
-        }
-
-        if (arguments.has("--ignore-unknown-traits")) {
-            LOGGER.fine("Ignoring unknown traits");
-            assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
-        }
+        CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
+        CommandUtils.handleUnknownTraitsOption(arguments, assembler);
 
         models.forEach(assembler::addImport);
         ValidatedResult<Model> modelResult = assembler.assemble();
         Validator.validate(modelResult);
-        Colors.out(Colors.GREEN, "Smithy validation complete");
+        Colors.out(Colors.BRIGHT_BOLD_GREEN, "Smithy validation complete");
     }
 }

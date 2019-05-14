@@ -18,6 +18,7 @@ package software.amazon.smithy.cli.commands;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
@@ -25,7 +26,6 @@ import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
-import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.Node;
@@ -49,11 +49,11 @@ public final class GenerateCommand implements Command {
     public String getHelp() {
         return String.format(
                 "Examples:%n%n"
-                + "  smithy generate --plugin model --output /tmp/example /path/to/models%n%n"
+                + "  smithy generate --plugin model --output /tmp/example -- /path/to/models%n%n"
                 + "  smithy generate --plugin MyPlugin --settings /path/to/settings.json --output "
-                + "/tmp/example /path/to/models /path/to/more/models%n%n"
+                + "/tmp/example -- /path/to/models /path/to/more/models%n%n"
                 + "  echo \"{\"foo\": \"baz\"} | smithy generate --plugin MyPlugin --settings - "
-                + "--output /tmp/example /path/to/models"
+                + "--output /tmp/example -- /path/to/models"
         );
     }
 
@@ -64,6 +64,7 @@ public final class GenerateCommand implements Command {
                 .parameter("--settings", "-s", "Path to a JSON file that contains plugin settings. Use - for stdin.")
                 .parameter("--output", "-o", "Where to write artifacts.")
                 .option("--discover", "-d", "Enables model discovery, merging in models found inside of jars")
+                .parameter("--discover-classpath", "Enables model discovery using a custom classpath just for models")
                 .positional("<MODELS>", "Path to Smithy models or directories to generate from.")
                 .build();
     }
@@ -95,11 +96,7 @@ public final class GenerateCommand implements Command {
         LOGGER.info(String.format("Generating '%s' for Smithy models: %s", plugin, String.join(" ", models)));
 
         ModelAssembler assembler = Model.assembler(classLoader);
-
-        if (arguments.has(SmithyCli.DISCOVER)) {
-            LOGGER.fine("Enabling model discovery");
-            assembler.discoverModels(classLoader);
-        }
+        CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
 
         models.forEach(assembler::addImport);
         Model model = assembler.assemble().unwrap();
@@ -112,6 +109,7 @@ public final class GenerateCommand implements Command {
                 .model(model)
                 .settings(settingsObject)
                 .fileManifest(manifest)
+                .sources(models.stream().map(Paths::get).collect(Collectors.toSet()))
                 .build();
 
         buildPlugin.execute(context);

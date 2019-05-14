@@ -54,7 +54,9 @@ public final class BuildCommand implements Command {
                 .repeatedParameter("--config", "-c",
                      "Path to smithy-build.json configuration. Defaults to 'smithy-build.json'.")
                 .parameter("--output", "-o", "Where to write artifacts. Defaults to 'build/smithy'.")
-                .option("--discover", "-d", "Enables model discovery, merging in models found inside of jars")
+                .option(SmithyCli.DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars")
+                .parameter(SmithyCli.DISCOVER_CLASSPATH, "Enables model discovery using a custom classpath for models")
+                .option(SmithyCli.ALLOW_UNKNOWN_TRAITS, "Ignores unknown traits when building models")
                 .positional("<MODELS>", "Path to Smithy models or directories")
                 .build();
     }
@@ -65,7 +67,7 @@ public final class BuildCommand implements Command {
         String output = arguments.parameter("--output", null);
         List<String> models = arguments.positionalArguments();
 
-        LOGGER.info(String.format("Building Smithy models: [%s]", String.join(" ", models)));
+        LOGGER.info(String.format("Building Smithy model sources: %s", models));
         SmithyBuildConfig.Builder configBuilder = SmithyBuildConfig.builder();
 
         // Try to find a smithy-build.json file.
@@ -91,31 +93,30 @@ public final class BuildCommand implements Command {
         SmithyBuildConfig smithyBuildConfig = configBuilder.build();
 
         // Build the model and fail if there are errors.
-        ValidatedResult<Model> sourceResult = buildModel(classLoader, models, arguments.has(SmithyCli.DISCOVER));
+        ValidatedResult<Model> sourceResult = buildModel(classLoader, models, arguments);
         Model model = sourceResult.unwrap();
-
-        SmithyBuildResult smithyBuildResult = SmithyBuild.create(classLoader)
+        SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
                 .config(smithyBuildConfig)
-                .model(model)
-                .build();
+                .model(model);
+
+        // Register sources with the builder.
+        models.forEach(path -> smithyBuild.registerSources(Paths.get(path)));
+
+        SmithyBuildResult smithyBuildResult = smithyBuild.build();
 
         // Fail if any projections failed to build, but build all projections.
         if (smithyBuildResult.anyBroken()) {
             throw new CliError("One or more projections contained ERROR or unsuppressed DANGER events");
         }
 
-        Colors.out(Colors.BRIGHT_GREEN, "Smithy build successfully generated the following artifacts");
+        Colors.out(Colors.BRIGHT_BOLD_GREEN, "Smithy build successfully generated the following artifacts");
         smithyBuildResult.allArtifacts().map(Path::toString).sorted().forEach(System.out::println);
     }
 
-    private ValidatedResult<Model> buildModel(ClassLoader classLoader, List<String> models, boolean discoverModels) {
+    private ValidatedResult<Model> buildModel(ClassLoader classLoader, List<String> models, Arguments arguments) {
         ModelAssembler assembler = Model.assembler(classLoader);
-
-        if (discoverModels) {
-            LOGGER.fine("Enabling model discovery");
-            assembler.discoverModels(classLoader);
-        }
-
+        CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
+        CommandUtils.handleUnknownTraitsOption(arguments, assembler);
         models.forEach(assembler::addImport);
         ValidatedResult<Model> result = assembler.assemble();
         Validator.validate(result, true);
