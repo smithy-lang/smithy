@@ -1,7 +1,7 @@
 {
     "smithy": "1.0",
     "metadata": {
-        "smithy.validators": [
+        "validators": [
             {
                 "name": "UnknownValidator"
             },
@@ -13,7 +13,7 @@
             },
             "foo"
         ],
-        "smithy.suppressions": [
+        "suppressions": [
             {
                 "ids": [
                     "UnreferencedShape"

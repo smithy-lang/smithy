@@ -1,7 +1,7 @@
 {
     "smithy": "1.0",
     "metadata": {
-        "smithy.validators": [
+        "validators": [
             {
                 "name": "AbbreviationName",
                 "id": "DefaultAbbreviationName"

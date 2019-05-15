@@ -31,7 +31,7 @@ import software.amazon.smithy.model.loader.ModelAssembler;
  *
  * <p>The {@link ValidatorService} class is used to provide a service provider
  * for validators that can be configured in the Smithy model via the
- * {@code smithy.validators[]} metadata.
+ * {@code validators[]} metadata.
  *
  * @see ValidationEvent
  */

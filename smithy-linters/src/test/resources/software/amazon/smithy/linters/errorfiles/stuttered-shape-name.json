@@ -1,7 +1,7 @@
 {
     "smithy": "1.0",
     "metadata": {
-        "smithy.validators": [
+        "validators": [
             {
                 "name": "StutteredShapeName"
             }
@@ -9,17 +9,6 @@
     },
     "ns.foo": {
         "shapes": {
-            "Valid": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String"
-                    },
-                    "baz": {
-                        "target": "String"
-                    }
-                }
-            },
             "Valid": {
                 "type": "structure",
                 "members": {
