@@ -1,2 +1,2 @@
-[ERROR] (TraitTarget) ns.foo#String / [0, 0]: Trait `range` cannot be applied to `ns.foo#String`. This trait may only be applied to shapes that match the following selector: :test(number, member > number)
-[ERROR] (TraitTarget) ns.foo#Invalid$baz / [28, 28]: Trait `ns.foo#test` cannot be applied to `ns.foo#Invalid$baz`. This trait may only be applied to shapes that match the following selector: operation -[input]-> structure > member
+[ERROR] ns.foo#Invalid$baz: Trait `ns.foo#test` cannot be applied to `ns.foo#Invalid$baz`. This trait may only be applied to shapes that match the following selector: operation -[input]-> structure > member | TraitTarget
+[ERROR] ns.foo#String: Trait `range` cannot be applied to `ns.foo#String`. This trait may only be applied to shapes that match the following selector: :test(number, member > number) | TraitTarget

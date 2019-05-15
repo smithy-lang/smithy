@@ -1,1 +1,1 @@
-[ERROR] (Model) ns.foo#Invalid1 / [0, 0]: Conflicting `smithy.api#documentation` trait found on shape `ns.foo#Invalid1`
+[ERROR] ns.foo#Invalid1: Conflicting `smithy.api#documentation` trait found on shape `ns.foo#Invalid1`. | Model

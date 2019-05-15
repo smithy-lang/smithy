@@ -37,9 +37,7 @@ import software.amazon.smithy.utils.IoUtils;
  */
 public final class SmithyTestCase {
     private static final Pattern EVENT_PATTERN = Pattern.compile(
-            "^\\[(?<severity>SUPPRESSED|NOTE|WARNING|DANGER|ERROR)] \\((?<id>[^)]+)\\) "
-            + "(?<shape>[^ ]+) (?<file>[^ ]+) "
-            + "\\[(?<line>\\d+), (?<column>\\d+)]: ?(?<message>.*)$");
+            "^\\[(?<severity>SUPPRESSED|NOTE|WARNING|DANGER|ERROR)] (?<shape>[^ ]+): ?(?<message>.*) \\| (?<id>[^)]+)");
 
     private List<ValidationEvent> expectedEvents;
     private String modelLocation;
@@ -62,7 +60,7 @@ public final class SmithyTestCase {
      *
      * <p>The accompanying error file is a newline separated list of error
      * strings, where each error is defined in the following format:
-     * {@code [SEVERITY] (EventId) shapeId filename [line, column]: message}.
+     * {@code [SEVERITY] shapeId message | EventId filename:line:column}.
      * A shapeId of "-" means that a specific shape is not targeted.
      *
      * @param modelLocation File location of the model.
@@ -149,10 +147,8 @@ public final class SmithyTestCase {
             throw new IllegalArgumentException("Invalid validation event: " + event);
         }
 
-        SourceLocation location = new SourceLocation(
-                matcher.group("file"),
-                Integer.parseInt(matcher.group("line")),
-                Integer.parseInt(matcher.group("column")));
+        // Construct a dummy source location since we don't validate it.
+        SourceLocation location = new SourceLocation("/", 0, 0);
 
         ValidationEvent.Builder builder = ValidationEvent.builder()
                 .severity(Severity.fromString(matcher.group("severity")).get())

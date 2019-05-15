@@ -1,8 +1,8 @@
-[DANGER] (DefaultCamelCase) ns.foo#bam / [0, 0]: string shape name, `bam`, is not upper camel case
-[DANGER] (DefaultCamelCase) ns.foo#snake_case / [0, 0]: string shape name, `snake_case`, is not upper camel case
-[DANGER] (DefaultCamelCase) ns.foo#Structure$snake_case / [0, 0]: Member shape member name, `snake_case`, is not lower camel case
-[DANGER] (DefaultCamelCase) ns.foo#Structure$UpperCamelCase / [0, 0]: Member shape member name, `UpperCamelCase`, is not lower camel case
-[DANGER] (OppositeOfDefaults) ns.foo#bam / [0, 0]: string shape name, `bam`, is not upper camel case
-[DANGER] (OppositeOfDefaults) ns.foo#snake_case / [0, 0]: string shape name, `snake_case`, is not upper camel case
-[DANGER] (OppositeOfDefaults) ns.foo#Structure$lowerCamelCase / [0, 0]: Member shape member name, `lowerCamelCase`, is not upper camel case
-[DANGER] (OppositeOfDefaults) ns.foo#Structure$snake_case / [0, 0]: Member shape member name, `snake_case`, is not upper camel case
+[DANGER] ns.foo#Structure$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case | DefaultCamelCase
+[DANGER] ns.foo#Structure$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case | OppositeOfDefaults
+[DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not lower camel case | DefaultCamelCase
+[DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not upper camel case | OppositeOfDefaults
+[DANGER] ns.foo#bam: string shape name, `bam`, is not upper camel case | DefaultCamelCase
+[DANGER] ns.foo#bam: string shape name, `bam`, is not upper camel case | OppositeOfDefaults
+[DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | DefaultCamelCase
+[DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | OppositeOfDefaults

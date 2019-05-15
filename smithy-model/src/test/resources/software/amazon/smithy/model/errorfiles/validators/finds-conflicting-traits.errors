@@ -1,3 +1,3 @@
-[ERROR] (TraitConflict) ns.foo#String2 / [0, 0]: Found conflicting traits on string shape: `ns.foo#foo` conflicts with `ns.foo#baz`
-[ERROR] (TraitConflict) ns.foo#String3 / [0, 0]: Found conflicting traits on string shape: `ns.foo#foo` conflicts with `ns.foo#baz`, `ns.foo#foo` conflicts with `ns.foo#qux`
-[ERROR] (TraitConflict) ns.foo#String4 / [0, 0]: Found conflicting traits on string shape: `ns.foo#qux` conflicts with `ns.foo#bam`
+[ERROR] ns.foo#String2: Found conflicting traits on string shape: `ns.foo#foo` conflicts with `ns.foo#baz` | TraitConflict
+[ERROR] ns.foo#String3: Found conflicting traits on string shape: `ns.foo#foo` conflicts with `ns.foo#baz`, `ns.foo#foo` conflicts with `ns.foo#qux` | TraitConflict
+[ERROR] ns.foo#String4: Found conflicting traits on string shape: `ns.foo#qux` conflicts with `ns.foo#bam` | TraitConflict

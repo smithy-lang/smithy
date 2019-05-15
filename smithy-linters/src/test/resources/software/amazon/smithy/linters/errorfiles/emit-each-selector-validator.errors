@@ -1,124 +1,124 @@
-[DANGER] (any) ns.foo#Boolean / [511, 24]: Selector capture matched selector: :each(long, float, boolean)
-[DANGER] (any) ns.foo#Float / [508, 22]: Selector capture matched selector: :each(long, float, boolean)
-[DANGER] (any) ns.foo#Long / [505, 21]: Selector capture matched selector: :each(long, float, boolean)
-[DANGER] (blob) ns.foo#Blob / [611, 21]: Selector capture matched selector: blob
-[DANGER] (boolean) ns.foo#Boolean / [511, 24]: Selector capture matched selector: boolean
-[DANGER] (float) ns.foo#Float / [508, 22]: Selector capture matched selector: float
-[DANGER] (identifier) ns.foo#MyResourceIdentifier / [555, 37]: Selector capture matched selector: resource -[identifier]-> string
-[DANGER] (integer) ns.foo#Integer / [502, 24]: Selector capture matched selector: integer
-[DANGER] (list) ns.foo#List / [517, 21]: Selector capture matched selector: list
-[DANGER] (long) ns.foo#Long / [505, 21]: Selector capture matched selector: long
-[DANGER] (map) ns.foo#Map / [523, 20]: Selector capture matched selector: map
-[DANGER] (member) ns.foo#List$member / [519, 27]: Selector capture matched selector: member
-[DANGER] (member) ns.foo#Map$key / [525, 24]: Selector capture matched selector: member
-[DANGER] (member) ns.foo#Map$value / [528, 26]: Selector capture matched selector: member
-[DANGER] (member) ns.foo#OperationAInput$memberName / [571, 35]: Selector capture matched selector: member
-[DANGER] (member) ns.foo#OperationAInput$otherMemberName / [574, 40]: Selector capture matched selector: member
-[DANGER] (member) ns.foo#OperationAOutput$b / [582, 26]: Selector capture matched selector: member
-[DANGER] (member) ns.foo#OperationBInput$id / [602, 27]: Selector capture matched selector: member
-[DANGER] (memberTargetsString) ns.foo#List$member / [519, 27]: Selector capture matched selector: :test(member > [id='ns.foo#String'])
-[DANGER] (memberTargetsString) ns.foo#Map$key / [525, 24]: Selector capture matched selector: :test(member > [id='ns.foo#String'])
-[DANGER] (memberTargetsString) ns.foo#Map$value / [528, 26]: Selector capture matched selector: :test(member > [id='ns.foo#String'])
-[DANGER] (memberTargetsString) ns.foo#OperationAInput$memberName / [571, 35]: Selector capture matched selector: :test(member > [id='ns.foo#String'])
-[DANGER] (not) ns.foo#List / [517, 21]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#List$member / [519, 27]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#Map / [523, 20]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#Map$key / [525, 24]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#Map$value / [528, 26]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#MyResource / [546, 27]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#MyService / [532, 26]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#OperationA / [558, 27]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#OperationAInput / [568, 32]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#OperationAInput$memberName / [571, 35]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#OperationAInput$otherMemberName / [574, 40]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#OperationAOutput / [579, 33]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#OperationAOutput$b / [582, 26]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#OperationB / [595, 27]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#OperationBInput / [599, 32]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (not) ns.foo#OperationBInput$id / [602, 27]: Selector capture matched selector: :not(:each([trait|error], simpleType))
-[DANGER] (number) ns.foo#Float / [508, 22]: Selector capture matched selector: number
-[DANGER] (number) ns.foo#Integer / [502, 24]: Selector capture matched selector: number
-[DANGER] (number) ns.foo#Long / [505, 21]: Selector capture matched selector: number
-[DANGER] (operation) ns.foo#OperationA / [558, 27]: Selector capture matched selector: operation
-[DANGER] (operation) ns.foo#OperationB / [595, 27]: Selector capture matched selector: operation
-[DANGER] (resource) ns.foo#MyResource / [546, 27]: Selector capture matched selector: resource
-[DANGER] (serviceChild) ns.foo#MyResource / [546, 27]: Selector capture matched selector: service -[resource]-> resource
-[DANGER] (serviceVersion) ns.foo#MyService / [532, 26]: Selector capture matched selector: [service|version^=2017]
-[DANGER] (shapeId) ns.foo#String / [499, 23]: Selector capture matched selector: [id='ns.foo#String']
-[DANGER] (shapeId) ns.foo#String / [499, 23]: Selector capture matched selector: [id=ns.foo#String]
-[DANGER] (shapeMember) ns.foo#OperationAInput$memberName / [571, 35]: Selector capture matched selector: [id|member=memberName]
-[DANGER] (shapeName) ns.foo#String / [499, 23]: Selector capture matched selector: [id|name="String"]
-[DANGER] (shapeName) ns.foo#String / [499, 23]: Selector capture matched selector: [id|name='String']
-[DANGER] (shapeName) other.ns#String / [619, 23]: Selector capture matched selector: [id|name="String"]
-[DANGER] (shapeName) other.ns#String / [619, 23]: Selector capture matched selector: [id|name='String']
-[DANGER] (simpleType) ns.foo#Blob / [611, 21]: Selector capture matched selector: simpleType
-[DANGER] (simpleType) ns.foo#Boolean / [511, 24]: Selector capture matched selector: simpleType
-[DANGER] (simpleType) ns.foo#Float / [508, 22]: Selector capture matched selector: simpleType
-[DANGER] (simpleType) ns.foo#Integer / [502, 24]: Selector capture matched selector: simpleType
-[DANGER] (simpleType) ns.foo#Long / [505, 21]: Selector capture matched selector: simpleType
-[DANGER] (simpleType) ns.foo#MyResourceIdentifier / [555, 37]: Selector capture matched selector: simpleType
-[DANGER] (simpleType) ns.foo#String / [499, 23]: Selector capture matched selector: simpleType
-[DANGER] (simpleType) ns.foo#UtcTimestamp / [608, 29]: Selector capture matched selector: simpleType
-[DANGER] (simpleType) other.ns#String / [619, 23]: Selector capture matched selector: simpleType
-[DANGER] (traitContains) ns.foo#Blob / [611, 21]: Selector capture matched selector: [trait|mediaType*='plain']
-[DANGER] (traitContains) ns.foo#Blob / [611, 21]: Selector capture matched selector: [trait|smithy.api#mediaType*=plain]
-[DANGER] (traitContainsCaseInsensitive) ns.foo#Blob / [611, 21]: Selector capture matched selector: [trait|mediaType*='PLAIN' i]
-[DANGER] (traitEndsWith) ns.foo#Blob / [611, 21]: Selector capture matched selector: [trait|mediaType$='plain']
-[DANGER] (traitEqualTo) ns.foo#Blob / [611, 21]: Selector capture matched selector: [trait|mediaType='text/plain']
-[DANGER] (traitEqualToCaseInsensitive) ns.foo#Blob / [611, 21]: Selector capture matched selector: [trait|mediaType='TEXT/PLAIN' i]
-[DANGER] (traitEqualToCaseInsensitiveNoQuotes) ns.foo#Blob / [611, 21]: Selector capture matched selector: [trait|mediaType^=TEXT  i]
-[DANGER] (traitExists) ns.foo#Blob / [611, 21]: Selector capture matched selector: [trait|mediaType]
-[DANGER] (traitStartsWith) ns.foo#Blob / [611, 21]: Selector capture matched selector: [trait|mediaType^='text']
-[DANGER] (valid-neighbor-only) ns.foo#Integer / [502, 24]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#List$member / [519, 27]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#Map / [523, 20]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#Map$key / [525, 24]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#Map$value / [528, 26]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#MyResource / [546, 27]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#MyResourceIdentifier / [555, 37]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#MyService / [532, 26]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationA / [558, 27]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationAInput / [568, 32]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationAInput$memberName / [571, 35]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationAInput$otherMemberName / [574, 40]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationAOutput / [579, 33]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationAOutput$b / [582, 26]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationB / [595, 27]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationBInput / [599, 32]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationBInput$id / [602, 27]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationErrorA / [587, 32]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#OperationErrorB / [591, 32]: Selector capture matched selector: >
-[DANGER] (valid-neighbor-only) ns.foo#String / [499, 23]: Selector capture matched selector: >
-[ERROR] (Model) - / [100, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 7, near `foo="]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo="]`
-[ERROR] (Model) - / [107, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 12, near `foo==value]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo==value]`
-[ERROR] (Model) - / [114, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 9, near `foo^foo]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo^foo]`
-[ERROR] (Model) - / [121, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 25 of 25, near ``: Expected one of the following tokens: `)`, `,`; expression `:each(:not(string) > list`
-[ERROR] (Model) - / [128, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 9, near `foo -[]->`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `foo -[]->`
-[ERROR] (Model) - / [135, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 12, near `foo -[foo]->`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `foo -[foo]->`
-[ERROR] (Model) - / [142, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 4 of 4, near ``: Expected one of the following tokens: `(`; expression `:not`
-[ERROR] (Model) - / [149, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 5 of 5, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:not(`
-[ERROR] (Model) - / [156, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 5 of 6, near `)`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:not()`
-[ERROR] (Model) - / [16, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 0, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression ``
-[ERROR] (Model) - / [163, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 11 of 11, near ``: Expected one of the following tokens: `)`, `,`; expression `:not(string`
-[ERROR] (Model) - / [170, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 5 of 5, near ``: Expected one of the following tokens: `(`; expression `:each`
-[ERROR] (Model) - / [177, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 6 of 6, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:each(`
-[ERROR] (Model) - / [184, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 6, near `nay()`: Expected one of the following tokens: `each`, `not`, `of`, `test`; expression `:nay()`
-[ERROR] (Model) - / [191, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 12 of 12, near ``: Expected one of the following tokens: `)`, `,`; expression `:each(string`
-[ERROR] (Model) - / [198, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 13 of 13, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:each(string,`
-[ERROR] (Model) - / [205, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 14 of 15, near `)`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:each(string, )`
-[ERROR] (Model) - / [212, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 19 of 21, near `))`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:each(string, :not())`
-[ERROR] (Model) - / [23, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 1, near `!`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `!`
-[ERROR] (Model) - / [30, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 5, near `'foo'`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `'foo'`
-[ERROR] (Model) - / [37, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 5, near `"foo"`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `"foo"`
-[ERROR] (Model) - / [44, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 7, near `invalid`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `invalid`
-[ERROR] (Model) - / [443, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 10 of 18, near `foo]-> *`: Expected one of the following tokens: `bound`, `create`, `delete`, `error`, `identifier`, `input`, `list`, `member`, `operation`, `output`, `read`, `resource`, `update`; expression `service -[foo]-> *`
-[ERROR] (Model) - / [478, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 5, near `foo]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo]`
-[ERROR] (Model) - / [485, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 9, near `foo=baz]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo=baz]`
-[ERROR] (Model) - / [51, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 2, near `]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[]`
-[ERROR] (Model) - / [58, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 6, near `foo|]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo|]`
-[ERROR] (Model) - / [65, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 3, near `|]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[|]`
-[ERROR] (Model) - / [72, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 4, near `a=]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[a=]`
-[ERROR] (Model) - / [79, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 4, near `a=b`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[a=b`
-[ERROR] (Model) - / [86, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 6 of 8, near `=b`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `string=b`
-[ERROR] (Model) - / [9, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 0, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression ``
-[ERROR] (Model) - / [93, 33]: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 7, near `foo=']`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo=']`
+[DANGER] ns.foo#Blob: Selector capture matched selector: [trait|mediaType$='plain'] | traitEndsWith
+[DANGER] ns.foo#Blob: Selector capture matched selector: [trait|mediaType*='PLAIN' i] | traitContainsCaseInsensitive
+[DANGER] ns.foo#Blob: Selector capture matched selector: [trait|mediaType*='plain'] | traitContains
+[DANGER] ns.foo#Blob: Selector capture matched selector: [trait|mediaType='TEXT/PLAIN' i] | traitEqualToCaseInsensitive
+[DANGER] ns.foo#Blob: Selector capture matched selector: [trait|mediaType='text/plain'] | traitEqualTo
+[DANGER] ns.foo#Blob: Selector capture matched selector: [trait|mediaType] | traitExists
+[DANGER] ns.foo#Blob: Selector capture matched selector: [trait|mediaType^='text'] | traitStartsWith
+[DANGER] ns.foo#Blob: Selector capture matched selector: [trait|mediaType^=TEXT  i] | traitEqualToCaseInsensitiveNoQuotes
+[DANGER] ns.foo#Blob: Selector capture matched selector: [trait|smithy.api#mediaType*=plain] | traitContains
+[DANGER] ns.foo#Blob: Selector capture matched selector: blob | blob
+[DANGER] ns.foo#Blob: Selector capture matched selector: simpleType | simpleType
+[DANGER] ns.foo#Boolean: Selector capture matched selector: :each(long, float, boolean) | any
+[DANGER] ns.foo#Boolean: Selector capture matched selector: boolean | boolean
+[DANGER] ns.foo#Boolean: Selector capture matched selector: simpleType | simpleType
+[DANGER] ns.foo#Float: Selector capture matched selector: :each(long, float, boolean) | any
+[DANGER] ns.foo#Float: Selector capture matched selector: float | float
+[DANGER] ns.foo#Float: Selector capture matched selector: number | number
+[DANGER] ns.foo#Float: Selector capture matched selector: simpleType | simpleType
+[DANGER] ns.foo#Integer: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#Integer: Selector capture matched selector: integer | integer
+[DANGER] ns.foo#Integer: Selector capture matched selector: number | number
+[DANGER] ns.foo#Integer: Selector capture matched selector: simpleType | simpleType
+[DANGER] ns.foo#List$member: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#List$member: Selector capture matched selector: :test(member > [id='ns.foo#String']) | memberTargetsString
+[DANGER] ns.foo#List$member: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#List$member: Selector capture matched selector: member | member
+[DANGER] ns.foo#List: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#List: Selector capture matched selector: list | list
+[DANGER] ns.foo#Long: Selector capture matched selector: :each(long, float, boolean) | any
+[DANGER] ns.foo#Long: Selector capture matched selector: long | long
+[DANGER] ns.foo#Long: Selector capture matched selector: number | number
+[DANGER] ns.foo#Long: Selector capture matched selector: simpleType | simpleType
+[DANGER] ns.foo#Map$key: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#Map$key: Selector capture matched selector: :test(member > [id='ns.foo#String']) | memberTargetsString
+[DANGER] ns.foo#Map$key: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#Map$key: Selector capture matched selector: member | member
+[DANGER] ns.foo#Map$value: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#Map$value: Selector capture matched selector: :test(member > [id='ns.foo#String']) | memberTargetsString
+[DANGER] ns.foo#Map$value: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#Map$value: Selector capture matched selector: member | member
+[DANGER] ns.foo#Map: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#Map: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#Map: Selector capture matched selector: map | map
+[DANGER] ns.foo#MyResource: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#MyResource: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#MyResource: Selector capture matched selector: resource | resource
+[DANGER] ns.foo#MyResource: Selector capture matched selector: service -[resource]-> resource | serviceChild
+[DANGER] ns.foo#MyResourceIdentifier: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#MyResourceIdentifier: Selector capture matched selector: resource -[identifier]-> string | identifier
+[DANGER] ns.foo#MyResourceIdentifier: Selector capture matched selector: simpleType | simpleType
+[DANGER] ns.foo#MyService: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#MyService: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#MyService: Selector capture matched selector: [service|version^=2017] | serviceVersion
+[DANGER] ns.foo#OperationA: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationA: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#OperationA: Selector capture matched selector: operation | operation
+[DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: :test(member > [id='ns.foo#String']) | memberTargetsString
+[DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: [id|member=memberName] | shapeMember
+[DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: member | member
+[DANGER] ns.foo#OperationAInput$otherMemberName: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationAInput$otherMemberName: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#OperationAInput$otherMemberName: Selector capture matched selector: member | member
+[DANGER] ns.foo#OperationAInput: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationAInput: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#OperationAOutput$b: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationAOutput$b: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#OperationAOutput$b: Selector capture matched selector: member | member
+[DANGER] ns.foo#OperationAOutput: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationAOutput: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#OperationB: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationB: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#OperationB: Selector capture matched selector: operation | operation
+[DANGER] ns.foo#OperationBInput$id: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationBInput$id: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#OperationBInput$id: Selector capture matched selector: member | member
+[DANGER] ns.foo#OperationBInput: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationBInput: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#OperationErrorA: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#OperationErrorB: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#String: Selector capture matched selector: > | valid-neighbor-only
+[DANGER] ns.foo#String: Selector capture matched selector: [id='ns.foo#String'] | shapeId
+[DANGER] ns.foo#String: Selector capture matched selector: [id=ns.foo#String] | shapeId
+[DANGER] ns.foo#String: Selector capture matched selector: [id|name="String"] | shapeName
+[DANGER] ns.foo#String: Selector capture matched selector: [id|name='String'] | shapeName
+[DANGER] ns.foo#String: Selector capture matched selector: simpleType | simpleType
+[DANGER] ns.foo#UtcTimestamp: Selector capture matched selector: simpleType | simpleType
+[DANGER] other.ns#String: Selector capture matched selector: [id|name="String"] | shapeName
+[DANGER] other.ns#String: Selector capture matched selector: [id|name='String'] | shapeName
+[DANGER] other.ns#String: Selector capture matched selector: simpleType | simpleType
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 0, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 0, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 1, near `!`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `!` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 12, near `foo -[foo]->`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `foo -[foo]->` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 5, near `"foo"`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `"foo"` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 5, near `'foo'`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `'foo'` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 7, near `invalid`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `invalid` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 0 of 9, near `foo -[]->`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `foo -[]->` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 12, near `foo==value]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo==value]` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 2, near `]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[]` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 3, near `|]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[|]` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 4, near `a=]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[a=]` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 4, near `a=b`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[a=b` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 5, near `foo]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo]` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 6, near `foo|]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo|]` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 6, near `nay()`: Expected one of the following tokens: `each`, `not`, `of`, `test`; expression `:nay()` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 7, near `foo="]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo="]` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 7, near `foo=']`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo=']` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 9, near `foo=baz]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo=baz]` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 1 of 9, near `foo^foo]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo^foo]` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 10 of 18, near `foo]-> *`: Expected one of the following tokens: `bound`, `create`, `delete`, `error`, `identifier`, `input`, `list`, `member`, `operation`, `output`, `read`, `resource`, `update`; expression `service -[foo]-> *` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 11 of 11, near ``: Expected one of the following tokens: `)`, `,`; expression `:not(string` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 12 of 12, near ``: Expected one of the following tokens: `)`, `,`; expression `:each(string` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 13 of 13, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:each(string,` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 14 of 15, near `)`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:each(string, )` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 19 of 21, near `))`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:each(string, :not())` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 25 of 25, near ``: Expected one of the following tokens: `)`, `,`; expression `:each(:not(string) > list` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 4 of 4, near ``: Expected one of the following tokens: `(`; expression `:not` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 5 of 5, near ``: Expected one of the following tokens: `(`; expression `:each` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 5 of 5, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:not(` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 5 of 6, near `)`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:not()` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 6 of 6, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `:each(` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Invalid selector expression: Syntax error at character 6 of 8, near `=b`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`; expression `string=b` | Model

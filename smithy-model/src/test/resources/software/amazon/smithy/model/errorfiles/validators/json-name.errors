@@ -1,1 +1,1 @@
-[ERROR] (TraitTarget) ns.foo#B / [0, 0]: Trait `jsonName` cannot be applied to `ns.foo#B`. This trait may only be applied to shapes that match the following selector: member:of(structure)
+[ERROR] ns.foo#B: Trait `jsonName` cannot be applied to `ns.foo#B`. This trait may only be applied to shapes that match the following selector: member:of(structure) | TraitTarget

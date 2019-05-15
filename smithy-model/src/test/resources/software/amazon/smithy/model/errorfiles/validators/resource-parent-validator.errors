@@ -1,6 +1,6 @@
-[ERROR] (ResourceCycle) ns.foo#CycleA / [0, 0]: Circular resource hierarchy found: ns.foo#CycleA -> ns.foo#CycleB -> ns.foo#CycleC -> ns.foo#CycleA
-[ERROR] (ResourceCycle) ns.foo#CycleB / [0, 0]: Circular resource hierarchy found: ns.foo#CycleB -> ns.foo#CycleC -> ns.foo#CycleA -> ns.foo#CycleB
-[ERROR] (ResourceCycle) ns.foo#CycleC / [0, 0]: Circular resource hierarchy found: ns.foo#CycleC -> ns.foo#CycleA -> ns.foo#CycleB -> ns.foo#CycleC
-[ERROR] (ResourceCycle) ns.foo#InvalidSelfResourceBinding / [0, 0]: Circular resource hierarchy found: ns.foo#InvalidSelfResourceBinding -> ns.foo#InvalidSelfResourceBinding
-[ERROR] (SingleResourceBinding) ns.foo#InvalidSelfResourceBinding / [0, 0]: A resource can appear only once in an entire service closure. This resource is illegally bound into the `ns.foo#MyService` service closure from multiple shapes: [`ns.foo#InvalidSelfResourceBinding`, `ns.foo#MyService`]
-[ERROR] (Target) ns.foo#InvalidResourceBindingType / [0, 0]: resource shape `resource` relationships must target a resource shape, but found (string: `smithy.api#String`)
+[ERROR] ns.foo#CycleA: Circular resource hierarchy found: ns.foo#CycleA -> ns.foo#CycleB -> ns.foo#CycleC -> ns.foo#CycleA | ResourceCycle
+[ERROR] ns.foo#CycleB: Circular resource hierarchy found: ns.foo#CycleB -> ns.foo#CycleC -> ns.foo#CycleA -> ns.foo#CycleB | ResourceCycle
+[ERROR] ns.foo#CycleC: Circular resource hierarchy found: ns.foo#CycleC -> ns.foo#CycleA -> ns.foo#CycleB -> ns.foo#CycleC | ResourceCycle
+[ERROR] ns.foo#InvalidResourceBindingType: resource shape `resource` relationships must target a resource shape, but found (string: `smithy.api#String`) | Target
+[ERROR] ns.foo#InvalidSelfResourceBinding: A resource can appear only once in an entire service closure. This resource is illegally bound into the `ns.foo#MyService` service closure from multiple shapes: [`ns.foo#InvalidSelfResourceBinding`, `ns.foo#MyService`] | SingleResourceBinding
+[ERROR] ns.foo#InvalidSelfResourceBinding: Circular resource hierarchy found: ns.foo#InvalidSelfResourceBinding -> ns.foo#InvalidSelfResourceBinding | ResourceCycle

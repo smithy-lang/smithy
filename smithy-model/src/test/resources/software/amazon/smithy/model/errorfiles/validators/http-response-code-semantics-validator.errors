@@ -1,4 +1,4 @@
-[DANGER] (HttpResponseCodeSemantics) ns.foo#B / [0, 0]: Expected an `http` code in the 2xx range, but found 404
-[DANGER] (HttpResponseCodeSemantics) ns.foo#ErrorE / [0, 0]: Expected an `httpError` code in the 4xx range for a `client` error, but found 200
-[DANGER] (HttpResponseCodeSemantics) ns.foo#ErrorD / [0, 0]: Expected an `httpError` code in the 5xx range for a `server` error, but found 404
-[DANGER] (HttpResponseCodeSemantics) ns.foo#C / [0, 0]: Expected an `http` code in the 2xx range, but found 100
+[DANGER] ns.foo#B: Expected an `http` code in the 2xx range, but found 404 | HttpResponseCodeSemantics
+[DANGER] ns.foo#C: Expected an `http` code in the 2xx range, but found 100 | HttpResponseCodeSemantics
+[DANGER] ns.foo#ErrorD: Expected an `httpError` code in the 5xx range for a `server` error, but found 404 | HttpResponseCodeSemantics
+[DANGER] ns.foo#ErrorE: Expected an `httpError` code in the 4xx range for a `client` error, but found 200 | HttpResponseCodeSemantics

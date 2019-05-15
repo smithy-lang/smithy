@@ -1,2 +1,2 @@
-[DANGER] (MqttUnsupportedErrors) smithy.example#Baz / [19, 22]: Operations marked with the `mqttPublish` trait do not support errors.
-[DANGER] (MqttUnsupportedErrors) smithy.example#Foo / [5, 24]: Operations marked with the `mqttSubscribe` trait do not support errors.
+[DANGER] smithy.example#Baz: Operations marked with the `mqttPublish` trait do not support errors. | MqttUnsupportedErrors
+[DANGER] smithy.example#Foo: Operations marked with the `mqttSubscribe` trait do not support errors. | MqttUnsupportedErrors

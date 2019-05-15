@@ -1,1 +1,1 @@
-[ERROR] (Model) ns.foo#InvalidDoesNotStartWithClientOrServer / [0, 0]: Error creating trait `error`: error trait must be set to client or server, found `notFound`
+[ERROR] ns.foo#InvalidDoesNotStartWithClientOrServer: Error creating trait `error`: error trait must be set to client or server, found `notFound` | Model

@@ -32,12 +32,12 @@ public class SmithyTestCaseTest {
     public void validatesThatEventsAreValid() {
         Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> SmithyTestCase.parseValidationEvent("[ERROR] (Foo) - / [0,"));
+                () -> SmithyTestCase.parseValidationEvent("[ERROR] - m"));
     }
 
     @Test
     public void parsesValidEvents() {
-        SmithyTestCase.parseValidationEvent("[ERROR] (EventId) - /filename [0, 0]: message");
+        SmithyTestCase.parseValidationEvent("[ERROR] -: message | EventId /filename:0:0");
     }
 
     @Test

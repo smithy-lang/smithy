@@ -1,15 +1,15 @@
-[DANGER] (SuggestAlternatives) ns.foo#Batch / [0, 0]: Operation name consists of only a verb prefix: Batch
-[DANGER] (SuggestAlternatives) ns.foo#BatchChangeFoo / [0, 0]: Operation shape `BatchChangeFoo` uses a non-standard verb, `Change`, with a detected prefix of `Batch`. Consider using one of the following verbs instead: `Update`
-[DANGER] (SuggestAlternatives) ns.foo#BatchDestroyFoo / [0, 0]: Operation shape `BatchDestroyFoo` uses a non-standard verb, `Destroy`, with a detected prefix of `Batch`. Consider using one of the following verbs instead: `Delete`
-[DANGER] (SuggestAlternatives) ns.foo#BatchMakeFoo / [0, 0]: Operation shape `BatchMakeFoo` uses a non-standard verb, `Make`, with a detected prefix of `Batch`. Consider using one of the following verbs instead: `Create`, `Generate`
-[DANGER] (SuggestAlternatives) ns.foo#ChangeFoo / [0, 0]: Operation shape `ChangeFoo` uses a non-standard verb, `Change`. Consider using one of the following verbs instead: `Update`
-[DANGER] (SuggestAlternatives) ns.foo#DestroyFoo / [0, 0]: Operation shape `DestroyFoo` uses a non-standard verb, `Destroy`. Consider using one of the following verbs instead: `Delete`
-[DANGER] (SuggestAlternatives) ns.foo#MakeFoo / [0, 0]: Operation shape `MakeFoo` uses a non-standard verb, `Make`. Consider using one of the following verbs instead: `Create`, `Generate`
-[DANGER] (WithVerbsAndPrefixes) ns.foo#Batch / [0, 0]: Operation name consists of only a verb prefix: Batch
-[DANGER] (WithVerbsAndPrefixes) ns.foo#BatchChangeFoo / [0, 0]: Operation shape `BatchChangeFoo` uses a non-standard verb, `Change`, with a detected prefix of `Batch`. Expected one of the following verbs: `Create`, `Delete`, `Update`
-[DANGER] (WithVerbsAndPrefixes) ns.foo#BatchDestroyFoo / [0, 0]: Operation shape `BatchDestroyFoo` uses a non-standard verb, `Destroy`, with a detected prefix of `Batch`. Expected one of the following verbs: `Create`, `Delete`, `Update`
-[DANGER] (WithVerbsAndPrefixes) ns.foo#BatchMakeFoo / [0, 0]: Operation shape `BatchMakeFoo` uses a non-standard verb, `Make`, with a detected prefix of `Batch`. Expected one of the following verbs: `Create`, `Delete`, `Update`
-[DANGER] (WithVerbsAndPrefixes) ns.foo#ChangeFoo / [0, 0]: Operation shape `ChangeFoo` uses a non-standard verb, `Change`. Expected one of the following verbs: `Create`, `Delete`, `Update`
-[DANGER] (WithVerbsAndPrefixes) ns.foo#DestroyFoo / [0, 0]: Operation shape `DestroyFoo` uses a non-standard verb, `Destroy`. Expected one of the following verbs: `Create`, `Delete`, `Update`
-[DANGER] (WithVerbsAndPrefixes) ns.foo#MakeFoo / [0, 0]: Operation shape `MakeFoo` uses a non-standard verb, `Make`. Expected one of the following verbs: `Create`, `Delete`, `Update`
-[ERROR] (Model) - / [0, 0]: Error creating `StandardOperationVerb` validator: Either verbs or suggestAlternatives must be set when configuring StandardOperationVerb
+[DANGER] ns.foo#Batch: Operation name consists of only a verb prefix: Batch | SuggestAlternatives
+[DANGER] ns.foo#Batch: Operation name consists of only a verb prefix: Batch | WithVerbsAndPrefixes
+[DANGER] ns.foo#BatchChangeFoo: Operation shape `BatchChangeFoo` uses a non-standard verb, `Change`, with a detected prefix of `Batch`. Consider using one of the following verbs instead: `Update` | SuggestAlternatives
+[DANGER] ns.foo#BatchChangeFoo: Operation shape `BatchChangeFoo` uses a non-standard verb, `Change`, with a detected prefix of `Batch`. Expected one of the following verbs: `Create`, `Delete`, `Update` | WithVerbsAndPrefixes
+[DANGER] ns.foo#BatchDestroyFoo: Operation shape `BatchDestroyFoo` uses a non-standard verb, `Destroy`, with a detected prefix of `Batch`. Consider using one of the following verbs instead: `Delete` | SuggestAlternatives
+[DANGER] ns.foo#BatchDestroyFoo: Operation shape `BatchDestroyFoo` uses a non-standard verb, `Destroy`, with a detected prefix of `Batch`. Expected one of the following verbs: `Create`, `Delete`, `Update` | WithVerbsAndPrefixes
+[DANGER] ns.foo#BatchMakeFoo: Operation shape `BatchMakeFoo` uses a non-standard verb, `Make`, with a detected prefix of `Batch`. Consider using one of the following verbs instead: `Create`, `Generate` | SuggestAlternatives
+[DANGER] ns.foo#BatchMakeFoo: Operation shape `BatchMakeFoo` uses a non-standard verb, `Make`, with a detected prefix of `Batch`. Expected one of the following verbs: `Create`, `Delete`, `Update` | WithVerbsAndPrefixes
+[DANGER] ns.foo#ChangeFoo: Operation shape `ChangeFoo` uses a non-standard verb, `Change`. Consider using one of the following verbs instead: `Update` | SuggestAlternatives
+[DANGER] ns.foo#ChangeFoo: Operation shape `ChangeFoo` uses a non-standard verb, `Change`. Expected one of the following verbs: `Create`, `Delete`, `Update` | WithVerbsAndPrefixes
+[DANGER] ns.foo#DestroyFoo: Operation shape `DestroyFoo` uses a non-standard verb, `Destroy`. Consider using one of the following verbs instead: `Delete` | SuggestAlternatives
+[DANGER] ns.foo#DestroyFoo: Operation shape `DestroyFoo` uses a non-standard verb, `Destroy`. Expected one of the following verbs: `Create`, `Delete`, `Update` | WithVerbsAndPrefixes
+[DANGER] ns.foo#MakeFoo: Operation shape `MakeFoo` uses a non-standard verb, `Make`. Consider using one of the following verbs instead: `Create`, `Generate` | SuggestAlternatives
+[DANGER] ns.foo#MakeFoo: Operation shape `MakeFoo` uses a non-standard verb, `Make`. Expected one of the following verbs: `Create`, `Delete`, `Update` | WithVerbsAndPrefixes
+[ERROR] -: Error creating `StandardOperationVerb` validator: Either verbs or suggestAlternatives must be set when configuring StandardOperationVerb | Model

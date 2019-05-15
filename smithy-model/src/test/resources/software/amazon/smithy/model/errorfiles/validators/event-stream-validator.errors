@@ -1,8 +1,8 @@
-[ERROR] (EventStream) ns.foo#EventStreamInputMemberMissing / [100, 29]: Operation input member `events` was not found for the `inputEventStream` trait.
-[ERROR] (EventStream) ns.foo#EventStreamInputMemberMustNotBeRequired / [113, 29]: Operation input member `ns.foo#EventStreamInputMemberMustNotBeRequiredInput$events` is referenced by an `inputEventStream` trait, so it cannot be marked as required.
-[ERROR] (EventStream) ns.foo#EventStreamNonInput / [88, 29]: Operation has the `inputEventStream` but does not define an input structure.
-[ERROR] (EventStream) ns.foo#EventStreamReferencesInvalidMultiEventShape / [139, 29]: Operation input member `ns.foo#EventStreamReferencesInvalidMultiEventShapeInput$events` targets an invalid union `ns.foo#InvalidUnion`; each member of an event stream union must target a structure shape, but the following union members do not: [b, c]
-[ERROR] (EventStream) ns.foo#EventStreamReferencesInvalidShape / [126, 29]: Operation input member `ns.foo#EventStreamReferencesInvalidShapeInput$events` is referenced by the `inputEventStream` trait, so it must target a structure or union, but found smithy.api#String, a string.
-[ERROR] (Target) ns.foo#EventStreamInputMissing / [91, 34]: operation shape has a `input` relationship to an unresolved shape `ns.foo#EventStreamInputMissingInput`
-[ERROR] (TraitTarget) ns.foo#EventStreamInputMissing / [91, 34]: Trait `inputEventStream` cannot be applied to `ns.foo#EventStreamInputMissing`.
-[ERROR] (TraitTarget) ns.foo#EventStreamNonInput / [86, 30]: Trait `inputEventStream` cannot be applied to `ns.foo#EventStreamNonInput`.
+[ERROR] ns.foo#EventStreamInputMemberMissing: Operation input member `events` was not found for the `inputEventStream` trait. | EventStream
+[ERROR] ns.foo#EventStreamInputMemberMustNotBeRequired: Operation input member `ns.foo#EventStreamInputMemberMustNotBeRequiredInput$events` is referenced by an `inputEventStream` trait, so it cannot be marked as required. | EventStream
+[ERROR] ns.foo#EventStreamInputMissing: Trait `inputEventStream` cannot be applied to `ns.foo#EventStreamInputMissing`. This trait may only be applied to shapes that match the following selector: operation:test(-[input]->) | TraitTarget
+[ERROR] ns.foo#EventStreamInputMissing: operation shape has a `input` relationship to an unresolved shape `ns.foo#EventStreamInputMissingInput` | Target
+[ERROR] ns.foo#EventStreamNonInput: Operation has the `inputEventStream` but does not define an input structure. | EventStream
+[ERROR] ns.foo#EventStreamNonInput: Trait `inputEventStream` cannot be applied to `ns.foo#EventStreamNonInput`. This trait may only be applied to shapes that match the following selector: operation:test(-[input]->) | TraitTarget
+[ERROR] ns.foo#EventStreamReferencesInvalidMultiEventShape: Operation input member `ns.foo#EventStreamReferencesInvalidMultiEventShapeInput$events` targets an invalid union `ns.foo#InvalidUnion`; each member of an event stream union must target a structure shape, but the following union members do not: [b, c] | EventStream
+[ERROR] ns.foo#EventStreamReferencesInvalidShape: Operation input member `ns.foo#EventStreamReferencesInvalidShapeInput$events` is referenced by the `inputEventStream` trait, so it must target a structure or union, but found smithy.api#String, a string. | EventStream
