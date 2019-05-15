@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -41,6 +41,7 @@ import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.model.validation.ValidatorService;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Checks if an operation should be paginated but is not.
@@ -106,13 +107,12 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
     }
 
     private static Set<String> parseSetOfString(ObjectNode node, String member, Set<String> defaults) {
-        return node.getArrayMember(member)
-                .map(array -> array.getElements().stream()
-                        .map(Node::expectStringNode)
-                        .map(StringNode::getValue)
-                        .map(string -> string.toLowerCase(Locale.US))
-                        .collect(Collectors.toSet()))
-                .orElse(defaults);
+        Optional<ArrayNode> arrayMember = node.getArrayMember(member);
+        return arrayMember.isPresent()
+                ? Node.loadArrayOfString(member, arrayMember.get()).stream()
+                        .map(StringUtils::lowerCase)
+                        .collect(Collectors.toSet())
+                : defaults;
     }
 
     private static Optional<String> findMember(Collection<String> haystack, Collection<String> needles) {

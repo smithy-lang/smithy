@@ -556,6 +556,101 @@ Default severity
 Best practice validators
 ========================
 
+.. _DeprecatedAuthSchemes:
+
+DeprecatedAuthSchemes
+---------------------
+
+Validates that :ref:`auth schemes <auth-trait>` used are not in the
+configured set of deprecated schemes. A validation event is emitted when one
+of the deprecated auth schemes is found on a service shape.
+
+Rationale
+    As a service evolves, its authentication schemes might too. This validator
+    can be used to inform consumers of a Smithy model that the auth scheme
+    listed should be considered deprecated.
+
+Default Severity
+    ``WARNING``
+
+Configuration
+    .. list-table::
+        :header-rows: 1
+        :widths: 20 20 60
+
+        * - Property
+          - Type
+          - Description
+        * - schemes
+          - [ ``string`` ]
+          - **Required**. A list of deprecated auth scheme names.
+        * - reason
+          - ``string``
+          - A reason to display for why these auth schemes are deprecated.
+
+Example:
+
+.. code-block:: smithy
+
+    metadata validators = [{
+      id: "DeprecateFooScheme"
+      name: "DeprecatedAuthSchemes",
+      configuration: {
+        schemes: [
+          "foo"
+        ],
+        reason: "Please migrate to the foo2 scheme.",
+      }
+    }]
+
+
+.. _DeprecatedProtocols:
+
+DeprecatedProtocols
+-------------------
+
+Validates that :ref:`protocols <protocols-trait>` used are not in the
+configured set of deprecated protocols. A validation event is emitted when one
+of the deprecated protocols is found on a service shape.
+
+Rationale
+    As a service evolves, its protocols might too. This validator can be used
+    to inform consumers of a Smithy model that the protocol listed should be
+    considered deprecated.
+
+Default Severity
+    ``WARNING``
+
+Configuration
+    .. list-table::
+        :header-rows: 1
+        :widths: 20 20 60
+
+        * - Property
+          - Type
+          - Description
+        * - protocols
+          - [ ``string`` ]
+          - **Required**. A list of deprecated protocol names.
+        * - reason
+          - ``string``
+          - A reason to display for why these protocols are deprecated.
+
+Example:
+
+.. code-block:: smithy
+
+    metadata validators = [{
+      id: "DeprecateFooProtocol"
+      name: "DeprecatedProtocols",
+      configuration: {
+        protocols: [
+          "foo"
+        ],
+        reason: "Please migrate to the bar protocol.",
+      }
+    }]
+
 
 .. _InputOutputStructureReuse:
 
