@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.MockManifest;
 import software.amazon.smithy.build.PluginContext;
-import software.amazon.smithy.build.Projection;
 import software.amazon.smithy.build.SourcesConflictException;
+import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.utils.ListUtils;
@@ -55,9 +55,9 @@ public class SourcesPluginTest {
                 .assemble()
                 .unwrap();
         MockManifest manifest = new MockManifest();
-        Projection projection = Projection.builder().name("foo").build();
+        ProjectionConfig projection = ProjectionConfig.builder().build();
         PluginContext context = PluginContext.builder()
-                .projection(projection)
+                .projection("foo", projection)
                 .fileManifest(manifest)
                 .model(model)
                 .originalModel(model)
@@ -90,9 +90,9 @@ public class SourcesPluginTest {
                 .assemble()
                 .unwrap();
         MockManifest manifest = new MockManifest();
-        Projection projection = Projection.builder().name("foo").build();
+        ProjectionConfig projection = ProjectionConfig.builder().build();
         PluginContext context = PluginContext.builder()
-                .projection(projection)
+                .projection("foo", projection)
                 .fileManifest(manifest)
                 .originalModel(originalModel)
                 .model(newModel)

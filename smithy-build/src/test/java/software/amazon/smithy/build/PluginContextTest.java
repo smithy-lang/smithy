@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -13,7 +14,7 @@ public class PluginContextTest {
     @Test
     public void usesExplicitProjectionName() {
         PluginContext context = PluginContext.builder()
-                .projection(Projection.builder().name("foo").build())
+                .projection("foo", ProjectionConfig.builder().build())
                 .fileManifest(new MockManifest())
                 .model(Model.builder().build())
                 .build();

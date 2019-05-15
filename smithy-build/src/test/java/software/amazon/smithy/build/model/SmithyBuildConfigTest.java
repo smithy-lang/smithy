@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.build;
+package software.amazon.smithy.build.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -30,79 +30,73 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.SmithyBuildException;
+import software.amazon.smithy.build.SmithyBuildTest;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.utils.ListUtils;
 
 public class SmithyBuildConfigTest {
     @Test
-    public void loadsFromJson() throws Exception {
-        SmithyBuildConfig.load(Paths.get(getClass().getResource("special-syntax.json").toURI()));
+    public void loadsFromJson() {
+        SmithyBuildConfig.load(Paths.get(getResourcePath("special-syntax.json")));
     }
 
     @Test
-    public void throwsWithCorrectSyntaxErrorMessage() throws Exception {
+    public void throwsWithCorrectSyntaxErrorMessage() {
         Exception thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
-            SmithyBuildConfig.load(Paths.get(getClass().getResource("bad-syntax.json").toURI()));
+            SmithyBuildConfig.load(Paths.get(getResourcePath("bad-syntax.json")));
         });
 
         assertThat(thrown.getMessage(), containsString("Error parsing file"));
     }
 
     @Test
-    public void requiresVersion() throws Exception {
+    public void requiresVersion() {
         Exception thrown = Assertions.assertThrows(SourceException.class, () -> {
-            SmithyBuildConfig.load(Paths.get(getClass().getResource("missing-version.json").toURI()));
+            SmithyBuildConfig.load(Paths.get(getResourcePath("missing-version.json")));
         });
 
         assertThat(thrown.getMessage(), containsString("version"));
     }
 
     @Test
-    public void canBeAbstract() throws Exception {
+    public void canBeAbstract() {
         SmithyBuildConfig config = SmithyBuildConfig.load(
-                Paths.get(getClass().getResource("config-with-abstract.json").toURI()));
+                Paths.get(getResourcePath("config-with-abstract.json")));
 
-        assertThat(config.getProjection("abstract").get().isAbstract(), is(true));
+        assertThat(config.getProjections().get("abstract").isAbstract(), is(true));
     }
 
     @Test
-    public void canLoadJsonDataIntoBuilder() throws Exception {
+    public void canLoadJsonDataIntoBuilder() {
         Path outputDir = Paths.get("/foo/baz");
         SmithyBuildConfig config = SmithyBuildConfig.builder()
-                .load(Paths.get(getClass().getResource("config-with-abstract.json").toURI()))
-                .load(Paths.get(getClass().getResource("simple-config.json").toURI()))
+                .load(Paths.get(getResourcePath(("config-with-abstract.json"))))
+                .load(Paths.get(getResourcePath("simple-config.json")))
                 .outputDirectory(outputDir.toString())
                 .build();
 
-        assertThat(config.getProjection("a").get(), notNullValue());
-        assertThat(config.getProjection("b").get(), notNullValue());
-        assertThat(config.getProjection("abstract").get().isAbstract(), is(true));
-        assertThat(config.getOutputDirectory(), equalTo(Optional.of(outputDir)));
+        assertThat(config.getProjections().get("a"), notNullValue());
+        assertThat(config.getProjections().get("b"), notNullValue());
+        assertThat(config.getProjections().get("abstract").isAbstract(), is(true));
+        assertThat(config.getOutputDirectory(), equalTo(Optional.of(outputDir.toString())));
     }
 
     @Test
-    public void canAddImports() throws Exception {
-        String importPath = Paths.get(getClass().getResource("simple-model.json").toURI()).toString();
-        SmithyBuildConfig config = SmithyBuildConfig.builder().addImport(importPath).build();
+    public void canAddImports() {
+        String importPath = getResourcePath("simple-model.json");
+        SmithyBuildConfig config = SmithyBuildConfig.builder().imports(ListUtils.of(importPath)).build();
 
         assertThat(config.getImports(), containsInAnyOrder(importPath));
     }
 
     @Test
-    public void canAddImportsAndOutputDirViaJson() throws Exception {
-        SmithyBuildConfig config = SmithyBuildConfig.builder()
-                .load(Paths.get(getClass().getResource("config-with-imports-and-output-dir.json").toURI()))
-                .build();
+    public void canAddImportsAndOutputDirViaJson() {
+        SmithyBuildConfig config = SmithyBuildConfig.load(
+                Paths.get(getResourcePath("config-with-imports-and-output-dir.json")));
 
         assertThat(config.getOutputDirectory(), not(Optional.empty()));
         assertThat(config.getImports(), not(empty()));
-    }
-
-    @Test
-    public void pluginsMustHaveValidNames() {
-        Assertions.assertThrows(SmithyBuildException.class, () -> {
-            SmithyBuildConfig.builder().addPlugin("!invalid", Node.objectNode()).build();
-        });
     }
 
     @Test
@@ -112,5 +106,9 @@ public class SmithyBuildConfigTest {
         assertThat(config.getPlugins(), hasKey("build-info"));
         assertThat(config.getPlugins(), hasKey("model"));
         assertThat(config.getPlugins(), hasKey("sources"));
+    }
+
+    private String getResourcePath(String name) {
+        return SmithyBuildTest.class.getResource(name).getPath();
     }
 }

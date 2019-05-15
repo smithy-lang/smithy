@@ -13,13 +13,14 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.build;
+package software.amazon.smithy.build.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -29,35 +30,22 @@ import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
- * Projection stored in a {@link SmithyBuildConfig}.
+ * ProjectionConfig stored in a {@link SmithyBuildConfig}.
  */
-public final class Projection implements ToNode {
+public final class ProjectionConfig implements ToNode {
     private final boolean isAbstract;
-    private final String name;
     private final List<String> imports;
-    private final List<TransformConfiguration> transforms;
+    private final List<TransformConfig> transforms;
     private final Map<String, ObjectNode> plugins;
 
-    private Projection(Builder builder) {
-        if (builder.name == null) {
-            throw new SmithyBuildException("No name was provided for projection");
-        }
-
-        if (!SmithyBuildConfig.PATTERN.matcher(builder.name).find()) {
-            throw new SmithyBuildException("Invalid projection name: `" + builder.name + "`. Projection names must "
-                                           + "match the following pattern: " + SmithyBuildConfig.PATTERN.pattern());
-        }
-
-        this.name = builder.name;
+    private ProjectionConfig(Builder builder) {
         this.imports = ListUtils.copyOf(builder.imports);
         this.transforms = ListUtils.copyOf(builder.transforms);
         this.isAbstract = builder.isAbstract;
         this.plugins = MapUtils.copyOf(builder.plugins);
 
         if (isAbstract && (!plugins.isEmpty() || !imports.isEmpty())) {
-            throw new SmithyBuildException(String.format(
-                    "Invalid abstract projection: `%s` Abstract projections must not define plugins or imports",
-                    builder.name));
+            throw new SmithyBuildException("Abstract projections must not define plugins or imports");
         }
     }
 
@@ -66,16 +54,9 @@ public final class Projection implements ToNode {
     }
 
     /**
-     * @return The name of the projection.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
      * @return Gets the immutable transforms in the projection.
      */
-    public List<TransformConfiguration> getTransforms() {
+    public List<TransformConfig> getTransforms() {
         return transforms;
     }
 
@@ -114,25 +95,23 @@ public final class Projection implements ToNode {
         }
 
         return result
-                .withMember("name", Node.from(getName()))
                 .withMember("transforms", createTransformerNode(getTransforms()))
                 .withMember("plugins", getPlugins().entrySet().stream()
                         .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)))
                 .build();
     }
 
-    private static Node createTransformerNode(List<TransformConfiguration> values) {
-        return values.stream().map(TransformConfiguration::toNode).collect(ArrayNode.collect());
+    private static Node createTransformerNode(List<TransformConfig> values) {
+        return values.stream().map(TransformConfig::toNode).collect(ArrayNode.collect());
     }
 
     /**
-     * Builds a {@link Projection}.
+     * Builds a {@link ProjectionConfig}.
      */
-    public static final class Builder implements SmithyBuilder<Projection> {
-        private String name;
+    public static final class Builder implements SmithyBuilder<ProjectionConfig> {
         private boolean isAbstract;
         private final List<String> imports = new ArrayList<>();
-        private final List<TransformConfiguration> transforms = new ArrayList<>();
+        private final List<TransformConfig> transforms = new ArrayList<>();
         private final Map<String, ObjectNode> plugins = new HashMap<>();
 
         private Builder() {}
@@ -142,19 +121,8 @@ public final class Projection implements ToNode {
          *
          * @return Returns the created projection.
          */
-        public Projection build() {
-            return new Projection(this);
-        }
-
-        /**
-         * Sets the <strong>required</strong> projection name.
-         *
-         * @param name Name of the projection.
-         * @return Returns the builder.
-         */
-        public Builder name(String name) {
-            this.name = name;
-            return this;
+        public ProjectionConfig build() {
+            return new ProjectionConfig(this);
         }
 
         /**
@@ -171,36 +139,38 @@ public final class Projection implements ToNode {
         }
 
         /**
-         * Adds a single path to import.
+         * Sets the imports of the projection.
          *
-         * @param importPath Path to a model file or directory to import.
+         * @param imports Imports to set.
          * @return Returns the builder.
          */
-        public Builder addImport(String importPath) {
-            this.imports.add(importPath);
+        public Builder imports(Collection<String> imports) {
+            this.imports.clear();
+            this.imports.addAll(imports);
             return this;
         }
 
         /**
-         * Adds a transform to the projection.
+         * Sets the transforms of the projection.
          *
-         * @param transform Transform to add.
+         * @param transforms Transform to set.
          * @return Returns the builder.
          */
-        public Builder addTransform(TransformConfiguration transform) {
-            transforms.add(transform);
+        public Builder transforms(Collection<TransformConfig> transforms) {
+            this.transforms.clear();
+            this.transforms.addAll(transforms);
             return this;
         }
 
         /**
-         * Adds a plugin to the projection.
+         * Sets the plugins of the projection.
          *
-         * @param name Name of the plugin.
-         * @param settings Settings of the plugin.
+         * @param plugins Map of plugin name to plugin settings.
          * @return Returns the builder.
          */
-        public Builder addPlugin(String name, ObjectNode settings) {
-            plugins.put(Objects.requireNonNull(name), Objects.requireNonNull(settings));
+        public Builder plugins(Map<String, ObjectNode> plugins) {
+            this.plugins.clear();
+            this.plugins.putAll(plugins);
             return this;
         }
     }

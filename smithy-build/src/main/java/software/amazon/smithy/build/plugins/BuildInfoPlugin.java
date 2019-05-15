@@ -15,11 +15,9 @@
 
 package software.amazon.smithy.build.plugins;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.PluginContext;
-import software.amazon.smithy.build.Projection;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -62,28 +60,28 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
     @Override
     public void execute(PluginContext context) {
         if (context.getOriginalModel().isPresent() && context.getProjection().isPresent()) {
-            context.getFileManifest().writeJson("smithy-build-info.json", serializeBuildInfo(
-                    context.getModel(), context.getProjection().get(), context.getEvents()));
+            context.getFileManifest().writeJson("smithy-build-info.json", serializeBuildInfo(context));
         }
     }
 
-    private static Node serializeBuildInfo(Model model, Projection projection, List<ValidationEvent> events) {
+    private static Node serializeBuildInfo(PluginContext context) {
         return Node.objectNodeBuilder()
                 .withMember("version", Node.from(BUILD_INFO_VERSION))
-                .withMember("smithyVersion", Node.from(model.getSmithyVersion()))
-                .withMember("projection", projection.toNode())
-                .withMember("validationEvents", events.stream()
+                .withMember("smithyVersion", Node.from(context.getModel().getSmithyVersion()))
+                .withMember("projectionName", Node.from(context.getProjectionName()))
+                .withMember("projection", context.getProjection().get().toNode())
+                .withMember("validationEvents", context.getEvents().stream()
                         .map(ValidationEvent::toNode)
                         .collect(ArrayNode.collect()))
-                .withMember("traitNames", findTraitNames(model))
-                .withMember("traitDefNames", model.getTraitDefinitions().stream()
+                .withMember("traitNames", findTraitNames(context.getModel()))
+                .withMember("traitDefNames", context.getModel().getTraitDefinitions().stream()
                         .map(TraitDefinition::getFullyQualifiedName)
                         .map(Node::from)
                         .collect(ArrayNode.collect()))
-                .withMember("serviceShapeIds", findShapeIds(model, ServiceShape.class))
-                .withMember("operationShapeIds", findShapeIds(model, OperationShape.class))
-                .withMember("resourceShapeIds", findShapeIds(model, ResourceShape.class))
-                .withMember("metadata", model.getMetadata().entrySet().stream()
+                .withMember("serviceShapeIds", findShapeIds(context.getModel(), ServiceShape.class))
+                .withMember("operationShapeIds", findShapeIds(context.getModel(), OperationShape.class))
+                .withMember("resourceShapeIds", findShapeIds(context.getModel(), ResourceShape.class))
+                .withMember("metadata", context.getModel().getMetadata().entrySet().stream()
                         .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)))
                 .build();
     }

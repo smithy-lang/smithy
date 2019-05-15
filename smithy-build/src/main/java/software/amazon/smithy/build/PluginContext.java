@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -35,7 +36,8 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * Context object used in plugin execution.
  */
 public final class PluginContext {
-    private final Projection projection;
+    private final ProjectionConfig projection;
+    private final String projectionName;
     private final Model model;
     private final Model originalModel;
     private final List<ValidationEvent> events;
@@ -45,14 +47,15 @@ public final class PluginContext {
     private final Set<Path> sources;
 
     private PluginContext(Builder builder) {
-        this.model = SmithyBuilder.requiredState("model", builder.model);
-        this.fileManifest = SmithyBuilder.requiredState("fileManifest", builder.fileManifest);
-        this.projection = builder.projection;
-        this.originalModel = builder.originalModel;
-        this.events = Collections.unmodifiableList(builder.events);
-        this.settings = builder.settings;
-        this.pluginClassLoader = builder.pluginClassLoader;
-        this.sources = SetUtils.copyOf(builder.sources);
+        model = SmithyBuilder.requiredState("model", builder.model);
+        fileManifest = SmithyBuilder.requiredState("fileManifest", builder.fileManifest);
+        projection = builder.projection;
+        projectionName = builder.projectionName;
+        originalModel = builder.originalModel;
+        events = Collections.unmodifiableList(builder.events);
+        settings = builder.settings;
+        pluginClassLoader = builder.pluginClassLoader;
+        sources = SetUtils.copyOf(builder.sources);
     }
 
     /**
@@ -67,8 +70,19 @@ public final class PluginContext {
     /**
      * @return Get the projection the plugin is optionally attached to.
      */
-    public Optional<Projection> getProjection() {
+    public Optional<ProjectionConfig> getProjection() {
         return Optional.ofNullable(projection);
+    }
+
+    /**
+     * Gets the name of the projection being applied.
+     *
+     * <p>If no projection could be found, "source" is assumed.
+     *
+     * @return Returns the explicit or assumed projection name.
+     */
+    public String getProjectionName() {
+        return projectionName;
     }
 
     /**
@@ -130,17 +144,6 @@ public final class PluginContext {
     }
 
     /**
-     * Gets the name of the projection being applied.
-     *
-     * <p>If no projection could be found, "source" is assumed.
-     *
-     * @return Returns the explicit or assumed projection name.
-     */
-    public String getProjectionName() {
-        return getProjection().map(Projection::getName).orElse("source");
-    }
-
-    /**
      * Gets the source models, or models that are considered the subject
      * of the build.
      *
@@ -159,7 +162,8 @@ public final class PluginContext {
      * Builds a {@link PluginContext}.
      */
     public static final class Builder implements SmithyBuilder<PluginContext> {
-        private Projection projection;
+        private ProjectionConfig projection;
+        private String projectionName = "source";
         private Model model;
         private Model originalModel;
         private List<ValidationEvent> events = Collections.emptyList();
@@ -201,10 +205,12 @@ public final class PluginContext {
         /**
          * Sets the projection that the plugin belongs to.
          *
-         * @param projection Projection to set.
+         * @param name Name of the projection.
+         * @param projection ProjectionConfig to set.
          * @return Returns the builder.
          */
-        public Builder projection(Projection projection) {
+        public Builder projection(String name, ProjectionConfig projection) {
+            this.projectionName = Objects.requireNonNull(name);
             this.projection = Objects.requireNonNull(projection);
             return this;
         }

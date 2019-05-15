@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -34,8 +34,8 @@ import software.amazon.smithy.model.transform.ModelTransformer;
  */
 public final class SmithyBuild {
     SmithyBuildConfig config;
+    Path importBasePath;
     Path outputDirectory;
-    BiFunction<String, SmithyBuildConfig, Path> importBasePathResolver;
     Function<String, Optional<ProjectionTransformer>> transformFactory;
     Function<String, Optional<SmithyBuildPlugin>> pluginFactory;
     Function<Path, FileManifest> fileManifestFactory;
@@ -48,7 +48,7 @@ public final class SmithyBuild {
     public SmithyBuild() {}
 
     public SmithyBuild(SmithyBuildConfig config) {
-        this.config = config;
+        config(config);
     }
 
     /**
@@ -106,7 +106,19 @@ public final class SmithyBuild {
      */
     public SmithyBuild config(SmithyBuildConfig config) {
         this.config = config;
+        config.getImportBasePath().ifPresent(this::importBasePath);
         return this;
+    }
+
+    /**
+     * Sets the <strong>required</strong> configuration object used to
+     * build the model.
+     *
+     * @param configPath Path to the configuration to set.
+     * @return Returns the builder.
+     */
+    public SmithyBuild config(Path configPath) {
+        return config(SmithyBuildConfig.load(configPath));
     }
 
     /**
@@ -122,32 +134,13 @@ public final class SmithyBuild {
     }
 
     /**
-     * Sets the <em>import base path resolver</em> function to use to find
-     * imports.
+     * Sets the base path for where imports are found.
      *
-     * <p>This function is invoked each time an import defined in the config
-     * is loaded. This function is provided the path String to the file to
-     * import followed by the smithy build configuration object. The function
-     * is expected to return the resolved path to the file to import.
-     *
-     * <p>If no custom import path resolver function is provided, a default
-     * function will be used to that resolves import paths based on the
-     * location of the smithy-build.json configuration file on disk (if known)
-     * using {@link SmithyBuildConfig#getImportBasePath}. For example:
-     *
-     * <pre>
-     * {@code
-     * Path basePath = Paths.get("/foo/baz");
-     * BuilderRunner runner = new BuilderRunner();
-     * runner.importBasePathResolver((path, config) -> basePath.resolve(path));
-     * }
-     * </pre>
-     *
-     * @param importBasePathResolver Import path resolved to use.
+     * @param importBasePath Base path to look for imports.
      * @return Returns the builder.
      */
-    public SmithyBuild importBasePathResolver(BiFunction<String, SmithyBuildConfig, Path> importBasePathResolver) {
-        this.importBasePathResolver = importBasePathResolver;
+    public SmithyBuild importBasePath(Path importBasePath) {
+        this.importBasePath = importBasePath;
         return this;
     }
 
