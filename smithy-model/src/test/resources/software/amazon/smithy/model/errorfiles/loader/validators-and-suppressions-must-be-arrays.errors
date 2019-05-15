@@ -1,2 +1,2 @@
-[ERROR] (Model) - / [0, 0]: smithy.suppressions must be an array. Found object.
-[ERROR] (Model) - / [0, 0]: smithy.validators must be an array. Found object.
+[ERROR] (Model) - / [0, 0]: suppressions must be an array. Found object.
+[ERROR] (Model) - / [0, 0]: validators must be an array. Found object.

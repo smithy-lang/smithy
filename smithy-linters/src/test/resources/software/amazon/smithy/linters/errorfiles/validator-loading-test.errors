@@ -1,6 +1,6 @@
 [DANGER] (CamelCase) ns.foo#Ignore_Me / [0, 0]: string shape name, `Ignore_Me`, is not upper camel case
-[ERROR] (Model) - / [0, 0]: Each element of `smithy.suppressions` must be an object. Found array.
-[ERROR] (Model) - / [0, 0]: Each element of `smithy.validators` must be an object. Found string.
+[ERROR] (Model) - / [0, 0]: Each element of `suppressions` must be an object. Found array.
+[ERROR] (Model) - / [0, 0]: Each element of `validators` must be an object. Found string.
 [SUPPRESSED] (CamelCase) ns.baz#This_is_ignored_too / [0, 0]: string shape name, `This_is_ignored_too`, is not upper camel case
 [SUPPRESSED] (UnreferencedShape) ns.baz#This_is_ignored_too / [0, 0]: The ns.baz#This_is_ignored_too string shape is not connected to from any service shape.
 [SUPPRESSED] (UnreferencedShape) ns.foo#Ignore_Me / [0, 0]: The ns.foo#Ignore_Me string shape is not connected to from any service shape.
