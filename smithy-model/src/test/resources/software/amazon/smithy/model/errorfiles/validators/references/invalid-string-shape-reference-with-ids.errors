@@ -1,1 +1,1 @@
-[ERROR] (ReferencesTrait) ns.foo#MyString / [0, 0]: Found an invalid references trait reference named `foo`. References applied to string shapes cannot contain 'ids'.
+[ERROR] ns.foo#MyString: Found an invalid references trait reference named `foo`. References applied to string shapes cannot contain 'ids'. | ReferencesTrait

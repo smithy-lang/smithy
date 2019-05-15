@@ -1,9 +1,9 @@
-[DANGER] (FooReservedWords) ns.foo#OperationB / [153, 21]: The word `OperationB` is reserved. Foo has a built in OperationB, we can rename around it.
-[DANGER] (FooReservedWords) ns.foo#FooShape / [173, 19]: The word `FooShape` is reserved.
-[DANGER] (FooReservedWords) ns.foo#FooShape$_qux / [182, 19]: The word `_qux` is reserved. Foo does not allow preceding underscores.
-[DANGER] (FooReservedWords) ns.foo#FooShape$string / [179, 21]: The word `string` is reserved.
-[DANGER] (FooReservedWords) ns.foo#OperationAInput$fooShape / [132, 23]: The word `fooShape` is reserved.
-[DANGER] (FooReservedWords) ns.foo#OperationAInput$otherMemberName / [129, 30]: The word `otherMemberName` is reserved.
-[DANGER] (FooReservedWords) ns.foo#OperationErrorB / [149, 26]: The word `OperationErrorB` is reserved.
-[DANGER] (FooReservedWords) ns.foo#_OperationBaz / [166, 24]: The word `_OperationBaz` is reserved. Foo does not allow preceding underscores.
-[DANGER] (FooReservedWords) ns.foo#_foo / [49, 15]: The word `_foo` is reserved. Foo does not allow preceding underscores.
+[DANGER] ns.foo#FooShape$_qux: The word `_qux` is reserved. Foo does not allow preceding underscores. | FooReservedWords
+[DANGER] ns.foo#FooShape$string: The word `string` is reserved.  | FooReservedWords
+[DANGER] ns.foo#FooShape: The word `FooShape` is reserved.  | FooReservedWords
+[DANGER] ns.foo#OperationAInput$fooShape: The word `fooShape` is reserved.  | FooReservedWords
+[DANGER] ns.foo#OperationAInput$otherMemberName: The word `otherMemberName` is reserved.  | FooReservedWords
+[DANGER] ns.foo#OperationB: The word `OperationB` is reserved. Foo has a built in OperationB, we can rename around it. | FooReservedWords
+[DANGER] ns.foo#OperationErrorB: The word `OperationErrorB` is reserved.  | FooReservedWords
+[DANGER] ns.foo#_OperationBaz: The word `_OperationBaz` is reserved. Foo does not allow preceding underscores. | FooReservedWords
+[DANGER] ns.foo#_foo: The word `_foo` is reserved. Foo does not allow preceding underscores. | FooReservedWords

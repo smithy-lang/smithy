@@ -1,1 +1,1 @@
-[ERROR] (ReferencesTrait) ns.foo#MyStructure / [0, 0]: `references` trait `foo` reference is invalid for the following reasons: `invalidMemberName` refers to a member that is not part of the structure
+[ERROR] ns.foo#MyStructure: `references` trait `foo` reference is invalid for the following reasons: `invalidMemberName` refers to a member that is not part of the structure | ReferencesTrait

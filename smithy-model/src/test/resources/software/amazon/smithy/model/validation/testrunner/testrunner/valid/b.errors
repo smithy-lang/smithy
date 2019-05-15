@@ -1,1 +1,1 @@
-[ERROR] (Model) smithy.example#MyString / [0, 0]: Error creating trait
+[ERROR] smithy.example#MyString: Error creating trait | Model

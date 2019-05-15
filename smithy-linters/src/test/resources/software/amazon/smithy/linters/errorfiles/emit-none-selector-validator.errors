@@ -1,1 +1,1 @@
-[DANGER] (NoLengthTraits) - / [0, 0]: Expected at least one shape to match selector: [trait|length]
+[DANGER] -: Expected at least one shape to match selector: [trait|length] | NoLengthTraits

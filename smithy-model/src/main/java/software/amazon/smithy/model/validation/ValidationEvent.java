@@ -58,8 +58,9 @@ public final class ValidationEvent implements ToNode, ToSmithyBuilder<Validation
         this.eventId = SmithyBuilder.requiredState("eventId", builder.eventId);
         this.shapeId = builder.shapeId;
         this.suppressionReason = builder.suppressionReason;
-        this.asString = String.format(
-                "[%s] (%s) %s %s: %s", severity, eventId, shapeId != null ? shapeId : "-", sourceLocation, message);
+        this.asString = String.format("[%s] %s: %s | %s %s:%s:%s",
+                severity, shapeId != null ? shapeId : "-", message, eventId,
+                sourceLocation.getFilename(), sourceLocation.getLine(), sourceLocation.getColumn());
     }
 
     public static Builder builder() {

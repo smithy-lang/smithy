@@ -1,2 +1,2 @@
-[ERROR] (TraitTarget) ns.foo#Invalid2 / [21, 25]: Trait `timestampFormat` cannot be applied to `ns.foo#Invalid2`
-[ERROR] (TraitValue) ns.foo#Invalid1 / [19, 36]: Error validating trait `timestampFormat`
+[ERROR] ns.foo#Invalid1: Error validating trait `timestampFormat`: String value provided for `smithy.api#TimestampFormatTrait` must be one of the following values: `date-time`, `epoch-seconds`, `http-date` | TraitValue
+[ERROR] ns.foo#Invalid2: Trait `timestampFormat` cannot be applied to `ns.foo#Invalid2`. This trait may only be applied to shapes that match the following selector: :test(timestamp, member > timestamp) | TraitTarget

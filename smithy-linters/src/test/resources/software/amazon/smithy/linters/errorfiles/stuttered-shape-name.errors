@@ -1,6 +1,6 @@
-[WARNING] (StutteredShapeName) ns.foo#Invalid$InvalidBaz / [0, 0]: The `Invalid` structure shape stutters its name in the member `InvalidBaz`; structure member names should not be prefixed with the structure name.
-[WARNING] (StutteredShapeName) ns.foo#Invalid$invalidBar / [0, 0]: The `Invalid` structure shape stutters its name in the member `invalidBar`; structure member names should not be prefixed with the structure name.
-[WARNING] (StutteredShapeName) ns.foo#Invalid$invalidFoo / [0, 0]: The `Invalid` structure shape stutters its name in the member `invalidFoo`; structure member names should not be prefixed with the structure name.
-[WARNING] (StutteredShapeName) ns.foo#Invalid2$Invalid2Baz / [0, 0]: The `Invalid2` union shape stutters its name in the member `Invalid2Baz`; union member names should not be prefixed with the union name.
-[WARNING] (StutteredShapeName) ns.foo#Invalid2$invalid2Bar / [0, 0]: The `Invalid2` union shape stutters its name in the member `invalid2Bar`; union member names should not be prefixed with the union name.
-[WARNING] (StutteredShapeName) ns.foo#Invalid2$invalid2Foo / [0, 0]: The `Invalid2` union shape stutters its name in the member `invalid2Foo`; union member names should not be prefixed with the union name.
+[WARNING] ns.foo#Invalid$InvalidBaz: The `Invalid` structure shape stutters its name in the member `InvalidBaz`; structure member names should not be prefixed with the structure name. | StutteredShapeName
+[WARNING] ns.foo#Invalid$invalidBar: The `Invalid` structure shape stutters its name in the member `invalidBar`; structure member names should not be prefixed with the structure name. | StutteredShapeName
+[WARNING] ns.foo#Invalid$invalidFoo: The `Invalid` structure shape stutters its name in the member `invalidFoo`; structure member names should not be prefixed with the structure name. | StutteredShapeName
+[WARNING] ns.foo#Invalid2$Invalid2Baz: The `Invalid2` union shape stutters its name in the member `Invalid2Baz`; union member names should not be prefixed with the union name. | StutteredShapeName
+[WARNING] ns.foo#Invalid2$invalid2Bar: The `Invalid2` union shape stutters its name in the member `invalid2Bar`; union member names should not be prefixed with the union name. | StutteredShapeName
+[WARNING] ns.foo#Invalid2$invalid2Foo: The `Invalid2` union shape stutters its name in the member `invalid2Foo`; union member names should not be prefixed with the union name. | StutteredShapeName

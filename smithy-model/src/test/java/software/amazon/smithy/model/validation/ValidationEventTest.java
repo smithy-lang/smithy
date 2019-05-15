@@ -256,7 +256,7 @@ public class ValidationEventTest {
                 .eventId("abc.foo")
                 .build();
 
-        assertEquals(a.toString(), "[SUPPRESSED] (abc.foo) - N/A [0, 0]: The message");
+        assertEquals(a.toString(), "[SUPPRESSED] -: The message | abc.foo N/A:0:0");
     }
 
     @Test
@@ -268,7 +268,7 @@ public class ValidationEventTest {
                 .shapeId(ShapeId.from("ns.foo#baz"))
                 .build();
 
-        assertEquals(a.toString(), "[SUPPRESSED] (abc.foo) ns.foo#baz N/A [0, 0]: The message");
+        assertEquals(a.toString(), "[SUPPRESSED] ns.foo#baz: The message | abc.foo N/A:0:0");
     }
 
     @Test
@@ -281,7 +281,7 @@ public class ValidationEventTest {
                 .sourceLocation(new SourceLocation("file", 1, 2))
                 .build();
 
-        assertEquals(a.toString(), "[SUPPRESSED] (abc.foo) ns.foo#baz file [1, 2]: The message");
+        assertEquals(a.toString(), "[SUPPRESSED] ns.foo#baz: The message | abc.foo file:1:2");
     }
 
     @Test

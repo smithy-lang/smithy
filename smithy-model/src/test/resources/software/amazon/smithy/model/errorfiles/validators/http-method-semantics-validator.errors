@@ -1,6 +1,6 @@
-[WARNING] (HttpMethodSemantics) ns.foo#G / [0, 0]: This operation uses the `POST` method in the `http` trait, but is marked with the readonly trait
-[WARNING] (HttpMethodSemantics) ns.foo#H / [0, 0]: This operation uses the `DELETE` method in the `http` trait, but is not marked with the idempotent trait
-[WARNING] (HttpMethodSemantics) ns.foo#I / [0, 0]: This operation uses the `GET` method in the `http` trait, but is not marked with the readonly trait
-[WARNING] (HttpMethodSemantics) ns.foo#J / [0, 0]: This operation uses the `POST` method in the `http` trait, but is marked with the idempotent trait
-[DANGER] (HttpMethodSemantics) ns.foo#K / [0, 0]: This operation uses the `GET` method in the `http` trait, but has the following members bound to the payload: `payload`
-[DANGER] (HttpMethodSemantics) ns.foo#L / [0, 0]: This operation uses the `GET` method in the `http` trait, but has the following members bound to the document: `payload`
+[DANGER] ns.foo#K: This operation uses the `GET` method in the `http` trait, but has the following members bound to the payload: `payload` | HttpMethodSemantics
+[DANGER] ns.foo#L: This operation uses the `GET` method in the `http` trait, but has the following members bound to the document: `payload` | HttpMethodSemantics
+[WARNING] ns.foo#G: This operation uses the `POST` method in the `http` trait, but is marked with the readonly trait | HttpMethodSemantics
+[WARNING] ns.foo#H: This operation uses the `DELETE` method in the `http` trait, but is not marked with the idempotent trait | HttpMethodSemantics
+[WARNING] ns.foo#I: This operation uses the `GET` method in the `http` trait, but is not marked with the readonly trait | HttpMethodSemantics
+[WARNING] ns.foo#J: This operation uses the `POST` method in the `http` trait, but is marked with the idempotent trait | HttpMethodSemantics

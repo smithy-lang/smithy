@@ -1,1 +1,1 @@
-[ERROR] (ResourceIdentifierBinding) ns.foo#InvokeB / [0, 0]: This operation is bound to the `ns.foo#B` resource, which is a child of the `ns.foo#A` resource, and it is missing the following resource identifier bindings of `ns.foo#A`: [`a`]
+[ERROR] ns.foo#InvokeB: This operation is bound to the `ns.foo#B` resource, which is a child of the `ns.foo#A` resource, and it is missing the following resource identifier bindings of `ns.foo#A`: [`a`] | ResourceIdentifierBinding

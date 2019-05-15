@@ -1,19 +1,19 @@
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#CreatedAt / [0, 0]: Shape `CreatedAt` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#CreatedOn / [0, 0]: Shape `CreatedOn` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#Date / [0, 0]: Shape `Date` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#DateFoo / [0, 0]: Shape `DateFoo` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#FooDate / [0, 0]: Shape `FooDate` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#FooTime / [0, 0]: Shape `FooTime` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#FooTimestamp / [0, 0]: Shape `FooTimestamp` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#OopsFloat / [0, 0]: Shape `OopsFloat` is named like a timestamp but is a `integer` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#OopsInteger / [0, 0]: Shape `OopsInteger` is named like a timestamp but is a `integer` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#OopsLong / [0, 0]: Shape `OopsLong` is named like a timestamp but is a `long` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#OopsString / [0, 0]: Shape `OopsString` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#StartedAt / [0, 0]: Shape `StartedAt` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#StartedOn / [0, 0]: Shape `StartedOn` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#Structure$OopsStructureMember / [0, 0]: Member `OopsStructureMember` is named like a timestamp but references a `string` shape
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#TaggedUnion$OopsTaggedUnionMember / [0, 0]: Member `OopsTaggedUnionMember` is named like a timestamp but references a `string` shape
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#Time / [0, 0]: Shape `Time` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#TimeFoo / [0, 0]: Shape `TimeFoo` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#Timestamp / [0, 0]: Shape `Timestamp` is named like a timestamp but is a `string` shape.
-[DANGER] (ShouldHaveUsedTimestamp) example.namespace#TimestampFoo / [0, 0]: Shape `TimestampFoo` is named like a timestamp but is a `string` shape.
+[DANGER] example.namespace#CreatedAt: Shape `CreatedAt` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#CreatedOn: Shape `CreatedOn` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#Date: Shape `Date` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#DateFoo: Shape `DateFoo` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#FooDate: Shape `FooDate` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#FooTime: Shape `FooTime` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#FooTimestamp: Shape `FooTimestamp` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#OopsFloat: Shape `OopsFloat` is named like a timestamp but is a `integer` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#OopsInteger: Shape `OopsInteger` is named like a timestamp but is a `integer` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#OopsLong: Shape `OopsLong` is named like a timestamp but is a `long` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#OopsString: Shape `OopsString` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#StartedAt: Shape `StartedAt` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#StartedOn: Shape `StartedOn` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#Structure$OopsStructureMember: Member `OopsStructureMember` is named like a timestamp but references a `string` shape | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#TaggedUnion$OopsTaggedUnionMember: Member `OopsTaggedUnionMember` is named like a timestamp but references a `string` shape | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#Time: Shape `Time` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#TimeFoo: Shape `TimeFoo` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#Timestamp: Shape `Timestamp` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp
+[DANGER] example.namespace#TimestampFoo: Shape `TimestampFoo` is named like a timestamp but is a `string` shape. | ShouldHaveUsedTimestamp

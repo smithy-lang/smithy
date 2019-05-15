@@ -1,2 +1,2 @@
-[ERROR] (AuthorizersTrait) ns.foo#SomeService / [5, 22]: Invalid `aws.apigateway#authorizers` entry `another` does not match one of the `protocols` trait `auth` schemes defined on the service: [`aws.v4`]
-[ERROR] (AuthorizersTrait) ns.foo#SomeService / [5, 22]: Invalid `aws.apigateway#authorizers` entry `invalid` does not match one of the `protocols` trait `auth` schemes defined on the service: [`aws.v4`]
+[ERROR] ns.foo#SomeService: Invalid `aws.apigateway#authorizers` entry `another` does not match one of the `protocols` trait `auth` schemes defined on the service: [`aws.v4`] | AuthorizersTrait
+[ERROR] ns.foo#SomeService: Invalid `aws.apigateway#authorizers` entry `invalid` does not match one of the `protocols` trait `auth` schemes defined on the service: [`aws.v4`] | AuthorizersTrait

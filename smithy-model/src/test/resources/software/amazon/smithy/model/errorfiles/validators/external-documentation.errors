@@ -1,1 +1,1 @@
-[ERROR] (Model) ns.foo#Invalid / [0, 0]: Error creating trait `externalDocumentation`: externalDocumentation must be a valid URL. Found invalid!
+[ERROR] ns.foo#Invalid: Error creating trait `externalDocumentation`: externalDocumentation must be a valid URL. Found invalid! (/Users/stickevi/Documents/Repositories/SmithyPublic/smithy/smithy-model/build/resources/test/software/amazon/smithy/model/errorfiles/validators/external-documentation.json [15, 42]) | Model

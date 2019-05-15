@@ -1,1 +1,1 @@
-[ERROR] (TraitTarget) smithy.example#Foo / [6, 1]: Trait `mqttSubscribe` cannot be applied to `smithy.example#Foo`.
+[ERROR] smithy.example#Foo: Trait `mqttSubscribe` cannot be applied to `smithy.example#Foo`. This trait may only be applied to shapes that match the following selector: operation[trait|outputEventStream] | TraitTarget
