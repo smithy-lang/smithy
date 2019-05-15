@@ -75,7 +75,7 @@ public final class SmithyBuildResult {
     /**
      * Gets a projection result by name.
      *
-     * @param projectionName Projection name to get.
+     * @param projectionName ProjectionConfig name to get.
      * @return Returns the optionally found result.
      */
     public Optional<ProjectionResult> getProjectionResult(String projectionName) {

@@ -137,7 +137,7 @@ public final class ProjectionResult {
         /**
          * Sets the <strong>required</strong> projection name.
          *
-         * @param projectionName Projection name to set.
+         * @param projectionName ProjectionConfig name to set.
          * @return Returns the builder.
          */
         public Builder projectionName(String projectionName) {

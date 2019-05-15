@@ -39,6 +39,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.model.ProjectionConfig;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
+import software.amazon.smithy.build.model.TransformConfig;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -46,6 +49,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 
@@ -80,7 +84,7 @@ public class SmithyBuildTest {
     public void appliesAllProjections() throws Exception {
         SmithyBuildConfig config = SmithyBuildConfig.builder()
                 .load(Paths.get(getClass().getResource("simple-config.json").toURI()))
-                .outputDirectory(outputDirectory)
+                .outputDirectory(outputDirectory.toString())
                 .build();
         Model model = Model.assembler()
                 .addImport(Paths.get(getClass().getResource("simple-model.json").toURI()))
@@ -104,7 +108,7 @@ public class SmithyBuildTest {
     public void buildsModels() throws Exception {
         SmithyBuildConfig config = SmithyBuildConfig.builder()
                 .load(Paths.get(getClass().getResource("simple-config.json").toURI()))
-                .outputDirectory(outputDirectory)
+                .outputDirectory(outputDirectory.toString())
                 .build();
         Model model = Model.assembler()
                 .addImport(Paths.get(getClass().getResource("simple-model.json").toURI()))
@@ -130,7 +134,7 @@ public class SmithyBuildTest {
     public void doesNotCopyErroneousModelsToBuildOutput() throws Exception {
         SmithyBuildConfig config = SmithyBuildConfig.builder()
                 .load(Paths.get(getClass().getResource("resource-model-config.json").toURI()))
-                .outputDirectory(outputDirectory)
+                .outputDirectory(outputDirectory.toString())
                 .build();
         Model model = Model.assembler()
                 .addImport(Paths.get(getClass().getResource("resource-model.json").toURI()))
@@ -155,12 +159,7 @@ public class SmithyBuildTest {
         ObjectNode badBuildInfo = Node.parse(contents).expectObjectNode();
         assertTrue(badBuildInfo.expectMember("version").isStringNode());
         assertTrue(badBuildInfo.expectMember("smithyVersion").isStringNode());
-        assertThat(badBuildInfo.expectMember("projection")
-                           .expectObjectNode()
-                           .expectMember("name")
-                           .expectStringNode()
-                           .getValue(),
-                   equalTo("source"));
+        assertThat(badBuildInfo.expectMember("projectionName").expectStringNode().getValue(), equalTo("source"));
         badBuildInfo.expectMember("validationEvents").expectArrayNode();
     }
 
@@ -168,7 +167,7 @@ public class SmithyBuildTest {
     public void ignoresUnknownPlugins() throws Exception {
         SmithyBuildConfig config = SmithyBuildConfig.builder()
                 .load(Paths.get(getClass().getResource("unknown-plugin.json").toURI()))
-                .outputDirectory(outputDirectory)
+                .outputDirectory(outputDirectory.toString())
                 .build();
         Model model = Model.assembler()
                 .addImport(Paths.get(getClass().getResource("resource-model.json").toURI()))
@@ -182,10 +181,9 @@ public class SmithyBuildTest {
     public void cannotSetFiltersOrMappersOnSourceProjection() {
         Throwable thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
             SmithyBuildConfig config = SmithyBuildConfig.builder()
-                    .addProjection(Projection.builder()
-                                           .name("source")
-                                           .addTransform(TransformConfiguration.builder().name("foo").build())
-                                           .build())
+                    .projections(MapUtils.of("source", ProjectionConfig.builder()
+                            .transforms(ListUtils.of(TransformConfig.builder().name("foo").build()))
+                            .build()))
                     .build();
             new SmithyBuild().config(config).build();
         });
@@ -195,10 +193,11 @@ public class SmithyBuildTest {
 
     @Test
     public void loadsImports() throws Exception {
-        SmithyBuild builder = new SmithyBuild(SmithyBuildConfig.builder()
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
                 .load(Paths.get(getClass().getResource("imports/smithy-build.json").toURI()))
-                .outputDirectory(outputDirectory)
-                .build());
+                .outputDirectory(outputDirectory.toString())
+                .build();
+        SmithyBuild builder = new SmithyBuild(config);
         SmithyBuildResult results = builder.build();
 
         Model resultA = results.getProjectionResult("source").get().getModel();
@@ -267,7 +266,7 @@ public class SmithyBuildTest {
         SmithyBuildConfig config = SmithyBuildConfig.builder()
                 .load(Paths.get(getClass().getResource("simple-config.json").toURI()))
                 // Note: this is not the same as the setting on SmithyBuild.
-                .outputDirectory(Paths.get("/foo/baz/bar"))
+                .outputDirectory("/foo/baz/bar")
                 .build();
         Model model = Model.assembler()
                 .addImport(Paths.get(getClass().getResource("simple-model.json").toURI()))
@@ -343,5 +342,18 @@ public class SmithyBuildTest {
 
         assertThat(modelText, not(containsString("length\"")));
         assertThat(modelText, not(containsString("tags\"")));
+    }
+
+    @Test
+    public void pluginsMustHaveValidNames() {
+        Throwable thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
+            SmithyBuildConfig config = SmithyBuildConfig.builder()
+                    .plugins(MapUtils.of("!invalid", Node.objectNode()))
+                    .build();
+            new SmithyBuild().config(config).build();
+        });
+
+        assertThat(thrown.getMessage(), containsString(
+                "Invalid plugin name `!invalid` found in the `[top-level]` projection"));
     }
 }

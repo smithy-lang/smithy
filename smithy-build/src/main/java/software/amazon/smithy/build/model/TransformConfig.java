@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.build;
+package software.amazon.smithy.build.model;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,11 +25,11 @@ import software.amazon.smithy.utils.SmithyBuilder;
 /**
  * Transform configuration found in a projection.
  */
-public final class TransformConfiguration implements ToNode {
+public final class TransformConfig implements ToNode {
     private final String name;
     private final List<String> args;
 
-    private TransformConfiguration(Builder builder) {
+    private TransformConfig(Builder builder) {
         name = SmithyBuilder.requiredState("name", builder.name);
         args = ListUtils.copyOf(builder.args);
     }
@@ -60,14 +60,15 @@ public final class TransformConfiguration implements ToNode {
                 .build();
     }
 
-    public static final class Builder implements SmithyBuilder<TransformConfiguration> {
+    public static final class Builder implements SmithyBuilder<TransformConfig> {
         private String name;
         private List<String> args = Collections.emptyList();
 
         private Builder() {}
 
-        public TransformConfiguration build() {
-            return new TransformConfiguration(this);
+        @Override
+        public TransformConfig build() {
+            return new TransformConfig(this);
         }
 
         /**

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.build;
+package software.amazon.smithy.build.model;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -21,8 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
-import software.amazon.smithy.model.node.BooleanNode;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -52,10 +53,12 @@ final class ConfigLoader {
             ABSTRACT_KEY, FILTERS_KEY, MAPPERS_KEY, TRANSFORMS_KEY, IMPORTS_KEY, PLUGINS_KEY);
     private static final List<String> TRANSFORM_KEYS = Arrays.asList(NAME_KEY, ARGS_KEY);
 
-    SmithyBuildConfig load(Path path) {
+    private ConfigLoader() {}
+
+    static SmithyBuildConfig load(Path path) {
         try {
             String content = IoUtils.readUtf8File(path);
-            return load(loadWithJson(path, content).expectObjectNode(), path);
+            return load(loadWithJson(path, content).expectObjectNode());
         } catch (ModelSyntaxException e) {
             throw new SmithyBuildException(e);
         }
@@ -65,80 +68,62 @@ final class ConfigLoader {
         return Node.parseJsonWithComments(contents, path.toString());
     }
 
-    private SmithyBuildConfig load(ObjectNode node, Path basePath) {
+    private static SmithyBuildConfig load(ObjectNode node) {
         SmithyBuildConfig.Builder builder = SmithyBuildConfig.builder();
-        builder.importBasePath(basePath.normalize().getParent());
         node.warnIfAdditionalProperties(ROOT_KEYS);
 
         node.expectMember(VERSION_KEY).expectStringNode().expectOneOf(VERSION);
-        node.getMember(IMPORTS_KEY)
+        builder.imports(node.getArrayMember(IMPORTS_KEY)
                 .map(imports -> Node.loadArrayOfString(IMPORTS_KEY, imports))
-                .ifPresent(imports -> imports.forEach(builder::addImport));
-        node.getMember(OUTPUT_DIRECTORY_KEY)
-                .map(Node::expectStringNode)
-                .map(StringNode::getValue)
-                .ifPresent(builder::outputDirectory);
-        node.getMember(PROJECTIONS_KEY)
-                .map(Node::expectObjectNode)
+                .orElse(Collections.emptyList()));
+        node.getStringMember(OUTPUT_DIRECTORY_KEY).map(StringNode::getValue).ifPresent(builder::outputDirectory);
+        builder.projections(node.getObjectMember(PROJECTIONS_KEY)
                 .map(ConfigLoader::loadProjections)
-                .ifPresent(projectionMap -> projectionMap.forEach(builder::addProjection));
-        node.getMember(PLUGINS_KEY)
+                .orElse(Collections.emptyMap()));
+        builder.plugins(node.getObjectMember(PLUGINS_KEY)
                 .map(ConfigLoader::loadPlugins)
-                .ifPresent(plugins -> plugins.forEach(builder::addPlugin));
+                .orElse(Collections.emptyMap()));
         return builder.build();
     }
 
-    private static List<Projection> loadProjections(ObjectNode container) {
+    private static Map<String, ProjectionConfig> loadProjections(ObjectNode container) {
         return container.getMembers().entrySet().stream()
-                .map(entry -> loadProjection(entry.getKey().getValue(), entry.getValue().expectObjectNode()))
-                .collect(Collectors.toList());
+                .map(entry -> Pair.of(entry.getKey().getValue(), loadProjection(entry.getValue().expectObjectNode())))
+                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
-    private static Projection loadProjection(String name, ObjectNode members) {
+    private static ProjectionConfig loadProjection(ObjectNode members) {
         members.warnIfAdditionalProperties(PROJECTION_KEYS);
-
-        Projection.Builder builder = Projection.builder()
-                .name(name)
-                .isAbstract(members.getMember(ABSTRACT_KEY)
-                                    .map(Node::expectBooleanNode)
-                                    .map(BooleanNode::getValue)
-                                    .orElse(false));
-        members.getMember(TRANSFORMS_KEY)
+        ProjectionConfig.Builder builder = ProjectionConfig.builder()
+                .isAbstract(members.getBooleanMemberOrDefault(ABSTRACT_KEY));
+        builder.transforms(members.getArrayMember(TRANSFORMS_KEY)
                 .map(ConfigLoader::loadTransforms)
-                .orElseGet(Collections::emptyList)
-                .forEach(builder::addTransform);
-        members.getMember(IMPORTS_KEY)
+                .orElse(Collections.emptyList()));
+        builder.imports(members.getArrayMember(IMPORTS_KEY)
                 .map(imports -> Node.loadArrayOfString(IMPORTS_KEY, imports))
-                .ifPresent(imports -> imports.forEach(builder::addImport));
-        members.getMember(PLUGINS_KEY)
+                .orElse(Collections.emptyList()));
+        builder.plugins(members.getObjectMember(PLUGINS_KEY)
                 .map(ConfigLoader::loadPlugins)
-                .ifPresent(plugins -> plugins.forEach(builder::addPlugin));
+                .orElse(Collections.emptyMap()));
         return builder.build();
     }
 
-    private static List<TransformConfiguration> loadTransforms(Node node) {
-        return node.expectArrayNode().getElements().stream()
+    private static List<TransformConfig> loadTransforms(ArrayNode node) {
+        return node.getElements().stream()
                 .map(element -> {
                     ObjectNode objectNode = element.expectObjectNode();
                     objectNode.warnIfAdditionalProperties(TRANSFORM_KEYS);
                     String name = objectNode.expectMember(NAME_KEY).expectStringNode().getValue();
                     List<String> args = objectNode.getArrayMember(ARGS_KEY)
-                            .map(ConfigLoader::loadStringArray)
+                            .map(argsNode -> argsNode.getElementsAs(StringNode::getValue))
                             .orElseGet(Collections::emptyList);
-                    return TransformConfiguration.builder().name(name).args(args).build();
+                    return TransformConfig.builder().name(name).args(args).build();
                 })
                 .collect(Collectors.toList());
     }
 
-    private static List<String> loadStringArray(Node node) {
-        return node.expectArrayNode().getElements().stream()
-                .map(Node::expectStringNode)
-                .map(StringNode::getValue)
-                .collect(Collectors.toList());
-    }
-
-    private static Map<String, ObjectNode> loadPlugins(Node container) {
-        return container.expectObjectNode().getMembers().entrySet().stream()
+    private static Map<String, ObjectNode> loadPlugins(ObjectNode container) {
+        return container.getMembers().entrySet().stream()
                 .map(entry -> Pair.of(entry.getKey().getValue(), entry.getValue().expectObjectNode()))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }

@@ -17,39 +17,25 @@ package software.amazon.smithy.build;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.model.ProjectionConfig;
+import software.amazon.smithy.build.model.TransformConfig;
 import software.amazon.smithy.utils.ListUtils;
 
-public class ProjectionTest {
-    @Test
-    public void projectionNamesMustBeValid() {
-        Assertions.assertThrows(SmithyBuildException.class, () -> {
-            Projection.builder().name("~!invalid!").build();
-        });
-    }
-
-    @Test
-    public void projectionRequiresName() {
-        Assertions.assertThrows(SmithyBuildException.class, () -> Projection.builder().build());
-    }
-
+public class ProjectionConfigTest {
     @Test
     public void buildsProjections() {
-        TransformConfiguration t = TransformConfiguration.builder()
+        TransformConfig t = TransformConfig.builder()
                 .name("foo")
                 .args(ListUtils.of("baz"))
                 .build();
-        Projection p = Projection.builder()
-                .name("foo")
+        ProjectionConfig p = ProjectionConfig.builder()
                 .isAbstract(false)
-                .addTransform(t)
+                .transforms(ListUtils.of(t))
                 .build();
 
-        assertThat(p.getName(), equalTo("foo"));
         assertThat(p.getTransforms(), contains(t));
         assertFalse(p.isAbstract());
     }
