@@ -16,9 +16,10 @@
 package software.amazon.smithy.model.loader;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -248,7 +249,7 @@ public final class ModelAssembler {
      * @return Returns the assembler.
      */
     public ModelAssembler addImport(Path importPath) {
-        Objects.requireNonNull(importPath, "importPath must not be null");
+        Objects.requireNonNull(importPath, "The importPath provided to ModelAssembler#addImport was null");
 
         if (Files.isDirectory(importPath)) {
             try {
@@ -257,13 +258,13 @@ public final class ModelAssembler {
                         .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))
                         .forEach(this::addImport);
             } catch (IOException e) {
-                throw new RuntimeException("Error loading the contents of " + importPath, e);
+                throw new ModelImportException("Error loading the contents of " + importPath, e);
             }
         } else if (Files.isRegularFile(importPath)) {
             String contents = IoUtils.readUtf8File(importPath.toString());
             stringModels.put(importPath.toString(), contents);
         } else {
-            throw new InvalidPathException(importPath.toString(), "Cannot find import file");
+            throw new ModelImportException("Cannot find import file: " + importPath);
         }
 
         return this;
@@ -285,13 +286,13 @@ public final class ModelAssembler {
      * @return Returns the assembler.
      */
     public ModelAssembler addImport(URL url) {
-        Objects.requireNonNull(url, "The provided url to addImport was null");
-        try {
-            String contents = IoUtils.toUtf8String(url.openStream());
+        Objects.requireNonNull(url, "The provided url to ModelAssembler#addImport was null");
+        try (InputStream inputStream = url.openStream()) {
+            String contents = IoUtils.toUtf8String(inputStream);
             stringModels.put(url.toExternalForm(), contents);
             return this;
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to load Smithy model resource from URL: " + url.toExternalForm(), e);
+        } catch (IOException | UncheckedIOException e) {
+            throw new ModelImportException("Unable to open Smithy model import URL: " + url.toExternalForm(), e);
         }
     }
 

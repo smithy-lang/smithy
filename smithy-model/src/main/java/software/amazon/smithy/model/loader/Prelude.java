@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.model.loader;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -91,7 +94,7 @@ public final class Prelude {
      * @return Returns true if the shape is a prelude shape.
      */
     public static boolean isPreludeShape(ShapeId id) {
-        return PreludeHolder.PRELUDE.getShapeIndex().getShape(id).isPresent();
+        return getPreludeModel().getShapeIndex().getShape(id).isPresent();
     }
 
     /**
@@ -133,7 +136,7 @@ public final class Prelude {
      * @return Returns true if the trait is defined by the prelude.
      */
     public static boolean isPreludeTraitDefinition(String fullyQualifiedTraitName) {
-        return PreludeHolder.PRELUDE.getTraitDefinition(fullyQualifiedTraitName).isPresent();
+        return getPreludeModel().getTraitDefinition(fullyQualifiedTraitName).isPresent();
     }
 
     /**
@@ -174,9 +177,15 @@ public final class Prelude {
 
             // Register prelude trait definitions.
             String filename = "smithy-prelude-traits.json";
-            String contents = IoUtils.toUtf8String(Prelude.class.getResourceAsStream(filename));
-            new JsonModelLoader().load(filename, contents, visitor);
-            return visitor.onEnd().unwrap();
+
+            try (InputStream inputStream = Prelude.class.getResourceAsStream(filename)) {
+                String contents = IoUtils.toUtf8String(inputStream);
+                new JsonModelLoader().load(filename, contents, visitor);
+                return visitor.onEnd().unwrap();
+            } catch (IOException | UncheckedIOException e) {
+                throw new ModelImportException(String.format("Unable to load prelude model `%s`: %s",
+                        filename, e.getMessage()), e);
+            }
         }
     }
 }
