@@ -44,4 +44,14 @@ public class SourceException extends RuntimeException implements FromSourceLocat
             return message.contains(asString) ? message : message + " (" + asString + ")";
         }
     }
+
+    /**
+     * Retrieves the message for this exception without the appended source
+     * location.
+     *
+     * @return The trimmed message.
+     */
+    public String getMessageWithoutLocation() {
+        return getMessage().replace(" (" + sourceLocation + ")", "");
+    }
 }

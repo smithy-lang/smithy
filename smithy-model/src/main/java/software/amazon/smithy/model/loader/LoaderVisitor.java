@@ -720,13 +720,10 @@ final class LoaderVisitor {
                     .orElseGet(() -> new DynamicTrait(traitName, traitValue));
             shapeBuilder.addTrait(createdTrait);
         } catch (SourceException e) {
-            events.add(ValidationEvent.builder()
-                    .eventId(Validator.MODEL_ERROR)
-                    .severity(Severity.ERROR)
+            events.add(ValidationEvent.fromSourceException(e, format("Error creating trait `%s`: ",
+                            Trait.getIdiomaticTraitName(traitName)))
+                    .toBuilder()
                     .shapeId(shapeBuilder.getId())
-                    .sourceLocation(traitValue.getSourceLocation())
-                    .message(format("Error creating trait `%s`: %s",
-                                    Trait.getIdiomaticTraitName(traitName), e.getMessage()))
                     .build());
         }
     }
