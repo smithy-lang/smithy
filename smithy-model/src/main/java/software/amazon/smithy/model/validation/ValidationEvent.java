@@ -85,10 +85,11 @@ public final class ValidationEvent implements ToNode, ToSmithyBuilder<Validation
      * @return Returns a created validation event with an ID of Model.
      */
     public static ValidationEvent fromSourceException(SourceException exception, String prefix) {
+        // Get the message without source location since it's in the event.
         return ValidationEvent.builder()
                 .eventId(MODEL_ERROR)
                 .severity(ERROR)
-                .message(prefix + exception.getMessage())
+                .message(prefix + exception.getMessageWithoutLocation())
                 .sourceLocation(exception.getSourceLocation())
                 .build();
     }
