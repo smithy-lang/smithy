@@ -279,7 +279,9 @@ or to escape an escape (using ``\\``).
                         :/ %x5D-10FFFF
                         :/ `escaped_single`
                         :/ `preserved_single`
-    escaped_single      :`escape` (`escape` / "'")
+    escaped_single      :`escape` (`escape` / "'" / "b" / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
+    unicode_escape      :"u" `hex` `hex` `hex` `hex`
+    hex                 : DIGIT / %x41-46 / %x61-66
     preserved_single    :`escape` (%x20-26 / %x28-5B / %x5D-10FFFF)
     double_quoted_text  :DQUOTE *`double_quoted_char` DQUOTE
     double_quoted_char  :  %x20-21
@@ -287,7 +289,7 @@ or to escape an escape (using ``\\``).
                         :/ %x5D-10FFFF
                         :/ `escaped_double`
                         :/ `preserved_double`
-    escaped_double      :`escape` (`escape` / DQUOTE)
+    escaped_double      :`escape` (`escape` / DQUOTE / "b" / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
     preserved_double    :`escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
     escape              :%x5C ; backslash
 
