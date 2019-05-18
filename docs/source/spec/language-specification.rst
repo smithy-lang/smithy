@@ -277,9 +277,9 @@ or to escape an escape (using ``\\``).
     single_quoted_char  :  %x20-26
                         :/ %x28-5B
                         :/ %x5D-10FFFF
-                        :/ `escaped_single`
+                        :/ `escaped_char`
                         :/ `preserved_single`
-    escaped_single      :`escape` (`escape` / "'" / "b" / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
+    escaped_char        :`escape` (`escape` / "'" / DQUOTE / "b" / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
     unicode_escape      :"u" `hex` `hex` `hex` `hex`
     hex                 : DIGIT / %x41-46 / %x61-66
     preserved_single    :`escape` (%x20-26 / %x28-5B / %x5D-10FFFF)
@@ -287,9 +287,8 @@ or to escape an escape (using ``\\``).
     double_quoted_char  :  %x20-21
                         :/ %x23-5B
                         :/ %x5D-10FFFF
-                        :/ `escaped_double`
+                        :/ `escaped_char`
                         :/ `preserved_double`
-    escaped_double      :`escape` (`escape` / DQUOTE / "b" / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
     preserved_double    :`escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
     escape              :%x5C ; backslash
 
@@ -321,6 +320,61 @@ and is equivalent to
 
     "foo"
     ' bar'
+
+
+.. _string-escape-characters:
+
+String escape characters
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Smithy IDL supports escape sequences only within quoted strings. Smithy
+supports all of the same escape sequences as JSON plus escaping of single
+quotes.
+
+The following sequences are allowed:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 35 55
+
+    * - Unicode code point
+      - Smithy escape
+      - Meaning
+    * - U+0022
+      - ``\"``
+      - double quote
+    * - U+0027
+      - ``\'``
+      - single quote
+    * - U+005C
+      - ``\\``
+      - backslash
+    * - U+002F
+      - ``\/``
+      - forward slash
+    * - U+0008
+      - ``\b``
+      - backspace BS
+    * - U+000C
+      - ``\f``
+      - form feed FF
+    * - U+000A
+      - ``\n``
+      - line feed LF
+    * - U+000D
+      - ``\r``
+      - carriage return CR
+    * - U+0009
+      - ``\t``
+      - horizontal tab HT
+    * - U+HHHH
+      - ``\uHHHH``
+      - 4-digit hexadecimal Unicode code point
+    * - *nothing*
+      - ``\\r\n``, ``\\r``, ``\\n``
+      - escaped new line expands to nothing
+
+Any other sequence following a backslash is an error.
 
 
 .. _node-values:
