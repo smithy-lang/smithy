@@ -46,6 +46,8 @@ public class SmithyModelLexerTest {
                 Arguments.of("\"foo\\\r\nbaz\"", "foobaz"),
                 Arguments.of("\"\\\r\"", ""),
                 Arguments.of("\"\\\n\"", ""),
+                Arguments.of("\"\\'\"", "'"),
+                Arguments.of("\"\\\"\"", "\""),
 
                 // SQUOTE
                 Arguments.of("'foo'", "foo"),
@@ -71,7 +73,9 @@ public class SmithyModelLexerTest {
                 Arguments.of("'foo\\\rbaz'", "foobaz"),
                 Arguments.of("'foo\\\r\nbaz'", "foobaz"),
                 Arguments.of("'\\\r'", ""),
-                Arguments.of("'\\\n'", ""));
+                Arguments.of("'\\\n'", ""),
+                Arguments.of("'\\''", "'"),
+                Arguments.of("'\\\"'", "\""));
     }
 
     @ParameterizedTest

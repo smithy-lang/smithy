@@ -20,18 +20,17 @@ import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.ANNOTATION;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.COLON;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.COMMA;
-import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.DQUOTE;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.EQUAL;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.ERROR;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.LBRACE;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.LBRACKET;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.LPAREN;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.NUMBER;
+import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.QUOTED;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RBRACE;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RBRACKET;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RETURN;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RPAREN;
-import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.SQUOTE;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.UNQUOTED;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.VERSION;
 
@@ -282,7 +281,7 @@ final class SmithyModelLoader implements ModelLoader {
     private static void parseVersion(State state) {
         requireNoPendingTraits(state);
         state.expect(COLON);
-        Token token = state.expect(NUMBER, UNQUOTED, SQUOTE, DQUOTE);
+        Token token = state.expect(NUMBER, UNQUOTED, QUOTED);
         state.visitor.onVersion(sourceFromToken(state, token), token.lexeme);
     }
 
@@ -328,7 +327,7 @@ final class SmithyModelLoader implements ModelLoader {
         }
 
         state.expect(LPAREN);
-        Token next = state.expect(RPAREN, DQUOTE, SQUOTE, UNQUOTED, LBRACKET, NUMBER);
+        Token next = state.expect(RPAREN, QUOTED, UNQUOTED, LBRACKET, NUMBER);
 
         if (next.type == RPAREN) {
             // An open and closed "()" signals an empty object.
@@ -337,7 +336,7 @@ final class SmithyModelLoader implements ModelLoader {
 
         // Test to see if this is just a string or if it's an object.
         if (state.test(COLON)) {
-            if (next.type == DQUOTE || next.type == SQUOTE || next.type == UNQUOTED) {
+            if (next.type == QUOTED || next.type == UNQUOTED) {
                 // Parse the object using the already parsed key.
                 return parseObjectNodeWithKey(state, sourceFromToken(state, state.current()), RPAREN, next);
             }
@@ -478,7 +477,7 @@ final class SmithyModelLoader implements ModelLoader {
         List<Pair<String, Node>> memberTraits = new ArrayList<>();
         Set<String> remainingMembers = requiredMembers.isEmpty() ? SetUtils.of() : new HashSet<>(requiredMembers);
 
-        Token token = state.expect(ANNOTATION, SQUOTE, DQUOTE, UNQUOTED, RBRACE);
+        Token token = state.expect(ANNOTATION, QUOTED, UNQUOTED, RBRACE);
         while (token.type != RBRACE) {
             if (token.type == ANNOTATION) {
                 memberTraits.add(parseTraitValue(token, state));
@@ -509,7 +508,7 @@ final class SmithyModelLoader implements ModelLoader {
                 }
             }
 
-            token = state.expect(ANNOTATION, SQUOTE, DQUOTE, UNQUOTED, RBRACE);
+            token = state.expect(ANNOTATION, QUOTED, UNQUOTED, RBRACE);
         }
 
         if (!remainingMembers.isEmpty()) {
@@ -522,7 +521,7 @@ final class SmithyModelLoader implements ModelLoader {
     private static void parseMember(State state, ShapeId memberId) {
         MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(currentSourceLocation(state));
         state.visitor.onShape(memberBuilder);
-        String target = state.expect(UNQUOTED, SQUOTE, DQUOTE).lexeme;
+        String target = state.expect(UNQUOTED, QUOTED).lexeme;
         state.visitor.onShapeTarget(state.namespace, target, memberBuilder::target);
     }
 
@@ -551,7 +550,7 @@ final class SmithyModelLoader implements ModelLoader {
     private static void parseMetadata(State state) {
         // metadata key = value\n
         requireNoPendingTraits(state);
-        String key = state.expect(SQUOTE, DQUOTE, UNQUOTED).lexeme;
+        String key = state.expect(QUOTED, UNQUOTED).lexeme;
         state.expect(EQUAL);
         state.visitor.onMetadata(key, parseNode(state));
         state.expectNewline();
@@ -588,15 +587,14 @@ final class SmithyModelLoader implements ModelLoader {
     }
 
     private static Node parseNode(State state) {
-        return parseNodeValue(state, state.expect(LBRACE, LBRACKET, SQUOTE, DQUOTE, UNQUOTED, NUMBER));
+        return parseNodeValue(state, state.expect(LBRACE, LBRACKET, QUOTED, UNQUOTED, NUMBER));
     }
 
     private static Node parseNodeValue(State state, Token token) {
         switch (token.type) {
             case LBRACE: return parseObjectNode(state, sourceFromToken(state, token), RBRACE);
             case LBRACKET: return parseArrayNode(state, sourceFromToken(state, token));
-            case SQUOTE:
-            case DQUOTE: return parseStringNode(state, token);
+            case QUOTED: return parseStringNode(state, token);
             case NUMBER: return parseNumber(state, token);
             case UNQUOTED: return parseUnquotedNode(state, token);
             default: throw new IllegalStateException("Parse node value not expected to be called with invalid token");
@@ -621,7 +619,7 @@ final class SmithyModelLoader implements ModelLoader {
     }
 
     private static ObjectNode parseObjectNode(State state, SourceLocation location, TokenType closing) {
-        return parseObjectNodeWithKey(state, location, closing, state.expect(SQUOTE, DQUOTE, UNQUOTED, closing));
+        return parseObjectNodeWithKey(state, location, closing, state.expect(QUOTED, UNQUOTED, closing));
     }
 
     private static ObjectNode parseObjectNodeWithKey(State state, SourceLocation sloc, TokenType closing, Token key) {
@@ -634,7 +632,7 @@ final class SmithyModelLoader implements ModelLoader {
             if (state.expect(closing, COMMA).type == closing) {
                 break;
             }
-            key = state.expect(closing, SQUOTE, DQUOTE, UNQUOTED);
+            key = state.expect(closing, QUOTED, UNQUOTED);
         }
 
         return new ObjectNode(entries, sloc);
@@ -642,7 +640,7 @@ final class SmithyModelLoader implements ModelLoader {
 
     private static ArrayNode parseArrayNode(State state, SourceLocation location) {
         List<Node> values = new ArrayList<>();
-        Token next = state.expect(LBRACE, LBRACKET, SQUOTE, DQUOTE, UNQUOTED, NUMBER, RBRACKET);
+        Token next = state.expect(LBRACE, LBRACKET, QUOTED, UNQUOTED, NUMBER, RBRACKET);
         // Checks initially and does a double-check for trailing commas.
         while (next.type != RBRACKET) {
             values.add(parseNodeValue(state, next));
@@ -650,7 +648,7 @@ final class SmithyModelLoader implements ModelLoader {
             if (next.type == RBRACKET) {
                 break;
             }
-            next = state.expect(RBRACKET, LBRACE, LBRACKET, SQUOTE, DQUOTE, UNQUOTED, NUMBER);
+            next = state.expect(RBRACKET, LBRACE, LBRACKET, QUOTED, UNQUOTED, NUMBER);
         }
 
         return new ArrayNode(values, location);
@@ -659,15 +657,10 @@ final class SmithyModelLoader implements ModelLoader {
     private static StringNode parseStringNode(State state, Token token) {
         SourceLocation stringStartLocation = sourceFromToken(state, token);
         StringBuilder concatenated = new StringBuilder(token.lexeme);
-        while (state.peek().filter(SmithyModelLoader::isStringToken).isPresent()) {
+        while (state.peek().filter(t -> t.type == QUOTED).isPresent()) {
             concatenated.append(state.next().lexeme);
         }
 
         return new StringNode(concatenated.toString().replaceAll("\\r", ""), stringStartLocation);
-    }
-
-    private static boolean isStringToken(Token token) {
-        return token.type == DQUOTE
-                || token.type == SQUOTE;
     }
 }
