@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * significant. All of the tokens and their expressions are combined into a
  * single regular expressions that uses named captures. The name of each
  * capture is the name of the enum. Any unrecognized token is tokenized as
- * {@code UNKNOWN}.
+ * {@code ERROR}.
  */
 final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
 
@@ -51,7 +51,7 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         COLON(":"),
         COMMA(","),
         ANNOTATION("@[A-Za-z0-9.$#]+"),
-        // DQUOTE and SQUOTE: supports espaced quotes and escaped escapes.
+        // DQUOTE and SQUOTE: supports escaped quotes and escaped escapes.
         DQUOTE("(?:\")([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)(?:\")"),
         SQUOTE("(?:')([^'\\\\]*(?:\\\\.[^'\\\\]*)*)(?:')"),
         NUMBER("-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"),
@@ -73,21 +73,25 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
     static final class Token {
         final TokenType type;
         final String lexeme;
+        final String errorMessage;
         final int line;
         final int column;
         final int span;
 
-        Token(TokenType type, String lexeme, int line, int column, int span) {
+        Token(TokenType type, String lexeme, int line, int column, int span, String errorMessage) {
             this.type = type;
             this.lexeme = lexeme;
             this.line = line;
             this.column = column;
             this.span = span;
+            this.errorMessage = errorMessage;
         }
 
         @Override
         public String toString() {
-            return String.format("%s(%s, %d:%d)", type.name(), lexeme, line, column);
+            return errorMessage != null
+                   ? String.format("ERROR(%s, %d:%d)", errorMessage, line, column)
+                   : String.format("%s(%s, %d:%d)", type.name(), lexeme, line, column);
         }
     }
 
@@ -146,32 +150,40 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
             for (TokenType token : TokenType.values()) {
                 if (matcher.group(token.name()) != null) {
                     String lexeme = matcher.group(token.name());
-                    switch (token) {
-                        case NEWLINE:
-                            line++;
-                            lastLineOffset = matcher.end();
-                            // fallthru
-                        case WS: // fallthru
-                        case COMMENT:
-                            // Try to grab the next token before returning.
-                            continue next_token;
-                        case SQUOTE:
-                            lexeme = fixString(lexeme, '\'');
-                            break;
-                        case DQUOTE:
-                            lexeme = fixString(lexeme, '"');
-                            break;
-                        case ANNOTATION:
-                            // Strip leading "@".
-                            lexeme = lexeme.substring(1);
-                            break;
-                        default:
-                            break;
+                    String errorMessage = null;
+
+                    try {
+                        switch (token) {
+                            case NEWLINE:
+                                line++;
+                                lastLineOffset = matcher.end();
+                                // fallthru
+                            case WS: // fallthru
+                            case COMMENT:
+                                // Try to grab the next token before returning.
+                                continue next_token;
+                            case SQUOTE:
+                                lexeme = parseStringContents(lexeme, '\'');
+                                break;
+                            case DQUOTE:
+                                lexeme = parseStringContents(lexeme, '"');
+                                break;
+                            case ANNOTATION:
+                                // Strip leading "@".
+                                lexeme = lexeme.substring(1);
+                                break;
+                            default:
+                                break;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // Handle cases where parsing escapes in strings failed.
+                        token = TokenType.ERROR;
+                        errorMessage = e.getMessage();
                     }
 
                     int column = 1 + (matcher.start() - lastLineOffset);
                     int span = matcher.end() - matcher.start();
-                    return new Token(token, lexeme, line, column, span);
+                    return new Token(token, lexeme, line, column, span, errorMessage);
                 }
             }
         }
@@ -185,32 +197,92 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         throw new NoSuchElementException();
     }
 
-    private static String fixString(String lexeme, char delimiter) {
+    enum LexerState { NORMAL, AFTER_ESCAPE, UNICODE }
+
+    /**
+     * This method adds support for JSON escapes found in strings.
+     *
+     * @param lexeme Lexeme to parse escpapes from.
+     * @param delimiter Delimiter used to open and close the lexeme.
+     * @return Returns the raw, unescaped lexeme.
+     * @throws IllegalArgumentException when escapes are invalid.
+     */
+    private static String parseStringContents(String lexeme, char delimiter) {
         // This method does a single pass over the lexeme to remove wrapping
         // delimiters, remove escaped '\', and remove escaped delimiters.
         StringBuilder result = new StringBuilder(lexeme.length() - 2);
-        boolean afterEscape = false;
+        LexerState state = LexerState.NORMAL;
+        int hexCount = 0;
+        int unicode = 0;
 
         // Remove quotes by clipping offsets by 1.
         for (int i = 1; i < lexeme.length() - 1; i++) {
             char c = lexeme.charAt(i);
-            if (c == '\\') {
-                if (afterEscape) {
-                    // Two "\\" is converted to "\".
-                    result.append('\\');
-                    afterEscape = false;
-                } else {
-                    afterEscape = true;
-                }
-            } else {
-                // '\' followed by delimiter character becomes the delimiter.
-                if (afterEscape && c == delimiter) {
-                    result.append(delimiter);
-                } else {
-                    result.append(c);
-                }
-                afterEscape = false;
+            switch (state) {
+                case NORMAL:
+                    if (c == '\\') {
+                        state = LexerState.AFTER_ESCAPE;
+                    } else {
+                        result.append(c);
+                    }
+                    break;
+                case AFTER_ESCAPE:
+                    state = LexerState.NORMAL;
+                    if (c == delimiter) {
+                        result.append(c);
+                        continue;
+                    }
+                    switch (c) {
+                        case '\\':
+                            result.append('\\');
+                            break;
+                        case '/':
+                            result.append('/');
+                            break;
+                        case 'b':
+                            result.append('\b');
+                            break;
+                        case 'f':
+                            result.append('\f');
+                            break;
+                        case 'n':
+                            result.append('\n');
+                            break;
+                        case 'r':
+                            result.append('\r');
+                            break;
+                        case 't':
+                            result.append('\t');
+                            break;
+                        case 'u':
+                            state = LexerState.UNICODE;
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Invalid escape found in string: `\\" + c + "`");
+                    }
+                    break;
+                default: // UNICODE
+                    if (c >= '0' && c <= '9') {
+                        unicode = (unicode << 4) + c - '0';
+                    } else if (c >= 'a' && c <= 'f') {
+                        unicode = (unicode << 4) + 10 + c - 'a';
+                    } else if (c >= 'A' && c <= 'F') {
+                        unicode = (unicode << 4) + 10 + c - 'A';
+                    } else {
+                        throw new IllegalArgumentException("Invalid unicode escape character: `" + c + "`");
+                    }
+
+                    if (++hexCount == 4) {
+                        result.append((char) unicode);
+                        hexCount = 0;
+                        state = LexerState.NORMAL;
+                    }
+                    break;
             }
+        }
+
+        if (state == LexerState.UNICODE) {
+            throw new IllegalArgumentException("Invalid unclosed unicode escape found in string");
         }
 
         return result.toString();
