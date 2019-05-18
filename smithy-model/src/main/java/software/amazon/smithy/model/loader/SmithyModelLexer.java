@@ -51,10 +51,10 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         COLON(":"),
         COMMA(","),
         ANNOTATION("@[A-Za-z0-9.$#]+"),
-        // DQUOTE and SQUOTE: supports escaped quotes and escaped escapes.
+        // single and double quoted text: supports escaped quotes and escaped escapes.
         // Allows a newline to be escaped too.
-        DQUOTE("(?:\")([^\"\\\\]*(?:\\\\(.|\r\n|\r|\n)[^\"\\\\]*)*)(?:\")"),
-        SQUOTE("(?:')([^'\\\\]*(?:\\\\(.|\r\n|\r|\n)[^'\\\\]*)*)(?:')"),
+        QUOTED("(?:\")([^\"\\\\]*(?:\\\\(.|\r\n|\r|\n)[^\"\\\\]*)*)(?:\")"
+               + "|(?:')([^'\\\\]*(?:\\\\(.|\r\n|\r|\n)[^'\\\\]*)*)(?:')"),
         NUMBER("-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"),
         ERROR(".");
 
@@ -163,11 +163,8 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                             case COMMENT:
                                 // Try to grab the next token before returning.
                                 continue next_token;
-                            case SQUOTE:
-                                lexeme = parseStringContents(lexeme, '\'');
-                                break;
-                            case DQUOTE:
-                                lexeme = parseStringContents(lexeme, '"');
+                            case QUOTED:
+                                lexeme = parseStringContents(lexeme);
                                 break;
                             case ANNOTATION:
                                 // Strip leading "@".
@@ -204,11 +201,10 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
      * This method adds support for JSON escapes found in strings.
      *
      * @param lexeme Lexeme to parse escpapes from.
-     * @param delimiter Delimiter used to open and close the lexeme.
      * @return Returns the raw, unescaped lexeme.
      * @throws IllegalArgumentException when escapes are invalid.
      */
-    private static String parseStringContents(String lexeme, char delimiter) {
+    private static String parseStringContents(String lexeme) {
         // This method does a single pass over the lexeme to remove wrapping
         // delimiters, remove escaped '\', and remove escaped delimiters.
         StringBuilder result = new StringBuilder(lexeme.length() - 2);
@@ -229,11 +225,13 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                     break;
                 case AFTER_ESCAPE:
                     state = LexerState.NORMAL;
-                    if (c == delimiter) {
-                        result.append(c);
-                        continue;
-                    }
                     switch (c) {
+                        case '"':
+                            result.append('"');
+                            continue;
+                        case '\'':
+                            result.append('\'');
+                            continue;
                         case '\\':
                             result.append('\\');
                             break;
