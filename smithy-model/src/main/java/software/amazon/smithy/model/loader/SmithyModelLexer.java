@@ -52,8 +52,9 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         COMMA(","),
         ANNOTATION("@[A-Za-z0-9.$#]+"),
         // DQUOTE and SQUOTE: supports escaped quotes and escaped escapes.
-        DQUOTE("(?:\")([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)(?:\")"),
-        SQUOTE("(?:')([^'\\\\]*(?:\\\\.[^'\\\\]*)*)(?:')"),
+        // Allows a newline to be escaped too.
+        DQUOTE("(?:\")([^\"\\\\]*(?:\\\\(.|\r\n|\r|\n)[^\"\\\\]*)*)(?:\")"),
+        SQUOTE("(?:')([^'\\\\]*(?:\\\\(.|\r\n|\r|\n)[^'\\\\]*)*)(?:')"),
         NUMBER("-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"),
         ERROR(".");
 
@@ -256,6 +257,15 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                             break;
                         case 'u':
                             state = LexerState.UNICODE;
+                            break;
+                        case '\n':
+                            // An escaped newline just eats the newline.
+                            break;
+                        case '\r':
+                            // Eat the CR, but also peek at the next character to consume CRLF.
+                            if (i < lexeme.length() - 1 && lexeme.charAt(i + 1) == '\n') {
+                                i++;
+                            }
                             break;
                         default:
                             throw new IllegalArgumentException("Invalid escape found in string: `\\" + c + "`");
