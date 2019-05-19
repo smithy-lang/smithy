@@ -127,15 +127,14 @@ string T
 
 // Long strings
 
-@documentation(
-    "This is a "
-    "string defined on multiple lines. "
-    "It "
-    'can '
-    "span "
-    "a "
-    'great '
-    "many "
-    'lines.'
-)
+@documentation("""
+    This is a
+    string defined on multiple lines.
+    It \
+    can \
+    span
+    a
+    great
+    many
+    lines.""")
 string U

@@ -125,7 +125,7 @@
       },
       "U": {
         "type": "string",
-        "documentation": "This is a string defined on multiple lines. It can span a great many lines."
+        "documentation": "This is a\nstring defined on multiple lines.\nIt can span\n\ngreat\nmany\nlines."
       }
     },
     "traitDefs": {
