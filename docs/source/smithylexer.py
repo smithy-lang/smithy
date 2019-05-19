@@ -50,8 +50,9 @@ class SmithyLexer(RegexLexer):
             (r'\)', Text, "#pop"),
             (r'{', Text, "#push"),
             (r'}', Text, "#pop"),
-            (r'"(\\\\|\\"|[^"])*"', String.Double),
-            (r"'(\\\\|\\'|[^'])*'", String.Single),
+            (r'"{3}(\\\\|\n|\\")*"{3}', String.Double),
+            (r'"(\\\\|\n|\\"|[^"])*"', String.Double),
+            (r"'(\\\\|\n|\\'|[^'])*'", String.Single),
             (r'[:,\s]+', Text),
         ]
     }

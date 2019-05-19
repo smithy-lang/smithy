@@ -1,3 +1,5 @@
+.. highlight:: smithy
+
 .. _smithy-language-specification:
 
 =============================
@@ -350,7 +352,7 @@ This example is equivalent to the following:
 
 The following text blocks are ill-formed:
 
-.. code-block:: none
+::
 
     """foo"""  // missing new line following open delimiter
     """ """    // missing new line following open delimiter
@@ -426,7 +428,7 @@ incidental whitespace using the following algorithm:
    This step produces the following result ("|" is used to represent the
    left margin):
 
-   .. code-block:: none
+   ::
 
        |Foo
        |    Baz
@@ -488,7 +490,7 @@ of other strings. The use of three double quotes allows unescaped double quotes
 (") to appear in text blocks. The following text block is interpreted as
 ``"hello!"``:
 
-.. code-block:: none
+::
 
     """
     "hello!"
@@ -498,7 +500,7 @@ Three quotes can appear in a text block without being treated as the closing
 delimiter as long as one of the quotes are escaped. The following text block
 is interpreted as ``foo """\nbaz``:
 
-.. code-block:: none
+::
 
     """
     foo \"""
@@ -507,7 +509,7 @@ is interpreted as ``foo """\nbaz``:
 String escapes are interpreted **after** :ref:`incidental whitespace <incidental-whitespace>`
 is removed from a text block. The following example uses "." to denote spaces:
 
-.. code-block:: none
+::
 
     """
     ..<div>
@@ -518,7 +520,7 @@ is removed from a text block. The following example uses "." to denote spaces:
 Because string escapes are expanded after incidental whitespace is removed, it
 is interpreted as:
 
-.. code-block:: none
+::
 
     <div>
     ..<p>Hi
@@ -529,7 +531,7 @@ New lines in the text block can be escaped. This allows for long, single-line
 strings to be broken into multiple lines in the IDL. The following example
 is interpreted as ``Foo Baz Bam``:
 
-.. code-block:: none
+::
 
     """
     Foo \
@@ -539,7 +541,7 @@ is interpreted as ``Foo Baz Bam``:
 Escaped new lines can be intermixed with unescaped newlines. The following
 example is interpreted as ``Foo\nBaz Bam``:
 
-.. code-block:: none
+::
 
     """
     Foo
