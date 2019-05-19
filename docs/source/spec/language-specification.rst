@@ -268,10 +268,8 @@ form of escapes other than to escape a closing quote (using ``\"`` or ``\'``)
 or to escape an escape (using ``\\``).
 
 .. productionlist:: smithy
-    text                :`unquoted_text` / `long_string`
-    unquoted_text       :(ALPHA / "_")
-                        :*(ALPHA / DIGIT / "-" / "_" / "$" / "." / "#")
-    long_string         :`quoted_text` [*`quoted_text`]
+    text                :`unquoted_text` / `quoted_text` / `text_block`
+    unquoted_text       :(ALPHA / "_") *(ALPHA / DIGIT / "-" / "_" / "$" / "." / "#")
     quoted_text         :`single_quoted_text` / `double_quoted_text`
     single_quoted_text  :"'" *`single_quoted_char` "'"
     single_quoted_char  :  %x20-26
@@ -291,35 +289,262 @@ or to escape an escape (using ``\\``).
                         :/ `preserved_double`
     preserved_double    :`escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
     escape              :%x5C ; backslash
+    text_block          :DQUOTE DQUOTE DQUOTE `br` `double_quoted_char` DQUOTE DQUOTE DQUOTE
+
+New lines in strings are normalized from CR (\u000D) and CRLF (\u000D\u000A)
+to LF (\u000A). This ensures that strings defined in a Smithy model are
+equivalent across platforms. If a literal ``\r`` is desired, it can be added
+a string value using the Unicode escape ``\u000d``.
 
 
-.. _long-strings:
+.. _text-blocks:
 
-Long strings
-~~~~~~~~~~~~
+Text blocks
+~~~~~~~~~~~
 
-Any two adjacent :token:`single_quoted_text` or :token:`double_quoted_text`
-tokens come together to form a single string. This is useful for breaking
-long strings across multiple lines.
+A text block is a string literal that can span multiple lines and
+automatically removes any incidental whitespace. A text block is opened with
+three double quotes ("""), followed by a newline, zero or more content
+characters, and closed with three double quotes.
 
-The following string,
+*Smithy text blocks are heavily based on text blocks defined in* `JEP 355 <https://openjdk.java.net/jeps/355>`_
+
+Text blocks differentiate *incidental whitespace* from
+*significant whitespace*. Smithy will re-indent the content of a text block by
+removing all incidental whitespace.
 
 ::
 
-    "foo bar"
+    @documentation("""
+        <div>
+            <p>Hello!</p>
+        </div>
+        """)
 
-is equivalent to
+The four leading spaces in the above text block are considered insignificant
+because they are common across all lines. Because the closing delimiter
+appears on its own line, a trailing new line is added to the result. The
+content of the text block is re-indented to remove the insignificant
+whitespace, making it equivalent to the following:
 
 ::
 
-    "foo" " bar"
+    @documentation("<div>\n    <p>Hello!</p>\n</div>\n")
 
-and is equivalent to
+The closing delimiter can be placed on the same line as content if no new line
+is desired at the end of the result. The above example could be rewritten to
+not including a trailing new line:
 
 ::
 
-    "foo"
-    ' bar'
+    @documentation("""
+        <div>
+            <p>Hello!</p>
+        </div>""")
+
+This example is equivalent to the following:
+
+::
+
+    @documentation("<div>\n    <p>Hello!</p>\n</div>")
+
+The following text blocks are ill-formed:
+
+.. code-block:: none
+
+    """foo"""  // missing new line following open delimiter
+    """ """    // missing new line following open delimiter
+    """
+    "          // missing closing delimiter
+
+
+.. _incidental-whitespace:
+
+Incidental white space removal
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Smithy will re-indent the content of a text block by removing all
+incidental whitespace using the following algorithm:
+
+1. Split the content of the text block at every LF, producing a list of lines.
+   The opening LF of the text block is not considered.
+
+   Given the following example ("." is used to represent spaces),
+
+   ::
+
+       @documentation("""
+       ....Foo
+       ........Baz
+
+       ..
+       ....Bar
+       ....""")
+
+   the following lines are produced:
+
+   .. code-block:: javascript
+
+       ["    Foo", "        Baz", "", "  ", "    Bar", "    "]
+
+2. Compute the *common whitespace prefix* by iterating over each line,
+   counting the number of leading spaces (" ") and taking the minimum count.
+   Except for the last line of content, lines that are empty or consist wholly
+   of whitespace are not considered. If the last line of content (that is, the
+   line that contains the closing delimiter) appears on its own line, then
+   that line's leading whitespace **is** considered when determining the
+   common whitespace prefix, allowing the closing delimiter to determine the
+   amount of indentation to remove.
+
+   Using the previous example, the common whitespace prefix is four spaces.
+   The empty third line and the blank fourth lines are not considered when
+   computing the common whitespace. The following uses "." to represent the
+   common whitespace prefix:
+
+   ::
+
+       @documentation("""
+       ....Foo
+       ....    Baz
+
+       ....
+       ....Bar
+       ....""")
+
+3. Remove the common white space prefix from each line.
+
+   This step produces the following values from the previous example:
+
+   .. code-block:: javascript
+
+       ["Foo", "    Baz", "", "", "Bar", ""]
+
+4. Remove any trailing spaces from each line.
+
+5. Concatenate each line together, separated by LF.
+
+   This step produces the following result ("|" is used to represent the
+   left margin):
+
+   .. code-block:: none
+
+       |Foo
+       |    Baz
+       |
+       |
+       |Bar
+       |
+
+
+Significant trailing line
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The last line of text block content is used when determining the common
+whitespace prefix.
+
+Consider the following example:
+
+::
+
+       @documentation("""
+           Foo
+               Baz
+           Bar
+       """)
+
+Because the closing delimiter is at the margin and left of the rest of the
+content, the common whitespace prefix is 0 characters, resulting in the
+following equivalent string:
+
+::
+
+       @documentation("    Foo\n        Baz\n    Bar\n")
+
+If the closing delimiter is moved to the right of the content, then is has
+no bearing on the common whitespace prefix. The common whitespace prefix in
+the following example is visualized using "." to represent spaces:
+
+::
+
+       @documentation("""
+       ....Foo
+       ....    Baz
+       ....Bar
+               """)
+
+Because lines are trimmed when they are added to the result, the above example
+is equivalent to the following:
+
+::
+
+       @documentation("Foo\n    Baz\nBar\n")
+
+
+Escapes in text blocks
+^^^^^^^^^^^^^^^^^^^^^^
+
+Text blocks support all of the :ref:`string escape characters <string-escape-characters>`
+of other strings. The use of three double quotes allows unescaped double quotes
+(") to appear in text blocks. The following text block is interpreted as
+``"hello!"``:
+
+.. code-block:: none
+
+    """
+    "hello!"
+    """
+
+Three quotes can appear in a text block without being treated as the closing
+delimiter as long as one of the quotes are escaped. The following text block
+is interpreted as ``foo """\nbaz``:
+
+.. code-block:: none
+
+    """
+    foo \"""
+    baz"""
+
+String escapes are interpreted **after** :ref:`incidental whitespace <incidental-whitespace>`
+is removed from a text block. The following example uses "." to denote spaces:
+
+.. code-block:: none
+
+    """
+    ..<div>
+    ....<p>Hi\\n....bar</p>
+    ..</div>
+    .."""
+
+Because string escapes are expanded after incidental whitespace is removed, it
+is interpreted as:
+
+.. code-block:: none
+
+    <div>
+    ..<p>Hi
+    ....bar</p>
+    </div>
+
+New lines in the text block can be escaped. This allows for long, single-line
+strings to be broken into multiple lines in the IDL. The following example
+is interpreted as ``Foo Baz Bam``:
+
+.. code-block:: none
+
+    """
+    Foo \
+    Baz \
+    Bam"""
+
+Escaped new lines can be intermixed with unescaped newlines. The following
+example is interpreted as ``Foo\nBaz Bam``:
+
+.. code-block:: none
+
+    """
+    Foo
+    Baz \
+    Bam"""
 
 
 .. _string-escape-characters:
@@ -398,10 +623,7 @@ and trailing commas.
                         :(( "," "]" ) / "]" )
     node_object         :"{" [`node_object_kvp` *("," `node_object_kvp`)]
                         :(( "," "}" ) / "}" )
-    node_object_kvp     :`node_object_key` ":" `node_value`
-    node_object_key     :`single_quoted_text`
-                        :/ `double_quoted_text`
-                        :/ `unquoted_text`
+    node_object_kvp     :`text` ":" `node_value`
     number              :[`minus`] `int` [`frac`] [`exp`]
     decimal_point       :%x2E ; .
     digit1_9            :%x31-39 ; 1-9

@@ -30,8 +30,23 @@ import java.util.regex.Pattern;
  * single regular expressions that uses named captures. The name of each
  * capture is the name of the enum. Any unrecognized token is tokenized as
  * {@code ERROR}.
+ *
+ * <p>\r\n and \n within strings are normalized into just "\n". This removes
+ * any element of surprise when using Smithy models with different operating
+ * systems. \r and \r\n can be added to model within quoted strings using
+ * unicode escapes or by escaping \r and \n.
  */
 final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
+
+    private static final Pattern COMPILED;
+    private Token peeked;
+    private int line = 1;
+    private int lastLineOffset;
+    private final Matcher matcher;
+
+    SmithyModelLexer(String input) {
+        matcher = COMPILED.matcher(input);
+    }
 
     /** Represents a parsed token type, in order of precedence. */
     enum TokenType {
@@ -51,10 +66,10 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         COLON(":"),
         COMMA(","),
         ANNOTATION("@[A-Za-z0-9.$#]+"),
-        // single and double quoted text: supports escaped quotes and escaped escapes.
-        // Allows a newline to be escaped too.
-        QUOTED("(?:\")([^\"\\\\]*(?:\\\\(.|\r\n|\r|\n)[^\"\\\\]*)*)(?:\")"
-               + "|(?:')([^'\\\\]*(?:\\\\(.|\r\n|\r|\n)[^'\\\\]*)*)(?:')"),
+        // Quoted strings support escaped quotes, escaped escapes, and escaped newlines.
+        QUOTED("(\"\"\"(((?!\"\"\")|[^\\\\])*(?:\\\\(.|\r\n|\r|\n)((?!\"\"\")|[^\\\\])*)*)\"\"\")"
+               + "|(\"([^\"\\\\]*(?:\\\\(.|\r\n|\r|\n)[^\"\\\\]*)*)\")"
+               + "|('([^'\\\\]*(?:\\\\(.|\r\n|\r|\n)[^'\\\\]*)*)')"),
         NUMBER("-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"),
         ERROR(".");
 
@@ -96,8 +111,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         }
     }
 
-    private static final Pattern COMPILED;
-
     static {
         // Compile the lexer tokens into a regular expression with capture
         // groups matching the enum value name.
@@ -108,16 +121,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         COMPILED = Pattern.compile(builder.substring(1));
     }
 
-    private Token peeked;
-    private final Matcher matcher;
-    private int line = 1;
-    private int lastLineOffset;
-    private boolean inPeek;
-
-    SmithyModelLexer(String input) {
-        matcher = COMPILED.matcher(input);
-    }
-
     /**
      * Peeks at the next available token without consuming it.
      *
@@ -125,9 +128,7 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
      */
     Token peek() {
         if (peeked == null) {
-            inPeek = true;
-            peeked = next();
-            inPeek = false;
+            peeked = maybeGetNext();
         }
 
         return peeked;
@@ -140,6 +141,21 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
 
     @Override
     public Token next() {
+        Token next = maybeGetNext();
+        if (next == null) {
+            throw new NoSuchElementException();
+        }
+        return next;
+    }
+
+    /**
+     * Gets the next token or returns null if there are no more tokens.
+     *
+     * <p>Drains and returns a previously peeked value if present.
+     *
+     * @return Returns the nullable next token.
+     */
+    private Token maybeGetNext() {
         if (peeked != null) {
             Token value = peeked;
             peeked = null;
@@ -152,47 +168,47 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                 if (matcher.group(token.name()) != null) {
                     String lexeme = matcher.group(token.name());
                     String errorMessage = null;
+                    final int startingLineNumber = line;
+                    final int column = 1 + (matcher.start() - lastLineOffset);
+                    final int span = matcher.end() - matcher.start();
 
-                    try {
-                        switch (token) {
-                            case NEWLINE:
-                                line++;
-                                lastLineOffset = matcher.end();
-                                // fallthru
-                            case WS: // fallthru
-                            case COMMENT:
-                                // Try to grab the next token before returning.
-                                continue next_token;
-                            case QUOTED:
+                    switch (token) {
+                        case NEWLINE:
+                            line++;
+                            lastLineOffset = matcher.end();
+                            // fallthru
+                        case WS: // fallthru
+                        case COMMENT:
+                            // Try to grab the next token before returning.
+                            continue next_token;
+                        case QUOTED:
+                            try {
+                                // Quoted text can contain newlines, so track the offsets.
+                                int lastNewline = Math.max(lexeme.lastIndexOf('\n'), lexeme.lastIndexOf('\r'));
+                                if (lastNewline != -1) {
+                                    // Offset from the text position from start + the last new line (starting at 1).
+                                    lastLineOffset = matcher.start() + lastNewline + 1;
+                                }
                                 lexeme = parseStringContents(lexeme);
-                                break;
-                            case ANNOTATION:
-                                // Strip leading "@".
-                                lexeme = lexeme.substring(1);
-                                break;
-                            default:
-                                break;
-                        }
-                    } catch (IllegalArgumentException e) {
-                        // Handle cases where parsing escapes in strings failed.
-                        token = TokenType.ERROR;
-                        errorMessage = e.getMessage();
+                            } catch (IllegalArgumentException e) {
+                                token = TokenType.ERROR;
+                                errorMessage = e.getMessage();
+                            }
+                            break;
+                        case ANNOTATION:
+                            // Strip leading "@".
+                            lexeme = lexeme.substring(1);
+                            break;
+                        default:
+                            break;
                     }
 
-                    int column = 1 + (matcher.start() - lastLineOffset);
-                    int span = matcher.end() - matcher.start();
-                    return new Token(token, lexeme, line, column, span, errorMessage);
+                    return new Token(token, lexeme, startingLineNumber, column, span, errorMessage);
                 }
             }
         }
 
-        if (inPeek) {
-            return null;
-        }
-
-        // The expected behavior is to throw an exception if no more tokens
-        // are available. However, we don't wan't to throw when peeking.
-        throw new NoSuchElementException();
+        return null;
     }
 
     enum LexerState { NORMAL, AFTER_ESCAPE, UNICODE }
@@ -200,21 +216,37 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
     /**
      * This method adds support for JSON escapes found in strings.
      *
-     * @param lexeme Lexeme to parse escpapes from.
+     * @param lexeme Lexeme to parse escapes from.
      * @return Returns the raw, unescaped lexeme.
      * @throws IllegalArgumentException when escapes are invalid.
      */
-    private static String parseStringContents(String lexeme) {
-        // This method does a single pass over the lexeme to remove wrapping
-        // delimiters, remove escaped '\', and remove escaped delimiters.
-        StringBuilder result = new StringBuilder(lexeme.length() - 2);
+    private String parseStringContents(String lexeme) {
+        // Normalize all new lines into \n.
+        if (lexeme.indexOf('\r') > -1) {
+            lexeme = lexeme.replaceAll("\r\n?", "\n");
+        }
+
+        int offset = 1;
+
+        // Format the text block and remove incidental whitespace.
+        if (lexeme.startsWith("\"\"\"")) {
+            lexeme = formatTextBlock(lexeme);
+            offset = 0;
+        }
+
+        StringBuilder result = new StringBuilder(lexeme.length() - offset * 2);
         LexerState state = LexerState.NORMAL;
         int hexCount = 0;
         int unicode = 0;
 
-        // Remove quotes by clipping offsets by 1.
-        for (int i = 1; i < lexeme.length() - 1; i++) {
+        // Skip quotes from the start and end.
+        for (int i = offset; i < lexeme.length() - offset; i++) {
             char c = lexeme.charAt(i);
+
+            if (c == '\n') {
+                line++;
+            }
+
             switch (state) {
                 case NORMAL:
                     if (c == '\\') {
@@ -257,13 +289,7 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                             state = LexerState.UNICODE;
                             break;
                         case '\n':
-                            // An escaped newline just eats the newline.
-                            break;
-                        case '\r':
-                            // Eat the CR, but also peek at the next character to consume CRLF.
-                            if (i < lexeme.length() - 1 && lexeme.charAt(i + 1) == '\n') {
-                                i++;
-                            }
+                            // Skip writing the escaped new line.
                             break;
                         default:
                             throw new IllegalArgumentException("Invalid escape found in string: `\\" + c + "`");
@@ -294,5 +320,106 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         }
 
         return result.toString();
+    }
+
+    /**
+     * Formats a text block by removing leading incidental whitespace.
+     *
+     * <p>Text block formatting occurs before expanding escapes.
+     *
+     * @param lexeme Lexeme to format.
+     * @return Returns the formatted textblock.
+     * @throws IllegalArgumentException if the block does not start with \n or is empty.
+     */
+    private String formatTextBlock(String lexeme) {
+        // Strip the leading and trailing delimiter.
+        lexeme = lexeme.substring(3, lexeme.length() - 3);
+
+        if (lexeme.isEmpty()) {
+            throw new IllegalArgumentException("Invalid text block: text block is empty");
+        } else if (lexeme.charAt(0) != '\n') {
+            throw new IllegalArgumentException("Invalid text block: text block must start with a new line (LF)");
+        }
+
+        line++;
+        StringBuilder buffer = new StringBuilder();
+        int longestPadding = Integer.MAX_VALUE;
+        String[] lines = lexeme.split("\n", -1);
+
+        for (int i = 1; i < lines.length; i++) {
+            int padding = computeLeadingWhitespace(lines[i], i == lines.length - 1);
+            if (padding > -1 && padding < longestPadding) {
+                longestPadding = padding;
+            }
+        }
+
+        for (int i = 1; i < lines.length; i++) {
+            String line = lines[i];
+
+            if (!line.isEmpty()) {
+                String formattedLine = createTextBlockLine(line, longestPadding);
+                if (formattedLine != null) {
+                    buffer.append(formattedLine);
+                }
+            }
+
+            if (i < lines.length - 1) {
+                buffer.append('\n');
+            }
+        }
+
+        return buffer.toString();
+    }
+
+    /**
+     * Computes the number of leading whitespace characters in a string.
+     *
+     * <p>This method returns -1 if the string is empty or if the string
+     * contains only whitespace. When determining the whitespace of the
+     * last line, the length of the line is returned if the entire
+     * line consists of only spaces. This ensures that the whitespace
+     * of the last line can be used to influence the indentation of the
+     * content as a whole (a significant trailing line policy).
+     *
+     * @param line Line to search for whitespace.
+     * @param isLastLine Whether or not this is the last line.
+     * @return Returns the last whitespace index starting at 0 or -1.
+     */
+    private int computeLeadingWhitespace(String line, boolean isLastLine) {
+        if (line.isEmpty()) {
+            return -1;
+        }
+
+        for (int offset = 0; offset < line.length(); offset++) {
+            if (line.charAt(offset) != ' ') {
+                return offset;
+            }
+        }
+
+        return isLastLine ? line.length() : -1;
+    }
+
+    /**
+     * Creates a line for a text block.
+     *
+     * <p>Leading padding and trailing whitespace are removed from each line.
+     * This method will not fail if a line is not longer than the leading
+     * whitespace lines to remove (for example, a mixed number of blank lines
+     * consisting of only whitespace).
+     *
+     * @param line The line to format.
+     * @param longestPadding The leading whitespace to remove.
+     * @return Returns the line or null if no line is emitted.
+     */
+    private static String createTextBlockLine(String line, int longestPadding) {
+        int startPosition = Math.min(longestPadding, line.length());
+        int endPosition = line.length() - 1;
+
+        // Strip off trailing whitespace from each line.
+        while (endPosition > 0 && line.charAt(endPosition) == ' ') {
+            endPosition--;
+        }
+
+        return endPosition > startPosition ? line.substring(startPosition, endPosition + 1) : null;
     }
 }

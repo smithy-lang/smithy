@@ -594,7 +594,7 @@ final class SmithyModelLoader implements ModelLoader {
         switch (token.type) {
             case LBRACE: return parseObjectNode(state, sourceFromToken(state, token), RBRACE);
             case LBRACKET: return parseArrayNode(state, sourceFromToken(state, token));
-            case QUOTED: return parseStringNode(state, token);
+            case QUOTED: return new StringNode(token.lexeme, sourceFromToken(state, token));
             case NUMBER: return parseNumber(state, token);
             case UNQUOTED: return parseUnquotedNode(state, token);
             default: throw new IllegalStateException("Parse node value not expected to be called with invalid token");
@@ -652,15 +652,5 @@ final class SmithyModelLoader implements ModelLoader {
         }
 
         return new ArrayNode(values, location);
-    }
-
-    private static StringNode parseStringNode(State state, Token token) {
-        SourceLocation stringStartLocation = sourceFromToken(state, token);
-        StringBuilder concatenated = new StringBuilder(token.lexeme);
-        while (state.peek().filter(t -> t.type == QUOTED).isPresent()) {
-            concatenated.append(state.next().lexeme);
-        }
-
-        return new StringNode(concatenated.toString().replaceAll("\\r", ""), stringStartLocation);
     }
 }
