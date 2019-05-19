@@ -45,12 +45,17 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
     private final Matcher matcher;
 
     SmithyModelLexer(String input) {
+        // Normalize all new lines into \n.
+        if (input.indexOf('\r') > -1) {
+            input = input.replaceAll("\r\n?", "\n");
+        }
+
         matcher = COMPILED.matcher(input);
     }
 
     /** Represents a parsed token type, in order of precedence. */
     enum TokenType {
-        NEWLINE("\\R"),
+        NEWLINE("\n"),
         WS("\\s+"),
         COMMENT("//[^\\n]*"),
         RETURN(Pattern.quote("->")),
@@ -67,9 +72,9 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         COMMA(","),
         ANNOTATION("@[A-Za-z0-9.$#]+"),
         // Quoted strings support escaped quotes, escaped escapes, and escaped newlines.
-        QUOTED("(\"\"\"(((?!\"\"\")|[^\\\\])*(?:\\\\(.|\r\n|\r|\n)((?!\"\"\")|[^\\\\])*)*)\"\"\")"
-               + "|(\"([^\"\\\\]*(?:\\\\(.|\r\n|\r|\n)[^\"\\\\]*)*)\")"
-               + "|('([^'\\\\]*(?:\\\\(.|\r\n|\r|\n)[^'\\\\]*)*)')"),
+        QUOTED("(\"\"\"(((?!\"\"\")|[^\\\\])*(?:\\\\(.|\n)((?!\"\"\")|[^\\\\])*)*)\"\"\")"
+               + "|(\"([^\"\\\\]*(?:\\\\(.|\n)[^\"\\\\]*)*)\")"
+               + "|('([^'\\\\]*(?:\\\\(.|\n)[^'\\\\]*)*)')"),
         NUMBER("-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"),
         ERROR(".");
 
@@ -184,7 +189,7 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                         case QUOTED:
                             try {
                                 // Quoted text can contain newlines, so track the offsets.
-                                int lastNewline = Math.max(lexeme.lastIndexOf('\n'), lexeme.lastIndexOf('\r'));
+                                int lastNewline = lexeme.lastIndexOf('\n');
                                 if (lastNewline != -1) {
                                     // Offset from the text position from start + the last new line (starting at 1).
                                     lastLineOffset = matcher.start() + lastNewline + 1;
@@ -221,11 +226,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
      * @throws IllegalArgumentException when escapes are invalid.
      */
     private String parseStringContents(String lexeme) {
-        // Normalize all new lines into \n.
-        if (lexeme.indexOf('\r') > -1) {
-            lexeme = lexeme.replaceAll("\r\n?", "\n");
-        }
-
         int offset = 1;
 
         // Format the text block and remove incidental whitespace.
