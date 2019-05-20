@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  *
  * <p>\r\n and \n within strings are normalized into just "\n". This removes
  * any element of surprise when using Smithy models with different operating
- * systems. \r and \r\n can be added to model within quoted strings using
+ * systems. \r and \r\n can be added to models within quoted strings using
  * unicode escapes or by escaping \r and \n.
  */
 final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
