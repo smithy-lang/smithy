@@ -462,7 +462,7 @@ following equivalent string:
 
        @documentation("    Foo\n        Baz\n    Bar\n")
 
-If the closing delimiter is moved to the right of the content, then is has
+If the closing delimiter is moved to the right of the content, then it has
 no bearing on the common whitespace prefix. The common whitespace prefix in
 the following example is visualized using "." to represent spaces:
 
