@@ -295,13 +295,13 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                             throw new IllegalArgumentException("Invalid escape found in string: `\\" + c + "`");
                     }
                     break;
-                default: // UNICODE
+                case UNICODE:
                     if (c >= '0' && c <= '9') {
-                        unicode = (unicode << 4) + c - '0';
+                        unicode = (unicode << 4) | (c - '0');
                     } else if (c >= 'a' && c <= 'f') {
-                        unicode = (unicode << 4) + 10 + c - 'a';
+                        unicode = (unicode << 4) | (10 + c - 'a');
                     } else if (c >= 'A' && c <= 'F') {
-                        unicode = (unicode << 4) + 10 + c - 'A';
+                        unicode = (unicode << 4) | (10 + c - 'A');
                     } else {
                         throw new IllegalArgumentException("Invalid unicode escape character: `" + c + "`");
                     }
@@ -312,6 +312,8 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                         state = LexerState.NORMAL;
                     }
                     break;
+                default:
+                    throw new IllegalStateException("Unreachable");
             }
         }
 
