@@ -62,6 +62,7 @@ public class SmithyModelLexerTest {
                 Arguments.of("\"\\\n\"", ""),
                 Arguments.of("\"\\'\"", "'"),
                 Arguments.of("\"\\\"\"", "\""),
+                Arguments.of("\"\\ud83d\\ude00\"", "\uD83D\uDE00"),
 
                 // single quotes
                 Arguments.of("'foo'", "foo"),
