@@ -1,3 +1,0 @@
-[ERROR] ns.foo#InvalidSet1: Set member targets an invalid map shape ns.foo#StringMap. Set members must target one of the following type: [`bigDecimal`, `bigInteger`, `blob`, `byte`, `integer`, `long`, `short`, `string`] | SetTarget
-[ERROR] ns.foo#InvalidSet2: Set member targets an invalid float shape smithy.api#Float. Set members must target one of the following type: [`bigDecimal`, `bigInteger`, `blob`, `byte`, `integer`, `long`, `short`, `string`] | SetTarget
-[ERROR] ns.foo#InvalidSet3: Set member targets an invalid double shape smithy.api#Double. Set members must target one of the following type: [`bigDecimal`, `bigInteger`, `blob`, `byte`, `integer`, `long`, `short`, `string`] | SetTarget
