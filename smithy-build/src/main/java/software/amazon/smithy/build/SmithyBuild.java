@@ -19,9 +19,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.model.Model;
@@ -44,6 +46,8 @@ public final class SmithyBuild {
     Model model;
     ClassLoader pluginClassLoader;
     Set<Path> sources = new HashSet<>();
+    Predicate<String> projectionFilter = name -> true;
+    Predicate<String> pluginFilter = name -> true;
 
     public SmithyBuild() {}
 
@@ -310,6 +314,30 @@ public final class SmithyBuild {
      */
     public SmithyBuild registerSources(Path... pathToSources) {
         Collections.addAll(sources, pathToSources);
+        return this;
+    }
+
+    /**
+     * Sets a predicate that accepts the name of a projection and returns
+     * true if the projection should be built.
+     *
+     * @param projectionFilter Predicate that accepts a projection name.
+     * @return Returns the builder.
+     */
+    public SmithyBuild projectionFilter(Predicate<String> projectionFilter) {
+        this.projectionFilter = Objects.requireNonNull(projectionFilter);
+        return this;
+    }
+
+    /**
+     * Sets a predicate that accepts the name of a plugin and returns
+     * true if the plugin should be built.
+     *
+     * @param pluginFilter Predicate that accepts a projection name.
+     * @return Returns the builder.
+     */
+    public SmithyBuild pluginFilter(Predicate<String> pluginFilter) {
+        this.pluginFilter = Objects.requireNonNull(pluginFilter);
         return this;
     }
 }

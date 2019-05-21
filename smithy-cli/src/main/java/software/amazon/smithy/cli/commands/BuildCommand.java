@@ -54,6 +54,8 @@ public final class BuildCommand implements Command {
                 .repeatedParameter("--config", "-c",
                      "Path to smithy-build.json configuration. Defaults to 'smithy-build.json'.")
                 .parameter("--output", "-o", "Where to write artifacts. Defaults to 'build/smithy'.")
+                .parameter("--projection", "Smithy will only generate artifacts for the given projection name.")
+                .parameter("--plugin", "Smithy will only generate artifacts for the given plugin name.")
                 .option(SmithyCli.DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars")
                 .parameter(SmithyCli.DISCOVER_CLASSPATH, "Enables model discovery using a custom classpath for models")
                 .option(SmithyCli.ALLOW_UNKNOWN_TRAITS, "Ignores unknown traits when building models")
@@ -98,6 +100,14 @@ public final class BuildCommand implements Command {
         SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
                 .config(smithyBuildConfig)
                 .model(model);
+
+        if (arguments.has("--plugin")) {
+            smithyBuild.pluginFilter(name -> name.equals(arguments.parameter("--plugin")));
+        }
+
+        if (arguments.has("--projection")) {
+            smithyBuild.projectionFilter(name -> name.equals(arguments.parameter("--projection")));
+        }
 
         // Register sources with the builder.
         models.forEach(path -> smithyBuild.registerSources(Paths.get(path)));
