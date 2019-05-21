@@ -18,7 +18,6 @@ package software.amazon.smithy.cli;
 import java.util.List;
 import software.amazon.smithy.cli.commands.BuildCommand;
 import software.amazon.smithy.cli.commands.DiffCommand;
-import software.amazon.smithy.cli.commands.GenerateCommand;
 import software.amazon.smithy.cli.commands.ValidateCommand;
 
 /**
@@ -100,7 +99,6 @@ public final class SmithyCli {
         cli.addCommand(new ValidateCommand());
         cli.addCommand(new BuildCommand());
         cli.addCommand(new DiffCommand());
-        cli.addCommand(new GenerateCommand());
         cli.run(args);
     }
 }

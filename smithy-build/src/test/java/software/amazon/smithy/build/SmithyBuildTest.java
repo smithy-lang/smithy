@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -355,5 +356,50 @@ public class SmithyBuildTest {
 
         assertThat(thrown.getMessage(), containsString(
                 "Invalid plugin name `!invalid` found in the `[top-level]` projection"));
+    }
+
+    @Test
+    public void canFilterProjections() throws URISyntaxException {
+        Model model = Model.assembler()
+                .addImport(Paths.get(getClass().getResource("simple-model.json").toURI()))
+                .assemble()
+                .unwrap();
+
+        SmithyBuild builder = new SmithyBuild()
+                .model(model)
+                .fileManifestFactory(MockManifest::new)
+                .projectionFilter(name -> name.equals("a"));
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("apply-multiple-projections.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
+
+        SmithyBuildResult results = builder.build();
+        assertFalse(results.getProjectionResult("source").isPresent());
+        assertTrue(results.getProjectionResult("a").isPresent());
+    }
+
+    @Test
+    public void canFilterPlugins() throws URISyntaxException {
+        Model model = Model.assembler()
+                .addImport(Paths.get(getClass().getResource("simple-model.json").toURI()))
+                .assemble()
+                .unwrap();
+
+        SmithyBuild builder = new SmithyBuild()
+                .model(model)
+                .fileManifestFactory(MockManifest::new)
+                .pluginFilter(name -> name.equals("build-info"));
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("apply-multiple-projections.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
+
+        SmithyBuildResult results = builder.build();
+        assertTrue(results.getProjectionResult("source").isPresent());
+        assertTrue(results.getProjectionResult("a").isPresent());
+        ProjectionResult a = results.getProjectionResult("a").get();
+        assertFalse(a.getPluginManifest("model").isPresent());
+        assertTrue(a.getPluginManifest("build-info").isPresent());
     }
 }

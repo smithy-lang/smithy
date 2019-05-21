@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -58,6 +59,8 @@ final class SmithyBuildImpl {
     private final Path importBasePath;
     private final ClassLoader pluginClassLoader;
     private final Set<Path> sources;
+    private final Predicate<String> projectionFilter;
+    private final Predicate<String> pluginFilter;
 
     SmithyBuildImpl(SmithyBuild builder) {
         config = prepareConfig(SmithyBuilder.requiredState("config", builder.config));
@@ -99,6 +102,8 @@ final class SmithyBuildImpl {
         config.getProjections().forEach((k, p) -> transformers.put(k, createTransformer(k, p, new LinkedHashSet<>())));
 
         pluginClassLoader = builder.pluginClassLoader;
+        projectionFilter = builder.projectionFilter;
+        pluginFilter = builder.pluginFilter;
     }
 
     private static SmithyBuildConfig prepareConfig(SmithyBuildConfig config) {
@@ -150,6 +155,7 @@ final class SmithyBuildImpl {
         SmithyBuildResult.Builder builder = SmithyBuildResult.builder();
         config.getProjections().entrySet().stream()
                 .filter(e -> !e.getValue().isAbstract())
+                .filter(e -> projectionFilter.test(e.getKey()))
                 .sorted(Comparator.comparing(Map.Entry::getKey))
                 .parallel()
                 .map(e -> applyProjection(e.getKey(), e.getValue(), resolvedModel))
@@ -186,7 +192,7 @@ final class SmithyBuildImpl {
             // Fail if the model can't be merged with the imports.
             if (!resolvedResult.getResult().isPresent()) {
                 LOGGER.severe(String.format(
-                        "The model could not be merged with the following imports: [%s[",
+                        "The model could not be merged with the following imports: [%s]",
                         projection.getImports()));
                 return ProjectionResult.builder()
                         .projectionName(projectionName)
@@ -213,8 +219,10 @@ final class SmithyBuildImpl {
                 .events(modelResult.getValidationEvents());
 
         for (Map.Entry<String, ObjectNode> entry : resolvePlugins(projection).entrySet()) {
-            applyPlugin(projectionName, projection, baseProjectionDir, entry.getKey(), entry.getValue(),
-                        projectedModel, resolvedModel, modelResult, resultBuilder);
+            if (pluginFilter.test(entry.getKey())) {
+                applyPlugin(projectionName, projection, baseProjectionDir, entry.getKey(), entry.getValue(),
+                            projectedModel, resolvedModel, modelResult, resultBuilder);
+            }
         }
 
         return resultBuilder.build();
