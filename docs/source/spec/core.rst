@@ -1176,8 +1176,7 @@ Operation errors
 
 The errors of an operation is an optional, comma-separated, list of shape IDs
 that MUST target structure shapes that are marked with the
-:ref:`error-trait`. Errors defined on an operation and any error
-structure marked with the :ref:`synthetic-trait` are errors that can
+:ref:`error-trait`. Errors defined on an operation are errors that can
 potentially occur when calling an operation.
 
 The following example defines an operation shape that accepts no input,
@@ -2927,34 +2926,6 @@ in Java).
         @retryable
         @httpError(429)
         structure ThrottlingError {
-          @required
-          message: String,
-        }
-
-
-.. _synthetic-trait:
-
-``synthetic`` trait
--------------------
-
-Summary
-    Indicates that an error structure can be returned from any operation in
-    the model.
-Trait selector
-    ``structure[trait|error]``
-
-    *A structure shape with the error trait*
-Value type
-    Annotation trait
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        @error(client)
-        @synthetic
-        @httpError(403)
-        structure ForbiddenError {
           @required
           message: String,
         }
