@@ -350,13 +350,13 @@ reference other shapes using :ref:`members <member>`.
     * - Type
       - Description
     * - :ref:`list`
-      - Homogenous collection of values
+      - homogeneous collection of values
     * - :ref:`set`
-      - Unordered collection of unique homogenous values
+      - Unordered collection of unique homogeneous values
     * - :ref:`map`
-      - Map data structure that maps string keys to homogenous values
+      - Map data structure that maps string keys to homogeneous values
     * - :ref:`structure`
-      - Fixed set of named heterogenous members
+      - Fixed set of named heterogeneous members
     * - :ref:`union`
       - Tagged union data structure that can take on one of several
         different, but fixed, types
@@ -369,7 +369,7 @@ reference other shapes using :ref:`members <member>`.
 list
 ----
 
-The :dfn:`list` type represents a homogenous collection of values. A list is
+The :dfn:`list` type represents a homogeneous collection of values. A list is
 defined using a :token:`list_statement`. A list statement consists of the
 shape named followed by an object with a single key-value pair of "member"
 that defines the :ref:`member <member>` of the list.
@@ -467,12 +467,10 @@ definition using an ``apply`` statement:
 set
 ---
 
-The :dfn:`set` type represents an unordered collection of unique homogenous
-values.
-
-A set is defined using a :token:`set_statement`. The member MUST target a
-``string``, ``blob``, ``byte``, ``short``, ``integer``, ``long``,
-``bigInteger``, or ``bigDecimal`` shape.
+The :dfn:`set` type represents an unordered collection of unique homogeneous
+values. A set is defined using a :token:`set_statement` that consists of the
+shape named followed by an object with a single key-value pair of "member"
+that defines the :ref:`member <member>` of the set.
 
 The following example defines a set of strings:
 
@@ -535,6 +533,14 @@ Traits can be applied to the set shape and its members:
             }
         }
 
+.. note::
+
+    Not all languages support set data structures with non-scalar values.
+    Such languages SHOULD represent sets as a custom set data structure that
+    can interpret value hash codes and equality. Alternatively, clients MAY
+    store the values of a set data structure in a list and rely on the service
+    to ensure uniqueness.
+
 
 .. _map:
 
@@ -542,10 +548,9 @@ map
 ---
 
 The :dfn:`map` type represents a map data structure that maps string keys to
-homogenous values. A map cannot contain duplicate keys.
-
-A map is defined using a :token:`map_statement`. The ``key`` member of a map
-MUST get a ``string`` shape.
+homogeneous values. A map cannot contain duplicate keys. A map is defined using
+a :token:`map_statement`. The ``key`` member of a map MUST get a ``string``
+shape.
 
 The following example defines a map of strings to integers:
 
@@ -637,7 +642,7 @@ Traits can be applied to the map shape and its members:
 structure
 ---------
 
-The :dfn:`structure` type represents a fixed set of named heterogenous members.
+The :dfn:`structure` type represents a fixed set of named heterogeneous members.
 A member name maps to exactly one structure :ref:`member <member>` definition.
 
 A structure is defined using a :token:`structure_statement`. A structure
