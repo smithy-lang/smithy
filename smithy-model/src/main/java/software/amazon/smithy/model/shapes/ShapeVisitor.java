@@ -52,6 +52,8 @@ public interface ShapeVisitor<R> {
 
     R floatShape(FloatShape shape);
 
+    R documentShape(DocumentShape shape);
+
     R doubleShape(DoubleShape shape);
 
     R bigIntegerShape(BigIntegerShape shape);
@@ -215,6 +217,11 @@ public interface ShapeVisitor<R> {
 
         @Override
         public R floatShape(FloatShape shape) {
+            return getDefault(shape);
+        }
+
+        @Override
+        public R documentShape(DocumentShape shape) {
             return getDefault(shape);
         }
 

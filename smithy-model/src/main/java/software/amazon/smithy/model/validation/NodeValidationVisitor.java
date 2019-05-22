@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.validation;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +29,7 @@ import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.CollectionShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
@@ -179,6 +181,12 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         return value.isNumberNode()
                ? applyPlugins(shape)
                : invalidShape(shape, NodeType.NUMBER);
+    }
+
+    @Override
+    public List<ValidationEvent> documentShape(DocumentShape shape) {
+        // Document values are always valid.
+        return Collections.emptyList();
     }
 
     @Override

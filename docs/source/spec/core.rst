@@ -229,6 +229,11 @@ or shape references.
       - Represents an instant in time with no UTC offset or timezone. The
         serialization of a timestamp is determined by a
         :ref:`protocol <protocols-trait>`.
+    * - document
+      - **Unstable** Represents an untyped JSON-like value that can take on
+        one of the following types: null, boolean, string, byte, short,
+        integer, long, float, double, an array of these types, or a map of
+        these types where the key is string.
 
 The :token:`simple_shape` statement is used to define a simple shape. Simple
 shapes are defined by a type, followed by a shape name, followed by a
@@ -262,6 +267,7 @@ The following example defines a shape for each simple type in the
         bigInteger BigInteger
         bigDecimal BigDecimal
         timestamp Timestamp
+        document Document
 
     .. code-tab:: json
 
@@ -304,6 +310,9 @@ The following example defines a shape for each simple type in the
               },
               "Timestamp": {
                 "type": "timestamp"
+              },
+              "Document": {
+                "type": "document"
               }
             }
           }
@@ -333,6 +342,27 @@ The timestamp shape is an abstraction of time; the serialization format of a
 timestamp as it is sent over the wire, whether determined by the protocol or by
 the ``timestampFormat`` trait, SHOULD NOT have any effect on the types exposed
 by tooling to represent a timestamp.
+
+
+.. _document-type:
+
+Document types
+--------------
+
+A document type represents an untyped JSON-like value that can take on one of
+the following types: null, boolean, string, byte, short, integer, long, float,
+double, an array of these types, or a map of these types where the key is a
+string.
+
+Not all protocols support document types, and the serialization format of a
+document type is protocol-specific. All JSON protocols SHOULD support document
+types and they SHOULD serialize document types inline as normal JSON values.
+
+.. warning::
+
+    Document types are currently considered unstable. They are not generally
+    supported by all protocols or tooling, and their design MAY change and
+    evolve before a stable release of Smithy.
 
 
 .. _aggregate-types:
@@ -2031,6 +2061,8 @@ The prelude model is defined using the following :ref:`JSON AST <json-ast>`:
     bigDecimal BigDecimal
 
     timestamp Timestamp
+
+    document Document
 
     @box
     boolean Boolean

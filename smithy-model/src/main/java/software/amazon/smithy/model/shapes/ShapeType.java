@@ -29,6 +29,7 @@ public enum ShapeType {
     INTEGER("integer"),
     LONG("long"),
     FLOAT("float"),
+    DOCUMENT("document"),
     DOUBLE("double"),
     BIG_DECIMAL("bigDecimal"),
     BIG_INTEGER("bigInteger"),
