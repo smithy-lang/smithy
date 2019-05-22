@@ -57,7 +57,7 @@ public final class Relationship {
                 shape,
                 relationshipType,
                 Objects.requireNonNull(neighborShape, "Neighbor shape must not be null").getId(),
-                shape
+                neighborShape
         );
     }
 

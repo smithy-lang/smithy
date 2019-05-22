@@ -29,6 +29,18 @@ import software.amazon.smithy.model.shapes.StringShape;
 
 public class RelationshipTest {
     @Test
+    public void hasShortCtor() {
+        Shape member = MemberShape.builder().id("ns.foo#List$member").target("ns.foo#String").build();
+        Shape target = StringShape.builder().id("ns.foo#String").build();
+        Relationship relationship = new Relationship(member, RelationshipType.MEMBER_TARGET, target);
+
+        assertSame(member, relationship.getShape());
+        assertSame(RelationshipType.MEMBER_TARGET, relationship.getRelationshipType());
+        assertSame(target.getId(), relationship.getNeighborShapeId());
+        assertSame(target, relationship.getNeighborShape().get());
+    }
+
+    @Test
     public void getters() {
         Shape member = MemberShape.builder().id("ns.foo#List$member").target("ns.foo#String").build();
         Shape target = StringShape.builder().id("ns.foo#String").build();
