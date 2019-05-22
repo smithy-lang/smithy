@@ -46,9 +46,9 @@ final class Parser {
     private static final List<String> MULTI_EDGE_NEXT_ARG_TOKEN = ListUtils.of(",", "]->");
     private static final List<String> EXPRESSION_TOKENS = ListUtils.of(
             ":", "[", ">", "-[",
-            "*", "blob", "boolean", "string", "byte", "short", "integer", "long", "float", "double", "bigDecimal",
-            "bigInteger", "timestamp", "list", "map", "set", "structure", "union", "service", "operation",
-            "resource", "member", "number", "simpleType", "collection");
+            "*", "blob", "boolean", "string", "byte", "short", "integer", "long", "float", "document", "double",
+            "bigInteger", "bigDecimal", "timestamp", "list", "map", "set", "structure", "union", "service",
+            "operation", "resource", "member", "number", "simpleType", "collection");
 
     private final String expression;
     private int position = 0;

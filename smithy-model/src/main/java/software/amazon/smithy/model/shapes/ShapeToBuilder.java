@@ -41,6 +41,11 @@ final class ShapeToBuilder implements ShapeVisitor<AbstractShapeBuilder> {
     }
 
     @Override
+    public AbstractShapeBuilder documentShape(DocumentShape shape) {
+        return shape.toBuilder();
+    }
+
+    @Override
     public AbstractShapeBuilder doubleShape(DoubleShape shape) {
         return shape.toBuilder();
     }

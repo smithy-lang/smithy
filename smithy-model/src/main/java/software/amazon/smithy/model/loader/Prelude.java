@@ -28,6 +28,7 @@ import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
@@ -62,6 +63,7 @@ public final class Prelude {
             BigIntegerShape.builder().id(NAMESPACE + "#BigInteger"),
             BigDecimalShape.builder().id(NAMESPACE + "#BigDecimal"),
             TimestampShape.builder().id(NAMESPACE + "#Timestamp"),
+            DocumentShape.builder().id(NAMESPACE + "#Document"),
             BooleanShape.builder().id(NAMESPACE + "#Boolean").addTrait(new BoxTrait()),
             BooleanShape.builder().id(NAMESPACE + "#PrimitiveBoolean"),
             ByteShape.builder().id(NAMESPACE + "#Byte").addTrait(new BoxTrait()),

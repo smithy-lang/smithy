@@ -33,6 +33,7 @@ import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.CollectionShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
@@ -147,6 +148,9 @@ class NodeModelLoader implements ModelLoader {
                 break;
             case "double":
                 loadSimpleShape(id, value, DoubleShape.builder(), visitor);
+                break;
+            case "document":
+                loadSimpleShape(id, value, DocumentShape.builder(), visitor);
                 break;
             case "bigDecimal":
                 loadSimpleShape(id, value, BigDecimalShape.builder(), visitor);

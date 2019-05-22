@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.CollectionShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
@@ -81,6 +82,12 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
     @Override
     public Schema getDefault(Shape shape) {
         throw new UnsupportedOperationException("Unable to convert " + shape + " to JSON Schema");
+    }
+
+    @Override
+    public Schema documentShape(DocumentShape shape) {
+        // A document type becomes just `{}`
+        return buildSchema(shape, createBuilder(shape, null));
     }
 
     @Override

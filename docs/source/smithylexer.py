@@ -36,7 +36,7 @@ class SmithyLexer(RegexLexer):
             (r'^(\$version)(:)(.+)', bygroups(Keyword.Declaration, Name.Decorator, Name.Class)),
             (r'^(namespace)(\s+' + identifier + r')\b', bygroups(Keyword.Declaration, Name.Class)),
             (r'^(byte|short|integer|long|float|'
-             r'double|bigInteger|bigDecimal|boolean|blob|string|timestamp)(\s+' + identifier + r')\b',
+             r'document|double|bigInteger|bigDecimal|boolean|blob|string|timestamp)(\s+' + identifier + r')\b',
              bygroups(Keyword.Declaration, Name.Class)),
             (r'^(apply|list|map|set|structure|union|resource|operation|service|trait)(\s+' + identifier + r')',
              bygroups(Keyword.Declaration, Name.Class)),

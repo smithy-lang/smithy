@@ -61,6 +61,7 @@ import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.CollectionShape;
+import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
@@ -113,6 +114,7 @@ final class SmithyModelLoader implements ModelLoader {
         STATEMENTS.put("integer", state -> parseSimpleShape(state, IntegerShape.builder()));
         STATEMENTS.put("long", state -> parseSimpleShape(state, LongShape.builder()));
         STATEMENTS.put("float", state -> parseSimpleShape(state, FloatShape.builder()));
+        STATEMENTS.put("document", state -> parseSimpleShape(state, DocumentShape.builder()));
         STATEMENTS.put("double", state -> parseSimpleShape(state, DoubleShape.builder()));
         STATEMENTS.put("bigInteger", state -> parseSimpleShape(state, BigIntegerShape.builder()));
         STATEMENTS.put("bigDecimal", state -> parseSimpleShape(state, BigDecimalShape.builder()));

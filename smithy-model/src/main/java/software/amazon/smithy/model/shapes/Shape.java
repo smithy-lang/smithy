@@ -240,6 +240,13 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     }
 
     /**
+     * @return Optionally returns the shape as a {@link DocumentShape}.
+     */
+    public Optional<DocumentShape> asDocumentShape() {
+        return Optional.empty();
+    }
+
+    /**
      * @return Optionally returns the shape as a {@link DoubleShape}.
      */
     public Optional<DoubleShape> asDoubleShape() {
@@ -387,6 +394,13 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     }
 
     /**
+     * @return Returns true if the shape is an {@link DocumentShape} shape.
+     */
+    public final boolean isDocumentShape() {
+        return getType() == ShapeType.DOCUMENT;
+    }
+
+    /**
      * @return Returns true if the shape is an {@link DoubleShape} shape.
      */
     public final boolean isDoubleShape() {
@@ -518,7 +532,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     public boolean equals(Object o) {
         if (o == this) {
             return true;
-        } else if (o == null || !(o instanceof Shape)) {
+        } else if (!(o instanceof Shape)) {
             return false;
         }
 
