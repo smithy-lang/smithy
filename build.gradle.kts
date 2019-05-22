@@ -26,8 +26,11 @@ plugins {
 // of band with the rest of the projects.
 allprojects {
     group = "software.amazon.smithy"
-    version = "0.4.1"
+    version = "0.5.0"
 }
+
+// The root project doesn't produce a JAR.
+tasks["jar"].enabled = false
 
 subprojects {
     val subproject = this
