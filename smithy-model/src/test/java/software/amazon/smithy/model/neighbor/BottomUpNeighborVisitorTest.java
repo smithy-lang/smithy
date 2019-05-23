@@ -64,10 +64,10 @@ public class BottomUpNeighborVisitorTest {
         NeighborProvider neighborVisitor = NeighborProvider.bottomUp(shapeIndex);
 
         assertThat(neighborVisitor.getNeighbors(shape), containsInAnyOrder(
-                new Relationship(listMemberShape, RelationshipType.MEMBER_TARGET, shape.getId(), shape),
-                new Relationship(mapKeyShape, RelationshipType.MEMBER_TARGET, shape.getId(), shape),
-                new Relationship(mapValueShape, RelationshipType.MEMBER_TARGET, shape.getId(), shape),
-                new Relationship(structureMemberShape, RelationshipType.MEMBER_TARGET, shape.getId(), shape)));
+                Relationship.create(listMemberShape, RelationshipType.MEMBER_TARGET, shape),
+                Relationship.create(mapKeyShape, RelationshipType.MEMBER_TARGET, shape),
+                Relationship.create(mapValueShape, RelationshipType.MEMBER_TARGET, shape),
+                Relationship.create(structureMemberShape, RelationshipType.MEMBER_TARGET, shape)));
     }
 
     @Test
@@ -111,17 +111,15 @@ public class BottomUpNeighborVisitorTest {
         NeighborProvider neighborVisitor = NeighborProvider.bottomUp(shapeIndex);
 
         assertThat(neighborVisitor.getNeighbors(listMemberShape), containsInAnyOrder(
-                new Relationship(listShape, RelationshipType.LIST_MEMBER, listMemberShape.getId(), listMemberShape)));
+                Relationship.create(listShape, RelationshipType.LIST_MEMBER, listMemberShape)));
         assertThat(neighborVisitor.getNeighbors(mapKeyShape), containsInAnyOrder(
-                new Relationship(mapShape, RelationshipType.MAP_KEY, mapKeyShape.getId(), mapKeyShape)));
+                Relationship.create(mapShape, RelationshipType.MAP_KEY, mapKeyShape)));
         assertThat(neighborVisitor.getNeighbors(mapValueShape), containsInAnyOrder(
-                new Relationship(mapShape, RelationshipType.MAP_VALUE, mapValueShape.getId(), mapValueShape)));
+                Relationship.create(mapShape, RelationshipType.MAP_VALUE, mapValueShape)));
         assertThat(neighborVisitor.getNeighbors(structureMemberShape), containsInAnyOrder(
-                new Relationship(structureShape, RelationshipType.STRUCTURE_MEMBER, structureMemberShape.getId(),
-                        structureMemberShape)));
+                Relationship.create(structureShape, RelationshipType.STRUCTURE_MEMBER, structureMemberShape)));
         assertThat(neighborVisitor.getNeighbors(tuMemberShape), containsInAnyOrder(
-                new Relationship(unionShape, RelationshipType.UNION_MEMBER, tuMemberShape.getId(),
-                        tuMemberShape)));
+                Relationship.create(unionShape, RelationshipType.UNION_MEMBER, tuMemberShape)));
     }
 
     @Test
@@ -145,14 +143,14 @@ public class BottomUpNeighborVisitorTest {
         NeighborProvider neighborVisitor = NeighborProvider.bottomUp(shapeIndex);
 
         assertThat(neighborVisitor.getNeighbors(input), containsInAnyOrder(
-                new Relationship(fooOperation, RelationshipType.INPUT, input.getId(), input),
-                new Relationship(barOperation, RelationshipType.OUTPUT, input.getId(), input)));
+                Relationship.create(fooOperation, RelationshipType.INPUT, input),
+                Relationship.create(barOperation, RelationshipType.OUTPUT, input)));
         assertThat(neighborVisitor.getNeighbors(output), containsInAnyOrder(
-                new Relationship(fooOperation, RelationshipType.OUTPUT, output.getId(), output),
-                new Relationship(barOperation, RelationshipType.INPUT, output.getId(), output)));
+                Relationship.create(fooOperation, RelationshipType.OUTPUT, output),
+                Relationship.create(barOperation, RelationshipType.INPUT, output)));
         assertThat(neighborVisitor.getNeighbors(error), containsInAnyOrder(
-                new Relationship(fooOperation, RelationshipType.ERROR, error.getId(), error),
-                new Relationship(barOperation, RelationshipType.ERROR, error.getId(), error)));
+                Relationship.create(fooOperation, RelationshipType.ERROR, error),
+                Relationship.create(barOperation, RelationshipType.ERROR, error)));
     }
 
     @Test
@@ -171,8 +169,8 @@ public class BottomUpNeighborVisitorTest {
         NeighborProvider neighborVisitor = NeighborProvider.bottomUp(shapeIndex);
 
         assertThat(neighborVisitor.getNeighbors(service), containsInAnyOrder(
-                new Relationship(resourceShape, RelationshipType.BOUND, service.getId(), service),
-                new Relationship(operationShape, RelationshipType.BOUND, service.getId(), service)
+                Relationship.create(resourceShape, RelationshipType.BOUND, service),
+                Relationship.create(operationShape, RelationshipType.BOUND, service)
         ));
     }
 
@@ -202,16 +200,16 @@ public class BottomUpNeighborVisitorTest {
         NeighborProvider neighborVisitor = NeighborProvider.bottomUp(shapeIndex);
 
         assertThat(neighborVisitor.getNeighbors(child2), containsInAnyOrder(
-                new Relationship(child1, RelationshipType.RESOURCE, child2.getId(), child2)));
+                Relationship.create(child1, RelationshipType.RESOURCE, child2)));
         assertThat(neighborVisitor.getNeighbors(child1), containsInAnyOrder(
-                new Relationship(resource, RelationshipType.RESOURCE, child1.getId(), child1),
-                new Relationship(otherService, RelationshipType.RESOURCE, child1.getId(), child1),
-                new Relationship(child2, RelationshipType.BOUND, child1.getId(), child1)));
+                Relationship.create(resource, RelationshipType.RESOURCE, child1),
+                Relationship.create(otherService, RelationshipType.RESOURCE, child1),
+                Relationship.create(child2, RelationshipType.BOUND, child1)));
         assertThat(neighborVisitor.getNeighbors(resource), containsInAnyOrder(
-                new Relationship(parent, RelationshipType.RESOURCE, resource.getId(), resource),
-                new Relationship(child1, RelationshipType.BOUND, resource.getId(), resource)));
+                Relationship.create(parent, RelationshipType.RESOURCE, resource),
+                Relationship.create(child1, RelationshipType.BOUND, resource)));
         assertThat(neighborVisitor.getNeighbors(child2), containsInAnyOrder(
-                new Relationship(child1, RelationshipType.RESOURCE, child2.getId(), child2)));
+                Relationship.create(child1, RelationshipType.RESOURCE, child2)));
     }
 
     @Test
@@ -261,23 +259,23 @@ public class BottomUpNeighborVisitorTest {
         NeighborProvider neighborVisitor = NeighborProvider.bottomUp(shapeIndex);
 
         assertThat(neighborVisitor.getNeighbors(namedOperation), containsInAnyOrder(
-                new Relationship(resource, RelationshipType.OPERATION, namedOperation.getId(), namedOperation),
-                new Relationship(otherService, RelationshipType.OPERATION, namedOperation.getId(), namedOperation)));
+                Relationship.create(resource, RelationshipType.OPERATION, namedOperation),
+                Relationship.create(otherService, RelationshipType.OPERATION, namedOperation)));
         assertThat(neighborVisitor.getNeighbors(createOperation), containsInAnyOrder(
-                new Relationship(resource, RelationshipType.CREATE, createOperation.getId(), createOperation),
-                new Relationship(resource, RelationshipType.OPERATION, createOperation.getId(), createOperation)));
+                Relationship.create(resource, RelationshipType.CREATE, createOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, createOperation)));
         assertThat(neighborVisitor.getNeighbors(getOperation), containsInAnyOrder(
-                new Relationship(resource, RelationshipType.READ, getOperation.getId(), getOperation),
-                new Relationship(resource, RelationshipType.OPERATION, getOperation.getId(), getOperation)));
+                Relationship.create(resource, RelationshipType.READ, getOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, getOperation)));
         assertThat(neighborVisitor.getNeighbors(updateOperation), containsInAnyOrder(
-                new Relationship(resource, RelationshipType.UPDATE, updateOperation.getId(), updateOperation),
-                new Relationship(resource, RelationshipType.OPERATION, updateOperation.getId(), updateOperation)));
+                Relationship.create(resource, RelationshipType.UPDATE, updateOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, updateOperation)));
         assertThat(neighborVisitor.getNeighbors(deleteOperation), containsInAnyOrder(
-                new Relationship(resource, RelationshipType.DELETE, deleteOperation.getId(), deleteOperation),
-                new Relationship(resource, RelationshipType.OPERATION, deleteOperation.getId(), deleteOperation)));
+                Relationship.create(resource, RelationshipType.DELETE, deleteOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, deleteOperation)));
         assertThat(neighborVisitor.getNeighbors(listOperation), containsInAnyOrder(
-                new Relationship(resource, RelationshipType.LIST, listOperation.getId(), listOperation),
-                new Relationship(resource, RelationshipType.OPERATION, listOperation.getId(), listOperation)));
+                Relationship.create(resource, RelationshipType.LIST, listOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, listOperation)));
     }
 
     @Test

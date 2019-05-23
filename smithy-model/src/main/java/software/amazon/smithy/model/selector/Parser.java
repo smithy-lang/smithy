@@ -16,10 +16,13 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -33,9 +36,7 @@ import software.amazon.smithy.utils.SetUtils;
  */
 final class Parser {
     private static final Set<Character> BREAK_TOKENS = SetUtils.of(',', ']', ')');
-    private static final List<String> REL_TYPES = ListUtils.of(
-            "identifier", "create", "read", "update", "delete", "list", "member", "input", "output", "error",
-            "operation", "resource", "bound");
+    private static final Set<String> REL_TYPES = new HashSet<>();
     private static final List<String> FUNCTIONS = ListUtils.of("test", "each", "of", "not");
     private static final List<String> ATTRIBUTES = ListUtils.of(
             "trait|", "id|namespace", "id|name", "id|member", "id", "service|version");
@@ -44,11 +45,20 @@ final class Parser {
     private static final List<String> START_FUNCTION = ListUtils.of("(");
     private static final List<String> FUNCTION_ARG_NEXT_TOKEN = ListUtils.of(")", ",");
     private static final List<String> MULTI_EDGE_NEXT_ARG_TOKEN = ListUtils.of(",", "]->");
-    private static final List<String> EXPRESSION_TOKENS = ListUtils.of(
-            ":", "[", ">", "-[",
-            "*", "blob", "boolean", "string", "byte", "short", "integer", "long", "float", "document", "double",
-            "bigInteger", "bigDecimal", "timestamp", "list", "map", "set", "structure", "union", "service",
-            "operation", "resource", "member", "number", "simpleType", "collection");
+    private static final List<String> EXPRESSION_TOKENS = new ArrayList<>(Arrays.asList(
+            ":", "[", ">", "-[", "*", "number", "simpleType", "collection"));
+
+    static {
+        // Adds selector relationship labels.
+        for (RelationshipType rel : RelationshipType.values()) {
+            rel.getSelectorLabel().ifPresent(REL_TYPES::add);
+        }
+
+        // Adds all shape types as possible tokens.
+        for (ShapeType type : ShapeType.values()) {
+            EXPRESSION_TOKENS.add(type.toString());
+        }
+    }
 
     private final String expression;
     private int position = 0;

@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.neighbor;
 
+import java.util.Optional;
+import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -32,7 +34,7 @@ public enum RelationshipType {
      * A resource relationship exists between a service or resource and the
      * resources bound through the "resources" property.
      */
-    RESOURCE,
+    RESOURCE("resource", RelationshipDirection.DIRECTED),
 
     /**
      * An operation relationship exists between a service and the operations
@@ -40,7 +42,7 @@ public enum RelationshipType {
      * resource and the operations bound to the resource in only the
      * "operations" property.
      */
-    OPERATION,
+    OPERATION("operation", RelationshipDirection.DIRECTED),
 
     /**
      * A BINDING relationship exists between the following shapes:
@@ -55,115 +57,152 @@ public enum RelationshipType {
      * The subject of the relationship is that shape that was bound, and the
      * target is the shape that declared the binding.
      */
-    BOUND,
+    BOUND("bound", RelationshipDirection.INVERTED),
 
     /**
      * Relationships that exist between a resource and the create lifecycle
      * operation.
      */
-    CREATE,
+    CREATE("create", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist between a resource and the get lifecycle
      * operation.
      */
-    READ,
+    READ("read", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist between a resource and the update lifecycle
      * operation.
      */
-    UPDATE,
+    UPDATE("update", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist between a resource and the delete lifecycle
      * operation.
      */
-    DELETE,
+    DELETE("delete", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist between a resource and the list lifecycle
      * operation.
      */
-    LIST,
+    LIST("list", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist between a {@link ResourceShape member} and
      * the shapes that are referenced by its identifiers property.
      */
-    IDENTIFIER,
+    IDENTIFIER("identifier", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships exist on {@link MemberShape member} shapes. The subject
      * of the relationship is the member shape, and the neighbor is the
      * aggregate shape that contains the member.
      */
-    MEMBER_CONTAINER,
+    MEMBER_CONTAINER(null, RelationshipDirection.INVERTED),
 
     /**
      * Relationships exist on {@link MemberShape member} shapes. The subject
      * of the relationship is the member shape, and the neighbor is the shape
      * that the member targets.
      */
-    MEMBER_TARGET,
+    MEMBER_TARGET(null, RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist on {@link OperationShape operation} shapes.
      * They reference {@link StructureShape structure} shapes that are used
      * as input.
      */
-    INPUT,
+    INPUT("input", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist on {@link OperationShape operation} shapes.
      * They reference {@link StructureShape structure} shapes that are used
      * as output.
      */
-    OUTPUT,
+    OUTPUT("output", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist on {@link OperationShape operation} shapes.
      * They reference {@link StructureShape structure} shapes that can be
      * returned from the operation.
      */
-    ERROR,
+    ERROR("error", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist on {@link ListShape list} shapes to their
      * {@link MemberShape member shapes}.
      */
-    LIST_MEMBER,
+    LIST_MEMBER("member", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist on {@link SetShape set} shapes to their
      * {@link MemberShape member shapes}.
      */
-    SET_MEMBER,
+    SET_MEMBER("member", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist on {@link MapShape map} shapes. They reference
      * {@link MemberShape member} shapes that define the key type for the map.
      */
-    MAP_KEY,
+    MAP_KEY("member", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist on {@link MapShape map} shapes. They
      * reference {@link MemberShape member} shapes that define the value type
      * for the map.
      */
-    MAP_VALUE,
+    MAP_VALUE("member", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist on {@link StructureShape structure} shapes.
      * They reference {@link MemberShape member} shapes that define the
      * attributes of a structure.
      */
-    STRUCTURE_MEMBER,
+    STRUCTURE_MEMBER("member", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist on {@link UnionShape union}
      * shapes. They reference the {@link MemberShape member} shapes that define
      * the members of the union.
      */
-    UNION_MEMBER;
+    UNION_MEMBER("member", RelationshipDirection.DIRECTED);
+
+    private String selectorLabel;
+    private RelationshipDirection direction;
+
+    RelationshipType(String selectorLabel, RelationshipDirection direction) {
+        this.selectorLabel = selectorLabel;
+        this.direction = direction;
+    }
+
+    /**
+     * Gets the token that is used in {@link Selector} expressions when
+     * referring to the relationship or an empty {@code Optional} if this
+     * relationship is not used directly in a selector.
+     *
+     * @return Returns the optionally present selector token for this relationship.
+     */
+    public Optional<String> getSelectorLabel() {
+        return Optional.ofNullable(selectorLabel);
+    }
+
+    /**
+     * Gets the direction of the relationship.
+     *
+     * <p>A {@link RelationshipDirection#DIRECTED} direction is formed from a shape
+     * that defines a reference to another shape (for example, when a resource
+     * defines operations or resources it contains).
+     *
+     * <p>A {@link RelationshipDirection#INVERTED} relationship is a relationship
+     * from a shape to a shape that defines a relationship to it. The target
+     * of such a relationship doesn't define the relationship, but is the
+     * target of the relationship.
+     *
+     * @return Returns the direction of the relationship.
+     */
+    public RelationshipDirection getDirection() {
+        return direction;
+    }
 }
