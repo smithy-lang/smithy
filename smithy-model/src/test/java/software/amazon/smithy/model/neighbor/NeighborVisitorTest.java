@@ -98,8 +98,7 @@ public class NeighborVisitorTest {
         MemberShape memberTarget = list.getMember();
         List<Relationship> relationships = list.accept(neighborVisitor);
 
-        assertThat(relationships, contains(
-                new Relationship(list, RelationshipType.LIST_MEMBER, memberTarget.getId(), memberTarget)));
+        assertThat(relationships, contains(Relationship.create(list, RelationshipType.LIST_MEMBER, memberTarget)));
     }
 
     @Test
@@ -124,8 +123,8 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = map.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
-                new Relationship(map, RelationshipType.MAP_KEY, keyTarget.getId(), keyTarget),
-                new Relationship(map, RelationshipType.MAP_VALUE, valueTarget.getId(), valueTarget)));
+                Relationship.create(map, RelationshipType.MAP_KEY, keyTarget),
+                Relationship.create(map, RelationshipType.MAP_VALUE, valueTarget)));
     }
 
     @Test
@@ -156,8 +155,8 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = struct.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
-                new Relationship(struct, RelationshipType.STRUCTURE_MEMBER, member1Target.getId(), member1Target),
-                new Relationship(struct, RelationshipType.STRUCTURE_MEMBER, member2Target.getId(), member2Target)));
+                Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member1Target),
+                Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member2Target)));
     }
 
     @Test
@@ -188,8 +187,8 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = union.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
-                new Relationship(union, RelationshipType.UNION_MEMBER, v1Target.getId(), v1Target),
-                new Relationship(union, RelationshipType.UNION_MEMBER, v2Target.getId(), v2Target)));
+                Relationship.create(union, RelationshipType.UNION_MEMBER, v1Target),
+                Relationship.create(union, RelationshipType.UNION_MEMBER, v2Target)));
     }
 
     @Test
@@ -209,10 +208,10 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = service.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
-                new Relationship(service, RelationshipType.RESOURCE, resourceShape.getId(), resourceShape),
-                new Relationship(service, RelationshipType.OPERATION, operationShape.getId(), operationShape),
-                new Relationship(resourceShape, RelationshipType.BOUND, service.getId(), service),
-                new Relationship(operationShape, RelationshipType.BOUND, service.getId(), service)));
+                Relationship.create(service, RelationshipType.RESOURCE, resourceShape),
+                Relationship.create(service, RelationshipType.OPERATION, operationShape),
+                Relationship.create(resourceShape, RelationshipType.BOUND, service),
+                Relationship.create(operationShape, RelationshipType.BOUND, service)));
     }
 
     @Test
@@ -262,31 +261,31 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = resource.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
-                new Relationship(parent, RelationshipType.RESOURCE, resource.getId(), resource),
+                Relationship.create(parent, RelationshipType.RESOURCE, resource),
 
-                new Relationship(resource, RelationshipType.BOUND, parent.getId(), parent),
-                new Relationship(resource, RelationshipType.IDENTIFIER, identifier.getId(), identifier),
-                new Relationship(resource, RelationshipType.CREATE, createOperation.getId(), createOperation),
-                new Relationship(resource, RelationshipType.READ, getOperation.getId(), getOperation),
-                new Relationship(resource, RelationshipType.UPDATE, updateOperation.getId(), updateOperation),
-                new Relationship(resource, RelationshipType.DELETE, deleteOperation.getId(), deleteOperation),
-                new Relationship(resource, RelationshipType.LIST, listOperation.getId(), listOperation),
-                new Relationship(resource, RelationshipType.OPERATION, createOperation.getId(), createOperation),
-                new Relationship(resource, RelationshipType.OPERATION, getOperation.getId(), getOperation),
-                new Relationship(resource, RelationshipType.OPERATION, updateOperation.getId(), updateOperation),
-                new Relationship(resource, RelationshipType.OPERATION, deleteOperation.getId(), deleteOperation),
-                new Relationship(resource, RelationshipType.OPERATION, listOperation.getId(), listOperation),
-                new Relationship(resource, RelationshipType.OPERATION, namedOperation.getId(), namedOperation),
-                new Relationship(resource, RelationshipType.RESOURCE, child1.getId(), child1),
+                Relationship.create(resource, RelationshipType.BOUND, parent),
+                Relationship.create(resource, RelationshipType.IDENTIFIER, identifier),
+                Relationship.create(resource, RelationshipType.CREATE, createOperation),
+                Relationship.create(resource, RelationshipType.READ, getOperation),
+                Relationship.create(resource, RelationshipType.UPDATE, updateOperation),
+                Relationship.create(resource, RelationshipType.DELETE, deleteOperation),
+                Relationship.create(resource, RelationshipType.LIST, listOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, createOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, getOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, updateOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, deleteOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, listOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, namedOperation),
+                Relationship.create(resource, RelationshipType.RESOURCE, child1),
 
-                new Relationship(namedOperation, RelationshipType.BOUND, resource.getId(), resource),
-                new Relationship(createOperation, RelationshipType.BOUND, resource.getId(), resource),
-                new Relationship(getOperation, RelationshipType.BOUND, resource.getId(), resource),
-                new Relationship(updateOperation, RelationshipType.BOUND, resource.getId(), resource),
-                new Relationship(deleteOperation, RelationshipType.BOUND, resource.getId(), resource),
-                new Relationship(listOperation, RelationshipType.BOUND, resource.getId(), resource),
+                Relationship.create(namedOperation, RelationshipType.BOUND, resource),
+                Relationship.create(createOperation, RelationshipType.BOUND, resource),
+                Relationship.create(getOperation, RelationshipType.BOUND, resource),
+                Relationship.create(updateOperation, RelationshipType.BOUND, resource),
+                Relationship.create(deleteOperation, RelationshipType.BOUND, resource),
+                Relationship.create(listOperation, RelationshipType.BOUND, resource),
 
-                new Relationship(child1, RelationshipType.BOUND, resource.getId(), resource)
+                Relationship.create(child1, RelationshipType.BOUND, resource)
         ));
     }
 
@@ -306,9 +305,9 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = method.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
-                new Relationship(method, RelationshipType.INPUT, input.getId(), input),
-                new Relationship(method, RelationshipType.OUTPUT, output.getId(), output),
-                new Relationship(method, RelationshipType.ERROR, error.getId(), error)));
+                Relationship.create(method, RelationshipType.INPUT, input),
+                Relationship.create(method, RelationshipType.OUTPUT, output),
+                Relationship.create(method, RelationshipType.ERROR, error)));
     }
 
     @Test
@@ -333,8 +332,8 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = target.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
-                new Relationship(target, RelationshipType.MEMBER_CONTAINER, list.getId(), list),
-                new Relationship(target, RelationshipType.MEMBER_TARGET, string.getId(), string)));
+                Relationship.create(target, RelationshipType.MEMBER_CONTAINER, list),
+                Relationship.create(target, RelationshipType.MEMBER_TARGET, string)));
     }
 
     @Test
@@ -350,7 +349,7 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = target.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
-                new Relationship(target, RelationshipType.MEMBER_CONTAINER, ShapeId.from("ns.foo#List"), null),
-                new Relationship(target, RelationshipType.MEMBER_TARGET, ShapeId.from("ns.foo#String"), null)));
+                Relationship.createInvalid(target, RelationshipType.MEMBER_CONTAINER, ShapeId.from("ns.foo#List")),
+                Relationship.createInvalid(target, RelationshipType.MEMBER_TARGET, ShapeId.from("ns.foo#String"))));
     }
 }

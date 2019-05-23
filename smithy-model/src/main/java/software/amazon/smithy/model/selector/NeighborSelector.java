@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,29 +51,14 @@ final class NeighborSelector implements Selector {
 
     private Optional<Shape> createNeighbor(Relationship rel, Shape target) {
         if (rel.getRelationshipType() != RelationshipType.MEMBER_CONTAINER
-                && (relTypes.isEmpty() || relTypes.contains(getRelType(rel.getRelationshipType())))) {
+                && (relTypes.isEmpty() || relTypes.contains(getRelType(rel)))) {
             return Optional.of(target);
         }
 
         return Optional.empty();
     }
 
-    /**
-     * Gets the name that appears in a selector for a relationship type.
-     *
-     * @param rel Relationship type to convert to a selector relationship.
-     * @return Returns the converted name.
-     */
-    static String getRelType(RelationshipType rel) {
-        switch (rel) {
-            case STRUCTURE_MEMBER:
-            case UNION_MEMBER:
-            case LIST_MEMBER:
-            case MAP_KEY:
-            case MAP_VALUE:
-                return "member";
-            default:
-                return rel.toString().toLowerCase(Locale.ENGLISH);
-        }
+    private static String getRelType(Relationship rel) {
+        return rel.getSelectorLabel().orElse("");
     }
 }

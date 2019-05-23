@@ -63,7 +63,7 @@ public enum ShapeType {
     public static Optional<ShapeType> fromString(String text) {
         for (ShapeType e : values()) {
             if (e.stringValue.equals(text)) {
-                return Optional.ofNullable(e);
+                return Optional.of(e);
             }
         }
 

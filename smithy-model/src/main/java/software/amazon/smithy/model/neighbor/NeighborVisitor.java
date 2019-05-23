@@ -143,22 +143,24 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     @Override
     public List<Relationship> structureShape(StructureShape shape) {
         return shape.getAllMembers().values().stream()
-                .map(member -> new Relationship(shape, RelationshipType.STRUCTURE_MEMBER, member.getId(), member))
+                .map(member -> Relationship.create(shape, RelationshipType.STRUCTURE_MEMBER, member))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Relationship> unionShape(UnionShape shape) {
         return shape.getAllMembers().values().stream()
-                .map(member -> new Relationship(shape, RelationshipType.UNION_MEMBER, member.getId(), member))
+                .map(member -> Relationship.create(shape, RelationshipType.UNION_MEMBER, member))
                 .collect(Collectors.toList());
     }
 
     private Relationship relationship(Shape shape, RelationshipType type, MemberShape memberShape) {
-        return new Relationship(shape, type, memberShape.getId(), memberShape);
+        return Relationship.create(shape, type, memberShape);
     }
 
     private Relationship relationship(Shape shape, RelationshipType type, ShapeId neighborShapeId) {
-        return new Relationship(shape, type, neighborShapeId, shapeIndex.getShape(neighborShapeId).orElse(null));
+        return shapeIndex.getShape(neighborShapeId)
+                .map(target -> Relationship.create(shape, type, target))
+                .orElseGet(() -> Relationship.createInvalid(shape, type, neighborShapeId));
     }
 }

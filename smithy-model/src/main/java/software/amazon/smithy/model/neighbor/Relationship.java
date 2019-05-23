@@ -18,6 +18,7 @@ package software.amazon.smithy.model.neighbor;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
+import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -34,50 +35,7 @@ public final class Relationship {
     private final ShapeId neighborShapeId;
     private final Shape neighborShape;
 
-    /**
-     * Constructs a shape relationship where the neighbor is not present.
-     *
-     * @param shape The shape the relationship originates from.
-     * @param relationshipType The relationshipType of relationship.
-     * @param neighborShapeId The id of the missing shape the relationship targets.
-     */
-    public Relationship(Shape shape, RelationshipType relationshipType, ShapeId neighborShapeId) {
-        this(shape, relationshipType, neighborShapeId, null);
-    }
-
-    /**
-     * Constructs a shape relationship where the neighbor is present.
-     *
-     * @param shape The shape the relationship originates from.
-     * @param relationshipType The relationshipType of relationship.
-     * @param neighborShape The shape the relationship targets.
-     */
-    public Relationship(Shape shape, RelationshipType relationshipType, Shape neighborShape) {
-        this(
-                shape,
-                relationshipType,
-                Objects.requireNonNull(neighborShape, "Neighbor shape must not be null").getId(),
-                neighborShape
-        );
-    }
-
-    /**
-     * Constructs a shape relationship.
-     *
-     * <p>Describes a relationship between two shapes. Relationships are
-     * directional. The starting shape references the neighbor shape. The
-     * relationshipType of relationship is given as a {@link RelationshipType}.
-     * If when building this relationship, the neighbor shape is not present
-     * in the shape index, then the {@code neighborShape} argument can be
-     * null. When present, the {@code neighborShapeId} MUST match the ID of
-     * the given {@code neighborShape}.
-     *
-     * @param shape The shape the relationship originates from.
-     * @param relationshipType The relationshipType of relationship.
-     * @param neighborShapeId The id of the shape the relationship targets.
-     * @param neighborShape The nullable member shape.
-     */
-    public Relationship(
+    private Relationship(
             Shape shape,
             RelationshipType relationshipType,
             ShapeId neighborShapeId,
@@ -87,10 +45,30 @@ public final class Relationship {
         this.relationshipType = Objects.requireNonNull(relationshipType);
         this.neighborShapeId = Objects.requireNonNull(neighborShapeId);
         this.neighborShape = neighborShape;
+    }
 
-        if (neighborShape != null && !neighborShapeId.equals(neighborShape.getId())) {
-            throw new IllegalArgumentException("neighborShapeId must be the same as neighborShape#getId()");
-        }
+    /**
+     * Constructs a valid shape relationship where the neighbor is present.
+     *
+     * @param shape The shape the relationship originates from.
+     * @param relationshipType The relationshipType of relationship.
+     * @param neighborShape The shape the relationship targets.
+     * @return Returns the created Relationship.
+     */
+    public static Relationship create(Shape shape, RelationshipType relationshipType, Shape neighborShape) {
+        return new Relationship(shape, relationshipType, neighborShape.getId(), neighborShape);
+    }
+
+    /**
+     * Constructs an invalid shape relationship where the neighbor is not present.
+     *
+     * @param shape The shape the relationship originates from.
+     * @param relationshipType The relationshipType of relationship.
+     * @param neighborShapeId The shape the relationship targets.
+     * @return Returns the created Relationship.
+     */
+    public static Relationship createInvalid(Shape shape, RelationshipType relationshipType, ShapeId neighborShapeId) {
+        return new Relationship(shape, relationshipType, neighborShapeId, null);
     }
 
     /**
@@ -142,6 +120,35 @@ public final class Relationship {
         }
 
         return neighborShape;
+    }
+
+    /**
+     * Gets the token that is used in {@link Selector} expressions when
+     * referring to the relationship or an empty {@code Optional} if this
+     * relationship is not used in a selector.
+     *
+     * @return Returns the optionally present selector token for this relationship.
+     */
+    public Optional<String> getSelectorLabel() {
+        return relationshipType.getSelectorLabel();
+    }
+
+    /**
+     * Gets the direction of the relationship.
+     *
+     * <p>A {@link RelationshipDirection#DIRECTED} direction is formed from a shape
+     * that defines a reference to another shape (for example, when a resource
+     * defines operations or resources it contains).
+     *
+     * <p>A {@link RelationshipDirection#INVERTED} relationship is a relationship
+     * from a shape to a shape that defines a relationship to it. The target
+     * of such a relationship doesn't define the relationship, but is the
+     * target of the relationship.
+     *
+     * @return Returns the direction of the relationship.
+     */
+    public RelationshipDirection getDirection() {
+        return relationshipType.getDirection();
     }
 
     @Override

@@ -29,6 +29,7 @@ import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
+import software.amazon.smithy.model.neighbor.RelationshipDirection;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -40,8 +41,8 @@ import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
- * Finds the possible downward directed relationship paths from a starting
- * shape to shapes connected to the starting shape that match a selector.
+ * Finds the possible directed relationship paths from a starting shape to
+ * shapes connected to the starting shape that match a selector.
  *
  * <p>For example, the {@code PathFinder} can answer the question of
  * "Where are all of the shapes in the closure of the input of an operation
@@ -52,10 +53,11 @@ import software.amazon.smithy.utils.ListUtils;
  * List<PathFinder.Path> results = pathFinder.search(myOperationInput, "[trait|sensitive]");
  * }</pre>
  *
- * <p>{@code PathFinder} is downward directed, meaning it only traverses
- * relationships from containers to containees. In other words, {@code PathFinder}
- * will not traverse relationships from a resource to the resource's parent,
- * from a member to the shape that contains it, etc.
+ * <p>{@code PathFinder} is directed, meaning it only traverses relationships
+ * from shapes that define a relationship to shapes that it targets. In other
+ * words, {@code PathFinder} will not traverse relationships from a resource to
+ * the resource's parent or from a member to the shape that contains it
+ * because those are inverted relationships.
  */
 public final class PathFinder {
     private static final Logger LOGGER = Logger.getLogger(PathFinder.class.getName());
@@ -183,9 +185,9 @@ public final class PathFinder {
         }
 
         List<Relationship> relationships = new ArrayList<>();
-        relationships.add(new Relationship(operation, rel, struct.getId(), struct));
-        relationships.add(new Relationship(struct, RelationshipType.STRUCTURE_MEMBER, member.getId(), member));
-        relationships.add(new Relationship(member, RelationshipType.MEMBER_TARGET, member.getTarget(), target));
+        relationships.add(Relationship.create(operation, rel, struct));
+        relationships.add(Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member));
+        relationships.add(Relationship.create(member, RelationshipType.MEMBER_TARGET, target));
         return Optional.of(new Path(relationships));
     }
 
@@ -251,7 +253,10 @@ public final class PathFinder {
                 if (rel.getRelationshipType() == RelationshipType.MEMBER_TARGET) {
                     result.append(" > ");
                 } else {
-                    result.append(" -[").append(NeighborSelector.getRelType(rel.getRelationshipType())).append("]-> ");
+                    result.append(" -[")
+                            .append(rel.getRelationshipType().getSelectorLabel()
+                                            .orElseGet(() -> rel.getRelationshipType().toString()))
+                            .append("]-> ");
                 }
                 result.append("[id|").append(rel.getNeighborShapeId()).append("]");
             }
@@ -301,16 +306,12 @@ public final class PathFinder {
             newVisited.add(current.getId());
 
             for (Relationship relationship : provider.getNeighbors(current)) {
-                switch (relationship.getRelationshipType()) {
-                    case MEMBER_CONTAINER:
-                    case BOUND:
-                        // Don't traverse up through containers.
-                        continue;
-                    default:
-                        List<Relationship> newPath = new ArrayList<>(path.size() + 1);
-                        newPath.add(relationship);
-                        newPath.addAll(path);
-                        traverseUp(relationship.getShape(), newPath, newVisited);
+                // Don't traverse up through containers.
+                if (relationship.getDirection() == RelationshipDirection.DIRECTED) {
+                    List<Relationship> newPath = new ArrayList<>(path.size() + 1);
+                    newPath.add(relationship);
+                    newPath.addAll(path);
+                    traverseUp(relationship.getShape(), newPath, newVisited);
                 }
             }
         }
