@@ -46,6 +46,32 @@ public class SourcesPluginTest {
     }
 
     @Test
+    public void copiesModelFromJarWithSourceProjection() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("sources/jar-import.jar").getPath())
+                .addImport(getClass().getResource("notsources/d.smithy"))
+                .assemble()
+                .unwrap();
+        MockManifest manifest = new MockManifest();
+        PluginContext context = PluginContext.builder()
+                .fileManifest(manifest)
+                .model(model)
+                .originalModel(model)
+                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/jar-import.jar").getPath())))
+                .build();
+        new SourcesPlugin().execute(context);
+        String manifestString = manifest.getFileString("manifest").get();
+
+        assertThat(manifestString, containsString("a.smithy\n"));
+        assertThat(manifestString, containsString("b/b.smithy\n"));
+        assertThat(manifestString, containsString("b/c/c.json\n"));
+        assertThat(manifestString, not(containsString("d.json")));
+        assertThat(manifest.getFileString("a.smithy").get(), containsString("string A"));
+        assertThat(manifest.getFileString("b/b.smithy").get(), containsString("string B"));
+        assertThat(manifest.getFileString("b/c/c.json").get(), containsString("\"C\""));
+    }
+
+    @Test
     public void copiesOnlyFilesFromSourcesForProjection() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("sources/a.smithy").getPath())

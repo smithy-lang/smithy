@@ -24,15 +24,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.Shape;
@@ -68,7 +67,7 @@ public final class ModelAssembler {
     private TraitFactory traitFactory;
     private ValidatorFactory validatorFactory;
     private ModelLoader modelLoader = DEFAULT_LOADER;
-    private final Map<String, String> stringModels = new LinkedHashMap<>();
+    private final Map<String, Supplier<String>> stringModels = new HashMap<>();
     private final List<Validator> validators = new ArrayList<>();
     private final List<Suppression> suppressions = new ArrayList<>();
     private final List<Node> documentNodes = new ArrayList<>();
@@ -202,17 +201,15 @@ public final class ModelAssembler {
     /**
      * Adds a string containing an unparsed model to the assembler.
      *
-     * <p>The provided {@link SourceLocation} should end with one of the
-     * supported filename suffixes of the {@link ModelLoader} of the
-     * assemebler or the contents of the provided model need to be detected
-     * by the associated ModelLoader.
+     * <p>The provided {@code sourceLocation} string must end with
+     * ".json" or ".smithy" to be parsed correctly.
      *
      * @param sourceLocation Source location to assume for the unparsed content.
      * @param model Unparsed model source.
      * @return Returns the assembler.
      */
     public ModelAssembler addUnparsedModel(String sourceLocation, String model) {
-        stringModels.put(sourceLocation, model);
+        stringModels.put(sourceLocation, () -> model);
         return this;
     }
 
@@ -261,8 +258,7 @@ public final class ModelAssembler {
                 throw new ModelImportException("Error loading the contents of " + importPath, e);
             }
         } else if (Files.isRegularFile(importPath)) {
-            String contents = IoUtils.readUtf8File(importPath.toString());
-            stringModels.put(importPath.toString(), contents);
+            stringModels.put(importPath.toString(), () -> IoUtils.readUtf8File(importPath.toString()));
         } else {
             throw new ModelImportException("Cannot find import file: " + importPath);
         }
@@ -272,6 +268,9 @@ public final class ModelAssembler {
 
     /**
      * Adds an import to the assembler from a URL.
+     *
+     * <p>The provided URL can point to a .json model, .smithy model, or
+     * a .jar file that contains Smithy models.
      *
      * <pre>
      * {@code
@@ -287,13 +286,15 @@ public final class ModelAssembler {
      */
     public ModelAssembler addImport(URL url) {
         Objects.requireNonNull(url, "The provided url to ModelAssembler#addImport was null");
-        try (InputStream inputStream = url.openStream()) {
-            String contents = IoUtils.toUtf8String(inputStream);
-            stringModels.put(url.toExternalForm(), contents);
-            return this;
-        } catch (IOException | UncheckedIOException e) {
-            throw new ModelImportException("Unable to open Smithy model import URL: " + url.toExternalForm(), e);
-        }
+        stringModels.put(url.toExternalForm(), () -> {
+            try (InputStream inputStream = url.openStream()) {
+                return IoUtils.toUtf8String(inputStream);
+            } catch (IOException | UncheckedIOException e) {
+                throw new ModelImportException("Unable to open Smithy model import URL: " + url.toExternalForm(), e);
+            }
+        });
+
+        return this;
     }
 
     /**
@@ -465,13 +466,13 @@ public final class ModelAssembler {
         }
 
         if (!documentNodes.isEmpty()) {
-            JsonModelLoader loader = new JsonModelLoader();
+            NodeModelLoader loader = new NodeModelLoader();
             for (Node node : documentNodes) {
                 loader.load(visitor, node);
             }
         }
 
-        for (Map.Entry<String, String> modelEntry : stringModels.entrySet()) {
+        for (Map.Entry<String, Supplier<String>> modelEntry : stringModels.entrySet()) {
             if (!modelLoader.load(modelEntry.getKey(), modelEntry.getValue(), visitor)) {
                 LOGGER.warning(() -> "No ModelLoader was able to load " + modelEntry.getKey());
             }

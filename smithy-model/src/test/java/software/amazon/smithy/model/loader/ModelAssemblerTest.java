@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -359,5 +360,20 @@ public class ModelAssemblerTest {
 
         assertThat(result.getValidationEvents(), not(empty()));
         assertFalse(result.isBroken());
+    }
+
+    @Test
+    public void canLoadModelsFromJar() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("jar-import.jar"))
+                .assemble()
+                .unwrap();
+
+        for (String id : ListUtils.of("foo.baz#A", "foo.baz#B", "foo.baz#C")) {
+            ShapeId shapeId = ShapeId.from(id);
+            assertTrue(model.getShapeIndex().getShape(shapeId).isPresent());
+            assertThat(model.getShapeIndex().getShape(shapeId).get().getSourceLocation().getFilename(),
+                       startsWith("jar:file:"));
+        }
     }
 }

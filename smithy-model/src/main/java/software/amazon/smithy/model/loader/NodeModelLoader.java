@@ -15,13 +15,14 @@
 
 package software.amazon.smithy.model.loader;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.DefaultNodeFactory;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeFactory;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -61,7 +62,7 @@ import software.amazon.smithy.utils.SetUtils;
 /**
  * Adds shapes and definitions from a JSON file to a loader visitor.
  */
-class NodeModelLoader implements ModelLoader {
+final class NodeModelLoader implements ModelLoader {
     private static final String SMITHY = "smithy";
     private static final String METADATA = "metadata";
     private static final String SHAPES = "shapes";
@@ -79,37 +80,36 @@ class NodeModelLoader implements ModelLoader {
 
     private final NodeFactory nodeFactory;
 
+    NodeModelLoader() {
+        this(new DefaultNodeFactory());
+    }
+
     NodeModelLoader(NodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
     }
 
     @Override
-    public final boolean load(String filename, String contents, LoaderVisitor visitor) {
-        try {
-            if (test(filename, contents)) {
-                Node node = nodeFactory.createNode(filename, contents);
-                load(visitor, node);
-                return true;
-            }
-            return false;
-        } catch (IOException e) {
-            throw new ModelSyntaxException(
-                    String.format("Unable to load model %s: %s", filename, e.getMessage()), 0, 0);
+    public boolean load(String filename, Supplier<String> contentSupplier, LoaderVisitor visitor) {
+        if (test(filename, contentSupplier)) {
+            Node node = nodeFactory.createNode(filename, contentSupplier.get());
+            load(visitor, node);
+            return true;
         }
+
+        return false;
     }
 
-    /**
-     * Tests if the given path and contents are valid for this model loader.
-     *
-     * <p>Returns true by default. Override to return false.
-     *
-     * @param path Path to check. This path might not exist.
-     * @param contents Contents to check.
-     * @return Returns true if the path and contents are loaded by this loader.
-     * @throws IOException if interacting with the path fails.
-     */
-    protected boolean test(String path, String contents) throws IOException {
-        return true;
+    private boolean test(String path, Supplier<String> contentSupplier) {
+        if (path.endsWith(".json")) {
+            return true;
+        }
+
+        // Loads the contents of a file if the file has a source location
+        // of "N/A", isn't empty, and the first character is "{".
+        String contents = contentSupplier.get();
+        return path.equals(SourceLocation.NONE.getFilename())
+               && !contents.isEmpty()
+               && contents.charAt(0) == '{';
     }
 
     /**
@@ -193,7 +193,7 @@ class NodeModelLoader implements ModelLoader {
         }
     }
 
-    final void load(LoaderVisitor visitor, Node node) {
+    void load(LoaderVisitor visitor, Node node) {
         ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
         model.getMembers().forEach((key, value) -> {
             switch (key.getValue()) {

@@ -25,6 +25,7 @@ import java.util.TreeMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -146,7 +147,13 @@ public final class Cli {
             Handler handler = getConsoleHandler();
             if (hasArgument(args, DEBUG)) {
                 handler.setFormatter(new DebugFormatter());
-                handler.setLevel(Level.FINEST);
+                handler.setLevel(Level.ALL);
+                // Configure logging level of all loggers.
+                Logger rootLogger = LogManager.getLogManager().getLogger("");
+                rootLogger.setLevel(Level.ALL);
+                for (Handler h : rootLogger.getHandlers()) {
+                    h.setLevel(Level.ALL);
+                }
             } else {
                 handler.setFormatter(new BasicFormatter());
                 handler.setLevel(Level.WARNING);

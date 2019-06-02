@@ -46,6 +46,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -125,15 +126,15 @@ final class SmithyModelLoader implements ModelLoader {
     }
 
     @Override
-    public boolean load(String path, String contents, LoaderVisitor visitor) {
-        if (path.endsWith(".smithy")) {
-            SmithyModelLexer lexer = new SmithyModelLexer(contents);
-            State state = new State(path, lexer, visitor);
-            parse(state);
-            return true;
+    public boolean load(String path, Supplier<String> contentSupplier, LoaderVisitor visitor) {
+        if (!path.endsWith(".smithy")) {
+            return false;
         }
 
-        return false;
+        SmithyModelLexer lexer = new SmithyModelLexer(contentSupplier.get());
+        State state = new State(path, lexer, visitor);
+        parse(state);
+        return true;
     }
 
     /**
