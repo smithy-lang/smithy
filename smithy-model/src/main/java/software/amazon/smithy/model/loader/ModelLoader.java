@@ -16,6 +16,8 @@
 package software.amazon.smithy.model.loader;
 
 import java.util.List;
+import java.util.function.Supplier;
+import software.amazon.smithy.model.node.DefaultNodeFactory;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -31,13 +33,13 @@ interface ModelLoader {
     /**
      * Attempts to load the given filename and mutate the loader visitor.
      *
-     * @param filename File being loaded.
-     * @param contents Contents of the file.
+     * @param filename File being loaded. The provided file is either a path or a URL.
+     * @param contentSupplier Method that supplies the contents of the file.
      * @param visitor The visitor to update.
      * @return Returns true if this loader was used, false otherwise.
      * @throws ModelSyntaxException when the format of the contents is invalid.
      */
-    boolean load(String filename, String contents, LoaderVisitor visitor);
+    boolean load(String filename, Supplier<String> contentSupplier, LoaderVisitor visitor);
 
     /**
      * Creates a Model loader from many loaders.
@@ -62,9 +64,9 @@ interface ModelLoader {
      * @return Returns the default model loader.
      */
     static ModelLoader createDefaultLoader() {
-        return ModelLoader.composeLoaders(ListUtils.of(
-                new JsonModelLoader(),
-                new SmithyModelLoader(),
-                new DefaultingJsonModelLoader()));
+        ModelLoader delegate = ModelLoader.composeLoaders(ListUtils.of(
+                new NodeModelLoader(new DefaultNodeFactory()),
+                new SmithyModelLoader()));
+        return new JarModelLoader(delegate);
     }
 }

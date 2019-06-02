@@ -182,7 +182,7 @@ public final class Prelude {
 
             try (InputStream inputStream = Prelude.class.getResourceAsStream(filename)) {
                 String contents = IoUtils.toUtf8String(inputStream);
-                new JsonModelLoader().load(filename, contents, visitor);
+                new NodeModelLoader().load(filename, () -> contents, visitor);
                 return visitor.onEnd().unwrap();
             } catch (IOException | UncheckedIOException e) {
                 throw new ModelImportException(String.format("Unable to load prelude model `%s`: %s",

@@ -511,13 +511,33 @@ them to be discovered.
 The `model`, `build-info`, and `sources` plugins are plugins that are
 always run in every non-abstract projection.
 
-- `model`: Serializes the filtered version of the model as a single file.
-- `build-info`: Produces a JSON document that contains information about
-  the projection and model.
-- `sources`: Copies the source models and creates a manifest. When using the
-  `source` projection, the source models are copied over literally. When
-  using a projection, a new model file is created that contains only the
-  shapes, trait definitions, and metadata that were defined in a source model
-  *and* all of the newly add shapes, traits, and metadata. The manifest file
-  is a newline (`\n`) separated file that contains the relative path from the
-  manifest file to each model file created by the sources plugin.
+
+### model plugin
+
+The `model` plugin serializes a self-contained and filtered version of the
+model as a single file. All of the dependencies of the model are included
+in the file.
+
+### build-info plugin
+
+The `build-info` plugin produces a JSON document that contains information
+about the projection and model.
+
+
+### sources plugin
+
+The `sources` plugin copies the source models and creates a manifest.
+When building the `source` projection, the models that were used to build the
+model are copied over literally. When a JAR is used as a source model, the
+Smithy models contained within the JAR are copied as a source model while the
+JAR itself is not copied.
+
+When applying a projection, a new model file is created that contains only
+the shapes, trait definitions, and metadata that were defined in a source
+model *and* all of the newly added shapes, traits, and metadata.
+
+The manifest file is a newline (`\n`) separated file that contains the
+relative path from the manifest file to each model file created by the
+sources plugin. A Smithy manifest file is stored in a JAR as
+`META-INF/smithy/manifest`. All model names referenced by the manifest are
+relative to `META-INF/smithy/`.

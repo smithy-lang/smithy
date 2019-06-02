@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.loader;
 
+import static java.lang.String.format;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +25,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -121,39 +122,93 @@ public final class ModelDiscovery {
      */
     public static List<URL> findModels(ClassLoader loader) {
         try {
+            List<URL> result = new ArrayList<>();
             Enumeration<URL> manifests = loader.getResources(MANIFEST_PATH);
-            return findModels(Collections.list(manifests));
+            while (manifests.hasMoreElements()) {
+                result.addAll(findModels(manifests.nextElement()));
+            }
+            return result;
         } catch (IOException e) {
             throw new ModelManifestException("Error locating Smithy model manifests", e);
         }
     }
 
     /**
-     * Parse the Smithy models from the given list of manifest URLs.
+     * Parse the Smithy models from the given URL that points to a Smithy
+     * manifest file in a JAR.
      *
-     * @param manifestUrls Manifest URLs to parse line by line.
-     * @return Returns the URLs of each model referenced by manifests.
+     * <p>The provided URL is expected to point to a manifest stored in JAR
+     * (e.g., "jar:file:/example.jar!/META-INF/smithy/manifest).
+     *
+     * @param jarManifestUrl Manifest URL to parse line by line.
+     * @return Returns the URLs of each model referenced by the manifest.
      */
-    public static List<URL> findModels(List<URL> manifestUrls) {
+    public static List<URL> findModels(URL jarManifestUrl) {
         List<URL> result = new ArrayList<>();
+        LOGGER.finer(() -> "Found ModelDiscovery manifest at " + jarManifestUrl);
+        String modelUrlPrefix = jarManifestUrl.toString();
+        modelUrlPrefix = modelUrlPrefix.substring(0, modelUrlPrefix.length() - MANIFEST.length());
 
-        for (URL manifest : manifestUrls) {
-            LOGGER.finer(() -> "Found ModelDiscovery manifest at " + manifest);
-            String modelUrlPrefix = manifest.toString();
-            modelUrlPrefix = modelUrlPrefix.substring(0, modelUrlPrefix.length() - MANIFEST.length());
-
-            try {
-                for (String model : parseManifest(manifest)) {
-                    URL modelUrl = new URL(modelUrlPrefix + model);
-                    LOGGER.finest(() -> String.format("Found Smithy model `%s` in manifest `%s`", modelUrl, manifest));
-                    result.add(modelUrl);
-                }
-            } catch (IOException e) {
-                throw new ModelManifestException("Error parsing Smithy model manifest from " + manifest, e);
+        try {
+            for (String model : parseManifest(jarManifestUrl)) {
+                URL modelUrl = new URL(modelUrlPrefix + model);
+                LOGGER.finest(() -> format("Found Smithy model `%s` in manifest", modelUrl));
+                result.add(modelUrl);
             }
+        } catch (IOException e) {
+            throw new ModelManifestException("Error parsing Smithy model manifest from " + jarManifestUrl, e);
         }
 
         return result;
+    }
+
+    /**
+     * Extracts the relative name of a Smithy model from a URL that points to
+     * a Smithy model returned from {@link #findModels()}.
+     *
+     * <p>For example, given "jar:file:/example.jar!/META-INF/smithy/example.json",
+     * this method will return "example.json".
+     *
+     * @param modelUrl Model URL to get the name from.
+     * @return Returns the extracted name.
+     */
+    public static String getSmithyModelPathFromJarUrl(URL modelUrl) {
+        String urlString = modelUrl.toString();
+
+        int position = urlString.indexOf(ROOT_RESOURCE_PATH);
+        if (position == -1) {
+            throw new IllegalArgumentException("Invalid Smithy model URL: " + modelUrl);
+        }
+
+        return urlString.substring(position + ROOT_RESOURCE_PATH.length());
+    }
+
+    /**
+     * Creates a URL that points to the Smithy manifest file of a JAR.
+     *
+     * <p>The provided {@code fileOrUrl} string can be an absolute path
+     * to a file, (e.g., "/foo/baz.jar"), a file URL (e.g., "file:/baz.jar"),
+     * or a JAR URL (e.g., "jar:file:/baz.jar").
+     *
+     * @param fileOrUrl Filename or URL that points to a JAR.
+     * @return Returns the computed URL.
+     */
+    public static URL createSmithyJarManifestUrl(String fileOrUrl) {
+        try {
+            return new URL(getFilenameWithScheme(fileOrUrl) + "!/" + MANIFEST_PATH);
+        } catch (IOException e) {
+            throw new ModelImportException(e.getMessage(), e);
+        }
+    }
+
+    private static String getFilenameWithScheme(String filename) {
+        if (filename.startsWith("jar:")) {
+            return filename;
+        } else if (filename.startsWith("file:")) {
+            return "jar:" + filename;
+        } else {
+            return "jar:file:" + filename;
+        }
     }
 
     private static Set<String> parseManifest(URL location) throws IOException {
@@ -169,7 +224,7 @@ public final class ModelDiscovery {
                     break;
                 } else if (!line.isEmpty()) {
                     if (!isValidateResourceLine(line)) {
-                        throw new ModelManifestException(String.format(
+                        throw new ModelManifestException(format(
                                 "Illegal Smithy model manifest syntax found in `%s`: `%s`", location, line));
                     }
                     models.add(line);

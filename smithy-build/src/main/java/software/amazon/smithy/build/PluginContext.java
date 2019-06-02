@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.build;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -269,15 +268,7 @@ public final class PluginContext {
          * @return Returns the builder.
          */
         public Builder sources(Collection<Path> sources) {
-            Set<Path> result = new HashSet<>();
-            for (Path source : sources) {
-                if (Files.isRegularFile(source)) {
-                    Optional.ofNullable(source.getParent()).ifPresent(result::add);
-                } else {
-                    result.add(source);
-                }
-            }
-            this.sources = result;
+            this.sources = new HashSet<>(sources);
             return this;
         }
     }
