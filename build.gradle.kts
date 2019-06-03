@@ -26,7 +26,7 @@ plugins {
 // of band with the rest of the projects.
 allprojects {
     group = "software.amazon.smithy"
-    version = "0.5.0"
+    version = "0.5.1"
 }
 
 // The root project doesn't produce a JAR.
