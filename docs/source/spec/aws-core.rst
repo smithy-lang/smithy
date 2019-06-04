@@ -46,7 +46,7 @@ The following example defines an AWS service that uses the default values of
 
     .. code-tab:: smithy
 
-        $version:1.0
+        $version: "0.1.0"
         namespace aws.fooBaz
 
         @aws.api#service(sdkId: "Some Value")
@@ -57,7 +57,7 @@ The following example defines an AWS service that uses the default values of
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "aws.fooBaz": {
                 "shapes": {
                     "FooBaz": {
@@ -77,7 +77,7 @@ The following example provides explicit values for all properties:
 
     .. code-tab:: smithy
 
-        $version:1.0
+        $version: "0.1.0"
         namespace aws.fooBaz
 
         @aws.api#service(
@@ -92,7 +92,7 @@ The following example provides explicit values for all properties:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "aws.fooBaz": {
                 "shapes": {
                     "FooBaz": {
@@ -370,7 +370,7 @@ For example, given the following service:
 
     .. code-tab:: smithy
 
-        $version:1.0
+        $version: "0.1.0"
         namespace aws.fooBaz
 
         @aws.api#service(sdkId: "Some Value")
@@ -388,7 +388,7 @@ For example, given the following service:
     .. code-tab:: json
 
         {
-          "smithy": "1.0",
+          "smithy": "0.1.0",
           "smithy.example": {
             "shapes": {
               "FooBaz": {
@@ -439,7 +439,7 @@ resource.
     .. code-tab:: json
 
         {
-          "smithy": "1.0",
+          "smithy": "0.1.0",
           "smithy.example": {
             "shapes": {
               "MyResource": {
@@ -521,7 +521,7 @@ referenced resource.
 
     .. code-tab:: smithy
 
-        $version:1.0
+        $version: "0.1.0"
         namespace smithy.example
 
         @aws.api#arnReference(
@@ -533,7 +533,7 @@ referenced resource.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "smithy.example": {
                 "shapes": {
                     "SomeResourceId": {
@@ -556,7 +556,7 @@ previous example:
 
     .. code-tab:: smithy
 
-        $version:1.0
+        $version: "0.1.0"
         namespace smithy.example
 
         @aws.api#arnReference
@@ -565,7 +565,7 @@ previous example:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "smithy.example": {
                 "shapes": {
                     "SomeResourceId": {
@@ -613,7 +613,7 @@ operation MUST NOT be used as part of the request signature calculation:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "smithy.example": {
                 "shapes": {
                     "PutThings": {
@@ -639,7 +639,7 @@ only when using the "aws.v4" authentication scheme:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "smithy.example": {
                 "shapes": {
                     "PutThings": {
@@ -686,7 +686,7 @@ the service converted to lowercase characters).
 
     .. code-tab:: smithy
 
-        $version:1.0
+        $version: "0.1.0"
         namespace aws.fooBaz
 
         @aws.api#service(sdkId: "Some Value")
@@ -698,7 +698,7 @@ the service converted to lowercase characters).
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "aws.fooBaz": {
                 "shapes": {
                     "FooBaz": {
@@ -759,7 +759,7 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "ns.example": {
                 "shapes": {
                     "FooOperation": {
@@ -820,7 +820,7 @@ The following example's ``MyResource`` resource has the
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -922,7 +922,7 @@ Each condition key object supports the following key-value pairs:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -1036,7 +1036,7 @@ condition key inference disabled.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -1106,7 +1106,7 @@ operation for it to complete successfully.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -1190,7 +1190,7 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "0.1.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {

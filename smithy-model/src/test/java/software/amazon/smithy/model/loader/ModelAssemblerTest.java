@@ -83,7 +83,7 @@ public class ModelAssemblerTest {
     @Test
     public void addsExplicitDocumentNode() {
         ObjectNode node = Node.objectNode()
-                .withMember("smithy", Node.from("1.0"))
+                .withMember("smithy", Node.from(Model.MODEL_VERSION))
                 .withMember("ns.foo", Node.objectNode()
                         .withMember("shapes", Node.objectNode()
                                 .withMember("String", Node.objectNode()
@@ -96,7 +96,7 @@ public class ModelAssemblerTest {
 
     @Test
     public void addsExplicitUnparsedDocumentNode() {
-        String document = "{\"smithy\": \"1.0\", \"ns.foo\": { \"shapes\": { \"String\": { \"type\": \"string\"}}}}";
+        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"ns.foo\": { \"shapes\": { \"String\": { \"type\": \"string\"}}}}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .assemble();
@@ -109,7 +109,7 @@ public class ModelAssemblerTest {
     public void addsExplicitValidators() {
         ValidationEvent event = ValidationEvent.builder()
                 .severity(Severity.ERROR).eventId("Foo").message("bar").build();
-        String document = "{\"smithy\": \"1.0\"}";
+        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\"}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .addValidator(index -> Collections.singletonList(event))
@@ -120,7 +120,7 @@ public class ModelAssemblerTest {
 
     @Test
     public void detectsTraitsOnUnknownShape() {
-        String document = "{\"smithy\": \"1.0\", \"ns.foo\": {\"traits\": {\"Unknown\": {\"documentation\": \"foo\"}}}}";
+        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"ns.foo\": {\"traits\": {\"Unknown\": {\"documentation\": \"foo\"}}}}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .assemble();
@@ -298,7 +298,7 @@ public class ModelAssemblerTest {
         Model model = new ModelAssembler().addImport(getClass().getResource("main.json")).assemble().unwrap();
         Model model2 = Model.assembler()
                 .addModel(model)
-                .addUnparsedModel("N/A", "{\"smithy\": \"1.0\", \"example.namespace\": {\"traits\": {\"String\": {\"documentation\": \"hi\"}}}}")
+                .addUnparsedModel("N/A", "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"example.namespace\": {\"traits\": {\"String\": {\"documentation\": \"hi\"}}}}")
                 .assemble()
                 .unwrap();
 
@@ -352,7 +352,7 @@ public class ModelAssemblerTest {
 
     @Test
     public void canIgnoreUnknownTraits() {
-        String document = "{\"smithy\": \"1.0\", \"ns.foo\": { \"shapes\": { \"String\": { \"type\": \"string\", \"invalidTrait\": true}}}}";
+        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"ns.foo\": { \"shapes\": { \"String\": { \"type\": \"string\", \"invalidTrait\": true}}}}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)

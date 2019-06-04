@@ -51,8 +51,6 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * to formats like JSON, YAML, Ion, etc.
  */
 public final class ModelSerializer {
-    private static final String SMITHY_VERSION = "1.0";
-
     private final Predicate<String> metadataFilter;
     private final Predicate<TraitDefinition> traitDefinitionFilter;
     private final Predicate<Shape> shapeFilter;
@@ -69,7 +67,7 @@ public final class ModelSerializer {
 
     public ObjectNode serialize(Model model) {
         return Node.objectNode()
-                .withMember("smithy", Node.from(SMITHY_VERSION))
+                .withMember("smithy", Node.from(Model.MODEL_VERSION))
                 .withOptionalMember("metadata", createMetadata(model).map(Node::withDeepSortedKeys))
                 .merge(createNamespaces(model).entrySet().stream()
                         .collect(ObjectNode.collectStringKeys(

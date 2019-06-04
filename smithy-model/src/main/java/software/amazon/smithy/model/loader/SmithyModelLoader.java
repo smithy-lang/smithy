@@ -20,6 +20,7 @@ import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.ANNOTATION;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.COLON;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.COMMA;
+import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.DOLLAR;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.EQUAL;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.ERROR;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.LBRACE;
@@ -32,7 +33,6 @@ import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RBR
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RETURN;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RPAREN;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.UNQUOTED;
-import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.VERSION;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +47,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -81,7 +82,10 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.Pair;
@@ -92,6 +96,7 @@ import software.amazon.smithy.utils.SetUtils;
  * to load a model.
  */
 final class SmithyModelLoader implements ModelLoader {
+    private static final Logger LOGGER = Logger.getLogger(SmithyModelLoader.class.getName());
     private static final Collection<String> MAP_KEYS = ListUtils.of("key", "value");
 
     /** Top-level statements that can be encountered while parsing. */
@@ -145,6 +150,7 @@ final class SmithyModelLoader implements ModelLoader {
         final SmithyModelLexer lexer;
         final List<Pair<String, Node>> pendingTraits = new ArrayList<>();
         final LoaderVisitor visitor;
+        boolean definedMetadata;
         Token current;
         String namespace;
 
@@ -262,13 +268,13 @@ final class SmithyModelLoader implements ModelLoader {
 
     private static void parse(State state) {
         while (!state.eof()) {
-            Token token = state.expect(UNQUOTED, ANNOTATION, VERSION);
+            Token token = state.expect(UNQUOTED, ANNOTATION, DOLLAR);
             if (token.type == UNQUOTED) {
                 parseStatement(token, state);
             } else if (token.type == ANNOTATION) {
                 state.pendingTraits.add(parseTraitValue(token, state));
-            } else if (token.type == VERSION) {
-                parseVersion(state);
+            } else if (token.type == DOLLAR) {
+                parseControlStatement(state);
             }
         }
     }
@@ -281,11 +287,33 @@ final class SmithyModelLoader implements ModelLoader {
         STATEMENTS.get(token.lexeme).accept(state);
     }
 
-    private static void parseVersion(State state) {
-        requireNoPendingTraits(state);
+    private static void parseControlStatement(State state) {
+        if (state.namespace != null || state.definedMetadata) {
+            throw state.syntax("A control statement must come before any namespace, metadata, or shape");
+        }
+
+        String key = state.expect(UNQUOTED, QUOTED).lexeme;
         state.expect(COLON);
-        Token token = state.expect(NUMBER, UNQUOTED, QUOTED);
-        state.visitor.onVersion(sourceFromToken(state, token), token.lexeme);
+        Node value = parseNodeValue(state, state.next());
+
+        switch (key) {
+            case "version":
+                if (!value.isStringNode()) {
+                    value.expectStringNode("The $version control statement must have a string value, but found "
+                                           + Node.printJson(value));
+                }
+                state.visitor.onVersion(sourceFromToken(state, state.current), value.expectStringNode().getValue());
+                break;
+            default:
+                state.visitor.onError(ValidationEvent.builder()
+                        .eventId(Validator.MODEL_ERROR)
+                        .sourceLocation(value)
+                        .severity(Severity.WARNING)
+                        .message(String.format(
+                                "Unknown control statement `%s` with value `%s", key, Node.printJson(value)))
+                        .build());
+                break;
+        }
     }
 
     private static void parseNamespace(State state) {
@@ -551,6 +579,8 @@ final class SmithyModelLoader implements ModelLoader {
     }
 
     private static void parseMetadata(State state) {
+        state.definedMetadata = true;
+
         // metadata key = value\n
         requireNoPendingTraits(state);
         String key = state.expect(QUOTED, UNQUOTED).lexeme;

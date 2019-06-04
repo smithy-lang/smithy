@@ -54,7 +54,7 @@ public class LoaderVisitorTest {
     public void versionMustBeConsistent() {
         Assertions.assertThrows(SourceException.class, () -> {
             LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-            visitor.onVersion(SourceLocation.NONE, "1.0");
+            visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
             visitor.onVersion(SourceLocation.NONE, "1.1");
         });
     }
@@ -68,16 +68,24 @@ public class LoaderVisitorTest {
     }
 
     @Test
-    public void versionDefaultsTo1_0() {
+    public void versionDefaults() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
         visitor.onMetadata("foo", Node.from("bar"));
+    }
+
+    @Test
+    public void acceptableVersionDifference() {
+        LoaderVisitor visitor = new LoaderVisitor(FACTORY);
+        visitor.onVersion(SourceLocation.NONE, "0.1.0");
+        visitor.onVersion(SourceLocation.NONE, "0.1.1");
+        visitor.onVersion(SourceLocation.NONE, "0.1.3");
     }
 
     @Test
     public void cannotMutateAfterOnEnd() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-            visitor.onVersion(SourceLocation.NONE, "1.0");
+            visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
             visitor.onEnd();
             visitor.onMetadata("foo", Node.from("bar"));
         });
@@ -87,7 +95,7 @@ public class LoaderVisitorTest {
     public void cannotCallOnEndTwice() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-            visitor.onVersion(SourceLocation.NONE, "1.0");
+            visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
             visitor.onEnd();
             visitor.onEnd();
         });
@@ -96,7 +104,7 @@ public class LoaderVisitorTest {
     @Test
     public void cannotDuplicateTraitDefs() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, "1.0");
+        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         TraitDefinition.Builder def1 = TraitDefinition.builder()
                 .name("foo.baz#Bar")
                 .selector(Selector.IDENTITY);
@@ -113,7 +121,7 @@ public class LoaderVisitorTest {
     @Test
     public void ignoresDuplicateTraitDefsFromPrelude() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, "1.0");
+        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         TraitDefinition.Builder def = TraitDefinition.builder().name("smithy.api#deprecated")
                 .selector(Selector.IDENTITY);
         visitor.onTraitDef(def);
@@ -126,7 +134,7 @@ public class LoaderVisitorTest {
     @Test
     public void cannotDuplicateNonPreludeTraitDefs() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, "1.0");
+        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         TraitDefinition.Builder def = TraitDefinition.builder().name("smithy.example#deprecated")
                 .selector(Selector.IDENTITY);
         visitor.onTraitDef(def);
@@ -139,7 +147,7 @@ public class LoaderVisitorTest {
     @Test
     public void cannotDuplicateTraits() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, "1.0");
+        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));
         visitor.onTrait(id, "foo.bam", "documentation", Node.from("abc"));
@@ -152,7 +160,7 @@ public class LoaderVisitorTest {
     @Test
     public void createsModeledTraitWhenTraitFactoryReturnsEmpty() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, "1.0");
+        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         TraitDefinition.Builder def = TraitDefinition.builder().name("foo.baz#Bar").selector(Selector.IDENTITY);
         visitor.onTraitDef(def);
         ShapeId id = ShapeId.from("foo.bam#Boo");
@@ -167,7 +175,7 @@ public class LoaderVisitorTest {
     @Test
     public void failsWhenTraitNotFound() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, "1.0");
+        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));
         visitor.onTrait(id, "foo.baz", "foo.baz#Bar", Node.from(true));

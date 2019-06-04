@@ -49,6 +49,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * grouped into separate document files.
  */
 public final class Model implements ToSmithyBuilder<Model> {
+    /** Specifies the highest supported version of the IDL. */
+    public static final String MODEL_VERSION = "0.1.0";
+
     private final Map<String, Node> metadata;
     private final ShapeIndex shapeIndex;
     private final Map<String, TraitDefinition> traitDefinitions;
@@ -233,7 +236,7 @@ public final class Model implements ToSmithyBuilder<Model> {
     public static final class Builder implements SmithyBuilder<Model> {
         private Map<String, Node> metadata = new HashMap<>();
         private Set<TraitDefinition> traitDefinitions = new HashSet<>();
-        private String smithyVersion = "1.0";
+        private String smithyVersion = MODEL_VERSION;
         private ShapeIndex shapeIndex;
 
         private Builder() {}

@@ -50,7 +50,7 @@ public class ModelSerializerTest {
                 .unwrap();
 
         String serializedString2 = Node.prettyPrintJson(serializer.serialize(other));
-        assertThat(serialized.expectMember("smithy").expectStringNode(), equalTo(Node.from("1.0")));
+        assertThat(serialized.expectMember("smithy").expectStringNode(), equalTo(Node.from(Model.MODEL_VERSION)));
         assertThat(serializedString, equalTo(serializedString2));
         assertThat(model, equalTo(other));
     }
