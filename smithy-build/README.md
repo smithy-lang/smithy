@@ -165,7 +165,7 @@ Removes shapes if they are tagged with one or more of the given arguments.
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -185,7 +185,7 @@ Removes shapes that are not tagged with at least one of the given arguments.
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -204,7 +204,7 @@ Note that this does not filter out traits based on namespaces.
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -223,7 +223,7 @@ service shape IDs.
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -242,7 +242,7 @@ provided arguments (a list of allowed tags).
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -266,7 +266,7 @@ orphaned shapes.
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -283,7 +283,7 @@ all traits in the "example.foo" namespace:
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -307,7 +307,7 @@ orphaned shapes.
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -326,7 +326,7 @@ given arguments (a list of authentication schemes).
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -345,7 +345,7 @@ allowed names.
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -364,7 +364,7 @@ arguments (a list of protocol names).
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -383,7 +383,7 @@ argument list (a list of allowed tags).
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -407,7 +407,7 @@ orphaned shapes.
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -424,7 +424,7 @@ all traits in the "smithy.api" namespace:
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -448,7 +448,7 @@ orphaned shapes.
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [
@@ -475,7 +475,7 @@ but keeps the shape if it has any of the provided tags:
 
 ```json
 {
-  "smithyBuild": "1.0",
+  "version": "1.0",
   "projections": {
     "exampleProjection": {
       "transforms": [

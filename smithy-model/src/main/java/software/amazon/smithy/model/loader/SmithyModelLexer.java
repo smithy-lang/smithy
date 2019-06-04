@@ -59,7 +59,7 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         WS("\\s+"),
         COMMENT("//[^\\n]*"),
         RETURN(Pattern.quote("->")),
-        VERSION(Pattern.quote("$version")),
+        DOLLAR(Pattern.quote("$")),
         UNQUOTED("[A-Za-z_][A-Za-z0-9_#$.-]*"),
         LPAREN(Pattern.quote("(")),
         RPAREN(Pattern.quote(")")),

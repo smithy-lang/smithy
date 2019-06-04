@@ -28,7 +28,7 @@ The Smithy IDL is a series of statements separated by newlines.
 
 .. productionlist:: smithy
     idl                     :[`statement` *(1*`br` `statement`)]
-    statement               :`version_statement`
+    statement               :`control_statement`
                             :/ `metadata_statement`
                             :/ `namespace_statement`
                             :/ `apply_statement`
@@ -71,24 +71,37 @@ Example:
     string MyString
 
 
+.. _control-statement:
+
+Control statement
+-----------------
+
+Control statements apply metadata to a file. Control statements MUST be
+defined at the beginning of a Smithy file before any other statements.
+
+.. productionlist:: smithy
+    control_statement       :"$" `text` ":" `node_value`
+
+Implementations SHOULD ignore unknown control statements.
+
+
 .. _version-statement:
 
 Version statement
------------------
+~~~~~~~~~~~~~~~~~
 
-The version statement is used to set the version of the Smithy model. Multiple
-version statements MAY appear in a Smithy model if and only if all of the
-version statements define the same version. A version of `1.0` is assumed if
-no version is specified.
-
-.. productionlist:: smithy
-    version_statement       :"$version:" (`text` / `number`)
+The version control statement is used to set the :ref:`version <smithy-version>`
+of a Smithy model file. The value of a version statement MUST be a string.
 
 Example:
 
 ::
 
-    $version:1.0
+    $version: "0.1.0"
+
+.. note::
+
+    The Smithy specification is currently at version ``0.1.0``.
 
 
 .. _metadata-statement:
@@ -723,7 +736,7 @@ properties:
     * - smithy
       - ``string``
       - **Required**. Defines the :ref:`version <smithy-version>` of the
-        Smithy specification (e.g., "1.0").
+        Smithy specification (e.g., "|version|").
     * - metadata
       - object
       - Defines all of the :ref:`metadata <metadata>` about the model
@@ -797,7 +810,7 @@ Any additional properties found in shape definitions are considered
 .. code-block:: json
 
     {
-      "smithy": "1.0",
+      "smithy": "0.1.0",
       "smithy.example": {
         "shapes": {
           "MyString": {
@@ -818,7 +831,7 @@ example defines a shape for each simple type:
 .. code-block:: json
 
     {
-      "smithy": "1.0",
+      "smithy": "0.1.0",
       "smithy.example": {
         "shapes": {
           "Blob": {"type": "blob"},
@@ -859,7 +872,7 @@ The following example defines a list with a string member:
 .. code-block:: json
 
     {
-      "smithy": "1.0",
+      "smithy": "0.1.0",
       "smithy.example": {
         "shapes": {
           "MyList": {
@@ -896,7 +909,7 @@ The following example defines a map of strings to numbers:
 .. code-block:: json
 
     {
-      "smithy": "1.0",
+      "smithy": "0.1.0",
       "smithy.example": {
         "shapes": {
           "IntegerMap": {
@@ -936,7 +949,7 @@ member:
 .. code-block:: json
 
     {
-      "smithy": "1.0",
+      "smithy": "0.1.0",
       "smithy.example": {
         "shapes": {
           "MyStructure": {
@@ -960,7 +973,7 @@ The following example defines a union:
 .. code-block:: json
 
     {
-      "smithy": "1.0",
+      "smithy": "0.1.0",
       "smithy.example": {
         "shapes": {
           "MyUnion": {
@@ -1006,7 +1019,7 @@ documentation trait to the member:
 .. code-block:: json
 
     {
-      "smithy": "1.0",
+      "smithy": "0.1.0",
       "smithy.example": {
         "shapes": {
           "MyList": {
@@ -1073,7 +1086,7 @@ The following example defines an operation, its input, output, and errors:
 .. code-block:: json
 
     {
-      "smithy": "1.0",
+      "smithy": "0.1.0",
       "smithy.example": {
         "shapes": {
           "MyOperation": {

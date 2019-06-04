@@ -40,11 +40,11 @@ public class ModelTest {
                 .putMetadataProperty("name.name", Node.objectNode())
                 .shapeIndex(index)
                 .addTraitDefinition(customTrait)
-                .smithyVersion("1.0")
+                .smithyVersion(Model.MODEL_VERSION)
                 .build();
 
         assertTrue(model.getMetadataProperty("name.name").isPresent());
-        assertEquals(model.getSmithyVersion(), "1.0");
+        assertEquals(model.getSmithyVersion(), Model.MODEL_VERSION);
         assertThat(model.getTraitDefinitions(), hasSize(1));
         assertThat(model.getTraitDefinitions().iterator().next().getFullyQualifiedName(), equalTo("ns.foo#baz"));
     }

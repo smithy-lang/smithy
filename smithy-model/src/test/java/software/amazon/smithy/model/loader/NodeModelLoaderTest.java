@@ -38,7 +38,7 @@ public class NodeModelLoaderTest {
         Assertions.assertThrows(SourceException.class, () -> {
             LoaderVisitor visitor = new LoaderVisitor(TraitFactory.createServiceFactory());
             new NodeModelLoader(new DefaultNodeFactory())
-                    .load("foo.json", () -> "{\"smithy\": \"1.0\", \"foo.baz!\": {}}", visitor);
+                    .load("foo.json", () -> "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"foo.baz!\": {}}", visitor);
         });
     }
 
@@ -47,7 +47,7 @@ public class NodeModelLoaderTest {
         LoaderVisitor visitor = new LoaderVisitor(TraitFactory.createServiceFactory());
         new NodeModelLoader(new DefaultNodeFactory()).load(
                 "foo.json",
-                () -> "{\"smithy\": \"1.0\", \"foo.baz\": {\"shapes\": {\"ns.bar#bam\": {\"type\": \"string\"}}}}",
+                () -> "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"foo.baz\": {\"shapes\": {\"ns.bar#bam\": {\"type\": \"string\"}}}}",
                 visitor);
         assertThat(visitor.onEnd().getValidationEvents(Severity.ERROR), not(empty()));
     }
@@ -57,7 +57,7 @@ public class NodeModelLoaderTest {
         LoaderVisitor visitor = new LoaderVisitor(TraitFactory.createServiceFactory());
         new NodeModelLoader(new DefaultNodeFactory()).load(
                 "foo.json",
-                () -> "{\"smithy\": \"1.0\", \"foo.baz\": {\"traits\": {\"ns.bar#bam\": {\"sensitive\": true}}}}",
+                () -> "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"foo.baz\": {\"traits\": {\"ns.bar#bam\": {\"sensitive\": true}}}}",
                 visitor);
         assertThat(visitor.onEnd().getValidationEvents(Severity.ERROR), not(empty()));
     }

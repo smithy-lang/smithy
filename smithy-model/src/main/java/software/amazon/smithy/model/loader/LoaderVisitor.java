@@ -62,7 +62,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * rather than logic around duplication detection, trait loading, etc.
  */
 final class LoaderVisitor {
-    private static final List<String> SUPPORTED_VERSIONS = ListUtils.of("1.0");
+    private static final String[] SUPPORTED_VERSION_PARTS = Model.MODEL_VERSION.split("\\.");
     private static final Logger LOGGER = Logger.getLogger(LoaderVisitor.class.getName());
 
     /** Whether or not a call to {@link #onEnd()} has been made. */
@@ -70,6 +70,9 @@ final class LoaderVisitor {
 
     /** Nullable version that was defined. */
     private String smithyVersion;
+
+    /** Nullable version that was defined parsed into parts. */
+    private String[] smithyVersionParts;
 
     /** Where the version was first defined. */
     private SourceLocation versionSourceLocation;
@@ -232,30 +235,79 @@ final class LoaderVisitor {
      * @param smithyVersion Version to set.
      */
     public void onVersion(SourceLocation sourceLocation, String smithyVersion) {
-        if (this.smithyVersion != null && !smithyVersion.equals(this.smithyVersion)) {
+        String[] versionParts = smithyVersion.split("\\.");
+        validateVersionNumber(sourceLocation, versionParts);
+
+        if (this.smithyVersion != null && !areVersionsCompatible(smithyVersionParts, versionParts)) {
             throw new SourceException(format(
-                    "Cannot set Smithy version to %s because it was previously set to %s in %s",
-                    smithyVersion, this.smithyVersion, versionSourceLocation), sourceLocation);
+                    "Cannot set Smithy version to `%s` because it was previously set to an incompatible version "
+                    + "`%s` in %s", smithyVersion, this.smithyVersion, versionSourceLocation), sourceLocation);
+        }
+
+        if (!isSupportedVersion(versionParts)) {
+            throw new SourceException(
+                    format("Invalid Smithy version provided: `%s`. Expected a version compatible with the tooling "
+                           + "version of `%s`. Perhaps you need to update your version of Smithy?",
+                           String.join(".", versionParts), Model.MODEL_VERSION),
+                    sourceLocation);
         }
 
         this.smithyVersion = smithyVersion;
+        this.smithyVersionParts = versionParts;
         this.versionSourceLocation = sourceLocation;
 
         validateState();
+    }
 
-        if (!SUPPORTED_VERSIONS.contains(smithyVersion)) {
-            throw new SourceException(format(
-                    "Invalid Smithy version provided: %s. Expected one of %s",
-                    smithyVersion, SUPPORTED_VERSIONS),
-                    sourceLocation);
+    private static void validateVersionNumber(SourceLocation sourceLocation, String[] versionParts) {
+        // We require at least 2 but a maximum of 3 segments (e.g., "1.0", and "1.0.0" are equal).
+        if (versionParts.length < 2 || versionParts.length > 3) {
+            throw new SourceException(
+                    "Smithy version number should have 2 or 3 parts: "
+                    + String.join(".", versionParts), sourceLocation);
         }
+
+        for (String part : versionParts) {
+            if (part.isEmpty()) {
+                throw new SourceException("Invalid Smithy version number: "
+                                          + String.join(".", versionParts), sourceLocation);
+            }
+            for (int i = 0; i < part.length(); i++) {
+                if (!Character.isDigit(part.charAt(i))) {
+                    throw new SourceException(
+                            "Invalid Smithy version number: " + String.join(".", versionParts), sourceLocation);
+                }
+            }
+        }
+    }
+
+    private static boolean areVersionsCompatible(String[] left, String[] right) {
+        if (!left[0].equals(right[0])) {
+            return false;
+        }
+
+        // A major version of "1" or higher are equal at this point.
+        // A major version of "0" must also check the minor version.
+        return !left[0].equals("0") || left[1].equals(right[1]);
+    }
+
+    private static boolean isSupportedVersion(String[] version) {
+        // First ensure that the version is in the same range.
+        if (!areVersionsCompatible(SUPPORTED_VERSION_PARTS, version)) {
+            return false;
+        }
+
+        // Next ensure that the version does not exceed the latest known
+        // minor version of the model.
+        return version[1].equals(SUPPORTED_VERSION_PARTS[1])
+               || Integer.parseInt(version[1]) < Integer.parseInt(SUPPORTED_VERSION_PARTS[1]);
     }
 
     private void validateState() {
         if (smithyVersion == null) {
-            // Assume version 1.0.
-            LOGGER.fine("No Smithy version explicitly specified, so assuming version of 1.0");
-            onVersion(SourceLocation.NONE, "1.0");
+            // Assume latest supported version.
+            LOGGER.warning("No Smithy version explicitly specified, so assuming version of " + Model.MODEL_VERSION);
+            onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         }
 
         if (calledOnEnd) {

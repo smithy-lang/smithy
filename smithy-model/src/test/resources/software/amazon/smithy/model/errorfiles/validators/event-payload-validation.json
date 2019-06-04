@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "0.1.0",
     "ns.foo": {
         "shapes": {
             "ValidEvent": {
