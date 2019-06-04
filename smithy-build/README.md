@@ -538,6 +538,6 @@ model *and* all of the newly added shapes, traits, and metadata.
 
 The manifest file is a newline (`\n`) separated file that contains the
 relative path from the manifest file to each model file created by the
-sources plugin. A Smithy manifest file is stored in a JAR as
-`META-INF/smithy/manifest`. All model names referenced by the manifest are
-relative to `META-INF/smithy/`.
+sources plugin. Lines that start with a number sign (#) are comments and are
+ignored. A Smithy manifest file is stored in a JAR as `META-INF/smithy/manifest`.
+All model names referenced by the manifest are relative to `META-INF/smithy/`.

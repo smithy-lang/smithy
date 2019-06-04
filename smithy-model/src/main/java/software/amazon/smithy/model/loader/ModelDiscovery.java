@@ -56,6 +56,7 @@ import java.util.regex.Pattern;
  *
  * <ul>
  *     <li>Empty lines are ignored.</li>
+ *     <li>Lines that start with a number sign (#) are comments and are ignored.</li>
  *     <li>Lines must contain only ASCII characters </li>
  *     <li>Lines must not start with "/" or end with "/". Models are resolved
  *     as relative resources to the manifest URL and expected to be
@@ -223,11 +224,14 @@ public final class ModelDiscovery {
                 if (line == null) {
                     break;
                 } else if (!line.isEmpty()) {
-                    if (!isValidateResourceLine(line)) {
+                    if (line.charAt(0) == '#') {
+                        // Ignore comments.
+                    } else if (!isValidateResourceLine(line)) {
                         throw new ModelManifestException(format(
                                 "Illegal Smithy model manifest syntax found in `%s`: `%s`", location, line));
+                    } else {
+                        models.add(line);
                     }
-                    models.add(line);
                 }
             }
         }

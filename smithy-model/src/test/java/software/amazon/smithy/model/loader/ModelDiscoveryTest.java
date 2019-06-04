@@ -49,6 +49,19 @@ public class ModelDiscoveryTest {
     }
 
     @Test
+    public void skipsCommentLines() throws IOException {
+        URL manifest = getClass().getResource("manifest-valid-with-comments");
+        String prefix = manifest.toString().substring(0, manifest.toString().length() - "manifest".length());
+        List<URL> models = ModelDiscovery.findModels(manifest);
+
+        assertThat(models, contains(
+                new URL(prefix + "foo.smithy"),
+                new URL(prefix + "baz/bar/example.json"),
+                new URL(prefix + "test"),
+                new URL(prefix + "test2")));
+    }
+
+    @Test
     public void prohibitsLeadingSlash() {
         Assertions.assertThrows(ModelManifestException.class, () -> {
             URL manifest = getClass().getResource("manifest-prohibits-leading-slash");
