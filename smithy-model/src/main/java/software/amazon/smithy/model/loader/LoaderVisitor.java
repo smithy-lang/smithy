@@ -256,7 +256,7 @@ final class LoaderVisitor {
         this.smithyVersionParts = versionParts;
         this.versionSourceLocation = sourceLocation;
 
-        validateState();
+        validateState(sourceLocation);
     }
 
     private static void validateVersionNumber(SourceLocation sourceLocation, String[] versionParts) {
@@ -303,11 +303,12 @@ final class LoaderVisitor {
                || Integer.parseInt(version[1]) < Integer.parseInt(SUPPORTED_VERSION_PARTS[1]);
     }
 
-    private void validateState() {
+    private void validateState(FromSourceLocation sourceLocation) {
         if (smithyVersion == null) {
             // Assume latest supported version.
-            LOGGER.warning("No Smithy version explicitly specified, so assuming version of " + Model.MODEL_VERSION);
-            onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
+            LOGGER.warning(format("No Smithy version explicitly specified in %s, so assuming version of %s",
+                                  sourceLocation.getSourceLocation().getFilename(), Model.MODEL_VERSION));
+            onVersion(sourceLocation.getSourceLocation(), Model.MODEL_VERSION);
         }
 
         if (calledOnEnd) {
@@ -330,7 +331,7 @@ final class LoaderVisitor {
      * @param shapeBuilder Shape builder to add.
      */
     public void onShape(AbstractShapeBuilder shapeBuilder) {
-        validateState();
+        validateState(shapeBuilder);
         ShapeId id = SmithyBuilder.requiredState("id", shapeBuilder.getId());
         if (validateOnShape(id, shapeBuilder)) {
             pendingShapes.put(id, shapeBuilder);
@@ -343,7 +344,7 @@ final class LoaderVisitor {
      * @param shape Built shape to add to the loader visitor.
      */
     public void onShape(Shape shape) {
-        validateState();
+        validateState(shape);
         if (validateOnShape(shape.getId(), shape)) {
             builtShapes.put(shape.getId(), shape);
         }
@@ -390,7 +391,7 @@ final class LoaderVisitor {
      * @param traitValue Trait value as a Node object.
      */
     public void onTrait(ShapeId target, String currentNamespace, String traitName, Node traitValue) {
-        validateState();
+        validateState(traitValue);
         PendingTrait pendingTrait = new PendingTrait(currentNamespace, traitName, traitValue);
         pendingTraits.computeIfAbsent(target, id -> new ArrayList<>()).add(pendingTrait);
     }
@@ -418,7 +419,7 @@ final class LoaderVisitor {
     }
 
     private boolean validateOnTraitDef(String name, FromSourceLocation source) {
-        validateState();
+        validateState(source);
         if (!pendingTraitDefinitions.containsKey(name) && !builtTraitDefinitions.containsKey(name)) {
             return true;
         } else if (Prelude.isPreludeTraitDefinition(name)) {
@@ -453,7 +454,7 @@ final class LoaderVisitor {
      * @param value Metadata value to add.
      */
     public void onMetadata(String key, Node value) {
-        validateState();
+        validateState(value);
 
         if (!metadata.containsKey(key)) {
             metadata.put(key, value);
@@ -483,7 +484,7 @@ final class LoaderVisitor {
      * @return Returns the validated model result.
      */
     public ValidatedResult<Model> onEnd() {
-        validateState();
+        validateState(SourceLocation.NONE);
         calledOnEnd = true;
         Model.Builder modelBuilder = Model.builder().smithyVersion(smithyVersion).metadata(metadata);
         ShapeIndex.Builder shapeIndexBuilder = ShapeIndex.builder();
