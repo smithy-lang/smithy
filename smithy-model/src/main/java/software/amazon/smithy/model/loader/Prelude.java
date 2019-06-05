@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
@@ -171,6 +172,7 @@ public final class Prelude {
 
         private static Model loadPrelude() {
             LoaderVisitor visitor = new LoaderVisitor(ModelAssembler.LazyTraitFactoryHolder.INSTANCE);
+            visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
 
             // Register prelude shape definitions.
             for (AbstractShapeBuilder builder : PUBLIC_PRELUDE_SHAPES) {
