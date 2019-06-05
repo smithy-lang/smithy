@@ -48,8 +48,11 @@ import software.amazon.smithy.utils.ListUtils;
  * component that is found in the updated model but not the original model.
  *
  * <p>When a JAR is provided as a source, the models contained within the
- * JAR are extracted into the sources directory. The JAR is not copied into
- * the sources directory.
+ * JAR are extracted into the sources directory under a directory with the
+ * same name as the JAR without the ".jar" extension; the JAR is not copied
+ * into the sources directory. For example, given a JAR at "/foo/baz.jar"
+ * that contains a "bar.smithy" file, a source will be created named
+ * "baz/bar.smithy".
  *
  * <p>This plugin can only run if an original model is provided.
  */
@@ -184,14 +187,25 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
         LOGGER.fine(() -> "Copying models from JAR " + jarPath);
         URL manifestUrl = ModelDiscovery.createSmithyJarManifestUrl(jarPath.toString());
 
+        String prefix = computeJarFilePrefix(jarRoot, jarPath);
         for (URL model : ModelDiscovery.findModels(manifestUrl)) {
             String name = ModelDiscovery.getSmithyModelPathFromJarUrl(model);
-            Path target = Paths.get(jarRoot + name);
+            Path target = Paths.get(prefix + name);
             LOGGER.finer(() -> "Copying " + name + " from JAR to " + target);
             try (InputStream is = model.openStream()) {
                 copyFile(names, manifest, target, IoUtils.toUtf8String(is));
             }
-
         }
+    }
+
+    private static String computeJarFilePrefix(String jarRoot, Path jarPath) {
+        Path jarFilenamePath = jarPath.getFileName();
+
+        if (jarFilenamePath == null) {
+            return jarRoot;
+        }
+
+        String jarFilename = jarFilenamePath.toString();
+        return jarRoot + jarFilename.substring(0, jarFilename.length() - ".jar".length()) + File.separator;
     }
 }
