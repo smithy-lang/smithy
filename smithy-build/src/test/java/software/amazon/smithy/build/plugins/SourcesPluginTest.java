@@ -62,13 +62,13 @@ public class SourcesPluginTest {
         new SourcesPlugin().execute(context);
         String manifestString = manifest.getFileString("manifest").get();
 
-        assertThat(manifestString, containsString("a.smithy\n"));
-        assertThat(manifestString, containsString("b/b.smithy\n"));
-        assertThat(manifestString, containsString("b/c/c.json\n"));
-        assertThat(manifestString, not(containsString("d.json")));
-        assertThat(manifest.getFileString("a.smithy").get(), containsString("string A"));
-        assertThat(manifest.getFileString("b/b.smithy").get(), containsString("string B"));
-        assertThat(manifest.getFileString("b/c/c.json").get(), containsString("\"C\""));
+        assertThat(manifestString, containsString("jar-import/a.smithy\n"));
+        assertThat(manifestString, containsString("jar-import/b/b.smithy\n"));
+        assertThat(manifestString, containsString("jar-import/b/c/c.json\n"));
+        assertThat(manifestString, not(containsString("jar-import/d.json")));
+        assertThat(manifest.getFileString("jar-import/a.smithy").get(), containsString("string A"));
+        assertThat(manifest.getFileString("jar-import/b/b.smithy").get(), containsString("string B"));
+        assertThat(manifest.getFileString("jar-import/b/c/c.json").get(), containsString("\"C\""));
     }
 
     @Test
