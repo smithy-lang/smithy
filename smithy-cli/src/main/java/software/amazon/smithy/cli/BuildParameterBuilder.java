@@ -109,6 +109,26 @@ public final class BuildParameterBuilder {
     }
 
     /**
+     * Adds a collection of "source" model files only if they exist.
+     *
+     * @param sources Sources to add.
+     * @return Returns the builder.
+     */
+    public BuildParameterBuilder addSourcesIfExists(Collection<String> sources) {
+        if (sources != null) {
+            for (String source : sources) {
+                if (!source.isEmpty() && Files.exists(Paths.get(source))) {
+                    this.sources.addAll(sources);
+                } else {
+                    LOGGER.info("Skipping source that does not exist: " + source);
+                }
+            }
+        }
+
+        return this;
+    }
+
+    /**
      * Sets the build classpath.
      *
      * @param buildClasspath Classpath to set.
