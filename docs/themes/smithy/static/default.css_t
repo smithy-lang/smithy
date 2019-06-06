@@ -96,6 +96,7 @@ h7 {
   padding: 2em 0;
   background: {{ theme_color }};
   color: #fff;
+  margin-bottom: 1em;
 }
 
 #splash > .width-wrapper > p {
@@ -138,18 +139,12 @@ h7 {
 
 .splash-links a {
   display: inline-block;
-  border: 1px solid #fff;
   border-radius: 6px;
   padding: 12px;
-  color: #fff;
+  color: {{ theme_color }};
   text-align: center;
   margin-bottom: 1em;
   font-weight: 500;
-}
-
-.splash-links a:hover {
-  color: {{ theme_link_color }};
-  text-decoration: none;
   background: #fff;
 }
 
@@ -165,12 +160,6 @@ h7 {
   }
 }
 
-#landing-container h2 {
-  text-align: center;
-  font-size: 2em;
-  margin: 1em 0;
-}
-
 .list-header {
   color: {{ theme_color }};
   font-weight: bold;
@@ -178,14 +167,26 @@ h7 {
   margin-bottom: 12px;
 }
 
-.landing-list {
-  list-style-type: none;
+.splash-row {
+  display: flex;
 }
 
-.landing-list > li {
-  margin-bottom: 1em;
-  padding-bottom: 1em;
-  position: relative;
+.splash-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  width: 50%;
+  padding: 0 20px;
+}
+
+.splash-column h2 {
+  color: {{ theme_color }};
+  margin: 1em 0 0 0;
+  font-weight: 300;
+  padding: 0;
+  font-size: 2rem;
+  text-align: left;
+  border: none;
 }
 
 /* ----- Visual separations ------ */
@@ -266,85 +267,85 @@ a:hover, .reference.external:hover {
 header {
   display: block;
   width: 100%;
-  background-color: #fff;
-  box-shadow: 0 1px 2px #ccc;
-  z-index: 1;
+  background-color: {{ theme_color }};
   flex: none;
 }
 
-#header-nav {
-  padding: 10px 1em;
-  align-items: center;
+.header-flex {
   display: flex;
-  list-style: none;
+  justify-content: space-between;
 }
 
-#header-nav li {
-  cursor: pointer;
-}
-
-#header-nav .site-logo {
+.site-logo {
   height: 26px;
   line-height: normal;
   position: relative;
+  margin-top: 12px;
 }
 
-#header-nav .site-logo a {
-  color: {{ theme_color }};
+.site-logo a {
+  color: #fff;
   font-weight: 500;
   font-size: 22px;
   line-height: 22px;
 }
 
-#header-nav .site-logo a:hover {
+.site-logo a:hover {
   text-decoration: none;
 }
 
-#header-nav .site-logo .logo-text {
+.site-logo .logo-text {
+  font-weight: 700;
   padding-left: 35px;
 }
 
-#header-nav .site-logo .logo-icon {
+.site-logo .logo-icon {
   padding: 2px 3px 2px 4px;
   border-radius: 6px;
   color: transparent;
-  text-shadow: 0 0 0 #fff;
+  text-shadow: 0 0 0 {{ theme_color }};
   position: absolute;
   top: -1px;
-  background: #1F73D7;
+  background: theme_color;
   font-size: 18px;
-  background: {{ theme_color }};
+  background: #fff;
 }
 
-#header-nav .site-page.first {
-  margin-left: 40px;
+#page-navigation {
+  padding: 10px 1em;
+  display: flex;
+  list-style: none;
+  margin-bottom: 0;
 }
 
-#header-nav .site-page {
-  font-size: 0.9em;
+#page-navigation li {
+  cursor: pointer;
+}
+
+#page-navigation .site-page {
   line-height: 1.8;
   margin-right: 0 18px 0 0;
 }
 
-#header-nav .site-page a {
+#page-navigation .site-page a {
   display: block;
   padding: 0 1em;
-  color: #333;
+  color: #fff;
   border-radius: 12px;
 }
 
-#header-nav .site-page a:hover {
-  color: #fff;
-  background: {{ theme_color }};
+#page-navigation .site-page a:hover {
+  color: {{ theme_color }};
+  background: #fff;
   text-decoration: none;
 }
 
-#header-nav .site-search {
+#page-navigation .site-search {
   margin-top: 3px;
-  margin-left: auto;
+  margin-left: 2em;
 }
 
-#header-nav .site-search .search-input {
+#page-navigation .site-search .search-input {
   padding: 0 1em;
   color: #777;
   border: solid 1px rgba(23, 30, 38, 0.2);
@@ -354,7 +355,7 @@ header {
   border-radius: 10px;
 }
 
-#header-nav .site-search button {
+#page-navigation .site-search button {
   border: none;
   padding: 5px 10px;
   background-color: #fff;
@@ -362,17 +363,26 @@ header {
 }
 
 footer {
-  border-top: 6rem solid #fff;
-  background: #303c42;
-  padding: 3em;
-  color: hsla(0, 0%, 100%, .4);
-  font-size: 0.85em;
-  min-height: 200px;
+  margin-top: 3rem;
+  padding: 2rem;
+  background: #f1f1f3;
 }
 
 .copyright {
   text-align: center;
   width: 100%;
+  font-size: 0.8rem;
+}
+
+.faq {
+  background: #f1f1f3;
+  padding: 2em 0;
+  margin: 4em 0;
+}
+
+.faq h2 {
+  color: {{ theme_color }};
+  border-bottom: none;
 }
 
 /* ----- Tables ------ */
@@ -811,20 +821,26 @@ dt:target, .highlighted {
 
 @media (max-width: 600px) {
   /* Make the header navigation usable on a small screen. */
-  #header-nav {
+  header {
     display: block;
-    align-items: left;
   }
 
-  #header-nav .logo-icon {
+  .header-flex, .site-logo, #page-navigation {
+    display: block;
+    margin-left: 0.5em;
+    margin: 0.5em 0 0 0.5em;
+    padding: 0;
+  }
+
+  header .logo-icon {
     display: none;
   }
 
-  #header-nav .site-logo .logo-text {
+  .site-logo .logo-text {
     padding-left: 16px;
   }
 
-  #header-nav .site-page.first {
+  header .site-page.first {
     margin-left: 0;
     margin-top: 0.5em;
   }
@@ -832,6 +848,16 @@ dt:target, .highlighted {
   /* Don't show the hover anchor links when too small as it will often cause the links to jump around. */
   *:hover > .headerlink {
     display: none;
+  }
+
+  .splash-row {
+    display: block;
+  }
+
+  .splash-column {
+    display: block;
+    width: 100%;
+    padding: 0;
   }
 }
 

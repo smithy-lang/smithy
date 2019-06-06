@@ -9,51 +9,47 @@
                 documentation for any programming language.
             </p>
             <div class="splash-links">
-                <a href="quickstart.html">Quick start</a>
+                <a href="quickstart.html">Get started</a>
                 <a href="spec/index.html">Specifications</a>
             </div>
         </div>
     </div>
 
     <div class="width-wrapper">
-
-        <h2>Benefits</h2>
-
-        <ul class="landing-list">
-            <li>
-                <div class="list-header">Language, platform, and protocol-agnostic</div>
-                <p>Smithy models are designed to work with any programming language, describe
+        <div class="splash-row">
+            <div class="splash-column">
+                <h2>Language and protocol-agnostic</h2>
+                <p>Smithy is designed to work with any programming language, describe
                     services running in any environment, and work with any kind of transport or
-                    serialization format. Smithy models are defined in terms of the interfaces
-                    and behaviors exposed to customers, but still allow implementation details
-                    like serialization formats to be customized if needed.</p>
-            </li>
-            <li>
-                <div class="list-header">Balances extensibility and constraints</div>
-                <p>Smithy models can be extended through traits that allow service providers
-                    to define any metadata they want. Traits in Smithy are self-describing,
-                    allowing IDEs to autocomplete their definitions and validators to
-                    automatically enforce their constraints. While Smithy is extensible,
-                    customizable constraints can be enforced on the model to ensure that APIs
-                    adhere to any kind of standard or convention.</p>
-            </li>
-            <li>
-                <div class="list-header">Defines resources and operations</div>
-                <p>Smithy combines concepts from both RPC and REST, allowing a service to be
-                    defined in terms of resources and operations you can enact on them.
-                    Explicitly defining resources provides rich metadata about an API that
-                    can be used to build higher-level client tooling and derive artifacts
-                    from a model.</p>
-            </li>
-        </ul>
+                    serialization format.</p>
+            </div>
+            <div class="splash-column">
+                <h2>Extend with traits</h2>
+                <p>Smithy models can be extended through <em>traits</em>. There are
+                    many built-in traits to affect things like behavior and serialization,
+                    and custom traits can be added for additional functionality.</p>
+            </div>
+        </div>
+        <div class="splash-row">
+            <div class="splash-column">
+                <h2 class="list-header">Standardize your APIs</h2>
+                <p>Customizable constraints can be enforced on the model to ensure that
+                    APIs adhere to any kind of standard or convention.</p>
+            </div>
+            <div class="splash-column">
+                <h2 class="list-header">Resources and operations</h2>
+                <p>Smithy is defined in terms of resources and operations you can enact on
+                    them. Explicitly defining resources provides rich metadata about an API
+                    that can be used to build higher-level client tooling and derive
+                    artifacts from a model.</p>
+            </div>
+        </div>
+    </div>
 
-        <h2>FAQs</h2>
-
-        <ul class="landing-list">
-            <li>
-                <div class="list-header">Why did you develop Smithy?</div>
-
-                <p>With thousands of operations across hundreds of public web services, AWS
+    <div class="faq">
+        <div class="width-wrapper">
+            <h2>Why did you develop Smithy?</h2>
+            <p>With thousands of operations across hundreds of public web services, AWS
                 needed a simple way to describe APIs that could adapt to change and support a
                 wide range of services. At AWS, we provide our customers with extensive
                 documentation, strongly typed client libraries, high-level abstractions like
@@ -61,75 +57,68 @@
                 interface definition languages available outside of AWS were either not
                 compatible with our existing services, not extensible enough to meet our
                 needs, or not strict enough to provide the right customer experience.</p>
+            <p>
+                <strong>Smithy isn't really new.</strong> The Smithy IDL is an
+                evolution of an interface definition language that was developed
+                internally at Amazon. Smithy models are compatible with the
+                tens-of-thousands of web services used internally within Amazon
+                and the hundreds of web services provided by AWS.
+            </p>
+            <p>
+                <strong>Smithy is built for code generation and tools.</strong>
+                Smithy models were designed for the purpose of generating clients,
+                servers, and documentation in multiple programming languages. To achieve
+                this, Smithy models are completely normalized, which makes models easy
+                to traverse, validate, and diff. Normalization also ensures that every
+                shape has an explicit name to aid in code generation.
+            </p>
+            <p>
+                <strong>Smithy balances extensibility and constraints.</strong> Traits
+                are used to extend a model and add capabilities that are not part of the
+                core specification. For example, AWS defines AWS-specific traits that are
+                used to generate other metadata documents that are derived from Smithy
+                models. While extensibility is a key design requirement, Smithy provides
+                a built-in validation system for ensuring that traits are used properly,
+                don't conflict with other traits, are applied only to the correct places
+                in a model, and are configured correctly when used in a model.
+            </p>
+            <p>
+                <strong>Smithy is protocol agnostic.</strong>
+                Smithy decouples the transport layer of web services from the data
+                structures and capabilities of the service so that they can evolve
+                independently.
+            </p>
 
-                <p>
-                    <strong>Smithy isn't really new.</strong> The Smithy IDL is an
-                    evolution of an interface definition language that was developed
-                    internally at Amazon. Smithy models are compatible with the
-                    tens-of-thousands of web services used internally within Amazon
-                    and the hundreds of web services provided by AWS.
-                </p>
+            <h2>Why is Smithy protocol-agnostic?</h2>
+            <ul>
+                <li>
+                    Most web service customers don't care about the wire-level format of the
+                    web services they consume; they care about how they can easily and
+                    efficiently integrate their systems with a web service in a way that’s
+                    idiomatic to the language of their choice.
+                </li>
+                <li>
+                    Requirements of web services and clients change over time. XML was once
+                    the dominant serialization format of the Web, but that distinction has
+                    now been passed on to JSON. As web service providers grow and face
+                    scaling challenges, they might wish to utilize a more efficient binary
+                    protocol rather than using JSON or even HTTP.
+                </li>
+                <li>
+                    A protocol-agnostic IDL focuses more on the interfaces and abstractions
+                    that are provided to customers rather than bytes over the wire.
+                </li>
+            </ul>
 
-                <p>
-                    <strong>Smithy is built for code generation and tools.</strong>
-                    Smithy models were designed for the purpose of generating clients,
-                    servers, and documentation in multiple programming languages. To achieve
-                    this, Smithy models are completely normalized, which makes models easy
-                    to traverse, validate, and diff. Normalization also ensures that every
-                    shape has an explicit name to aid in code generation.
-                </p>
-
-                <p>
-                    <strong>Smithy balances extensibility and constraints.</strong> Traits
-                    are used to extend a model and add capabilities that are not part of the
-                    core specification. For example, AWS defines AWS-specific traits that are
-                    used to generate other metadata documents that are derived from Smithy
-                    models. While extensibility is a key design requirement, Smithy provides
-                    a built-in validation system for ensuring that traits are used properly,
-                    don't conflict with other traits, are applied only to the correct places
-                    in a model, and are configured correctly when used in a model.
-                </p>
-
-                <p>
-                    <strong>Smithy is protocol agnostic.</strong>
-                    Smithy decouples the transport layer of web services from the data
-                    structures and capabilities of the service so that they can evolve
-                    independently.
-                </p>
-            </li>
-
-            <li>
-                <div class="list-header">What benefits does being protocol-agnostic provide?</div>
-                <ul>
-                    <li>
-                        Most web service customers don't care about the wire-level format of the
-                        web services they consume; they care about how they can easily and
-                        efficiently integrate their systems with a web service in a way that’s
-                        idiomatic to the language of their choice.
-                    </li>
-                    <li>
-                        Requirements of web services and clients change over time. XML was once
-                        the dominant serialization format of the Web, but that distinction has
-                        now been passed on to JSON. As web service providers grow and face
-                        scaling challenges, they might wish to utilize a more efficient binary
-                        protocol rather than using JSON or even HTTP.
-                    </li>
-                    <li>
-                        A protocol-agnostic IDL focuses more on the interfaces and abstractions
-                        that are provided to customers rather than bytes over the wire.
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <div class="list-header">What is the difference between Smithy and OpenAPI?</div>
-                <p>The primary difference between Smithy and OpenAPI is that Smithy is
+            <h2>What is the difference between Smithy and OpenAPI?</h2>
+            <p>The primary difference between Smithy and OpenAPI is that Smithy is
                 protocol-agnostic. This allows Smithy to describe a broader range of services,
                 metadata, and capabilities.</p>
-            </li>
-        </ul>
+        </div>
+    </div>
 
+    <div class="width-wrapper">
         <h2>Site map</h2>
-
         <div class="learn-more">
         {{ toctree(titles_only=False, maxdepth=3, collapse=False) }}
         </div>
