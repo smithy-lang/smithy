@@ -62,24 +62,26 @@
 
     {%- block header %}
     <header>
-        <ul id="header-nav" class="width-wrapper">
-            <li class="site-logo">
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
                 <a href="{{ pathto(master_doc) }}">
                     <span class="logo-icon">⚒️</span><span class="logo-text">Smithy</span>
                 </a>
-            </li>
-            <li class="site-page first"><a href="{{ pathto('quickstart') }}">Quick Start</a></li>
-            <li class="site-page"><a href="{{ pathto('spec/index') }}">Specifications</a></li>
-            <li class="site-page"><a href="{{ pathto('guides/index') }}">Guides</a></li>
-            <li class="site-page"><a href="#">Code</a></li>
-            <li class="site-search hidden-sm">
-                <form action="{{ pathto('search') }}" method="get">
-                    <input type="hidden" name="check_keywords" value="yes" />
-                    <input type="hidden" name="area" value="default" />
-                    <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
-                </form>
-            </li>
-        </ul>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="{{ pathto('quickstart') }}">Quick Start</a></li>
+                <li class="site-page"><a href="{{ pathto('spec/index') }}">Specifications</a></li>
+                <li class="site-page"><a href="{{ pathto('guides/index') }}">Guides</a></li>
+                <li class="site-page"><a href="#">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="{{ pathto('search') }}" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
     </header>
     {% endblock -%}
 
