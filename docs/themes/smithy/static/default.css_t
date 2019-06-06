@@ -105,19 +105,17 @@ h7 {
 }
 
 #splash h1 {
-  font-size: 2.5em;
-  font-weight: bold;
-  margin-bottom: 12px;
-  color: #fff;
-  border: none;
-  padding: 0;
-  text-align: center;
+  display: none;
+}
+
+#splash .highlight-smithy {
+  color: #24292e
 }
 
 .headline {
   font-weight: 400;
   color: #fff;
-  font-size: 24px;
+  font-size: 1.7em;
 }
 
 @media (max-width: 600px) {
@@ -129,35 +127,27 @@ h7 {
   }
 }
 
-.splash-links {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 2em;
-  width: 400px;
-  margin: auto;
-}
-
-.splash-links a {
+.splash-link {
   display: inline-block;
   border-radius: 6px;
   padding: 12px;
   color: {{ theme_color }};
   text-align: center;
-  margin-bottom: 1em;
+  margin: 2em 0 1em 0;
   font-weight: 500;
   background: #fff;
+  width: 160px;
 }
 
-/* Make the splash links render better on smaller screens. */
-@media (max-width: 600px) {
-  .splash-links {
-    display: block;
-    width: auto;
-    margin-top: 1em;
-  }
-  .splash-links a {
-    margin-right: 18px;
-  }
+.splash-link-small {
+  display: block;
+  text-decoration: underline;
+  color: #fff;
+  margin-bottom: 2em;
+}
+
+.splash-link-small:hover {
+  color: #fff;
 }
 
 .list-header {
@@ -823,6 +813,8 @@ dt:target, .highlighted {
   /* Make the header navigation usable on a small screen. */
   header {
     display: block;
+    padding: 1em 1em 1em 0;
+    border-bottom: 1px solid rgba(1, 1, 1, 0.2);
   }
 
   .header-flex, .site-logo, #page-navigation {
@@ -838,11 +830,6 @@ dt:target, .highlighted {
 
   .site-logo .logo-text {
     padding-left: 16px;
-  }
-
-  header .site-page.first {
-    margin-left: 0;
-    margin-top: 0.5em;
   }
 
   /* Don't show the hover anchor links when too small as it will often cause the links to jump around. */
