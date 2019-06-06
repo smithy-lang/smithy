@@ -150,6 +150,15 @@ public class BuildParameterBuilderTest {
     }
 
     @Test
+    public void skipsSourcesThatDoNotExsit() {
+        BuildParameterBuilder.Result result = new BuildParameterBuilder()
+                .addSourcesIfExists(ListUtils.of("foo.smithy", "bar.smithy"))
+                .build();
+
+        assertThat(result.args, contains("build"));
+    }
+
+    @Test
     public void projectionBuildUsesCorrectClasspaths() {
         BuildParameterBuilder.Result result = new BuildParameterBuilder()
                 .projectionSource("foo")

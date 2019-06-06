@@ -42,7 +42,9 @@ import java.util.logging.SimpleFormatter;
  *     <li>--help | -h: Prints subcommand help text.</li>
  *     <li>--debug: Prints debug information, including exception stack traces.</li>
  *     <li>--no-color: Explicitly disables ANSI colors.</li>
+ *     <li>--force-color: Explicitly enables ANSI colors.</li>
  *     <li>--stacktrace: Prints the stacktrace of any CLI exception that is thrown.</li>
+ *     <li>--quiet-logs: Disables writing log messages to STDOUT.</li>
  * </ul>
  *
  * <p>Why are we not using a library for this? Because parsing command line
@@ -54,8 +56,10 @@ import java.util.logging.SimpleFormatter;
 public final class Cli {
     public static final String HELP = "--help";
     public static final String NO_COLOR = "--no-color";
+    public static final String FORCE_COLOR = "--force-color";
     public static final String DEBUG = "--debug";
     public static final String STACKTRACE = "--stacktrace";
+    public static final String QUIET_LOGS = "--quiet-logs";
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("HH:mm:ss.SSS");
 
     private final String applicationName;
@@ -125,6 +129,8 @@ public final class Cli {
                 // Use the --no-color argument to globally disable ANSI colors.
                 if (parsedArguments.has(NO_COLOR)) {
                     Colors.setUseAnsiColors(false);
+                } else if (parsedArguments.has(FORCE_COLOR)) {
+                    Colors.setUseAnsiColors(true);
                 }
                 // Automatically handle --help output for subcommands.
                 if (parsedArguments.has(HELP)) {
@@ -143,7 +149,7 @@ public final class Cli {
     }
 
     private void configureLogging(String[] args) {
-        if (configureLogging) {
+        if (configureLogging && !hasArgument(args, QUIET_LOGS)) {
             Handler handler = getConsoleHandler();
             if (hasArgument(args, DEBUG)) {
                 handler.setFormatter(new DebugFormatter());
@@ -275,7 +281,7 @@ public final class Cli {
             table.put("  " + name + "  ", parser.getPositionalHelp().orElse(""));
         });
 
-        body.append(createTable(table).trim());
+        body.append("  ").append(createTable(table).trim());
 
         String help = command.getHelp();
         if (!help.isEmpty()) {
