@@ -2,15 +2,39 @@
 
     <div id="splash">
         <div class="width-wrapper">
-            <h1>Smithy, an extensible API definition language</h1>
-            <p class="headline">
-                Smithy is a protocol-agnostic interface definition language
-                and set of tools for building clients, servers, and
-                documentation for any programming language.
-            </p>
-            <div class="splash-links">
-                <a href="quickstart.html">Get started</a>
-                <a href="spec/index.html">Specifications</a>
+            <div class="splash-row">
+                <div class="splash-column">
+                    <h1>Smithy, an extensible API definition language</h1>
+                    <div class="headline">
+                        Smithy is a protocol-agnostic interface definition language
+                        and set of tools that builds clients, servers, and
+                        documentation for any programming language.
+                    </div>
+                    <a class="splash-link" href="quickstart.html">Get started</a>
+                    <a class="splash-link-small" href="spec/index.html">Specifications</a>
+                </div>
+
+                <div class="splash-column">
+                    <div class="highlight-smithy notranslate">
+                        <div class="highlight">
+<pre><span></span><span class="kd">namespace</span><span class="nc"> example.weather</span>
+
+<span class="kd">service</span><span class="nc"> Weather</span> {
+  <span class="nl">version:</span> <span class="s2">"2006-03-01"</span>,
+  <span class="nl">resources:</span> [<span class="n">City</span>],
+  <span class="nl">operations:</span> [<span class="n">GetCurrentTime</span>]
+}
+
+<span class="kd">resource</span><span class="nc"> City</span> {
+  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="n">CityId</span> },
+  <span class="nl">read:</span> <span class="n">GetCity</span>,
+  <span class="nl">list:</span> <span class="n">ListCities</span>,
+  <span class="nl">resources:</span> [<span class="n">Forecast</span>],
+}
+</pre>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -18,13 +42,13 @@
     <div class="width-wrapper">
         <div class="splash-row">
             <div class="splash-column">
-                <h2>Language and protocol-agnostic</h2>
+                <h2>Protocol-agnostic</h2>
                 <p>Smithy is designed to work with any programming language, describe
                     services running in any environment, and work with any kind of transport or
                     serialization format.</p>
             </div>
             <div class="splash-column">
-                <h2>Extend with traits</h2>
+                <h2>Extensible</h2>
                 <p>Smithy models can be extended through <em>traits</em>. There are
                     many built-in traits to affect things like behavior and serialization,
                     and custom traits can be added for additional functionality.</p>
@@ -32,12 +56,13 @@
         </div>
         <div class="splash-row">
             <div class="splash-column">
-                <h2 class="list-header">Standardize your APIs</h2>
-                <p>Customizable constraints can be enforced on the model to ensure that
-                    APIs adhere to any kind of standard or convention.</p>
+                <h2 class="list-header">Enforce standards &amp; consistency</h2>
+                <p>Customizable standards and validation constraints ensure that APIs
+                    adhere to any kind of standard or convention. Rule sets can be
+                    shared and applied to all APIs in an organization.</p>
             </div>
             <div class="splash-column">
-                <h2 class="list-header">Resources and operations</h2>
+                <h2 class="list-header">Resource based</h2>
                 <p>Smithy is defined in terms of resources and operations you can enact on
                     them. Explicitly defining resources provides rich metadata about an API
                     that can be used to build higher-level client tooling and derive
