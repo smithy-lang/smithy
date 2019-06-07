@@ -118,7 +118,7 @@ public final class BuildParameterBuilder {
         if (sources != null) {
             for (String source : sources) {
                 if (!source.isEmpty() && Files.exists(Paths.get(source))) {
-                    this.sources.addAll(sources);
+                    this.sources.add(source);
                 } else {
                     LOGGER.info("Skipping source that does not exist: " + source);
                 }
