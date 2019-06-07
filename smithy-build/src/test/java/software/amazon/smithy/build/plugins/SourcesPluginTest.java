@@ -72,6 +72,32 @@ public class SourcesPluginTest {
     }
 
     @Test
+    public void copiesModelFromJarWithNonSourceProjection() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("sources/jar-import.jar").getPath())
+                .addImport(getClass().getResource("notsources/d.smithy"))
+                .assemble()
+                .unwrap();
+        MockManifest manifest = new MockManifest();
+        ProjectionConfig projection = ProjectionConfig.builder().build();
+        PluginContext context = PluginContext.builder()
+                .fileManifest(manifest)
+                .projection("foo", projection)
+                .model(model)
+                .originalModel(model)
+                .sources(ListUtils.of(Paths.get(getClass().getResource("sources/jar-import.jar").getPath())))
+                .build();
+        new SourcesPlugin().execute(context);
+        String manifestString = manifest.getFileString("manifest").get();
+
+        assertThat(manifestString, containsString("model.json"));
+        assertThat(manifestString, not(containsString("jar-import")));
+        assertThat(manifest.getFileString("model.json").get(), containsString("\"A\""));
+        assertThat(manifest.getFileString("model.json").get(), containsString("\"B\""));
+        assertThat(manifest.getFileString("model.json").get(), containsString("\"C\""));
+    }
+
+    @Test
     public void copiesOnlyFilesFromSourcesForProjection() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("sources/a.smithy").getPath())
