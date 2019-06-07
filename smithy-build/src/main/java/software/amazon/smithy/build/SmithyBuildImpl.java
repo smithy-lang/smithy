@@ -247,7 +247,7 @@ final class SmithyBuildImpl {
         SmithyBuildPlugin resolved = pluginFactory.apply(pluginName).orElse(null);
 
         if (resolved == null) {
-            LOGGER.fine(() -> String.format(
+            LOGGER.info(() -> String.format(
                     "Unable to find a plugin for `%s` in the `%s` projection",
                     pluginName, projectionName));
         } else if (resolved.requiresValidModel() && modelResult.isBroken()) {
@@ -255,7 +255,7 @@ final class SmithyBuildImpl {
                     "Skipping `%s` plugin for `%s` projection because the model is broken",
                     pluginName, projectionName));
         } else {
-            LOGGER.fine(() -> String.format(
+            LOGGER.info(() -> String.format(
                     "Applying `%s` plugin to `%s` projection",
                     pluginName, projectionName));
             resolved.execute(PluginContext.builder()
