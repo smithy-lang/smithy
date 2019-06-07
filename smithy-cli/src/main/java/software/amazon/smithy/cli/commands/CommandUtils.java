@@ -49,7 +49,7 @@ final class CommandUtils {
 
     private static void discoverModelsWithClasspath(Arguments arguments, ModelAssembler assembler) {
         String rawClasspath = arguments.parameter(SmithyCli.DISCOVER_CLASSPATH);
-        LOGGER.info("Discovering models with classpath: " + rawClasspath);
+        LOGGER.finer("Discovering models with classpath: " + rawClasspath);
         String[] classpath = rawClasspath.split(":");
         URL[] urls = new URL[classpath.length];
 
