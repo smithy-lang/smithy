@@ -235,6 +235,11 @@ final class LoaderVisitor {
      * @param smithyVersion Version to set.
      */
     public void onVersion(SourceLocation sourceLocation, String smithyVersion) {
+        // Optimized case of an exact match.
+        if (this.smithyVersion != null && this.smithyVersion.equals(smithyVersion)) {
+            return;
+        }
+
         String[] versionParts = smithyVersion.split("\\.");
         validateVersionNumber(sourceLocation, versionParts);
 
@@ -304,15 +309,15 @@ final class LoaderVisitor {
     }
 
     private void validateState(FromSourceLocation sourceLocation) {
+        if (calledOnEnd) {
+            throw new IllegalStateException("Cannot call visitor method because visitor has called onEnd");
+        }
+
         if (smithyVersion == null) {
             // Assume latest supported version.
             LOGGER.warning(format("No Smithy version explicitly specified in %s, so assuming version of %s",
                                   sourceLocation.getSourceLocation().getFilename(), Model.MODEL_VERSION));
             onVersion(sourceLocation.getSourceLocation(), Model.MODEL_VERSION);
-        }
-
-        if (calledOnEnd) {
-            throw new IllegalStateException("Cannot call visitor method because visitor has called onEnd");
         }
     }
 

@@ -32,6 +32,7 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.Shape;
@@ -453,16 +454,11 @@ public final class ModelAssembler {
 
         LoaderVisitor visitor = new LoaderVisitor(traitFactory, properties);
 
-        if (!disablePrelude) {
-            mergeModelIntoVisitor(Prelude.getPreludeModel(), visitor);
-        }
-
-        shapes.forEach(visitor::onShape);
-        traitDefinitions.forEach(visitor::onTraitDef);
-        metadata.forEach(visitor::onMetadata);
-
-        for (Model model : mergeModels) {
-            mergeModelIntoVisitor(model, visitor);
+        // Load models first to ensure a version is set.
+        for (Map.Entry<String, Supplier<String>> modelEntry : stringModels.entrySet()) {
+            if (!modelLoader.load(modelEntry.getKey(), modelEntry.getValue(), visitor)) {
+                LOGGER.warning(() -> "No ModelLoader was able to load " + modelEntry.getKey());
+            }
         }
 
         if (!documentNodes.isEmpty()) {
@@ -472,10 +468,16 @@ public final class ModelAssembler {
             }
         }
 
-        for (Map.Entry<String, Supplier<String>> modelEntry : stringModels.entrySet()) {
-            if (!modelLoader.load(modelEntry.getKey(), modelEntry.getValue(), visitor)) {
-                LOGGER.warning(() -> "No ModelLoader was able to load " + modelEntry.getKey());
-            }
+        shapes.forEach(visitor::onShape);
+        traitDefinitions.forEach(visitor::onTraitDef);
+        metadata.forEach(visitor::onMetadata);
+
+        if (!disablePrelude) {
+            mergeModelIntoVisitor(Prelude.getPreludeModel(), visitor);
+        }
+
+        for (Model model : mergeModels) {
+            mergeModelIntoVisitor(model, visitor);
         }
 
         ValidatedResult<Model> modelResult = visitor.onEnd();
@@ -485,6 +487,7 @@ public final class ModelAssembler {
     }
 
     private static void mergeModelIntoVisitor(Model model, LoaderVisitor visitor) {
+        visitor.onVersion(SourceLocation.NONE, model.getSmithyVersion());
         model.getTraitDefinitions().forEach(visitor::onTraitDef);
         model.getMetadata().forEach(visitor::onMetadata);
         model.getShapeIndex().shapes().forEach(visitor::onShape);
