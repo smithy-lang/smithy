@@ -172,14 +172,25 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
             return true;
         }
 
-        Path location = Paths.get(sourceLocation.getSourceLocation().getFilename());
+        String location = sourceLocation.getSourceLocation().getFilename();
+        int offsetFromStart = findOffsetFromStart(location);
+
         for (Path path : sources) {
-            if (location.startsWith(path)) {
+            String pathString = path.toString();
+            int offsetFromStartInSource = findOffsetFromStart(pathString);
+            // Compare the strings in a way that normalizes them and strips off protocols.
+            if (location.regionMatches(offsetFromStart, pathString, offsetFromStartInSource, pathString.length())) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private static int findOffsetFromStart(String location) {
+        // This accounts for "jar:file:" and "file:".
+        int position = location.indexOf("file:");
+        return position == -1 ? 0 : position + "file:".length();
     }
 
     private static void copyModelsFromJar(List<String> names, FileManifest manifest, String jarRoot, Path jarPath)
