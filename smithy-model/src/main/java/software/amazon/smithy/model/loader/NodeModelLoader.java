@@ -195,19 +195,21 @@ final class NodeModelLoader implements ModelLoader {
 
     void load(LoaderVisitor visitor, Node node) {
         ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
+
+        model.getMember(SMITHY).ifPresent(version -> {
+            visitor.onVersion(version.getSourceLocation(), version.expectStringNode().getValue());
+        });
+
+        model.getMember(METADATA).ifPresent(value -> {
+            ObjectNode metadata = value.expectObjectNode("`metadata` must be an object");
+            metadata.getMembers().forEach((k, v) -> visitor.onMetadata(k.getValue(), v));
+        });
+
         model.getMembers().forEach((key, value) -> {
-            switch (key.getValue()) {
-                case SMITHY:
-                    String version = value.expectStringNode().getValue();
-                    visitor.onVersion(value.getSourceLocation(), version);
-                    break;
-                case METADATA:
-                    ObjectNode metadata = value.expectObjectNode("`metadata` must be an object");
-                    metadata.getMembers().forEach((k, v) -> visitor.onMetadata(k.getValue(), v));
-                    break;
-                default:
-                    // Additional properties are considered namespaces.
-                    loadNamespace(visitor, key.getValue(), value.expectObjectNode());
+            String keyValue = key.getValue();
+            if (!keyValue.equals(SMITHY) && !keyValue.equals(METADATA)) {
+                // Additional properties are considered namespaces.
+                loadNamespace(visitor, key.getValue(), value.expectObjectNode());
             }
         });
     }
