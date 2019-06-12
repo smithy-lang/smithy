@@ -47,7 +47,7 @@ blockquote {
 h1, h2, h3, h4, h5, h6 {
   color: #000;
   line-height: 1.25;
-  margin-bottom: 16px;
+  margin-bottom: 1em;
   margin-top: 2rem;
   font-weight: 600;
 }
@@ -99,11 +99,6 @@ h7 {
   margin-bottom: 1em;
 }
 
-#splash > .width-wrapper > p {
-  margin: 1em auto;
-  max-width: 800px;
-}
-
 #splash h1 {
   display: none;
 }
@@ -150,13 +145,6 @@ h7 {
   color: #fff;
 }
 
-.list-header {
-  color: {{ theme_color }};
-  font-weight: bold;
-  font-size: 110%;
-  margin-bottom: 12px;
-}
-
 .splash-row {
   display: flex;
 }
@@ -169,14 +157,21 @@ h7 {
   padding: 0 20px;
 }
 
-.splash-column h2 {
+.splash-column p {
+  margin: 0;
+}
+
+.splash-column h2, .faq h2 {
   color: {{ theme_color }};
-  margin: 1em 0 0 0;
   font-weight: 300;
   padding: 0;
   font-size: 2rem;
   text-align: left;
   border: none;
+}
+
+.splash-column h2 {
+  margin-bottom: 0.5em;
 }
 
 /* ----- Visual separations ------ */
@@ -197,11 +192,6 @@ h7 {
   padding: 0 0 2em 0;
   min-height: 500px;
   background: #fff;
-}
-
-#page-container p,
-#landing-container p {
-  margin: 1em 0;
 }
 
 #page-container li > p.first:last-child,
@@ -270,7 +260,7 @@ header {
   height: 26px;
   line-height: normal;
   position: relative;
-  margin-top: 12px;
+  margin-top: 9px;
 }
 
 .site-logo a {
@@ -289,13 +279,20 @@ header {
   padding-left: 35px;
 }
 
+.site-logo .beta-text {
+  font-weight: 300;
+  padding-left: 6px;
+  font-size: 12px;
+  vertical-align: super;
+}
+
 .site-logo .logo-icon {
   padding: 2px 3px 2px 4px;
   border-radius: 6px;
   color: transparent;
   text-shadow: 0 0 0 {{ theme_color }};
   position: absolute;
-  top: -1px;
+  top: 1px;
   background: theme_color;
   font-size: 18px;
   background: #fff;
