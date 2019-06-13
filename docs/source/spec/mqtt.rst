@@ -10,6 +10,11 @@ messaging transport protocol. In addition to traits, it defines the
 requirements, limitations, and expected client behavior when decorating
 Smithy models with MQTT metadata.
 
+.. warning::
+
+    The MQTT traits defined in this specification are still evolving and
+    subject to change.
+
 .. contents:: Table of contents
     :depth: 2
     :local:

@@ -54,8 +54,8 @@ Additional specifications
 .. toctree::
     :maxdepth: 1
 
-    mqtt
     validation
+    mqtt
 
 *Additional specifications* define additional functionality and
 enhancements.
@@ -63,10 +63,10 @@ enhancements.
 .. list-table::
     :widths: 45 55
 
-    * - :doc:`mqtt`
-      - Defines how to bind models to MQTT.
     * - :doc:`validation`
       - Defines how to configure custom validation.
+    * - :doc:`mqtt`
+      - Defines how to bind models to MQTT.
 
 
 ------------------

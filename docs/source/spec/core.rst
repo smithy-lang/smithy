@@ -16,7 +16,7 @@ models define a service as a collection resources, operations, and shapes.
 Status of this specification
 ----------------------------
 
-This specification is currently a draft and subject to change.
+This specification is currently at version |version| and is subject to change.
 
 
 ---------------------

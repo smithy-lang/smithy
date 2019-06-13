@@ -68,6 +68,8 @@ Smithy supports the following types:
       - An instant in time with no UTC offset or timezone. The
         serialization of a timestamp is determined by a
         :ref:`protocol <protocols-trait>`.
+    * - :ref:`document <document-type>`
+      - An untyped JSON-like value.
     * - :ref:`list`
       - Homogenous collection of values.
     * - :ref:`set`
