@@ -18,6 +18,8 @@ package software.amazon.smithy.openapi.fromsmithy;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
@@ -42,6 +44,17 @@ public interface OpenApiProtocol {
      * @return Returns the supported protocol names.
      */
     Set<String> getProtocolNames();
+
+    /**
+     * Configures protocol-specific default values when they are not present
+     * in the configuration context. Only values that are not explicitly set
+     * are modified as a result of calling this method.
+     *
+     * @return Returns a map of property names to their default values to set.
+     */
+    default ObjectNode getDefaultSettings() {
+        return Node.objectNode();
+    }
 
     /**
      * Creates an operation entry, including the method, URI, and operation

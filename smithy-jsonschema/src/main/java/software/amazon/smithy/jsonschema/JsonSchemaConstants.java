@@ -30,7 +30,8 @@ public final class JsonSchemaConstants {
     /** Includes shapes marked with the {@code private} trait. */
     public static final String SMITHY_INCLUDE_PRIVATE_SHAPES = "includePrivateShapes";
 
-    /** Uses the value of the jsonName trait when creating JSON schema
+    /**
+     * Uses the value of the jsonName trait when creating JSON schema
      * properties for structure and union shapes.
      *
      * <p>This property has no effect if a {@link PropertyNamingStrategy} is
@@ -76,7 +77,7 @@ public final class JsonSchemaConstants {
      * <p>Defaults to "#/definitions" if no value is specified. OpenAPI
      * artifacts will want to use "#/components/schemas".
      */
-    public static final String DEFINITION_POINTER = "definitionsPointer";
+    public static final String DEFINITION_POINTER = "definitionPointer";
 
     /**
      * Adds custom key-value pairs to the JSON Schema document generated from

@@ -236,16 +236,20 @@ public final class OpenApiConverter {
                 .withMember(OpenApiConstants.OPEN_API_MODE, true)
                 .withMember(JsonSchemaConstants.DEFINITION_POINTER, OpenApiConstants.SCHEMA_COMPONENTS_POINTER);
 
-        settings.forEach(configBuilder::withMember);
-        ObjectNode config = configBuilder.build();
-        getJsonSchemaConverter().config(config);
-
+        // Find the service shape.
         ServiceShape service = model.getShapeIndex().getShape(serviceShapeId)
                 .orElseThrow(() -> new IllegalArgumentException(String.format(
                         "Shape `%s` not found in shape index", serviceShapeId)))
                 .asServiceShape()
                 .orElseThrow(() -> new IllegalArgumentException(String.format(
                         "Shape `%s` is not a service shape", serviceShapeId)));
+
+        settings.forEach(configBuilder::withMember);
+        ObjectNode config = configBuilder.build();
+
+        if (protocolName == null && config.getMember(OpenApiConstants.PROTOCOL).isPresent()) {
+            protocolName = config.getStringMember(OpenApiConstants.PROTOCOL).get().getValue();
+        }
 
         // Discover OpenAPI extensions.
         List<Smithy2OpenApiExtension> extensions = new ArrayList<>();
@@ -257,6 +261,17 @@ public final class OpenApiConverter {
         Pair<Protocol, OpenApiProtocol> protocolPair = resolveProtocol(service, extensions);
         Protocol resolvedProtocol = protocolPair.getLeft();
         OpenApiProtocol openApiProtocol = protocolPair.getRight();
+        LOGGER.info(() -> "Resolved " + resolvedProtocol.getName() + " OpenAPI protocol");
+
+        // Merge in protocol default values.
+        for (Map.Entry<String, Node> entry : openApiProtocol.getDefaultSettings().getStringMap().entrySet()) {
+            if (!config.getMember(entry.getKey()).isPresent()) {
+                config = config.withMember(entry.getKey(), entry.getValue());
+            }
+        }
+
+        getJsonSchemaConverter().config(config);
+
         // Set a protocol name if one wasn't set but instead derived.
         protocolName = protocolName != null ? protocolName : resolvedProtocol.getName();
         ComponentsObject.Builder components = ComponentsObject.builder();
