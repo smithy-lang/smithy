@@ -63,7 +63,7 @@ public final class UnsupportedTraits implements OpenApiMapper {
                        + "model directly, they have no direct corollary in OpenAPI and can not be included in "
                        + "the generated model.");
 
-        if (context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.IGNORE_UNSUPPORTED_TRAIT)) {
+        if (context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.IGNORE_UNSUPPORTED_TRAITS)) {
             LOGGER.warning(message.toString());
         } else {
             throw new OpenApiException(message.toString());

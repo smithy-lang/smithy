@@ -24,8 +24,11 @@ public final class OpenApiConstants {
     /** The supported version of OpenAPI. */
     public static final String VERSION = "3.0.2";
 
-    /** The Smithy service Shape ID being converted. */
+    /** The Smithy service Shape ID to convert. */
     public static final String SERVICE = "service";
+
+    /** The protocol name to use when converting Smithy to OpenAPI. */
+    public static final String PROTOCOL = "protocol";
 
     /** Whether or not to include tags in the result. */
     public static final String OPEN_API_TAGS = "openapi.tags";
@@ -98,7 +101,7 @@ public final class OpenApiConstants {
     public static final String ON_HTTP_PREFIX_HEADERS_WARN = "WARN";
 
     /** Ignores unsupported trait like eventStream and logs them rather than fail. */
-    public static final String IGNORE_UNSUPPORTED_TRAIT = "openapi.ignoreUnsupportedTrait";
+    public static final String IGNORE_UNSUPPORTED_TRAITS = "openapi.ignoreUnsupportedTraits";
 
     /**
      * The prefix used to provide a custom OpenAPI security scheme name for

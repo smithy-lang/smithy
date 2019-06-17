@@ -324,6 +324,8 @@ Given a pattern of ``/path?requiredKey=requiredValue`` and an endpoint of
         is not "requiredValue" .
 
 
+.. _greedy-labels:
+
 Greedy labels
 ~~~~~~~~~~~~~
 

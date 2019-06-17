@@ -29,7 +29,7 @@ public class UnsupportedTraitsPluginTest {
     @Test
     public void logsWhenUnsupportedTraitsAreFound() {
         OpenApiConverter.create()
-                .putSetting(OpenApiConstants.IGNORE_UNSUPPORTED_TRAIT, true)
+                .putSetting(OpenApiConstants.IGNORE_UNSUPPORTED_TRAITS, true)
                 .convert(model, ShapeId.from("smithy.example#Streaming"));
     }
 
