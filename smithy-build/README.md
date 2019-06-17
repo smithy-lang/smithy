@@ -45,10 +45,10 @@ The configuration file looks like the following JSON:
 
 * ``version`` (``string``): **Required.** Defines the version of
   SmithyBuild. Set to `1.0`.
-* ``outputDirectory`` (``string``): **Required.** The location where
-  projections are written. Each projection will create a subdirectory
-  named after the projection, and the artifacts from the projection,
-  including a ``model.json`` file, will be placed in the directory.
+* ``outputDirectory`` (``string``): The location where projections are
+  written. Each projection will create a subdirectory named after the
+  projection, and the artifacts from the projection, including a ``model.json``
+  file, will be placed in the directory.
 * ``imports`` (``string[]``): Provides a list of relative imports to
   combine into a single model. When a directory is encountered, all
   files and all files within all subdirectories are imported. Note that

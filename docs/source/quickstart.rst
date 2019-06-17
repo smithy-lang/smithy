@@ -21,7 +21,7 @@ What is Smithy?
 
 *Smithy* is an interface definition language and set of tools that allows
 developers to build clients and servers in multiple languages. Smithy
-models define a service as a collection resources, operations, and shapes.
+models define a service as a collection of resources, operations, and shapes.
 A Smithy model enables API providers to generate clients and servers in
 various programming languages, API documentation, test automation, and
 example code.

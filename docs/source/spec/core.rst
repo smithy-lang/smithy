@@ -4,7 +4,7 @@ Smithy core specification
 
 *Smithy* is an interface definition language and set of tools that allows
 developers to build RPC clients and servers in multiple languages. Smithy
-models define a service as a collection resources, operations, and shapes.
+models define a service as a collection of resources, operations, and shapes.
 
 .. contents:: Table of contents
     :depth: 2
