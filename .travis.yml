@@ -1,0 +1,15 @@
+language: java
+
+jdk:
+- oraclejdk8
+- oraclejdk11
+- openjdk8
+- openjdk11
+
+sudo: true
+
+dist: trusty
+
+install: /bin/true
+
+script: ./gradlew -q clean build
