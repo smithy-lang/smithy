@@ -1,0 +1,907 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Using SmithyBuild &#8212; Smithy 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
+    <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Smithy Gradle Plugin" href="gradle-plugin.html" />
+    <link rel="prev" title="Building Smithy Models" href="index.html" /> 
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../index.html">
+                    <span class="logo-icon">⚒️</span><span class="logo-text">Smithy</span><span class="beta-text">beta</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../../spec/index.html">Specifications</a></li>
+                <li class="site-page"><a href="../index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+  <div class="section" id="using-smithybuild">
+<h1>Using SmithyBuild<a class="headerlink" href="#using-smithybuild" title="Permalink to this headline">¶</a></h1>
+<p>Building a Smithy model requires constructing a configuration file,
+<code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code>. This file is used to describe how a model is created
+and what projections of the model to create.</p>
+<div class="section" id="using-smithy-build-json">
+<span id="smithy-build-json"></span><h2>Using <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code><a class="headerlink" href="#using-smithy-build-json" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file is used to describe how a model is created and
+what projections of the model to create.</p>
+<p>The configuration file accepts the following properties:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>version</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required.</strong> Defines the version of SmithyBuild. Set to <cite>1.0</cite>.</td>
+</tr>
+<tr class="row-odd"><td>outputDirectory</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required.</strong> The location where projections are written. Each
+projection will create a subdirectory named after the projection, and
+the artifacts from the projection, including a <code class="docutils literal notranslate"><span class="pre">model.json</span></code> file,
+will be placed in the directory.</td>
+</tr>
+<tr class="row-even"><td>imports</td>
+<td><code class="docutils literal notranslate"><span class="pre">string[]</span></code></td>
+<td>Provides a list of relative imports to combine into a single model.
+When a directory is encountered, all files and all files within all
+subdirectories are imported. Note that build systems MAY choose to rely
+on other mechanisms for importing models and forming a composite model.
+These imports are used in every projection. Note: imports are relative
+to the configuration file.</td>
+</tr>
+<tr class="row-odd"><td>projections</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></td>
+<td>A map of projection names to projection configurations.</td>
+</tr>
+<tr class="row-even"><td>plugins</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></td>
+<td>Defines the plugins to apply to the model when building every
+projection. Plugins are a mapping of plugin names to an arbitrary
+plugin configuration object.</td>
+</tr>
+</tbody>
+</table>
+<p>The following is an example <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> configuration:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;outputDirectory&quot;</span><span class="p">:</span> <span class="s2">&quot;build/output&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;imports&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;foo.json&quot;</span><span class="p">,</span> <span class="s2">&quot;some/directory&quot;</span><span class="p">],</span>
+    <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;my-abstract-projection&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;abstract&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;projection-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;imports&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;projection-specific-imports/&quot;</span><span class="p">],</span>
+            <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeShapesByTag&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;internal&quot;</span><span class="p">,</span> <span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="s2">&quot;...&quot;</span><span class="p">]},</span>
+                <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeTraitsByTag&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;internal&quot;</span><span class="p">]}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;plugin-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;plugin-config&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;...&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;plugin-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;plugin-config&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;...&quot;</span><span class="p">:</span> <span class="p">{}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="projections">
+<span id="id1"></span><h2>Projections<a class="headerlink" href="#projections" title="Permalink to this headline">¶</a></h2>
+<p>A projection of a model is a filtered and modified version of a Smithy model
+that is intended for specific audiences or customers. Projections are
+useful to companies that maintain internal and external versions of an API
+or include parameters and operations that are available to only a subset of
+their customers.</p>
+<p>Projections are defined in the smithy-build.json file in the <code class="docutils literal notranslate"><span class="pre">projections</span></code>
+property. Projection names MUST match the following pattern: <code class="docutils literal notranslate"><span class="pre">^[A-Za-z0-9\-_.]+$</span></code>.</p>
+<p>A projection accepts the following configuration:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>abstract</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Defines the projection as a placeholder that other projections apply.
+Smithy will not build artifacts for abstract projections. Abstract
+projections must not define <code class="docutils literal notranslate"><span class="pre">imports</span></code> or <code class="docutils literal notranslate"><span class="pre">plugins</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>imports</td>
+<td><code class="docutils literal notranslate"><span class="pre">string[]</span></code></td>
+<td>Provides a list of relative imports to include when building this
+specific projection. When a directory is encountered, all files and
+all files within all subdirectories are imported. Note: imports are
+relative to the configuration file.</td>
+</tr>
+<tr class="row-even"><td>transforms</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;Transforms&gt;</span></code></td>
+<td>Defines the transformations to apply to the projection.
+Transformations are used to remove shapes, remove traits, modify trait
+contents, and any other kind of transformation necessary for the
+projection. Transforms are applied in the order defined.</td>
+</tr>
+<tr class="row-odd"><td>plugins</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></td>
+<td>Defines the plugins to apply to the model when building this
+projection. Plugins are a mapping of plugin names to an arbitrary
+plugin configuration object. SmithyBuild will attempt to resolve
+plugin names using <a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">Java SPI</a> to locate and instance of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.SmithyBuildPlugin</span></code>
+that returns a matching name when calling <code class="docutils literal notranslate"><span class="pre">getName</span></code>. SmithyBuild will
+emit a warning when a plugin cannot be resolved.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="projection-artifacts">
+<span id="id2"></span><h3>Projection artifacts<a class="headerlink" href="#projection-artifacts" title="Permalink to this headline">¶</a></h3>
+<p>SmithyBuild will write artifacts for each projection inside of
+<cite>outputDirectory</cite>.</p>
+<ul class="simple">
+<li>The model that is projected is placed inside of <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/model/model.json</span></code>.</li>
+<li>Build information about the projection build result, including the
+configuration of the projection and the validation events encountered when
+validating the projected model, are written to <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/build-info/smithy-build-info.json</span></code>.</li>
+<li>All plugin artifacts are written to <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/${pluginName}/${artifactName}</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">${artifactName}</span></code> is the name of an artifact contributed by an
+instance of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.SmithyBuildPlugin</span></code>. The relative
+path of each artifact is resolved against <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/${pluginName}/</span></code>.
+For example, given an artifact path of <code class="docutils literal notranslate"><span class="pre">foo/baz.json</span></code>, the resolved path
+would become <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/${pluginName}/foo/baz.json</span></code>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="transforms">
+<span id="id3"></span><h2>Transforms<a class="headerlink" href="#transforms" title="Permalink to this headline">¶</a></h2>
+<p>Transforms are used to filter and modify the model for the projection.
+Transforms are applied to the model, in order.</p>
+<p>A transform accepts the following configuration:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The required name of the transform.</td>
+</tr>
+<tr class="row-odd"><td>arguments</td>
+<td><code class="docutils literal notranslate"><span class="pre">string[]</span></code></td>
+<td>Provides a list of arguments to pass to the transform.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="apply">
+<span id="apply-transform"></span><h3>apply<a class="headerlink" href="#apply" title="Permalink to this headline">¶</a></h3>
+<p>Applies the transforms defined in the given projection names. Each provided
+name must be a valid projection name. The transforms of the referenced
+projections are applied in the order provided. No cycles are allowed in
+<code class="docutils literal notranslate"><span class="pre">apply</span></code>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;my-abstract-projection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;abstract&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;projection-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;imports&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;projection-specific-imports/&quot;</span><span class="p">],</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;baz&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;apply&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;my-abstract-projection&quot;</span><span class="p">]},</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span><span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="excludeshapesbytag">
+<h3>excludeShapesByTag<a class="headerlink" href="#excludeshapesbytag" title="Permalink to this headline">¶</a></h3>
+<p>Aliases: <code class="docutils literal notranslate"><span class="pre">excludeByTag</span></code> (deprecated)</p>
+<p>Removes shapes if they are tagged with one or more of the given arguments via
+the <a class="reference internal" href="../../spec/core.html#tags-trait"><span class="std std-ref">tags trait</span></a>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeByTag&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="includeshapesbytag">
+<span id="includeshapesbytag-transform"></span><h3>includeShapesByTag<a class="headerlink" href="#includeshapesbytag" title="Permalink to this headline">¶</a></h3>
+<p>Aliases: <code class="docutils literal notranslate"><span class="pre">includeByTag</span></code> (deprecated)</p>
+<p>Removes shapes that are not tagged with at least one of the given arguments
+via the <a class="reference internal" href="../../spec/core.html#tags-trait"><span class="std std-ref">tags trait</span></a>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeByTag&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="includenamespaces">
+<span id="includenamespaces-transform"></span><h3>includeNamespaces<a class="headerlink" href="#includenamespaces" title="Permalink to this headline">¶</a></h3>
+<p>Filters out shapes that are not part of one of the given <a class="reference internal" href="../../spec/core.html#namespaces"><span class="std std-ref">namespaces</span></a>.
+Note that this does not filter out traits based on namespaces.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeNamespaces&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;com.foo.bar&quot;</span><span class="p">,</span> <span class="s2">&quot;my.api&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="includeservices">
+<span id="includeservices-transform"></span><h3>includeServices<a class="headerlink" href="#includeservices" title="Permalink to this headline">¶</a></h3>
+<p>Filters out service shapes that are not included in the arguments list of
+service shape IDs.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeServices&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;my.api#MyService&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="excludetags">
+<span id="excludetags-transform"></span><h3>excludeTags<a class="headerlink" href="#excludetags" title="Permalink to this headline">¶</a></h3>
+<p>Removes tags from shapes and trait definitions that match any of the
+provided arguments (a list of allowed tags).</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeTags&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;tagA&quot;</span><span class="p">,</span> <span class="s2">&quot;tagB&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="excludetraits">
+<span id="excludetraits-transform"></span><h3>excludeTraits<a class="headerlink" href="#excludetraits" title="Permalink to this headline">¶</a></h3>
+<p>Removes trait definitions from a model if the trait name is present in the
+provided list of arguments. Any instance of a removed trait is also removed
+from shapes in the model.</p>
+<p>The shapes that make up trait definitions that are removed <em>are not</em>
+automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
+orphaned shapes.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeTraits&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;since&quot;</span><span class="p">,</span> <span class="s2">&quot;com.foo#customTrait&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>You can exclude all of the traits in a namespace by ending one of the
+arguments with &quot;#&quot;. For example, the following configuration excludes
+all traits in the &quot;example.foo&quot; namespace:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeTraits&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;example.foo#&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="excludetraitsbytag">
+<span id="excludetraitsbytag-transform"></span><h3>excludeTraitsByTag<a class="headerlink" href="#excludetraitsbytag" title="Permalink to this headline">¶</a></h3>
+<p>Removes trait definitions from a model if the trait definition has any of
+the provided <a class="reference internal" href="../../spec/core.html#tags-trait"><span class="std std-ref">tags</span></a>. Any instance of a removed trait is
+also removed from shapes in the model.</p>
+<p>The shapes that make up trait definitions that are removed <em>are not</em>
+automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
+orphaned shapes.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeTraitsByTag&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;internal&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="includeauth">
+<span id="includeauth-transform"></span><h3>includeAuth<a class="headerlink" href="#includeauth" title="Permalink to this headline">¶</a></h3>
+<p>Removes authentication schemes from shapes that do not match one of the
+given arguments (a list of authentication schemes).</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeAuth&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;aws.v4&quot;</span><span class="p">,</span> <span class="s2">&quot;http-basic&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="includeendpoints">
+<span id="includeendpoints-transform"></span><h3>includeEndpoints<a class="headerlink" href="#includeendpoints" title="Permalink to this headline">¶</a></h3>
+<p>Removes endpoints from endpoints traits that do not have one of the
+allowed names.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeEndpoints&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;us-east-1&quot;</span><span class="p">,</span> <span class="s2">&quot;us-west-2&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="includeprotocols">
+<span id="includeprotocols-transform"></span><h3>includeProtocols<a class="headerlink" href="#includeprotocols" title="Permalink to this headline">¶</a></h3>
+<p>Removes protocols from service shapes that do not match one of the given
+arguments (a list of protocol names).</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeProtocols&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;aws.rest-json&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="includetags">
+<span id="includetags-transform"></span><h3>includeTags<a class="headerlink" href="#includetags" title="Permalink to this headline">¶</a></h3>
+<p>Removes tags from shapes and trait definitions that are not in the
+argument list (a list of allowed tags).</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeTags&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="includetraits">
+<span id="includetraits-transform"></span><h3>includeTraits<a class="headerlink" href="#includetraits" title="Permalink to this headline">¶</a></h3>
+<p>Removes trait definitions from a model if the trait name is not present in the
+provided list of arguments. Any instance of a removed trait is also removed
+from shapes in the model.</p>
+<p>The shapes that make up trait definitions that are removed <em>are not</em>
+automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
+orphaned shapes.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeTraits&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;sensitive&quot;</span><span class="p">,</span> <span class="s2">&quot;com.foo.baz#customTrait&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>You can include all of the traits in a namespace by ending one of the
+arguments with &quot;#&quot;. For example, the following configuration includes
+all traits in the &quot;smithy.api&quot; namespace:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeTraits&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;smithy.api#&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="includetraitsbytag">
+<span id="includetraitsbytag-transform"></span><h3>includeTraitsByTag<a class="headerlink" href="#includetraitsbytag" title="Permalink to this headline">¶</a></h3>
+<p>Removes trait definitions from a model if the trait definition does not
+contain one of the provided <a class="reference internal" href="../../spec/core.html#tags-trait"><span class="std std-ref">tags</span></a>. Any instance of a
+removed trait definition is also removed from shapes in the model.</p>
+<p>The shapes that make up trait definitions that are removed <em>are not</em>
+automatically removed from the model. Use <code class="docutils literal notranslate"><span class="pre">removeUnusedShapes</span></code> to remove
+orphaned shapes.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeTraitsByTag&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;public&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="removeunusedshapes">
+<span id="removeunusedshapes-transform"></span><h3>removeUnusedShapes<a class="headerlink" href="#removeunusedshapes" title="Permalink to this headline">¶</a></h3>
+<p>Aliases: <code class="docutils literal notranslate"><span class="pre">treeShaker</span></code> (deprecated)</p>
+<p>Removes shapes from the model that are not connected to any service shape.</p>
+<p>You can <em>export</em> shapes that are not connected to any service shape by
+applying specific tags to the shape and adding the list of export tags as
+arguments to the transform.</p>
+<p>The following example removes shapes that are not connected to any service,
+but keeps the shape if it has any of the provided tags:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;removeUnusedShapes&quot;</span><span class="p">,</span> <span class="nt">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;export-tag1&quot;</span><span class="p">,</span> <span class="s2">&quot;another-export-tag&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="plugins">
+<span id="id4"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
+<p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
+configuration file, or in the &quot;plugins&quot; key-value pair of a projection.
+Plugins defined at the top-level of the configuration file are applied to
+every projection. Projections that define plugins of the same name as a
+top-level plugin completely overwrite the top-level plugin for that projection;
+projection settings are not merged in any way.</p>
+<p>Plugin names MUST match the following pattern: <code class="docutils literal notranslate"><span class="pre">^[A-Za-z0-9\-_.]+$</span></code>.</p>
+<p>SmithyBuild will attempt to resolve plugin names using <a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">Java SPI</a>
+to locate and instance of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.SmithyBuildPlugin</span></code>
+that matches the given plugin name (via <code class="docutils literal notranslate"><span class="pre">matchesPluginName</span></code>). SmithyBuild
+will log a warning when a plugin cannot be resolved.</p>
+<p>SmithyBuild DOES NOT attempt to automatically download and install plugins.
+Plugins MUST be available in the Java class path or module path in order for
+them to be discovered.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">build-info</span></code>, and <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugins are plugins that are
+always run in every non-abstract projection.</p>
+<div class="section" id="model-plugin">
+<span id="id5"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
+model as a single file. All of the dependencies of the model are included
+in the file.</p>
+</div>
+<div class="section" id="build-info-plugin">
+<span id="id6"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">build-info</span></code> plugin produces a JSON document that contains information
+about the projection and model.</p>
+</div>
+<div class="section" id="sources-plugin">
+<span id="id7"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin copies the source models and creates a manifest.
+When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
+model are copied over literally. When a JAR is used as a source model, the
+Smithy models contained within the JAR are copied as a source model while the
+JAR itself is not copied.</p>
+<p>When applying a projection, a new model file is created that contains only
+the shapes, trait definitions, and metadata that were defined in a source
+model <em>and</em> all of the newly added shapes, traits, and metadata.</p>
+<p>The manifest file is a newline (<code class="docutils literal notranslate"><span class="pre">\n</span></code>) separated file that contains the
+relative path from the manifest file to each model file created by the
+sources plugin. Lines that start with a number sign (#) are comments and are
+ignored. A Smithy manifest file is stored in a JAR as <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/manifest</span></code>.
+All model names referenced by the manifest are relative to <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/</span></code>.</p>
+</div>
+</div>
+</div>
+
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="index.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Building Smithy Models</a>
+                        
+                        <a href="gradle-plugin.html" title="next chapter" class="next-page clearfix">Smithy Gradle Plugin →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            <ul>
+<li><a class="reference internal" href="#">Using SmithyBuild</a><ul>
+<li><a class="reference internal" href="#using-smithy-build-json">Using <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code></a></li>
+<li><a class="reference internal" href="#projections">Projections</a><ul>
+<li><a class="reference internal" href="#projection-artifacts">Projection artifacts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#transforms">Transforms</a><ul>
+<li><a class="reference internal" href="#apply">apply</a></li>
+<li><a class="reference internal" href="#excludeshapesbytag">excludeShapesByTag</a></li>
+<li><a class="reference internal" href="#includeshapesbytag">includeShapesByTag</a></li>
+<li><a class="reference internal" href="#includenamespaces">includeNamespaces</a></li>
+<li><a class="reference internal" href="#includeservices">includeServices</a></li>
+<li><a class="reference internal" href="#excludetags">excludeTags</a></li>
+<li><a class="reference internal" href="#excludetraits">excludeTraits</a></li>
+<li><a class="reference internal" href="#excludetraitsbytag">excludeTraitsByTag</a></li>
+<li><a class="reference internal" href="#includeauth">includeAuth</a></li>
+<li><a class="reference internal" href="#includeendpoints">includeEndpoints</a></li>
+<li><a class="reference internal" href="#includeprotocols">includeProtocols</a></li>
+<li><a class="reference internal" href="#includetags">includeTags</a></li>
+<li><a class="reference internal" href="#includetraits">includeTraits</a></li>
+<li><a class="reference internal" href="#includetraitsbytag">includeTraitsByTag</a></li>
+<li><a class="reference internal" href="#removeunusedshapes">removeUnusedShapes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plugins">Plugins</a><ul>
+<li><a class="reference internal" href="#model-plugin">model plugin</a></li>
+<li><a class="reference internal" href="#build-info-plugin">build-info plugin</a></li>
+<li><a class="reference internal" href="#sources-plugin">sources plugin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2019, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

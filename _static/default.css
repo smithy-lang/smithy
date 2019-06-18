@@ -1,0 +1,910 @@
+/* ----- Layout ------ */
+
+html {
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* Base scaffolding taken from Markswatch theme */
+body {
+  color: #24292e;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-size: 16px;
+  line-height: 1.5;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  word-wrap: break-word;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+/* Utility class used in things like hidden form fields */
+.hidden {
+  display: none;
+}
+
+#site-container {
+  color: #24292e;
+}
+
+blockquote {
+  padding: 0 0 0 1.5em;
+  margin: 0 2rem 1rem 0;
+  color: #777;
+  border-left: 0.5rem solid #eee;
+}
+
+.width-wrapper  {
+  max-width: 1120px;
+  margin: auto;
+  position: relative;
+  padding: 0 1em;
+}
+
+/* ----- Headings ------ */
+
+h1, h2, h3, h4, h5, h6 {
+  color: #000;
+  line-height: 1.25;
+  margin-bottom: 1em;
+  margin-top: 2rem;
+  font-weight: 600;
+}
+
+h1 {
+  margin-top: 0;
+  margin-top: 0;
+  font-size: 2.5em;
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+}
+
+h2 {
+  font-size: 2.1em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h3 {
+  font-size: 1.8em;
+}
+
+h4 {
+  font-size: 1.6em;
+  font-weight: normal;
+}
+
+h5 {
+  font-size: 1.3em;
+  font-weight: normal;
+}
+
+h6 {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+h7 {
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+/* ----- Landing page ------ */
+
+#splash {
+  padding: 2em 0;
+  background: #1F73D7;
+  color: #fff;
+  margin-bottom: 1em;
+}
+
+#splash h1 {
+  display: none;
+}
+
+#splash .highlight-smithy {
+  color: #24292e
+}
+
+.headline {
+  font-weight: 400;
+  color: #fff;
+  font-size: 1.7em;
+}
+
+@media (max-width: 600px) {
+  #splash h1 {
+    font-size: 1.5em;
+  }
+  #splash .headline {
+    font-size: 18px;
+  }
+}
+
+.splash-link {
+  display: inline-block;
+  border-radius: 6px;
+  padding: 12px;
+  color: #1F73D7;
+  text-align: center;
+  margin: 2em 0 1em 0;
+  font-weight: 500;
+  background: #fff;
+  width: 160px;
+}
+
+.splash-link-small {
+  display: block;
+  text-decoration: underline;
+  color: #fff;
+  margin-bottom: 2em;
+}
+
+.splash-link-small:hover {
+  color: #fff;
+}
+
+.splash-row {
+  display: flex;
+}
+
+.splash-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  width: 50%;
+  padding: 0 20px;
+}
+
+.splash-column p {
+  margin: 0;
+}
+
+.splash-column h2, .faq h2 {
+  color: #1F73D7;
+  font-weight: 300;
+  padding: 0;
+  font-size: 2rem;
+  text-align: left;
+  border: none;
+}
+
+.splash-column h2 {
+  margin-bottom: 0.5em;
+}
+
+#splash pre {
+  position: relative;
+}
+
+.see-full-example {
+  display: block;
+  position: absolute;
+  bottom: 0.5em;
+  right: 0.5em;
+  font-size: 12px;
+}
+
+/* ----- Visual separations ------ */
+
+#page-container {
+  padding: 3rem 2rem 2rem 2em;
+  background: #fff;
+  flex: 1;
+}
+
+/* Make document and right nav left and right aligned columns. */
+#page-container > .width-wrapper {
+  display: flex;
+  flex-flow: row;
+}
+
+#landing-container {
+  padding: 0 0 2em 0;
+  min-height: 500px;
+  background: #fff;
+}
+
+#page-container li > p.first:last-child,
+#landing-container li > p.first:last-child {
+  margin-bottom: 0;
+}
+
+dt {
+  margin-bottom: 0.5em;
+}
+
+dd {
+  margin-left: 2em;
+}
+
+dd > ul {
+  padding-left: 0;
+  list-style-position: inside;
+}
+
+hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: #e1e4e8;
+  border: 0;
+}
+
+
+/* ----- Anchors ------ */
+
+a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+a:hover, .reference.external:hover {
+  text-decoration: underline;
+}
+
+.reference.external {
+  text-decoration: underline dotted #ccc;
+}
+
+/* First title (h1) on the page */
+.headerlink {
+  margin-left: 1em;
+  display: none;
+  font-size: 18px;
+  vertical-align: super;
+  line-height: 0;
+}
+
+*:hover > .headerlink {
+  display: inline-block;
+}
+
+
+/* ----- Header and footer ------ */
+
+header {
+  display: block;
+  width: 100%;
+  background-color: #1F73D7;
+  flex: none;
+}
+
+.header-flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.site-logo {
+  height: 26px;
+  line-height: normal;
+  position: relative;
+  margin-top: 9px;
+}
+
+.site-logo a {
+  color: #fff;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 22px;
+}
+
+.site-logo a:hover {
+  text-decoration: none;
+}
+
+.site-logo .logo-text {
+  font-weight: 700;
+  padding-left: 35px;
+}
+
+.site-logo .beta-text {
+  font-weight: 300;
+  padding-left: 6px;
+  font-size: 12px;
+  vertical-align: super;
+}
+
+.site-logo .logo-icon {
+  padding: 2px 3px 2px 4px;
+  border-radius: 6px;
+  color: transparent;
+  text-shadow: 0 0 0 #1F73D7;
+  position: absolute;
+  top: 1px;
+  background: theme_color;
+  font-size: 18px;
+  background: #fff;
+}
+
+#page-navigation {
+  padding: 10px 1em;
+  display: flex;
+  list-style: none;
+  margin-bottom: 0;
+}
+
+#page-navigation li {
+  cursor: pointer;
+}
+
+#page-navigation .site-page {
+  line-height: 1.8;
+  margin-right: 0 18px 0 0;
+}
+
+#page-navigation .site-page a {
+  display: block;
+  padding: 0 1em;
+  color: #fff;
+  border-radius: 12px;
+}
+
+#page-navigation .site-page a:hover {
+  color: #1F73D7;
+  background: #fff;
+  text-decoration: none;
+}
+
+#page-navigation .site-search {
+  margin-top: 3px;
+  margin-left: 2em;
+}
+
+#page-navigation .site-search .search-input {
+  padding: 0 1em;
+  color: #fff;
+  background-color: #14529B;
+  border: solid 1px rgba(23, 30, 38, 0.2);
+  border-radius: 3px;
+  width: 180px;
+  font-size: 0.9em;
+  border-radius: 10px;
+}
+
+#page-navigation .site-search button {
+  border: none;
+  padding: 5px 10px;
+  background-color: #fff;
+  color: #777;
+}
+
+footer {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: #f1f1f3;
+}
+
+.copyright {
+  text-align: center;
+  width: 100%;
+  font-size: 0.8rem;
+}
+
+.faq {
+  background: #f1f1f3;
+  padding: 2em 0;
+  margin: 4em 0;
+}
+
+.faq h2 {
+  color: #1F73D7;
+  border-bottom: none;
+}
+
+/* ----- Tables ------ */
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  border-width: 1px;
+  border-color: #e8e8e8;
+  border-style: solid;
+  width: 100%;
+  margin: 0 0 1rem 0;
+}
+
+tr {
+  border-bottom: 1px solid #e8e8e8;
+}
+
+tr.row-even {
+  background-color: #f7f7f7;
+}
+
+th {
+  text-align: left;
+  padding: 1.2rem 1.6em;
+  vertical-align: top;
+}
+
+td, th {
+  padding: 8px 16px;
+  border: none;
+  border-right: 1px solid #e8e8e8;
+}
+
+/* Field list tables */
+
+table.field-list {
+  margin: 2em 0;
+}
+
+table.field-list th {
+  background-color: #fff;
+  color: #24292e;
+  border-right: 1px solid #e8e8e8;
+  min-width: 0;
+}
+
+/* hlist tables */
+
+table.hlist {
+  border: none;
+}
+
+.hlist > tbody > tr {
+  border-bottom: none;
+}
+
+.hlist > tbody > tr > td {
+  border-right: 1px solid #ccc;
+  vertical-align: top;
+  padding-right: 12px;
+}
+
+.hlist > tbody > tr > td > ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hlist > tbody > tr > td:last-child {
+  border-right: none;
+}
+
+/* ----- Code and pre ------ */
+
+code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(27, 31, 35, 0.05);
+  border-radius: 3px;
+}
+
+pre {
+  padding: 16px;
+  overflow: auto;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+code, pre {
+  font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+}
+
+a code {
+  color: #0366d6;
+}
+
+
+/* ----- Tables with line numbers (..code directives) ------ */
+
+table.highlighttable {
+  margin: 0.5em 0 2em 0;
+  width: 100%;
+  overflow: auto;
+  display: block;
+  border: none;
+  background-color: #f6f8fa;
+}
+
+.highlighttable pre {
+  box-shadow: none;
+}
+
+table.highlighttable td {
+  border: none;
+  padding: 0;
+}
+
+table.highlighttable td.linenos {
+  border-right: 1px solid #ccc;
+  width: 20px; /* This will enlarge if needed. */
+  text-align: right;
+}
+
+table.highlighttable tr {
+  border-bottom: none;
+}
+
+table.highlighttable td.linenos pre {
+  padding-left: 0.8em;
+  color: #999;
+}
+
+table.highlighttable pre {
+  margin: 0;
+}
+
+.code-block-caption .caption-text {
+  font-style: italic;
+  color: #666;
+}
+
+.code-block-caption:hover .headerlink {
+  visibility: visible;
+  opacity: 100;
+}
+
+
+/* ------- Misc. -------- */
+
+/* RFC directive styling */
+.rfc strong {
+  font-weight: normal;
+}
+
+/* Table of contents "title" */
+.topic-title {
+  font-weight: 300;
+  color: #777;
+}
+
+/* -------- Document ---------- */
+/* TODO: These columns styles are convoluted. */
+
+.side-column {
+  min-height: 100px;
+  position: static;
+  flex: 0 0 350px;
+  top: 0;
+}
+
+.column-body {
+  position: sticky;
+  top: 30px;
+  overflow: auto;
+}
+
+#document-body {
+  padding: 0 3.5rem 0 0;
+  min-height: 300px;
+  flex: auto;
+  overflow: hidden;
+}
+
+#right-column {
+  font-size: 14px;
+}
+
+#right-column > .column-body > .sidebar {
+  border-left: 1px solid #1F73D7;
+  padding-left: 1em;
+}
+
+#right-column > .column-body > .sidebar > ul > li > a {
+  font-weight: bold;
+  color: #1F73D7;
+}
+
+#right-column > .column-body > .sidebar > ul > li > ul {
+  margin: 8px 0 0 0;
+}
+
+#sidebar-navigation {
+  font-size: 15px;
+  padding-right: 1em;
+}
+
+#sidebar-navigation ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#sidebar-navigation li {
+  margin-bottom: 8px;
+}
+
+#sidebar-navigation ul ul {
+  margin: 8px 0 0 1em;
+}
+
+#sidebar-navigation a {
+  color: rgba(0, 0, 0, 0.87);
+  display: block;
+}
+
+#right-column a {
+  color: #387894;
+}
+
+#right-column a {
+  color: rgba(0, 0, 0, 0.87);
+  display: block;
+}
+
+#right-column a code {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+#right-column h3 {
+  font-size: 1em;
+  line-height: 1.2em;
+  font-weight: 200;
+  margin: 0 0 1em 0;
+}
+
+#right-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#right-column ul ul {
+  margin: 0 0 0 1em;
+}
+
+#right-column li {
+  margin-bottom: 5px;
+}
+
+.side-column a {
+  padding-left: 6px;
+  border-left: 2px solid rgba(0, 0, 0, 0);
+}
+
+.side-column a.current {
+  border-left: 2px solid #1F73D7;
+  font-weight: bold;
+}
+
+/* -- admonitions ----------------------------------------------------------- */
+
+.admonition {
+  margin: 20px 0;
+  padding: 0 1em 0.2em 1em;
+  background-color: #fff;
+  box-shadow: 1px 1px 1px #eee;
+}
+
+.admonition dt {
+  font-weight: bold;
+}
+
+.admonition dl {
+  margin-bottom: 0;
+}
+
+.admonition-title {
+  margin: 0px 0 5px;
+  padding: 0;
+  font-size: 1.2em;
+  line-height: 1.1;
+}
+
+.admonition.danger,
+.admonition.error {
+  border-left: 8px solid #d9534f;
+}
+
+.admonition.danger .admonition-title,
+.admonition.error .admonition-title {
+  color: #d9534f;
+}
+
+.admonition.important,
+.admonition.warning,
+.admonition.attention,
+.admonition.caution {
+  border-left: 8px solid #9B581F;
+}
+
+.admonition.important .admonition-title,
+.admonition.warning .admonition-title,
+.admonition.attention .admonition-title,
+.admonition.caution .admonition-title {
+  color: #9B581F;
+}
+
+.admonition.note,
+.admonition.hint {
+  border-left: 8px solid #31708f;
+}
+
+.admonition.note .admonition-title,
+.admonition.hint .admonition-title {
+  color: #31708f;
+}
+
+.admonition.tip {
+  border-left: 8px solid #3c763d;
+}
+
+.admonition.tip .admonition-title {
+  color: #3c763d;
+}
+
+div.seealso {
+  background-color: #ffc;
+  border: 1px solid #ff6;
+}
+
+div.admonition tt.xref, div.admonition a tt {
+  border-bottom: 1px solid #fafafa;
+}
+
+div.admonition p.last {
+  margin-bottom: 0;
+}
+
+
+/* -- search page ----------------------- */
+
+ul.search {
+  margin: 10px 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+ul.search li {
+  padding: 5px 0 5px 20px;
+  background: url(file.png) no-repeat 0 7px;
+}
+
+ul.search li a {
+  font-weight: bold;
+}
+
+ul.search li div.context {
+  color: #888;
+  margin: 2px 0 0 30px;
+  text-align: left;
+}
+
+ul.keywordmatches li.goodmatch a {
+  font-weight: bold;
+}
+
+dt:target, .highlighted {
+    background-color: #fbe54e;
+}
+
+/* -------- Page relations (bottom next/previous links) ------- */
+
+.relations {
+  margin-top: 2em;
+  padding-top: 2em;
+  display: flex;
+}
+
+.relations .previous-page {
+  margin-right: auto;
+}
+
+.relations .next-page {
+  margin-left: auto;
+}
+
+.relations a {
+  display: block;
+  color: #0366d6;
+  border-radius: 2px;
+  border: 1px solid #0366d6;
+  padding: 0.8rem 1em;
+  transition: background .25s, color 0.25s;
+}
+
+.relations a:hover {
+  color: #fff;
+  background: #0366d6;
+  text-decoration: none;
+}
+
+/* -------- media query helpers ------- */
+
+@media (max-width: 1100px) {
+    #right-column { display: none; }
+    #page-container { padding: 1.5em; }
+}
+
+@media (max-width: 991px) {
+  #left-column { font-size: 0.8em; }
+  .hidden-sm, tr.hidden-sm, th.hidden-sm, td.hidden-sm {
+    display: none !important
+  }
+}
+
+@media (max-width: 767px) {
+  #document-body { padding: 0; }
+  .hidden-xs, tr.hidden-xs, th.hidden-xs, td.hidden-xs {
+    display: none !important
+  }
+}
+
+@media (max-width: 600px) {
+  /* Make the header navigation usable on a small screen. */
+  header {
+    display: block;
+    padding: 1em 1em 1em 0;
+    border-bottom: 1px solid rgba(1, 1, 1, 0.2);
+  }
+
+  .header-flex, .site-logo, #page-navigation {
+    display: block;
+    margin-left: 0.5em;
+    margin: 0.5em 0 0 0.5em;
+    padding: 0;
+  }
+
+  header .logo-icon {
+    display: none;
+  }
+
+  .site-logo .logo-text {
+    padding-left: 16px;
+  }
+
+  /* Don't show the hover anchor links when too small as it will often cause the links to jump around. */
+  *:hover > .headerlink {
+    display: none;
+  }
+
+  .splash-row {
+    display: block;
+  }
+
+  .splash-column {
+    display: block;
+    width: 100%;
+    padding: 0;
+  }
+}
+
+/* ------- Make tables scroll on smaller screens. ------ */
+
+@media (max-width: 992px) {
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+}
+
+/* ------- Printer friendly styling ------ */
+
+@media print{
+  /* Hide the header, footer, relations, and table of contents */
+  header, footer, .relations, .contents { display: none; }
+
+  /* Make text and padding a lot tighter */
+  body {
+    font-size: 12px;
+    line-height: 1.1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 1.5em;
+  }
+
+  .sphinx-tabs {
+    margin: 0.5em 0 !important;
+  }
+
+  /* Hide code-tab tabs */
+  .tabular {
+    display: none !important;
+  }
+
+  #document-body { padding: 0; height: 100%; }
+
+  .hidden-xs, tr.hidden-xs, th.hidden-xs, td.hidden-xs {
+    display: none !important
+  }
+}

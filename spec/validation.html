@@ -1,0 +1,1218 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Model Validation &#8212; Smithy 0.1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="MQTT Protocol Bindings" href="mqtt.html" />
+    <link rel="prev" title="XML traits" href="xml.html" /> 
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../index.html">
+                    <span class="logo-icon">⚒️</span><span class="logo-text">Smithy</span><span class="beta-text">beta</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="index.html">Specifications</a></li>
+                <li class="site-page"><a href="../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+  <div class="section" id="model-validation">
+<span id="validation"></span><h1>Model Validation<a class="headerlink" href="#model-validation" title="Permalink to this headline">¶</a></h1>
+<p>This specification defines a customizable validation system for Smithy
+models that can be used by API designers and organizations to ensure that
+their APIs adhere to their own standards and best practices.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title first">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id15">Introduction</a></li>
+<li><a class="reference internal" href="#validators" id="id16">Validators</a><ul>
+<li><a class="reference internal" href="#missing-validators" id="id17">Missing validators</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#severity" id="id18">Severity</a></li>
+<li><a class="reference internal" href="#suppressions" id="id19">Suppressions</a></li>
+<li><a class="reference internal" href="#naming-validators" id="id20">Naming validators</a><ul>
+<li><a class="reference internal" href="#abbreviationname" id="id21">AbbreviationName</a></li>
+<li><a class="reference internal" href="#camelcase" id="id22">CamelCase</a></li>
+<li><a class="reference internal" href="#reservedwords" id="id23">ReservedWords</a></li>
+<li><a class="reference internal" href="#standardoperationverb" id="id24">StandardOperationVerb</a></li>
+<li><a class="reference internal" href="#stutteredshapename" id="id25">StutteredShapeName</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#best-practice-validators" id="id26">Best practice validators</a><ul>
+<li><a class="reference internal" href="#deprecatedauthschemes" id="id27">DeprecatedAuthSchemes</a></li>
+<li><a class="reference internal" href="#deprecatedprotocols" id="id28">DeprecatedProtocols</a></li>
+<li><a class="reference internal" href="#inputoutputstructurereuse" id="id29">InputOutputStructureReuse</a></li>
+<li><a class="reference internal" href="#missingpaginatedtrait" id="id30">MissingPaginatedTrait</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modeling-validators" id="id31">Modeling validators</a><ul>
+<li><a class="reference internal" href="#shouldhaveusedtimestamp" id="id32">ShouldHaveUsedTimestamp</a></li>
+<li><a class="reference internal" href="#unreferencedshape" id="id33">UnreferencedShape</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#misc-validators" id="id34">Misc validators</a><ul>
+<li><a class="reference internal" href="#emiteachselector" id="id35">EmitEachSelector</a></li>
+<li><a class="reference internal" href="#emitnoneselector" id="id36">EmitNoneSelector</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>APIs require a great deal of care and discipline to ensure that they provide
+a coherent interface to customers, particularly after an API is released and
+new features are added. This specification defines metadata that is used to
+validate a model against configurable validator definitions, ensuring that
+developers adhere to an organization's API standards.</p>
+<p>Tools like Checkstyle and Findbugs help to ensure that developers avoid common
+bugs and pitfalls when writing code. This is a very powerful concept,
+particularly for developers that are new to a programming language. This
+concept is even more powerful when teams use the configurability of these
+tools to communicate the coding standards of an organization and automate
+their enforcement. This validation standard allows the same level of
+conformity and rigor to be applied to Smithy models and API definitions.</p>
+</div>
+<div class="section" id="validators">
+<span id="validator-definition"></span><h2>Validators<a class="headerlink" href="#validators" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">validators</span></code> metadata property contains an array of validator
+objects that are used to constrain a model. Each object in the
+<code class="docutils literal notranslate"><span class="pre">validators</span></code> array supports the following properties:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The name of the validator to apply. This name is used in
+implementations to find and configure the appropriate validator
+implementation. Validators only take effect if a Smithy processor
+implements the validator.</td>
+</tr>
+<tr class="row-odd"><td>id</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">Defines a custom identifier for the validator.</p>
+<p>Multiple instances of a single validator can be configured for a model.
+Providing an <code class="docutils literal notranslate"><span class="pre">id</span></code> allows suppressions to suppress a specific instance
+of a validator.</p>
+<p class="last">If <code class="docutils literal notranslate"><span class="pre">id</span></code> is not specified, it will default to the <code class="docutils literal notranslate"><span class="pre">name</span></code> property of
+the validator definition.</p>
+</td>
+</tr>
+<tr class="row-even"><td>message</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Provides a custom message to use when emitting validation events. The
+special <code class="docutils literal notranslate"><span class="pre">{super}</span></code> string can be added to a custom message to inject
+the original error message of the validation event into the custom
+message.</td>
+</tr>
+<tr class="row-odd"><td>severity</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">Provides a custom <a class="reference internal" href="#severity-definition"><span class="std std-ref">severity</span></a> level to use
+when a validation event occurs. If no severity is provided, then the
+default severity of the validator is used.</p>
+<div class="last admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The severity of user-defined validators cannot be set to ERROR.</p>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>namespaces</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td>Provides a list of the namespaces that are targeted by the validator.
+The validator will ignore any validation events encountered that are
+not specific to the given namespaces.</td>
+</tr>
+<tr class="row-odd"><td>configuration</td>
+<td><code class="docutils literal notranslate"><span class="pre">object</span></code></td>
+<td>Object that provides validator configuraton. The available properties
+are defined by each validator. Validators MAY require that specific
+configuration properties are provided.</td>
+</tr>
+</tbody>
+</table>
+<p>The following Smithy document applies a custom validator named &quot;SomeValidator&quot;:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
+  {
+    <span class="c">// The name of the validator.</span>
+    <span class="nl">name:</span> <span class="s2">&quot;SomeValidator&quot;</span>,
+    <span class="c">// Uses a custom event ID for each validation event emitted.</span>
+    <span class="nl">id:</span> <span class="s2">&quot;CustomEventId&quot;</span>,
+    <span class="c">// Uses a custom message that also includes the default message.</span>
+    <span class="nl">message:</span> <span class="s2">&quot;My custom message name. {super}&quot;</span>,
+    <span class="c">// Applies the rule only to the following namespaces.</span>
+    <span class="nl">namespaces:</span> [<span class="s2">&quot;foo.baz&quot;</span>, <span class="s2">&quot;bar.qux&quot;</span>],
+    <span class="c">// The following properties are specific to the validator.</span>
+    <span class="nl">configuration:</span> {
+      <span class="s2">&quot;someProperty&quot;</span>: <span class="s2">&quot;foo&quot;</span>,
+    }
+  }
+]
+</pre></div>
+</div>
+<div class="section" id="missing-validators">
+<span id="id1"></span><h3>Missing validators<a class="headerlink" href="#missing-validators" title="Permalink to this headline">¶</a></h3>
+<p>If a Smithy implementation does not have an implementation for a specific
+validator by name, the Smithy implementation MUST emit a WARNING validation
+event with an event ID that is the concatenation of <code class="docutils literal notranslate"><span class="pre">UnknownValidator.</span></code> and
+the name property of the validator that could not be found. For example, given
+a custom validator that could not be found named <code class="docutils literal notranslate"><span class="pre">Foo</span></code>, the implementation
+MUST emit a validation event with an event ID of <code class="docutils literal notranslate"><span class="pre">UnknownValidator.Foo</span></code> and
+a severity of WARNING.</p>
+</div>
+</div>
+<div class="section" id="severity">
+<span id="severity-definition"></span><h2>Severity<a class="headerlink" href="#severity" title="Permalink to this headline">¶</a></h2>
+<p>When a model is in violation of a validator, a <em>validation event</em> is emitted.
+This validation event contains metadata about the violation, including the
+optional shape that was in violation, the source location of the violation,
+the validator ID, and the severity of the violation. <em>Severity</em> is used
+to define the importance or impact of a violation.</p>
+<dl class="docutils">
+<dt><strong>ERROR</strong></dt>
+<dd><p class="first">Indicates that something is structurally wrong with the model and cannot
+be suppressed.</p>
+<p class="last">Validation events with a severity of ERROR are reserved for enforcing that
+models adhere to the Smithy specification. Validators cannot emit a
+validation event with a severity of ERROR.</p>
+</dd>
+<dt><strong>DANGER</strong></dt>
+<dd>Indicates that something is very likely wrong with the model. Unsuppressed
+DANGER validation events indicate that a model is invalid.</dd>
+<dt><strong>WARNING</strong></dt>
+<dd>Indicates that something might be wrong with the model.</dd>
+<dt><strong>NOTE</strong></dt>
+<dd>Informational message that does not imply anything is wrong with the model.</dd>
+</dl>
+</div>
+<div class="section" id="suppressions">
+<span id="suppression-definition"></span><h2>Suppressions<a class="headerlink" href="#suppressions" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">suppressions</span></code> metadata property contains an array of
+suppression objects. Suppressions are used to suppress specific validation
+events.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Validation events with a severity of <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> cannot be suppressed.</p>
+</div>
+<p>Each suppression object in the <code class="docutils literal notranslate"><span class="pre">suppressions</span></code> array supports the
+following properties:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>ids</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td><strong>Required</strong>. An array of validator event IDs to suppress. One or more
+event IDs MUST be provided. A value of <code class="docutils literal notranslate"><span class="pre">*</span></code> MAY be provided in order
+to suppress all validation event IDs (e.g., <code class="docutils literal notranslate"><span class="pre">[&quot;*&quot;]</span></code>).</td>
+</tr>
+<tr class="row-odd"><td>shapes</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td>A array of absolute <a class="reference internal" href="core.html#shape-id"><span class="std std-ref">shape IDs</span></a> to suppress. An entire
+namespace can be suppressed by suffixing a namespace name with <code class="docutils literal notranslate"><span class="pre">#</span></code>.
+For example, <code class="docutils literal notranslate"><span class="pre">foo.baz#</span></code> can be used to suppress all validation events
+on shapes in the &quot;foo.baz&quot; namespace.</td>
+</tr>
+<tr class="row-even"><td>reason</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Provides a reason for the suppression.</td>
+</tr>
+</tbody>
+</table>
+<p>One or more entries from the <code class="docutils literal notranslate"><span class="pre">ids</span></code> list and one or more entries from the
+<code class="docutils literal notranslate"><span class="pre">shapes</span></code> list (if provided) MUST match in order for a validation event to be
+suppressed.</p>
+<p>An example suppression for the &quot;UnreferencedShape&quot; validator:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span> [
+  {
+    <span class="c">// The list of rules to suppress.</span>
+    <span class="nl">ids:</span> [<span class="s2">&quot;UnreferencedShape&quot;</span>],
+    <span class="c">// The optional list of shapes that are suppressed.</span>
+    <span class="nl">shapes:</span> [<span class="s2">&quot;foo.baz#SomeShape/members/someMemberName&quot;</span>],
+    <span class="c">// The optional reason that the rule is suppressed.</span>
+    <span class="nl">reason:</span> <span class="s2">&quot;This shape is used for code generation.&quot;</span>
+  }
+]
+</pre></div>
+</div>
+<p>An example suppression that suppresses all validation events for all shapes
+within a specific namespace:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span> [
+  {
+    <span class="nl">ids:</span> [<span class="s2">&quot;*&quot;</span>],
+    <span class="nl">shapes:</span> [<span class="s2">&quot;smithy.testing#&quot;</span>],
+    <span class="nl">reason:</span> <span class="s2">&quot;smithy.testing is used only for testing&quot;</span>
+  }
+]
+</pre></div>
+</div>
+</div>
+<div class="section" id="naming-validators">
+<h2>Naming validators<a class="headerlink" href="#naming-validators" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="abbreviationname">
+<span id="id2"></span><h3>AbbreviationName<a class="headerlink" href="#abbreviationname" title="Permalink to this headline">¶</a></h3>
+<p>Validates that shape names and member names do not represent abbreviations
+with all uppercase letters. For example, instead of using &quot;XMLRequest&quot; or
+&quot;instanceID&quot;, this validator recommends using &quot;XmlRequest&quot; and &quot;instanceId&quot;.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>Using a strict form of camelCase where abbreviations are written just
+like other words makes names more predictable and easier to work with
+in tooling. For example, a tool that generates code in Python might wish
+to represent camelCase words using snake_case; utilizing strict camel
+casing makes it easier to split words apart.</dd>
+<dt>Default severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt>
+<dd><table border="1" class="colwidths-given first last docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>allowedAbbreviations</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td>A case-insensitive list of abbreviations to allow to be all capital
+letters. Defaults to an empty list.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{<span class="nl">name:</span> <span class="s2">&quot;AbbreviationName&quot;</span>}]
+</pre></div>
+</div>
+</div>
+<div class="section" id="camelcase">
+<span id="id3"></span><h3>CamelCase<a class="headerlink" href="#camelcase" title="Permalink to this headline">¶</a></h3>
+<p>Validates that shape names and member names adhere to a consistent style of
+camel casing. By default, this validator will ensure that shape names use
+UpperCamelCase, and that member names use lowerCamelCase.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>Utilizing a consistent camelCase style makes it easier to understand a
+model and can lead to consistent naming in code generated from Smithy
+models.</dd>
+<dt>Default severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt>
+<dd><table border="1" class="colwidths-given first last docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>shapeNames</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Specifies the camelCase style of shape names. Can be set to either
+&quot;upper&quot; (the default) or &quot;lower&quot;.</td>
+</tr>
+<tr class="row-odd"><td>memberNames</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Specifies the camelCase style of member names. Can be set to either
+&quot;upper&quot; or &quot;lower&quot; (the default).</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{<span class="nl">name:</span> <span class="s2">&quot;CamelCase&quot;</span>}]
+</pre></div>
+</div>
+</div>
+<div class="section" id="reservedwords">
+<span id="id4"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this headline">¶</a></h3>
+<p>Validates that shape names and member names do not match a configured set of
+reserved words.</p>
+<p>Reserved words are compared in a case-insensitive manner via substring match
+and support a leading and trailing wildcard character, &quot;*&quot;. See
+<a class="reference internal" href="#reserved-words-wildcards"><span class="std std-ref">wildcard evaluation</span></a> for more detail.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>Tools that generate code from Smithy models SHOULD automatically convert
+reserved words into symbols that are safe to use in the targeted
+programming language. This validator can be used to warn about these
+conversions as well as to prevent sensitive words, like internal
+code-names, from appearing in public artifacts.</dd>
+<dt>Default Severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt>
+<dd><p class="first">A single key, <code class="docutils literal notranslate"><span class="pre">reserved</span></code>, is <strong>Required</strong> in the configuration. Its
+value is a list of objects with the following properties:</p>
+<table border="1" class="colwidths-given last docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>words</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td><strong>Required</strong>. A list of words that shape or member names MUST not
+case-insensitively match. Supports only the leading and trailing
+wildcard character of &quot;*&quot;.</td>
+</tr>
+<tr class="row-odd"><td>selector</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">Specifies a selector of shapes to validate for this configuration.
+Defaults to validating all shapes, including member names.</p>
+<div class="last admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When evaluating member shapes, the <em>member name</em> will be
+evaluated instead of the shape name.</p>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>reason</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A reason to display for why this set of words is reserved.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
+  <span class="nl">id:</span> <span class="s2">&quot;FooReservedWords&quot;</span>
+  <span class="nl">name:</span> <span class="s2">&quot;ReservedWords&quot;</span>,
+  <span class="nl">configuration:</span> {
+    <span class="nl">reserved:</span> [
+      {
+        <span class="nl">words:</span> [
+          <span class="s2">&quot;Codename&quot;</span>
+        ],
+        <span class="nl">reason:</span> <span class="s2">&quot;This is the internal project name.&quot;</span>,
+      },
+    ]
+  }
+}]
+</pre></div>
+</div>
+<div class="section" id="wildcards-in-reservedwords">
+<span id="reserved-words-wildcards"></span><h4>Wildcards in ReservedWords<a class="headerlink" href="#wildcards-in-reservedwords" title="Permalink to this headline">¶</a></h4>
+<p>The ReservedWords validator allows leading and trailing wildcard characters to
+be specified.</p>
+<ul>
+<li><p class="first">Using both a leading and trailing wildcard indicates that shape or member
+names match when case-insensitively <strong>containing</strong> the word. The following
+table shows matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">*codename*</span></code>:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="75%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Example</th>
+<th class="head">Result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Create<strong>Codename</strong>Input</td>
+<td>Match</td>
+</tr>
+<tr class="row-odd"><td><strong>Codename</strong>Resource</td>
+<td>Match</td>
+</tr>
+<tr class="row-even"><td>Referenced<strong>Codename</strong></td>
+<td>Match</td>
+</tr>
+<tr class="row-odd"><td><strong>Codename</strong></td>
+<td>Match</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">Using a leading wildcard indicates that shape or member names match when
+case-insensitively <strong>ending with</strong> the word. The following table shows
+matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">*codename</span></code>:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="75%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Example</th>
+<th class="head">Result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>CreateCodenameInput</td>
+<td>No match</td>
+</tr>
+<tr class="row-odd"><td>CodenameResource</td>
+<td>No match</td>
+</tr>
+<tr class="row-even"><td>Referenced<strong>Codename</strong></td>
+<td>Match</td>
+</tr>
+<tr class="row-odd"><td><strong>Codename</strong></td>
+<td>Match</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">Using a trailing wildcard indicates that shape or member names match when
+case-insensitively <strong>starting with</strong> the word. The following table shows
+matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">codename*</span></code>:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="75%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Example</th>
+<th class="head">Result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>CreateCodenameInput</td>
+<td>No match</td>
+</tr>
+<tr class="row-odd"><td><strong>Codename</strong>Resource</td>
+<td>Match</td>
+</tr>
+<tr class="row-even"><td>ReferencedCodename</td>
+<td>No Match</td>
+</tr>
+<tr class="row-odd"><td><strong>Codename</strong></td>
+<td>Match</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">Using no wildcards indicates that shape or member names match when
+case-insensitively <strong>the same as</strong> the word. The following table shows
+matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">codename</span></code>:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="75%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Example</th>
+<th class="head">Result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>CreateCodenameInput</td>
+<td>No match</td>
+</tr>
+<tr class="row-odd"><td>CodenameResource</td>
+<td>No match</td>
+</tr>
+<tr class="row-even"><td>ReferencedCodename</td>
+<td>No match</td>
+</tr>
+<tr class="row-odd"><td><strong>Codename</strong></td>
+<td>Match</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="standardoperationverb">
+<span id="id5"></span><h3>StandardOperationVerb<a class="headerlink" href="#standardoperationverb" title="Permalink to this headline">¶</a></h3>
+<p>Looks at each operation shape name and determines if the first word in the
+operation shape name is one of the defined standard verbs or if it is a verb
+that has better alternatives.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Operations names MUST use a verb as the first word in the shape name
+in order for this validator to properly function.</p>
+</div>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>Using consistent verbs for operation shape names helps consumers of the
+API to more easily understand the semantics of an operation.</dd>
+<dt>Default severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt>
+<dd><table border="1" class="colwidths-given first last docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>verbs</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td>The list of verbs that each operation shape name MUST start with.</td>
+</tr>
+<tr class="row-odd"><td>prefixes</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td>A list of prefixes that MAY come before one of the valid verbs.
+Prefixes are often used to group families of operations under a
+common prefix (e.g., <code class="docutils literal notranslate"><span class="pre">batch</span></code> might be a common prefix in some
+organizations). Only a single prefix is honored.</td>
+</tr>
+<tr class="row-even"><td>suggestAlternatives</td>
+<td><code class="docutils literal notranslate"><span class="pre">object</span></code></td>
+<td>Used to recommend alternative verbs. Each key is the name of a verb
+that should be changed, and each value is a list of suggested
+verbs to use instead.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">At least one <code class="docutils literal notranslate"><span class="pre">verb</span></code> or one <code class="docutils literal notranslate"><span class="pre">suggestAlternatives</span></code> key-value pair MUST
+be provided.</p>
+</div>
+<p>Example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
+  <span class="nl">name:</span> <span class="s2">&quot;StandardOperationVerb&quot;</span>,
+  <span class="nl">configuration:</span> {
+    <span class="nl">verbs:</span> [<span class="s2">&quot;Register&quot;</span>, <span class="s2">&quot;Deregister&quot;</span>, <span class="s2">&quot;Associate&quot;</span>],
+    <span class="nl">prefixes:</span> [<span class="s2">&quot;Batch&quot;</span>],
+    <span class="nl">suggestAlternatives:</span> {
+      <span class="s2">&quot;Make&quot;</span>: [<span class="s2">&quot;Create&quot;</span>],
+      <span class="s2">&quot;Transition&quot;</span>: [<span class="s2">&quot;Update&quot;</span>],
+    }
+  }
+}]
+</pre></div>
+</div>
+</div>
+<div class="section" id="stutteredshapename">
+<span id="id6"></span><h3>StutteredShapeName<a class="headerlink" href="#stutteredshapename" title="Permalink to this headline">¶</a></h3>
+<p>Validators that <a class="reference internal" href="core.html#structure"><span class="std std-ref">structure</span></a> member names and <a class="reference internal" href="core.html#union"><span class="std std-ref">union</span></a> member
+names do not stutter their shape names.</p>
+<p>As an example, if a structure named &quot;Table&quot; contained a member named
+&quot;TableName&quot;, then this validator would emit a WARNING event.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>Repeating a shape name in the members of identifier of the shape is
+redundant.</dd>
+<dt>Default severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
+</dl>
+</div>
+</div>
+<div class="section" id="best-practice-validators">
+<h2>Best practice validators<a class="headerlink" href="#best-practice-validators" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="deprecatedauthschemes">
+<span id="id7"></span><h3>DeprecatedAuthSchemes<a class="headerlink" href="#deprecatedauthschemes" title="Permalink to this headline">¶</a></h3>
+<p>Validates that <a class="reference internal" href="core.html#auth-trait"><span class="std std-ref">auth schemes</span></a> used are not in the
+configured set of deprecated schemes. A validation event is emitted when one
+of the deprecated auth schemes is found on a service shape.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>As a service evolves, its authentication schemes might too. This validator
+can be used to inform consumers of a Smithy model that the auth scheme
+listed should be considered deprecated.</dd>
+<dt>Default Severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
+<dt>Configuration</dt>
+<dd><table border="1" class="colwidths-given first last docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>schemes</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td><strong>Required</strong>. A list of deprecated auth scheme names.</td>
+</tr>
+<tr class="row-odd"><td>reason</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A reason to display for why these auth schemes are deprecated.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
+  <span class="nl">id:</span> <span class="s2">&quot;DeprecateFooScheme&quot;</span>
+  <span class="nl">name:</span> <span class="s2">&quot;DeprecatedAuthSchemes&quot;</span>,
+  <span class="nl">configuration:</span> {
+    <span class="nl">schemes:</span> [
+      <span class="s2">&quot;foo&quot;</span>
+    ],
+    <span class="nl">reason:</span> <span class="s2">&quot;Please migrate to the foo2 scheme.&quot;</span>,
+  }
+}]
+</pre></div>
+</div>
+</div>
+<div class="section" id="deprecatedprotocols">
+<span id="id8"></span><h3>DeprecatedProtocols<a class="headerlink" href="#deprecatedprotocols" title="Permalink to this headline">¶</a></h3>
+<p>Validates that <a class="reference internal" href="core.html#protocols-trait"><span class="std std-ref">protocols</span></a> used are not in the
+configured set of deprecated protocols. A validation event is emitted when one
+of the deprecated protocols is found on a service shape.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>As a service evolves, its protocols might too. This validator can be used
+to inform consumers of a Smithy model that the protocol listed should be
+considered deprecated.</dd>
+<dt>Default Severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
+<dt>Configuration</dt>
+<dd><table border="1" class="colwidths-given first last docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>protocols</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td><strong>Required</strong>. A list of deprecated protocol names.</td>
+</tr>
+<tr class="row-odd"><td>reason</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A reason to display for why these protocols are deprecated.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
+  <span class="nl">id:</span> <span class="s2">&quot;DeprecateFooProtocol&quot;</span>
+  <span class="nl">name:</span> <span class="s2">&quot;DeprecatedProtocols&quot;</span>,
+  <span class="nl">configuration:</span> {
+    <span class="nl">protocols:</span> [
+      <span class="s2">&quot;foo&quot;</span>
+    ],
+    <span class="nl">reason:</span> <span class="s2">&quot;Please migrate to the bar protocol.&quot;</span>,
+  }
+}]
+</pre></div>
+</div>
+</div>
+<div class="section" id="inputoutputstructurereuse">
+<span id="id9"></span><h3>InputOutputStructureReuse<a class="headerlink" href="#inputoutputstructurereuse" title="Permalink to this headline">¶</a></h3>
+<p>Detects when a structure is used as both input and output or if a structure
+is referenced as the input or output for multiple operations.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd><ol class="first last arabic simple">
+<li>Using the same structure for both input and output can lead to
+backward-compatibility problems in the future if the members or traits
+used in input needs to diverge from those used in output. It is always
+better to use structures that are exclusively used as input or exclusively
+used as output.</li>
+<li>Referencing the same input or output structure from multiple operations
+can lead to backward-compatibility problems in the future if the
+inputs or outputs of the operations ever need to diverge. By using the
+same structure, you are unnecessarily tying the interfaces of these
+operations together.</li>
+</ol>
+</dd>
+<dt>Default severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+</dl>
+</div>
+<div class="section" id="missingpaginatedtrait">
+<span id="id10"></span><h3>MissingPaginatedTrait<a class="headerlink" href="#missingpaginatedtrait" title="Permalink to this headline">¶</a></h3>
+<p>Checks for operations that look like they should be paginated but do not
+have the <a class="reference internal" href="core.html#paginated-trait"><span class="std std-ref">paginated trait</span></a>.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>Paginating operations that can return potentially unbounded lists of
+data helps to maintain a predictable SLA and helps to prevent operational
+issues in the future.</dd>
+<dt>Default severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt>
+<dd><table border="1" class="colwidths-given first last docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>verbsRequirePagination</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>Defines the case-insensitive operation verb prefixes for operations
+that MUST be paginated. A <code class="docutils literal notranslate"><span class="pre">DANGER</span></code> event is emitted for any
+operation that has a shape name that starts with one of these verbs.
+Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;list&quot;,</span> <span class="pre">&quot;search&quot;]</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>verbsSuggestPagination</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>Defines the case-insensitive operation verb prefixes for operations
+that SHOULD be paginated. A <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> event is emitted when an
+operation is found that matches one of these prefixes, the operation
+has output, and the output contains at least one top-level member
+that targets a <a class="reference internal" href="core.html#list"><span class="std std-ref">list</span></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;describe&quot;,</span> <span class="pre">&quot;get&quot;]</span></code></td>
+</tr>
+<tr class="row-even"><td>inputMembersRequirePagination</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>Defines the case-insensitive operation input member names that
+indicate that an operation MUST be paginated. A <code class="docutils literal notranslate"><span class="pre">DANGER</span></code> event
+is emitted if an operation is found to have an input member name
+that case-insensitively matches one of these member names.
+Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;maxResults&quot;,</span> <span class="pre">&quot;pageSize&quot;,</span> <span class="pre">&quot;limit&quot;,</span> <span class="pre">&quot;nextToken&quot;,</span> <span class="pre">&quot;pageToken&quot;,</span> <span class="pre">&quot;token&quot;]</span></code></td>
+</tr>
+<tr class="row-odd"><td>outputMembersRequirePagination</td>
+<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td>Defines the case-insensitive operation output member names that
+indicate that an operation MUST be paginated. A <code class="docutils literal notranslate"><span class="pre">DANGER</span></code> event
+is emitted if an operation is found to have an output member name
+that case-insensitively matches one of these member names.
+Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;nextToken&quot;,</span> <span class="pre">&quot;pageToken&quot;,</span> <span class="pre">&quot;token&quot;,</span> <span class="pre">&quot;marker&quot;,</span> <span class="pre">&quot;nextPage&quot;]</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{<span class="nl">name:</span> <span class="s2">&quot;MissingPaginatedTrait&quot;</span>}]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="modeling-validators">
+<h2>Modeling validators<a class="headerlink" href="#modeling-validators" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="shouldhaveusedtimestamp">
+<span id="id11"></span><h3>ShouldHaveUsedTimestamp<a class="headerlink" href="#shouldhaveusedtimestamp" title="Permalink to this headline">¶</a></h3>
+<p>Looks for shapes that likely represent time, but that do not use a
+timestamp shape.</p>
+<p>The ShouldHaveUsedTimestamp validator checks the following names:</p>
+<ul class="simple">
+<li>string shape names</li>
+<li>short, integer, long, float, and double shape names</li>
+<li>structure member names</li>
+<li>union member names</li>
+</ul>
+<p>The ShouldHaveUsedTimestamp validator checks each of the above names to see if
+they likely represent a time value. If a name does look like a time value,
+the shape or targeted shape MUST be a timestamp shape.</p>
+<p>A name is assumed to represent a time value if it:</p>
+<ul class="simple">
+<li>Begins or ends with the word &quot;time&quot;</li>
+<li>Begins or ends with the word &quot;date&quot;</li>
+<li>Ends with the word &quot;at&quot;</li>
+<li>Ends with the word &quot;on&quot;</li>
+<li>Contains the exact string &quot;timestamp&quot; or &quot;Timestamp&quot;</li>
+</ul>
+<p>For the purpose of this validator, words are matched case insensitively. Words
+are separated by either an underscore character, or by mixed case characters.
+For example, &quot;FooBar&quot;, &quot;fooBar&quot;, &quot;foo_bar&quot;, &quot;Foo_Bar&quot;, and &quot;FOO_BAR&quot; all
+contain the same two words, &quot;foo&quot; and &quot;bar&quot;.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>Smithy tooling can convert timestamp shapes into idiomatic language types
+that make them easier to work with in client tooling.</dd>
+<dt>Default severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt>
+<dd><table border="1" class="colwidths-given first last docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>additionalPatterns</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td>A list of regular expression patterns that identify names that
+represent time.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</div>
+<div class="section" id="unreferencedshape">
+<span id="id12"></span><h3>UnreferencedShape<a class="headerlink" href="#unreferencedshape" title="Permalink to this headline">¶</a></h3>
+<p>Looks for shapes that are not connected to from any service shape within
+the model.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>Unreferenced shapes are good candidates for removal from a model.</dd>
+<dt>Default severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">NOTE</span></code></dd>
+</dl>
+</div>
+</div>
+<div class="section" id="misc-validators">
+<h2>Misc validators<a class="headerlink" href="#misc-validators" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="emiteachselector">
+<span id="id13"></span><h3>EmitEachSelector<a class="headerlink" href="#emiteachselector" title="Permalink to this headline">¶</a></h3>
+<p>Emits a validation event for each shape that matches the given
+<a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>Detecting shapes that violate a validation rule using customizable
+validators allows organizations to create custom Smithy validators without
+needing to write code.</dd>
+<dt>Default severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt>
+<dd><table border="1" class="colwidths-given first last docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>selector</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. A valid <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>. Each shape in
+the model that is returned from the selector with emit a validation
+event.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Example:</p>
+<p>The following example detects if a shape is missing documentation with the
+following constraints:</p>
+<ul class="simple">
+<li>Shapes that have the documentation trait are excluded.</li>
+<li>Members that target shapes that have the documentation trait are excluded.</li>
+<li>Simple types are excluded.</li>
+<li>List and map members are excluded.</li>
+</ul>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
+  <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
+  <span class="nl">id:</span> <span class="s2">&quot;MissingDocumentation&quot;</span>,
+  <span class="nl">message:</span> <span class="s2">&quot;This shape is missing documentation&quot;</span>
+  <span class="nl">configuration:</span> {
+    <span class="nl">selector:</span> <span class="s2">&quot;</span>
+<span class="s2">        :not([trait|documentation])</span>
+<span class="s2">        :not(simpleType)</span>
+<span class="s2">        :not(member:of(:each(list, map)))</span>
+<span class="s2">        :not(:test(member &gt; [trait|documentation]))&quot;</span>
+  }
+}]
+</pre></div>
+</div>
+<p>The following example emits a validation event for each structure referenced as
+input/output that has a shape name that does not case-insensitively end with
+&quot;Input&quot;/&quot;Output&quot;:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
+  {
+    <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
+    <span class="nl">id:</span> <span class="s2">&quot;OperationInputName&quot;</span>,
+    <span class="nl">message:</span> <span class="s2">&quot;This shape is referenced as input but the name does not end with &#39;Input&#39;&quot;</span>,
+    <span class="nl">configuration:</span> {
+      <span class="nl">selector:</span> <span class="s2">&quot;operation -[input]-&gt; :not([id|name$=Input i])&quot;</span>
+    }
+  },
+  {
+    <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
+    <span class="nl">id:</span> <span class="s2">&quot;OperationOutputName&quot;</span>,
+    <span class="nl">message:</span> <span class="s2">&quot;This shape is referenced as output but the name does not end with &#39;Output&#39;&quot;</span>,
+    <span class="nl">configuration:</span> {
+      <span class="nl">selector:</span> <span class="s2">&quot;operation -[output]-&gt; :not([id|name$=Output i])&quot;</span>
+    }
+  }
+]
+</pre></div>
+</div>
+<p>The following example emits a validation event for each operation referenced
+as lifecycle 'read' or 'delete' that has a shape name that does not start with
+&quot;Get&quot; or &quot;Delete&quot;:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
+  {
+    <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
+    <span class="nl">id:</span> <span class="s2">&quot;LifecycleGetName&quot;</span>,
+    <span class="nl">message:</span> <span class="s2">&quot;Lifecycle &#39;read&#39; operation shape names should start with &#39;Get&#39;&quot;</span>,
+    <span class="nl">configuration:</span> {
+      <span class="nl">selector:</span> <span class="s2">&quot;operation [read]-&gt; :not([id|name^=Get i])&quot;</span>
+    }
+  },
+  {
+    <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
+    <span class="nl">id:</span> <span class="s2">&quot;LifecycleDeleteName&quot;</span>,
+    <span class="nl">message:</span> <span class="s2">&quot;Lifecycle &#39;delete&#39; operation shape names should start with &#39;Delete&#39;&quot;</span>,
+    <span class="nl">configuration:</span> {
+      <span class="nl">selector:</span> <span class="s2">&quot;operation -[delete]-&gt; :not([id|name^=Delete i])&quot;</span>
+    }
+  }
+]
+</pre></div>
+</div>
+</div>
+<div class="section" id="emitnoneselector">
+<span id="id14"></span><h3>EmitNoneSelector<a class="headerlink" href="#emitnoneselector" title="Permalink to this headline">¶</a></h3>
+<p>Emits a validation event if no shape in the model matches the given
+<a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
+<dl class="docutils">
+<dt>Rationale</dt>
+<dd>Detecting the omission of a specific trait, pattern, or other requirement
+can help developers to remember to apply constraint traits, documentation,
+etc.</dd>
+<dt>Default severity</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
+<dt>Configuration</dt>
+<dd><table border="1" class="colwidths-given first last docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>selector</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. A valid <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>. If no shape
+in the model is returned by the selector, then a validation event
+is emitted.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Example:</p>
+<p>The following example detects if the model does not contain any constraint
+traits.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
+  <span class="nl">name:</span> <span class="s2">&quot;EmitNoneSelector&quot;</span>,
+  <span class="nl">id:</span> <span class="s2">&quot;MissingConstraintTraits&quot;</span>,
+  <span class="nl">message:</span> <span class="s2">&quot;No instances of the enum, pattern, length, or range trait &quot;</span>
+      <span class="s2">&quot;could be found. Did you forget to apply these traits?&quot;</span>,
+  <span class="nl">configuration:</span> {
+    <span class="nl">selector:</span> <span class="s2">&quot;:each([trait|enum], [trait|pattern], [trait|length], [trait|range])&quot;</span>,
+  }
+}]
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="xml.html" title="previous chapter" class="previous-page clearfix hidden-xs">← XML traits</a>
+                        
+                        <a href="mqtt.html" title="next chapter" class="next-page clearfix">MQTT Protocol Bindings →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            <ul>
+<li><a class="reference internal" href="#">Model Validation</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#validators">Validators</a><ul>
+<li><a class="reference internal" href="#missing-validators">Missing validators</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#severity">Severity</a></li>
+<li><a class="reference internal" href="#suppressions">Suppressions</a></li>
+<li><a class="reference internal" href="#naming-validators">Naming validators</a><ul>
+<li><a class="reference internal" href="#abbreviationname">AbbreviationName</a></li>
+<li><a class="reference internal" href="#camelcase">CamelCase</a></li>
+<li><a class="reference internal" href="#reservedwords">ReservedWords</a><ul>
+<li><a class="reference internal" href="#wildcards-in-reservedwords">Wildcards in ReservedWords</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#standardoperationverb">StandardOperationVerb</a></li>
+<li><a class="reference internal" href="#stutteredshapename">StutteredShapeName</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#best-practice-validators">Best practice validators</a><ul>
+<li><a class="reference internal" href="#deprecatedauthschemes">DeprecatedAuthSchemes</a></li>
+<li><a class="reference internal" href="#deprecatedprotocols">DeprecatedProtocols</a></li>
+<li><a class="reference internal" href="#inputoutputstructurereuse">InputOutputStructureReuse</a></li>
+<li><a class="reference internal" href="#missingpaginatedtrait">MissingPaginatedTrait</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modeling-validators">Modeling validators</a><ul>
+<li><a class="reference internal" href="#shouldhaveusedtimestamp">ShouldHaveUsedTimestamp</a></li>
+<li><a class="reference internal" href="#unreferencedshape">UnreferencedShape</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#misc-validators">Misc validators</a><ul>
+<li><a class="reference internal" href="#emiteachselector">EmitEachSelector</a></li>
+<li><a class="reference internal" href="#emitnoneselector">EmitNoneSelector</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2019, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

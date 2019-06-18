@@ -1,0 +1,231 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Evolving Models &#8212; Smithy 0.1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Style Guide" href="style-guide.html" />
+    <link rel="prev" title="Smithy Gradle Plugin" href="building-models/gradle-plugin.html" /> 
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../index.html">
+                    <span class="logo-icon">⚒️</span><span class="logo-text">Smithy</span><span class="beta-text">beta</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../spec/index.html">Specifications</a></li>
+                <li class="site-page"><a href="index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+  <div class="section" id="evolving-models">
+<h1>Evolving Models<a class="headerlink" href="#evolving-models" title="Permalink to this headline">¶</a></h1>
+<p>This guide describes how to evolve Smithy models without breaking your
+customers.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title first">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#updating-operations" id="id1">Updating operations</a></li>
+<li><a class="reference internal" href="#updating-structures" id="id2">Updating structures</a></li>
+<li><a class="reference internal" href="#booleans-and-api-evolution" id="id3">Booleans and API evolution</a></li>
+<li><a class="reference internal" href="#updating-unions" id="id4">Updating unions</a></li>
+<li><a class="reference internal" href="#boxed-shapes" id="id5">Boxed shapes</a></li>
+</ul>
+</div>
+<div class="section" id="updating-operations">
+<h2>Updating operations<a class="headerlink" href="#updating-operations" title="Permalink to this headline">¶</a></h2>
+<p>The following changes to operation shapes are backward-compatible:</p>
+<ol class="arabic simple">
+<li>Changing an operation from no input to referencing a structure that contains
+all optional members.</li>
+<li>Changing an operation from no output to referencing a structure.</li>
+<li>Adding a new error shape if the error shape is only encountered under new
+conditions that previously released clients/tools will not encounter.</li>
+</ol>
+<p>The following changes are not backward-compatible:</p>
+<ol class="arabic simple">
+<li>Removing or renaming a resource or operation.</li>
+<li>Removing an operation from a service or resource.</li>
+<li>Removing a resource from a service.</li>
+<li>Changing the parent of a resource.</li>
+<li>Changing an operation from referencing an input/output structure to no
+longer referencing an input/output structure.</li>
+<li>Renaming an error that is referenced by an operation.</li>
+<li>The addition, removal, or modification of traits applied to an operation or
+members of the input/output of an operation MAY result in a breaking change
+if it changes the wire representation of an operation or breaks behavior
+that was previously relied upon by tooling.</li>
+</ol>
+</div>
+<div class="section" id="updating-structures">
+<h2>Updating structures<a class="headerlink" href="#updating-structures" title="Permalink to this headline">¶</a></h2>
+<p>The following changes to structure shapes are backward-compatible:</p>
+<ol class="arabic simple">
+<li>Adding new optional members to a structure.</li>
+<li>Changing a structure member from <a class="reference internal" href="../spec/core.html#required-trait"><span class="std std-ref">required trait</span></a> to optional.
+The required trait SHOULD only be used for validation purposes; code
+generators SHOULD NOT consider whether or not a structure member is
+required when generating data structures.</li>
+</ol>
+<p>The following changes to a structure are not backward-compatible:</p>
+<ol class="arabic simple">
+<li>Renaming a member.</li>
+<li>Removing a member.</li>
+<li>Changing the shape targeted by a member.</li>
+<li>Adding the required trait to a member.</li>
+</ol>
+</div>
+<div class="section" id="booleans-and-api-evolution">
+<h2>Booleans and API evolution<a class="headerlink" href="#booleans-and-api-evolution" title="Permalink to this headline">¶</a></h2>
+<p>A boolean shape is often used to model state flags; however, consider whether
+or not the state of a resource is actually binary. If other states can be
+added in the future, it is often better to use a string shape with an
+<a class="reference internal" href="../spec/core.html#enum-trait"><span class="std std-ref">enum trait</span></a> or a union shape.</p>
+</div>
+<div class="section" id="updating-unions">
+<h2>Updating unions<a class="headerlink" href="#updating-unions" title="Permalink to this headline">¶</a></h2>
+<p>The following changes to union shapes are backward-compatible:</p>
+<ol class="arabic simple">
+<li>Adding a new member to a union. Unions in Smithy are considered &quot;open&quot;;
+it is a backward-compatible change to add new members to a union. Smithy
+clients SHOULD anticipate and account for receiving unknown members for
+a union in a response from a service at runtime. Clients SHOULD NOT fail
+when receiving unknown members from a service.</li>
+</ol>
+<p>The following changes are backward-incompatible:</p>
+<ol class="arabic simple">
+<li>Renaming a union member.</li>
+<li>Removing a union member.</li>
+<li>Changing the shape targeted by a union member.</li>
+</ol>
+</div>
+<div class="section" id="boxed-shapes">
+<h2>Boxed shapes<a class="headerlink" href="#boxed-shapes" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../spec/core.html#box-trait"><span class="std std-ref">box trait</span></a> is used to influence code generation in various
+programming languages. It is a backward-incompatible change for the boxed
+trait to be added or removed from a shape because it will affect types
+generated by tooling that uses Smithy models.</p>
+</div>
+</div>
+
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="building-models/gradle-plugin.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Smithy Gradle Plugin</a>
+                        
+                        <a href="style-guide.html" title="next chapter" class="next-page clearfix">Style Guide →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            <ul>
+<li><a class="reference internal" href="#">Evolving Models</a><ul>
+<li><a class="reference internal" href="#updating-operations">Updating operations</a></li>
+<li><a class="reference internal" href="#updating-structures">Updating structures</a></li>
+<li><a class="reference internal" href="#booleans-and-api-evolution">Booleans and API evolution</a></li>
+<li><a class="reference internal" href="#updating-unions">Updating unions</a></li>
+<li><a class="reference internal" href="#boxed-shapes">Boxed shapes</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2019, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

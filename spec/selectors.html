@@ -1,0 +1,734 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Selectors &#8212; Smithy 0.1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Event stream specification" href="event-streams.html" />
+    <link rel="prev" title="Smithy Language Specification" href="language-specification.html" /> 
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../index.html">
+                    <span class="logo-icon">⚒️</span><span class="logo-text">Smithy</span><span class="beta-text">beta</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="index.html">Specifications</a></li>
+                <li class="site-page"><a href="../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+  <div class="section" id="selectors">
+<span id="id1"></span><h1>Selectors<a class="headerlink" href="#selectors" title="Permalink to this headline">¶</a></h1>
+<p>A <em class="dfn">Smithy selector</em> is a domain specific language (DSL) used to match
+specific shapes within a model. Selectors are used to build custom
+<a class="reference internal" href="validation.html#emiteachselector"><span class="std std-ref">validators</span></a> and to specify where it is valid to
+apply a <a class="reference internal" href="core.html#trait-selector"><span class="std std-ref">trait</span></a>.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title first">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
+<li><a class="reference internal" href="#matching-shapes-with-selectors" id="id3">Matching shapes with selectors</a></li>
+<li><a class="reference internal" href="#matching-shapes-by-type" id="id4">Matching shapes by type</a></li>
+<li><a class="reference internal" href="#attribute-selectors" id="id5">Attribute selectors</a><ul>
+<li><a class="reference internal" href="#matching-traits" id="id6">Matching traits</a></li>
+<li><a class="reference internal" href="#matching-on-shape-id" id="id7">Matching on shape ID</a></li>
+<li><a class="reference internal" href="#available-attributes" id="id8">Available attributes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#neighbors" id="id9">Neighbors</a><ul>
+<li><a class="reference internal" href="#directed-neighbors" id="id10">Directed neighbors</a></li>
+<li><a class="reference internal" href="#relationships" id="id11">Relationships</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#functions" id="id12">Functions</a><ul>
+<li><a class="reference internal" href="#each" id="id13">:each</a></li>
+<li><a class="reference internal" href="#test" id="id14">:test</a></li>
+<li><a class="reference internal" href="#not" id="id15">:not</a></li>
+<li><a class="reference internal" href="#of" id="id16">:of</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#grammar" id="id17">Grammar</a></li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>A loaded Smithy <em>model</em> can be thought of as a traversable graph, more
+specifically, as a labeled multidigraph: each <a class="reference internal" href="core.html#shapes"><span class="std std-ref">shape</span></a> in a model
+is a labeled graph vertex, and each <a class="reference internal" href="core.html#shape-id"><span class="std std-ref">shape ID</span></a> and
+<a class="reference internal" href="core.html#member"><span class="std std-ref">member</span></a> is a labeled edge. Shapes that are one of the
+<a class="reference internal" href="core.html#aggregate-types"><span class="std std-ref">aggregate types</span></a> or <a class="reference internal" href="core.html#service-types"><span class="std std-ref">service types</span></a>
+have named relationships to <em>neighbors</em> that they reference or are connected
+to. For example, a <a class="reference internal" href="core.html#list"><span class="std std-ref">list</span></a> shape has a member that targets a shape; thus,
+the list shape is connected to the member shape, and the member shape is
+connected to the targeted shape.</p>
+</div>
+<div class="section" id="matching-shapes-with-selectors">
+<h2>Matching shapes with selectors<a class="headerlink" href="#matching-shapes-with-selectors" title="Permalink to this headline">¶</a></h2>
+<p>Every shape in a model, including members defined in shapes of aggregate types,
+is sent through a selector, and all of the shapes returned from the selector
+are the matching shapes.</p>
+</div>
+<div class="section" id="matching-shapes-by-type">
+<h2>Matching shapes by type<a class="headerlink" href="#matching-shapes-by-type" title="Permalink to this headline">¶</a></h2>
+<p>Shapes can be matched by type using the following tokens:
+<code class="docutils literal notranslate"><span class="pre">blob</span></code>, <code class="docutils literal notranslate"><span class="pre">boolean</span></code>, <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">integer</span></code>, <code class="docutils literal notranslate"><span class="pre">byte</span></code>, <code class="docutils literal notranslate"><span class="pre">short</span></code>, <code class="docutils literal notranslate"><span class="pre">long</span></code>,
+<code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">double</span></code>, <code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code>, <code class="docutils literal notranslate"><span class="pre">bigInteger</span></code>, <code class="docutils literal notranslate"><span class="pre">timestamp</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>,
+<code class="docutils literal notranslate"><span class="pre">map</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">structure</span></code>, <code class="docutils literal notranslate"><span class="pre">union</span></code>, <code class="docutils literal notranslate"><span class="pre">service</span></code>, <code class="docutils literal notranslate"><span class="pre">operation</span></code>,
+<code class="docutils literal notranslate"><span class="pre">resource</span></code>, <code class="docutils literal notranslate"><span class="pre">member</span></code>, <code class="docutils literal notranslate"><span class="pre">number</span></code>, <code class="docutils literal notranslate"><span class="pre">simpleType</span></code>, <code class="docutils literal notranslate"><span class="pre">collection</span></code>, <code class="docutils literal notranslate"><span class="pre">*</span></code>.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">number</span></code> matches all <code class="docutils literal notranslate"><span class="pre">byte</span></code>, <code class="docutils literal notranslate"><span class="pre">short</span></code>, <code class="docutils literal notranslate"><span class="pre">integer</span></code>, <code class="docutils literal notranslate"><span class="pre">long</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code>,
+<code class="docutils literal notranslate"><span class="pre">double</span></code>, <code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code>, and <code class="docutils literal notranslate"><span class="pre">bigInteger</span></code> shapes.</li>
+<li><code class="docutils literal notranslate"><span class="pre">simpleType</span></code> matches all <a class="reference internal" href="core.html#simple-types"><span class="std std-ref">simple types</span></a>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">collection</span></code> matches both a <code class="docutils literal notranslate"><span class="pre">list</span></code> and <code class="docutils literal notranslate"><span class="pre">set</span></code> shape.</li>
+<li><code class="docutils literal notranslate"><span class="pre">*</span></code> matches all shapes.</li>
+</ul>
+<p>The following selector matches all string shapes in a model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">string</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="attribute-selectors">
+<h2>Attribute selectors<a class="headerlink" href="#attribute-selectors" title="Permalink to this headline">¶</a></h2>
+<p><em>Attribute selectors</em> are used to match shapes based on the
+<a class="reference internal" href="core.html#shape-id"><span class="std std-ref">shape ID</span></a>, <a class="reference internal" href="core.html#traits"><span class="std std-ref">traits</span></a>, and member target.
+Attribute selectors take one of two forms: existence of an attribute and
+comparison of an attribute value to an expected value.</p>
+<p>Attribute selectors support the following comparators:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Comparator</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">=</span></code></td>
+<td>Matches if the attribute value is equal to the expected value.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">^=</span></code></td>
+<td>Matches if the attribute value starts with the expected value.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">$=</span></code></td>
+<td>Matches if the attribute value ends with the expected value.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">*=</span></code></td>
+<td>Matches if the attribute value contains with the expected value.</td>
+</tr>
+</tbody>
+</table>
+<p>Attribute comparisions can be made case-insensitive by preceding the closing
+bracket with &quot; i&quot; (e.g., <code class="docutils literal notranslate"><span class="pre">string[trait|time=DATE</span> <span class="pre">i]</span></code>).</p>
+<div class="section" id="matching-traits">
+<h3>Matching traits<a class="headerlink" href="#matching-traits" title="Permalink to this headline">¶</a></h3>
+<p>We can match shapes based on traits using an <em>attribute selector</em>. The
+following selector finds all structure shapes with the <a class="reference internal" href="core.html#error-trait"><span class="std std-ref">error trait</span></a>
+trait:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">structure</span><span class="p">[</span><span class="n">trait</span><span class="o">|</span><span class="n">error</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">trait|</span></code> is called a <em>namespace prefix</em>. This particular prefix tells
+the selector that we are interested in a trait applied to the current shape,
+and that that specific trait is <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p>
+<p>We can match string shapes that have a specific trait value:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">structure</span><span class="p">[</span><span class="n">trait</span><span class="o">|</span><span class="n">error</span><span class="o">=</span><span class="n">client</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Matching on trait values only works for traits that have a scalar value
+(e.g., strings, numbers, and booleans). We can also match case-insensitvely
+on the value by appending &quot; i&quot; before the closing bracket:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">structure</span><span class="p">[</span><span class="n">trait</span><span class="o">|</span><span class="n">error</span><span class="o">=</span><span class="n">CLIENT</span> <span class="n">i</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Fully-qualified trait names are also supported:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">string</span><span class="p">[</span><span class="n">trait</span><span class="o">|</span><span class="n">smithy</span><span class="o">.</span><span class="n">example</span><span class="c1">#customTrait=foo]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="matching-on-shape-id">
+<h3>Matching on shape ID<a class="headerlink" href="#matching-on-shape-id" title="Permalink to this headline">¶</a></h3>
+<p>Attribute selectors can be used to match the <a class="reference internal" href="core.html#shape-id"><span class="std std-ref">shape ID</span></a>. The
+following example matches a single resource shape with an ID of
+<code class="docutils literal notranslate"><span class="pre">smithy.example#Foo</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resource</span><span class="p">[</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;smithy.example#Foo&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Notice that the value of an attribute selector can be quoted. The example
+above uses single quotes, but double quotes work too.</p>
+<p>Smithy provides several attributes in the <code class="docutils literal notranslate"><span class="pre">id</span></code> namespace to make matching
+on a shape ID easier. The following example finds all shapes that are in the
+&quot;smithy.example&quot; namespace:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resource</span><span class="p">[</span><span class="nb">id</span><span class="o">|</span><span class="n">namespace</span><span class="o">=</span><span class="n">smithy</span><span class="o">.</span><span class="n">example</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Though not as clear, matching shapes in a specific namespace can also be
+acheived using the <code class="docutils literal notranslate"><span class="pre">^=</span></code> comparator against <code class="docutils literal notranslate"><span class="pre">id</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resource</span><span class="p">[</span><span class="nb">id</span><span class="o">^=</span><span class="n">smithy</span><span class="o">.</span><span class="n">example</span><span class="c1">#]</span>
+</pre></div>
+</div>
+<p>The following example matches all member shapes that have a member name of
+&quot;key&quot;:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resource</span><span class="p">[</span><span class="nb">id</span><span class="o">|</span><span class="n">member</span><span class="o">=</span><span class="n">key</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Though not as clear, matching members with a member name of &quot;key&quot; can also be
+acheived using the <code class="docutils literal notranslate"><span class="pre">$=</span></code> comparator against <code class="docutils literal notranslate"><span class="pre">id</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>resource[id$=&quot;$key&quot;]
+</pre></div>
+</div>
+</div>
+<div class="section" id="available-attributes">
+<h3>Available attributes<a class="headerlink" href="#available-attributes" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="50%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Description</th>
+<th class="head">Example result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">id</span></code></td>
+<td>The full shape ID of a shape</td>
+<td><code class="docutils literal notranslate"><span class="pre">foo.baz#Structure$memberName</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">id|namespace</span></code></td>
+<td>The namespace part of a shape ID</td>
+<td><code class="docutils literal notranslate"><span class="pre">foo.baz</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">id|name</span></code></td>
+<td>The name part of a shape ID</td>
+<td><code class="docutils literal notranslate"><span class="pre">Structure</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">id|member</span></code></td>
+<td>The member part of a shape ID (if available)</td>
+<td><code class="docutils literal notranslate"><span class="pre">memberName</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">service|version</span></code></td>
+<td>Gets the version property of a service shape if the shape is
+a service.</td>
+<td><code class="docutils literal notranslate"><span class="pre">service[service|version^='2018-']</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">trait|*</span></code></td>
+<td>Gets the value of a trait applied to a shape, where &quot;*&quot; is the name
+of a trait (e.g., <code class="docutils literal notranslate"><span class="pre">trait|error</span></code>). Boolean trait values are
+converted to &quot;true&quot; or &quot;false&quot;.</td>
+<td><code class="docutils literal notranslate"><span class="pre">client</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="neighbors">
+<h2>Neighbors<a class="headerlink" href="#neighbors" title="Permalink to this headline">¶</a></h2>
+<p>The <em>current</em> shape evaulated by a selector is changed using a neighbor token,
+<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>. A neighbor token returns every shape that is connected to the current
+shape. For example, the following selector returns the key and value members of
+every map:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">map</span> <span class="o">&gt;</span> <span class="n">member</span>
+</pre></div>
+</div>
+<p>We can return just the key members or just the value members by adding an
+attribute selector on the <code class="docutils literal notranslate"><span class="pre">id|member</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">map</span> <span class="o">&gt;</span> <span class="n">member</span><span class="p">[</span><span class="nb">id</span><span class="o">|</span><span class="n">member</span><span class="o">=</span><span class="n">key</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Neighbors can be chained to traverse further into a shape. The following
+selector returns strings that are targeted by list members:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">list</span> <span class="o">&gt;</span> <span class="n">member</span> <span class="o">&gt;</span> <span class="n">string</span>
+</pre></div>
+</div>
+<div class="section" id="directed-neighbors">
+<h3>Directed neighbors<a class="headerlink" href="#directed-neighbors" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> neighbor selector is an <em>undirected</em> edge traversal. Sometimes a
+directed edge traversal is necessary to match the appropriate shapes. For
+example, the following selector returns the &quot;bound&quot;, &quot;input&quot;, &quot;output&quot;,
+and &quot;errors&quot; relationships of each operation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">operation</span> <span class="o">&gt;</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>A directed edge traversal can be performed using the <code class="docutils literal notranslate"><span class="pre">-[</span></code> token followed
+by a comma separated list of <a class="reference internal" href="#selector-relationships"><span class="std std-ref">relationships</span></a>,
+followed by <code class="docutils literal notranslate"><span class="pre">]-&gt;</span></code>. The following selector matches all structure
+shapes referenced as operation input or output.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">operation</span> <span class="o">-</span><span class="p">[</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">]</span><span class="o">-&gt;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">:test</span></code> function can be used to check if a shape has a named
+relationship. The following selector matches all resource shapes that define
+an identifier:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resource</span><span class="p">:</span><span class="n">test</span><span class="p">(</span><span class="o">-</span><span class="p">[</span><span class="n">identifier</span><span class="p">]</span><span class="o">-&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="relationships">
+<span id="selector-relationships"></span><h3>Relationships<a class="headerlink" href="#relationships" title="Permalink to this headline">¶</a></h3>
+<p>The table below lists the labeled directed relationships from each shape.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="15%" />
+<col width="15%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Shape</th>
+<th class="head">Relationship</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>service</td>
+<td>operation</td>
+<td>Each operation that is bound to a service.</td>
+</tr>
+<tr class="row-odd"><td>service</td>
+<td>resource</td>
+<td>Each resource that is bound to a service.</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>identifier</td>
+<td>The identifier referenced by the resource (if specified).</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
+<td>operation</td>
+<td>Each operation that is bound to a resource through the
+&quot;operations&quot;, &quot;create&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;, and &quot;list&quot;
+properties.</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>resource</td>
+<td>Each resource that is bound to a resource.</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
+<td>create</td>
+<td>The operation referenced by the <a class="reference internal" href="core.html#create-lifecycle"><span class="std std-ref">Create lifecycle</span></a> property of
+a resource (if present).</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>read</td>
+<td>The operation referenced by the <a class="reference internal" href="core.html#read-lifecycle"><span class="std std-ref">Read lifecycle</span></a> property of
+a resource (if present).</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
+<td>update</td>
+<td>The operation referenced by the <a class="reference internal" href="core.html#update-lifecycle"><span class="std std-ref">Update lifecycle</span></a> property of
+a resource (if present).</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>delete</td>
+<td>The operation referenced by the <a class="reference internal" href="core.html#delete-lifecycle"><span class="std std-ref">Delete lifecycle</span></a> property of
+a resource (if present).</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
+<td>list</td>
+<td>The operation referenced by the <a class="reference internal" href="core.html#list-lifecycle"><span class="std std-ref">List lifecycle</span></a> property of
+a resource (if present).</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>bound</td>
+<td>The service or resource to which the resource is bound.</td>
+</tr>
+<tr class="row-odd"><td>operation</td>
+<td>bound</td>
+<td>The service or resource to which the operation is bound.</td>
+</tr>
+<tr class="row-even"><td>operation</td>
+<td>input</td>
+<td>The input structure of the operation (if present).</td>
+</tr>
+<tr class="row-odd"><td>operation</td>
+<td>output</td>
+<td>The output structure of the operation (if present).</td>
+</tr>
+<tr class="row-even"><td>operation</td>
+<td>error</td>
+<td>Each error structure referenced by the operation (if present).</td>
+</tr>
+<tr class="row-odd"><td>list</td>
+<td>member</td>
+<td>The <a class="reference internal" href="core.html#member"><span class="std std-ref">member</span></a> of the list. Note that this is not the shape targeted
+by the member.</td>
+</tr>
+<tr class="row-even"><td>map</td>
+<td>member</td>
+<td>The key and value members of the map. Note that these are not the
+shapes targeted by the member.</td>
+</tr>
+<tr class="row-odd"><td>structure</td>
+<td>member</td>
+<td>Each structure member. Note that these are not the shapes targeted by
+the members.</td>
+</tr>
+<tr class="row-even"><td>union</td>
+<td>member</td>
+<td>Each union member. Note that these are not the shapes targeted by
+the members.</td>
+</tr>
+<tr class="row-odd"><td>member</td>
+<td>&#160;</td>
+<td>The shape targeted by the member. Note that member targets have no
+relationship name.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<p>Functions are used to filter shapes. Functions always start with <code class="docutils literal notranslate"><span class="pre">:</span></code>.</p>
+<div class="section" id="each">
+<h3>:each<a class="headerlink" href="#each" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">:each</span></code> function is used to map over the current shape with multiple
+selectors and returns all of the shapes returned from each selector. The
+<code class="docutils literal notranslate"><span class="pre">:each</span></code> function accepts a variadic list of selectors each separated by a
+comma (&quot;,&quot;).</p>
+<p>The following selector matches all string and number shapes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">each</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each can be used inside of neighbors too. The following selector
+matches all members that target a string or number:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">member</span> <span class="o">&gt;</span> <span class="p">:</span><span class="n">each</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following <code class="docutils literal notranslate"><span class="pre">:each</span></code> selector matches all shapes that are either
+targeted by a list member or targeted by a map member:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">each</span><span class="p">(</span><span class="nb">list</span> <span class="o">&gt;</span> <span class="n">member</span> <span class="o">&gt;</span> <span class="o">*</span><span class="p">,</span> <span class="nb">map</span> <span class="o">&gt;</span> <span class="n">member</span> <span class="o">&gt;</span> <span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following selector matches all list and map shapes that target strings:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">each</span><span class="p">(:</span><span class="n">test</span><span class="p">(</span><span class="nb">list</span> <span class="o">&gt;</span> <span class="n">member</span> <span class="o">&gt;</span> <span class="n">string</span><span class="p">),</span> <span class="p">:</span><span class="n">test</span><span class="p">(</span><span class="nb">map</span> <span class="o">&gt;</span> <span class="n">member</span> <span class="o">&gt;</span> <span class="n">string</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Because none of the selectors in the <code class="docutils literal notranslate"><span class="pre">:each</span></code> function are intended to
+change the current node, this can be reduced to the following selector:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">test</span><span class="p">(:</span><span class="n">each</span><span class="p">(</span><span class="nb">list</span> <span class="o">&gt;</span> <span class="n">member</span> <span class="o">&gt;</span> <span class="n">string</span><span class="p">,</span> <span class="nb">map</span> <span class="o">&gt;</span> <span class="n">member</span> <span class="o">&gt;</span> <span class="n">string</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test">
+<h3>:test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">:test</span></code> function is used to test if a shape is contained within any of
+the provided predicate selector return values without changing the current
+shape.</p>
+<p>The following selector is used to match all string and number shapes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">test</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">:test</span></code> function is much more interesting when used to test if a shape
+contains a neighbor in addition to other filtering. The following example
+matches all shapes that are bound to a resource and have no documentation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">test</span><span class="p">(</span><span class="o">-</span><span class="p">[</span><span class="n">bound</span><span class="p">,</span> <span class="n">resource</span><span class="p">]</span><span class="o">-&gt;</span><span class="p">)</span> <span class="p">:</span><span class="ow">not</span><span class="p">([</span><span class="n">trait</span><span class="o">|</span><span class="n">documentation</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="not">
+<h3>:not<a class="headerlink" href="#not" title="Permalink to this headline">¶</a></h3>
+<p>The <em>:not</em> function is used to filter out shapes. This function accepts a
+list of selector arguments, and the shapes returned from each predicate are
+filtered out from the result set.</p>
+<p>The following selector matches every shape except strings:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="ow">not</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following selector matches every shape except strings and floats:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="ow">not</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following example matches all shapes except for strings that are targeted
+by a list member:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="ow">not</span><span class="p">(</span><span class="nb">list</span> <span class="o">&gt;</span> <span class="n">member</span> <span class="o">&gt;</span> <span class="n">string</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The shapes <em>returned</em> from the predicate selectors are filtered out.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">:test</span></code> function can be used to test a shape, potentially traversing its
+neighbors, without changing the return value of the test. The following
+example does not match any list shape that has a string member:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="ow">not</span><span class="p">(:</span><span class="n">test</span><span class="p">(</span><span class="nb">list</span> <span class="o">&gt;</span> <span class="n">member</span> <span class="o">&gt;</span> <span class="n">string</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Successive <code class="docutils literal notranslate"><span class="pre">:not</span></code> functions can be used to filter shapes using several
+predicates. The following example does not match strings or shapes with the
+<a class="reference internal" href="core.html#sensitive-trait"><span class="std std-ref">sensitive trait</span></a> trait:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="ow">not</span><span class="p">(</span><span class="n">string</span><span class="p">):</span><span class="ow">not</span><span class="p">([</span><span class="n">trait</span><span class="o">|</span><span class="n">sensitive</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Multiple selectors can be provided to <code class="docutils literal notranslate"><span class="pre">:not</span></code> to find shapes that do not
+match all of the provided predicates. The following selector finds all
+string shapes that do not have both the <code class="docutils literal notranslate"><span class="pre">length</span></code> and <code class="docutils literal notranslate"><span class="pre">pattern</span></code>
+traits:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">string</span><span class="p">:</span><span class="ow">not</span><span class="p">([</span><span class="n">trait</span><span class="o">|</span><span class="n">length</span><span class="p">],</span> <span class="p">[</span><span class="n">trait</span><span class="o">|</span><span class="n">pattern</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The following example matches all structure members that target strings in
+which the member does not have the <code class="docutils literal notranslate"><span class="pre">length</span></code> trait and the shape targeted by
+the member does not have the <code class="docutils literal notranslate"><span class="pre">length</span></code> trait:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">structure</span> <span class="o">&gt;</span> <span class="n">member</span>
+    <span class="p">:</span><span class="n">test</span><span class="p">(</span><span class="o">&gt;</span> <span class="n">string</span><span class="p">:</span><span class="ow">not</span><span class="p">([</span><span class="n">trait</span><span class="o">|</span><span class="n">length</span><span class="p">]))</span>
+    <span class="p">:</span><span class="n">test</span><span class="p">(:</span><span class="ow">not</span><span class="p">([</span><span class="n">trait</span><span class="o">|</span><span class="n">length</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="of">
+<h3>:of<a class="headerlink" href="#of" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">:of</span></code> function is used to match members based on their containers
+(i.e., the shape that defines the member). The <code class="docutils literal notranslate"><span class="pre">:of</span></code> function accepts one
+or more selector arguments. Each selector receives the containing shape
+of the member, and if any of the selectors return returns 1 or more shapes,
+the member is matched.</p>
+<p>The following example matches all structure members:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">member</span><span class="p">:</span><span class="n">of</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following example matches all structure and list members:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">member</span><span class="p">:</span><span class="n">of</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="grammar">
+<h2>Grammar<a class="headerlink" href="#grammar" title="Permalink to this headline">¶</a></h2>
+<p>Selectors are defined by the following <a class="reference external" href="https://tools.ietf.org/html/rfc5234">ABNF</a> grammar.</p>
+<div class="note admonition">
+<p class="first admonition-title">Lexical note</p>
+<p class="last">Whitespace is insignificant and can occur between any token without
+changing the semantics of a selector.</p>
+</div>
+<pre>
+<strong id="grammar-token-selector">selector                   </strong> = <a class="reference internal" href="#grammar-token-selector-expression"><code class="xref docutils literal notranslate"><span class="pre">selector_expression</span></code></a> *(<a class="reference internal" href="#grammar-token-selector-expression"><code class="xref docutils literal notranslate"><span class="pre">selector_expression</span></code></a>)
+
+<strong id="grammar-token-selector-expression">selector_expression        </strong> = <a class="reference internal" href="#grammar-token-shape-types"><code class="xref docutils literal notranslate"><span class="pre">shape_types</span></code></a>
+                              / <a class="reference internal" href="#grammar-token-attr"><code class="xref docutils literal notranslate"><span class="pre">attr</span></code></a>
+                              / <a class="reference internal" href="#grammar-token-function-expression"><code class="xref docutils literal notranslate"><span class="pre">function_expression</span></code></a>
+                              / <a class="reference internal" href="#grammar-token-neighbors"><code class="xref docutils literal notranslate"><span class="pre">neighbors</span></code></a>
+
+<strong id="grammar-token-shape-types">shape_types                </strong> = &quot;*&quot;
+                              / &quot;blob&quot;
+                              / &quot;boolean&quot;
+                              / &quot;string&quot;
+                              / &quot;byte&quot;
+                              / &quot;short&quot;
+                              / &quot;integer&quot;
+                              / &quot;long&quot;
+                              / &quot;float&quot;
+                              / &quot;double&quot;
+                              / &quot;bigDecimal&quot;
+                              / &quot;bigInteger&quot;
+                              / &quot;timestamp&quot;
+                              / &quot;list&quot;
+                              / &quot;map&quot;
+                              / &quot;set&quot;
+                              / &quot;structure&quot;
+                              / &quot;union&quot;
+                              / &quot;service&quot;
+                              / &quot;operation&quot;
+                              / &quot;resource&quot;
+                              / &quot;member&quot;
+                              / &quot;number&quot;
+                              / &quot;simpleType&quot;
+                              / &quot;collection&quot;
+
+<strong id="grammar-token-neighbors">neighbors                  </strong> = &quot;&gt;&quot; / <a class="reference internal" href="#grammar-token-directed-neighbor"><code class="xref docutils literal notranslate"><span class="pre">directed_neighbor</span></code></a>
+
+<strong id="grammar-token-directed-neighbor">directed_neighbor          </strong> = &quot;-[&quot; <a class="reference internal" href="#grammar-token-relationship-type"><code class="xref docutils literal notranslate"><span class="pre">relationship_type</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-relationship-type"><code class="xref docutils literal notranslate"><span class="pre">relationship_type</span></code></a>) &quot;]-&gt;&quot;
+
+<strong id="grammar-token-relationship-type">relationship_type          </strong> = &quot;identifier&quot;
+                              / &quot;create&quot;
+                              / &quot;read&quot;
+                              / &quot;update&quot;
+                              / &quot;delete&quot;
+                              / &quot;list&quot;
+                              / &quot;member&quot;
+                              / &quot;input&quot;
+                              / &quot;output&quot;
+                              / &quot;error&quot;
+                              / &quot;operation&quot;
+                              / &quot;resource&quot;
+                              / &quot;bound&quot;
+
+<strong id="grammar-token-attr">attr                       </strong> = &quot;[&quot; <a class="reference internal" href="#grammar-token-attr-key"><code class="xref docutils literal notranslate"><span class="pre">attr_key</span></code></a>
+                              *(<a class="reference internal" href="#grammar-token-comparator"><code class="xref docutils literal notranslate"><span class="pre">comparator</span></code></a> <a class="reference internal" href="#grammar-token-attr-value"><code class="xref docutils literal notranslate"><span class="pre">attr_value</span></code></a> [&quot;i&quot;]) &quot;]&quot;
+
+<strong id="grammar-token-attr-key">attr_key                   </strong> = <a class="reference internal" href="#grammar-token-id-attribute"><code class="xref docutils literal notranslate"><span class="pre">id_attribute</span></code></a>
+                              / <a class="reference internal" href="#grammar-token-trait-attribute"><code class="xref docutils literal notranslate"><span class="pre">trait_attribute</span></code></a>
+                              / <a class="reference internal" href="#grammar-token-service-attribute"><code class="xref docutils literal notranslate"><span class="pre">service_attribute</span></code></a>
+
+<strong id="grammar-token-id-attribute">id_attribute               </strong> = &quot;id&quot; [&quot;|&quot; (&quot;namespace&quot; / &quot;name&quot; / &quot;member&quot;)]
+
+<strong id="grammar-token-trait-attribute">trait_attribute            </strong> = &quot;trait&quot; &quot;|&quot; <a class="reference internal" href="#grammar-token-attr-value"><code class="xref docutils literal notranslate"><span class="pre">attr_value</span></code></a> *(&quot;|&quot; <a class="reference internal" href="#grammar-token-attr-value"><code class="xref docutils literal notranslate"><span class="pre">attr_value</span></code></a>)
+
+<strong id="grammar-token-attr-value">attr_value                 </strong> = <a class="reference internal" href="#grammar-token-attr-identifier"><code class="xref docutils literal notranslate"><span class="pre">attr_identifier</span></code></a> / <a class="reference internal" href="#grammar-token-selector-text"><code class="xref docutils literal notranslate"><span class="pre">selector_text</span></code></a>
+
+<strong id="grammar-token-attr-identifier">attr_identifier            </strong> = 1*(ALPHA / DIGIT / &quot;_&quot;)
+                              *(ALPHA / DIGIT / &quot;_&quot; / &quot;-&quot; / &quot;.&quot; / &quot;#&quot;)
+
+<strong id="grammar-token-service-attribute">service_attribute          </strong> = &quot;service|version&quot;
+
+<strong id="grammar-token-comparator">comparator                 </strong> = &quot;^=&quot; / &quot;$=&quot; / &quot;*=&quot; / &quot;=&quot;
+
+<strong id="grammar-token-function-expression">function_expression        </strong> = &quot;:&quot; <a class="reference internal" href="#grammar-token-function"><code class="xref docutils literal notranslate"><span class="pre">function</span></code></a> &quot;(&quot; <a class="reference internal" href="#grammar-token-selector"><code class="xref docutils literal notranslate"><span class="pre">selector</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selector"><code class="xref docutils literal notranslate"><span class="pre">selector</span></code></a>) &quot;)&quot;
+
+<strong id="grammar-token-function">function                   </strong> = &quot;each&quot; / &quot;test&quot; / &quot;of&quot; / &quot;not&quot;
+
+<strong id="grammar-token-selector-text">selector_text              </strong> = <a class="reference internal" href="#grammar-token-selector-single-quoted-text"><code class="xref docutils literal notranslate"><span class="pre">selector_single_quoted_text</span></code></a>
+                              / <a class="reference internal" href="#grammar-token-selector-double-quoted-text"><code class="xref docutils literal notranslate"><span class="pre">selector_double_quoted_text</span></code></a>
+
+<strong id="grammar-token-selector-single-quoted-text">selector_single_quoted_text</strong> = &quot;'&quot; 1*<a class="reference internal" href="#grammar-token-selector-single-quoted-char"><code class="xref docutils literal notranslate"><span class="pre">selector_single_quoted_char</span></code></a> &quot;'&quot;
+
+<strong id="grammar-token-selector-double-quoted-text">selector_double_quoted_text</strong> = DQUOTE 1*<a class="reference internal" href="#grammar-token-selector-double-quoted-char"><code class="xref docutils literal notranslate"><span class="pre">selector_double_quoted_char</span></code></a> DQUOTE
+
+<strong id="grammar-token-selector-single-quoted-char">selector_single_quoted_char</strong> = %x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
+
+<strong id="grammar-token-selector-double-quoted-char">selector_double_quoted_char</strong> = %x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (&quot;)
+</pre>
+</div>
+</div>
+
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="language-specification.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Smithy Language Specification</a>
+                        
+                        <a href="event-streams.html" title="next chapter" class="next-page clearfix">Event stream specification →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            <ul>
+<li><a class="reference internal" href="#">Selectors</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#matching-shapes-with-selectors">Matching shapes with selectors</a></li>
+<li><a class="reference internal" href="#matching-shapes-by-type">Matching shapes by type</a></li>
+<li><a class="reference internal" href="#attribute-selectors">Attribute selectors</a><ul>
+<li><a class="reference internal" href="#matching-traits">Matching traits</a></li>
+<li><a class="reference internal" href="#matching-on-shape-id">Matching on shape ID</a></li>
+<li><a class="reference internal" href="#available-attributes">Available attributes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#neighbors">Neighbors</a><ul>
+<li><a class="reference internal" href="#directed-neighbors">Directed neighbors</a></li>
+<li><a class="reference internal" href="#relationships">Relationships</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#each">:each</a></li>
+<li><a class="reference internal" href="#test">:test</a></li>
+<li><a class="reference internal" href="#not">:not</a></li>
+<li><a class="reference internal" href="#of">:of</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#grammar">Grammar</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2019, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

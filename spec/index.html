@@ -1,0 +1,233 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Specifications &#8212; Smithy 0.1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Smithy core specification" href="core.html" />
+    <link rel="prev" title="Quick start" href="../quickstart.html" /> 
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../index.html">
+                    <span class="logo-icon">⚒️</span><span class="logo-text">Smithy</span><span class="beta-text">beta</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="#">Specifications</a></li>
+                <li class="site-page"><a href="../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+  <div class="section" id="specifications">
+<span id="specification"></span><h1>Specifications<a class="headerlink" href="#specifications" title="Permalink to this headline">¶</a></h1>
+<p>Smithy is split into several specifications.</p>
+<div class="section" id="core-specifications">
+<span id="id1"></span><h2>Core specifications<a class="headerlink" href="#core-specifications" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper hidden compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Smithy core specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language-specification.html">Smithy Language Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selectors.html">Selectors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="event-streams.html">Event stream specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http.html">HTTP protocol bindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xml.html">XML traits</a></li>
+</ul>
+</div>
+<p>Every specification builds on top of these core specifications.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="core.html"><span class="doc">Smithy core specification</span></a></td>
+<td>Defines the foundation of Smithy modeling.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="language-specification.html"><span class="doc">Smithy Language Specification</span></a></td>
+<td>Defines the syntax of <code class="docutils literal notranslate"><span class="pre">.smithy</span></code> models.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="selectors.html"><span class="doc">Selectors</span></a></td>
+<td>Defines the syntax used to match shapes.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="event-streams.html"><span class="doc">Event stream specification</span></a></td>
+<td>Defines streaming of structured data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="http.html"><span class="doc">HTTP protocol bindings</span></a></td>
+<td>Defines how to bind models to HTTP.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="xml.html"><span class="doc">XML traits</span></a></td>
+<td>Defines how to bind models to XML.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="additional-specifications">
+<h2>Additional specifications<a class="headerlink" href="#additional-specifications" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper hidden compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="validation.html">Model Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</div>
+<p><em>Additional specifications</em> define additional functionality and
+enhancements.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="validation.html"><span class="doc">Model Validation</span></a></td>
+<td>Defines how to configure custom validation.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="mqtt.html"><span class="doc">MQTT Protocol Bindings</span></a></td>
+<td>Defines how to bind models to MQTT.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="aws-specifications">
+<h2>AWS specifications<a class="headerlink" href="#aws-specifications" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper hidden compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="amazon-apigateway.html">Amazon API Gateway Integrations</a></li>
+</ul>
+</div>
+<p>AWS-specific specifications are defined below.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="aws-core.html"><span class="doc">AWS Core Specification</span></a></td>
+<td>Defines core traits used to integrate Smithy models with AWS.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="amazon-apigateway.html"><span class="doc">Amazon API Gateway Integrations</span></a></td>
+<td>Defines Amazon API Gateway traits and integrations.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="../quickstart.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Quick start</a>
+                        
+                        <a href="core.html" title="next chapter" class="next-page clearfix">Smithy core specification →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            <ul>
+<li><a class="reference internal" href="#">Specifications</a><ul>
+<li><a class="reference internal" href="#core-specifications">Core specifications</a></li>
+<li><a class="reference internal" href="#additional-specifications">Additional specifications</a></li>
+<li><a class="reference internal" href="#aws-specifications">AWS specifications</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2019, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>
