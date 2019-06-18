@@ -104,18 +104,6 @@ public final class OpenApiConstants {
     public static final String IGNORE_UNSUPPORTED_TRAITS = "openapi.ignoreUnsupportedTraits";
 
     /**
-     * The prefix used to provide a custom OpenAPI security scheme name for
-     * Smithy authentication schemes, specifically, keys with this prefix
-     * can change the key used to register a security scheme in the
-     * "#/components/securitySchemes" section of the model.
-     *
-     * <p>By default, if no security scheme name is found using this prefix
-     * concatenated with the Smithy authentication scheme name, then the name
-     * of the Smithy authentication scheme is used.
-     */
-    public static final String SECURITY_NAME_PREFIX = "openapi.security.name.";
-
-    /**
      * Defines a map of String to any Node value to find and replace in the
      * generated OpenAPI model.
      *

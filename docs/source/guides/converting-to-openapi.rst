@@ -286,26 +286,6 @@ openapi.substitutions (``Map<String, any>``)
             }
         }
 
-openapi.security.name.* (string)
-    Provides a custom mapping for what a Smithy authentication scheme should
-    be called when used as an OpenAPI security name. ``openapi.security.name.``
-    is a prefix key where any text that comes after is used to refer to the
-    name of a Smithy authentication scheme. For example, the following
-    configuration names the ``aws.v4`` authentication scheme to ``SigV4!``
-    in OpenAPI:
-
-    .. code-block:: json
-
-        {
-            "version": "1.0",
-            "plugins": {
-                "openapi": {
-                    "service": "smithy.example#Weather",
-                    "openapi.security.name.aws.v4": "SigV4!"
-                }
-            }
-        }
-
 
 JSON schema configuration settings
 ==================================
