@@ -38,7 +38,7 @@ public class AddAuthorizersTest {
         OpenApi result = OpenApiConverter.create()
                 .classLoader(getClass().getClassLoader())
                 .convert(model, ShapeId.from("ns.foo#SomeService"));
-        SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
+        SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("aws.v4");
 
         assertThat(sigV4.getType(), equalTo("apiKey"));
         assertThat(sigV4.getName().get(), equalTo("Authorization"));

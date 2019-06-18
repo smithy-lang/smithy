@@ -386,7 +386,7 @@
       }
     },
     "securitySchemes": {
-      "sigv4": {
+      "aws.v4": {
         "type": "apiKey",
         "description": "AWS Signature Version 4 authentication",
         "name": "Authorization",
@@ -402,7 +402,7 @@
   },
   "security": [
     {
-      "sigv4": [ ]
+      "aws.v4": [ ]
     },
     {
       "http-basic": [ ]

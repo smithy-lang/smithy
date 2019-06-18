@@ -17,7 +17,6 @@ package software.amazon.smithy.openapi.fromsmithy.security;
 
 import java.util.Set;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
@@ -34,12 +33,6 @@ public final class AwsV4 implements SecuritySchemeConverter {
     @Override
     public String getAuthSchemeName() {
         return "aws.v4";
-    }
-
-    @Override
-    public String getSecurityName(Context context) {
-        return context.getConfig().getStringMemberOrDefault(
-                OpenApiConstants.SECURITY_NAME_PREFIX + getAuthSchemeName(), "sigv4");
     }
 
     @Override

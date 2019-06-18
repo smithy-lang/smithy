@@ -18,7 +18,6 @@ package software.amazon.smithy.openapi.fromsmithy;
 import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.model.SecurityScheme;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
@@ -51,22 +50,14 @@ public interface SecuritySchemeConverter {
      * Get the name that should be used for this security scheme throughout
      * the model.
      *
-     * <p>By default, this method will return the following value:
-     *
-     * <ul>
-     *     <li>Returns the value of "openapi.security.name.AUTHNAME" from
-     *     the config object if present, where "AUTHNAME" is the return value
-     *     of {@link #getAuthSchemeName()}.</li>
-     *     <li>Returns the result of {@link #getAuthSchemeName()}</li>
-     * </ul>
+     * <p>By default, this method will return the result of
+     * {@link #getAuthSchemeName()}
      *
      * @param context Conversion context.
      * @return The Smithy security authentication scheme name.
      */
     default String getSecurityName(Context context) {
-        return context.getConfig().getStringMemberOrDefault(
-                OpenApiConstants.SECURITY_NAME_PREFIX + getAuthSchemeName(),
-                getAuthSchemeName());
+        return getAuthSchemeName();
     }
 
     /**
