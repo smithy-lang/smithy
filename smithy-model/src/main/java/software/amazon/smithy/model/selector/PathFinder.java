@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -213,6 +214,27 @@ public final class PathFinder {
         @Override
         public Relationship get(int index) {
             return relationships.get(index);
+        }
+
+        /**
+         * Gets a list of all shapes in the path including the starting
+         * shape all the way to the last shape.
+         *
+         * <p>The returned list does not return the last element (the
+         * end shape targeted by the last neighbor) if it does not exist.
+         *
+         * @return Returns the list of shapes.
+         */
+        public List<Shape> getShapes() {
+            List<Shape> results = relationships.stream()
+                    .map(Relationship::getShape)
+                    .collect(Collectors.toList());
+            Relationship last = relationships.get(relationships.size() - 1);
+            if (last.getNeighborShape().isPresent()) {
+                results.add(last.getNeighborShape().get());
+            }
+
+            return results;
         }
 
         /**

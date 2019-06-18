@@ -15,25 +15,41 @@
 
 package software.amazon.smithy.aws.apigateway.openapi;
 
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import software.amazon.smithy.aws.traits.apigateway.Authorizer;
+import software.amazon.smithy.aws.traits.apigateway.AuthorizerIndex;
+import software.amazon.smithy.aws.traits.apigateway.AuthorizerTrait;
 import software.amazon.smithy.aws.traits.apigateway.AuthorizersTrait;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
+import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
+import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveUnusedComponents;
+import software.amazon.smithy.openapi.model.ComponentsObject;
+import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.SecurityScheme;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
- * Adds API Gateway authorizers to their corresponding security schemes.
+ * Dynamically creates security schemes for API Gateway authorizers based on
+ * the {@link AuthorizerTrait}.
  *
- * <p>The {@link AuthorizersTrait} is applied to a service shape to define
- * a custom API Gateway authorizer. This trait is a map of authentication
- * scheme name to the authorizer definition. This plugin finds each
- * authorizer and applies the API Gateway specific OpenAPI extension
- * {@code x-amazon-apigateway-authorizer} to define the authorizer in the
- * OpenAPI security scheme that corresponds to the referenced authentication
- * scheme.
+ * <p>The effective authorizer of a service and each operation is calculated,
+ * and if resolves to a value, the components are updated to remove the
+ * scheme that the authorizer augments. API Gateway authorizers create a copy
+ * of the scheme that they augment and apply API Gateway extensions. This
+ * allows for a single Smithy authentication scheme to be referenced by
+ * multiple authorizers.
+ *
+ * <p>This mapper quite possibly could cause security scheme definitions on a
+ * service to become unreferenced by any operation. These security schemes
+ * should be picked up and removed by the {@link RemoveUnusedComponents}
+ * mapper.
  */
 final class AddAuthorizers implements OpenApiMapper {
     private static final String EXTENSION_NAME = "x-amazon-apigateway-authorizer";
@@ -41,49 +57,78 @@ final class AddAuthorizers implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(AddApiKeySource.class.getName());
 
     @Override
-    public SecurityScheme updateSecurityScheme(
+    public Map<String, List<String>> updateSecurity(
             Context context,
-            String authName,
-            String securitySchemeName,
-            SecurityScheme securityScheme
+            Shape shape,
+            SecuritySchemeConverter converter,
+            Map<String, List<String>> requirement
     ) {
-        return context.getService().getTrait(AuthorizersTrait.class)
-                .map(trait -> addAuthorizers(authName, securitySchemeName, securityScheme, trait))
-                .orElse(securityScheme);
-    }
-
-    private SecurityScheme addAuthorizers(
-            String authName,
-            String securitySchemeName,
-            SecurityScheme securityScheme,
-            AuthorizersTrait trait
-    ) {
-        if (!trait.getAllAuthorizers().containsKey(authName)) {
-            return securityScheme;
+        // Only modify requirements that exactly match the updated scheme.
+        if (requirement.size() != 1
+                || !requirement.keySet().iterator().next().equals(converter.getAuthSchemeName())) {
+            return requirement;
         }
 
-        Authorizer authorizer = trait.getAllAuthorizers().get(authName);
-        LOGGER.fine(() -> String.format(
-                "Adding the `%s` OpenAPI extension to the `%s` security scheme based on the `%s` trait for the "
-                + "`%s` authentication scheme.",
-                EXTENSION_NAME, securitySchemeName, trait.getName(), authName));
+        ServiceShape service = context.getService();
+        AuthorizerIndex authorizerIndex = context.getModel().getKnowledge(AuthorizerIndex.class);
 
-        SecurityScheme.Builder builder = securityScheme.toBuilder();
+        return authorizerIndex.getAuthorizer(service, shape)
+                // Remove the original scheme authentication scheme from the operation if found.
+                // Add a new scheme for this operation using the authorizer name.
+                .map(authorizer -> MapUtils.of(authorizer, requirement.values().iterator().next()))
+                .orElse(requirement);
+    }
 
-        // The client authorization method is not contained within the authorizer in
-        // the OpenAPI extension.
-        authorizer.getClientType().ifPresent(type -> builder.putExtension(CLIENT_EXTENSION_NAME, type));
+    @Override
+    public OpenApi after(Context context, OpenApi openapi) {
+        return context.getService().getTrait(AuthorizersTrait.class)
+                .map(authorizers -> addComputedAuthorizers(context, openapi, authorizers))
+                .orElse(openapi);
+    }
 
-        ObjectNode authorizerNode = Node.objectNodeBuilder()
-                .withMember("type", authorizer.getType())
-                .withMember("authorizerUri", authorizer.getUri())
-                .withOptionalMember("authorizerCredentials", authorizer.getCredentials().map(Node::from))
-                .withOptionalMember("identityValidationExpression",
-                                    authorizer.getIdentityValidationExpression().map(Node::from))
-                .withOptionalMember("identitySource", authorizer.getIdentitySource().map(Node::from))
-                .withOptionalMember("authorizerResultTtlInSeconds", authorizer.getResultTtlInSeconds().map(Node::from))
-                .build();
+    private OpenApi addComputedAuthorizers(Context context, OpenApi openApi, AuthorizersTrait trait) {
+        OpenApi.Builder builder = openApi.toBuilder();
+        ComponentsObject.Builder components = openApi.getComponents().toBuilder();
 
-        return builder.putExtension(EXTENSION_NAME, authorizerNode).build();
+        for (Map.Entry<String, Authorizer> entry : trait.getAllAuthorizers().entrySet()) {
+            String scheme = entry.getValue().getScheme();
+            for (SecuritySchemeConverter converter : context.getSecuritySchemeConverters()) {
+                Authorizer authorizer = entry.getValue();
+                if (converter.getAuthSchemeName().equals(scheme)) {
+                    SecurityScheme createdScheme = converter.createSecurityScheme(context);
+                    SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();
+                    schemeBuilder.putExtension(
+                            CLIENT_EXTENSION_NAME, determineApiGatewayClientName(authorizer.getScheme()));
+
+                    ObjectNode authorizerNode = Node.objectNodeBuilder()
+                            .withMember("type", authorizer.getType())
+                            .withMember("authorizerUri", authorizer.getUri())
+                            .withOptionalMember("authorizerCredentials", authorizer.getCredentials().map(Node::from))
+                            .withOptionalMember("identityValidationExpression",
+                                                authorizer.getIdentityValidationExpression().map(Node::from))
+                            .withOptionalMember("identitySource", authorizer.getIdentitySource().map(Node::from))
+                            .withOptionalMember("authorizerResultTtlInSeconds",
+                                                authorizer.getResultTtlInSeconds().map(Node::from))
+                            .build();
+                    schemeBuilder.putExtension(EXTENSION_NAME, authorizerNode);
+
+                    LOGGER.fine(() -> String.format("Adding the `%s` OpenAPI security scheme", entry.getKey()));
+                    components.putSecurityScheme(entry.getKey(), schemeBuilder.build());
+                    break;
+                }
+            }
+        }
+
+        builder.components(components.build());
+        return builder.build();
+    }
+
+    // TODO: should this also allow overrides via configuration properties?
+    private static String determineApiGatewayClientName(String value) {
+        if (value.equals("aws.v4")) {
+            return "awsSigv4";
+        } else{
+            return "custom";
+        }
     }
 }

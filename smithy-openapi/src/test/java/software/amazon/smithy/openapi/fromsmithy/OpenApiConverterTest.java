@@ -16,21 +16,27 @@
 package software.amazon.smithy.openapi.fromsmithy;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.PathItem;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 public class OpenApiConverterTest {
     @Test
@@ -176,5 +182,55 @@ public class OpenApiConverterTest {
                 getClass().getResourceAsStream("mixed-security-service.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
+    }
+
+    private static final class NullSecurity implements OpenApiMapper {
+        @Override
+        public Map<String, List<String>> updateSecurity(
+                Context context, Shape shape,
+                SecuritySchemeConverter converter,
+                Map<String, List<String>> requirement
+        ) {
+            return null;
+        }
+    }
+
+    @Test
+    public void canOmitSecurityRequirements() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("mixed-security-service.json"))
+                .assemble()
+                .unwrap();
+        OpenApi result = OpenApiConverter.create()
+                .addOpenApiMapper(new NullSecurity())
+                .convert(model, ShapeId.from("smithy.example#Service"));
+
+        assertThat(result.getSecurity(), empty());
+        assertThat(result.getPaths().get("/2").getGet().get().getSecurity(), empty());
+    }
+
+    private static final class ConstantSecurity implements OpenApiMapper {
+        @Override
+        public Map<String, List<String>> updateSecurity(
+                Context context, Shape shape,
+                SecuritySchemeConverter converter,
+                Map<String, List<String>> requirement
+        ) {
+            return MapUtils.of("foo_baz", ListUtils.of());
+        }
+    }
+
+    @Test
+    public void canChangeSecurityRequirementName() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("mixed-security-service.json"))
+                .assemble()
+                .unwrap();
+        OpenApi result = OpenApiConverter.create()
+                .addOpenApiMapper(new ConstantSecurity())
+                .convert(model, ShapeId.from("smithy.example#Service"));
+
+        assertThat(result.getSecurity().get(0).keySet(), contains("foo_baz"));
+        assertThat(result.getPaths().get("/2").getGet().get().getSecurity().get(0).keySet(), contains("foo_baz"));
     }
 }

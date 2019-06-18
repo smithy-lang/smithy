@@ -15,6 +15,12 @@
         "documentation": "Lambda authorizers to attach to the authentication schemes defined on this service.",
         "tags": ["internal"]
       },
+      "authorizer": {
+        "selector": ":test(service, resource, operation)",
+        "shape": "smithy.api#String",
+        "documentation": "Attaches an authorizer to a service, resource, or operation.",
+        "tags": ["internal"]
+      },
       "requestValidator": {
         "selector": ":test(service, operation)",
         "shape": "smithy.api#String",
@@ -49,9 +55,10 @@
         "private": true,
         "documentation": "An object that associates an authorizer and associated metadata with an authentication mechanism.",
         "members": {
-          "clientType": {
+          "scheme": {
+            "required": true,
             "target": "smithy.api#String",
-            "documentation": "The client authentication type. A value identifying the category of authorizer, such as \"oauth2\" or \"awsSigv4\"."
+            "documentation": "The Smithy authentication scheme used by the client (e.g, aws.v4)."
           },
           "type": {
             "target": "smithy.api#String",

@@ -9,6 +9,7 @@ software.amazon.smithy.aws.traits.iam.ConditionKeysTrait$Provider
 software.amazon.smithy.aws.traits.iam.DefineConditionKeysTrait$Provider
 software.amazon.smithy.aws.traits.iam.DisableConditionKeyInferenceTrait$Provider
 software.amazon.smithy.aws.traits.iam.RequiredActionsTrait$Provider
+software.amazon.smithy.aws.traits.apigateway.AuthorizerTrait$Provider
 software.amazon.smithy.aws.traits.apigateway.AuthorizersTrait$Provider
 software.amazon.smithy.aws.traits.apigateway.RequestValidatorTrait$Provider
 software.amazon.smithy.aws.traits.apigateway.ApiKeySourceTrait$Provider

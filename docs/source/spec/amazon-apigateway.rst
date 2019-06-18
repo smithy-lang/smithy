@@ -92,9 +92,9 @@ Trait selector
 
     *A service shape that has the protocols trait*
 Value type
-    Map of x names to *authorizer* definitions. The key used as the authorizer
-    name MUST reference one of the ``auth`` schemes of the :ref:`protocols-trait`
-    attached to the service.
+    Map of arbitrary names to *authorizer* definitions. These authorizer
+    definitions are applied to a service, resource, or operation using the
+    :ref:`aws.apigateway#authorizer-trait`.
 
 An *authorizer* definition is an object that supports the following properties:
 
@@ -111,6 +111,11 @@ An *authorizer* definition is an object that supports the following properties:
         and the value must be "token", for an authorizer with the caller
         identity embedded in an authorization token, or "request", for an
         authorizer with the caller identity contained in request parameters.
+    * - scheme
+      - ``string``
+      - **Required**. A Smithy authentication scheme name that identifies how
+        a client authenticates. This value MUST reference one of the ``auth``
+        schemes of the :ref:`protocols-trait` attached to the service.
     * - uri
       - ``string``
       - **Required.** Specifies the authorizer's Uniform Resource Identifier
@@ -123,15 +128,6 @@ An *authorizer* definition is an object that supports the following properties:
         should be treated as the path to the resource, including the initial
         ``/``. For Lambda functions, this is usually of the form
         ``/2015-03-31/functions/[FunctionARN]/invocations``.
-    * - clientType
-      - ``string``
-      - The client authentication type. A value identifying the category of
-        authorizer, such as "oauth2" or "awsSigv4".
-
-        .. note::
-
-            This is the equivalent of setting the `x-amazon-apigateway-authtype`_
-            extension property in OpenAPI.
     * - credentials
       - ``string``
       - Specifies the required credentials as an IAM role for API Gateway to
@@ -197,9 +193,10 @@ An *authorizer* definition is an object that supports the following properties:
                             "auth": ["aws.v4"]
                         }
                     ],
+                    "aws.apigateway#authorizer": "arbitrary-name",
                     "aws.apigateway#authorizers": {
-                        "aws.v4": {
-                            "clientType": "awsSigV4",
+                        "arbitrary-name": {
+                            "scheme": "aws.v4",
                             "type": "request",
                             "uri": "arn:foo:baz",
                             "credentials": "arn:foo:bar",
@@ -212,6 +209,30 @@ An *authorizer* definition is an object that supports the following properties:
             }
         }
     }
+
+.. note::
+
+    This trait should be considered internal-only and not exposed to your
+    customers.
+
+
+.. _aws.apigateway#authorizer-trait:
+
+``aws.apigateway#authorizer`` trait
+====================================
+
+Summary
+    Applies a Lambda authorizer to a service, resource, or operation.
+    Authorizers are resolved hierarchically: an operation inherits
+    the effective authorizer applied to a parent resource or operation.
+Trait selector
+    ``:each(service, resource, operation)``
+
+    *A service, resource, or operation*
+Value type
+    String value that MUST reference one of the keys in the
+    :ref:`aws.apigateway#authorizers-trait` of the service that contains
+    the shape.
 
 .. note::
 

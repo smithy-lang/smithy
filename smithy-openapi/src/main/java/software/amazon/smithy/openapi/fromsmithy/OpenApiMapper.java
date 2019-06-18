@@ -18,8 +18,10 @@ package software.amazon.smithy.openapi.fromsmithy;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.openapi.model.ParameterObject;
@@ -127,30 +129,47 @@ public interface OpenApiMapper {
     }
 
     /**
-     * Updates a security scheme object.
-     *
-     * @param context Conversion context.
-     * @param authName Smithy authentication scheme name.
-     * @param securitySchemeName Name of the OpenAPI security scheme entry.
-     * @param securityScheme Security scheme object to update.
-     * @return Returns the updated security scheme object. Return null to remove the scheme.
-     */
-    default SecurityScheme updateSecurityScheme(
-            Context context,
-            String authName,
-            String securitySchemeName,
-            SecurityScheme securityScheme
-    ) {
-        return securityScheme;
-    }
-
-    /**
      * Updates an OpenApi.Builder before converting the model.
      *
      * @param context Conversion context.
      * @param builder OpenAPI builder to modify.
      */
     default void before(Context context, OpenApi.Builder builder) {}
+
+    /**
+     * Updates a security scheme object.
+     *
+     * @param context Conversion context.
+     * @param authName Smithy authentication scheme name.
+     * @param securityScheme Security scheme object to update.
+     * @return Returns the updated security scheme object. Return null to remove the scheme.
+     */
+    default SecurityScheme updateSecurityScheme(Context context, String authName, SecurityScheme securityScheme) {
+        return securityScheme;
+    }
+
+    /**
+     * Updates a security requirement map.
+     *
+     * <p>The provided requirement {@code Map} will never be null or empty,
+     * but it may contain more than one key-value pair. A null or empty
+     * return value will cause the security requirement to be omitted
+     * from the converted shape.
+     *
+     * @param context Conversion context.
+     * @param shape Shape that is getting a security requirement (a service or operation).
+     * @param converter Security scheme converter.
+     * @param requirement Security scheme requirement to update.
+     * @return Returns the updated security requirement, a mapping of scheme to requirements.
+     */
+    default Map<String, List<String>> updateSecurity(
+            Context context,
+            Shape shape,
+            SecuritySchemeConverter converter,
+            Map<String, List<String>> requirement
+    ) {
+        return requirement;
+    }
 
     /**
      * Updates an OpenApi object after it is built.
@@ -255,20 +274,31 @@ public interface OpenApiMapper {
             }
 
             @Override
-            public SecurityScheme updateSecurityScheme(
-                    Context context,
-                    String authName,
-                    String securitySchemeName,
-                    SecurityScheme securityScheme
-            ) {
+            public SecurityScheme updateSecurityScheme(Context context, String name, SecurityScheme securityScheme) {
                 for (OpenApiMapper plugin : sorted) {
                     if (securityScheme == null) {
                         return null;
                     }
-                    securityScheme = plugin.updateSecurityScheme(
-                            context, authName, securitySchemeName, securityScheme);
+                    securityScheme = plugin.updateSecurityScheme(context, name, securityScheme);
                 }
                 return securityScheme;
+            }
+
+            @Override
+            public Map<String, List<String>> updateSecurity(
+                    Context context,
+                    Shape shape,
+                    SecuritySchemeConverter converter,
+                    Map<String, List<String>> requirement
+            ) {
+                for (OpenApiMapper plugin : sorted) {
+                    if (requirement == null || requirement.isEmpty()) {
+                        return null;
+                    }
+                    requirement = plugin.updateSecurity(context, shape, converter, requirement);
+                }
+
+                return requirement;
             }
 
             @Override

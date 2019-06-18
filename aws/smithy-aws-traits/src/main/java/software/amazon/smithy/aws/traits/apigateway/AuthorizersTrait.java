@@ -34,11 +34,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * values that correspond to Smithy authorization definitions.
  *
  * <p>The key in each key-value pair of the {@code aws.apigateway#authorizers}
- * trait must correspond to the name of an authorization scheme of the
- * service the trait is bound to. When used to generate and OpenAPI model,
- * the {@code aws.apigateway#authorizers} trait is used to add the
- * {@code x-amazon-apigateway-authorizer} OpenAPI extension to the
- * generated security scheme.
+ * trait is an arbitrary name that's used to associate authorizer definitions
+ * to operations. The {@code scheme} property of an authorizer must correspond
+ * to the name of an authorization scheme of the service the trait is bound to.
+ * When used to generate and OpenAPI model, the {@code aws.apigateway#authorizers}
+ * trait is used to add the {@code x-amazon-apigateway-authorizer} OpenAPI
+ * extension to the generated security scheme.
  *
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html">API Gateway Authorizers</a>
  */
@@ -122,8 +123,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
         /**
          * Adds an authorizer.
          *
-         * @param name Name of the authorizer that must correspond to
-         *  an authentication scheme name.
+         * @param name Name of the authorizer to add.
          * @param authorizer Authorizer definition.
          * @return Returns the builder.
          */

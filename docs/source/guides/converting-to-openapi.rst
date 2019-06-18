@@ -119,7 +119,7 @@ that builds an OpenAPI specification from a service for the
 
 .. code-block:: json
     :caption: smithy-build.json
-    :name: smithy-build-json
+    :name: open-api-smithy-build-json
 
     {
         "version": "1.0",

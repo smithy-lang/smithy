@@ -16,6 +16,7 @@
 package software.amazon.smithy.openapi.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -199,6 +200,12 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
 
         public Builder addSecurity(Map<String, List<String>> requirement) {
             this.security.add(requirement);
+            return this;
+        }
+
+        public Builder security(Collection<Map<String, List<String>>> security) {
+            this.security.clear();
+            this.security.addAll(security);
             return this;
         }
 

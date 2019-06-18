@@ -8,17 +8,17 @@
         "protocols": [{"name": "aws.rest-json", "auth": ["aws.v4"]}],
         "aws.apigateway#authorizers": {
           "invalid": {
-            "clientType": "awsSigV4",
+            "scheme": "invalid",
             "type": "request",
             "uri": "arn:foo:baz"
           },
           "another": {
-            "clientType": "awsSigV4",
+            "scheme": "another",
             "type": "token",
             "uri": "arn:foo:baz"
           },
           "aws.v4": {
-            "clientType": "awsSigV4",
+            "scheme": "aws.v4",
             "type": "request",
             "uri": "arn:foo:baz",
             "credentials": "arn:foo:bar",
