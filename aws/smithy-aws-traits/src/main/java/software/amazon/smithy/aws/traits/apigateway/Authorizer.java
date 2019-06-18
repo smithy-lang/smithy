@@ -33,7 +33,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * @see AuthorizersTrait
  */
 public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
-    private static final String CLIENT_TYPE_KEY = "clientType";
+    private static final String SCHEME_KEY = "scheme";
     private static final String TYPE_KEY = "type";
     private static final String URI_KEY = "uri";
     private static final String CREDENTIALS_KEY = "credentials";
@@ -41,10 +41,10 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
     private static final String IDENTITY_VALIDATION_EXPRESSION_KEY = "identityValidationExpression";
     private static final String RESULT_TTL_IN_SECONDS = "resultTtlInSeconds";
     private static final List<String> PROPERTIES = ListUtils.of(
-            CLIENT_TYPE_KEY, TYPE_KEY, URI_KEY, CREDENTIALS_KEY, IDENTITY_SOURCE_KEY,
+            SCHEME_KEY, TYPE_KEY, URI_KEY, CREDENTIALS_KEY, IDENTITY_SOURCE_KEY,
             IDENTITY_VALIDATION_EXPRESSION_KEY, RESULT_TTL_IN_SECONDS);
 
-    private final String clientType;
+    private final String scheme;
     private final String type;
     private final String uri;
     private final String credentials;
@@ -53,8 +53,8 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
     private final Integer resultTtlInSeconds;
 
     private Authorizer(Builder builder) {
-        clientType = builder.clientType;
         type = SmithyBuilder.requiredState(TYPE_KEY, builder.type);
+        scheme = SmithyBuilder.requiredState(SCHEME_KEY, builder.scheme);
         uri = SmithyBuilder.requiredState(URI_KEY, builder.uri);
         credentials = builder.credentials;
         identitySource = builder.identitySource;
@@ -72,15 +72,12 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
     }
 
     /**
-     * Gets the client authentication type.
-     *
-     * <p>A value identifying the category of authorizer, such
-     * as "oauth2" or "awsSigv4."
+     * Gets the Smithy scheme used as the client authentication type.
      *
      * @return Returns the optionally defined client authentication type.
      */
-    public Optional<String> getClientType() {
-        return Optional.ofNullable(clientType);
+    public String getScheme() {
+        return scheme;
     }
 
     /**
@@ -155,7 +152,7 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
     @Override
     public Builder toBuilder() {
         return builder()
-                .clientType(clientType)
+                .scheme(scheme)
                 .type(type)
                 .uri(uri)
                 .credentials(credentials)
@@ -167,8 +164,8 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withOptionalMember(CLIENT_TYPE_KEY, getClientType().map(Node::from))
                 .withMember(TYPE_KEY, Node.from(getType()))
+                .withMember(SCHEME_KEY, Node.from(getScheme()))
                 .withMember(URI_KEY, Node.from(getUri()))
                 .withOptionalMember(CREDENTIALS_KEY, getCredentials().map(Node::from))
                 .withOptionalMember(IDENTITY_SOURCE_KEY, getIdentitySource().map(Node::from))
@@ -187,7 +184,7 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
         }
 
         Authorizer that = (Authorizer) o;
-        return Objects.equals(clientType, that.clientType)
+        return Objects.equals(scheme, that.scheme)
                && type.equals(that.type)
                && uri.equals(that.uri)
                && Objects.equals(credentials, that.credentials)
@@ -198,15 +195,15 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(clientType, type, uri);
+        return Objects.hash(scheme, type, uri);
     }
 
     static Authorizer fromNode(ObjectNode node) {
         node.warnIfAdditionalProperties(PROPERTIES);
         Builder builder = builder();
-        node.getStringMember(CLIENT_TYPE_KEY)
+        node.getStringMember(SCHEME_KEY)
                 .map(StringNode::getValue)
-                .ifPresent(builder::clientType);
+                .ifPresent(builder::scheme);
         builder.type(node.expectMember(TYPE_KEY).expectStringNode().getValue());
         builder.uri(node.expectMember(URI_KEY).expectStringNode().getValue());
         node.getStringMember(CREDENTIALS_KEY)
@@ -229,7 +226,7 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
      * Builder used to create an {@link Authorizer}.
      */
     public static final class Builder implements SmithyBuilder<Authorizer> {
-        private String clientType;
+        private String scheme;
         private String type;
         private String uri;
         private String credentials;
@@ -243,13 +240,13 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
         }
 
         /**
-         * Sets the client authentication type.
+         * Sets the client authentication scheme name.
          *
-         * @param clientType Client authentication type such as "oauth2" or "awsSigv4."
+         * @param scheme Client authentication scheme (e.g., aws.v4).
          * @return Returns the builder.
          */
-        public Builder clientType(String clientType) {
-            this.clientType = clientType;
+        public Builder scheme(String scheme) {
+            this.scheme = scheme;
             return this;
         }
 

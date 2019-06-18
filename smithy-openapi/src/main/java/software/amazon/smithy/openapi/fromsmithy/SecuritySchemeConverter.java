@@ -47,23 +47,8 @@ public interface SecuritySchemeConverter {
     SecurityScheme createSecurityScheme(Context context);
 
     /**
-     * Get the name that should be used for this security scheme throughout
-     * the model.
-     *
-     * <p>By default, this method will return the result of
-     * {@link #getAuthSchemeName()}
-     *
-     * @param context Conversion context.
-     * @return The Smithy security authentication scheme name.
-     */
-    default String getSecurityName(Context context) {
-        return getAuthSchemeName();
-    }
-
-    /**
      * Creates a "security" requirements property to apply to an operation
-     * or top-level service using the return value of {@link #getSecurityName}
-     * as the security scheme name.
+     * or top-level service using the Smithy auth scheme name as the key.
      *
      * <p>The default implementation will return an empty list.
      *

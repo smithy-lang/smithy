@@ -229,6 +229,11 @@ public final class ComponentsObject extends Component implements ToSmithyBuilder
             return this;
         }
 
+        public Builder removeSecurityScheme(String name) {
+            securitySchemes.remove(name);
+            return this;
+        }
+
         public Builder links(Map<String, LinkObject> links) {
             this.links.clear();
             this.links.putAll(links);

@@ -16,7 +16,10 @@
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -29,6 +32,8 @@ import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.ComponentsObject;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.openapi.model.OperationObject;
+import software.amazon.smithy.openapi.model.PathItem;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
@@ -38,7 +43,7 @@ import software.amazon.smithy.utils.SetUtils;
  * "openapi.keepUnusedComponents" to true. Refs are removed in rounds until
  * a round of removals has no effect.
  *
- * <p>TODO: This plugin currently only supports the removal of schemas.
+ * <p>TODO: This plugin currently only supports the removal of schemas and security schemes.
  */
 public class RemoveUnusedComponents implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(RemoveUnusedComponents.class.getName());
@@ -62,6 +67,7 @@ public class RemoveUnusedComponents implements OpenApiMapper {
             result = removalRound(current);
         } while (!result.equals(current));
 
+        result = removeUnusedSecuritySchemes(result);
         return result;
     }
 
@@ -127,5 +133,36 @@ public class RemoveUnusedComponents implements OpenApiMapper {
                 return result;
             }
         });
+    }
+
+    private OpenApi removeUnusedSecuritySchemes(OpenApi openapi) {
+        // Determine which security schemes were actually used.
+        Set<String> used = openapi.getSecurity().stream()
+                .flatMap(map -> map.keySet().stream())
+                .collect(Collectors.toSet());
+
+        for (PathItem path : openapi.getPaths().values()) {
+            for (OperationObject operation : path.getOperations().values()) {
+                for (Map<String, List<String>> entry : operation.getSecurity()) {
+                    used.addAll(entry.keySet());
+                }
+            }
+        }
+
+        // Find out if there are unused security definitions.
+        Set<String> unused = new TreeSet<>(openapi.getComponents().getSecuritySchemes().keySet());
+        unused.removeAll(used);
+
+        if (unused.isEmpty()) {
+            return openapi;
+        }
+
+        LOGGER.info("Removing unused OpenAPI security scheme definitions: " + unused);
+        ComponentsObject.Builder componentsBuilder = openapi.getComponents().toBuilder();
+        for (String unusedScheme : unused) {
+            componentsBuilder.removeSecurityScheme(unusedScheme);
+        }
+
+        return openapi.toBuilder().components(componentsBuilder.build()).build();
     }
 }

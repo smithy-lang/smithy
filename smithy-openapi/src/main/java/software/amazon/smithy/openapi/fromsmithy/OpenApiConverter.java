@@ -469,7 +469,7 @@ public final class OpenApiConverter {
             OptionalUtils.ifPresentOrElse(protocolService.createOperation(context, shape), result -> {
                 PathItem.Builder pathItem = paths.computeIfAbsent(result.getUri(), (uri) -> PathItem.builder());
                 // Add security requirements to the operation.
-                addOperationSecurity(context, result.getOperation(), shape);
+                addOperationSecurity(context, result.getOperation(), shape, plugin);
                 // Pass the operation through the plugin system and then build it.
                 OperationObject builtOperation = plugin.updateOperation(context, shape, result.getOperation().build());
                 // Add tags that are on the operation.
@@ -528,7 +528,8 @@ public final class OpenApiConverter {
     private void addOperationSecurity(
             Context context,
             OperationObject.Builder builder,
-            OperationShape shape
+            OperationShape shape,
+            OpenApiMapper plugin
     ) {
         ServiceShape service = context.getService();
         AuthIndex auth = context.getModel().getKnowledge(AuthIndex.class);
@@ -539,8 +540,12 @@ public final class OpenApiConverter {
         // Add a security requirement for the operation if it differs from the service.
         if (!SetUtils.copyOf(serviceSchemes).equals(SetUtils.copyOf(operationSchemes))) {
             for (SecuritySchemeConverter converter : findMatchingConverters(context, operationSchemes)) {
-                List<String> result = converter.createSecurityRequirements(context, shape);
-                builder.addSecurity(MapUtils.of(converter.getSecurityName(context), result));
+                List<String> result = converter.createSecurityRequirements(context, context.getService());
+                Map<String, List<String>> requirement = plugin.updateSecurity(
+                        context, shape, converter, MapUtils.of(converter.getAuthSchemeName(), result));
+                if (requirement != null) {
+                    builder.addSecurity(requirement);
+                }
             }
         }
     }
@@ -631,13 +636,11 @@ public final class OpenApiConverter {
                 context.getService().getTrait(ProtocolsTrait.class),
                 trait -> {
                     for (SecuritySchemeConverter converter : context.getSecuritySchemeConverters()) {
-                        String securityName = converter.getSecurityName(context);
                         String authName = converter.getAuthSchemeName();
                         SecurityScheme createdScheme = converter.createSecurityScheme(context);
-                        SecurityScheme securityScheme = plugin.updateSecurityScheme(
-                                context, authName, securityName, createdScheme);
-                        if (securityScheme != null) {
-                            components.putSecurityScheme(securityName, securityScheme);
+                        SecurityScheme scheme = plugin.updateSecurityScheme(context, authName, createdScheme);
+                        if (scheme != null) {
+                            components.putSecurityScheme(authName, scheme);
                         }
                     }
                 },
@@ -649,7 +652,11 @@ public final class OpenApiConverter {
         List<String> schemes = authIndex.getDefaultServiceSchemes(context.getService());
         for (SecuritySchemeConverter converter : findMatchingConverters(context, schemes)) {
             List<String> result = converter.createSecurityRequirements(context, context.getService());
-            openApiBuilder.addSecurity(MapUtils.of(converter.getSecurityName(context), result));
+            Map<String, List<String>> requirement = plugin.updateSecurity(
+                    context, context.getService(), converter, MapUtils.of(converter.getAuthSchemeName(), result));
+            if (requirement != null) {
+                openApiBuilder.addSecurity(requirement);
+            }
         }
     }
 
