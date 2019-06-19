@@ -27,7 +27,7 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     private final String version;
 
     private ServiceShape(Builder builder) {
-        super(builder, ShapeType.SERVICE);
+        super(builder);
         version = SmithyBuilder.requiredState("version", builder.version);
     }
 
@@ -79,6 +79,11 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
         @Override
         public ServiceShape build() {
             return new ServiceShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.SERVICE;
         }
 
         public Builder version(String version) {

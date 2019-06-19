@@ -29,7 +29,7 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
     private final MemberShape value;
 
     private MapShape(Builder builder) {
-        super(builder, ShapeType.MAP, false);
+        super(builder, false);
         key = SmithyBuilder.requiredState("key", builder.key);
         value = SmithyBuilder.requiredState("value", builder.value);
 
@@ -108,6 +108,11 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
         @Override
         public MapShape build() {
             return new MapShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.MAP;
         }
 
         public Builder key(MemberShape member) {

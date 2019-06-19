@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class ShortShape extends NumberShape implements ToSmithyBuilder<ShortShape> {
 
     private ShortShape(Builder builder) {
-        super(builder, ShapeType.SHORT);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class ShortShape extends NumberShape implements ToSmithyBuilder<Sho
         @Override
         public ShortShape build() {
             return new ShortShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.SHORT;
         }
     }
 }

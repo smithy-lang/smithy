@@ -37,7 +37,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
     private final Set<ShapeId> allOperations = new HashSet<>();
 
     private ResourceShape(Builder builder) {
-        super(builder, ShapeType.RESOURCE);
+        super(builder);
         identifiers = Collections.unmodifiableMap(new LinkedHashMap<>(builder.identifiers));
         create = builder.create;
         read = builder.read;
@@ -177,6 +177,11 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
         @Override
         public ResourceShape build() {
             return new ResourceShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.RESOURCE;
         }
 
         /**

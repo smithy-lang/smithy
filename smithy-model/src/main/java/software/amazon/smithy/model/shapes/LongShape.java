@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class LongShape extends NumberShape implements ToSmithyBuilder<LongShape> {
 
     private LongShape(Builder builder) {
-        super(builder, ShapeType.LONG);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class LongShape extends NumberShape implements ToSmithyBuilder<Long
         @Override
         public LongShape build() {
             return new LongShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.LONG;
         }
     }
 }

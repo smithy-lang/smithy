@@ -33,7 +33,7 @@ public final class UnionShape extends Shape implements ToSmithyBuilder<UnionShap
     private final Map<String, MemberShape> members;
 
     private UnionShape(Builder builder) {
-        super(builder, ShapeType.UNION, false);
+        super(builder, false);
         if (builder.members.isEmpty()) {
             throw new SourceException("union shapes require at least one member", builder.source);
         }
@@ -120,6 +120,11 @@ public final class UnionShape extends Shape implements ToSmithyBuilder<UnionShap
         @Override
         public UnionShape build() {
             return new UnionShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.UNION;
         }
 
         public Builder members(Collection<MemberShape> members) {

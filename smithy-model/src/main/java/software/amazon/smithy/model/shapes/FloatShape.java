@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class FloatShape extends NumberShape implements ToSmithyBuilder<FloatShape> {
 
     private FloatShape(Builder builder) {
-        super(builder, ShapeType.FLOAT);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class FloatShape extends NumberShape implements ToSmithyBuilder<Flo
         @Override
         public FloatShape build() {
             return new FloatShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.FLOAT;
         }
     }
 }

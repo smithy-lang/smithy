@@ -23,7 +23,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class TimestampShape extends SimpleShape implements ToSmithyBuilder<TimestampShape> {
     private TimestampShape(Builder builder) {
-        super(builder, ShapeType.TIMESTAMP);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -52,6 +52,11 @@ public final class TimestampShape extends SimpleShape implements ToSmithyBuilder
         @Override
         public TimestampShape build() {
             return new TimestampShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.TIMESTAMP;
         }
     }
 }

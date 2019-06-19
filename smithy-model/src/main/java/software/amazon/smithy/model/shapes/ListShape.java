@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class ListShape extends CollectionShape implements ToSmithyBuilder<ListShape> {
 
     private ListShape(Builder builder) {
-        super(builder, ShapeType.LIST);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class ListShape extends CollectionShape implements ToSmithyBuilder<
         @Override
         public ListShape build() {
             return new ListShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.LIST;
         }
     }
 }

@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class DoubleShape extends NumberShape implements ToSmithyBuilder<DoubleShape> {
 
     private DoubleShape(Builder builder) {
-        super(builder, ShapeType.DOUBLE);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class DoubleShape extends NumberShape implements ToSmithyBuilder<Do
         @Override
         public DoubleShape build() {
             return new DoubleShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.DOUBLE;
         }
     }
 }

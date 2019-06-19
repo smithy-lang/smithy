@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class SetShape extends CollectionShape implements ToSmithyBuilder<SetShape> {
 
     private SetShape(Builder builder) {
-        super(builder, ShapeType.SET);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class SetShape extends CollectionShape implements ToSmithyBuilder<S
         @Override
         public SetShape build() {
             return new SetShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.SET;
         }
     }
 }

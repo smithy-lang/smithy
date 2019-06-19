@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class BooleanShape extends SimpleShape implements ToSmithyBuilder<BooleanShape> {
 
     private BooleanShape(Builder builder) {
-        super(builder, ShapeType.BOOLEAN);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class BooleanShape extends SimpleShape implements ToSmithyBuilder<B
         @Override
         public BooleanShape build() {
             return new BooleanShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.BOOLEAN;
         }
     }
 }

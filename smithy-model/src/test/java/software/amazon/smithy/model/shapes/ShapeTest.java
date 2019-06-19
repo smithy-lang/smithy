@@ -38,7 +38,7 @@ public class ShapeTest {
 
     private static final class SubShape extends Shape {
         private SubShape(final Builder builder) {
-            super(builder, ShapeType.STRUCTURE, false);
+            super(builder, false);
         }
 
         public static Builder builder() {
@@ -53,6 +53,11 @@ public class ShapeTest {
             @Override
             public SubShape build() {
                 return new SubShape(this);
+            }
+
+            @Override
+            public ShapeType getShapeType() {
+                return ShapeType.STRUCTURE;
             }
         }
     }

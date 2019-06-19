@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class DocumentShape extends Shape implements ToSmithyBuilder<DocumentShape> {
 
     private DocumentShape(Builder builder) {
-        super(builder, ShapeType.DOCUMENT, false);
+        super(builder, false);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class DocumentShape extends Shape implements ToSmithyBuilder<Docume
         @Override
         public DocumentShape build() {
             return new DocumentShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.DOCUMENT;
         }
     }
 }

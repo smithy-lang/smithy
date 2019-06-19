@@ -198,8 +198,15 @@ public class LoaderVisitorTest {
     }
 
     @Test
-    public void coercesStructureTraitValues() {
-        Model model = createCoercionModel("structure TraitValue {}");
+    public void coercesBooleanToStructureTraitValues() {
+        Model model = Model.assembler()
+                .addUnparsedModel("test.smithy", "namespace smithy.example\n"
+                                                 + "@foo(true)\n"
+                                                 + "string MyString\n"
+                                                 + "trait foo { shape: TraitValue, selector: '*'}\n"
+                                                 + "structure TraitValue {}\n")
+                .assemble()
+                .unwrap();
         Shape shape = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyString")).get();
 
         assertTrue(shape.hasTrait("smithy.example#foo"));
@@ -219,6 +226,14 @@ public class LoaderVisitorTest {
     @Test
     public void coercesListTraitValues() {
         Model model = createCoercionModel("list TraitValue { member: String }");
+        Shape shape = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyString")).get();
+
+        assertTrue(shape.hasTrait("smithy.example#foo"));
+    }
+
+    @Test
+    public void coercesBooleanTraitValuesToStructures() {
+        Model model = createCoercionModel("structure TraitValue {}");
         Shape shape = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyString")).get();
 
         assertTrue(shape.hasTrait("smithy.example#foo"));
