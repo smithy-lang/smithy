@@ -17,6 +17,7 @@ package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -41,6 +42,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -211,7 +213,8 @@ public class ModelAssemblerTest {
         assertThat(model.getMetadata(), hasKey("lorem"));
         assertThat(model.getMetadata().get("lorem"), equalTo(Node.from("ipsum")));
         assertThat(model.getMetadata(), hasKey("list"));
-        assertThat(model.getMetadata().get("list"), equalTo(Node.fromStrings("a", "b", "c")));
+        assertThat(model.getMetadata().get("list").expectArrayNode().getElementsAs(StringNode::getValue),
+                   containsInAnyOrder("a", "b", "c"));
 
         // The String shape should have a documentation trait applied.
         assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String"))
