@@ -37,6 +37,11 @@
         "shape": "Uri",
         "documentation": "Links a service or operation to a URL that contains additional documentation."
       },
+      "examples": {
+        "selector": "operation",
+        "shape": "ExamplesList",
+        "documentation": "Provides example inputs and outputs for operations."
+      },
       "error": {
         "selector": "structure",
         "shape": "ErrorKind",
@@ -573,6 +578,21 @@
             "required": true,
             "documentation": "A host prefix pattern for the operation. Labels defined in the host pattern are used to bind top-level operation input members to the host."
           }
+        },
+        "private": true
+      },
+      "ExamplesList": {
+        "type": "list",
+        "member": {"target": "Example"},
+        "private": true
+      },
+      "Example": {
+        "type": "structure",
+        "members": {
+          "title": {"required":  true, "target": "smithy.api#String"},
+          "documentation": {"target": "smithy.api#String"},
+          "input": {"target": "smithy.api#Document"},
+          "output": {"target": "smithy.api#Document"}
         },
         "private": true
       }

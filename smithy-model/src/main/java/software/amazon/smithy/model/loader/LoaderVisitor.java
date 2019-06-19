@@ -646,11 +646,6 @@ final class LoaderVisitor {
             if (definition != null) {
                 traitName = definition.getFullyQualifiedName();
                 value = coerceTraitValue(value, definition);
-            } else if (trait.name.equals("examples") || trait.name.equals("smithy.api#examples")) {
-                // TODO: Add a document type or something.
-                // The examples trait is not part of the prelude because we have no document type and this
-                // trait requires a free-form document value to model example input and output.
-                traitName = "smithy.api#examples";
             } else {
                 onUnresolvedTraitName(shapeBuilder, trait);
                 continue;
