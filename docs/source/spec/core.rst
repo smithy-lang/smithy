@@ -3725,7 +3725,20 @@ Trait selector
 
     *A structure shape with the error trait*
 Value type
-    Annotation trait
+    ``object``
+
+The retryable trait is an object that contains the following key value pairs:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - throttling
+      - ``boolean``
+      - Indicates that the error is a retryable throttling error.
 
 .. tabs::
 
@@ -3735,6 +3748,11 @@ Value type
         @retryable
         @httpError(503)
         structure ServiceUnavailableError {}
+
+        @error(client)
+        @retryable(throttling: true)
+        @httpError(429)
+        structure ThrottlingError {}
 
 
 .. _pagination:

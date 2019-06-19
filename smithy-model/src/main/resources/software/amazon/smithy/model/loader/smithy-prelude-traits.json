@@ -50,6 +50,7 @@
       },
       "retryable": {
         "selector": "structure[trait|error]",
+        "shape": "RetryableTrait",
         "documentation": "Indicates that an error MAY be retried by the client."
       },
       "readonly": {
@@ -130,6 +131,7 @@
       },
       "streaming": {
         "selector": "blob",
+        "shape": "StreamingTrait",
         "documentation": "Indicates that the the data stored in the shape is very large and should not be stored in memory, or that the size of the data stored in the shape is unknown at the start of a request",
         "tags": ["diff.error.const"]
       },
@@ -593,6 +595,26 @@
           "documentation": {"target": "smithy.api#String"},
           "input": {"target": "smithy.api#Document"},
           "output": {"target": "smithy.api#Document"}
+        },
+        "private": true
+      },
+      "StreamingTrait": {
+        "type": "structure",
+        "members": {
+          "requiresLength": {
+            "target": "smithy.api#Boolean",
+            "documentation": "Indicates that the stream must have a known size"
+          }
+        },
+        "private": true
+      },
+      "RetryableTrait": {
+        "type": "structure",
+        "members": {
+          "throttling": {
+            "target": "smithy.api#Boolean",
+            "documentation": "Classifies the retry as throttling."
+          }
         },
         "private": true
       }
