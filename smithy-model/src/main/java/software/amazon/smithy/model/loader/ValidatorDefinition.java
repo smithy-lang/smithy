@@ -17,9 +17,16 @@ package software.amazon.smithy.model.loader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
+import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.selector.Selector;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -35,6 +42,7 @@ final class ValidatorDefinition {
     SourceLocation sourceLocation = SourceLocation.none();
     Severity severity;
     String message;
+    Selector selector;
     private final String id;
 
     ValidatorDefinition(String name, String id) {
@@ -42,22 +50,53 @@ final class ValidatorDefinition {
         this.id = id;
     }
 
-    ValidationEvent map(ValidationEvent event) {
-        if (!filterEvent(event) || (id == null && severity == null && message == null)) {
-            return event;
-        } else {
-            ValidationEvent.Builder builder = event.toBuilder();
-            builder.eventId(id != null ? id : event.getEventId());
-            builder.severity(severity != null ? severity : event.getSeverity());
-            if (message != null) {
-                builder.message(message.replace("{super}", event.getMessage()));
-            }
-            return builder.build();
+    List<ValidationEvent> map(Model model, List<ValidationEvent> events) {
+        List<ValidationEvent> filtered = new ArrayList<>(events.size());
+        Set<ShapeId> candidates = null;
+
+        // If there's a selector, create a list of candidate shape IDs that can be emitted.
+        if (selector != null) {
+            NeighborProvider provider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
+            candidates = selector.select(provider, model.getShapeIndex()).stream()
+                    .map(Shape::getId)
+                    .collect(Collectors.toSet());
         }
+
+        for (ValidationEvent event : events) {
+            // Skip events that are not eligible.
+            if (!filterEvent(event, candidates)) {
+                continue;
+            }
+
+            if (name.equals(id) && severity == null && message == null) {
+                // Use the event as-is without modifying it.
+                filtered.add(event);
+            } else {
+                // Modify the event by changing the id, severity, or message.
+                ValidationEvent.Builder builder = event.toBuilder();
+                builder.eventId(id != null ? id : event.getEventId());
+                builder.severity(severity != null ? severity : event.getSeverity());
+                if (message != null) {
+                    builder.message(message.replace("{super}", event.getMessage()));
+                }
+                filtered.add(builder.build());
+            }
+        }
+
+        return filtered;
     }
 
-    private boolean filterEvent(ValidationEvent event) {
-        return namespaces.isEmpty()
-               || event.getShapeId().map(ShapeId::getNamespace).filter(namespaces::contains).isPresent();
+    private boolean filterEvent(ValidationEvent event, Set<ShapeId> candidates) {
+        ShapeId target = event.getShapeId().orElse(null);
+        if (target != null) {
+            if (!namespaces.isEmpty() && !namespaces.contains(target.getNamespace())) {
+                return false;
+            }
+            if (candidates != null && !candidates.contains(target)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
