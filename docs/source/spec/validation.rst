@@ -84,9 +84,14 @@ objects that are used to constrain a model. Each object in the
       - Provides a list of the namespaces that are targeted by the validator.
         The validator will ignore any validation events encountered that are
         not specific to the given namespaces.
+    * - selector
+      - ``string``
+      - A valid :ref:`selector <selectors>` that causes the validator to only
+        validate shapes that match the selector. The validator will ignore any
+        validation events encountered that do not satisfy the selector.
     * - configuration
       - ``object``
-      - Object that provides validator configuraton. The available properties
+      - Object that provides validator configuration. The available properties
         are defined by each validator. Validators MAY require that specific
         configuration properties are provided.
 

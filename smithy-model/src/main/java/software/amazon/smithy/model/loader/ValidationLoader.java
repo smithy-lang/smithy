@@ -27,6 +27,8 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.selector.Selector;
+import software.amazon.smithy.model.selector.SelectorSyntaxException;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -42,7 +44,7 @@ final class ValidationLoader {
     private static final List<String> SEVERITIES = ListUtils.of("DANGER", "WARNING", "NOTE");
     private static final List<String> SUPPRESSION_PROPERTIES = ListUtils.of("ids", "shapes", "reason");
     private static final List<String> VALIDATOR_PROPERTIES = ListUtils.of(
-            "name", "id", "message", "severity", "namespaces", "configuration");
+            "name", "id", "message", "severity", "namespaces", "selector", "configuration");
 
     private ValidationLoader() {}
 
@@ -120,6 +122,17 @@ final class ValidationLoader {
                 .orElse(null);
         node.getMember("namespaces").ifPresent(value -> def.namespaces.addAll(loadArrayOfString("namespaces", value)));
         def.configuration = node.getObjectMember("configuration").orElse(Node.objectNode());
+
+        node.getStringMember("selector").ifPresent(selector -> {
+            try {
+                def.selector = Selector.parse(selector.getValue());
+            } catch (SelectorSyntaxException e) {
+                throw new SourceException(
+                        String.format("Invalid validator selector `%s`: %s", selector.getValue(), e.getMessage()),
+                        selector, e);
+            }
+        });
+
         return def;
     }
 

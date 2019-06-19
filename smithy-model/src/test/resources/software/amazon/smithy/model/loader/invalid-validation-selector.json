@@ -1,0 +1,11 @@
+{
+  "smithy": "0.1.0",
+  "metadata": {
+    "validators": [
+      {
+        "name": "Foo",
+        "selector": "!@#!@@!%"
+      }
+    ]
+  }
+}

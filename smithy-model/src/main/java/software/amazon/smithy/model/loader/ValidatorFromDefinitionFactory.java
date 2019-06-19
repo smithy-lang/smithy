@@ -18,7 +18,6 @@ package software.amazon.smithy.model.loader;
 import static java.lang.String.format;
 
 import java.util.Objects;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -46,6 +45,6 @@ final class ValidatorFromDefinitionFactory {
     }
 
     private Validator mapValidator(ValidatorDefinition definition, Validator upstream) {
-        return model -> upstream.validate(model).stream().map(definition::map).collect(Collectors.toList());
+        return model -> definition.map(model, upstream.validate(model));
     }
 }
