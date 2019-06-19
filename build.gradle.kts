@@ -183,3 +183,18 @@ subprojects {
         }
     }
 }
+
+/*
+ * Javadoc
+ * ====================================================
+ *
+ * Configure javadoc to collect sources and construct
+ * its classpath from the main sourceset of each
+ * subproject.
+ */
+tasks.javadoc {
+    title = "Smithy API $version"
+    setDestinationDir(file("$buildDir/docs/javadoc/latest"))
+    source(project.subprojects.map { project(it.name).sourceSets.main.get().allJava })
+    classpath = files(project.subprojects.map { project(it.name).sourceSets.main.get().compileClasspath })
+}
