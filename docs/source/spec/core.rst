@@ -2380,8 +2380,8 @@ Annotation trait values
 -----------------------
 
 *Annotation traits* are traits that have no value and are either
-present or not present. Annotation trait values can be set to ``true``
-or ``null`` and can be omitted in the IDL.
+present or not present. Annotation trait values can be set to ``true``,
+``null``, and can be omitted in the IDL.
 
 For example, the :ref:`sensitive-trait` is an annotation trait:
 
@@ -2389,6 +2389,9 @@ For example, the :ref:`sensitive-trait` is an annotation trait:
 
     @sensitive
     string MyString
+
+This trait could also have been defined as ``@sensitive(true)`` or
+``@sensitive(null)``.
 
 
 Modeled trait values
@@ -2448,6 +2451,53 @@ Other trait values
 
 All other trait values MUST adhere to the JSON type mappings defined
 in :ref:`trait-definition-values` table.
+
+
+Trait value coercion
+````````````````````
+
+It's hard to predict what information a trait needs to capture when modeling
+a domain; a trait might start out as an annotation trait but later might need
+to capture additional information. Smithy explicitly supports this use case by
+allowing both ``null`` and ``true`` to be provided for traits that have a
+structure value.
+
+For example, consider the following valid annotation trait definition
+and usage:
+
+.. code-block:: smithy
+
+    trait foo {
+      selector: "*"
+    }
+
+    @foo
+    string MyString1
+
+    @foo(true)
+    string MyString2
+
+    @foo(null)
+    string MyString3
+
+An annotation trait can later be updated to use a structure shape that has
+no required members without breaking existing uses of the trait. The
+applications of the ``foo`` trait in the previous example and the following
+example are all valid even after changing the shape of the ``foo`` trait:
+
+.. code-block:: smithy
+
+    trait foo {
+      selector: "*",
+      shape: FooTrait,
+    }
+
+    structure FooTrait {
+      baz: String,
+    }
+
+    @foo(baz: "bar")
+    string MyString4
 
 
 .. _trait-name-resolution:
