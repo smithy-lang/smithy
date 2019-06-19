@@ -18,6 +18,7 @@ package software.amazon.smithy.model.loader;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,13 +35,11 @@ import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
-import software.amazon.smithy.model.shapes.CollectionShape;
-import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
-import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -49,8 +48,6 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -133,7 +130,7 @@ final class LoaderVisitor {
      * @param traitFactory Trait factory to use when resolving traits.
      */
     LoaderVisitor(TraitFactory traitFactory) {
-        this(traitFactory, MapUtils.of());
+        this(traitFactory, Collections.emptyMap());
     }
 
     /**
@@ -641,27 +638,26 @@ final class LoaderVisitor {
         Map<String, Node> traits = new HashMap<>();
         for (PendingTrait trait : pending) {
             TraitDefinition definition = resolveTraitDefinition(trait);
-            Node value = trait.value;
-            String traitName;
-            if (definition != null) {
-                traitName = definition.getFullyQualifiedName();
-                value = coerceTraitValue(value, definition);
-            } else {
+
+            if (definition == null) {
                 onUnresolvedTraitName(shapeBuilder, trait);
                 continue;
             }
 
+            String traitName = definition.getFullyQualifiedName();
+            Node value = coerceTraitValue(trait.value, definition);
             Node previous = traits.get(traitName);
+
             if (previous == null) {
                 traits.put(traitName, value);
             } else if (previous.isArrayNode() && value.isArrayNode()) {
                 // You can merge trait arrays.
                 traits.put(traitName, value.asArrayNode().get().merge(previous.asArrayNode().get()));
-            } else if (!previous.equals(value)) {
-                onDuplicateTrait(shapeBuilder.getId(), traitName, previous, value);
-            } else {
+            } else if (previous.equals(value)) {
                 LOGGER.fine(() -> String.format(
                         "Ignoring duplicate %s trait value on %s", traitName, shapeBuilder.getId()));
+            } else {
+                onDuplicateTrait(shapeBuilder.getId(), traitName, previous, value);
             }
         }
 
@@ -678,33 +674,46 @@ final class LoaderVisitor {
      * 2. Structure and map traits are converted to an empty object.
      * 3. List and set traits are converted to an empty array.
      *
+     * Boolean values can be coerced from `true` to an empty object if the
+     * shape targeted by the trait is a structure. This allows traits to
+     * evolve over time from being an annotation trait to a structured
+     * trait (with optional members only to make it backward-compatible).
+     *
      * @param value Value to coerce.
      * @param definition Trait definition to base the coercion on.
      * @return Returns the coerced value.
      */
     private Node coerceTraitValue(Node value, TraitDefinition definition) {
         if (value.isNullNode()) {
-            ShapeId target = definition.getShape().orElse(null);
-            if (target == null) {
+            ShapeType targetType = determineTraitDefinitionType(definition);
+            if (targetType == null) {
                 return new BooleanNode(true, value.getSourceLocation());
-            } else if (pendingShapes.containsKey(target)) {
-                AbstractShapeBuilder builder = pendingShapes.get(target);
-                if (builder instanceof StructureShape.Builder || builder instanceof MapShape.Builder) {
-                    return new ObjectNode(MapUtils.of(), value.getSourceLocation());
-                } else if (builder instanceof CollectionShape.Builder) {
-                    return new ArrayNode(ListUtils.of(), value.getSourceLocation());
-                }
-            } else if (builtShapes.containsKey(target)) {
-                Shape shape = builtShapes.get(target);
-                if (shape.isStructureShape() || shape.isMapShape()) {
-                    return new ObjectNode(MapUtils.of(), value.getSourceLocation());
-                } else if (shape instanceof CollectionShape) {
-                    return new ArrayNode(ListUtils.of(), value.getSourceLocation());
-                }
+            } else if (targetType == ShapeType.STRUCTURE || targetType == ShapeType.MAP) {
+                return new ObjectNode(Collections.emptyMap(), value.getSourceLocation());
+            } else if (targetType == ShapeType.LIST || targetType == ShapeType.SET) {
+                return new ArrayNode(Collections.emptyList(), value.getSourceLocation());
+            } else {
+                return value;
             }
+        } else if (value.isBooleanNode()
+                   && value.asBooleanNode().get().getValue()
+                   && determineTraitDefinitionType(definition) == ShapeType.STRUCTURE) {
+            return new ObjectNode(Collections.emptyMap(), value.getSourceLocation());
         }
 
         return value;
+    }
+
+    private ShapeType determineTraitDefinitionType(TraitDefinition definition) {
+        ShapeId target = definition.getShape().orElse(null);
+        if (pendingShapes.containsKey(target)) {
+            return pendingShapes.get(target).getShapeType();
+        } else if (builtShapes.containsKey(target)) {
+            return builtShapes.get(target).getType();
+        } else {
+            // The trait is an annotation trait.
+            return null;
+        }
     }
 
     /**

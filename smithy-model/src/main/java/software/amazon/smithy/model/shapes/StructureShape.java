@@ -33,7 +33,7 @@ public final class StructureShape extends Shape implements ToSmithyBuilder<Struc
     private final Map<String, MemberShape> members;
 
     private StructureShape(Builder builder) {
-        super(builder, ShapeType.STRUCTURE, false);
+        super(builder, false);
         assert builder.members != null;
 
         // Copy the members to make them immutable and ensure that each
@@ -114,6 +114,11 @@ public final class StructureShape extends Shape implements ToSmithyBuilder<Struc
         @Override
         public StructureShape build() {
             return new StructureShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.STRUCTURE;
         }
 
         /**

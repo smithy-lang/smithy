@@ -53,11 +53,11 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      * @param expectMemberSegments True/false if the ID must have a member.
      */
     @SuppressWarnings("unchecked")
-    Shape(AbstractShapeBuilder builder, ShapeType type, boolean expectMemberSegments) {
+    Shape(AbstractShapeBuilder builder, boolean expectMemberSegments) {
         id = validateShapeId(getType(), SmithyBuilder.requiredState("id", builder.id), expectMemberSegments);
         source = builder.source;
         traits = MapUtils.copyOf(builder.traits);
-        this.type = type;
+        type = builder.getShapeType();
     }
 
     /**

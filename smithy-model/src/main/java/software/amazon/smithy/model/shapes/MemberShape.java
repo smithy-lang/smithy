@@ -30,7 +30,7 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
     private final String memberName;
 
     private MemberShape(Builder builder) {
-        super(builder, ShapeType.MEMBER, true);
+        super(builder, true);
         this.target = SmithyBuilder.requiredState("target", builder.target);
         this.memberName = getId().getMember().orElse("");
     }
@@ -137,6 +137,11 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
         @Override
         public MemberShape build() {
             return new MemberShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.MEMBER;
         }
 
         /**

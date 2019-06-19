@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class ByteShape extends NumberShape implements ToSmithyBuilder<ByteShape> {
 
     private ByteShape(Builder builder) {
-        super(builder, ShapeType.BYTE);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class ByteShape extends NumberShape implements ToSmithyBuilder<Byte
         @Override
         public ByteShape build() {
             return new ByteShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.BYTE;
         }
     }
 }

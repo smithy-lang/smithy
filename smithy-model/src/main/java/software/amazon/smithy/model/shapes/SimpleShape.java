@@ -19,7 +19,7 @@ package software.amazon.smithy.model.shapes;
  * Abstract class representing all simple type shapes.
  */
 public abstract class SimpleShape extends Shape {
-    SimpleShape(AbstractShapeBuilder<?, ? extends SimpleShape> builder, ShapeType type) {
-        super(builder, type, false);
+    SimpleShape(AbstractShapeBuilder<?, ? extends SimpleShape> builder) {
+        super(builder, false);
     }
 }

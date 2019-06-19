@@ -25,8 +25,8 @@ public abstract class CollectionShape extends Shape {
 
     private final MemberShape member;
 
-    CollectionShape(Builder builder, ShapeType type) {
-        super(builder, type, false);
+    CollectionShape(Builder builder) {
+        super(builder, false);
         member = SmithyBuilder.requiredState("member", builder.member);
         ShapeId expected = getId().withMember("member");
         if (!member.getId().equals(expected)) {

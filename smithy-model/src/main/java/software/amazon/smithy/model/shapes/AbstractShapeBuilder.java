@@ -44,6 +44,13 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
     }
 
     /**
+     * Gets the type of shape being built.
+     *
+     * @return Returns the shape type.
+     */
+    public abstract ShapeType getShapeType();
+
+    /**
      * Gets the shape ID of the builder.
      *
      * @return Returns null if no shape ID is set.

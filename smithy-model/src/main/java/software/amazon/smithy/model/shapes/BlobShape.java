@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class BlobShape extends SimpleShape implements ToSmithyBuilder<BlobShape> {
 
     private BlobShape(Builder builder) {
-        super(builder, ShapeType.BLOB);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class BlobShape extends SimpleShape implements ToSmithyBuilder<Blob
         @Override
         public BlobShape build() {
             return new BlobShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.BLOB;
         }
     }
 }

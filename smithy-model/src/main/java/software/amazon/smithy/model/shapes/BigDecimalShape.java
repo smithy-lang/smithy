@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class BigDecimalShape extends NumberShape implements ToSmithyBuilder<BigDecimalShape> {
 
     private BigDecimalShape(Builder builder) {
-        super(builder, ShapeType.BIG_DECIMAL);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class BigDecimalShape extends NumberShape implements ToSmithyBuilde
         @Override
         public BigDecimalShape build() {
             return new BigDecimalShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.BIG_DECIMAL;
         }
     }
 }

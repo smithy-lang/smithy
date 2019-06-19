@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class IntegerShape extends NumberShape implements ToSmithyBuilder<IntegerShape> {
 
     private IntegerShape(Builder builder) {
-        super(builder, ShapeType.INTEGER);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class IntegerShape extends NumberShape implements ToSmithyBuilder<I
         @Override
         public IntegerShape build() {
             return new IntegerShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.INTEGER;
         }
     }
 }

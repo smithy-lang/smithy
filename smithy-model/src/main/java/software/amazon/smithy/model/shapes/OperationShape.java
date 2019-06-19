@@ -32,7 +32,7 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
     private final List<ShapeId> errors;
 
     private OperationShape(Builder builder) {
-        super(builder, ShapeType.OPERATION, false);
+        super(builder, false);
         errors = ListUtils.copyOf(builder.errors);
         input = builder.input;
         output = builder.output;
@@ -110,6 +110,11 @@ public final class OperationShape extends Shape implements ToSmithyBuilder<Opera
         private ShapeId input;
         private ShapeId output;
         private List<ShapeId> errors = new ArrayList<>();
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.OPERATION;
+        }
 
         /**
          * Sets the input shape ID of the operation.

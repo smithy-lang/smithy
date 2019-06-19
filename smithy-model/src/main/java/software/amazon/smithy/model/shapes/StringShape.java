@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class StringShape extends SimpleShape implements ToSmithyBuilder<StringShape> {
 
     private StringShape(Builder builder) {
-        super(builder, ShapeType.STRING);
+        super(builder);
     }
 
     public static Builder builder() {
@@ -53,6 +53,11 @@ public final class StringShape extends SimpleShape implements ToSmithyBuilder<St
         @Override
         public StringShape build() {
             return new StringShape(this);
+        }
+
+        @Override
+        public ShapeType getShapeType() {
+            return ShapeType.STRING;
         }
     }
 }

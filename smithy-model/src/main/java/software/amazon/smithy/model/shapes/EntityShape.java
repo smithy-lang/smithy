@@ -28,8 +28,8 @@ public abstract class EntityShape extends Shape {
     private final Set<ShapeId> operations;
 
     @SuppressWarnings("unchecked")
-    EntityShape(Builder builder, ShapeType type) {
-        super(builder, type, false);
+    EntityShape(Builder builder) {
+        super(builder, false);
         resources = SetUtils.copyOf(builder.resources);
         operations = SetUtils.copyOf(builder.operations);
     }
