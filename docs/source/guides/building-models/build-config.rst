@@ -642,7 +642,7 @@ projection settings are not merged in any way.
 Plugin names MUST match the following pattern: ``^[A-Za-z0-9\-_.]+$``.
 
 SmithyBuild will attempt to resolve plugin names using `Java SPI`_
-to locate and instance of ``software.amazon.smithy.build.SmithyBuildPlugin``
+to locate an instance of ``software.amazon.smithy.build.SmithyBuildPlugin``
 that matches the given plugin name (via ``matchesPluginName``). SmithyBuild
 will log a warning when a plugin cannot be resolved.
 
