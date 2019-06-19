@@ -1,8 +1,6 @@
 namespace example.namespace
 
-trait customTrait {
-  selector: "*"
-}
+trait customTrait {}
 
 // Overrides the prelude documentation shape.
 trait documentation {

@@ -23,9 +23,7 @@
       }
     },
     "traitDefs": {
-      "customTrait": {
-        "selector": "*"
-      },
+      "customTrait": {},
       "documentation": {
         "selector": "*",
         "shape": "smithy.api#String"

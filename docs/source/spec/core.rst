@@ -2653,10 +2653,11 @@ Trait definitions are objects that accept the following key-value pairs:
       - Description
     * - selector
       - string
-      - **Required**. A valid :ref:`selector <selectors>` that defines where
-        the trait can be applied. For example, a ``selector`` set to
-        ``:test(list, map)`` means that the trait can be applied to a
-        :ref:`list` or :ref:`map` shape.
+      - A valid :ref:`selector <selectors>` that defines where the trait
+        can be applied. For example, a ``selector`` set to ``:test(list, map)``
+        means that the trait can be applied to a :ref:`list` or :ref:`map`
+        shape. This value defaults to ``*`` if not set, meaning the trait can
+        be applied to any shape.
     * - shape
       - :ref:`shape-id`
       - A shape ID that describes the format of the trait.
