@@ -127,7 +127,7 @@ final class AddAuthorizers implements OpenApiMapper {
     private static String determineApiGatewayClientName(String value) {
         if (value.equals("aws.v4")) {
             return "awsSigv4";
-        } else{
+        } else {
             return "custom";
         }
     }
