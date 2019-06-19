@@ -15,25 +15,86 @@
 
 package software.amazon.smithy.model.traits;
 
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Marks an error structure as retryable.
  */
-public final class RetryableTrait extends BooleanTrait {
+public final class RetryableTrait extends AbstractTrait implements ToSmithyBuilder<RetryableTrait> {
     public static final String NAME = "smithy.api#retryable";
+    private static final String THROTTLING = "throttling";
 
-    public RetryableTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+    private final boolean throttling;
+
+    private RetryableTrait(Builder builder) {
+        super(NAME, builder.getSourceLocation());
+        throttling = builder.throttling;
     }
 
-    public RetryableTrait() {
-        this(SourceLocation.NONE);
+    /**
+     * Creates a builder for a retryable trait.
+     *
+     * @return Returns the created builder.
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public static final class Provider extends BooleanTrait.Provider<RetryableTrait> {
-        public Provider() {
-            super(NAME, RetryableTrait::new);
+    /**
+     * @return Returns true if the retry is a throttle.
+     */
+    public boolean getThrottling() {
+        return throttling;
+    }
+
+    @Override
+    public Builder toBuilder() {
+        return builder().throttling(throttling);
+    }
+
+    @Override
+    protected Node createNode() {
+        return throttling ? Node.objectNode().withMember(THROTTLING, true) : Node.objectNode();
+    }
+
+    public static final class Provider implements TraitService {
+        @Override
+        public String getTraitName() {
+            return NAME;
+        }
+
+        @Override
+        public RetryableTrait createTrait(ShapeId target, Node value) {
+            ObjectNode node = value.expectObjectNode();
+            return builder().throttling(node.getBooleanMemberOrDefault(THROTTLING)).build();
+        }
+    }
+
+    /**
+     * Builds a {@link RetryableTrait} trait.
+     */
+    public static final class Builder extends AbstractTraitBuilder<RetryableTrait, Builder> {
+        private boolean throttling;
+
+        private Builder() {}
+
+        @Override
+        public RetryableTrait build() {
+            return new RetryableTrait(this);
+        }
+
+        /**
+         * Indicates if the retry is considered a throttle.
+         *
+         * @param throttling Set to true if the retry is a throttle.
+         * @return Returns the builder.
+         */
+        public Builder throttling(boolean throttling) {
+            this.throttling = throttling;
+            return this;
         }
     }
 }
