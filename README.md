@@ -4,11 +4,13 @@ Smithy is a protocol-agnostic interface definition language and set of tools
 for generating clients, servers, and documentation for any programming
 language.
 
-Smithy is a developer preview; we will continue to provide updates with new
-features, integrations, and fixes.
+* [Smithy Homepage][docs]
+* [Specifications][specs]
+* [Java API documentation][javadocs]
+* [Smithy Gradle Plugin][Smithy Gradle Plugin]
 
-Documentation for Smithy, including the specification, [can be found in the
-online documentation][docs].
+> **NOTE**: Smithy is a developer preview; we will continue to provide updates with new
+features, integrations, and fixes.
 
 # Modeling in Smithy
 
@@ -68,6 +70,8 @@ Smithy Models][building] guide.
 This library is licensed under the Apache 2.0 License.
 
 [docs]: https://awslabs.github.io/smithy/
+[specs]: https://awslabs.github.io/smithy/spec/
+[javadocs]: https://awslabs.github.io/smithy/javadoc/latest/
 [quickstart]: https://awslabs.github.io/smithy/quickstart.html
 [Smithy Gradle Plugin]: https://github.com/awslabs/smithy-gradle-plugin/
 [`smithy-build.json`]: https://awslabs.github.io/smithy/guides/building-models/build-config.html#using-smithy-build-json
