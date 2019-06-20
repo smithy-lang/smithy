@@ -17,7 +17,6 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -216,9 +215,15 @@ default severity of the validator is used.</p>
 The validator will ignore any validation events encountered that are
 not specific to the given namespaces.</td>
 </tr>
-<tr class="row-odd"><td>configuration</td>
+<tr class="row-odd"><td>selector</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A valid <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a> that causes the validator to only
+validate shapes that match the selector. The validator will ignore any
+validation events encountered that do not satisfy the selector.</td>
+</tr>
+<tr class="row-even"><td>configuration</td>
 <td><code class="docutils literal notranslate"><span class="pre">object</span></code></td>
-<td>Object that provides validator configuraton. The available properties
+<td>Object that provides validator configuration. The available properties
 are defined by each validator. Validators MAY require that specific
 configuration properties are provided.</td>
 </tr>

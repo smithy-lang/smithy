@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -113,13 +112,14 @@ schemes, and OpenAPI specifications.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title first">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#amazon-api-gateway-traits" id="id6">Amazon API Gateway traits</a><ul>
-<li><a class="reference internal" href="#aws-apigateway-apikeysource-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-apigateway-authorizers-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-apigateway-requestvalidator-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-apigateway-integration-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-apigateway-mockintegration-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait</a></li>
-<li><a class="reference internal" href="#shared-trait-data-types" id="id12">Shared trait data types</a></li>
+<li><a class="reference internal" href="#amazon-api-gateway-traits" id="id7">Amazon API Gateway traits</a><ul>
+<li><a class="reference internal" href="#aws-apigateway-apikeysource-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-authorizers-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-authorizer-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-requestvalidator-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-integration-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-mockintegration-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait</a></li>
+<li><a class="reference internal" href="#shared-trait-data-types" id="id14">Shared trait data types</a></li>
 </ul>
 </li>
 </ul>
@@ -223,9 +223,9 @@ this service.</dd>
 <p class="last"><em>A service shape that has the protocols trait</em></p>
 </dd>
 <dt>Value type</dt>
-<dd>Map of x names to <em>authorizer</em> definitions. The key used as the authorizer
-name MUST reference one of the <code class="docutils literal notranslate"><span class="pre">auth</span></code> schemes of the <a class="reference internal" href="core.html#protocols-trait"><span class="std std-ref">protocols trait</span></a>
-attached to the service.</dd>
+<dd>Map of arbitrary names to <em>authorizer</em> definitions. These authorizer
+definitions are applied to a service, resource, or operation using the
+<a class="reference internal" href="#aws-apigateway-authorizer-trait"><span class="std std-ref">aws.apigateway#authorizer trait</span></a>.</dd>
 </dl>
 <p>An <em>authorizer</em> definition is an object that supports the following properties:</p>
 <table border="1" class="colwidths-given docutils">
@@ -248,7 +248,13 @@ and the value must be &quot;token&quot;, for an authorizer with the caller
 identity embedded in an authorization token, or &quot;request&quot;, for an
 authorizer with the caller identity contained in request parameters.</td>
 </tr>
-<tr class="row-odd"><td>uri</td>
+<tr class="row-odd"><td>scheme</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. A Smithy authentication scheme name that identifies how
+a client authenticates. This value MUST reference one of the <code class="docutils literal notranslate"><span class="pre">auth</span></code>
+schemes of the <a class="reference internal" href="core.html#protocols-trait"><span class="std std-ref">protocols trait</span></a> attached to the service.</td>
+</tr>
+<tr class="row-even"><td>uri</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td><strong>Required.</strong> Specifies the authorizer's Uniform Resource Identifier
 (URI). For <code class="docutils literal notranslate"><span class="pre">token</span></code> or <code class="docutils literal notranslate"><span class="pre">request</span></code> authorizers, this must be a
@@ -260,17 +266,6 @@ function, path indicates that the remaining substring in the URI
 should be treated as the path to the resource, including the initial
 <code class="docutils literal notranslate"><span class="pre">/</span></code>. For Lambda functions, this is usually of the form
 <code class="docutils literal notranslate"><span class="pre">/2015-03-31/functions/[FunctionARN]/invocations</span></code>.</td>
-</tr>
-<tr class="row-even"><td>clientType</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><p class="first">The client authentication type. A value identifying the category of
-authorizer, such as &quot;oauth2&quot; or &quot;awsSigv4&quot;.</p>
-<div class="last admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This is the equivalent of setting the <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authtype.html">x-amazon-apigateway-authtype</a>
-extension property in OpenAPI.</p>
-</div>
-</td>
 </tr>
 <tr class="row-odd"><td>credentials</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
@@ -336,9 +331,10 @@ the default value is 300. The maximum value is 3600, or 1 hour.</td>
                         <span class="nt">&quot;auth&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;aws.v4&quot;</span><span class="p">]</span>
                     <span class="p">}</span>
                 <span class="p">],</span>
+                <span class="nt">&quot;aws.apigateway#authorizer&quot;</span><span class="p">:</span> <span class="s2">&quot;arbitrary-name&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;aws.apigateway#authorizers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;aws.v4&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;clientType&quot;</span><span class="p">:</span> <span class="s2">&quot;awsSigV4&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;arbitrary-name&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;scheme&quot;</span><span class="p">:</span> <span class="s2">&quot;aws.v4&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;request&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;arn:foo:baz&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;credentials&quot;</span><span class="p">:</span> <span class="s2">&quot;arn:foo:bar&quot;</span><span class="p">,</span>
@@ -359,8 +355,30 @@ the default value is 300. The maximum value is 3600, or 1 hour.</td>
 customers.</p>
 </div>
 </div>
+<div class="section" id="aws-apigateway-authorizer-trait">
+<span id="id3"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizer-trait" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Applies a Lambda authorizer to a service, resource, or operation.
+Authorizers are resolved hierarchically: an operation inherits
+the effective authorizer applied to a parent resource or operation.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:each(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></p>
+<p class="last"><em>A service, resource, or operation</em></p>
+</dd>
+<dt>Value type</dt>
+<dd>String value that MUST reference one of the keys in the
+<a class="reference internal" href="#aws-apigateway-authorizers-trait"><span class="std std-ref">aws.apigateway#authorizers trait</span></a> of the service that contains
+the shape.</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This trait should be considered internal-only and not exposed to your
+customers.</p>
+</div>
+</div>
 <div class="section" id="aws-apigateway-requestvalidator-trait">
-<span id="id3"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait<a class="headerlink" href="#aws-apigateway-requestvalidator-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id4"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait<a class="headerlink" href="#aws-apigateway-requestvalidator-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Opts-in to Amazon API Gateway request validation for a service or
@@ -451,7 +469,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-integration-trait">
-<span id="id4"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait<a class="headerlink" href="#aws-apigateway-integration-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id5"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait<a class="headerlink" href="#aws-apigateway-integration-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway integration</a> that integrates with an actual
@@ -636,7 +654,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-mockintegration-trait">
-<span id="id5"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait<a class="headerlink" href="#aws-apigateway-mockintegration-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id6"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait<a class="headerlink" href="#aws-apigateway-mockintegration-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway integration</a> that returns a mock response.</dd>
@@ -1053,6 +1071,7 @@ integration response to two <code class="docutils literal notranslate"><span cla
 <li><a class="reference internal" href="#amazon-api-gateway-traits">Amazon API Gateway traits</a><ul>
 <li><a class="reference internal" href="#aws-apigateway-apikeysource-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-apigateway-authorizers-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-authorizer-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-apigateway-requestvalidator-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-apigateway-integration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-apigateway-mockintegration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait</a></li>

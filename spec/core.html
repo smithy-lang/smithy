@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -418,7 +417,7 @@ these types where the key is string.</td>
 </tr>
 </tbody>
 </table>
-<p>The <a class="reference internal" href="language-specification.html#grammar-token-simple-shape"><code class="xref std std-token docutils literal notranslate"><span class="pre">simple_shape</span></code></a> statement is used to define a simple shape. Simple
+<p>The <a class="reference internal" href="language-specification.html#grammar-token-simple_shape"><code class="xref std std-token docutils literal notranslate"><span class="pre">simple_shape</span></code></a> statement is used to define a simple shape. Simple
 shapes are defined by a type, followed by a shape name, followed by a
 new line.</p>
 <div class="admonition tip">
@@ -587,7 +586,7 @@ different, but fixed, types</td>
 <div class="section" id="list">
 <span id="id6"></span><h4>list<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h4>
 <p>The <em class="dfn">list</em> type represents a homogeneous collection of values. A list is
-defined using a <a class="reference internal" href="language-specification.html#grammar-token-list-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">list_statement</span></code></a>. A list statement consists of the
+defined using a <a class="reference internal" href="language-specification.html#grammar-token-list_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">list_statement</span></code></a>. A list statement consists of the
 shape named followed by an object with a single key-value pair of &quot;member&quot;
 that defines the <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> of the list.</p>
 <p>The following example defines a list with a string member from the
@@ -714,7 +713,7 @@ JSON</div>
 <div class="section" id="set">
 <span id="id7"></span><h4>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h4>
 <p>The <em class="dfn">set</em> type represents an unordered collection of unique homogeneous
-values. A set is defined using a <a class="reference internal" href="language-specification.html#grammar-token-set-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">set_statement</span></code></a> that consists of the
+values. A set is defined using a <a class="reference internal" href="language-specification.html#grammar-token-set_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">set_statement</span></code></a> that consists of the
 shape named followed by an object with a single key-value pair of &quot;member&quot;
 that defines the <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> of the set.</p>
 <p>The following example defines a set of strings:</p>
@@ -813,7 +812,7 @@ to ensure uniqueness.</p>
 <span id="id8"></span><h4>map<a class="headerlink" href="#map" title="Permalink to this headline">¶</a></h4>
 <p>The <em class="dfn">map</em> type represents a map data structure that maps string keys to
 homogeneous values. A map cannot contain duplicate keys. A map is defined using
-a <a class="reference internal" href="language-specification.html#grammar-token-map-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">map_statement</span></code></a>. The <code class="docutils literal notranslate"><span class="pre">key</span></code> member of a map MUST get a <code class="docutils literal notranslate"><span class="pre">string</span></code>
+a <a class="reference internal" href="language-specification.html#grammar-token-map_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">map_statement</span></code></a>. The <code class="docutils literal notranslate"><span class="pre">key</span></code> member of a map MUST get a <code class="docutils literal notranslate"><span class="pre">string</span></code>
 shape.</p>
 <p>The following example defines a map of strings to integers:</p>
 <div class="sphinx-tabs docutils container">
@@ -925,7 +924,7 @@ JSON</div>
 <span id="id9"></span><h4>structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h4>
 <p>The <em class="dfn">structure</em> type represents a fixed set of named heterogeneous members.
 A member name maps to exactly one structure <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> definition.</p>
-<p>A structure is defined using a <a class="reference internal" href="language-specification.html#grammar-token-structure-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">structure_statement</span></code></a>. A structure
+<p>A structure is defined using a <a class="reference internal" href="language-specification.html#grammar-token-structure_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">structure_statement</span></code></a>. A structure
 statement is a map of structure <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> names to the shape targeted by
 the member. Any number of inline trait definitions can precede each member.</p>
 <p>The following example defines a structure with two members:</p>
@@ -1033,7 +1032,7 @@ JSON</div>
 <p>The union type represents a <a class="reference external" href="https://en.wikipedia.org/wiki/Tagged_union">tagged union data structure</a> that can take
 on several different, but fixed, types. Only one type can be used at any
 one time.</p>
-<p>A union is defined using a <a class="reference internal" href="language-specification.html#grammar-token-union-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">union_statement</span></code></a>. Union shapes take the
+<p>A union is defined using a <a class="reference internal" href="language-specification.html#grammar-token-union_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">union_statement</span></code></a>. Union shapes take the
 same form as structure shapes.</p>
 <p>The following example defines a union shape with several members:</p>
 <div class="sphinx-tabs docutils container">
@@ -1262,7 +1261,7 @@ aggregate shapes are always considered boxed and have no default values.</p>
 operations together. The <a class="reference internal" href="#resource"><span class="std std-ref">resources</span></a> and
 <a class="reference internal" href="#operation"><span class="std std-ref">operations</span></a> of an API are bound within the closure of a
 service.</p>
-<p>A service shape is defined using a <a class="reference internal" href="language-specification.html#grammar-token-service-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">service_statement</span></code></a> and supports
+<p>A service shape is defined using a <a class="reference internal" href="language-specification.html#grammar-token-service_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">service_statement</span></code></a> and supports
 the following properties:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -1411,7 +1410,7 @@ namespaces.</li>
 <p>The <em class="dfn">operation</em> type represents the input, output and possible errors of
 an API operation. Operation shapes are bound to <a class="reference internal" href="#resource"><span class="std std-ref">resource</span></a>
 shapes and <a class="reference internal" href="#service"><span class="std std-ref">service</span></a> shapes. Operation shapes are defined using
-the <a class="reference internal" href="language-specification.html#grammar-token-operation-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">operation_statement</span></code></a>.</p>
+the <a class="reference internal" href="language-specification.html#grammar-token-operation_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">operation_statement</span></code></a>.</p>
 <p>The following example defines an operation shape that accepts an input
 structure named <code class="docutils literal notranslate"><span class="pre">Input</span></code>, returns an output structure named <code class="docutils literal notranslate"><span class="pre">Output</span></code>, and
 can potentially return the <code class="docutils literal notranslate"><span class="pre">NotFound</span></code> or <code class="docutils literal notranslate"><span class="pre">BadRequest</span></code>
@@ -1609,7 +1608,7 @@ JSON</div>
 <span id="id21"></span><h4>Resource<a class="headerlink" href="#resource" title="Permalink to this headline">¶</a></h4>
 <p>Smithy defines a <em class="dfn">resource</em> as an entity with an identity that has a
 set of operations.</p>
-<p>A resource shape is defined using a <a class="reference internal" href="language-specification.html#grammar-token-resource-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">resource_statement</span></code></a> and supports
+<p>A resource shape is defined using a <a class="reference internal" href="language-specification.html#grammar-token-resource_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">resource_statement</span></code></a> and supports
 the following properties:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -2745,13 +2744,15 @@ or a modeled trait.</p>
 <div class="section" id="annotation-trait-values">
 <h4>Annotation trait values<a class="headerlink" href="#annotation-trait-values" title="Permalink to this headline">¶</a></h4>
 <p><em>Annotation traits</em> are traits that have no value and are either
-present or not present. Annotation trait values can be set to <code class="docutils literal notranslate"><span class="pre">true</span></code>
-or <code class="docutils literal notranslate"><span class="pre">null</span></code> and can be omitted in the IDL.</p>
+present or not present. Annotation trait values can be set to <code class="docutils literal notranslate"><span class="pre">true</span></code>,
+<code class="docutils literal notranslate"><span class="pre">null</span></code>, and can be omitted in the IDL.</p>
 <p>For example, the <a class="reference internal" href="#sensitive-trait"><span class="std std-ref">sensitive trait</span></a> is an annotation trait:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@sensitive</span>
 <span class="kd">string</span><span class="nc"> MyString</span>
 </pre></div>
 </div>
+<p>This trait could also have been defined as <code class="docutils literal notranslate"><span class="pre">&#64;sensitive(true)</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&#64;sensitive(null)</span></code>.</p>
 </div>
 <div class="section" id="modeled-trait-values">
 <h4>Modeled trait values<a class="headerlink" href="#modeled-trait-values" title="Permalink to this headline">¶</a></h4>
@@ -2795,6 +2796,47 @@ the value can be omitted:</p>
 <h5>Other trait values<a class="headerlink" href="#other-trait-values" title="Permalink to this headline">¶</a></h5>
 <p>All other trait values MUST adhere to the JSON type mappings defined
 in <a class="reference internal" href="#trait-definition-values"><span class="std std-ref">Trait JSON values</span></a> table.</p>
+</div>
+<div class="section" id="trait-value-coercion">
+<h5>Trait value coercion<a class="headerlink" href="#trait-value-coercion" title="Permalink to this headline">¶</a></h5>
+<p>It's hard to predict what information a trait needs to capture when modeling
+a domain; a trait might start out as an annotation trait but later might need
+to capture additional information. Smithy explicitly supports this use case by
+allowing both <code class="docutils literal notranslate"><span class="pre">null</span></code> and <code class="docutils literal notranslate"><span class="pre">true</span></code> to be provided for traits that have a
+structure value.</p>
+<p>For example, consider the following valid annotation trait definition
+and usage:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">trait</span><span class="nc"> foo</span> {
+  <span class="nl">selector:</span> <span class="s2">&quot;*&quot;</span>
+}
+
+<span class="nd">@foo</span>
+<span class="kd">string</span><span class="nc"> MyString1</span>
+
+<span class="nd">@foo</span>(<span class="n">true</span>)
+<span class="kd">string</span><span class="nc"> MyString2</span>
+
+<span class="nd">@foo</span>(<span class="n">null</span>)
+<span class="kd">string</span><span class="nc"> MyString3</span>
+</pre></div>
+</div>
+<p>An annotation trait can later be updated to use a structure shape that has
+no required members without breaking existing uses of the trait. The
+applications of the <code class="docutils literal notranslate"><span class="pre">foo</span></code> trait in the previous example and the following
+example are all valid even after changing the shape of the <code class="docutils literal notranslate"><span class="pre">foo</span></code> trait:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">trait</span><span class="nc"> foo</span> {
+  <span class="nl">selector:</span> <span class="s2">&quot;*&quot;</span>,
+  <span class="nl">shape:</span> <span class="n">FooTrait</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> FooTrait</span> {
+  <span class="nl">baz:</span> <span class="n">String</span>,
+}
+
+<span class="nd">@foo</span>(<span class="nl">baz:</span> <span class="s2">&quot;bar&quot;</span>)
+<span class="kd">string</span><span class="nc"> MyString4</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -2924,10 +2966,11 @@ and are automatically available in every Smithy model.</p>
 <tbody valign="top">
 <tr class="row-even"><td>selector</td>
 <td>string</td>
-<td><strong>Required</strong>. A valid <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a> that defines where
-the trait can be applied. For example, a <code class="docutils literal notranslate"><span class="pre">selector</span></code> set to
-<code class="docutils literal notranslate"><span class="pre">:test(list,</span> <span class="pre">map)</span></code> means that the trait can be applied to a
-<a class="reference internal" href="#list"><span class="std std-ref">list</span></a> or <a class="reference internal" href="#map"><span class="std std-ref">map</span></a> shape.</td>
+<td>A valid <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a> that defines where the trait
+can be applied. For example, a <code class="docutils literal notranslate"><span class="pre">selector</span></code> set to <code class="docutils literal notranslate"><span class="pre">:test(list,</span> <span class="pre">map)</span></code>
+means that the trait can be applied to a <a class="reference internal" href="#list"><span class="std std-ref">list</span></a> or <a class="reference internal" href="#map"><span class="std std-ref">map</span></a>
+shape. This value defaults to <code class="docutils literal notranslate"><span class="pre">*</span></code> if not set, meaning the trait can
+be applied to any shape.</td>
 </tr>
 <tr class="row-odd"><td>shape</td>
 <td><a class="reference internal" href="#shape-id"><span class="std std-ref">Shape ID</span></a></td>
@@ -4188,8 +4231,28 @@ Smithy</div>
 <p class="last"><em>A structure shape with the error trait</em></p>
 </dd>
 <dt>Value type</dt>
-<dd>Annotation trait</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">object</span></code></dd>
 </dl>
+<p>The retryable trait is an object that contains the following key value pairs:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>throttling</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Indicates that the error is a retryable throttling error.</td>
+</tr>
+</tbody>
+</table>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
@@ -4202,6 +4265,11 @@ Smithy</div>
 <span class="nd">@retryable</span>
 <span class="nd">@httpError</span>(<span class="n">503</span>)
 <span class="kd">structure</span><span class="nc"> ServiceUnavailableError</span> {}
+
+<span class="nd">@error</span>(<span class="n">client</span>)
+<span class="nd">@retryable</span>(<span class="nl">throttling:</span> <span class="n">true</span>)
+<span class="nd">@httpError</span>(<span class="n">429</span>)
+<span class="kd">structure</span><span class="nc"> ThrottlingError</span> {}
 </pre></div>
 </div>
 </div>
@@ -6088,6 +6156,7 @@ model:</p>
 <li><a class="reference internal" href="#modeled-trait-values">Modeled trait values</a><ul>
 <li><a class="reference internal" href="#structure-map-and-union-trait-values">Structure, map, and union trait values</a></li>
 <li><a class="reference internal" href="#other-trait-values">Other trait values</a></li>
+<li><a class="reference internal" href="#trait-value-coercion">Trait value coercion</a></li>
 </ul>
 </li>
 </ul>

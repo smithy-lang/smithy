@@ -17,7 +17,6 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -205,7 +204,7 @@ specification from a Smithy model using a buildscript dependency:</p>
 
 <span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:openapi:0.5.4&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:openapi:0.6.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -216,8 +215,8 @@ root of a project to define the actual process of building the OpenAPI
 specification. The following example defines a <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file
 that builds an OpenAPI specification from a service for the
 <code class="docutils literal notranslate"><span class="pre">smithy.example#Weather</span></code> service using the <code class="docutils literal notranslate"><span class="pre">aws-rest-json-1.1</span></code> protocol:</p>
-<div class="literal-block-wrapper docutils container" id="smithy-build-json">
-<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#smithy-build-json" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="open-api-smithy-build-json">
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#open-api-smithy-build-json" title="Permalink to this code">¶</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -232,7 +231,7 @@ that builds an OpenAPI specification from a service for the
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:openapi:0.5.4&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:openapi:0.6.0&quot; is
 required in order for smithy-build to map the &quot;openapi&quot; plugin name to the
 correct Java library implementation.</p>
 </div>
@@ -411,7 +410,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">softw
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#apigateway-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:0.5.4&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-apigateway-openapi:0.6.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -561,7 +560,7 @@ shows how to install <code class="docutils literal notranslate"><span class="pre
 <div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#code-build-gradle" title="Permalink to this code">¶</a></div>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:openapi:0.5.4&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:openapi:0.6.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>

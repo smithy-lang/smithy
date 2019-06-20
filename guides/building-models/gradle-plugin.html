@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
+    <link rel="stylesheet" href="../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -195,7 +194,7 @@ Kotlin</div>
 <tr class="row-even"><td>projection</td>
 <td><code class="docutils literal notranslate"><span class="pre">String</span></code></td>
 <td>Sets the <a class="reference internal" href="build-config.html#projections"><span class="std std-ref">projection</span></a> name to build. There must
-be a corresponding projection definition in the <a class="reference internal" href="../converting-to-openapi.html#smithy-build-json"><span class="std std-ref">smithy-build.json</span></a>
+be a corresponding projection definition in the <a class="reference internal" href="build-config.html#smithy-build-json"><span class="std std-ref">smithy-build.json</span></a>
 file in the project.</td>
 </tr>
 <tr class="row-odd"><td>projectionSourceTags</td>
@@ -265,7 +264,7 @@ Kotlin</div>
 <span class="p">}</span>
 
 <span class="n">dependencies</span> <span class="p">{</span>
-    <span class="n">api</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:0.5.4&quot;</span><span class="p">)</span>
+    <span class="n">api</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:0.6.0&quot;</span><span class="p">)</span>
 
     <span class="c1">// These are just examples of dependencies. This model has a dependency on</span>
     <span class="c1">// a &quot;common&quot; model package and uses the external AWS traits.</span>
@@ -309,7 +308,7 @@ Kotlin</div>
         <span class="n">mavenCentral</span><span class="p">()</span>
     <span class="p">}</span>
     <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:0.5.4&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:0.6.0&quot;</span><span class="p">)</span>
 
         <span class="c1">// Take a dependency on the internal model package. This</span>
         <span class="c1">// dependency *must* be a buildscript only dependency to ensure</span>
@@ -333,7 +332,7 @@ Kotlin</div>
 <span class="p">}</span>
 
 <span class="n">dependencies</span> <span class="p">{</span>
-    <span class="n">api</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:0.5.4&quot;</span><span class="p">)</span>
+    <span class="n">api</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:0.6.0&quot;</span><span class="p">)</span>
 
     <span class="c1">// Any dependencies that the projected model needs must be (re)declared</span>
     <span class="c1">// here. For example, let&#39;s assume that the smithy-aws-traits package is</span>
@@ -461,7 +460,7 @@ Kotlin</div>
 
         <span class="c1">// This dependency is required in order to apply the &quot;openapi&quot;</span>
         <span class="c1">// plugin in smithy-build.json</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:0.5.4&quot;</span><span class="p">)</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:0.6.0&quot;</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
