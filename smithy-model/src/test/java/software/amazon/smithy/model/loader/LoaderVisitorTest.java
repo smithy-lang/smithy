@@ -44,6 +44,7 @@ import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.MapUtils;
 
@@ -262,11 +263,11 @@ public class LoaderVisitorTest {
 
     @Test
     public void cannotAddMemberToNonExistentShape() {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(ValidatedResultException.class, () -> {
             LoaderVisitor visitor = new LoaderVisitor(FACTORY);
             visitor.onShape(MemberShape.builder().id("foo.baz#Bar$bam").target("foo.baz#Bam"));
 
-            visitor.onEnd();
+            visitor.onEnd().unwrap();
         });
     }
 

@@ -379,4 +379,14 @@ public class ModelAssemblerTest {
                        startsWith("jar:file:"));
         }
     }
+
+    @Test
+    public void gracefullyParsesPartialDocuments() {
+        String document = "namespace foo.baz\nstring MyString\nstr";
+        ValidatedResult<Model> result = new ModelAssembler().addUnparsedModel("foo.smithy", document).assemble();
+
+        assertTrue(result.isBroken());
+        assertTrue(result.getResult().isPresent());
+        assertTrue(result.getResult().get().getShapeIndex().getShape(ShapeId.from("foo.baz#MyString")).isPresent());
+    }
 }

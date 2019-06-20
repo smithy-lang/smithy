@@ -434,22 +434,19 @@ final class SmithyModelLoader implements ModelLoader {
     private static void parseResource(State state) {
         SourceLocation sourceLocation = currentSourceLocation(state);
         ShapeId shapeId = parseShapeName(state);
-        ResourceShape.Builder builder = ResourceShape.builder()
-                .id(shapeId)
-                .source(sourceLocation);
+        ResourceShape.Builder builder = ResourceShape.builder().id(shapeId).source(sourceLocation);
+        state.visitor.onShape(builder);
         ObjectNode shapeNode = parseObjectNode(state, sourceFromToken(state, state.expect(LBRACE)), RBRACE);
         shapeNode.warnIfAdditionalProperties(LoaderUtils.RESOURCE_PROPERTY_NAMES);
         LoaderUtils.loadResourceObject(builder, shapeId, shapeNode, state.visitor);
-        state.visitor.onShape(builder);
         state.expectNewline();
     }
 
     private static void parseOperation(State state) {
         SourceLocation sourceLocation = currentSourceLocation(state);
         ShapeId id = parseShapeName(state);
-        OperationShape.Builder builder = OperationShape.builder()
-                .id(id)
-                .source(sourceLocation);
+        OperationShape.Builder builder = OperationShape.builder().id(id).source(sourceLocation);
+        state.visitor.onShape(builder);
 
         // Parse the optionally present input target.
         state.expect(LPAREN);
@@ -482,15 +479,14 @@ final class SmithyModelLoader implements ModelLoader {
             state.expect(RBRACKET);
         }
 
-        state.visitor.onShape(builder);
         state.expectNewline();
     }
 
     private static void parseStructuredShape(State state, String shapeType, AbstractShapeBuilder builder) {
         builder.source(currentSourceLocation(state));
         ShapeId id = parseShapeName(state);
-        parseStructuredBody(shapeType, state, id);
         state.visitor.onShape(builder.id(id));
+        parseStructuredBody(shapeType, state, id);
     }
 
     private static void parseStructuredBody(String shapeType, State state, ShapeId parent) {

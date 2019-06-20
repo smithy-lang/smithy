@@ -516,8 +516,12 @@ final class LoaderVisitor {
                 if (member != null) {
                     AbstractShapeBuilder container = pendingShapes.get(shape.getId().withoutMember());
                     if (container == null) {
-                        throw new IllegalStateException(format(
-                                "Member shape `%s` added to non-existent shape", member.getId()));
+                        events.add(ValidationEvent.builder()
+                                .shape(member)
+                                .eventId(Validator.MODEL_ERROR)
+                                .severity(Severity.ERROR)
+                                .message(format("Member shape `%s` added to non-existent shape", member.getId()))
+                                .build());
                     } else {
                         container.addMember(member);
                     }
