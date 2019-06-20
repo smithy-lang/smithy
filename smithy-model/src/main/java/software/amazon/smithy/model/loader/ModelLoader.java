@@ -17,7 +17,9 @@ package software.amazon.smithy.model.loader;
 
 import java.util.List;
 import java.util.function.Supplier;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.DefaultNodeFactory;
+import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -67,6 +69,27 @@ interface ModelLoader {
         ModelLoader delegate = ModelLoader.composeLoaders(ListUtils.of(
                 new NodeModelLoader(new DefaultNodeFactory()),
                 new SmithyModelLoader()));
-        return new JarModelLoader(delegate);
+        return recoveringModelLoader(new JarModelLoader(delegate));
+    }
+
+    /**
+     * Creates a {@code ModelLoader} that recovers from a syntax error and
+     * allows model loading to continue.
+     *
+     * <p>This allows for things like partial file parses and continuing to
+     * parse other files even if one is broken.
+     *
+     * @param delegate Delegate {@code ModelLoader} to wrap.
+     * @return Returns the created {@code ModelLoader}.
+     */
+    static ModelLoader recoveringModelLoader(ModelLoader delegate) {
+        return (filename, contents, visitor) -> {
+            try {
+                return delegate.load(filename, contents, visitor);
+            } catch (SourceException e) {
+                visitor.onError(ValidationEvent.fromSourceException(e));
+                return true;
+            }
+        };
     }
 }
