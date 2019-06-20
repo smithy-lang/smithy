@@ -1,7 +1,8 @@
 # Smithy
+[![Build Status](https://travis-ci.com/awslabs/smithy.svg?branch=master)](https://travis-ci.com/awslabs/smithy)
 
-Smithy is a protocol-agnostic interface definition language and set of tools
-for generating clients, servers, and documentation for any programming
+**Smithy** is a protocol-agnostic interface definition language and set of
+tools for generating clients, servers, and documentation for any programming
 language.
 
 * [Smithy Homepage][docs]
