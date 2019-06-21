@@ -2999,7 +2999,7 @@ the trait.</td>
 </tr>
 <tr class="row-even"><td>documentation</td>
 <td>string</td>
-<td>Defines documentation about the trait.</td>
+<td>Defines documentation about the trait in the <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a> format.</td>
 </tr>
 <tr class="row-odd"><td>externalDocumentation</td>
 <td>string</td>
@@ -3468,7 +3468,7 @@ is, enum names SHOULD match the following regular expression:
 </tr>
 <tr class="row-odd"><td>documentation</td>
 <td>string</td>
-<td>Defines documentation about the enum value.</td>
+<td>Defines documentation about the enum value in the <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a> format.</td>
 </tr>
 <tr class="row-even"><td>tags</td>
 <td><code class="docutils literal notranslate"><span class="pre">List&lt;string&gt;</span></code></td>
@@ -5222,8 +5222,7 @@ determine the serialization format of a timestamp.</p>
 <span id="id67"></span><h4><code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait<a class="headerlink" href="#documentation-trait" title="Permalink to this headline">¶</a></h4>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd>Adds documentation to a shape or member. The format of the documentation
-trait MUST be a valid HTML fragment.</dd>
+<dd>Adds documentation to a shape or member using the <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a> format.</dd>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
 <dt>Value type</dt>
@@ -5237,7 +5236,7 @@ Smithy</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;This &lt;em&gt;is&lt;/em&gt; documentation about the shape.&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;This *is* documentation about the shape.&quot;</span>)
 <span class="kd">string</span><span class="nc"> MyString</span>
 </pre></div>
 </div>
@@ -5245,7 +5244,7 @@ Smithy</div>
 </div>
 <div class="section" id="effective-documentation">
 <h5>Effective documentation<a class="headerlink" href="#effective-documentation" title="Permalink to this headline">¶</a></h5>
-<p>The <em>effecive documentation trait</em> of a shape is resolved using the following
+<p>The <em>effective documentation trait</em> of a shape is resolved using the following
 process:</p>
 <ol class="arabic simple">
 <li>Use the <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait of the shape, if present.</li>
@@ -5347,7 +5346,7 @@ JSON</div>
 </tr>
 <tr class="row-odd"><td>documentation</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>A longer description of the example.</td>
+<td>A longer description of the example in the <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a> format.</td>
 </tr>
 <tr class="row-even"><td>input</td>
 <td><code class="docutils literal notranslate"><span class="pre">object</span></code></td>
