@@ -2682,7 +2682,7 @@ Trait definitions are objects that accept the following key-value pairs:
         the trait.
     * - documentation
       - string
-      - Defines documentation about the trait.
+      - Defines documentation about the trait in the CommonMark_ format.
     * - externalDocumentation
       - string
       - A valid URL that defines more information about the trait.
@@ -3090,7 +3090,7 @@ properties:
         ``^[A-Z]+[A-Z_0-9]*$``.
     * - documentation
       - string
-      - Defines documentation about the enum value.
+      - Defines documentation about the enum value in the CommonMark_ format.
     * - tags
       - ``List<string>``
       - Attaches a list of tags that allow the enum value to be categorized and
@@ -4643,8 +4643,7 @@ Documentation traits
 -----------------------
 
 Summary
-    Adds documentation to a shape or member. The format of the documentation
-    trait MUST be a valid HTML fragment.
+    Adds documentation to a shape or member using the CommonMark_ format.
 Trait selector
     ``*``
 Value type
@@ -4654,14 +4653,14 @@ Value type
 
     .. code-tab:: smithy
 
-        @documentation("This <em>is</em> documentation about the shape.")
+        @documentation("This *is* documentation about the shape.")
         string MyString
 
 
 Effective documentation
 ```````````````````````
 
-The *effecive documentation trait* of a shape is resolved using the following
+The *effective documentation trait* of a shape is resolved using the following
 process:
 
 #. Use the ``documentation`` trait of the shape, if present.
@@ -4752,7 +4751,7 @@ Each ``example`` trait value is an object with the following properties:
       - **Required**. A short title that defines the example.
     * - documentation
       - ``string``
-      - A longer description of the example.
+      - A longer description of the example in the CommonMark_ format.
     * - input
       - ``object``
       - Provides example input parameters for the operation. Each key is
@@ -5402,3 +5401,4 @@ model:
 .. _Option type: https://doc.rust-lang.org/std/option/enum.Option.html
 .. _ECMA 262 regular expression dialect: https://www.ecma-international.org/ecma-262/8.0/index.html#sec-patterns
 .. _RFC 3986 Host: https://tools.ietf.org/html/rfc3986#section-3.2.2
+.. _CommonMark: https://spec.commonmark.org/
