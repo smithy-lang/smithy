@@ -115,8 +115,9 @@ final class LoaderUtils {
      * @param name Name of the trait definition.
      * @param node Value that contains the definition.
      * @param visitor Visitor to add the loaded definition to.
+     * @param docs External documentation string to inject into the definition.
      */
-    static void loadTraitDefinition(String namespace, String name, Node node, LoaderVisitor visitor) {
+    static void loadTraitDefinition(String namespace, String name, Node node, LoaderVisitor visitor, String docs) {
         ObjectNode members = node.expectObjectNode("Trait definitions must be defined using object nodes.");
         members.warnIfAdditionalProperties(TRAIT_DEFINITION_PROPERTY_NAMES);
         validateTraitDefinitionName(name, node);
@@ -124,6 +125,10 @@ final class LoaderUtils {
         TraitDefinition.Builder builder = TraitDefinition.builder()
                 .name(namespace + "#" + name)
                 .sourceLocation(node.getSourceLocation());
+
+        if (docs != null) {
+            builder.documentation(docs);
+        }
 
         members.getMember(TraitDefinition.SELECTOR_KEY)
                 .map(LoaderUtils::loadSelector)

@@ -20,6 +20,7 @@ import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.ANNOTATION;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.COLON;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.COMMA;
+import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.DOC;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.DOLLAR;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.EQUAL;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.ERROR;
@@ -47,7 +48,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -82,6 +82,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -96,7 +97,6 @@ import software.amazon.smithy.utils.SetUtils;
  * to load a model.
  */
 final class SmithyModelLoader implements ModelLoader {
-    private static final Logger LOGGER = Logger.getLogger(SmithyModelLoader.class.getName());
     private static final Collection<String> MAP_KEYS = ListUtils.of("key", "value");
 
     /** Top-level statements that can be encountered while parsing. */
@@ -130,6 +130,18 @@ final class SmithyModelLoader implements ModelLoader {
         STATEMENTS.put("trait", SmithyModelLoader::parseTraitDefinition);
     }
 
+    private static final Set<String> SUPPORTS_TRAITS = SetUtils.of(
+            "bigDecimal", "bigInteger", "blob", "boolean", "byte", "document",
+            "double", "float", "integer", "list", "long", "map", "operation", "resource",
+            "service", "set", "short", "string", "structure", "timestamp", "union");
+
+    private static final Set<String> SUPPORTS_DOCS = new HashSet<>(SUPPORTS_TRAITS);
+
+    static {
+        SUPPORTS_DOCS.add("trait");
+    }
+
+
     @Override
     public boolean load(String path, Supplier<String> contentSupplier, LoaderVisitor visitor) {
         if (!path.endsWith(".smithy")) {
@@ -143,6 +155,19 @@ final class SmithyModelLoader implements ModelLoader {
     }
 
     /**
+     * Pending documentation comment that can be added to shapes or trait defs.
+     */
+    private static final class DocComment {
+        final SourceLocation sourceLocation;
+        final String content;
+
+        DocComment(String content, SourceLocation sourceLocation) {
+            this.content = content;
+            this.sourceLocation = sourceLocation;
+        }
+    }
+
+    /**
      * Encapsulates all of the parsing state.
      */
     private static final class State {
@@ -153,6 +178,7 @@ final class SmithyModelLoader implements ModelLoader {
         boolean definedMetadata;
         Token current;
         String namespace;
+        DocComment pendingDocComment;
 
         State(String filename, SmithyModelLexer lexer, LoaderVisitor visitor) {
             this.filename = filename;
@@ -268,13 +294,15 @@ final class SmithyModelLoader implements ModelLoader {
 
     private static void parse(State state) {
         while (!state.eof()) {
-            Token token = state.expect(UNQUOTED, ANNOTATION, DOLLAR);
+            Token token = state.expect(UNQUOTED, ANNOTATION, DOLLAR, DOC);
             if (token.type == UNQUOTED) {
                 parseStatement(token, state);
             } else if (token.type == ANNOTATION) {
-                state.pendingTraits.add(parseTraitValue(token, state));
+                state.pendingTraits.add(parseTraitValue(token, state, false));
             } else if (token.type == DOLLAR) {
                 parseControlStatement(state);
+            } else if (token.type == DOC) {
+                parseDocComment(state, token, false);
             }
         }
     }
@@ -316,8 +344,26 @@ final class SmithyModelLoader implements ModelLoader {
         }
     }
 
+    private static void parseDocComment(State state, Token token, boolean memberScope) {
+        StringBuilder builder = new StringBuilder(token.getDocContents());
+        while (state.peek().filter(tok -> tok.type == DOC).isPresent()) {
+            builder.append('\n').append(state.next().getDocContents());
+        }
+
+        state.pendingDocComment = new DocComment(builder.toString(), sourceFromToken(state, token));
+
+        if (!state.peek().isPresent()) {
+            throw state.syntax("Found a documentation comment that doesn't document anything");
+        }
+
+        Token next = state.peek().get();
+        if (next.type != ANNOTATION
+                && (next.type != UNQUOTED || (!memberScope && !SUPPORTS_DOCS.contains(next.lexeme)))) {
+            throw state.syntax("Documentation cannot be applied to `" + next.lexeme + "`");
+        }
+    }
+
     private static void parseNamespace(State state) {
-        requireNoPendingTraits(state);
         String namespace = state.expect(UNQUOTED).lexeme;
         if (!ShapeId.VALID_NAMESPACE.matcher(namespace).find()) {
             throw state.syntax("Invalid namespace name. Namespaces must match the following regular expression: "
@@ -333,19 +379,25 @@ final class SmithyModelLoader implements ModelLoader {
         }
     }
 
-    private static void requireNoPendingTraits(State state) {
-        if (!state.pendingTraits.isEmpty()) {
-            throw state.syntax("Traits cannot be applied to a `" + state.current().lexeme + "` definition");
-        }
-    }
-
-    private static Pair<String, Node> parseTraitValue(Token token, State state) {
+    private static Pair<String, Node> parseTraitValue(Token token, State state, boolean memberScope) {
         requireNamespaceOrThrow(state);
 
         try {
             // Ensure that the trait forms a syntactically valid value.
             ShapeId.fromOptionalNamespace(state.namespace, token.lexeme);
-            return Pair.of(token.lexeme, parseTraitValueBody(state));
+            Pair<String, Node> result = Pair.of(token.lexeme, parseTraitValueBody(state));
+
+            if (!state.peek().isPresent()) {
+                throw state.syntax("Found a trait doesn't apply to anything");
+            }
+
+            Token next = state.peek().get();
+            if (next.type != ANNOTATION
+                && (next.type != UNQUOTED || (!memberScope && !SUPPORTS_TRAITS.contains(next.lexeme)))) {
+                throw state.syntax("Traits cannot be applied to `" + next.lexeme + "`");
+            }
+
+            return result;
         } catch (ShapeIdSyntaxException e) {
             throw state.syntax("Invalid trait name syntax. Trait names must adhere to the same syntax as shape IDs.");
         }
@@ -404,9 +456,18 @@ final class SmithyModelLoader implements ModelLoader {
             state.pendingTraits.forEach(pair -> state.visitor.onTrait(
                     id, state.namespace, pair.getLeft(), pair.getRight()));
             state.pendingTraits.clear();
+            collectPendingDocString(state, id);
             return id;
         } catch (ShapeIdSyntaxException e) {
             throw state.syntax(e.getMessage());
+        }
+    }
+
+    private static void collectPendingDocString(State state, ShapeId id) {
+        if (state.pendingDocComment != null) {
+            Node value = new StringNode(state.pendingDocComment.content, state.pendingDocComment.sourceLocation);
+            state.pendingDocComment = null;
+            state.visitor.onTrait(id, state.namespace, DocumentationTrait.NAME, value);
         }
     }
 
@@ -504,12 +565,14 @@ final class SmithyModelLoader implements ModelLoader {
         List<Pair<String, Node>> memberTraits = new ArrayList<>();
         Set<String> remainingMembers = requiredMembers.isEmpty() ? SetUtils.of() : new HashSet<>(requiredMembers);
 
-        Token token = state.expect(ANNOTATION, QUOTED, UNQUOTED, RBRACE);
+        Token token = state.expect(ANNOTATION, QUOTED, UNQUOTED, RBRACE, DOC);
         while (token.type != RBRACE) {
             if (token.type == ANNOTATION) {
-                memberTraits.add(parseTraitValue(token, state));
+                memberTraits.add(parseTraitValue(token, state, true));
                 // Traits can't come before a closing brace, so continue
                 // to make sure they come before another trait or a key.
+            } else if (token.type == DOC) {
+                parseDocComment(state, token, true);
             } else {
                 String memberName = token.lexeme;
                 if (!requiredMembers.isEmpty()) {
@@ -526,16 +589,18 @@ final class SmithyModelLoader implements ModelLoader {
                 state.expect(COLON);
                 parseMember(state, memberId);
                 // Add the loaded traits on the member now that the ID is known.
-                memberTraits.forEach(pair -> state.visitor.onTrait(
-                        memberId, state.namespace, pair.getLeft(), pair.getRight()));
+                for (Pair<String, Node> pair : memberTraits) {
+                    state.visitor.onTrait(memberId, state.namespace, pair.getLeft(), pair.getRight());
+                }
                 memberTraits.clear();
+                collectPendingDocString(state, memberId);
 
                 if (state.expect(COMMA, RBRACE).type == RBRACE) {
                     break;
                 }
             }
 
-            token = state.expect(ANNOTATION, QUOTED, UNQUOTED, RBRACE);
+            token = state.expect(ANNOTATION, QUOTED, UNQUOTED, RBRACE, DOC);
         }
 
         if (!remainingMembers.isEmpty()) {
@@ -578,7 +643,6 @@ final class SmithyModelLoader implements ModelLoader {
         state.definedMetadata = true;
 
         // metadata key = value\n
-        requireNoPendingTraits(state);
         String key = state.expect(QUOTED, UNQUOTED).lexeme;
         state.expect(EQUAL);
         state.visitor.onMetadata(key, parseNode(state));
@@ -586,24 +650,26 @@ final class SmithyModelLoader implements ModelLoader {
     }
 
     private static void parseApply(State state) {
-        // apply <ShapeName> @<trait>\n
         requireNamespaceOrThrow(state);
-        requireNoPendingTraits(state);
+        // apply <ShapeName> @<trait>\n
         String name = state.expect(UNQUOTED).lexeme;
         ShapeId id = ShapeId.fromOptionalNamespace(state.namespace, name);
         Token token = state.expect(ANNOTATION);
-        Pair<String, Node> trait = parseTraitValue(token, state);
+        Pair<String, Node> trait = parseTraitValue(token, state, false);
         state.visitor.onTrait(id, state.namespace, trait.getLeft(), trait.getRight());
         state.expectNewline();
     }
 
     private static void parseTraitDefinition(State state) {
         requireNamespaceOrThrow(state);
-        requireNoPendingTraits(state);
+
+        String docs = state.pendingDocComment != null ? state.pendingDocComment.content : null;
+        state.pendingDocComment = null;
+
         String name = state.expect(UNQUOTED).lexeme;
         state.expect(LBRACE);
         ObjectNode node = parseObjectNode(state, sourceFromToken(state, state.current()), RBRACE);
-        LoaderUtils.loadTraitDefinition(state.namespace, name, node, state.visitor);
+        LoaderUtils.loadTraitDefinition(state.namespace, name, node, state.visitor, docs);
         state.expectNewline();
     }
 

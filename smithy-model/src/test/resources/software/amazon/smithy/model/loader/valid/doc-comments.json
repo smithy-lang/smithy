@@ -1,0 +1,24 @@
+{
+  "smithy": "0.1.0",
+  "smithy.example": {
+    "shapes": {
+      "MyString": {
+        "type": "string",
+        "documentation": "Foo\nbaz\nBar!"
+      },
+      "MyStructure": {
+        "type": "structure",
+        "documentation": "Structure",
+        "members": {
+          "foo": {"target": "String", "documentation": "Docs on member!"},
+          "baz": {"target": "String", "documentation": "Docs on another member!"}
+        }
+      }
+    },
+    "traitDefs": {
+      "MyTrait": {
+        "documentation": "The documentation\nof this trait!"
+      }
+    }
+  }
+}

@@ -57,6 +57,7 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
     enum TokenType {
         NEWLINE("\n"),
         WS("\\s+"),
+        DOC("///[^\\n]*"),
         COMMENT("//[^\\n]*"),
         RETURN(Pattern.quote("->")),
         DOLLAR(Pattern.quote("$")),
@@ -113,6 +114,17 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
             return errorMessage != null
                    ? String.format("ERROR(%s, %d:%d)", errorMessage, line, column)
                    : String.format("%s(%s, %d:%d)", type.name(), lexeme, line, column);
+        }
+
+        public String getDocContents() {
+            if (type != TokenType.DOC) {
+                throw new IllegalStateException("Not a doc comment token");
+            }
+
+            // Strip "///" and a leading space if present.
+            return lexeme.startsWith("/// ")
+                     ? lexeme.substring(4)
+                     : lexeme.substring(3);
         }
     }
 

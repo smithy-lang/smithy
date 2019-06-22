@@ -111,6 +111,7 @@ weather service.
 
         namespace example.weather
 
+        /// Provides weather forecasts.
         service Weather {
           version: "2006-03-01"
         }
@@ -155,6 +156,7 @@ identifiers, operations, and any number of child resources.
 
         namespace example.weather
 
+        /// Provides weather forecasts.
         service Weather {
           version: "2006-03-01",
           resources: [City]
@@ -536,6 +538,7 @@ service.
 
     .. code-tab:: smithy
 
+        /// Provides weather forecasts.
         service Weather {
           version: "2006-03-01",
           resources: [City],
@@ -604,6 +607,7 @@ Complete example
 
         namespace example.weather
 
+        /// Provides weather forecasts.
         service Weather {
           version: "2006-03-01",
           resources: [City],
