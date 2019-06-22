@@ -23,7 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -84,5 +86,16 @@ public class SmithyModelLoaderTest {
         assertTrue(model.getTraitDefinition("example.namespace#numeric").isPresent());
         assertThat(model.getTraitDefinition("example.namespace#numeric").get().getShape().get(),
                    equalTo(ShapeId.from("smithy.api#Integer")));
+    }
+
+    @Test
+    public void canLoadAndAliasShapesAndTraits() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("first-namespace.smithy"))
+                .addImport(getClass().getResource("second-namespace.smithy"))
+                .assemble()
+                .unwrap();
+
+        System.out.println(Node.prettyPrintJson(ModelSerializer.builder().build().serialize(model)));
     }
 }

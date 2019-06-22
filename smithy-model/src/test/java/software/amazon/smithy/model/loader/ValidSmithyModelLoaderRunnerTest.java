@@ -75,7 +75,7 @@ public class ValidSmithyModelLoaderRunnerTest {
 
     private static List<SmithyModelLexer.Token> getTokens(String smithyFilename) {
         List<SmithyModelLexer.Token> tokens = new ArrayList<>();
-        new SmithyModelLexer(IoUtils.readUtf8File(smithyFilename)).forEachRemaining(tokens::add);
+        new SmithyModelLexer(smithyFilename, IoUtils.readUtf8File(smithyFilename)).forEachRemaining(tokens::add);
         return tokens;
     }
 

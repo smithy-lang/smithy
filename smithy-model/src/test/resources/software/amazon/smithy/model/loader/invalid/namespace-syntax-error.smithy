@@ -1,2 +1,2 @@
-// Parse error at line 2, column 11 near `not.valid.trailing.`: Invalid namespace name
+// Invalid namespace name `not.valid.trailing.`
 namespace not.valid.trailing.

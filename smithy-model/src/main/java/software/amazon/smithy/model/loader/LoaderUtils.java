@@ -90,7 +90,7 @@ final class LoaderUtils {
             for (Map.Entry<StringNode, Node> entry : ids.getMembers().entrySet()) {
                 String name = entry.getKey().getValue();
                 String target = entry.getValue().expectStringNode().getValue();
-                visitor.onShapeTarget(shapeId.getNamespace(), target, id -> builder.addIdentifier(name, id));
+                visitor.onShapeTarget(target, id -> builder.addIdentifier(name, id));
             }
         });
     }
@@ -141,7 +141,7 @@ final class LoaderUtils {
         // Resolve shape targets only after all shapes have been loaded by the assembler.
         members.getStringMember(TraitDefinition.SHAPE_KEY)
                 .map(StringNode::getValue)
-                .ifPresent(shape -> visitor.onShapeTarget(namespace, shape, builder::shape));
+                .ifPresent(shape -> visitor.onShapeTarget(shape, builder::shape));
 
         members.getMember(TraitDefinition.TAGS_KEY)
                 .ifPresent(values -> loadArrayOfString(TraitDefinition.TAGS_KEY, values)
