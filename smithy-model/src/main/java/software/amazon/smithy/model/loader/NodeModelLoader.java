@@ -268,7 +268,7 @@ final class NodeModelLoader implements ModelLoader {
     private void loadTraitDefs(LoaderVisitor visitor, String namespace, ObjectNode members) {
         for (Map.Entry<StringNode, Node> entry : members.getMembers().entrySet()) {
             try {
-                LoaderUtils.loadTraitDefinition(namespace, entry.getKey().getValue(), entry.getValue(), visitor);
+                LoaderUtils.loadTraitDefinition(namespace, entry.getKey().getValue(), entry.getValue(), visitor, null);
             } catch (SourceException e) {
                 visitor.onError(ValidationEvent.fromSourceException(e));
             }

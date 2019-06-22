@@ -2,7 +2,7 @@ namespace com.example
 
 string String
 
-///////////// lists //////////////
+// ----- lists ------
 
 list A {member: smithy.api#String}
 list B {member:String}
@@ -40,7 +40,7 @@ list G
 member: String
 }
 
-///////////// sets //////////////
+//---- sets -----
 
 set H {member: smithy.api#String}
 set I{member:String}

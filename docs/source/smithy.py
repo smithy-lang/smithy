@@ -14,20 +14,16 @@ class HTMLTranslator(SphinxHTMLTranslator):
     def visit_productionlist(self, node):
         # type: (nodes.Node) -> None
         self.body.append(self.starttag(node, 'pre'))
-        names = []
-        for production in node:
-            names.append(production['tokenname'])
-        maxlen = max(len(name) for name in names)
         lastname = None
         for production in node:
             if production['tokenname']:
                 if lastname is not None:
                     self.body.append('\n')
-                lastname = production['tokenname'].ljust(maxlen)
+                lastname = production['tokenname']
                 self.body.append(self.starttag(production, 'strong', ''))
-                self.body.append(lastname + '</strong> = ')
+                self.body.append(lastname + "</strong> =\n    ")
             elif lastname is not None:
-                self.body.append('%s   ' % (' ' * len(lastname)))
+                self.body.append('  ')
             production.walkabout(self)
             self.body.append('\n')
         self.body.append('</pre>\n')

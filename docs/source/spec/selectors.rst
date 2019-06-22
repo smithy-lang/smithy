@@ -517,10 +517,7 @@ Selectors are defined by the following ABNF_ grammar.
 
 .. productionlist:: selectors
     selector             :`selector_expression` *(`selector_expression`)
-    selector_expression  :`shape_types`
-                         :/ `attr`
-                         :/ `function_expression`
-                         :/ `neighbors`
+    selector_expression  :`shape_types` / `attr` / `function_expression` / `neighbors`
     shape_types          :"*"
                          :/ "blob"
                          :/ "boolean"
@@ -561,22 +558,17 @@ Selectors are defined by the following ABNF_ grammar.
                          :/ "operation"
                          :/ "resource"
                          :/ "bound"
-    attr                   :"[" `attr_key`
-                           :*(`comparator` `attr_value` ["i"]) "]"
-    attr_key               :`id_attribute`
-                           :/ `trait_attribute`
-                           :/ `service_attribute`
+    attr                   :"[" `attr_key` *(`comparator` `attr_value` ["i"]) "]"
+    attr_key               :`id_attribute` / `trait_attribute` / `service_attribute`
     id_attribute           :"id" ["|" ("namespace" / "name" / "member")]
     trait_attribute        :"trait" "|" `attr_value` *("|" `attr_value`)
     attr_value             :`attr_identifier` / `selector_text`
-    attr_identifier        :1*(ALPHA / DIGIT / "_")
-                           :*(ALPHA / DIGIT / "_" / "-" / "." / "#")
+    attr_identifier        :1*(ALPHA / DIGIT / "_") *(ALPHA / DIGIT / "_" / "-" / "." / "#")
     service_attribute      :"service|version"
     comparator            :"^=" / "$=" / "*=" / "="
     function_expression   :":" `function` "(" `selector` *("," `selector`) ")"
     function              :"each" / "test" / "of" / "not"
-    selector_text         :`selector_single_quoted_text`
-                          :/ `selector_double_quoted_text`
+    selector_text         :`selector_single_quoted_text` / `selector_double_quoted_text`
     selector_single_quoted_text    :"'" 1*`selector_single_quoted_char` "'"
     selector_double_quoted_text    :DQUOTE 1*`selector_double_quoted_char` DQUOTE
     selector_single_quoted_char    :%x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')

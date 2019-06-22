@@ -32,6 +32,7 @@ The Smithy IDL is a series of statements separated by newlines.
                             :/ `metadata_statement`
                             :/ `namespace_statement`
                             :/ `apply_statement`
+                            :/ `documentation_comment`
                             :/ `trait_statement`
                             :/ `shape_statement`
 
@@ -57,8 +58,9 @@ is insignificant. Comments in Smithy are defined using two forward slashes
 followed by any character. A newline terminates a comment.
 
 .. productionlist:: smithy
-    line_comment        :"//" *(`not_newline`)
-    not_newline         :%x09 / %x20-10FFFF ; Any character but new line
+    line_comment        :"//" *(start_comment *`not_newline`)
+    start_comment       :%x09 / %x20-%x46 / %x48-10FFFF ; Any character other than "/" or newline
+    not_newline         :%x09 / %x20-10FFFF             ; Any character but new line
 
 Example:
 
@@ -176,14 +178,11 @@ be defined after a *current namespace* has been defined using a
                             :/ `simple_shape`
     service_statement       :"service" `identifier` `node_object`
     resource_statement      :"resource" `identifier` `node_object`
-    operation_statement     :"operation" `identifier`
-                            :"(" [`shape_id`] ")" `operation_results`
-    operation_results       :["->" `shape_id`]
-                            :["errors" "[" [`shape_id` *("," `shape_id`)] "]"]
+    operation_statement     :"operation" `identifier` "(" [`shape_id`] ")" `operation_results`
+    operation_results       :["->" `shape_id`] ["errors" "[" [`shape_id` *("," `shape_id`)] "]"]
     structure_statement     :"structure" `structured_body`
     union_statement         :"union" `structured_body`
-    structured_body         :`identifier`
-                            :"{" [`structured_member` *("," `structured_member`)] "}"
+    structured_body         :`identifier` "{" [`structured_member` *("," `structured_member`)] "}"
     structured_member       :`member_traits` `identifier` ":" `shape_id`
     list_statement          :"list" `list_and_set_body`
     set_statement           :"set" `list_and_set_body`
@@ -191,18 +190,10 @@ be defined after a *current namespace* has been defined using a
     map_statement           :"map" `identifier` "{" `map_body` "}"
     map_body                :`map_member` "," `map_member` [","]
     map_member              :`member_traits` ("key" / "value") ":" `shape_id`
-    simple_shape            :(   "blob"
-                            :  / "boolean"
-                            :  / "string"
-                            :  / "byte"
-                            :  / "short"
-                            :  / "integer"
-                            :  / "long"
-                            :  / "float"
-                            :  / "double"
-                            :  / "bigInteger"
-                            :  / "bigDecimal"
-                            :  / "timestamp" ) `identifier`
+    simple_shape            :`simple_shape_name` `identifier`
+    simple_shape_name       :"blob" / "boolean" / "document" / "string" / "byte" / "short"
+                            :/ "integer" / "long" / "float" / "double" / "bigInteger"
+                            :/ "bigDecimal" / "timestamp"
 
 
 Apply statement
@@ -220,6 +211,115 @@ named ``MyShape`` using a :ref:`relative shape id <relative-shape-id>`.
 ::
 
     apply MyShape @deprecated
+
+
+.. _documentation-comment:
+
+Documentation comment
+---------------------
+
+Documentation comments are a special kind of comment that provide
+documentation for shapes and trait definitions. A documentation comment
+is formed when three forward slashes ("///") appear as the first
+non-whitespace characters on a line.
+
+.. productionlist:: smithy
+    documentation_comment   :"///" *(`not_newline`)
+
+Documentation comments are defined using CommonMark_. The text after the
+forward slashes is considered the contents of the line. If the text starts
+with a space (" "), the leading space is removed from the content.
+Successive documentation comments are combined together using a newline
+("\\n") to form the documentation of a shape or trait definition.
+
+.. note::
+
+    Documentation comments on shapes are just syntax sugar for applying the
+    :ref:`documentation-trait`.
+
+The following Smithy IDL example,
+
+::
+
+    namespace smithy.example
+
+    /// This is documentation about a shape.
+    ///
+    /// - This is a list
+    /// - More of the list.
+    string MyString
+
+    /// This is documentation about a trait definition.
+    ///   More docs here.
+    trait myTrait {}
+
+is equivalent to the following JSON model:
+
+.. code-block:: json
+
+    {
+        "smithy": "0.1.0",
+        "smithy.example": {
+            "shapes": {
+                "MyString": {
+                    "type": "string",
+                    "documentation": "This is documentation about a shape.\n\n- This is a list\n- More of the list."
+                }
+            },
+            "traitDefs": {
+                "myTrait": {
+                    "documentation": "This is documentation about a trait definition.\n  More docs here."
+                }
+            }
+        }
+    }
+
+Documentation comments MUST appear immediately before the shape or trait
+definition that they document. When documenting a shape, documentation
+comments MUST appear **before** traits applied to the shape.
+
+The following example is valid because the documentation comment comes
+before the traits applied to a shape:
+
+::
+
+    /// A deprecated string.
+    @deprecated
+    string MyString
+
+Documentation comments can be applied to members of a shape.
+
+::
+
+    // Documentation about the structure.
+    structure Example {
+        /// Documentation about the member.
+        @sensitive
+        foo: String,
+    }
+
+Documentation comments MUST NOT be applied to anything other than shapes,
+trait definitions, and members. The following documentation comments are
+all invalid.
+
+::
+
+    /// Invalid (cannot apply to control statements)
+    $version: "0.1.0"
+
+    /// Invalid (cannot apply to namespaces)
+    namespace smithy.example
+
+    /// Invalid (cannot apply to metadata)
+    metadata foo = "baz"
+
+    @deprecated
+    /// Invalid (comes after the @deprecated trait)
+    structure Example {
+      /// Invalid (cannot apply docs to '}')
+    }
+
+    /// Invalid (nothing comes after the comment)
 
 
 .. _trait-statement:
@@ -287,7 +387,7 @@ or to escape an escape (using ``\\``).
     unquoted_text       :(ALPHA / "_") *(ALPHA / DIGIT / "-" / "_" / "$" / "." / "#")
     quoted_text         :`single_quoted_text` / `double_quoted_text`
     single_quoted_text  :"'" *`single_quoted_char` "'"
-    single_quoted_char  :  %x20-26
+    single_quoted_char  :%x20-26
                         :/ %x28-5B
                         :/ %x5D-10FFFF
                         :/ `escaped_char`
@@ -297,7 +397,7 @@ or to escape an escape (using ``\\``).
     hex                 : DIGIT / %x41-46 / %x61-66
     preserved_single    :`escape` (%x20-26 / %x28-5B / %x5D-10FFFF)
     double_quoted_text  :DQUOTE *`double_quoted_char` DQUOTE
-    double_quoted_char  :  %x20-21
+    double_quoted_char  :%x20-21
                         :/ %x23-5B
                         :/ %x5D-10FFFF
                         :/ `escaped_char`
@@ -630,14 +730,9 @@ unquoted keys, unquoted strings, single quoted strings, long strings,
 and trailing commas.
 
 .. productionlist:: smithy
-    node_value          :  `text`
-                        :/ `number`
-                        :/ `node_array`
-                        :/ `node_object`
-    node_array          :"[" [`node_value` *("," `node_value`)]
-                        :(( "," "]" ) / "]" )
-    node_object         :"{" [`node_object_kvp` *("," `node_object_kvp`)]
-                        :(( "," "}" ) / "}" )
+    node_value          :`text` / `number` / `node_array` / `node_object`
+    node_array          :"[" [`node_value` *("," `node_value`)] (( "," "]" ) / "]" )
+    node_object         :"{" [`node_object_kvp` *("," `node_object_kvp`)] (( "," "}" ) / "}" )
     node_object_kvp     :`text` ":" `node_value`
     number              :[`minus`] `int` [`frac`] [`exp`]
     decimal_point       :%x2E ; .
@@ -1114,3 +1209,4 @@ The following example defines an operation, its input, output, and errors:
     }
 
 .. _ABNF: https://tools.ietf.org/html/rfc5234
+.. _CommonMark: https://spec.commonmark.org/
