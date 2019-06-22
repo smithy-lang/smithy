@@ -19,14 +19,14 @@ public class SmithyModelLexerTest {
     @Test
     public void throwsWhenNoTokens() {
         Assertions.assertThrows(NoSuchElementException.class, () -> {
-            new SmithyModelLexer("").next();
+            new SmithyModelLexer("/foo.smithy", "").next();
         });
     }
 
     @ParameterizedTest
     @MethodSource("validTextProvider")
     public void parsesText(String input, String lexeme) {
-        SmithyModelLexer lexer = new SmithyModelLexer(input);
+        SmithyModelLexer lexer = new SmithyModelLexer("/foo.smithy", input);
         SmithyModelLexer.Token token = lexer.next();
 
         assertThat(token.lexeme, equalTo(lexeme));
@@ -113,7 +113,7 @@ public class SmithyModelLexerTest {
     @ParameterizedTest
     @MethodSource("invalidStringEscapeProvider")
     public void parsesInvalidEscapesInString(String input, String errorContains) {
-        SmithyModelLexer lexer = new SmithyModelLexer(input);
+        SmithyModelLexer lexer = new SmithyModelLexer("/foo.smithy", input);
         SmithyModelLexer.Token token = lexer.next();
         if (token.type != SmithyModelLexer.TokenType.ERROR) {
             Assertions.fail("expected a syntax error for: `" + input + "`, but found " + token);
@@ -157,7 +157,7 @@ public class SmithyModelLexerTest {
     @MethodSource("lineAndColumnProvider")
     public void tracksLineAndColumn(String input, String[] positions) {
         List<SmithyModelLexer.Token> tokens = new ArrayList<>();
-        SmithyModelLexer lexer = new SmithyModelLexer(input);
+        SmithyModelLexer lexer = new SmithyModelLexer("/foo.smithy", input);
         lexer.forEachRemaining(tokens::add);
 
         assertThat("Token length mismatch: " + tokens, tokens.size(), equalTo(positions.length));

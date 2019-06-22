@@ -38,6 +38,7 @@ import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.DynamicTrait;
@@ -104,6 +105,15 @@ final class LoaderVisitor {
     /** Built trait definitions. Keys are not allowed to conflict with pendingTraitDefinitions. */
     private final Map<String, TraitDefinition> builtTraitDefinitions = new HashMap<>();
 
+    /** Current namespace being parsed. */
+    private String namespace;
+
+    /** Map of shape aliases to their alias. */
+    private final Map<String, ShapeId> useShapes = new HashMap<>();
+
+    /** Map of trait aliases to their alias. */
+    private final Map<String, ShapeId> useTraits = new HashMap<>();
+
     private static final class PendingTrait {
         final String relativeNamespace;
         final String name;
@@ -153,7 +163,52 @@ final class LoaderVisitor {
     }
 
     /**
-     * Adds a possible forward reference to the LoaderVisitor.
+     * Invoked each time a new file is loaded, causing any file-specific
+     * caches and metadata to be flushed.
+     *
+     * <p>More specifically, this method clears out the previously used
+     * trait and shape name aliases so that they do not affect the next
+     * file that is loaded.
+     *
+     * @param filename The name of the file being opened.
+     */
+    public void onOpenFile(String filename) {
+        LOGGER.fine(() -> "Beginning to parse " + filename);
+        namespace = null;
+        useShapes.clear();
+        useTraits.clear();
+    }
+
+    /**
+     * Gets the namespace that is currently being loaded.
+     *
+     * @return Returns the namespace or null if none is set.
+     */
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * Sets and validates the current namespace of the visitor.
+     *
+     * <p>Relative shape and trait definitions will use this
+     * namespace by default.
+     *
+     * @param namespace Namespace being entered.
+     * @param source The source location of where the namespace is defined.
+     */
+    public void onNamespace(String namespace, FromSourceLocation source) {
+        if (!ShapeId.VALID_NAMESPACE.matcher(namespace).find()) {
+            String msg = String.format("Invalid namespace name `%s`. Namespaces must match the following pattern: %s",
+                                       namespace, ShapeId.VALID_NAMESPACE);
+            throw new ModelSyntaxException(msg, source);
+        }
+
+        this.namespace = namespace;
+    }
+
+    /**
+     * Resolve shape targets and tracks forward references.
      *
      * <p>Smithy models allow for forward references to shapes that have not
      * yet been defined. Only after all shapes are loaded is the entire set
@@ -171,14 +226,19 @@ final class LoaderVisitor {
      * the {@code resolver} is invoked inside of the {@link #onEnd} method
      * only after all shapes have been declared.
      *
-     * @param namespace Namespace the target was defined in.
      * @param target Shape that is targeted.
      * @param resolver The consumer to invoke once the shape ID is resolved.
      */
-    public void onShapeTarget(String namespace, String target, Consumer<ShapeId> resolver) {
+    public void onShapeTarget(String target, Consumer<ShapeId> resolver) {
+        assertNamespaceIsPresent(SourceLocation.none());
+
         ShapeId expectedId = ShapeId.fromOptionalNamespace(namespace, target);
         if (hasDefinedShape(expectedId) || target.contains("#")) {
+            // Account for previously seen shapes in this namespace and absolute shapes.
             resolver.accept(expectedId);
+        } else if (useShapes.containsKey(target)) {
+            // Account for aliased shapes.
+            resolver.accept(useShapes.get(target));
         } else {
             forwardReferenceResolvers.add(new ForwardReferenceResolver(expectedId, resolver));
         }
@@ -328,6 +388,61 @@ final class LoaderVisitor {
     }
 
     /**
+     * Invoked when a shape definition name is defined, validates the name,
+     * and returns the resolved shape ID of the name.
+     *
+     * <p>This method ensures a namespace has been set, the syntax is valid,
+     * and that the name does not conflict with any previously defined use
+     * statements.
+     *
+     * @param name Name being defined.
+     * @param source The location of where it is defined.
+     * @return Returns the parsed and loaded shape ID.
+     */
+    public ShapeId onShapeDefName(String name, FromSourceLocation source) {
+        return shapeId(name, "shape", source, useShapes);
+    }
+
+    /**
+     * Invoked when a trait definition name is defined, validates the name,
+     * and returns the resolved ID of the name.
+     *
+     * <p>This method ensures a namespace has been set, the syntax is valid,
+     * and that the name does not conflict with any previously defined use
+     * statements.
+     *
+     * @param name Name being defined.
+     * @param source The location of where it is defined.
+     * @return Returns the parsed and loaded shape ID.
+     */
+    public ShapeId onTraitDefName(String name, FromSourceLocation source) {
+        return shapeId(name, "trait", source, useTraits);
+    }
+
+    private ShapeId shapeId(String name, String descriptor, FromSourceLocation source, Map<String, ShapeId> map) {
+        validateState(source);
+        assertNamespaceIsPresent(source);
+
+        if (map.containsKey(name)) {
+            String msg = String.format("%s name `%s` conflicts with imported shape `%s`",
+                                       descriptor, name, map.get(name));
+            throw new UseException(msg, source);
+        }
+
+        try {
+            return ShapeId.fromRelative(namespace, name);
+        } catch (ShapeIdSyntaxException e) {
+            throw new ModelSyntaxException("Invalid " + descriptor + " name: " + name, source);
+        }
+    }
+
+    private void assertNamespaceIsPresent(FromSourceLocation source) {
+        if (namespace == null) {
+            throw new ModelSyntaxException("A namespace must be set before shapes or traits can be defined", source);
+        }
+    }
+
+    /**
      * Adds a shape to the loader.
      *
      * @param shapeBuilder Shape builder to add.
@@ -385,16 +500,26 @@ final class LoaderVisitor {
      * Adds a trait to a shape.
      *
      * <p>Resolving the trait against a trait definition is deferred until
-     * the entire model is loaded.
+     * the entire model is loaded. A namespace is required to have been set
+     * if the trait name is not absolute.
      *
      * @param target Shape to add the trait to.
-     * @param currentNamespace Namespace that the trait was added inside.
      * @param traitName Fully-qualified trait name to add.
      * @param traitValue Trait value as a Node object.
      */
-    public void onTrait(ShapeId target, String currentNamespace, String traitName, Node traitValue) {
+    public void onTrait(ShapeId target, String traitName, Node traitValue) {
         validateState(traitValue);
-        PendingTrait pendingTrait = new PendingTrait(currentNamespace, traitName, traitValue);
+
+        if (!traitName.contains("#")) {
+            assertNamespaceIsPresent(traitValue);
+        }
+
+        // Account for trait aliases.
+        if (useTraits.containsKey(traitName)) {
+            traitName = useTraits.get(traitName).toString();
+        }
+
+        PendingTrait pendingTrait = new PendingTrait(namespace, traitName, traitValue);
         pendingTraits.computeIfAbsent(target, id -> new ArrayList<>()).add(pendingTrait);
     }
 
@@ -477,6 +602,39 @@ final class LoaderVisitor {
                     .build());
         } else {
             LOGGER.fine(() -> "Ignoring duplicate metadata definition of " + key);
+        }
+    }
+
+    /**
+     * Registers a fully-qualified trait name as an alias.
+     *
+     * <p>These aliases are cleared when {@link #onOpenFile} is called.
+     *
+     * @param id Shape ID to use.
+     * @param location The location of where it is registered.
+     */
+    void onUseTrait(ShapeId id, FromSourceLocation location) {
+        addUseAlias("use trait", id, useTraits, location);
+    }
+
+    /**
+     * Registers an absolute shape ID as an alias.
+     *
+     * <p>These aliases are cleared when {@link #onOpenFile} is called.
+     *
+     * @param id Fully-qualified shape ID to register.
+     * @param location The location of where it is registered.
+     */
+    void onUseShape(ShapeId id, FromSourceLocation location) {
+        addUseAlias("use shape", id, useShapes, location);
+    }
+
+    private void addUseAlias(String key, ShapeId id, Map<String, ShapeId> map, FromSourceLocation location) {
+        validateState(location);
+        ShapeId previous = map.put(id.getName(), id);
+        if (previous != null) {
+            throw new UseException(String.format(
+                    "Cannot `%s` name `%s` because it conflicts with `%s`", key, id, previous), location);
         }
     }
 
@@ -776,7 +934,7 @@ final class LoaderVisitor {
      * event is logged.
      *
      * @param shapeBuilder Shape builder to update.
-     * @param traitName Name of the trait to add.
+     * @param traitName Name of the fully-qualified trait to add.
      * @param traitValue The trait value to set.
      */
     private void createAndApplyTraitToShape(AbstractShapeBuilder shapeBuilder, String traitName, Node traitValue) {

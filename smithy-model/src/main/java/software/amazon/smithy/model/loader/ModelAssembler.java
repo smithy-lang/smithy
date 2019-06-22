@@ -472,12 +472,12 @@ public final class ModelAssembler {
         traitDefinitions.forEach(visitor::onTraitDef);
         metadata.forEach(visitor::onMetadata);
 
-        if (!disablePrelude) {
-            mergeModelIntoVisitor(Prelude.getPreludeModel(), visitor);
-        }
-
         for (Model model : mergeModels) {
             mergeModelIntoVisitor(model, visitor);
+        }
+
+        if (!disablePrelude) {
+            mergeModelIntoVisitor(Prelude.getPreludeModel(), visitor);
         }
 
         ValidatedResult<Model> modelResult = visitor.onEnd();

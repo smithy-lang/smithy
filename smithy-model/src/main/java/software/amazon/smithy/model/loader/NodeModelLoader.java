@@ -92,6 +92,7 @@ final class NodeModelLoader implements ModelLoader {
     public boolean load(String filename, Supplier<String> contentSupplier, LoaderVisitor visitor) {
         if (test(filename, contentSupplier)) {
             Node node = nodeFactory.createNode(filename, contentSupplier.get());
+            visitor.onOpenFile(filename);
             load(visitor, node);
             return true;
         }
@@ -195,10 +196,8 @@ final class NodeModelLoader implements ModelLoader {
 
     void load(LoaderVisitor visitor, Node node) {
         ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
-
-        model.getMember(SMITHY).ifPresent(version -> {
-            visitor.onVersion(version.getSourceLocation(), version.expectStringNode().getValue());
-        });
+        StringNode version = model.expectMember(SMITHY).expectStringNode();
+        visitor.onVersion(version.getSourceLocation(), version.expectStringNode().getValue());
 
         model.getMember(METADATA).ifPresent(value -> {
             ObjectNode metadata = value.expectObjectNode("`metadata` must be an object");
@@ -209,16 +208,13 @@ final class NodeModelLoader implements ModelLoader {
             String keyValue = key.getValue();
             if (!keyValue.equals(SMITHY) && !keyValue.equals(METADATA)) {
                 // Additional properties are considered namespaces.
+                visitor.onNamespace(key.getValue(), key);
                 loadNamespace(visitor, key.getValue(), value.expectObjectNode());
             }
         });
     }
 
     private void loadNamespace(LoaderVisitor visitor, String namespace, ObjectNode node) {
-        if (!ShapeId.isValidNamespace(namespace)) {
-            throw new SourceException(String.format("Invalid namespace name, `%s`", namespace), node);
-        }
-
         ObjectNode members = node.expectObjectNode("Each namespace must be an object. Found {type}.");
         members.warnIfAdditionalProperties(NAMESPACE_PROPERTIES);
         node.getObjectMember(SHAPES).ifPresent(shapes -> loadShapes(visitor, namespace, shapes));
@@ -248,7 +244,7 @@ final class NodeModelLoader implements ModelLoader {
                 ObjectNode traitDefinitions = v.expectObjectNode(
                         "Each value in the inner object of `traits` must be an object; found {type}.");
                 for (Map.Entry<StringNode, Node> traitNode : traitDefinitions.getMembers().entrySet()) {
-                    visitor.onTrait(shapeId, namespace, traitNode.getKey().getValue(), traitNode.getValue());
+                    visitor.onTrait(shapeId, traitNode.getKey().getValue(), traitNode.getValue());
                 }
             } catch (ShapeIdSyntaxException e) {
                 visitor.onError(invalidShapeId("traits", e.getMessage(), k.getSourceLocation()));
@@ -294,7 +290,7 @@ final class NodeModelLoader implements ModelLoader {
                 .expectMember("target", "Missing required member property `target`.")
                 .expectStringNode("Expected `target` property of member to be a string; found {type}.")
                 .getValue();
-        visitor.onShapeTarget(shapeId.getNamespace(), target, builder::target);
+        visitor.onShapeTarget(target, builder::target);
         extractTraits(shapeId, targetNode, MEMBER_PROPERTIES, visitor);
         visitor.onShape(builder);
     }
@@ -309,7 +305,7 @@ final class NodeModelLoader implements ModelLoader {
         for (Map.Entry<StringNode, Node> entry : shapeNode.getMembers().entrySet()) {
             String traitName = entry.getKey().getValue();
             if (!propertyNames.contains(traitName)) {
-                visitor.onTrait(shapeId, shapeId.getNamespace(), traitName, entry.getValue());
+                visitor.onTrait(shapeId, traitName, entry.getValue());
             }
         }
     }

@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 
 /**
  * Tokenizes a .smithy formatted string into a list of tokens.
@@ -39,12 +41,15 @@ import java.util.regex.Pattern;
 final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
 
     private static final Pattern COMPILED;
+    private final String filename;
     private Token peeked;
     private int line = 1;
     private int lastLineOffset;
     private final Matcher matcher;
 
-    SmithyModelLexer(String input) {
+    SmithyModelLexer(String filename, String input) {
+        this.filename = filename;
+
         // Normalize all new lines into \n.
         if (input.indexOf('\r') > -1) {
             input = input.replaceAll("\r\n?", "\n");
@@ -60,7 +65,7 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         DOC("///[^\\n]*"),
         COMMENT("//[^\\n]*"),
         RETURN(Pattern.quote("->")),
-        DOLLAR(Pattern.quote("$")),
+        CONTROL("\\$[A-Za-z_][ A-Za-z0-9_#$.-]*:"),
         UNQUOTED("[A-Za-z_][A-Za-z0-9_#$.-]*"),
         LPAREN(Pattern.quote("(")),
         RPAREN(Pattern.quote(")")),
@@ -92,7 +97,8 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
     }
 
     /** Represents a parsed token. */
-    static final class Token {
+    static final class Token implements FromSourceLocation {
+        final String filename;
         final TokenType type;
         final String lexeme;
         final String errorMessage;
@@ -100,7 +106,8 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         final int column;
         final int span;
 
-        Token(TokenType type, String lexeme, int line, int column, int span, String errorMessage) {
+        Token(String filename, TokenType type, String lexeme, int line, int column, int span, String errorMessage) {
+            this.filename = filename;
             this.type = type;
             this.lexeme = lexeme;
             this.line = line;
@@ -114,6 +121,11 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
             return errorMessage != null
                    ? String.format("ERROR(%s, %d:%d)", errorMessage, line, column)
                    : String.format("%s(%s, %d:%d)", type.name(), lexeme, line, column);
+        }
+
+        @Override
+        public SourceLocation getSourceLocation() {
+            return new SourceLocation(filename, line, column);
         }
 
         public String getDocContents() {
@@ -220,7 +232,7 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                             break;
                     }
 
-                    return new Token(token, lexeme, startingLineNumber, column, span, errorMessage);
+                    return new Token(filename, token, lexeme, startingLineNumber, column, span, errorMessage);
                 }
             }
         }

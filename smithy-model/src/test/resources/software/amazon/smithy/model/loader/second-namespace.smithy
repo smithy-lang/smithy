@@ -1,0 +1,18 @@
+$version: "0.1.0"
+
+use shape smithy.example1#Foo
+use shape smithy.example1#[Baz, Bar]
+
+use trait smithy.example1#trait1
+use trait smithy.example1#[trait2, trait3]
+
+namespace smithy.example2
+
+@trait1
+@trait2
+@trait3
+structure MyStruct {
+    foo: Foo,
+    baz: Baz,
+    bar: Bar,
+}

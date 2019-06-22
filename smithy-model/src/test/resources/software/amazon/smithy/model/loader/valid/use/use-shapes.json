@@ -1,0 +1,20 @@
+{
+  "smithy": "0.1.0",
+  "smithy.example": {
+    "shapes": {
+      "MyList": {
+        "type": "list",
+        "member": {
+          "target": "smithy.api#String"
+        }
+      },
+      "Struct": {
+        "type": "structure",
+        "members": {
+          "a": {"target": "smithy.api#Integer"},
+          "b": {"target": "smithy.api#Long"}
+        }
+      }
+    }
+  }
+}

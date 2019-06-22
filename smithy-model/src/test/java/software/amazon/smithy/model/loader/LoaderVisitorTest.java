@@ -148,11 +148,13 @@ public class LoaderVisitorTest {
     @Test
     public void cannotDuplicateTraits() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
+        visitor.onOpenFile("/foo/baz");
         visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
+        visitor.onNamespace("foo.bam", SourceLocation.NONE);
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));
-        visitor.onTrait(id, "foo.bam", "documentation", Node.from("abc"));
-        visitor.onTrait(id, "foo.bam", "documentation", Node.from("def"));
+        visitor.onTrait(id, "documentation", Node.from("abc"));
+        visitor.onTrait(id, "documentation", Node.from("def"));
         List<ValidationEvent> events = visitor.onEnd().getValidationEvents();
 
         assertThat(events, not(empty()));
@@ -161,12 +163,14 @@ public class LoaderVisitorTest {
     @Test
     public void createsModeledTraitWhenTraitFactoryReturnsEmpty() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
+        visitor.onOpenFile("/foo/baz.smithy");
         visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
+        visitor.onNamespace("foo.bam", SourceLocation.none());
         TraitDefinition.Builder def = TraitDefinition.builder().name("foo.baz#Bar").selector(Selector.IDENTITY);
         visitor.onTraitDef(def);
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));
-        visitor.onTrait(id, "foo.baz", "foo.baz#Bar", Node.from(true));
+        visitor.onTrait(id, "foo.baz#Bar", Node.from(true));
         Model model = visitor.onEnd().unwrap();
 
         assertThat(model.getShapeIndex().getShape(id).get().findTrait("foo.baz#Bar").get(),
@@ -176,10 +180,12 @@ public class LoaderVisitorTest {
     @Test
     public void failsWhenTraitNotFound() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
+        visitor.onOpenFile("/foo/baz.smithy");
         visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
+        visitor.onNamespace("foo.bam", SourceLocation.none());
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));
-        visitor.onTrait(id, "foo.baz", "foo.baz#Bar", Node.from(true));
+        visitor.onTrait(id, "foo.baz#Bar", Node.from(true));
         List<ValidationEvent> events = visitor.onEnd().getValidationEvents();
 
         assertThat(events, not(empty()));

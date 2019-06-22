@@ -2,3 +2,4 @@
 namespace foo.bar
 
 @invalid##foo..bar
+string MyString
