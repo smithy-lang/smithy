@@ -1548,7 +1548,7 @@ For example, given the following model,
         @readonly
         operation GetForecast(GetForecastInput) -> GetForecastOutput
 
-        structure GetForecastInput: {
+        structure GetForecastInput {
           @required
           forecastId: ForecastId,
         }
