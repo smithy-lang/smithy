@@ -46,9 +46,9 @@ Is it working? Is \'This\' the "expected" result?
 Is this a backslash? \'\\\'.')
 string G
 
-// Unquoted string
+// Unquoted string resolves to a shape ID
 
-@documentation(Hello)
+@documentation(H)
 string H
 
 // Unquoted string array
@@ -76,12 +76,12 @@ string L
 
 // List with values
 
-@tags([a, b, c])
+@tags(["a", "b", "c"])
 string M
 
 // List with values and trailing comma
 
-@tags([a, b, c, ])
+@tags(["a", "b", "c", ])
 string N
 
 // List with quoted values.

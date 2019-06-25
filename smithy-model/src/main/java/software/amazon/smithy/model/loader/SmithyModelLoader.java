@@ -181,6 +181,7 @@ final class SmithyModelLoader implements ModelLoader {
         Token current;
         DocComment pendingDocComment;
         boolean definedMetadata;
+        boolean definedShapesOrTraits;
 
         State(String filename, SmithyModelLexer lexer, LoaderVisitor visitor) {
             this.filename = filename;
@@ -351,6 +352,10 @@ final class SmithyModelLoader implements ModelLoader {
     }
 
     private static void parseUseStatement(State state) {
+        if (state.definedShapesOrTraits) {
+            throw state.syntax("A use statement must come before any shape or trait definition");
+        }
+
         switch (state.expect(UNQUOTED).lexeme) {
             case "shape":
                 parseUse(state, state.visitor::onUseShape);
@@ -505,6 +510,7 @@ final class SmithyModelLoader implements ModelLoader {
      * @return Returns the parsed shape ID.
      */
     private static ShapeId parseShapeName(State state) {
+        state.definedShapesOrTraits = true;
         Token nameToken = state.expect(UNQUOTED);
         String name = nameToken.lexeme;
         ShapeId id = state.visitor.onShapeDefName(name, nameToken);
@@ -564,14 +570,15 @@ final class SmithyModelLoader implements ModelLoader {
         state.expect(LPAREN);
         Token next = state.expect(RPAREN, UNQUOTED);
         if (next.type == UNQUOTED) {
-            state.visitor.onShapeTarget(next.lexeme, builder::input);
+            state.visitor.onShapeTarget(next.lexeme, next, builder::input);
             state.expect(RPAREN);
         }
 
         // Parse the optionally present return value.
         if (state.test(RETURN)) {
             state.expect(RETURN);
-            state.visitor.onShapeTarget(state.expect(UNQUOTED).lexeme, builder::output);
+            Token returnToken = state.expect(UNQUOTED);
+            state.visitor.onShapeTarget(returnToken.lexeme, returnToken, builder::output);
         }
 
         // Parse the optionally present errors list.
@@ -580,7 +587,8 @@ final class SmithyModelLoader implements ModelLoader {
             state.expect(LBRACKET);
             if (!state.test(RBRACKET)) {
                 while (true) {
-                    state.visitor.onShapeTarget(state.expect(UNQUOTED).lexeme, builder::addError);
+                    Token errorToken = state.expect(UNQUOTED);
+                    state.visitor.onShapeTarget(errorToken.lexeme, errorToken, builder::addError);
                     if (state.test(RBRACKET)) {
                         break;
                     }
@@ -663,8 +671,8 @@ final class SmithyModelLoader implements ModelLoader {
     private static void parseMember(State state, ShapeId memberId) {
         MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(state.currentLocation());
         state.visitor.onShape(memberBuilder);
-        String target = state.expect(UNQUOTED, QUOTED).lexeme;
-        state.visitor.onShapeTarget(target, memberBuilder::target);
+        Token targetToken = state.expect(UNQUOTED, QUOTED);
+        state.visitor.onShapeTarget(targetToken.lexeme, targetToken, memberBuilder::target);
     }
 
     private static void parseCollection(State state, String shapeType, CollectionShape.Builder builder) {
@@ -711,6 +719,7 @@ final class SmithyModelLoader implements ModelLoader {
     }
 
     private static void parseTraitDefinition(State state) {
+        state.definedShapesOrTraits = true;
         Token nameToken = state.expect(UNQUOTED);
         ShapeId resolved = state.visitor.onTraitDefName(nameToken.lexeme, nameToken);
         // Grab any pending documentation comment.
@@ -733,17 +742,25 @@ final class SmithyModelLoader implements ModelLoader {
             case LBRACKET: return parseArrayNode(state, token.getSourceLocation());
             case QUOTED: return new StringNode(token.lexeme, token.getSourceLocation());
             case NUMBER: return parseNumber(token);
-            case UNQUOTED: return parseUnquotedNode(token);
+            case UNQUOTED: return parseUnquotedNode(state, token);
             default: throw new IllegalStateException("Parse node value not expected to be called with invalid token");
         }
     }
 
-    private static Node parseUnquotedNode(Token token) {
+    private static Node parseUnquotedNode(State state, Token token) {
         switch (token.lexeme) {
             case "true": return new BooleanNode(true, token.getSourceLocation());
             case "false": return new BooleanNode(false, token.getSourceLocation());
             case "null": return new NullNode(token.getSourceLocation());
-            default: return new StringNode(token.lexeme, token.getSourceLocation());
+            default:
+                // Unquoted node values syntactically are assumed to be references
+                // to shapes. A lazy string node is used because the shape ID may
+                // not be able to be resolved until after the entire model is loaded.
+                Pair<StringNode, Consumer<String>> pair = StringNode.createLazyString(
+                        token.lexeme, token.getSourceLocation());
+                Consumer<String> consumer = pair.right;
+                state.visitor.onShapeTarget(token.lexeme, token, id -> consumer.accept(id.toString()));
+                return pair.left;
         }
     }
 

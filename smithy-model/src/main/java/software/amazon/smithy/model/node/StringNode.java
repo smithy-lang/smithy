@@ -19,21 +19,52 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Represents a string node.
  */
 public final class StringNode extends Node {
-    private final String value;
+    private String value;
 
+    /**
+     * Creates a new StringNode.
+     *
+     * @param value Immutable value to set.
+     * @param sourceLocation Source location of where the node was defined.
+     */
     public StringNode(String value, SourceLocation sourceLocation) {
         super(sourceLocation);
         this.value = Objects.requireNonNull(value);
+    }
+
+    /**
+     * Creates a StringNode that is lazily populated with a value provided by
+     * the given {@code Supplier}.
+     *
+     * <p>This method is used in the {@code SmithyModelLoader} class to be
+     * able to resolve unquoted strings to the appropriate shape ID. Because
+     * this can only be done after an entire model is loaded, setting the
+     * resolved value inside of a node needs to be deferred.
+     *
+     * <p>Lazy string nodes are not thread safe and there's no validation
+     * to ensure that the supplier is invoked only once. Their usage should
+     * be rare and you should generally try to use an alternative approach.
+     *
+     * @param placeholder Placeholder string to use until the supplier is called.
+     * @param sourceLocation Location of where the value was originally defined.
+     * @return Returns a pair of the string node and the supplier to invoke with the value.
+     */
+    public static Pair<StringNode, Consumer<String>> createLazyString(
+            String placeholder, SourceLocation sourceLocation) {
+        StringNode result = new StringNode(placeholder, sourceLocation);
+        return Pair.of(result, result::updateValue);
     }
 
     @Override
@@ -63,6 +94,16 @@ public final class StringNode extends Node {
      */
     public String getValue() {
         return value;
+    }
+
+    /**
+     * Updates the value of the string node using the supplier returned
+     * from {@link #createLazyString(String, SourceLocation)}.
+     *
+     * @param value Value to set on the string node.
+     */
+    private void updateValue(String value) {
+        this.value = Objects.requireNonNull(value, "String value cannot be null");
     }
 
     /**

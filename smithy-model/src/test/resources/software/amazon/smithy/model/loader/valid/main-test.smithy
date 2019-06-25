@@ -56,8 +56,8 @@ structure GetCityOutput {
 
 @readonly
 @collection
-@paginated(inputToken: nextToken, outputToken: nextToken,
-           pageSize: pageSize, items: items)
+@paginated(inputToken: "nextToken", outputToken: "nextToken",
+           pageSize: "pageSize", items: "items")
 operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
 structure ListCitiesInput {

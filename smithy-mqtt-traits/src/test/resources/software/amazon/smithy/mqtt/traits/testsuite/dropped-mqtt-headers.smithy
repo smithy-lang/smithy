@@ -4,7 +4,7 @@
 namespace smithy.example
 
 @mqttSubscribe("events")
-@outputEventStream(messages)
+@outputEventStream("messages")
 operation Foo(FooInput) -> FooOutput
 
 structure FooInput {}

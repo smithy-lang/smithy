@@ -73,6 +73,7 @@
     "trailing-commas2": [
       "a",
       "b"
-    ]
+    ],
+    "shape-id": "foo.baz#Bam"
   }
 }

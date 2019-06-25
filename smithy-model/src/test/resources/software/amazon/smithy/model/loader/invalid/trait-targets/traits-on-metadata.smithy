@@ -2,4 +2,4 @@
 namespace com.foo
 
 @deprecated
-metadata foo = bar
+metadata foo = "bar"

@@ -1,10 +1,10 @@
 namespace smithy.example
 
-@protocols([{name: aws-rest-json, auth: [aws.v4]}])
+@protocols([{name: "aws-rest-json", auth: ["aws.v4"]}])
 @aws.apigateway#authorizer("foo")
 @aws.apigateway#authorizers(
-    foo: {scheme: aws.v4, type: aws, uri: "arn:foo"},
-    baz: {scheme: aws.v4, type: aws, uri: "arn:foo"})
+    foo: {scheme: "aws.v4", type: "aws", uri: "arn:foo"},
+    baz: {scheme: "aws.v4", type: "aws", uri: "arn:foo"})
 service ServiceA {
   version: "2019-06-17",
   operations: [OperationA, OperationB],
@@ -44,10 +44,10 @@ operation OperationE()
 operation OperationF()
 
 
-@protocols([{name: aws-rest-json, auth: [aws.v4]}])
+@protocols([{name: "aws-rest-json", auth: ["aws.v4"]}])
 @aws.apigateway#authorizers(
-    foo: {scheme: aws.v4, type: aws, uri: "arn:foo"},
-    baz: {scheme: aws.v4, type: aws, uri: "arn:foo"})
+    foo: {scheme: "aws.v4", type: "aws", uri: "arn:foo"},
+    baz: {scheme: "aws.v4", type: "aws", uri: "arn:foo"})
 service ServiceB {
   version: "2019-06-17",
   operations: [OperationA, OperationB],

@@ -2,16 +2,16 @@ namespace smithy.example
 
 metadata validators = [
   { // Picks up two shapes
-    name: hello,
+    name: "hello",
     selector: ":test(string, integer)"
   },
   { // Picks up no shapes
-    name: hello,
+    name: "hello",
     namespaces: ["not.smithy.example"]
   },
   { // Picks up 4 shapes
-    name: hello,
-    id: custom,
+    name: "hello",
+    id: "custom",
     message: "Test {super}"
   },
 ]

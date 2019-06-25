@@ -1,9 +1,9 @@
-metadata foo = abc
-metadata "foo.1" = def
+metadata foo = "abc"
+metadata "foo.1" = "def"
 metadata "foo.2" = 'def'
 metadata "foo.3"='def'
-metadata foo.4=def
-metadata foo.5   =    def
+metadata foo.4="def"
+metadata foo.5   =    "def"
 metadata "foo.6"   =    "def"
 metadata "foo.7" = true
 metadata "foo.8" = false
@@ -23,8 +23,8 @@ metadata foo.12 = {
 
 metadata foo.13 = {}
 metadata foo.14 = {abc: 123}
-metadata foo.15 = {abc: def}
-metadata foo.16 = {abc: def, foo: baz}
+metadata foo.15 = {abc: "def"}
+metadata foo.16 = {abc: "def", foo: "baz"}
 metadata foo.17 = {'abc': 'def', "foo": "baz"}
 
 metadata foo.18 = {
@@ -38,7 +38,7 @@ metadata foo.18 = {
 }
 
 metadata foo.19 = {
-  abc.123: def,
+  abc.123: "def",
   def: {
     foo: [1, 2, -10],
     bar: []
@@ -55,10 +55,15 @@ metadata float2 = 10.0
 // Trailing commas!
 
 metadata foo.20 = {
-  a: b,
+  a: "b",
 }
 
 metadata trailing-commas1 = {
-  a: b,
+  a: "b",
 }
-metadata trailing-commas2 = [a, b,]
+metadata trailing-commas2 = ["a", "b",]
+
+namespace foo.baz
+
+// Unquoted strings resolve to shape IDs.
+metadata shape-id = Bam

@@ -1,6 +1,6 @@
 namespace aws.iotjobs
 
-@protocols([{name: aws.mqtt-json}])
+@protocols([{name: "aws.mqtt-json"}])
 service IotJobs {
   version: "2018-08-14",
   operations: [
@@ -62,13 +62,13 @@ string RejectedErrorCode
 operation PublishGetPendingJobExecutions(GetPendingJobExecutionsRequest)
 
 @mqttSubscribe("$aws/things/{thingName}/jobs/get/accepted")
-@outputEventStream(messages)
+@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-getpendingjobexecutions")
 operation SubscribeToGetPendingJobExecutionsAccepted(GetPendingJobExecutionsSubscriptionRequest)
   -> GetPendingJobExecutionsSubscriptionResponse
 
 @mqttSubscribe("$aws/things/{thingName}/jobs/get/rejected")
-@outputEventStream(messages)
+@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-getpendingjobexecutions")
 operation SubscribeToGetPendingJobExecutionsRejected(GetPendingJobExecutionsSubscriptionRequest)
   -> RejectedResponse
@@ -120,13 +120,13 @@ structure JobExecutionSummary {
 operation PublishStartNextPendingJobExecution(StartNextPendingJobExecutionRequest)
 
 @mqttSubscribe("$aws/things/{thingName}/jobs/start-next/accepted")
-@outputEventStream(messages)
+@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-startnextpendingjobexecution")
 operation SubscribeToStartNextPendingJobExecutionAccepted(StartNextPendingJobExecutionSubscriptionRequest)
   -> StartNextPendingJobExecutionSubscriptionResponse
 
 @mqttSubscribe("$aws/things/{thingName}/jobs/start-next/rejected")
-@outputEventStream(messages)
+@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-startnextpendingjobexecution")
 operation SubscribeToStartNextPendingJobExecutionRejected(StartNextPendingJobExecutionSubscriptionRequest)
   -> RejectedResponse
@@ -197,13 +197,13 @@ string JobStatus
 operation PublishDescribeJobExecution(DescribeJobExecutionRequest)
 
 @mqttSubscribe("$aws/things/{thingName}/jobs/{jobId}/get/accepted")
-@outputEventStream(messages)
+@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-describejobexecution")
 operation SubscribeToDescribeJobExecutionAccepted(DescribeJobExecutionSubscriptionRequest)
   -> DescribeJobExecutionSubscriptionResponse
 
 @mqttSubscribe("$aws/things/{thingName}/jobs/{jobId}/get/rejected")
-@outputEventStream(messages)
+@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-describejobexecution")
 operation SubscribeToDescribeJobExecutionRejected(DescribeJobExecutionSubscriptionRequest)
   -> RejectedResponse
@@ -255,13 +255,13 @@ structure DescribeJobExecutionResponse {
 operation PublishUpdateJobExecution(UpdateJobExecutionRequest)
 
 @mqttSubscribe("$aws/things/{thingName}/jobs/{jobId}/update/accepted")
-@outputEventStream(messages)
+@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-updatejobexecution")
 operation SubscribeToUpdateJobExecutionAccepted(UpdateJobExecutionSubscriptionRequest)
   -> UpdateJobExecutionSubscriptionResponse
 
 @mqttSubscribe("$aws/things/{thingName}/jobs/{jobId}/update/rejected")
-@outputEventStream(messages)
+@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-updatejobexecution")
 operation SubscribeToUpdateJobExecutionRejected(UpdateJobExecutionSubscriptionRequest)
   -> RejectedResponse
@@ -334,7 +334,7 @@ structure JobDocument {}
 // ------- JobExecutionsChanged ----------
 
 @mqttSubscribe("$aws/things/{thingName}/jobs/notify")
-@outputEventStream(messages)
+@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-jobexecutionschanged")
 operation SubscribeToJobExecutionsChangedEvents(JobExecutionsChangedSubscriptionRequest)
   -> JobExecutionsChangedSubscriptionResponse
@@ -366,7 +366,7 @@ map JobExecutionsChangedJobs {
 // ------- NextJobExecutionChanged ----------
 
 @mqttSubscribe("$aws/things/{thingName}/jobs/notify-next")
-@outputEventStream(messages)
+@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-nextjobexecutionchanged")
 operation SubscribeToNextJobExecutionChangedEvents(NextJobExecutionChangedSubscriptionRequest)
   -> NextJobExecutionChangedSubscriptionResponse

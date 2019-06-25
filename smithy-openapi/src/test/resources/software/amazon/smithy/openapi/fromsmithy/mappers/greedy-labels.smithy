@@ -6,7 +6,7 @@ service Greedy {
   operations: [GreedyOperation]
 }
 
-@http(method: GET, uri: "/{greedy+}")
+@http(method: "GET", uri: "/{greedy+}")
 operation GreedyOperation(GreedyOperationInput)
 
 structure GreedyOperationInput {
