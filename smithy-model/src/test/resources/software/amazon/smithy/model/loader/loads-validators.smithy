@@ -2,9 +2,9 @@ namespace smithy.example
 
 metadata validators = [
   {
-    name: MyValidator,
+    name: "MyValidator",
     configuration: {
-      foo: baz
+      foo: "baz"
     }
   }
 ]

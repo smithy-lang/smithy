@@ -41,7 +41,7 @@
       },
       "H": {
         "type": "string",
-        "smithy.api#documentation": "Hello"
+        "smithy.api#documentation": "com.example#H"
       },
       "I": {
         "type": "string",

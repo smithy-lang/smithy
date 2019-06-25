@@ -37,8 +37,8 @@ operation K() errors []
 structure Input {}
 structure Output {}
 
-@error(client)
+@error("client")
 structure Error1 {}
 
-@error(client)
+@error("client")
 structure Error2 {}

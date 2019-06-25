@@ -12,7 +12,7 @@ structure BInput {}
 
 // Conflicts with A, B
 @mqttSubscribe("a")
-@outputEventStream(messages)
+@outputEventStream("messages")
 operation C() -> COutput
 
 structure COutput {
@@ -31,7 +31,7 @@ structure DInput {}
 operation E(DInput)
 
 @mqttSubscribe("b")
-@outputEventStream(messages)
+@outputEventStream("messages")
 operation F() -> FOutput
 
 structure FOutput {

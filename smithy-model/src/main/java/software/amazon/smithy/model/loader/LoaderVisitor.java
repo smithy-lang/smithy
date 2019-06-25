@@ -227,20 +227,25 @@ final class LoaderVisitor {
      * only after all shapes have been declared.
      *
      * @param target Shape that is targeted.
+     * @param sourceLocation The location of where the target occurred.
      * @param resolver The consumer to invoke once the shape ID is resolved.
      */
-    public void onShapeTarget(String target, Consumer<ShapeId> resolver) {
+    public void onShapeTarget(String target, FromSourceLocation sourceLocation, Consumer<ShapeId> resolver) {
         assertNamespaceIsPresent(SourceLocation.none());
 
-        ShapeId expectedId = ShapeId.fromOptionalNamespace(namespace, target);
-        if (hasDefinedShape(expectedId) || target.contains("#")) {
-            // Account for previously seen shapes in this namespace and absolute shapes.
-            resolver.accept(expectedId);
-        } else if (useShapes.containsKey(target)) {
-            // Account for aliased shapes.
-            resolver.accept(useShapes.get(target));
-        } else {
-            forwardReferenceResolvers.add(new ForwardReferenceResolver(expectedId, resolver));
+        try {
+            ShapeId expectedId = ShapeId.fromOptionalNamespace(namespace, target);
+            if (hasDefinedShape(expectedId) || target.contains("#")) {
+                // Account for previously seen shapes in this namespace and absolute shapes.
+                resolver.accept(expectedId);
+            } else if (useShapes.containsKey(target)) {
+                // Account for aliased shapes.
+                resolver.accept(useShapes.get(target));
+            } else {
+                forwardReferenceResolvers.add(new ForwardReferenceResolver(expectedId, resolver));
+            }
+        } catch (ShapeIdSyntaxException e) {
+            throw new SourceException("Error resolving shape target; " + e.getMessage(), sourceLocation, e);
         }
     }
 

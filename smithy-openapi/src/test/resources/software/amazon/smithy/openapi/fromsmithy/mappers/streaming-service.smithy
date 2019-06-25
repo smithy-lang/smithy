@@ -6,7 +6,7 @@ service Streaming {
   operations: [StreamingOperation]
 }
 
-@http(method: GET, uri: "/")
+@http(method: "GET", uri: "/")
 @readonly
 operation StreamingOperation() -> Output
 

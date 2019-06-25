@@ -286,11 +286,10 @@ final class NodeModelLoader implements ModelLoader {
     private void loadMember(LoaderVisitor visitor, ShapeId shapeId, Node node) {
         MemberShape.Builder builder = MemberShape.builder().source(node.getSourceLocation()).id(shapeId);
         ObjectNode targetNode = node.expectObjectNode("Expected member to be an object; found {type}");
-        String target = targetNode
+        StringNode targetStringNode = targetNode
                 .expectMember("target", "Missing required member property `target`.")
-                .expectStringNode("Expected `target` property of member to be a string; found {type}.")
-                .getValue();
-        visitor.onShapeTarget(target, builder::target);
+                .expectStringNode("Expected `target` property of member to be a string; found {type}.");
+        visitor.onShapeTarget(targetStringNode.getValue(), targetStringNode, builder::target);
         extractTraits(shapeId, targetNode, MEMBER_PROPERTIES, visitor);
         visitor.onShape(builder);
     }

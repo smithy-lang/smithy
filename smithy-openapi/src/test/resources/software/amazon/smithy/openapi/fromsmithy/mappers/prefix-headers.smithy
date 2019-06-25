@@ -6,7 +6,7 @@ service PrefixHeaders {
     operations: [PrefixHeadersOperation]
 }
 
-@http(method: GET, uri: "/")
+@http(method: "GET", uri: "/")
 operation PrefixHeadersOperation(Input) -> Output
 
 structure Input {
