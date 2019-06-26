@@ -159,10 +159,7 @@ Use shape statement
 The ``use_shape_statement`` imports one or more shapes.
 
 .. productionlist:: smithy
-    use_shape_statement   :"use" "shape" `use_statement_target`
-    use_statement_target  :`absolute_shape_id` / multi_use_ids
-    multi_use_ids         :(`namespace` "#" "[" use_statement_id_list "]")
-    use_statement_id_list :`relative_shape_id` *("," `relative_shape_id`) [","]
+    use_shape_statement   :"use" "shape" `absolute_shape_id`
 
 .. code-block:: smithy
 
@@ -178,23 +175,7 @@ The ``use_shape_statement`` imports one or more shapes.
         value: Baz,
     }
 
-The above could be more succinctly written using brackets to import relative
-shape IDs within a namespace:
-
-.. code-block:: smithy
-
-    namespace smithy.hello
-
-    use shape smithy.example#[Foo, Baz]
-
-    map MyMap {
-        // Resolves to smithy.example#Foo
-        key: Foo,
-        // Resolves to smithy.example#Baz
-        value: Baz,
-    }
-
-Relative shape IDs with member names cannot be imported with a use statement.
+Shapes IDs with members names cannot be imported with a use statement.
 A shape cannot be defined in a file with the same name as one of the shapes
 imported with a ``use shape`` statement.
 
@@ -211,7 +192,7 @@ The ``use_trait_statement`` imports one or more traits into the current
 namespace so that the trait can be referred to using a relative trait name.
 
 .. productionlist:: smithy
-    use_trait_statement   :"use" "trait" `use_statement_target`
+    use_trait_statement   :"use" "trait" `absolute_shape_id`
 
 .. code-block:: smithy
 
@@ -219,18 +200,6 @@ namespace so that the trait can be referred to using a relative trait name.
 
     use trait smithy.example#test
     use trait smithy.example#anotherTrait
-
-    @test // <-- Resolves to smithy.example#test
-    string MyString
-
-The above could be more succinctly written using brackets to import relative
-trait names within a namespace:
-
-.. code-block:: smithy
-
-    namespace smithy.hello
-
-    use trait smithy.example#[test, anotherTrait]
 
     @test // <-- Resolves to smithy.example#test
     string MyString
