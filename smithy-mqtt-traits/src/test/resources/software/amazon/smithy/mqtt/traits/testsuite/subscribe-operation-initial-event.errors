@@ -1,1 +1,1 @@
-[ERROR] smithy.example#Foo: Operations marked with the `mqttSubscribe` trait must not utilize event streams with initial responses in their output structure. | MqttSubscribeOutput
+[ERROR] smithy.example#Foo: Operations marked with the `smithy.mqtt#subscribe` trait must not utilize event streams with initial responses in their output structure. | MqttSubscribeOutput

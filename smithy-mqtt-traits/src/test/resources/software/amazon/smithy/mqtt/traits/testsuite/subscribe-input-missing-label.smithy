@@ -1,16 +1,18 @@
-// mqttSubscribe operations do not support input. This test
+// subscribe operations do not support input. This test
 // should detect that members of the input of the operation are
-// missing mqttTopicLabel traits.
+// missing @smithy.mqtt#topicLabel traits.
 
 namespace smithy.example
 
-@mqttSubscribe("events/{foo}")
+use trait smithy.mqtt#[topicLabel, subscribe]
+
+@subscribe("events/{foo}")
 @outputEventStream("messages")
 operation Foo(FooInput) -> FooOutput
 
 structure FooInput {
   @required
-  @mqttTopicLabel
+  @topicLabel
   foo: smithy.api#String,
 
   baz: smithy.api#String, // Error, missing topicLabel.

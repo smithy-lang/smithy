@@ -54,11 +54,11 @@ conditions, but this must be done according to semantic conventions
 established by the clients and server.
 
 Smithy models explicitly define the PUBLISH and SUBSCRIBE MQTT control
-packets using the :ref:`mqttPublish-trait` and :ref:`mqttSubscribe-trait`.
-Clients publish and subscribe to MQTT topics using separate operations.
-The CONNECT, DISCONNECT, and other MQTT control packets SHOULD be handled
-as implementation details in Smithy clients that connect to a service that
-utilizes MQTT protocol bindings.
+packets using the :ref:`smithy.mqtt#publish-trait` and
+:ref:`smithy.mqtt#subscribe-trait`. Clients publish and subscribe to MQTT
+topics using separate operations. The CONNECT, DISCONNECT, and other MQTT
+control packets SHOULD be handled as implementation details in Smithy
+clients that connect to a service that utilizes MQTT protocol bindings.
 
 
 .. _mqtt-topic-templates:
@@ -69,8 +69,8 @@ MQTT topic templates
 
 An *MQTT topic template* declares an MQTT topic to be used for a given
 operation and to bind components of the topic to fields in the operations's
-input structure. The :ref:`mqttPublish-trait` and :ref:`mqttSubscribe-trait`
-are defined using MQTT topic templates.
+input structure. The :ref:`smithy.mqtt#publish-trait` and
+:ref:`smithy.mqtt#subscribe-trait` are defined using MQTT topic templates.
 
 .. _mqtt-topic-label:
 
@@ -80,7 +80,7 @@ using an opening brace ("{"), followed by a member name, followed by a closing
 brace ("}"). Each member name referenced in a label MUST case-sensitively
 correspond to a single member by name in the input structure of an operation
 that is targeted by both the :ref:`required-trait` and the
-:ref:`mqttTopicLabel-trait`. The values of the corresponding members
+:ref:`smithy.mqtt#topicLabel-trait`. The values of the corresponding members
 are substituted into the topic template at runtime to resolve the actual
 MQTT topic.
 
@@ -91,16 +91,18 @@ and ``{second}``, in the MQTT topic template:
 
     .. code-tab:: smithy
 
-        @mqttPublish("{first}/{second}")
+        use trait smithy.mqtt#[publish, topicLabel]
+
+        @publish("{first}/{second}")
         operation ExampleOperation(ExampleOperationInput)
 
         structure ExampleOperationInput {
           @required
-          @mqttTopicLabel
+          @topicLabel
           first: String,
 
           @required
-          @mqttTopicLabel
+          @topicLabel
           second: String,
 
           message: String,
@@ -115,7 +117,7 @@ and ``{second}``, in the MQTT topic template:
                     "ExampleOperation": {
                         "type": "operation",
                         "input": "ExampleOperationInput",
-                        "mqttPublish": "{first}/{second}"
+                        "smithy.mqtt#publish": "{first}/{second}"
                     },
                     "ExampleOperationInput": {
                         "type": "structure",
@@ -123,12 +125,12 @@ and ``{second}``, in the MQTT topic template:
                             "first": {
                                 "target": "String",
                                 "required": true,
-                                "mqttTopicLabel": true
+                                "smithy.mqtt#topicLabel": true
                             },
                             "second": {
                                 "target": "String",
                                 "required": true,
-                                "mqttTopicLabel": true
+                                "smithy.mqtt#topicLabel": true
                             },
                             "message": {
                                 "target": "String"
@@ -154,15 +156,15 @@ MQTT topic templates MUST adhere to the following constraints:
 * The text inside of each label MUST case-sensitively match a single member by
   name of the input structure of an operation.
 * Operation input structures MUST NOT contain extraneous members marked with
-  the ``mqttTopicLabel`` trait that do not have corresponding labels
+  the ``smithy.mqtt#topicLabel`` trait that do not have corresponding labels
   in the topic template.
 
 
-.. _mqttPublish-trait:
+.. _smithy.mqtt#publish-trait:
 
----------------------
-``mqttPublish`` trait
----------------------
+-----------------------------
+``smithy.mqtt#publish`` trait
+-----------------------------
 
 Trait summary
     Binds an operation to send a PUBLISH control packet via the MQTT protocol.
@@ -178,10 +180,10 @@ Trait value
     reference top-level input members of the operation by case-sensitive
     member name.
 Conflicts with
-    :ref:`mqttSubscribe-trait`, :ref:`inputEventStream-trait`
+    :ref:`smithy.mqtt#subscribe-trait`, :ref:`inputEventStream-trait`
 
-Input members that are not marked with the :ref:`mqttTopicLabel-trait` come
-together to form the protocol-specific payload of the PUBLISH message.
+Input members that are not marked with the :ref:`smithy.mqtt#topicLabel-trait`
+come together to form the protocol-specific payload of the PUBLISH message.
 
 The following example defines an operation that publishes messages to the
 ``foo/{bar}`` topic:
@@ -192,12 +194,14 @@ The following example defines an operation that publishes messages to the
 
         namespace smithy.example
 
-        @mqttPublish("foo/{bar}")
+        use trait smithy.mqtt#[publish, topicLabel]
+
+        @publish("foo/{bar}")
         operation PostFoo(PostFooInput)
 
         structure PostFooInput {
           @required
-          @mqttTopicLabel
+          @topicLabel
           bar: String,
 
           someValue: String,
@@ -213,7 +217,7 @@ The following example defines an operation that publishes messages to the
                     "PostFoo": {
                         "type": "operation",
                         "input": "PostFooInput",
-                        "mqttPublish": "foo/{bar}"
+                        "smithy.mqtt#publish": "foo/{bar}"
                     },
                     "PostFooInput": {
                         "type": "structure",
@@ -221,7 +225,7 @@ The following example defines an operation that publishes messages to the
                             "bar": {
                                 "target": "String",
                                 "required": true,
-                                "mqttTopicLabel": true
+                                "smithy.mqtt#topicLabel": true
                             },
                             "message": {
                                 "target": "String"
@@ -236,7 +240,7 @@ The following example defines an operation that publishes messages to the
         }
 
 The "bar" member of the above ``PostFoo`` operation is marked with the
-:ref:`mqttTopicLabel-trait`, indicating that the member provides a
+:ref:`smithy.mqtt#topicLabel-trait`, indicating that the member provides a
 value for the "{bar}" label of the MQTT topic template. The "message" and
 "anotherValue" members come together to form a protocol-specific document
 that is sent in the payload of the message.
@@ -252,11 +256,11 @@ Publish validation
   the resolved MQTT topics of subscribe operations.
 
 
-.. _mqttSubscribe-trait:
+.. _smithy.mqtt#subscribe-trait:
 
------------------------
-``mqttSubscribe`` trait
------------------------
+-------------------------------
+``smithy.mqtt#subscribe`` trait
+-------------------------------
 
 Trait summary
     Binds an operation to send one or more SUBSCRIBE control packets
@@ -270,11 +274,11 @@ Trait value
     The MQTT topic template MAY contain label placeholders that reference
     top-level input members of the operation by case-sensitive member name.
 Conflicts with
-    :ref:`mqttPublish-trait`
+    :ref:`smithy.mqtt#publish-trait`
 
 No message is published when using an operation marked with the
-``mqttSubscribe`` trait. All members of the input of the operation
-MUST be marked with valid ``mqttTopicLabel`` traits.
+``smithy.mqtt#subscribe`` trait. All members of the input of the operation
+MUST be marked with valid ``smithy.mqtt#topicLabel`` traits.
 
 The operation MUST have an :ref:`outputEventStream-trait`. The top-level
 output member referenced by this trait represents the message that is sent
@@ -296,13 +300,15 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
 
     .. code-tab:: smithy
 
-        @mqttSubscribe("events/{id}")
-        @outputEventStream(events)
+        use trait smithy.mqtt#[subscribe, topicLabel]
+
+        @subscribe("events/{id}")
+        @outputEventStream("events")
         operation SubscribeForEvents(SubscribeForEventsInput) -> SubscribeForEventsOutput
 
         structure SubscribeForEventsInput {
           @required
-          @mqttTopicLabel
+          @topicLabel
           id: String,
         }
 
@@ -323,7 +329,7 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
                     "SubscribeForEvents": {
                         "type": "operation",
                         "input": "SubscribeForEventsInput",
-                        "mqttSubscribe": "events/{id}",
+                        "smithy.mqtt#subscribe": "events/{id}",
                         "outputEventStream": "events"
                     },
                     "SubscribeForEventsInput": {
@@ -332,7 +338,7 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
                             "id": {
                                 "target": "String",
                                 "required": true,
-                                "mqttTopicLabel": true
+                                "smithy.mqtt#topicLabel": true
                             }
                         }
                     },
@@ -364,7 +370,7 @@ Subscribe validation
   :ref:`initial-response <initial-response>`; only a single member can appear
   in the output of a subscribe operation.
 * Every member of the input of a subscribe operation MUST be marked with the
-  :ref:`mqttTopicLabel-trait`.
+  :ref:`smithy.mqtt#topicLabel-trait`.
 * Subscribe operations SHOULD NOT define errors.
 * Subscribe MQTT topics MUST NOT conflict with other topics.
 * Event stream events over MQTT SHOULD NOT contain the
@@ -373,11 +379,11 @@ Subscribe validation
   custom headers to messages.
 
 
-.. _mqttTopicLabel-trait:
+.. _smithy.mqtt#topicLabel-trait:
 
-------------------------
-``mqttTopicLabel`` trait
-------------------------
+--------------------------------
+``smithy.mqtt#topicLabel`` trait
+--------------------------------
 
 Trait summary
     Binds a structure member to an :ref:`MQTT topic label <mqtt-topic-label>`.
@@ -388,13 +394,14 @@ Trait selector
 Trait value
     Annotation trait
 
-The ``mqttTopicLabel`` trait binds the value of a structure member
+The ``smithy.mqtt#topicLabel`` trait binds the value of a structure member
 so that it provides a value at runtime for a corresponding MQTT topic template
-label specified in a :ref:`mqttPublish-trait` and :ref:`mqttSubscribe-trait`.
-All labels defined in an MQTT topic template MUST have corresponding input
-structure members with the same case-sensitive member name that is marked
-with the ``mqttTopicLabel`` trait, marked with the ``required`` trait, and
-targets a string, byte, short, integer, long, boolean, or timestamp shape.
+label specified in a :ref:`smithy.mqtt#publish-trait` and
+:ref:`smithy.mqtt#subscribe-trait`. All labels defined in an MQTT topic
+template MUST have corresponding input structure members with the same
+case-sensitive member name that is marked with the ``smithy.mqtt#topicLabel``
+trait, marked with the ``required`` trait, and targets a string, byte, short,
+integer, long, boolean, or timestamp shape.
 
 
 Label serialization
@@ -475,26 +482,26 @@ MQTT protocol bindings.
 .. code-block:: smithy
 
     $version: "0.1.0"
-    namespace smithy.api
+    namespace smithy.mqtt
 
-    trait mqttPublish {
+    trait publish {
       shape: MqttTopicString,
       selector: "operation:not(-[output]->)",
-      conflicts: [mqttSubscribe, inputEventStream]
+      conflicts: ["smithy.mqtt#subscribe", "inputEventStream"]
     }
 
-    trait mqttSubscribe {
-      shape: MqttTopicString,
+    trait subscribe {
+      shape: TopicString,
       selector: "operation[trait|outputEventStream]",
-      conflicts: [mqttPublish]
+      conflicts: ["smithy.mqtt#publish"]
     }
 
     // Matches one or more characters that are not "#" or "+".
     @pattern("^[^#+]+$")
     @private
-    string MqttTopicString
+    string TopicString
 
-    trait mqttTopicLabel {
+    trait topicLabel {
       selector: "member[trait|required]:test(> :test(string, byte, short, integer, long, boolean, timestamp))",
     }
 

@@ -19,10 +19,10 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
 
 /**
- * mqttSubscribe trait.
+ * smithy.mqtt#subscribe trait.
  */
 public final class SubscribeTrait extends StringTrait {
-    public static final String NAME = "smithy.api#mqttSubscribe";
+    public static final String NAME = "smithy.mqtt#subscribe";
     private final Topic topic;
 
     public SubscribeTrait(String topic, SourceLocation sourceLocation) {

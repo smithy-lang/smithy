@@ -29,7 +29,7 @@ import software.amazon.smithy.mqtt.traits.TopicLabelTrait;
 import software.amazon.smithy.utils.OptionalUtils;
 
 /**
- * Validates {@code mqttSubscribe} operation input.
+ * Validates {@code @smithy.mqtt#subscribe} operation input.
  *
  * <ul>
  *     <li>Subscribe operation input members must all have mqttLabel trait.</li>
@@ -50,8 +50,8 @@ public final class MqttSubscribeInputValidator extends AbstractValidator {
                 .flatMap(input -> input.getAllMembers().values().stream()
                         .filter(member -> !member.hasTrait(TopicLabelTrait.class))
                         .map(member -> error(member, String.format(
-                                "All input members of an operation marked with the `mqttSubscribe` trait "
-                                + "must be marked with the `mqttTopicLabel` trait, and this member is used "
+                                "All input members of an operation marked with the `smithy.mqtt#subscribe` trait "
+                                + "must be marked with the `smithy.mqtt#topicLabel` trait, and this member is used "
                                 + "as part of the input of the `%s` operation.", operation.getId()))));
     }
 }

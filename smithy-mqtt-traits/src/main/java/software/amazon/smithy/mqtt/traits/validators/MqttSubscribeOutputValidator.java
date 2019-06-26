@@ -37,7 +37,7 @@ import software.amazon.smithy.mqtt.traits.SubscribeTrait;
 import software.amazon.smithy.utils.OptionalUtils;
 
 /**
- * Validates {@code mqttSubscribe} operation output.
+ * Validates {@code subscribe} operation output.
  *
  * <ul>
  *     <li>Subscribe operations must use an event stream.</li>
@@ -72,8 +72,8 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
 
         if (info.hasInitialMessage()) {
             events.add(error(shape, shape.getTrait(SubscribeTrait.class).get(),
-                             "Operations marked with the `mqttSubscribe` trait must not utilize event streams "
-                             + "with initial responses in their output structure."));
+                             "Operations marked with the `smithy.mqtt#subscribe` trait must not utilize event "
+                             + "streams with initial responses in their output structure."));
         }
 
         // Find events in the output's event stream that have members marked

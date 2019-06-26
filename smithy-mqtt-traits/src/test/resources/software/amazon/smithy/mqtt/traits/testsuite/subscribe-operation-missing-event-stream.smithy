@@ -1,8 +1,8 @@
-// mqttSubscribe operations must have an event stream in its output.
+// @smithy.mqtt#subscribe operations must have an event stream in its output.
 
 namespace smithy.example
 
-@mqttSubscribe("events")
+@smithy.mqtt#subscribe("events")
 operation Foo() -> FooOutput
 
 structure FooOutput {}

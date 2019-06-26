@@ -2,7 +2,7 @@
 
 namespace smithy.example
 
-@mqttSubscribe("event1")
+@smithy.mqtt#subscribe("event1")
 @outputEventStream("messages")
 operation Foo() -> FooOutput errors [Error]
 
@@ -16,7 +16,7 @@ structure Event1 {}
 structure Error {}
 
 
-@mqttPublish("event2")
+@smithy.mqtt#publish("event2")
 operation Baz(BazInput) errors [Error]
 
 structure BazInput {}

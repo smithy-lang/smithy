@@ -29,7 +29,7 @@ import software.amazon.smithy.mqtt.traits.TopicBinding;
 import software.amazon.smithy.utils.OptionalUtils;
 
 /**
- * Validates that {@code mqttPublish} and {@code mqttSubscribe}
+ * Validates that {@code @smithy.mqtt#publish} and {@code subscribe}
  * operations should not define errors.
  *
  * <p>Errors have to just come back in the event stream of the output.
