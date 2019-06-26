@@ -1,17 +1,17 @@
 namespace smithy.example
 
 // Conflicts with B, C
-@mqttPublish("a")
+@smithy.mqtt#publish("a")
 operation A(AInput)
 structure AInput {}
 
 // Conflicts with A, C
-@mqttPublish("a")
+@smithy.mqtt#publish("a")
 operation B(BInput)
 structure BInput {}
 
 // Conflicts with A, B
-@mqttSubscribe("a")
+@smithy.mqtt#subscribe("a")
 @outputEventStream("messages")
 operation C() -> COutput
 
@@ -23,14 +23,14 @@ structure EmptyEvent {}
 
 
 // D and E do not conflict since they use the same payload.
-@mqttPublish("b")
+@smithy.mqtt#publish("b")
 operation D(DInput)
 structure DInput {}
 
-@mqttPublish("b")
+@smithy.mqtt#publish("b")
 operation E(DInput)
 
-@mqttSubscribe("b")
+@smithy.mqtt#subscribe("b")
 @outputEventStream("messages")
 operation F() -> FOutput
 

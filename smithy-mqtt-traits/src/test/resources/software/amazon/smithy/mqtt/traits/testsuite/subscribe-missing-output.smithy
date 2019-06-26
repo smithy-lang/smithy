@@ -2,5 +2,5 @@
 
 namespace smithy.example
 
-@mqttSubscribe("events")
+@smithy.mqtt#subscribe("events")
 operation Foo()

@@ -57,17 +57,17 @@ string RejectedErrorCode
 
 // ------ GetPendingJobExecutions -------
 
-@mqttPublish("$aws/things/{thingName}/jobs/get")
+@smithy.mqtt#publish("$aws/things/{thingName}/jobs/get")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-getpendingjobexecutions")
 operation PublishGetPendingJobExecutions(GetPendingJobExecutionsRequest)
 
-@mqttSubscribe("$aws/things/{thingName}/jobs/get/accepted")
+@smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/get/accepted")
 @outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-getpendingjobexecutions")
 operation SubscribeToGetPendingJobExecutionsAccepted(GetPendingJobExecutionsSubscriptionRequest)
   -> GetPendingJobExecutionsSubscriptionResponse
 
-@mqttSubscribe("$aws/things/{thingName}/jobs/get/rejected")
+@smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/get/rejected")
 @outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-getpendingjobexecutions")
 operation SubscribeToGetPendingJobExecutionsRejected(GetPendingJobExecutionsSubscriptionRequest)
@@ -75,7 +75,7 @@ operation SubscribeToGetPendingJobExecutionsRejected(GetPendingJobExecutionsSubs
 
 structure GetPendingJobExecutionsRequest {
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   thingName: smithy.api#String,
 
   clientToken: smithy.api#String,
@@ -83,7 +83,7 @@ structure GetPendingJobExecutionsRequest {
 
 structure GetPendingJobExecutionsSubscriptionRequest {
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   thingName: smithy.api#String,
 }
 
@@ -115,17 +115,17 @@ structure JobExecutionSummary {
 
 // ------- StartNextPendingJobExecution ----------
 
-@mqttPublish("$aws/things/{thingName}/jobs/start-next")
+@smithy.mqtt#publish("$aws/things/{thingName}/jobs/start-next")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-startnextpendingjobexecution")
 operation PublishStartNextPendingJobExecution(StartNextPendingJobExecutionRequest)
 
-@mqttSubscribe("$aws/things/{thingName}/jobs/start-next/accepted")
+@smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/start-next/accepted")
 @outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-startnextpendingjobexecution")
 operation SubscribeToStartNextPendingJobExecutionAccepted(StartNextPendingJobExecutionSubscriptionRequest)
   -> StartNextPendingJobExecutionSubscriptionResponse
 
-@mqttSubscribe("$aws/things/{thingName}/jobs/start-next/rejected")
+@smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/start-next/rejected")
 @outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-startnextpendingjobexecution")
 operation SubscribeToStartNextPendingJobExecutionRejected(StartNextPendingJobExecutionSubscriptionRequest)
@@ -133,7 +133,7 @@ operation SubscribeToStartNextPendingJobExecutionRejected(StartNextPendingJobExe
 
 structure StartNextPendingJobExecutionRequest {
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   thingName: smithy.api#String,
 
   clientToken: smithy.api#String,
@@ -149,7 +149,7 @@ map StatusDetails {
 
 structure StartNextPendingJobExecutionSubscriptionRequest {
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   thingName: smithy.api#String,
 }
 
@@ -192,17 +192,17 @@ string JobStatus
 
 // ------- DescribeJobExecution ----------
 
-@mqttPublish("$aws/things/{thingName}/jobs/{jobId}/get")
+@smithy.mqtt#publish("$aws/things/{thingName}/jobs/{jobId}/get")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-describejobexecution")
 operation PublishDescribeJobExecution(DescribeJobExecutionRequest)
 
-@mqttSubscribe("$aws/things/{thingName}/jobs/{jobId}/get/accepted")
+@smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/{jobId}/get/accepted")
 @outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-describejobexecution")
 operation SubscribeToDescribeJobExecutionAccepted(DescribeJobExecutionSubscriptionRequest)
   -> DescribeJobExecutionSubscriptionResponse
 
-@mqttSubscribe("$aws/things/{thingName}/jobs/{jobId}/get/rejected")
+@smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/{jobId}/get/rejected")
 @outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-describejobexecution")
 operation SubscribeToDescribeJobExecutionRejected(DescribeJobExecutionSubscriptionRequest)
@@ -210,11 +210,11 @@ operation SubscribeToDescribeJobExecutionRejected(DescribeJobExecutionSubscripti
 
 structure DescribeJobExecutionRequest {
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   thingName: smithy.api#String,
 
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   jobId: smithy.api#String,
 
   clientToken: smithy.api#String,
@@ -225,11 +225,11 @@ structure DescribeJobExecutionRequest {
 
 structure DescribeJobExecutionSubscriptionRequest {
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   thingName: smithy.api#String,
 
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   jobId: smithy.api#String,
 }
 
@@ -250,17 +250,17 @@ structure DescribeJobExecutionResponse {
 
 // ------- UpdateJobExecution ----------
 
-@mqttPublish("$aws/things/{thingName}/jobs/{jobId}/update")
+@smithy.mqtt#publish("$aws/things/{thingName}/jobs/{jobId}/update")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-updatejobexecution")
 operation PublishUpdateJobExecution(UpdateJobExecutionRequest)
 
-@mqttSubscribe("$aws/things/{thingName}/jobs/{jobId}/update/accepted")
+@smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/{jobId}/update/accepted")
 @outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-updatejobexecution")
 operation SubscribeToUpdateJobExecutionAccepted(UpdateJobExecutionSubscriptionRequest)
   -> UpdateJobExecutionSubscriptionResponse
 
-@mqttSubscribe("$aws/things/{thingName}/jobs/{jobId}/update/rejected")
+@smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/{jobId}/update/rejected")
 @outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-updatejobexecution")
 operation SubscribeToUpdateJobExecutionRejected(UpdateJobExecutionSubscriptionRequest)
@@ -268,11 +268,11 @@ operation SubscribeToUpdateJobExecutionRejected(UpdateJobExecutionSubscriptionRe
 
 structure UpdateJobExecutionRequest {
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   thingName: smithy.api#String,
 
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   jobId: smithy.api#String,
 
   @required
@@ -289,11 +289,11 @@ structure UpdateJobExecutionRequest {
 
 structure UpdateJobExecutionSubscriptionRequest {
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   thingName: smithy.api#String,
 
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   jobId: smithy.api#String,
 }
 
@@ -333,7 +333,7 @@ structure JobDocument {}
 
 // ------- JobExecutionsChanged ----------
 
-@mqttSubscribe("$aws/things/{thingName}/jobs/notify")
+@smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/notify")
 @outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-jobexecutionschanged")
 operation SubscribeToJobExecutionsChangedEvents(JobExecutionsChangedSubscriptionRequest)
@@ -341,7 +341,7 @@ operation SubscribeToJobExecutionsChangedEvents(JobExecutionsChangedSubscription
 
 structure JobExecutionsChangedSubscriptionRequest {
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   thingName: smithy.api#String,
 }
 
@@ -365,7 +365,7 @@ map JobExecutionsChangedJobs {
 
 // ------- NextJobExecutionChanged ----------
 
-@mqttSubscribe("$aws/things/{thingName}/jobs/notify-next")
+@smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/notify-next")
 @outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-nextjobexecutionchanged")
 operation SubscribeToNextJobExecutionChangedEvents(NextJobExecutionChangedSubscriptionRequest)
@@ -373,7 +373,7 @@ operation SubscribeToNextJobExecutionChangedEvents(NextJobExecutionChangedSubscr
 
 structure NextJobExecutionChangedSubscriptionRequest {
   @required
-  @mqttTopicLabel
+  @smithy.mqtt#topicLabel
   thingName: smithy.api#String
 }
 

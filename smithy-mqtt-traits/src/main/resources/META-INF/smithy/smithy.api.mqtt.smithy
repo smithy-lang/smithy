@@ -1,26 +1,26 @@
 $version: "0.1.0"
 
-namespace smithy.api
+namespace smithy.mqtt
 
-trait mqttPublish {
-  shape: MqttTopicString,
+trait publish {
+  shape: TopicString,
   selector: "operation:not(-[output]->)",
-  conflicts: ["mqttSubscribe", "inputEventStream"],
+  conflicts: ["smithy.mqtt#subscribe", "inputEventStream"],
   tags: ["diff.error.const"]
 }
 
-trait mqttSubscribe {
-  shape: MqttTopicString,
+trait subscribe {
+  shape: TopicString,
   selector: "operation[trait|outputEventStream]",
-  conflicts: ["mqttPublish"],
+  conflicts: ["smithy.mqtt#publish"],
   tags: ["diff.error.const"]
 }
 
 // Matches one or more characters that are not "#" or "+".
 @pattern("^[^#+]+$")
 @private
-string MqttTopicString
+string TopicString
 
-trait mqttTopicLabel {
+trait topicLabel {
   selector: "member[trait|required]:test(> :test(string, byte, short, integer, long, boolean, timestamp))",
 }

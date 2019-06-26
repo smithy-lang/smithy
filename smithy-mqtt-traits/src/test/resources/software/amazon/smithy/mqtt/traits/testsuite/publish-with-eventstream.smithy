@@ -1,6 +1,6 @@
 namespace smithy.example
 
-@mqttPublish("foo")
+@smithy.mqtt#publish("foo")
 @inputEventStream("messages") // Invalid
 operation Publish(PublishInput)
 

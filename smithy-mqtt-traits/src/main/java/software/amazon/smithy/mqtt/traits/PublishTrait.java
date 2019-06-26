@@ -19,10 +19,10 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
 
 /**
- * mqttPublish trait.
+ * {@code smithy.mqtt#publish} trait.
  */
 public final class PublishTrait extends StringTrait {
-    public static final String NAME = "smithy.api#mqttPublish";
+    public static final String NAME = "smithy.mqtt#publish";
     private final Topic topic;
 
     public PublishTrait(String topic, SourceLocation sourceLocation) {

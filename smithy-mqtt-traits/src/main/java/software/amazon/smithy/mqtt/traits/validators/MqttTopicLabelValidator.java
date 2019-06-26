@@ -38,7 +38,7 @@ import software.amazon.smithy.mqtt.traits.TopicLabelTrait;
 
 /**
  * Validates that labels are correct for MQTT topics on
- * {@code mqttSubscribe} and {@code mqttPublish} operations.
+ * {@code subscribe} and {@code publish} operations.
  *
  * <ul>
  *     <li>Operation input is required when a topic has labels.</li>
@@ -97,7 +97,7 @@ public class MqttTopicLabelValidator extends AbstractValidator {
                     labels.remove(member.getMemberName());
                 } else {
                     events.add(error(member, member.getTrait(TopicLabelTrait.class).get(), String.format(
-                            "This member is marked with the `mqttTopicLabel` trait, but when this member is "
+                            "This member is marked with the `smithy.mqtt#topicLabel` trait, but when this member is "
                             + "used as part of the input of the `%s` operation, a corresponding label cannot be "
                             + "found in the `%s` trait",
                             topics.operation.getId(),
@@ -109,7 +109,7 @@ public class MqttTopicLabelValidator extends AbstractValidator {
         if (!labels.isEmpty()) {
             events.add(error(topics.operation, topics.trait, String.format(
                     "The `%s` trait contains the following topic labels that could not be found in the input "
-                    + "structure of the operation or were not marked with the `mqttTopicLabel` trait: [%s]",
+                    + "structure of the operation or were not marked with the `smithy.mqtt#topicLabel` trait: [%s]",
                     Trait.getIdiomaticTraitName(topics.trait.getName()),
                     ValidationUtils.tickedList(labels))));
         }

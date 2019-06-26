@@ -22,7 +22,7 @@ import software.amazon.smithy.model.traits.BooleanTrait;
  * Binds a member to an MQTT label using the member name.
  */
 public final class TopicLabelTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#mqttTopicLabel";
+    public static final String NAME = "smithy.mqtt#topicLabel";
 
     public TopicLabelTrait(SourceLocation sourceLocation) {
         super(NAME, sourceLocation);

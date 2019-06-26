@@ -28,7 +28,7 @@ import software.amazon.smithy.model.traits.Trait;
  * of an operation.
  *
  * <p>Smithy models can contain a number of MQTT topics that are formed by
- * the {@code mqttPublish} and {@code mqttSubscribe} traits. Each of these
+ * the {@code publish} and {@code subscribe} traits. Each of these
  * traits resolves to a single MQTT topic.
  *
  * <p>This class abstracts away the process of computing the payload of an
@@ -42,14 +42,14 @@ import software.amazon.smithy.model.traits.Trait;
  *     provides information like topic label bindings.</li>
  * </ul>
  *
- * <h2>mqttPublish topics</h2>
+ * <h2>@smithy.mqtt#publish topics</h2>
  *
- * Operations marked with {@code mqttPublish} resolve to a single topic that
+ * Operations marked with {@code @smithy.mqtt#publish} resolve to a single topic that
  * is defined by topic topic property of the trait.
  *
- * <h2>mqttSubscribe topics</h2>
+ * <h2>subscribe topics</h2>
  *
- * Operations marked with {@code mqttSubscribe} resolve to a single topic
+ * Operations marked with {@code subscribe} resolve to a single topic
  * that is defined by the topic property of the trait.
  *
  * <h2>Payload resolution</h2>
@@ -57,7 +57,7 @@ import software.amazon.smithy.model.traits.Trait;
  * The payload binding of a topic binding can be resolved to either no
  * payload (e.g., publish operations with no input shape), a structure
  * payload, or a member of a structure. The target of a specific event
- * shape member can be used as a payload in {@code mqttSubscribe}
+ * shape member can be used as a payload in {@code subscribe}
  * operations where an event member is marked with the {@code eventPayload}
  * trait.
  */
