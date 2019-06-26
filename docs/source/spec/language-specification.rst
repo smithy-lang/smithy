@@ -30,6 +30,7 @@ The Smithy IDL is a series of statements separated by newlines.
     idl                     :[`statement` *(1*`br` `statement`)]
     statement               :`control_statement`
                             :/ `metadata_statement`
+                            :/ `use_statement`
                             :/ `namespace_statement`
                             :/ `apply_statement`
                             :/ `documentation_comment`
@@ -134,6 +135,108 @@ Example:
 
 Top-level metadata key-value pair conflicts are resolved by
 :ref:`merging metadata <merging-metadata>`
+
+
+.. _use-statement:
+
+Use statement
+-------------
+
+A use statement is used to import shapes and traits into the current namespace
+so that they can be referred to using relative shape IDs and trait names. A
+use statement MUST come before any shapes or traits have been defined in an
+IDL model file.
+
+.. productionlist:: smithy
+    use_statement         :`use_shape_statement` / `use_trait_statement`
+
+
+.. _use-shape-statement:
+
+Use shape statement
+~~~~~~~~~~~~~~~~~~~
+
+The ``use_shape_statement`` imports one or more shapes.
+
+.. productionlist:: smithy
+    use_shape_statement   :"use" "shape" `use_statement_target`
+    use_statement_target  :`absolute_shape_id` / multi_use_ids
+    multi_use_ids         :(`namespace` "#" "[" use_statement_id_list "]")
+    use_statement_id_list :`relative_shape_id` *("," `relative_shape_id`) [","]
+
+.. code-block:: smithy
+
+    namespace smithy.hello
+
+    use shape smithy.example#Foo
+    use shape smithy.example#Baz
+
+    map MyMap {
+        // Resolves to smithy.example#Foo
+        key: Foo,
+        // Resolves to smithy.example#Baz
+        value: Baz,
+    }
+
+The above could be more succinctly written using brackets to import relative
+shape IDs within a namespace:
+
+.. code-block:: smithy
+
+    namespace smithy.hello
+
+    use shape smithy.example#[Foo, Baz]
+
+    map MyMap {
+        // Resolves to smithy.example#Foo
+        key: Foo,
+        // Resolves to smithy.example#Baz
+        value: Baz,
+    }
+
+Relative shape IDs with member names cannot be imported with a use statement.
+A shape cannot be defined in a file with the same name as one of the shapes
+imported with a ``use shape`` statement.
+
+See :ref:`relative-shape-id` for an in-depth description of how relative
+shape IDs are resolved in the IDL.
+
+
+.. _use-trait-statement:
+
+Use trait statement
+~~~~~~~~~~~~~~~~~~~
+
+The ``use_trait_statement`` imports one or more traits into the current
+namespace so that the trait can be referred to using a relative trait name.
+
+.. productionlist:: smithy
+    use_trait_statement   :"use" "trait" `use_statement_target`
+
+.. code-block:: smithy
+
+    namespace smithy.hello
+
+    use trait smithy.example#test
+    use trait smithy.example#anotherTrait
+
+    @test // <-- Resolves to smithy.example#test
+    string MyString
+
+The above could be more succinctly written using brackets to import relative
+trait names within a namespace:
+
+.. code-block:: smithy
+
+    namespace smithy.hello
+
+    use trait smithy.example#[test, anotherTrait]
+
+    @test // <-- Resolves to smithy.example#test
+    string MyString
+
+A trait cannot be defined in a file with the same name as one of the
+traits imported with a ``use trait`` statement.
 
 
 .. _namespace-statement:
@@ -407,6 +510,18 @@ New lines in strings are normalized from CR (\u000D) and CRLF (\u000D\u000A)
 to LF (\u000A). This ensures that strings defined in a Smithy model are
 equivalent across platforms. If a literal ``\r`` is desired, it can be added
 a string value using the Unicode escape ``\u000d``.
+
+
+.. _unquoted-strings:
+
+Unquoted strings
+~~~~~~~~~~~~~~~~
+
+Unquoted strings that appear in the IDL as part of a trait value or metadata
+value are treated as shape IDs. Strings MUST be quoted if a value is not
+intended to be converted into a resolved shape ID.
+
+See :ref:`syntactic-shape-ids` for more information.
 
 
 .. _text-blocks:

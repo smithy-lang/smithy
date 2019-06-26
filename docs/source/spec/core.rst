@@ -198,11 +198,9 @@ Shapes
 
 *Shapes* are instances of *types* that describe the structure of an API.
 :ref:`Traits <traits>` can be applied to shapes to describe custom facets
-of the shape.
-
-Shapes are defined inside of :ref:`namespaces <namespaces>`. Shape definitions
-always start with the type name of the shape followed by the name of the
-shape.
+of the shape. Shapes are defined inside of :ref:`namespaces <namespaces>`.
+Shape definitions in the IDL always start with the type name of the shape
+followed by the name of the shape.
 
 
 .. _simple-types:
@@ -254,13 +252,6 @@ or shape references.
 The :token:`simple_shape` statement is used to define a simple shape. Simple
 shapes are defined by a type, followed by a shape name, followed by a
 new line.
-
-.. tip::
-
-    The :ref:`prelude model <prelude>` contains shapes for every simple type.
-    These shapes can be referenced using a relative shape ID
-    (for example, ``String``) or using an absolute shape ID
-    (for example, ``smithy.api#String``).
 
 The following example defines a shape for each simple type in the
 ``smithy.example`` namespace:
@@ -333,6 +324,13 @@ The following example defines a shape for each simple type in the
             }
           }
         }
+
+.. tip::
+
+    The :ref:`prelude model <prelude>` contains shapes for every simple type.
+    These shapes can be referenced using a relative shape ID
+    (for example, ``String``) or using an absolute shape ID
+    (for example, ``smithy.api#String``).
 
 
 .. _timestamp-serialization-format:
@@ -595,7 +593,7 @@ map
 
 The :dfn:`map` type represents a map data structure that maps string keys to
 homogeneous values. A map cannot contain duplicate keys. A map is defined using
-a :token:`map_statement`. The ``key`` member of a map MUST get a ``string``
+a :token:`map_statement`. The ``key`` member of a map MUST target a ``string``
 shape.
 
 The following example defines a map of strings to integers:
@@ -981,7 +979,7 @@ the following properties:
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 15 75
+    :widths: 10 20 70
 
     * - Property
       - Type
@@ -1043,10 +1041,10 @@ that do not fit within a resource hierarchy.
 
 **Validation**
 
-1. An operation MUST NOT be bound to multiple shapes wihin the closure of a
+1. An operation MUST NOT be bound to multiple shapes within the closure of a
    service.
 2. Every operation shape contained within the entire closure of a service MUST
-   have a case-insensitively unique shape name, regardless of its namespaces.
+   have a case-insensitively unique shape name, regardless of their namespaces.
 
 
 .. _service-resources:
@@ -1100,7 +1098,7 @@ shape ID of a resource to the ``resources`` property of a service.
 Operation
 ---------
 
-The :dfn:`operation` type represents the input, output and possible errors of
+The :dfn:`operation` type represents the input, output, and possible errors of
 an API operation. Operation shapes are bound to :ref:`resource <resource>`
 shapes and :ref:`service <service>` shapes. Operation shapes are defined using
 the :token:`operation_statement`.
@@ -1284,10 +1282,10 @@ the following properties:
       - Defines the lifecycle operation used to retrieve the resource.
     * - :ref:`update <update-lifecycle>`
       - :ref:`shape-id`
-      - Defines the lifecylce operation used to update the resource.
+      - Defines the lifecycle operation used to update the resource.
     * - :ref:`delete <delete-lifecycle>`
       - :ref:`shape-id`
-      - Defines the operation used to delete the resource.
+      - Defines the lifecycle operation used to delete the resource.
     * - :ref:`list <list-lifecycle>`
       - :ref:`shape-id`
       - Defines the lifecycle operation used to list resources of this type.
@@ -1983,6 +1981,279 @@ property in the reference.
 See the :ref:`references-trait` for more information about references.
 
 
+.. _shape-id:
+
+--------
+Shape ID
+--------
+
+A :dfn:`shape ID` is used to refer to other shapes in the model. Shape IDs
+adhere to the following syntax:
+
+::
+
+    com.foo.baz#ShapeName$memberName
+    \_________/ \_______/ \________/
+         |          |          |
+     Namespace  Shape name  Member name
+
+Shape IDs are formally defined by the :ref:`shape ID ABNF <shape-id-abnf>`.
+
+Absolute shape ID
+    An :dfn:`absolute shape ID` starts with a :token:`namespace` name,
+    followed by "``#``", followed by a *relative shape ID*.
+Relative shape ID
+    A :dfn:`relative shape ID` contains a :token:`shape name <identifier>`
+    and an optional :token:`member name <identifier>`. The shape name and
+    member name are separated by the "``$``" symbol if a member name is
+    present.
+
+    A relative shape ID is resolved to an absolute shape ID using the
+    process defined in :ref:`relative-shape-id`.
+
+
+.. _relative-shape-id:
+
+Relative shape ID resolution
+============================
+
+In the Smithy IDL, relative shape IDs are resolved using the following process:
+
+#. If a :token:`use_shape_statement` has imported a shape with the same name,
+   the shape ID resolves to the imported shape ID.
+#. If a shape is defined in the same namespace as the shape with the same name,
+   the namespace of the shape resolves to the *current namespace*.
+#. If a shape is defined in the :ref:`prelude <prelude>` with the same name,
+   the namespace resolves to ``smithy.api``.
+#. If a relative shape ID does not satisfy one of the above cases, the shape
+   ID is invalid, and the namespace is inherited from the *current namespace*.
+
+The following example Smithy model contains comments above each member of
+the shape named ``MyStructure`` that describes the shape the member resolves
+to.
+
+.. code-block:: smithy
+    :linenos:
+
+    namespace smithy.example
+
+    use shape foo.baz#Bar
+
+    string MyString
+
+    structure MyStructure {
+        // Resolves to smithy.example#MyString
+        // There is a shape named MyString defined in the same namespace.
+        a: MyString,
+
+        // Resolves to smithy.example#MyString
+        // Absolute shape IDs do not perform namespace resolution.
+        b: smithy.example#MyString,
+
+        // Resolves to foo.baz#Bar
+        // The "use shape foo.baz#Bar" statement imported the Bar symbol,
+        // allowing the shape to be referenced using a relative shape ID.
+        c: Bar,
+
+        // Resolves to foo.baz#Bar
+        // Absolute shape IDs do not perform namespace resolution.
+        d: foo.baz#Bar,
+
+        // Resolves to foo.baz#MyString
+        // Absolute shape IDs do not perform namespace resolution.
+        e: foo.baz#MyString,
+
+        // Resolves to smithy.api#String
+        // No shape named String was imported through a use statement
+        // the smithy.example namespace does not contain a shape named
+        // String, and the prelude model contains a shape named String.
+        f: String,
+
+        // Resolves to smithy.example#MyBoolean.
+        // There is a shape named MyBoolean defined in the same namespace.
+        // Forward references are supported both within the same file and
+        // across multiple files.
+        g: MyBoolean,
+
+        // Invalid. A shape by this name has not been imported through a
+        // use statement, a shape by this name does not exist in the
+        // current namespace, and a shape by this name does not exist in
+        // the prelude model.
+        h: InvalidShape,
+    }
+
+    boolean MyBoolean
+
+.. _relative-shape-id-json:
+
+Relative shape IDs in the :ref:`JSON AST <json-ast>` are resolved using
+the same process as the IDL with the only difference being the JSON AST
+does not support any kind of ``use`` statements.
+
+For example, given the following Smithy model:
+
+.. code-block:: json
+
+    {
+        "smithy": "0.1.0",
+        "smithy.example": {
+            "shapes": {
+                "MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "a": {"target": "MyString"},
+                        "b": {"target": "String"},
+                        "c": {"target": "smithy.example#Foo"},
+                        "d": {"target": "InvalidShape"}
+                    }
+                },
+                "MyString": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+
+The members of ``MyStructure`` resolve to the following shape IDs:
+
+- ``a`` targeting ``MyString`` resolves to ``smithy.example#MyString``.
+- ``b`` targeting ``String`` resolves to ``smithy.api#String`` in the prelude.
+- ``c`` targeting ``smithy.example#Foo`` resolves to ``smithy.example#Foo``
+  because absolute shape IDs do not perform namespace resolution.
+- ``d`` targeting ``InvalidShape`` resolves to an invalid shape ID that
+  targets ``smithy.example#InvalidShape`` because a shape named
+  ``InvalidShape`` does not exist in the ``smithy.example`` namespace nor
+  does one exist in the prelude.
+
+
+.. _shape-id-member-names:
+
+Shape ID member names
+=====================
+
+A :ref:`member` of an :ref:`aggregate shape <aggregate-types>` can be
+referenced in a shape ID by appending "``$``" followed by the
+appropriate member name. Member names for each shape are defined as follows:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 25 40 35
+
+    * - Shape ID
+      - Syntax
+      - Examples
+    * - :ref:`structure` member
+      - ``<name>$<member-name>``
+      - ``Shape$foo``, ``ns.example#Shape$baz``
+    * - :ref:`union` member
+      - ``<name>$<member-name>``
+      - ``Shape$foo``, ``ns.example#Shape$baz``
+    * - :ref:`list` member
+      - ``<name>$member``
+      - ``Shape$member``, ``ns.example#Shape$member``
+    * - :ref:`set` member
+      - ``<name>$member``
+      - ``Shape$member``, ``ns.example#Shape$member``
+    * - :ref:`map` key
+      - ``<name>$key``
+      - ``Shape$key``, ``ns.example#Shape$key``
+    * - :ref:`map` value
+      - ``<name>$value``
+      - ``Shape$value``, ``ns.example#Shape$value``
+
+
+.. _shape-names:
+
+Shape names
+===========
+
+Consumers of a Smithy model MAY choose to inflect shape names, structure
+member names, and other facets of a Smithy model in order to expose a more
+idiomatic experience to particular programming languages. In order to make this
+easier for consumers of a model, model authors SHOULD utilize a strict form of
+PascalCase in which only the first letter of acronyms, abbreviations, and
+initialisms are capitalized.
+
+===========   ===============
+Recommended   Not recommended
+===========   ===============
+UserId        UserID
+ResourceArn   ResourceARN
+IoChannel     IOChannel
+HtmlEntity    HTMLEntity
+HtmlEntity    HTML_Entity
+===========   ===============
+
+
+Shape ID conflicts
+==================
+
+While shape IDs used within a model are case-sensitive, no two shapes in
+the model can have the same case-insensitive shape ID. For example,
+``com.Foo#baz`` and ``com.foo#baz`` are not allowed in the same model. This
+property also extends to member names: ``com.foo#Baz$bar`` and
+``com.foo#Baz$Bar`` are not allowed on the same structure.
+
+
+.. _syntactic-shape-ids:
+
+Syntactic shape IDs in the IDL
+==============================
+
+Unquoted string values in the Smithy IDL in trait values or metadata values
+are considered shape IDs and are resolved using the process defined in
+:ref:`relative-shape-id`. Values that are not meant to be shape IDs MUST
+be quoted.
+
+For example, the following model resolves the value of the :ref:`error-trait`
+to the string literal ``"smithy.example#client"`` rather than using the valid
+string literal value of ``"client"``, causing the model to be invalid:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    @error(client) // <-- This should be "client"
+    structure Error
+
+    string client
+
+Object keys in the IDL are not automatically treated as shape IDs.
+
+Consider the following metadata definition:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    metadata foo = {
+        MyString: MyString,
+    }
+
+    string MyString
+
+The object key remains the same literal string value while the value is
+treated as a shape ID and resolves to the string literal
+``"smithy.example#MyString"``. This IDL model is equivalent to the
+following JSON AST model:
+
+.. code-block:: json
+
+    {
+        "smithy": "0.1.0",
+        "metadata": {
+            "MyString": "smithy.example#MyString"
+        },
+        "smithy.example": {
+            "shapes": {
+                "MyString": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+
+
 ..  _prelude:
 
 -------------
@@ -1990,82 +2261,17 @@ Prelude model
 -------------
 
 Smithy models automatically include a *prelude* model. The prelude model
-defines various simple shapes and every trait defined in the
-:ref:`core specifications <core-specifications>`. All of the shapes and
-traits defined in the prelude are available inside of the ``smithy.api``
-namespace.
-
-
-.. _relative-prelude-targets:
-
-Relative prelude targets
-========================
-
-Relative shape ID targets of :ref:`members <member>`,
-:ref:`resource identifiers <resource-identifiers>`,
-:ref:`trait shape <trait-definition-properties>` targets, and
-:ref:`idRef-trait`\s that do not resolve to shapes defined in their same
-namespace can resolve to any of the defined
-:ref:`prelude shapes <prelude-shapes>`.
-
-Given the following model,
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        namespace smithy.example
-
-        list MyList1 {
-          member: String
-        }
-
-        list MyList2 {
-          member: Integer
-        }
-
-        integer Integer
-
-    .. code-tab:: json
-
-        {
-          "smithy": "0.1.0",
-          "smithy.example": {
-            "shapes": {
-              "MyList1": {
-                "type": "list",
-                "member": {
-                  "target": "String"
-                }
-              },
-              "MyList2": {
-                "type": "list",
-                "member": {
-                  "target": "Integer"
-                }
-              },
-              "Integer": {
-                "type": "integer"
-              }
-            }
-          }
-        }
-
-The resolved shape targeted by the member of ``MyList1`` is
-``smithy.api#String``, and the resolved shape targeted by the member of
-``MyList2`` is ``smithy.example#Integer``.
-
-
-.. _prelude-shapes:
-
-Prelude shapes
-==============
-
-The prelude model is defined using the following :ref:`JSON AST <json-ast>`:
+defines various simple shapes and every trait defined in the core
+specification. Shapes defined in the prelude can be referenced from within
+any namespace using a relative shape ID. All of the shapes and traits
+defined in the prelude are available inside of the ``smithy.api`` namespace.
 
 .. code-block:: smithy
+    :caption: Smithy prelude
+    :name: prelude-shapes
 
     $version: "0.1.0"
+
     namespace smithy.api
 
     string String
@@ -2116,207 +2322,6 @@ The prelude model is defined using the following :ref:`JSON AST <json-ast>`:
     double PrimitiveDouble
 
 
-.. _shape-id:
-
---------
-Shape ID
---------
-
-A :dfn:`shape ID` is used to refer to other shapes in the model. Shape IDs
-adhere to the following syntax:
-
-::
-
-    com.foo.baz#ShapeName$memberName
-    \_________/ \_______/ \________/
-         |          |          |
-     Namespace  Shape name  Member name
-
-Shape IDs are formally defined by the :ref:`shape ID ABNF <shape-id-abnf>`.
-
-Absolute shape ID
-    An :dfn:`absolute shape ID` starts with a :token:`namespace` name,
-    followed by "``#``", followed by a *relative shape ID*.
-Relative shape ID
-    A :dfn:`relative shape ID` contains a :token:`shape name <identifier>`
-    and an optional :token:`member name <identifier>`. The namespace of the
-    shape ID is either inherited from the namespace in which the shape ID is
-    defined or ``smithy.api`` in cases where a relative shape ID resolves to
-    a :ref:`prelude shape <relative-prelude-targets>`. The shape name and
-    member name are separated by the "``$``" symbol if a member name is
-    present.
-
-
-Shape ID conflicts
-==================
-
-While shape IDs used within a model are case-sensitive, no two shapes in
-the model can have the same case-insensitive shape ID. For example,
-``com.Foo#baz`` and ``com.foo#baz`` are not allowed in the same model. This
-property also extends to member names: ``com.foo#Baz$bar`` and
-``com.foo#Baz$Bar`` are not allowed on the same structure.
-
-
-.. _example-shape-ids:
-
-Example shape IDs
-=================
-
-The following table provides examples of shape IDs:
-
-============================  ==========  =========================================================================================
-Shape ID                      Type         Description
-============================  ==========  =========================================================================================
-``Example``                   relative    Resolves to a shape named ``Example`` in the current namespace.
-``Example$member``            relative    Resolves to the member of a shape named ``Example`` in the current namespace.
-``foo.baz#Example``           absolute    Resolves to a shape named ``Example`` in the ``foo.baz`` namespace.
-``foo.baz#Example$baz``       absolute    Resolves to the ``baz`` member of a shape named ``Example`` in the ``foo.baz`` namespace.
-``foo.baz#Example$member``    absolute    Resolves to the member of a shape named ``Example`` in the ``foo.baz`` namespace.
-============================  ==========  =========================================================================================
-
-
-.. _relative-shape-id:
-
-Relative shape ID namespace resolution
-======================================
-
-The namespace of a relative shape ID resolves to the namespace in which the
-shape ID is defined.
-
-For example, given the following Smithy model,
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        namespace smithy.example
-
-        string MyString
-
-        structure MyStructure {
-          someMemberName: MyString,
-        }
-
-    .. code-tab:: json
-
-        {
-          "smithy": "0.1.0",
-          "smithy.example": {
-            "shapes": {
-              "MyString": {
-                "type": "string"
-              },
-              "MyStructure": {
-                "type": "structure",
-                "members": {
-                  "someMemberName": {
-                    "target": "MyString"
-                  }
-                }
-              }
-            }
-          }
-        }
-
-the structure member, ``someMemberName``, is defined using a relative
-shape ID.
-
-Though unnecessary, the structure member ``someMemberName`` could have utilized
-an absolute shape ID:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        namespace smithy.example
-
-        string MyString
-
-        structure MyStructure {
-          someMemberName: smithy.example#MyString,
-        }
-
-    .. code-tab:: json
-
-        {
-          "smithy": "0.1.0",
-          "smithy.example": {
-            "shapes": {
-              "MyString": {
-                "type": "string"
-              },
-              "MyStructure": {
-                "type": "structure",
-                "members": {
-                  "someMemberName": {
-                    "target": "smithy.example#MyString"
-                  }
-                }
-              }
-            }
-          }
-        }
-
-
-.. _shape-id-member-names:
-
-Shape ID member names
-=====================
-
-A :ref:`member` of an :ref:`aggregate shape <aggregate-types>` can be
-referenced in a shape ID by appending "``$``" followed by the
-appropriate member name. Member names for each shape are defined as follows:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 25 30 45
-
-    * - Shape ID
-      - Syntax
-      - Examples
-    * - :ref:`structure` member
-      - ``<name>$<member-name>``
-      - ``Shape$foo``, ``ns.example#Shape$baz``
-    * - :ref:`union` member
-      - ``<name>$<member-name>``
-      - ``Shape$foo``, ``ns.example#Shape$baz``
-    * - :ref:`list` member
-      - ``<name>$member``
-      - ``Shape$member``, ``ns.example#Shape$member``
-    * - :ref:`set` member
-      - ``<name>$member``
-      - ``Shape$member``, ``ns.example#Shape$member``
-    * - :ref:`map` key
-      - ``<name>$key``
-      - ``Shape$key``, ``ns.example#Shape$key``
-    * - :ref:`map` value
-      - ``<name>$value``
-      - ``Shape$value``, ``ns.example#Shape$value``
-
-
-.. _shape-names:
-
-Shape names
-===========
-
-Consumers of a Smithy model MAY choose to inflect shape names, structure
-member names, and other facets of a Smithy model in order to expose a more
-idiomatic experience to particular programming languages. In order to make this
-easier for consumers of a model, model authors SHOULD utilize a strict form of
-PascalCase in which only the first letter of acronyms, abbreviations, and
-initialisms are capitalized.
-
-===========   ===============
-Recommended   Not recommended
-===========   ===============
-UserId        UserID
-ResourceArn   ResourceARN
-IoChannel     IOChannel
-HtmlEntity    HTMLEntity
-HtmlEntity    HTML_Entity
-===========   ===============
-
-
 .. _traits:
 
 ------
@@ -2326,7 +2331,6 @@ Traits
 *Traits* are model components that can be attached to :doc:`shapes <index>`
 to describe additional information about the shape; shapes provide the
 structure and layout of an API, while traits provide refinement and style.
-Protocols MAY require specific traits to be applied in a model.
 
 Trait names are case-sensitive; it is invalid, for example, to write the
 :ref:`documentation-trait` as "Documentation").
@@ -2439,7 +2443,7 @@ the value can be omitted:
 
     @structuredTrait
 
-This is equivalent to setting the trait to ``null``:
+This is equivalent to setting the trait to ``null`` or ``true``:
 
 .. code-block:: smithy
 
@@ -2516,6 +2520,19 @@ example, the following definition unambiguously references a trait named
     string MyString
 
 If the trait name does not contain a namespace, trait resolution occurs.
+If a trait names matches the name of a trait that was imported into the
+current namespace using a :token:`use_trait_statement`, then the trait
+resolves to the fully-qualified trait name of the imported trait.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    use trait smithy.other#hello
+
+    @hello("test") // resolves to smithy.other#hello
+    string MyString
+
 If the trait name matches a trait defined in the *current namespace*, then
 that trait is resolved as the trait to apply to the shape. For example, the
 following definition applies a trait using a relative trait name in the current
@@ -2529,13 +2546,14 @@ namespace:
       selector: "*",
     }
 
-    @hello("test")
+    @hello("test") // Resolves to smithy.example#hello
     string MyString
 
-If no trait can be found by name in the current namespace, then the trait
-is assumed to be one of the built-in traits defined inside of the
-``smithy.api`` namespace. The following definition applies the sensitive
-trait without specifying the ``smithy.api`` namespace in the trait name:
+If no trait can be found by name in a use statement or in the current
+namespace, then the trait is assumed to be one of the built-in traits
+defined inside of the ``smithy.api`` namespace. The following definition
+applies the sensitive trait without specifying the ``smithy.api`` namespace
+in the trait name:
 
 .. code-block:: smithy
 
