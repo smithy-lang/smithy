@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Style Guide &#8212; Smithy 0.1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    <title>Style Guide &#8212; Smithy 0.2.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -132,7 +132,8 @@ style guide makes models easier to read.</p>
 <h2>Model files<a class="headerlink" href="#model-files" title="Permalink to this headline">¶</a></h2>
 <p>Smithy models SHOULD be authored using the <a class="reference internal" href="../spec/language-specification.html#smithy-language-specification"><span class="std std-ref">Smithy IDL</span></a>.
 Smithy models SHOULD resemble the following example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nl">$vesion:</span><span class="n">1.0</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
+
 <span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> []
 <span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span> []
 
@@ -147,7 +148,7 @@ Smithy models SHOULD resemble the following example:</p>
 <span class="c">// Example of creating custom traits.</span>
 <span class="kd">trait</span><span class="nc"> myTrait</span> {
   <span class="nl">selector:</span> <span class="s2">&quot;string&quot;</span>,
-  <span class="nl">booleanTrait:</span> <span class="n">true</span>
+  <span class="nl">booleanTrait:</span> <span class="kc">true</span>
 }
 </pre></div>
 </div>

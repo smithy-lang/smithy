@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AWS Core Specification &#8212; Smithy 0.1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    <title>AWS Core Specification &#8212; Smithy 0.2.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -176,7 +176,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
 <span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
@@ -188,7 +188,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;aws.fooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -218,7 +218,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
 <span class="nd">@aws.api#service</span>(
@@ -234,7 +234,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;aws.fooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -493,7 +493,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
 <span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
@@ -504,7 +504,7 @@ JSON</div>
 <span class="nd">@aws.api#arn</span>(<span class="nl">template:</span> <span class="s2">&quot;myresource/{myId}&quot;</span>)
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
   <span class="nl">identifiers:</span> {
-    <span class="nl">myId:</span> <span class="n">MyResourceId</span>
+    <span class="nl">myId:</span> <span class="vc">MyResourceId</span>
   },
 }
 </pre></div>
@@ -512,7 +512,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
   <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
       <span class="nt">&quot;FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -560,19 +560,19 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#arn</span>(<span class="nl">template:</span> <span class="s2">&quot;{arn}&quot;</span>, <span class="nl">absolute:</span> <span class="n">true</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#arn</span>(<span class="nl">template:</span> <span class="s2">&quot;{arn}&quot;</span>, <span class="nl">absolute:</span> <span class="kc">true</span>)
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
-  <span class="nl">identifiers:</span> {<span class="nl">arn:</span> <span class="n">Arn</span>}
+  <span class="nl">identifiers:</span> {<span class="nl">arn:</span> <span class="vc">Arn</span>}
 }
 
-<span class="nd">@aws.api#arnReference</span>(<span class="nl">service:</span> <span class="n">FooBaz</span>, <span class="nl">resource:</span> <span class="n">MyResource</span>)
+<span class="nd">@aws.api#arnReference</span>(<span class="nl">service:</span> <span class="vc">FooBaz</span>, <span class="nl">resource:</span> <span class="vc">MyResource</span>)
 <span class="kd">string</span><span class="nc"> Arn</span>
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
   <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
       <span class="nt">&quot;MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -671,20 +671,20 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="nd">@aws.api#arnReference</span>(
     <span class="nl">type:</span> <span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span>,
-    <span class="nl">service:</span> <span class="n">com.foo#SomeService</span>,
-    <span class="nl">resource:</span> <span class="n">com.foo#SomeResource</span>)
+    <span class="nl">service:</span> <span class="vc">com.foo#SomeService</span>,
+    <span class="nl">resource:</span> <span class="vc">com.foo#SomeResource</span>)
 <span class="kd">string</span><span class="nc"> SomeResourceId</span>
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;SomeResourceId&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -717,7 +717,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="nd">@aws.api#arnReference</span>
@@ -727,7 +727,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;SomeResourceId&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -777,13 +777,13 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#unsignedPayload</span>
-<span class="kd">operation</span><span class="nc"> PutThings</span>(<span class="n">PutThingsInput</span>) <span class="nd">-&gt;</span> <span class="n">PutThingsOutput</span>
+<span class="kd">operation</span><span class="nc"> PutThings</span>(<span class="vc">PutThingsInput</span>) <span class="nd">-&gt;</span> <span class="vc">PutThingsOutput</span>
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;PutThings&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -813,14 +813,14 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#unsignedPayload</span>([<span class="n">aws.v4</span>])
-<span class="kd">operation</span><span class="nc"> PutThings</span>(<span class="n">PutThingsInput</span>) <span class="nd">-&gt;</span> <span class="n">PutThingsOutput</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#unsignedPayload</span>([<span class="vc">aws.v4</span>])
+<span class="kd">operation</span><span class="nc"> PutThings</span>(<span class="vc">PutThingsInput</span>) <span class="nd">-&gt;</span> <span class="vc">PutThingsOutput</span>
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;PutThings&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -868,7 +868,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
 <span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
@@ -881,7 +881,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;aws.fooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -945,7 +945,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;FooOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -992,19 +992,19 @@ JSON</div>
 
 <span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
 <span class="nd">@aws.iam#defineConditionKeys</span>([
-    <span class="s2">&quot;otherservice:Bar&quot;</span>: { <span class="nl">type:</span> <span class="n">String</span> },
+    {<span class="s2">&quot;otherservice:Bar&quot;</span>: { <span class="nl">type:</span> <span class="s2">&quot;String&quot;</span> }},
 ])
 <span class="kd">service</span><span class="nc"> MyService</span> {
     <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
-    <span class="nl">resources:</span> [<span class="n">MyResource</span>],
+    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
 }
 
 <span class="nd">@aws.iam#conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
     <span class="nl">identifiers:</span> {
-        <span class="nl">foo:</span> <span class="n">String</span>
+        <span class="nl">foo:</span> <span class="vc">String</span>
     },
-    <span class="nl">operations:</span> [<span class="n">MyOperation</span>],
+    <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
 }
 
 <span class="nd">@aws.iam#conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
@@ -1014,7 +1014,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1119,23 +1119,22 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
 <span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
-<span class="nd">@aws.iam#defineConditionKeys</span>({
+<span class="nd">@aws.iam#defineConditionKeys</span>(
     <span class="s2">&quot;otherservice:Bar&quot;</span>: {
-        <span class="nl">type:</span> <span class="n">String</span>,
+        <span class="nl">type:</span> <span class="vc">String</span>,
         <span class="nl">documentation:</span> <span class="s2">&quot;The Bar string&quot;</span>,
         <span class="nl">externalDocumentation:</span> <span class="s2">&quot;http://example.com&quot;</span>
-    },
-})
+    }})
 <span class="kd">service</span><span class="nc"> MyService</span> {
     <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
-    <span class="nl">resources:</span> [<span class="n">MyResource</span>],
+    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1259,14 +1258,14 @@ JSON</div>
 <span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
 <span class="kd">service</span><span class="nc"> MyService</span> {
     <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
-    <span class="nl">resources:</span> [<span class="n">MyResource</span>],
+    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
 }
 
 <span class="nd">@aws.iam#disableConditionKeyInference</span>
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
     <span class="nl">identifiers:</span> {
-        <span class="nl">foo:</span> <span class="n">String</span>,
-        <span class="nl">bar:</span> <span class="n">String</span>,
+        <span class="nl">foo:</span> <span class="vc">String</span>,
+        <span class="nl">bar:</span> <span class="vc">String</span>,
     },
 }
 </pre></div>
@@ -1274,7 +1273,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1336,14 +1335,14 @@ JSON</div>
 <span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
 <span class="kd">service</span><span class="nc"> MyService</span> {
     <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
-    <span class="nl">resources:</span> [<span class="n">MyResource</span>],
+    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
 }
 
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
     <span class="nl">identifiers:</span> {
-        <span class="nl">foo:</span> <span class="n">String</span>
+        <span class="nl">foo:</span> <span class="vc">String</span>
     },
-    <span class="nl">operations:</span> [<span class="n">MyOperation</span>],
+    <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
 }
 
 <span class="nd">@aws.iam#requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])
@@ -1353,7 +1352,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1412,26 +1411,24 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
 <span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
-<span class="nd">@aws.iam#defineConditionKeys</span>([
-    <span class="s2">&quot;otherservice:Bar&quot;</span>: { <span class="nl">type:</span> <span class="n">String</span> },
-])
+<span class="nd">@aws.iam#defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span>: { <span class="nl">type:</span> <span class="vc">String</span> })
 <span class="kd">service</span><span class="nc"> MyService</span> {
     <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
-    <span class="nl">resources:</span> [<span class="n">MyResource</span>],
+    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
 }
 
 <span class="nd">@aws.iam#conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
     <span class="nl">identifiers:</span> {
-        <span class="nl">foo:</span> <span class="n">String</span>
+        <span class="nl">foo:</span> <span class="vc">String</span>
     },
-    <span class="nl">operations:</span> [<span class="n">MyOperation</span>],
-    <span class="nl">resources:</span> [<span class="n">MyInnerResource</span>],
+    <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
+    <span class="nl">resources:</span> [<span class="vc">MyInnerResource</span>],
 }
 
 <span class="kd">resource</span><span class="nc"> MyInnerResource</span> {
     <span class="nl">identifiers:</span> {
-        <span class="nl">yum:</span> <span class="n">String</span>
+        <span class="nl">yum:</span> <span class="vc">String</span>
     }
 }
 
@@ -1442,7 +1439,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>

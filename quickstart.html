@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Quick start &#8212; Smithy 0.1.0 documentation</title><link rel="stylesheet" href="_static/bootstrap-reboot.css" type="text/css" />
+    <title>Quick start &#8212; Smithy 0.2.0 documentation</title><link rel="stylesheet" href="_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -252,6 +252,7 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> example.weather</span>
 
+<span class="cm">/// Provides weather forecasts.</span>
 <span class="kd">service</span><span class="nc"> Weather</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>
 }
@@ -260,7 +261,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;example.weather&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -304,15 +305,16 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> example.weather</span>
 
+<span class="cm">/// Provides weather forecasts.</span>
 <span class="kd">service</span><span class="nc"> Weather</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>,
-  <span class="nl">resources:</span> [<span class="n">City</span>]
+  <span class="nl">resources:</span> [<span class="vc">City</span>]
 }
 
 <span class="kd">resource</span><span class="nc"> City</span> {
-  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="n">CityId</span> },
-  <span class="nl">read:</span> <span class="n">GetCity</span>,
-  <span class="nl">list:</span> <span class="n">ListCities</span>,
+  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="vc">CityId</span> },
+  <span class="nl">read:</span> <span class="vc">GetCity</span>,
+  <span class="nl">list:</span> <span class="vc">ListCities</span>,
 }
 
 <span class="c">// &quot;pattern&quot; is a trait.</span>
@@ -323,7 +325,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
 
     <span class="nt">&quot;example.weather&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -375,22 +377,22 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource</span><span class="nc"> City</span> {
-  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="n">CityId</span> },
-  <span class="nl">read:</span> <span class="n">GetCity</span>,
-  <span class="nl">list:</span> <span class="n">ListCities</span>,
-  <span class="nl">resources:</span> [<span class="n">Forecast</span>],
+  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="vc">CityId</span> },
+  <span class="nl">read:</span> <span class="vc">GetCity</span>,
+  <span class="nl">list:</span> <span class="vc">ListCities</span>,
+  <span class="nl">resources:</span> [<span class="vc">Forecast</span>],
 }
 
 <span class="kd">resource</span><span class="nc"> Forecast</span> {
-  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="n">CityId</span> },
-  <span class="nl">read:</span> <span class="n">GetForecast</span>,
+  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="vc">CityId</span> },
+  <span class="nl">read:</span> <span class="vc">GetForecast</span>,
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;example.weather&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;City&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -450,46 +452,46 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
-<span class="kd">operation</span><span class="nc"> GetCity</span>(<span class="n">GetCityInput</span>) <span class="nd">-&gt;</span> <span class="n">GetCityOutput</span> <span class="nd">errors</span> [<span class="n">NoSuchResource</span>]
+<span class="kd">operation</span><span class="nc"> GetCity</span>(<span class="vc">GetCityInput</span>) <span class="nd">-&gt;</span> <span class="vc">GetCityOutput</span> <span class="nd">errors</span> [<span class="vc">NoSuchResource</span>]
 
 <span class="kd">structure</span><span class="nc"> GetCityInput</span> {
   <span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
   <span class="c">// has to be marked as required.</span>
   <span class="nd">@required</span>
-  <span class="nl">cityId:</span> <span class="n">CityId</span>
+  <span class="nl">cityId:</span> <span class="vc">CityId</span>
 }
 
 <span class="kd">structure</span><span class="nc"> GetCityOutput</span> {
   <span class="c">// &quot;required&quot; is used on output to indicate if the service</span>
   <span class="c">// will always provide a value for the member.</span>
   <span class="nd">@required</span>
-  <span class="nl">name:</span> <span class="n">String</span>,
+  <span class="nl">name:</span> <span class="vc">String</span>,
 
   <span class="nd">@required</span>
-  <span class="nl">coordinates:</span> <span class="n">CityCoordinates</span>,
+  <span class="nl">coordinates:</span> <span class="vc">CityCoordinates</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> CityCoordinates</span> {
   <span class="nd">@required</span>
-  <span class="nl">latitude:</span> <span class="n">Float</span>,
+  <span class="nl">latitude:</span> <span class="vc">Float</span>,
 
   <span class="nd">@required</span>
-  <span class="nl">longitude:</span> <span class="n">Float</span>,
+  <span class="nl">longitude:</span> <span class="vc">Float</span>,
 }
 
 <span class="c">// &quot;error&quot; is a trait that is used to specialize</span>
 <span class="c">// a structure as an error.</span>
-<span class="nd">@error</span>(<span class="n">client</span>)
+<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
 <span class="kd">structure</span><span class="nc"> NoSuchResource</span> {
   <span class="nd">@required</span>
-  <span class="nl">resourceType:</span> <span class="n">String</span>
+  <span class="nl">resourceType:</span> <span class="vc">String</span>
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;example.weather&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;GetCity&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -584,42 +586,42 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// The paginated trait indicates that the operation may</span>
 <span class="c">// return truncated results.</span>
 <span class="nd">@readonly</span> <span class="nd">@collection</span>
-<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="n">nextToken</span>, <span class="nl">outputToken:</span> <span class="n">nextToken</span>,
-          <span class="nl">pageSize:</span> <span class="n">pageSize</span>, <span class="nl">items:</span> <span class="n">items</span>)
-<span class="kd">operation</span><span class="nc"> ListCities</span>(<span class="n">ListCitiesInput</span>) <span class="nd">-&gt;</span> <span class="n">ListCitiesOutput</span>
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
+          <span class="nl">pageSize:</span> <span class="s2">&quot;pageSize&quot;</span>, <span class="nl">items:</span> <span class="s2">&quot;items&quot;</span>)
+<span class="kd">operation</span><span class="nc"> ListCities</span>(<span class="vc">ListCitiesInput</span>) <span class="nd">-&gt;</span> <span class="vc">ListCitiesOutput</span>
 
 <span class="kd">structure</span><span class="nc"> ListCitiesInput</span> {
-  <span class="nl">nextToken:</span> <span class="n">String</span>,
-  <span class="nl">pageSize:</span> <span class="n">Integer</span>
+  <span class="nl">nextToken:</span> <span class="vc">String</span>,
+  <span class="nl">pageSize:</span> <span class="vc">Integer</span>
 }
 
 <span class="kd">structure</span><span class="nc"> ListCitiesOutput</span> {
-  <span class="nl">nextToken:</span> <span class="n">String</span>,
+  <span class="nl">nextToken:</span> <span class="vc">String</span>,
 
   <span class="nd">@required</span>
-  <span class="nl">items:</span> <span class="n">CitySummaries</span>,
+  <span class="nl">items:</span> <span class="vc">CitySummaries</span>,
 }
 
 <span class="c">// CitySummaries is a list of CitySummary structures.</span>
 <span class="kd">list</span><span class="nc"> CitySummaries</span> {
-  <span class="nl">member:</span> <span class="n">CitySummary</span>
+  <span class="nl">member:</span> <span class="vc">CitySummary</span>
 }
 
 <span class="c">// CitySummary contains a reference to a City.</span>
-<span class="nd">@references</span>(<span class="nl">city:</span> { <span class="nl">resource:</span> <span class="n">City</span>, <span class="nl">service:</span> <span class="n">Weather</span> })
+<span class="nd">@references</span>(<span class="nl">city:</span> { <span class="nl">resource:</span> <span class="vc">City</span>, <span class="nl">service:</span> <span class="vc">Weather</span> })
 <span class="kd">structure</span><span class="nc"> CitySummary</span> {
   <span class="nd">@required</span>
-  <span class="nl">cityId:</span> <span class="n">CityId</span>,
+  <span class="nl">cityId:</span> <span class="vc">CityId</span>,
 
   <span class="nd">@required</span>
-  <span class="nl">name:</span> <span class="n">String</span>,
+  <span class="nl">name:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;example.weather&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;ListCities&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -722,25 +724,26 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">service</span><span class="nc"> Weather</span> {
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="cm">/// Provides weather forecasts.</span>
+<span class="kd">service</span><span class="nc"> Weather</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>,
-  <span class="nl">resources:</span> [<span class="n">City</span>],
-  <span class="nl">operations:</span> [<span class="n">GetCurrentTime</span>]
+  <span class="nl">resources:</span> [<span class="vc">City</span>],
+  <span class="nl">operations:</span> [<span class="vc">GetCurrentTime</span>]
 }
 
 <span class="nd">@readonly</span>
-<span class="kd">operation</span><span class="nc"> GetCurrentTime</span>() <span class="nd">-&gt;</span> <span class="n">GetCurrentTimeOutput</span>
+<span class="kd">operation</span><span class="nc"> GetCurrentTime</span>() <span class="nd">-&gt;</span> <span class="vc">GetCurrentTimeOutput</span>
 
 <span class="kd">structure</span><span class="nc"> GetCurrentTimeOutput</span> {
   <span class="nd">@required</span>
-  <span class="nl">time:</span> <span class="n">Timestamp</span>
+  <span class="nl">time:</span> <span class="vc">Timestamp</span>
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;example.weather&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -799,22 +802,23 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> example.weather</span>
 
+<span class="cm">/// Provides weather forecasts.</span>
 <span class="kd">service</span><span class="nc"> Weather</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>,
-  <span class="nl">resources:</span> [<span class="n">City</span>],
-  <span class="nl">operations:</span> [<span class="n">GetCurrentTime</span>]
+  <span class="nl">resources:</span> [<span class="vc">City</span>],
+  <span class="nl">operations:</span> [<span class="vc">GetCurrentTime</span>]
 }
 
 <span class="kd">resource</span><span class="nc"> City</span> {
-  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="n">CityId</span> },
-  <span class="nl">read:</span> <span class="n">GetCity</span>,
-  <span class="nl">list:</span> <span class="n">ListCities</span>,
-  <span class="nl">resources:</span> [<span class="n">Forecast</span>],
+  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="vc">CityId</span> },
+  <span class="nl">read:</span> <span class="vc">GetCity</span>,
+  <span class="nl">list:</span> <span class="vc">ListCities</span>,
+  <span class="nl">resources:</span> [<span class="vc">Forecast</span>],
 }
 
 <span class="kd">resource</span><span class="nc"> Forecast</span> {
-  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="n">CityId</span> },
-  <span class="nl">read:</span> <span class="n">GetForecast</span>,
+  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="vc">CityId</span> },
+  <span class="nl">read:</span> <span class="vc">GetForecast</span>,
 }
 
 <span class="c">// &quot;pattern&quot; is a trait.</span>
@@ -822,103 +826,103 @@ JSON</div>
 <span class="kd">string</span><span class="nc"> CityId</span>
 
 <span class="nd">@readonly</span>
-<span class="kd">operation</span><span class="nc"> GetCity</span>(<span class="n">GetCityInput</span>) <span class="nd">-&gt;</span> <span class="n">GetCityOutput</span> <span class="nd">errors</span> [<span class="n">NoSuchResource</span>]
+<span class="kd">operation</span><span class="nc"> GetCity</span>(<span class="vc">GetCityInput</span>) <span class="nd">-&gt;</span> <span class="vc">GetCityOutput</span> <span class="nd">errors</span> [<span class="vc">NoSuchResource</span>]
 
 <span class="kd">structure</span><span class="nc"> GetCityInput</span> {
   <span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
   <span class="c">// has to be marked as required.</span>
   <span class="nd">@required</span>
-  <span class="nl">cityId:</span> <span class="n">CityId</span>
+  <span class="nl">cityId:</span> <span class="vc">CityId</span>
 }
 
 <span class="kd">structure</span><span class="nc"> GetCityOutput</span> {
   <span class="c">// &quot;required&quot; is used on output to indicate if the service</span>
   <span class="c">// will always provide a value for the member.</span>
   <span class="nd">@required</span>
-  <span class="nl">name:</span> <span class="n">String</span>,
+  <span class="nl">name:</span> <span class="vc">String</span>,
 
   <span class="nd">@required</span>
-  <span class="nl">coordinates:</span> <span class="n">CityCoordinates</span>,
+  <span class="nl">coordinates:</span> <span class="vc">CityCoordinates</span>,
 }
 
 <span class="c">// This structure is nested within GetCityOutput.</span>
 <span class="kd">structure</span><span class="nc"> CityCoordinates</span> {
   <span class="nd">@required</span>
-  <span class="nl">latitude:</span> <span class="n">Float</span>,
+  <span class="nl">latitude:</span> <span class="vc">Float</span>,
 
   <span class="nd">@required</span>
-  <span class="nl">longitude:</span> <span class="n">Float</span>,
+  <span class="nl">longitude:</span> <span class="vc">Float</span>,
 }
 
 <span class="c">// &quot;error&quot; is a trait that is used to specialize</span>
 <span class="c">// a structure as an error.</span>
-<span class="nd">@error</span>(<span class="n">client</span>)
+<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
 <span class="kd">structure</span><span class="nc"> NoSuchResource</span> {
   <span class="nd">@required</span>
-  <span class="nl">resourceType:</span> <span class="n">String</span>
+  <span class="nl">resourceType:</span> <span class="vc">String</span>
 }
 
 <span class="c">// The paginated trait indicates that the operation may</span>
 <span class="c">// return truncated results.</span>
 <span class="nd">@readonly</span> <span class="nd">@collection</span>
-<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="n">nextToken</span>, <span class="nl">outputToken:</span> <span class="n">nextToken</span>,
-          <span class="nl">pageSize:</span> <span class="n">pageSize</span>, <span class="nl">items:</span> <span class="n">items</span>)
-<span class="kd">operation</span><span class="nc"> ListCities</span>(<span class="n">ListCitiesInput</span>) <span class="nd">-&gt;</span> <span class="n">ListCitiesOutput</span>
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
+          <span class="nl">pageSize:</span> <span class="s2">&quot;pageSize&quot;</span>, <span class="nl">items:</span> <span class="s2">&quot;items&quot;</span>)
+<span class="kd">operation</span><span class="nc"> ListCities</span>(<span class="vc">ListCitiesInput</span>) <span class="nd">-&gt;</span> <span class="vc">ListCitiesOutput</span>
 
 <span class="kd">structure</span><span class="nc"> ListCitiesInput</span> {
-  <span class="nl">nextToken:</span> <span class="n">String</span>,
-  <span class="nl">pageSize:</span> <span class="n">Integer</span>
+  <span class="nl">nextToken:</span> <span class="vc">String</span>,
+  <span class="nl">pageSize:</span> <span class="vc">Integer</span>
 }
 
 <span class="kd">structure</span><span class="nc"> ListCitiesOutput</span> {
-  <span class="nl">nextToken:</span> <span class="n">String</span>,
+  <span class="nl">nextToken:</span> <span class="vc">String</span>,
 
   <span class="nd">@required</span>
-  <span class="nl">items:</span> <span class="n">CitySummaries</span>,
+  <span class="nl">items:</span> <span class="vc">CitySummaries</span>,
 }
 
 <span class="c">// CitySummaries is a list of CitySummary structures.</span>
 <span class="kd">list</span><span class="nc"> CitySummaries</span> {
-  <span class="nl">member:</span> <span class="n">CitySummary</span>
+  <span class="nl">member:</span> <span class="vc">CitySummary</span>
 }
 
 <span class="c">// CitySummary contains a reference to a City.</span>
-<span class="nd">@references</span>(<span class="nl">city:</span> { <span class="nl">resource:</span> <span class="n">City</span>, <span class="nl">service:</span> <span class="n">Weather</span> })
+<span class="nd">@references</span>(<span class="nl">city:</span> { <span class="nl">resource:</span> <span class="vc">City</span>, <span class="nl">service:</span> <span class="vc">Weather</span> })
 <span class="kd">structure</span><span class="nc"> CitySummary</span> {
   <span class="nd">@required</span>
-  <span class="nl">cityId:</span> <span class="n">CityId</span>,
+  <span class="nl">cityId:</span> <span class="vc">CityId</span>,
 
   <span class="nd">@required</span>
-  <span class="nl">name:</span> <span class="n">String</span>,
+  <span class="nl">name:</span> <span class="vc">String</span>,
 }
 
 <span class="nd">@readonly</span>
-<span class="kd">operation</span><span class="nc"> GetCurrentTime</span>() <span class="nd">-&gt;</span> <span class="n">GetCurrentTimeOutput</span>
+<span class="kd">operation</span><span class="nc"> GetCurrentTime</span>() <span class="nd">-&gt;</span> <span class="vc">GetCurrentTimeOutput</span>
 
 <span class="kd">structure</span><span class="nc"> GetCurrentTimeOutput</span> {
   <span class="nd">@required</span>
-  <span class="nl">time:</span> <span class="n">Timestamp</span>
+  <span class="nl">time:</span> <span class="vc">Timestamp</span>
 }
 
 <span class="nd">@readonly</span>
-<span class="kd">operation</span><span class="nc"> GetForecast</span>(<span class="n">GetForecastInput</span>) <span class="nd">-&gt;</span> <span class="n">GetForecastOutput</span>
+<span class="kd">operation</span><span class="nc"> GetForecast</span>(<span class="vc">GetForecastInput</span>) <span class="nd">-&gt;</span> <span class="vc">GetForecastOutput</span>
 
 <span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span>
 <span class="c">// a Forecast doesn&#39;t have its own.</span>
 <span class="kd">structure</span><span class="nc"> GetForecastInput</span> {
   <span class="nd">@required</span>
-  <span class="nl">cityId:</span> <span class="n">CityId</span>,
+  <span class="nl">cityId:</span> <span class="vc">CityId</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> GetForecastOutput</span> {
-    <span class="nl">chanceOfRain:</span> <span class="n">Float</span>
+    <span class="nl">chanceOfRain:</span> <span class="vc">Float</span>
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;example.weather&quot;</span><span class="p">:{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:{</span>
             <span class="nt">&quot;City&quot;</span><span class="p">:{</span>

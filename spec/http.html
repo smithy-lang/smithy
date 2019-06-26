@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>HTTP protocol bindings &#8212; Smithy 0.1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    <title>HTTP protocol bindings &#8212; Smithy 0.2.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -180,33 +180,33 @@ Smithy</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="nd">@idempotent</span>
-<span class="nd">@http</span>(<span class="nl">method:</span> <span class="n">PUT</span>, <span class="nl">uri:</span> <span class="s2">&quot;/{bucketName}/{key}&quot;</span>, <span class="nl">code:</span> <span class="n">200</span>)
-<span class="kd">operation</span><span class="nc"> PutObject</span>(<span class="n">PutObjectInput</span>)
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;PUT&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/{bucketName}/{key}&quot;</span>, <span class="nl">code:</span> <span class="m">200</span>)
+<span class="kd">operation</span><span class="nc"> PutObject</span>(<span class="vc">PutObjectInput</span>)
 
 <span class="kd">structure</span><span class="nc"> PutObjectInput</span> {
   <span class="c">// Sent in the URI label named &quot;key&quot;.</span>
   <span class="nd">@required</span>
   <span class="nd">@httpLabel</span>
-  <span class="nl">key:</span> <span class="n">ObjectKey</span>,
+  <span class="nl">key:</span> <span class="vc">ObjectKey</span>,
 
   <span class="c">// Sent in the URI label named &quot;bucketName&quot;.</span>
   <span class="nd">@required</span>
   <span class="nd">@httpLabel</span>
-  <span class="nl">bucketName:</span> <span class="n">String</span>,
+  <span class="nl">bucketName:</span> <span class="vc">String</span>,
 
   <span class="c">// Sent in the X-Foo header</span>
-  <span class="nd">@httpHeader</span>(<span class="n">X-Foo</span>)
-  <span class="nl">foo:</span> <span class="n">String</span>,
+  <span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)
+  <span class="nl">foo:</span> <span class="vc">String</span>,
 
   <span class="c">// Sent in the query string as paramName</span>
-  <span class="nd">@httpQuery</span>(<span class="n">paramName</span>)
-  <span class="nl">someValue:</span> <span class="n">String</span>,
+  <span class="nd">@httpQuery</span>(<span class="s2">&quot;paramName&quot;</span>)
+  <span class="nl">someValue:</span> <span class="vc">String</span>,
 
   <span class="c">// Sent in the body</span>
-  <span class="nl">data:</span> <span class="n">MyBlob</span>,
+  <span class="nl">data:</span> <span class="vc">MyBlob</span>,
 
   <span class="c">// Sent in the body</span>
-  <span class="nl">additional:</span> <span class="n">String</span>,
+  <span class="nl">additional:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -247,7 +247,7 @@ constraints:</p>
 properties.</li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
-<span class="nd">@http</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="s2">&quot;/foo/</span><span class="si">{baz}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">GET</span><span class="p">)</span>
+<span class="nd">@http</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="s2">&quot;/foo/</span><span class="si">{baz}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">operation</span> <span class="n">GetService</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">GetServiceOutput</span>
 </pre></div>
 </div>
@@ -632,8 +632,8 @@ Smithy</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="n">client</span>)
-<span class="nd">@httpError</span>(<span class="n">404</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nd">@httpError</span>(<span class="m">404</span>)
 <span class="kd">structure</span><span class="nc"> MyError</span> {}
 </pre></div>
 </div>
@@ -803,13 +803,13 @@ Smithy</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="nd">@readonly</span>
-<span class="nd">@http</span>(<span class="nl">method:</span> <span class="n">GET</span>, <span class="nl">uri:</span> <span class="s2">&quot;/{foo}&quot;</span>)
-<span class="kd">operation</span><span class="nc"> GetStatus</span>(<span class="n">GetStatusInput</span>) <span class="nd">-&gt;</span> <span class="n">GetStatusOutput</span>
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/{foo}&quot;</span>)
+<span class="kd">operation</span><span class="nc"> GetStatus</span>(<span class="vc">GetStatusInput</span>) <span class="nd">-&gt;</span> <span class="vc">GetStatusOutput</span>
 
 <span class="kd">structure</span><span class="nc"> GetStatusInput</span> {
   <span class="nd">@required</span>
   <span class="nd">@httpLabel</span>
-  <span class="nl">foo:</span> <span class="n">String</span>
+  <span class="nl">foo:</span> <span class="vc">String</span>
 }
 </pre></div>
 </div>
@@ -901,17 +901,17 @@ Smithy</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
-<span class="nd">@http</span>(<span class="nl">method:</span> <span class="n">GET</span>, <span class="nl">uri:</span> <span class="s2">&quot;/myOperation&quot;</span>)
-<span class="kd">operation</span><span class="nc"> MyOperation</span>(<span class="n">MyOperationInput</span>)
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/myOperation&quot;</span>)
+<span class="kd">operation</span><span class="nc"> MyOperation</span>(<span class="vc">MyOperationInput</span>)
 
 <span class="kd">structure</span><span class="nc"> MyOperationInput</span> {
   <span class="nd">@httpPrefixHeaders</span>(<span class="s2">&quot;X-Foo-&quot;</span>)
-  <span class="nl">headers:</span> <span class="n">StringMap</span>
+  <span class="nl">headers:</span> <span class="vc">StringMap</span>
 }
 
 <span class="kd">map</span><span class="nc"> StringMap</span> {
-  <span class="nl">key:</span> <span class="n">String</span>,
-  <span class="nl">value:</span> <span class="n">String</span>
+  <span class="nl">key:</span> <span class="vc">String</span>,
+  <span class="nl">value:</span> <span class="vc">String</span>
 }
 </pre></div>
 </div>
@@ -1122,24 +1122,24 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@inputEventStream</span>(<span class="n">messages</span>)
-<span class="nd">@http</span>(<span class="nl">method:</span> <span class="n">POST</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages&quot;</span>)
-<span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="n">PublishMessagesInput</span>)
+<span class="nd">@inputEventStream</span>(<span class="s2">&quot;messages&quot;</span>)
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages&quot;</span>)
+<span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
   <span class="nd">@httpPayload</span>
-  <span class="nl">messages:</span> <span class="n">Message</span>,
+  <span class="nl">messages:</span> <span class="vc">Message</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> Message</span> {
-  <span class="nl">message:</span> <span class="n">String</span>,
+  <span class="nl">message:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1172,12 +1172,12 @@ it has the <code class="docutils literal notranslate"><span class="pre">inputEve
 references a member that is not marked with the <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@inputEventStream</span>(<span class="n">invalid</span>)
-<span class="nd">@http</span>(<span class="nl">method:</span> <span class="n">POST</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages&quot;</span>)
-<span class="kd">operation</span><span class="nc"> InvalidOperation</span>(<span class="n">InvalidOperationInput</span>)
+<span class="nd">@inputEventStream</span>(<span class="s2">&quot;invalid&quot;</span>)
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages&quot;</span>)
+<span class="kd">operation</span><span class="nc"> InvalidOperation</span>(<span class="vc">InvalidOperationInput</span>)
 
 <span class="kd">structure</span><span class="nc"> InvalidOperationInput</span> {
-  <span class="nl">invalid:</span> <span class="n">Message</span>, <span class="c">// &lt;-- Missing the @httpPayload trait</span>
+  <span class="nl">invalid:</span> <span class="vc">Message</span>, <span class="c">// &lt;-- Missing the @httpPayload trait</span>
 }
 </pre></div>
 </div>

@@ -45,7 +45,7 @@ stream in its input by referencing a member that targets a structure:
 
         namespace smithy.example
 
-        @inputEventStream(messages)
+        @inputEventStream("messages")
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
@@ -60,7 +60,7 @@ stream in its input by referencing a member that targets a structure:
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "PublishMessages": {
@@ -102,7 +102,7 @@ stream in its output:
 
         namespace smithy.example
 
-        @outputEventStream(movements)
+        @outputEventStream("movements")
         operation SubscribeToMovements() -> SubscribeToMovementsOutput
 
         structure SubscribeToMovementsOutput {
@@ -117,7 +117,7 @@ stream in its output:
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "SubscribeToMovements": {
@@ -186,7 +186,7 @@ stream in its input by referencing a member that targets a union:
 
         namespace smithy.example
 
-        @inputEventStream(messages)
+        @inputEventStream("messages")
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
@@ -208,7 +208,7 @@ stream in its input by referencing a member that targets a union:
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "PublishMessages": {
@@ -257,7 +257,7 @@ stream in its output:
 
         namespace smithy.example
 
-        @outputEventStream(movements)
+        @outputEventStream("movements")
         operation SubscribeToMovements() -> SubscribeToMovementsOutput
 
         structure SubscribeToMovementsOutput {
@@ -278,7 +278,7 @@ stream in its output:
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "SubscribeToMovements": {
@@ -342,7 +342,7 @@ on the name of an event. For example, given the following event stream,
 
     namespace smithy.example
 
-    @outputEventStream(movements)
+    @outputEventStream("movements")
     operation SubscribeToEvents() -> SubscribeToEventsOutput
 
     structure SubscribeToEventsOutput {
@@ -410,8 +410,8 @@ service, followed by the events sent in the payload of the HTTP message.
 
         namespace smithy.example
 
-        @inputEventStream(messages)
-        @http(method: POST, uri: "/messages/{room}")
+        @inputEventStream("messages")
+        @http(method: "POST", uri: "/messages/{room}")
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
@@ -429,7 +429,7 @@ service, followed by the events sent in the payload of the HTTP message.
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "PublishMessages": {
@@ -494,8 +494,8 @@ message.
 
         namespace smithy.example
 
-        @outputEventStream(messages)
-        @http(method: GET, uri: "/messages/{room}")
+        @outputEventStream("messages")
+        @http(method: "GET", uri: "/messages/{room}")
         operation SubscribeToMessages(SubscribeToMessagesInput) -> SubscribeToMessagesOutput
 
         structure SubscribeToMessagesInput {
@@ -514,7 +514,7 @@ message.
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "PublishMessages": {
@@ -604,7 +604,7 @@ headers and the "c" member as the payload.
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "ExampleEvent": {
@@ -645,7 +645,7 @@ based protocol, the event payload is serialized as a JSON object:
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "ExampleEvent": {
@@ -749,7 +749,7 @@ The following example defines multiple event headers:
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "ExampleEvent": {
@@ -818,7 +818,7 @@ of an event:
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "ExampleEvent": {

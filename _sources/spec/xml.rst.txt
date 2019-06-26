@@ -52,7 +52,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -118,7 +118,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "MyList": {
@@ -169,7 +169,7 @@ Given the following structure definition,
     .. code-tab:: smithy
 
         structure MyStructure {
-          @xmlName(Foo)
+          @xmlName("Foo")
           foo: String,
 
           bar: String,
@@ -178,7 +178,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -268,7 +268,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -324,7 +324,7 @@ influence the overall structure of the payload.
           @xmlAttribute
           foo: String,
 
-          @xmlName(Bar)
+          @xmlName("Bar")
           bar: String,
 
           baz: MyList
@@ -339,7 +339,7 @@ influence the overall structure of the payload.
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {

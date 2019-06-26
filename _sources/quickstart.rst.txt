@@ -111,6 +111,7 @@ weather service.
 
         namespace example.weather
 
+        /// Provides weather forecasts.
         service Weather {
           version: "2006-03-01"
         }
@@ -118,7 +119,7 @@ weather service.
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "example.weather": {
                 "shapes": {
                     "Weather": {
@@ -155,6 +156,7 @@ identifiers, operations, and any number of child resources.
 
         namespace example.weather
 
+        /// Provides weather forecasts.
         service Weather {
           version: "2006-03-01",
           resources: [City]
@@ -173,7 +175,7 @@ identifiers, operations, and any number of child resources.
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
 
             "example.weather": {
                 "shapes": {
@@ -230,7 +232,7 @@ Each ``City`` has a single ``Forecast``. This can be defined by adding the
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "example.weather": {
                 "shapes": {
                     "City": {
@@ -311,7 +313,7 @@ Let's define the operation used to "read" a ``City``.
 
         // "error" is a trait that is used to specialize
         // a structure as an error.
-        @error(client)
+        @error("client")
         structure NoSuchResource {
           @required
           resourceType: String
@@ -320,7 +322,7 @@ Let's define the operation used to "read" a ``City``.
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "example.weather": {
                 "shapes": {
                     "GetCity": {
@@ -405,8 +407,8 @@ cities, so there's no way we could provide a City identifier.
         // The paginated trait indicates that the operation may
         // return truncated results.
         @readonly @collection
-        @paginated(inputToken: nextToken, outputToken: nextToken,
-                  pageSize: pageSize, items: items)
+        @paginated(inputToken: "nextToken", outputToken: "nextToken",
+                  pageSize: "pageSize", items: "items")
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
         structure ListCitiesInput {
@@ -439,7 +441,7 @@ cities, so there's no way we could provide a City identifier.
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "example.weather": {
                 "shapes": {
                     "ListCities": {
@@ -536,6 +538,7 @@ service.
 
     .. code-tab:: smithy
 
+        /// Provides weather forecasts.
         service Weather {
           version: "2006-03-01",
           resources: [City],
@@ -553,7 +556,7 @@ service.
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "example.weather": {
                 "shapes": {
                     "Weather": {
@@ -604,6 +607,7 @@ Complete example
 
         namespace example.weather
 
+        /// Provides weather forecasts.
         service Weather {
           version: "2006-03-01",
           resources: [City],
@@ -657,7 +661,7 @@ Complete example
 
         // "error" is a trait that is used to specialize
         // a structure as an error.
-        @error(client)
+        @error("client")
         structure NoSuchResource {
           @required
           resourceType: String
@@ -666,8 +670,8 @@ Complete example
         // The paginated trait indicates that the operation may
         // return truncated results.
         @readonly @collection
-        @paginated(inputToken: nextToken, outputToken: nextToken,
-                  pageSize: pageSize, items: items)
+        @paginated(inputToken: "nextToken", outputToken: "nextToken",
+                  pageSize: "pageSize", items: "items")
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
         structure ListCitiesInput {
@@ -722,7 +726,7 @@ Complete example
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "example.weather":{
                 "shapes":{
                     "City":{

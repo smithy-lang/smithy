@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>XML traits &#8212; Smithy 0.1.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    <title>XML traits &#8212; Smithy 0.2.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -156,16 +156,16 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> MyStructure</span> {
   <span class="nd">@xmlAttribute</span>
-  <span class="nl">foo:</span> <span class="n">String</span>,
+  <span class="nl">foo:</span> <span class="vc">String</span>,
 
-  <span class="nl">bar:</span> <span class="n">String</span>,
+  <span class="nl">bar:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -228,14 +228,14 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@xmlFlattened</span>
 <span class="kd">list</span><span class="nc"> MyList</span> {
-  <span class="nl">member:</span> <span class="n">String</span>
+  <span class="nl">member:</span> <span class="vc">String</span>
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyList&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -289,17 +289,17 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> MyStructure</span> {
-  <span class="nd">@xmlName</span>(<span class="n">Foo</span>)
-  <span class="nl">foo:</span> <span class="n">String</span>,
+  <span class="nd">@xmlName</span>(<span class="s2">&quot;Foo&quot;</span>)
+  <span class="nl">foo:</span> <span class="vc">String</span>,
 
-  <span class="nl">bar:</span> <span class="n">String</span>,
+  <span class="nl">bar:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -341,8 +341,9 @@ case) or <code class="docutils literal notranslate"><span class="pre">_</span></
 <code class="docutils literal notranslate"><span class="pre">-</span></code>. Values for an <code class="docutils literal notranslate"><span class="pre">xmlName</span></code> adhere to the following ABNF.</p>
 </div>
 <pre>
-<strong id="grammar-token-xml_name">xml_name</strong> = (ALPHA / &quot;_&quot;)
-           *(ALPHA / DIGIT / &quot;-&quot; / &quot;_&quot;)
+<strong id="grammar-token-xml_name">xml_name</strong> =
+    (ALPHA / &quot;_&quot;)
+  *(ALPHA / DIGIT / &quot;-&quot; / &quot;_&quot;)
 </pre>
 </div>
 <div class="section" id="xmlnamespace-trait">
@@ -392,15 +393,15 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@xmlNamespace</span>(<span class="nl">uri:</span> <span class="s2">&quot;http://foo.com&quot;</span>)
 <span class="kd">structure</span><span class="nc"> MyStructure</span> {
-  <span class="nl">foo:</span> <span class="n">String</span>,
-  <span class="nl">bar:</span> <span class="n">String</span>,
+  <span class="nl">foo:</span> <span class="vc">String</span>,
+  <span class="nl">bar:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -456,25 +457,25 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> MyStructure</span> {
   <span class="nd">@xmlAttribute</span>
-  <span class="nl">foo:</span> <span class="n">String</span>,
+  <span class="nl">foo:</span> <span class="vc">String</span>,
 
-  <span class="nd">@xmlName</span>(<span class="n">Bar</span>)
-  <span class="nl">bar:</span> <span class="n">String</span>,
+  <span class="nd">@xmlName</span>(<span class="s2">&quot;Bar&quot;</span>)
+  <span class="nl">bar:</span> <span class="vc">String</span>,
 
-  <span class="nl">baz:</span> <span class="n">MyList</span>
+  <span class="nl">baz:</span> <span class="vc">MyList</span>
 }
 
 <span class="nd">@xmlFlattened</span>
 <span class="kd">list</span><span class="nc"> MyList</span> {
   <span class="nd">@xmlName</span>(<span class="s2">&quot;Item&quot;</span>)
-  <span class="nl">member:</span> <span class="n">String</span>
+  <span class="nl">member:</span> <span class="vc">String</span>
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
