@@ -1,10 +1,11 @@
 $version: "0.1.0"
 
 use shape smithy.example1#Foo
-use shape smithy.example1#[Baz, Bar]
-
+use shape smithy.example1#Baz
+use shape smithy.example1#Bar
 use trait smithy.example1#trait1
-use trait smithy.example1#[trait2, trait3]
+use trait smithy.example1#trait2
+use trait smithy.example1#trait3
 
 namespace smithy.example2
 

@@ -370,44 +370,12 @@ final class SmithyModelLoader implements ModelLoader {
 
     private static void parseUse(State state, BiConsumer<ShapeId, FromSourceLocation> consumer) {
         Token namespaceToken = state.expect(UNQUOTED);
-        String namespace = namespaceToken.lexeme;
 
-        int delimiter = namespace.indexOf('#');
-        if (delimiter <= 0) {
-            throw new UseException("Use statement is missing a namespace: " + namespace, namespaceToken);
-        } else if (!ShapeId.isValidNamespace(namespace.substring(0, delimiter))) {
-            throw new UseException("Invalid use statement namespace: " + namespace, namespaceToken);
-        }
-
-        if (namespace.length() > delimiter + 1) {
-            consumer.accept(parseUseShapeId(state, namespace), namespaceToken);
-            state.expectNewline();
-            return;
-        }
-
-        state.expect(LBRACKET);
-        Token next = state.expect(UNQUOTED);
-
-        do {
-            if (next.lexeme.contains("#")) {
-                throw new UseException("Multi-use statement values must be relative. Found: " + next.lexeme, next);
-            }
-            consumer.accept(parseUseShapeId(state, namespace + next.lexeme), next);
-            // Account for trailing commas.
-            if (state.expect(RBRACKET, COMMA).type == RBRACKET) {
-                break;
-            }
-            next = state.expect(RBRACKET, UNQUOTED);
-        } while (next.type != RBRACKET);
-
-        state.expectNewline();
-    }
-
-    private static ShapeId parseUseShapeId(State state, String token) {
         try {
-            return ShapeId.from(token);
+            consumer.accept(ShapeId.from(namespaceToken.lexeme), namespaceToken);
+            state.expectNewline();
         } catch (ShapeIdSyntaxException e) {
-            throw state.syntax("Invalid use ID syntax (" + e.getMessage() + ")");
+            throw state.syntax(e.getMessage());
         }
     }
 
