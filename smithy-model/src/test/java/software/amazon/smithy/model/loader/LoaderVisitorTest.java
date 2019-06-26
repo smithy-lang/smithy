@@ -77,9 +77,9 @@ public class LoaderVisitorTest {
     @Test
     public void acceptableVersionDifference() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, "0.1.0");
-        visitor.onVersion(SourceLocation.NONE, "0.1.1");
-        visitor.onVersion(SourceLocation.NONE, "0.1.3");
+        visitor.onVersion(SourceLocation.NONE, "0.2.0");
+        visitor.onVersion(SourceLocation.NONE, "0.2.1");
+        visitor.onVersion(SourceLocation.NONE, "0.2.3");
     }
 
     @Test
