@@ -61,7 +61,7 @@ The following example defines an operation that uses HTTP bindings:
         namespace smithy.example
 
         @idempotent
-        @http(method: PUT, uri: "/{bucketName}/{key}", code: 200)
+        @http(method: "PUT", uri: "/{bucketName}/{key}", code: 200)
         operation PutObject(PutObjectInput)
 
         structure PutObjectInput {
@@ -76,11 +76,11 @@ The following example defines an operation that uses HTTP bindings:
           bucketName: String,
 
           // Sent in the X-Foo header
-          @httpHeader(X-Foo)
+          @httpHeader("X-Foo")
           foo: String,
 
           // Sent in the query string as paramName
-          @httpQuery(paramName)
+          @httpQuery("paramName")
           someValue: String,
 
           // Sent in the body
@@ -137,7 +137,7 @@ constraints:
 ::
 
     @readonly
-    @http(uri: "/foo/{baz}", method: GET)
+    @http(method: "GET", uri: "/foo/{baz}")
     operation GetService() -> GetServiceOutput
 
 
@@ -459,7 +459,7 @@ trait can be used to set a custom HTTP response status code.
 
     .. code-tab:: smithy
 
-        @error(client)
+        @error("client")
         @httpError(404)
         structure MyError {}
 
@@ -616,7 +616,7 @@ Serialization rules:
         namespace smithy.example
 
         @readonly
-        @http(method: GET, uri: "/{foo}")
+        @http(method: "GET", uri: "/{foo}")
         operation GetStatus(GetStatusInput) -> GetStatusOutput
 
         structure GetStatusInput {
@@ -718,7 +718,7 @@ Given the following Smithy model:
     .. code-tab:: smithy
 
         @readonly
-        @http(method: GET, uri: "/myOperation")
+        @http(method: "GET", uri: "/myOperation")
         operation MyOperation(MyOperationInput)
 
         structure MyOperationInput {
@@ -930,8 +930,8 @@ HTTP bindings:
 
         namespace smithy.example
 
-        @inputEventStream(messages)
-        @http(method: POST, uri: "/messages")
+        @inputEventStream("messages")
+        @http(method: "POST", uri: "/messages")
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
@@ -979,8 +979,8 @@ references a member that is not marked with the ``httpPayload`` trait:
 
     namespace smithy.example
 
-    @inputEventStream(invalid)
-    @http(method: POST, uri: "/messages")
+    @inputEventStream("invalid")
+    @http(method: "POST", uri: "/messages")
     operation InvalidOperation(InvalidOperationInput)
 
     structure InvalidOperationInput {

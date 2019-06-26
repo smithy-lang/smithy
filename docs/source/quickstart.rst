@@ -313,7 +313,7 @@ Let's define the operation used to "read" a ``City``.
 
         // "error" is a trait that is used to specialize
         // a structure as an error.
-        @error(client)
+        @error("client")
         structure NoSuchResource {
           @required
           resourceType: String
@@ -407,8 +407,8 @@ cities, so there's no way we could provide a City identifier.
         // The paginated trait indicates that the operation may
         // return truncated results.
         @readonly @collection
-        @paginated(inputToken: nextToken, outputToken: nextToken,
-                  pageSize: pageSize, items: items)
+        @paginated(inputToken: "nextToken", outputToken: "nextToken",
+                  pageSize: "pageSize", items: "items")
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
         structure ListCitiesInput {
@@ -661,7 +661,7 @@ Complete example
 
         // "error" is a trait that is used to specialize
         // a structure as an error.
-        @error(client)
+        @error("client")
         structure NoSuchResource {
           @required
           resourceType: String
@@ -670,8 +670,8 @@ Complete example
         // The paginated trait indicates that the operation may
         // return truncated results.
         @readonly @collection
-        @paginated(inputToken: nextToken, outputToken: nextToken,
-                  pageSize: pageSize, items: items)
+        @paginated(inputToken: "nextToken", outputToken: "nextToken",
+                  pageSize: "pageSize", items: "items")
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
         structure ListCitiesInput {

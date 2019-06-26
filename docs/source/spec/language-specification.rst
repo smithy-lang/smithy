@@ -125,14 +125,11 @@ Example:
 
     metadata example.string1 = "hello there"
     metadata example.string2 = 'hello there'
-    metadata example.string3 = hello
-    metadata example.string4 = hello.there
-    metadata example.string5 = hello.there
     metadata example.bool1 = true
     metadata example.bool2 = false
     metadata example.number = 10
     metadata example.array = [10, true, "hello"]
-    metadata example.object = {foo: baz}
+    metadata example.object = {foo: "baz"}
     metadata example.null = null
 
 Top-level metadata key-value pair conflicts are resolved by
@@ -749,7 +746,7 @@ The following example defines a string metadata key:
 
 ::
 
-    metadata foo = baz
+    metadata foo = "baz"
 
 The following example defines an integer metadata key:
 
@@ -761,7 +758,7 @@ The following example defines an array metadata key:
 
 ::
 
-    metadata foo = [hello, 123, true, [false]]
+    metadata foo = ["hello", 123, true, [false]]
 
 The following example defines a complex object metadata key:
 
@@ -770,7 +767,9 @@ The following example defines a complex object metadata key:
     metadata foo = {
       hello: 123,
       'foo': "456",
-      testing: "this is " "a single string",
+      testing: """
+          Hello!
+          """,
       an_array: [10.5],
       nested-object: {
         hello-there$: true

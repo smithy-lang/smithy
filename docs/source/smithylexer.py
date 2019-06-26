@@ -10,7 +10,7 @@ import re
 
 from pygments.lexer import RegexLexer, default, include, bygroups
 from pygments.token import Text, Comment, Keyword, Name
-from pygments.token import Literal, String, Operator
+from pygments.token import Literal, String, Operator, Number
 
 __all__ = ['SmithyLexer']
 
@@ -29,6 +29,7 @@ class SmithyLexer(RegexLexer):
 
     tokens = {
         'root': [
+            (r'///.*$', Comment.Multiline),
             (r'//.*$', Comment),
             (r'@[0-9a-zA-Z\.#-]*', Name.Decorator),
             (r'(->|=)', Name.Decorator),
@@ -40,17 +41,21 @@ class SmithyLexer(RegexLexer):
              bygroups(Keyword.Declaration, Name.Class)),
             (r'^(apply|list|map|set|structure|union|resource|operation|service|trait)(\s+' + identifier + r')',
              bygroups(Keyword.Declaration, Name.Class)),
+            (r'^(use shape|use trait)(\s+' + identifier + r')',
+             bygroups(Keyword.Declaration, Name.Class)),
             (r'^(metadata)(\s+.+)\s*(=)',
              bygroups(Keyword.Declaration, Name.Class, Name.Decorator)),
+            (r"(true|false|null)", Keyword.Constant),
+            (r"(-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)", Number),
             (identifier + ":", Name.Label),
-            (identifier, Name),
+            (identifier, Name.Variable.Class),
             (r'\[', Text, "#push"),
             (r'\]', Text, "#pop"),
             (r'\(', Text, "#push"),
             (r'\)', Text, "#pop"),
             (r'{', Text, "#push"),
             (r'}', Text, "#pop"),
-            (r'"{3}(\\\\|\n|\\")*"{3}', String.Double),
+            (r'"{3}(\\\\|\n|\\")*"{3}', String.Doc),
             (r'"(\\\\|\n|\\"|[^"])*"', String.Double),
             (r"'(\\\\|\n|\\'|[^'])*'", String.Single),
             (r'[:,\s]+', Text),

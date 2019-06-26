@@ -63,7 +63,7 @@
 .highlight .ss { color: #005cc5 } /* Literal.String.Symbol */
 .highlight .bp { color: #005cc5 } /* Name.Builtin.Pseudo */
 .highlight .fm { color: #005cc5 } /* Name.Function.Magic */
-.highlight .vc { color: #24292e } /* Name.Variable.Class */
+.highlight .vc { color: #24292e; font-style: italic; } /* Name.Variable.Class */
 .highlight .vg { color: #24292e } /* Name.Variable.Global */
 .highlight .vi { color: #24292e } /* Name.Variable.Instance */
 .highlight .vm { color: #005cc5 } /* Name.Variable.Magic */

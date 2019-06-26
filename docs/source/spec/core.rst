@@ -119,7 +119,7 @@ statements start with ``metadata``, followed by the key to set, followed by
 
     .. code-tab:: smithy
 
-        metadata foo = baz
+        metadata foo = "baz"
         metadata hello = "bar"
         metadata "lorem" = {
           ipsum: ["dolor"]
@@ -1700,11 +1700,11 @@ For example, given the following,
 
     structure GetHistoricalForecastInput {
       @required
-      @resourceIdentifier(forecastId)
+      @resourceIdentifier("forecastId")
       customForecastIdName: ForecastId,
 
       @required
-      @resourceIdentifier(historicalId)
+      @resourceIdentifier("historicalId")
       customHistoricalIdName: String
     }
 
@@ -1894,8 +1894,8 @@ For example:
 .. code-block:: smithy
 
     @collection @readonly
-    @paginated(inputToken: nextToken, pageSize: maxResults,
-               outputToken: nextToken, items: "forecasts")
+    @paginated(inputToken: "nextToken", pageSize: "maxResults",
+               outputToken: "nextToken", items: "forecasts")
     operation ListForecasts(ListForecastsInput) -> ListForecastsOutput
 
     structure ListForecastsInput {
@@ -1952,7 +1952,7 @@ defined if needed. For example:
       historicalForecast: {
         resource: HistoricalForecast,
         service: Weather,
-        ids: { forecastId: customForecastId, historicalId: customHistoricalId }
+        ids: { forecastId: "customForecastId", historicalId: "customHistoricalId" }
       }
     )
     structure AnotherHistoricalReference {
@@ -2418,7 +2418,7 @@ For example:
 
 .. code-block:: smithy
 
-    @structuredTrait(foo: bar, baz: bam)
+    @structuredTrait(foo: "bar", baz: "bam")
 
 Nested structure, map, and union values are defined like JSON value
 using the :ref:`node value <node-values>` productions:
@@ -2427,8 +2427,8 @@ using the :ref:`node value <node-values>` productions:
 
     @structuredTrait(
         foo: {
-            bar: baz,
-            qux: true,
+            bar: "baz",
+            qux: "true",
         }
     )
 
@@ -2592,12 +2592,12 @@ uses a :ref:`list` shape:
 
     namespace smithy.example
 
-    @tags([foo, baz, bar])
+    @tags(["foo", "baz", "bar"])
     string MyString
 
     // This is a valid trait collision on an array trait, tags.
     // tags becomes ["foo", "baz", "bar", "bar", "qux"]
-    apply MyString @tags([bar, qux])
+    apply MyString @tags(["bar", "qux"])
 
 
 .. _trait-definition:
@@ -2989,7 +2989,7 @@ The following structure defines a throttling error.
 
     .. code-tab:: smithy
 
-        @error(client)
+        @error("client")
         structure ThrottlingError {}
 
 Note that this structure is lacking the ``retryable`` trait that generically
@@ -2999,7 +2999,7 @@ lets clients know that the error is retryable.
 
     .. code-tab:: smithy
 
-        @error(client)
+        @error("client")
         @retryable
         structure ThrottlingError {}
 
@@ -3011,7 +3011,7 @@ the error.
 
     .. code-tab:: smithy
 
-        @error(client)
+        @error("client")
         @retryable
         @httpError(429)
         structure ThrottlingError {}
@@ -3026,7 +3026,7 @@ in Java).
 
     .. code-tab:: smithy
 
-        @error(client)
+        @error("client")
         @retryable
         @httpError(429)
         structure ThrottlingError {
@@ -3116,23 +3116,25 @@ The following example defines an enum of valid string values for ``MyString``.
 
         @enum(
           t2.nano: {
-            name: T2_NANO,
-            documentation: "T2 instances are Burstable Performance "
-                "Instances that provide a baseline level of CPU "
-                "performance with the ability to burst above the "
-                "baseline.",
-            tags: [ebsOnly]
+            name: "T2_NANO",
+            documentation: """
+                T2 instances are Burstable Performance
+                Instances that provide a baseline level of CPU
+                performance with the ability to burst above the
+                baseline.""",
+            tags: ["ebsOnly"]
           },
           t2.micro: {
-            name: T2_MICRO,
-            documentation: "T2 instances are Burstable Performance "
-                 "Instances that provide a baseline level of CPU "
-                 "performance with the ability to burst above the "
-                 "baseline.",
-            tags: [ebsOnly]
+            name: "T2_MICRO",
+            documentation: """
+                T2 instances are Burstable Performance
+                Instances that provide a baseline level of CPU
+                performance with the ability to burst above the
+                baseline.""",
+            tags: ["ebsOnly"]
           },
           m256.mega: {
-            name: M256_MEGA,
+            name: "M256_MEGA",
             deprecated: true
           }
         )
@@ -3236,7 +3238,7 @@ contain a valid shape ID that targets an integer shape in the model.
           shape: IntegerRefTraitValue,
         }
 
-        @idRef(failWhenMissing: true, selector: integer)
+        @idRef(failWhenMissing: true, selector: "integer")
         string IntegerRefTraitValue
 
     .. code-tab:: json
@@ -3744,12 +3746,12 @@ The retryable trait is an object that contains the following key value pairs:
 
     .. code-tab:: smithy
 
-        @error(server)
+        @error("server")
         @retryable
         @httpError(503)
         structure ServiceUnavailableError {}
 
-        @error(client)
+        @error("client")
         @retryable(throttling: true)
         @httpError(429)
         structure ThrottlingError {}
@@ -3825,8 +3827,8 @@ In the example below, a resource defines a paginated operation.
         namespace smithy.example
 
         @collection @readonly
-        @paginated(inputToken: nextToken, outputToken: nextToken,
-                  pageSize: maxResults, items: foos)
+        @paginated(inputToken: "nextToken", outputToken: "nextToken",
+                  pageSize: "maxResults", items: "foos")
         operation GetFoos(GetFoosInput) -> GetFoosOutput
 
         structure GetFoosInput {
@@ -4129,11 +4131,11 @@ The following example defines several references:
             service: Weather,
           },
           externalObject: {
-            resource: "com.foo.baz#Object",
-            service: "com.foo.baz#Service",
+            resource: com.foo.baz#Object,
+            service: com.foo.baz#Service,
             ids: {
-              bucket: bucketName,
-              object: objectKey,
+              bucket: "bucketName",
+              object: "objectKey",
             },
           }
         )
@@ -4195,7 +4197,7 @@ match for the name of the resource identifier.
 
           // resourceIdentifier is used because the input member name
           // does not match the resource identifier name
-          @resourceIdentifier(fileName)
+          @resourceIdentifier("fileName")
           @required
           name: String,
         }
@@ -4268,8 +4270,8 @@ The following example defines a service that supports both the
     .. code-tab:: smithy
 
         @protocols([
-            {name: smithy.example, auth: [http-basic]},
-            {name: aws.mqtt, auth: [x.509], tags: [internal]}])
+            {name: "smithy.example", auth: ["http-basic"]},
+            {name: "aws.mqtt", auth: ["x.509"], tags: ["internal"]}])
         service WeatherService {
           version: "2017-02-11",
         }
@@ -4375,9 +4377,9 @@ The following example defines two operations:
 
     .. code-tab:: smithy
 
-        @protocols([{name: smithy.example, auth: [http-basic, http-digest]}])
+        @protocols([{name: "smithy.example", auth: ["http-basic", "http-digest"]}])
         // Every operation by default should support http-basic and http-digest.
-        @auth([http-basic, http-digest])
+        @auth(["http-basic", "http-digest"])
         service AuthenticatedService {
             version: "2017-02-11",
             operations: [OperationA, OperationB]
@@ -4385,7 +4387,7 @@ The following example defines two operations:
 
         // This operation is configured to either be unauthenticated
         // or to use http-basic. It is not expected to support http-digest.
-        @auth([none, http-basic])
+        @auth(["none", "http-basic"])
         operation OperationA()
 
         // This operation defines no auth, so it is expected to support the auth
@@ -4421,8 +4423,8 @@ scheme that is not supported by any of the ``protocols`` of the service:
 
 .. code-block:: smithy
 
-    @protocols([{name: smithy.example, auth: [http-basic]}])
-    @auth([http-digest]) // <-- Invalid!
+    @protocols([{name: "smithy.example", auth: ["http-basic"]}])
+    @auth(["http-digest"]) // <-- Invalid!
     service InvalidExample {
         version: "2017-02-11"
     }
@@ -4435,15 +4437,15 @@ protocols can define different authentication schemes for each protocol.
     .. code-tab:: smithy
 
         @protocols([
-            {name: example.foo, auth: [http-basic, http-digest]},
-            {name: example.baz, auth: [x.509]}])
-        @auth([http-basic, x.509])
+            {name: "example.foo", auth: ["http-basic", "http-digest"]},
+            {name: "example.baz", auth: ["x.509"]}])
+        @auth(["http-basic", "x.509"])
         service AuthenticatedService {
             version: "2017-02-11",
             operations: [OperationA, OperationB]
         }
 
-        @auth([http-digest, x.509])
+        @auth(["http-digest", "x.509"])
         operation OperationA()
 
         operation OperationB()
@@ -4507,7 +4509,7 @@ Given the following structure definition,
     .. code-tab:: smithy
 
         structure MyStructure {
-          @jsonName(Foo)
+          @jsonName("Foo")
           foo: String,
 
           bar: String,
@@ -4779,19 +4781,19 @@ These values use the same semantics and format as
           {
             title: "Invoke MyOperation",
             input: {
-              tags: [foo, baz, bar],
+              tags: ["foo", "baz", "bar"],
             },
             output: {
-              status: PENDING,
+              status: "PENDING",
             }
           },
           {
             title: "Another example for MyOperation",
             input: {
-              foo: baz,
+              foo: "baz",
             },
             output: {
-              status: PENDING,
+              status: "PENDING",
             }
           },
         ])
@@ -5202,13 +5204,13 @@ Given the following operation,
 
         @readonly
         @endpoint(hostPrefix: "{foo}.data.")
-        @http(method: GET, uri: "/status")
+        @http(method: "GET", uri: "/status")
         operation GetStatus(GetStatusInput) -> GetStatusOutput
 
         structure GetStatusInput {
           @required
           @hostLabel
-          @httpHeader(X-Foo)
+          @httpHeader("X-Foo")
           foo: String
         }
 
