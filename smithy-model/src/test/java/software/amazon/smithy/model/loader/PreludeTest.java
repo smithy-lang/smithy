@@ -54,7 +54,7 @@ public class PreludeTest {
     public void checksIfTraitDefinitionIsFromPrelude() {
         assertTrue(Prelude.isPreludeTraitDefinition("smithy.api#required"));
         assertTrue(Prelude.isPreludeTraitDefinition("smithy.api#box"));
-        assertFalse(Prelude.isPreludeTraitDefinition("smithy.api#mqttPublish"));
+        assertFalse(Prelude.isPreludeTraitDefinition("smithy.mqtt#publish"));
         assertFalse(Prelude.isPreludeTraitDefinition("foo.baz#Bar"));
     }
 

@@ -169,7 +169,7 @@ Given the following structure definition,
     .. code-tab:: smithy
 
         structure MyStructure {
-          @xmlName(Foo)
+          @xmlName("Foo")
           foo: String,
 
           bar: String,
@@ -324,7 +324,7 @@ influence the overall structure of the payload.
           @xmlAttribute
           foo: String,
 
-          @xmlName(Bar)
+          @xmlName("Bar")
           bar: String,
 
           baz: MyList

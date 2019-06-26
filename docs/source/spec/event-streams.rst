@@ -45,7 +45,7 @@ stream in its input by referencing a member that targets a structure:
 
         namespace smithy.example
 
-        @inputEventStream(messages)
+        @inputEventStream("messages")
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
@@ -102,7 +102,7 @@ stream in its output:
 
         namespace smithy.example
 
-        @outputEventStream(movements)
+        @outputEventStream("movements")
         operation SubscribeToMovements() -> SubscribeToMovementsOutput
 
         structure SubscribeToMovementsOutput {
@@ -186,7 +186,7 @@ stream in its input by referencing a member that targets a union:
 
         namespace smithy.example
 
-        @inputEventStream(messages)
+        @inputEventStream("messages")
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
@@ -257,7 +257,7 @@ stream in its output:
 
         namespace smithy.example
 
-        @outputEventStream(movements)
+        @outputEventStream("movements")
         operation SubscribeToMovements() -> SubscribeToMovementsOutput
 
         structure SubscribeToMovementsOutput {
@@ -342,7 +342,7 @@ on the name of an event. For example, given the following event stream,
 
     namespace smithy.example
 
-    @outputEventStream(movements)
+    @outputEventStream("movements")
     operation SubscribeToEvents() -> SubscribeToEventsOutput
 
     structure SubscribeToEventsOutput {
@@ -410,8 +410,8 @@ service, followed by the events sent in the payload of the HTTP message.
 
         namespace smithy.example
 
-        @inputEventStream(messages)
-        @http(method: POST, uri: "/messages/{room}")
+        @inputEventStream("messages")
+        @http(method: "POST", uri: "/messages/{room}")
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
@@ -494,8 +494,8 @@ message.
 
         namespace smithy.example
 
-        @outputEventStream(messages)
-        @http(method: GET, uri: "/messages/{room}")
+        @outputEventStream("messages")
+        @http(method: "GET", uri: "/messages/{room}")
         operation SubscribeToMessages(SubscribeToMessagesInput) -> SubscribeToMessagesOutput
 
         structure SubscribeToMessagesInput {

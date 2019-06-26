@@ -53,7 +53,7 @@ The following example sets the ``X-API-Key`` header as the API key source.
         $version: "0.1.0"
         namespace smithy.example
 
-        @aws.apigateway#apiKeySource(HEADER)
+        @aws.apigateway#apiKeySource("HEADER")
         service Weather {
           version: "2018-03-17"
         }
@@ -283,7 +283,7 @@ Then following example enables request validation on a service:
         $version: "0.1.0"
         namespace smithy.example
 
-        @aws.apigateway#requestValidator(full)
+        @aws.apigateway#requestValidator("full")
         service Weather {
           version: "2018-03-17"
         }

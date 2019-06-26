@@ -799,7 +799,7 @@ The following example's ``MyResource`` resource has the
 
         @aws.api#service(sdkId: "My Value", arnNamespace: "myservice")
         @aws.iam#defineConditionKeys([
-            "otherservice:Bar": { type: String },
+            {"otherservice:Bar": { type: "String" }},
         ])
         service MyService {
             version: "2017-02-11",
@@ -907,13 +907,12 @@ Each condition key object supports the following key-value pairs:
         namespace ns.example
 
         @aws.api#service(sdkId: "My Value", arnNamespace: "myservice")
-        @aws.iam#defineConditionKeys({
+        @aws.iam#defineConditionKeys(
             "otherservice:Bar": {
                 type: String,
                 documentation: "The Bar string",
                 externalDocumentation: "http://example.com"
-            },
-        })
+            }})
         service MyService {
             version: "2017-02-11",
             resources: [MyResource],
@@ -1161,9 +1160,7 @@ Given the following model,
         namespace ns.example
 
         @aws.api#service(sdkId: "My Value", arnNamespace: "myservice")
-        @aws.iam#defineConditionKeys([
-            "otherservice:Bar": { type: String },
-        ])
+        @aws.iam#defineConditionKeys("otherservice:Bar": { type: String })
         service MyService {
             version: "2017-02-11",
             resources: [MyResource],
