@@ -1,4 +1,4 @@
-$version: "0.1.0"
+$version: "0.2.0"
 
 use shape smithy.api#String
 use shape smithy.api#Integer

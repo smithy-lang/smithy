@@ -946,7 +946,7 @@ HTTP bindings:
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "PublishMessages": {

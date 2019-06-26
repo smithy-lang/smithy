@@ -52,7 +52,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -118,7 +118,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "MyList": {
@@ -178,7 +178,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -268,7 +268,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -339,7 +339,7 @@ influence the overall structure of the payload.
     .. code-tab:: json
 
         {
-            "smithy": "0.1.0",
+            "smithy": "0.2.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {

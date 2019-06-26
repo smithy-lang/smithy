@@ -19,7 +19,7 @@ Smithy models SHOULD resemble the following example:
 
 .. code-block:: smithy
 
-    $version: "0.1.0"
+    $version: "0.2.0"
 
     metadata validators = []
     metadata suppressions = []

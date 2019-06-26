@@ -107,7 +107,7 @@ specification from a Smithy model using a buildscript dependency:
 
     buildscript {
         dependencies {
-            classpath("software.amazon.smithy:openapi:0.6.0")
+            classpath("software.amazon.smithy:openapi:0.7.0")
         }
     }
 
@@ -133,7 +133,7 @@ that builds an OpenAPI specification from a service for the
 
 .. important::
 
-    A buildscript dependency on "software.amazon.smithy:openapi:0.6.0" is
+    A buildscript dependency on "software.amazon.smithy:openapi:0.7.0" is
     required in order for smithy-build to map the "openapi" plugin name to the
     correct Java library implementation.
 
@@ -339,7 +339,7 @@ dependency on ``software.amazon.smithy:smithy-aws-apigateway-openapi``.
 
     buildscript {
         dependencies {
-            classpath("software.amazon.smithy:smithy-aws-apigateway-openapi:0.6.0")
+            classpath("software.amazon.smithy:smithy-aws-apigateway-openapi:0.7.0")
         }
     }
 
@@ -517,7 +517,7 @@ shows how to install ``software.amazon.smithy:openapi`` through Gradle:
 
     buildscript {
         dependencies {
-            classpath("software.amazon.smithy:openapi:0.6.0")
+            classpath("software.amazon.smithy:openapi:0.7.0")
         }
     }
 
