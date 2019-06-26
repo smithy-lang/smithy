@@ -203,7 +203,8 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> smithy.mqtt#</span>[<span class="vc">publish</span>, <span class="vc">topicLabel</span>]
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> smithy.mqtt#publish</span>
+<span class="kd">use trait</span><span class="nc"> smithy.mqtt#topicLabel</span>
 
 <span class="nd">@publish</span>(<span class="s2">&quot;{first}/{second}&quot;</span>)
 <span class="kd">operation</span><span class="nc"> ExampleOperation</span>(<span class="vc">ExampleOperationInput</span>)
@@ -313,7 +314,8 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="kd">use trait</span><span class="nc"> smithy.mqtt#</span>[<span class="vc">publish</span>, <span class="vc">topicLabel</span>]
+<span class="kd">use trait</span><span class="nc"> smithy.mqtt#publish</span>
+<span class="kd">use trait</span><span class="nc"> smithy.mqtt#topicLabel</span>
 
 <span class="nd">@publish</span>(<span class="s2">&quot;foo/{bar}&quot;</span>)
 <span class="kd">operation</span><span class="nc"> PostFoo</span>(<span class="vc">PostFooInput</span>)
@@ -424,7 +426,8 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> smithy.mqtt#</span>[<span class="vc">subscribe</span>, <span class="vc">topicLabel</span>]
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> smithy.mqtt#subscribe</span>
+<span class="kd">use trait</span><span class="nc"> smithy.mqtt#topicLabel</span>
 
 <span class="nd">@subscribe</span>(<span class="s2">&quot;events/{id}&quot;</span>)
 <span class="nd">@outputEventStream</span>(<span class="s2">&quot;events&quot;</span>)

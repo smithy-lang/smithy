@@ -91,7 +91,8 @@ and ``{second}``, in the MQTT topic template:
 
     .. code-tab:: smithy
 
-        use trait smithy.mqtt#[publish, topicLabel]
+        use trait smithy.mqtt#publish
+        use trait smithy.mqtt#topicLabel
 
         @publish("{first}/{second}")
         operation ExampleOperation(ExampleOperationInput)
@@ -194,7 +195,8 @@ The following example defines an operation that publishes messages to the
 
         namespace smithy.example
 
-        use trait smithy.mqtt#[publish, topicLabel]
+        use trait smithy.mqtt#publish
+        use trait smithy.mqtt#topicLabel
 
         @publish("foo/{bar}")
         operation PostFoo(PostFooInput)
@@ -300,7 +302,8 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
 
     .. code-tab:: smithy
 
-        use trait smithy.mqtt#[subscribe, topicLabel]
+        use trait smithy.mqtt#subscribe
+        use trait smithy.mqtt#topicLabel
 
         @subscribe("events/{id}")
         @outputEventStream("events")
