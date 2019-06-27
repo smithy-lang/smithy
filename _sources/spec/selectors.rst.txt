@@ -41,10 +41,11 @@ Matching shapes by type
 =======================
 
 Shapes can be matched by type using the following tokens:
-``blob``, ``boolean``, ``string``, ``integer``, ``byte``, ``short``, ``long``,
-``float``, ``double``, ``bigDecimal``, ``bigInteger``, ``timestamp``, ``list``,
-``map``, ``set``, ``structure``, ``union``, ``service``, ``operation``,
-``resource``, ``member``, ``number``, ``simpleType``, ``collection``, ``*``.
+``blob``, ``boolean``, ``document``, ``string``, ``integer``, ``byte``,
+``short``, ``long``, ``float``, ``double``, ``bigDecimal``, ``bigInteger``,
+``timestamp``, ``list``, ``map``, ``set``, ``structure``, ``union``,
+``service``, ``operation``, ``resource``, ``member``, ``number``,
+``simpleType``, ``collection``, ``*``.
 
 * ``number`` matches all ``byte``, ``short``, ``integer``, ``long``, ``float``,
   ``double``, ``bigDecimal``, and ``bigInteger`` shapes.
@@ -521,6 +522,7 @@ Selectors are defined by the following ABNF_ grammar.
     shape_types          :"*"
                          :/ "blob"
                          :/ "boolean"
+                         :/ "document"
                          :/ "string"
                          :/ "byte"
                          :/ "short"
