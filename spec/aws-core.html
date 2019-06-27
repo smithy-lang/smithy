@@ -177,9 +177,12 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
+
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
-<span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
+<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+
+<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
 <span class="kd">service</span><span class="nc"> FooBaz</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
 }
@@ -221,7 +224,9 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
-<span class="nd">@aws.api#service</span>(
+<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+
+<span class="nd">@service</span>(
     <span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>,
     <span class="nl">cloudFormationName:</span> <span class="s2">&quot;FooBaz&quot;</span>,
     <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>,
@@ -496,12 +501,15 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
-<span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
+<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+<span class="kd">use trait</span><span class="nc"> aws.api#arn</span>
+
+<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
 <span class="kd">service</span><span class="nc"> FooBaz</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
 }
 
-<span class="nd">@aws.api#arn</span>(<span class="nl">template:</span> <span class="s2">&quot;myresource/{myId}&quot;</span>)
+<span class="nd">@arn</span>(<span class="nl">template:</span> <span class="s2">&quot;myresource/{myId}&quot;</span>)
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
   <span class="nl">identifiers:</span> {
     <span class="nl">myId:</span> <span class="vc">MyResourceId</span>
@@ -560,12 +568,15 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#arn</span>(<span class="nl">template:</span> <span class="s2">&quot;{arn}&quot;</span>, <span class="nl">absolute:</span> <span class="kc">true</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> aws.api#arn</span>
+<span class="kd">use trait</span><span class="nc"> aws.api#arnReference</span>
+
+<span class="nd">@arn</span>(<span class="nl">template:</span> <span class="s2">&quot;{arn}&quot;</span>, <span class="nl">absolute:</span> <span class="kc">true</span>)
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
   <span class="nl">identifiers:</span> {<span class="nl">arn:</span> <span class="vc">Arn</span>}
 }
 
-<span class="nd">@aws.api#arnReference</span>(<span class="nl">service:</span> <span class="vc">FooBaz</span>, <span class="nl">resource:</span> <span class="vc">MyResource</span>)
+<span class="nd">@arnReference</span>(<span class="nl">service:</span> <span class="vc">FooBaz</span>, <span class="nl">resource:</span> <span class="vc">MyResource</span>)
 <span class="kd">string</span><span class="nc"> Arn</span>
 </pre></div>
 </div>
@@ -674,7 +685,9 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@aws.api#arnReference</span>(
+<span class="kd">use trait</span><span class="nc"> aws.api#arnReference</span>
+
+<span class="nd">@arnReference</span>(
     <span class="nl">type:</span> <span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span>,
     <span class="nl">service:</span> <span class="vc">com.foo#SomeService</span>,
     <span class="nl">resource:</span> <span class="vc">com.foo#SomeResource</span>)
@@ -720,7 +733,9 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@aws.api#arnReference</span>
+<span class="kd">use trait</span><span class="nc"> aws.api#arnReference</span>
+
+<span class="nd">@arnReference</span>
 <span class="kd">string</span><span class="nc"> SomeResourceId</span>
 </pre></div>
 </div>
@@ -776,7 +791,9 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#unsignedPayload</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> aws.api#unsignedPayload</span>
+
+<span class="nd">@unsignedPayload</span>
 <span class="kd">operation</span><span class="nc"> PutThings</span>(<span class="vc">PutThingsInput</span>) <span class="nd">-&gt;</span> <span class="vc">PutThingsOutput</span>
 </pre></div>
 </div>
@@ -813,7 +830,9 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#unsignedPayload</span>([<span class="vc">aws.v4</span>])
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> aws.api#unsignedPayload</span>
+
+<span class="nd">@unsignedPayload</span>([<span class="vc">aws.v4</span>])
 <span class="kd">operation</span><span class="nc"> PutThings</span>(<span class="vc">PutThingsInput</span>) <span class="nd">-&gt;</span> <span class="vc">PutThingsOutput</span>
 </pre></div>
 </div>
@@ -871,7 +890,9 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
-<span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
+<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+
+<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
 <span class="kd">service</span><span class="nc"> FooBaz</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
   <span class="nl">authentication:</span> {<span class="nl">aws.v4:</span> {}}
@@ -938,7 +959,9 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="nd">@aws.iam#actionPermissionDescription</span>(<span class="s2">&quot;This will allow the user to Foo.&quot;</span>)
+<span class="kd">use trait</span><span class="nc"> aws.iam#actionPermissionDescription</span>
+
+<span class="nd">@actionPermissionDescription</span>(<span class="s2">&quot;This will allow the user to Foo.&quot;</span>)
 <span class="kd">operation</span><span class="nc"> FooOperation</span>()
 </pre></div>
 </div>
@@ -990,8 +1013,12 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
-<span class="nd">@aws.iam#defineConditionKeys</span>([
+<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+<span class="kd">use trait</span><span class="nc"> aws.iam#definedContextKeys</span>
+<span class="kd">use trait</span><span class="nc"> aws.iam#conditionKeys</span>
+
+<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
+<span class="nd">@defineConditionKeys</span>([
     {<span class="s2">&quot;otherservice:Bar&quot;</span>: { <span class="nl">type:</span> <span class="s2">&quot;String&quot;</span> }},
 ])
 <span class="kd">service</span><span class="nc"> MyService</span> {
@@ -999,7 +1026,7 @@ JSON</div>
     <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
 }
 
-<span class="nd">@aws.iam#conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
+<span class="nd">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
     <span class="nl">identifiers:</span> {
         <span class="nl">foo:</span> <span class="vc">String</span>
@@ -1007,7 +1034,7 @@ JSON</div>
     <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
 }
 
-<span class="nd">@aws.iam#conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
+<span class="nd">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
 <span class="kd">operation</span><span class="nc"> MyOperation</span>
 </pre></div>
 </div>
@@ -1118,10 +1145,13 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
-<span class="nd">@aws.iam#defineConditionKeys</span>(
+<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+<span class="kd">use trait</span><span class="nc"> aws.iam#defineConditionKeys</span>
+
+<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
+<span class="nd">@defineConditionKeys</span>(
     <span class="s2">&quot;otherservice:Bar&quot;</span>: {
-        <span class="nl">type:</span> <span class="vc">String</span>,
+        <span class="nl">type:</span> <span class="s2">&quot;String&quot;</span>,
         <span class="nl">documentation:</span> <span class="s2">&quot;The Bar string&quot;</span>,
         <span class="nl">externalDocumentation:</span> <span class="s2">&quot;http://example.com&quot;</span>
     }})
@@ -1255,13 +1285,16 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
+<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+<span class="kd">use trait</span><span class="nc"> aws.iam#disableConditionKeyInference</span>
+
+<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
 <span class="kd">service</span><span class="nc"> MyService</span> {
     <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
     <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
 }
 
-<span class="nd">@aws.iam#disableConditionKeyInference</span>
+<span class="nd">@disableConditionKeyInference</span>
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
     <span class="nl">identifiers:</span> {
         <span class="nl">foo:</span> <span class="vc">String</span>,
@@ -1332,7 +1365,10 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
+<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+<span class="kd">use trait</span><span class="nc"> aws.iam#requiredActions</span>
+
+<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
 <span class="kd">service</span><span class="nc"> MyService</span> {
     <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
     <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
@@ -1345,7 +1381,7 @@ JSON</div>
     <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
 }
 
-<span class="nd">@aws.iam#requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])
+<span class="nd">@requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])
 <span class="kd">operation</span><span class="nc"> MyOperation</span>
 </pre></div>
 </div>
@@ -1410,18 +1446,20 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="nd">@aws.api#service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
-<span class="nd">@aws.iam#defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span>: { <span class="nl">type:</span> <span class="vc">String</span> })
+<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+<span class="kd">use trait</span><span class="nc"> aws.iam#defineConditionKeys</span>
+<span class="kd">use trait</span><span class="nc"> aws.iam#conditionKeys</span>
+
+<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
+<span class="nd">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span>: { <span class="nl">type:</span> <span class="s2">&quot;String&quot;</span> })
 <span class="kd">service</span><span class="nc"> MyService</span> {
     <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
     <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
 }
 
-<span class="nd">@aws.iam#conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
+<span class="nd">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
-    <span class="nl">identifiers:</span> {
-        <span class="nl">foo:</span> <span class="vc">String</span>
-    },
+    <span class="nl">identifiers:</span> {<span class="nl">foo:</span> <span class="vc">String</span>},
     <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
     <span class="nl">resources:</span> [<span class="vc">MyInnerResource</span>],
 }
@@ -1432,7 +1470,7 @@ JSON</div>
     }
 }
 
-<span class="nd">@aws.iam#conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
+<span class="nd">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
 <span class="kd">operation</span><span class="nc"> MyOperation</span>
 </pre></div>
 </div>

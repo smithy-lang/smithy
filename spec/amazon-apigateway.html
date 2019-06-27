@@ -182,7 +182,9 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@aws.apigateway#apiKeySource</span>(<span class="s2">&quot;HEADER&quot;</span>)
+<span class="kd">use trait</span><span class="nc"> aws.apigateway#apiKeySource</span>
+
+<span class="nd">@apiKeySource</span>(<span class="s2">&quot;HEADER&quot;</span>)
 <span class="kd">service</span><span class="nc"> Weather</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>
 }
@@ -438,7 +440,9 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@aws.apigateway#requestValidator</span>(<span class="s2">&quot;full&quot;</span>)
+<span class="kd">use trait</span><span class="nc"> aws.apigateway#requestValidator</span>
+
+<span class="nd">@requestValidator</span>(<span class="s2">&quot;full&quot;</span>)
 <span class="kd">service</span><span class="nc"> Weather</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>
 }

@@ -47,9 +47,12 @@ The following example defines an AWS service that uses the default values of
     .. code-tab:: smithy
 
         $version: "0.2.0"
+
         namespace aws.fooBaz
 
-        @aws.api#service(sdkId: "Some Value")
+        use trait aws.api#service
+
+        @service(sdkId: "Some Value")
         service FooBaz {
           version: "2018-03-17",
         }
@@ -80,7 +83,9 @@ The following example provides explicit values for all properties:
         $version: "0.2.0"
         namespace aws.fooBaz
 
-        @aws.api#service(
+        use trait aws.api#service
+
+        @service(
             sdkId: "Some Value",
             cloudFormationName: "FooBaz",
             arnNamespace: "myservice",
@@ -373,12 +378,15 @@ For example, given the following service:
         $version: "0.2.0"
         namespace aws.fooBaz
 
-        @aws.api#service(sdkId: "Some Value")
+        use trait aws.api#service
+        use trait aws.api#arn
+
+        @service(sdkId: "Some Value")
         service FooBaz {
           version: "2018-03-17",
         }
 
-        @aws.api#arn(template: "myresource/{myId}")
+        @arn(template: "myresource/{myId}")
         resource MyResource {
           identifiers: {
             myId: MyResourceId
@@ -428,12 +436,15 @@ resource.
 
     .. code-tab:: smithy
 
-        @aws.api#arn(template: "{arn}", absolute: true)
+        use trait aws.api#arn
+        use trait aws.api#arnReference
+
+        @arn(template: "{arn}", absolute: true)
         resource MyResource {
           identifiers: {arn: Arn}
         }
 
-        @aws.api#arnReference(service: FooBaz, resource: MyResource)
+        @arnReference(service: FooBaz, resource: MyResource)
         string Arn
 
     .. code-tab:: json
@@ -524,7 +535,9 @@ referenced resource.
         $version: "0.2.0"
         namespace smithy.example
 
-        @aws.api#arnReference(
+        use trait aws.api#arnReference
+
+        @arnReference(
             type: "AWS::SomeService::SomeResource",
             service: com.foo#SomeService,
             resource: com.foo#SomeResource)
@@ -559,7 +572,9 @@ previous example:
         $version: "0.2.0"
         namespace smithy.example
 
-        @aws.api#arnReference
+        use trait aws.api#arnReference
+
+        @arnReference
         string SomeResourceId
 
     .. code-tab:: json
@@ -607,7 +622,9 @@ operation MUST NOT be used as part of the request signature calculation:
 
     .. code-tab:: smithy
 
-        @aws.api#unsignedPayload
+        use trait aws.api#unsignedPayload
+
+        @unsignedPayload
         operation PutThings(PutThingsInput) -> PutThingsOutput
 
     .. code-tab:: json
@@ -633,7 +650,9 @@ only when using the "aws.v4" authentication scheme:
 
     .. code-tab:: smithy
 
-        @aws.api#unsignedPayload([aws.v4])
+        use trait aws.api#unsignedPayload
+
+        @unsignedPayload([aws.v4])
         operation PutThings(PutThingsInput) -> PutThingsOutput
 
     .. code-tab:: json
@@ -689,7 +708,9 @@ the service converted to lowercase characters).
         $version: "0.2.0"
         namespace aws.fooBaz
 
-        @aws.api#service(sdkId: "Some Value")
+        use trait aws.api#service
+
+        @service(sdkId: "Some Value")
         service FooBaz {
           version: "2018-03-17",
           authentication: {aws.v4: {}}
@@ -753,7 +774,9 @@ Value type
 
         namespace ns.example
 
-        @aws.iam#actionPermissionDescription("This will allow the user to Foo.")
+        use trait aws.iam#actionPermissionDescription
+
+        @actionPermissionDescription("This will allow the user to Foo.")
         operation FooOperation()
 
     .. code-tab:: json
@@ -797,8 +820,12 @@ The following example's ``MyResource`` resource has the
 
         namespace ns.example
 
-        @aws.api#service(sdkId: "My Value", arnNamespace: "myservice")
-        @aws.iam#defineConditionKeys([
+        use trait aws.api#service
+        use trait aws.iam#definedContextKeys
+        use trait aws.iam#conditionKeys
+
+        @service(sdkId: "My Value", arnNamespace: "myservice")
+        @defineConditionKeys([
             {"otherservice:Bar": { type: "String" }},
         ])
         service MyService {
@@ -806,7 +833,7 @@ The following example's ``MyResource`` resource has the
             resources: [MyResource],
         }
 
-        @aws.iam#conditionKeys(["otherservice:Bar"])
+        @conditionKeys(["otherservice:Bar"])
         resource MyResource {
             identifiers: {
                 foo: String
@@ -814,7 +841,7 @@ The following example's ``MyResource`` resource has the
             operations: [MyOperation],
         }
 
-        @aws.iam#conditionKeys(["aws:region"])
+        @conditionKeys(["aws:region"])
         operation MyOperation
 
     .. code-tab:: json
@@ -906,10 +933,13 @@ Each condition key object supports the following key-value pairs:
 
         namespace ns.example
 
-        @aws.api#service(sdkId: "My Value", arnNamespace: "myservice")
-        @aws.iam#defineConditionKeys(
+        use trait aws.api#service
+        use trait aws.iam#defineConditionKeys
+
+        @service(sdkId: "My Value", arnNamespace: "myservice")
+        @defineConditionKeys(
             "otherservice:Bar": {
-                type: String,
+                type: "String",
                 documentation: "The Bar string",
                 externalDocumentation: "http://example.com"
             }})
@@ -1018,13 +1048,16 @@ condition key inference disabled.
 
         namespace ns.example
 
-        @aws.api#service(sdkId: "My Value", arnNamespace: "myservice")
+        use trait aws.api#service
+        use trait aws.iam#disableConditionKeyInference
+
+        @service(sdkId: "My Value", arnNamespace: "myservice")
         service MyService {
             version: "2017-02-11",
             resources: [MyResource],
         }
 
-        @aws.iam#disableConditionKeyInference
+        @disableConditionKeyInference
         resource MyResource {
             identifiers: {
                 foo: String,
@@ -1086,7 +1119,10 @@ operation for it to complete successfully.
 
         namespace ns.example
 
-        @aws.api#service(sdkId: "My Value", arnNamespace: "myservice")
+        use trait aws.api#service
+        use trait aws.iam#requiredActions
+
+        @service(sdkId: "My Value", arnNamespace: "myservice")
         service MyService {
             version: "2017-02-11",
             resources: [MyResource],
@@ -1099,7 +1135,7 @@ operation for it to complete successfully.
             operations: [MyOperation],
         }
 
-        @aws.iam#requiredActions(["otherservice:OtherOperation"])
+        @requiredActions(["otherservice:OtherOperation"])
         operation MyOperation
 
     .. code-tab:: json
@@ -1159,18 +1195,20 @@ Given the following model,
 
         namespace ns.example
 
-        @aws.api#service(sdkId: "My Value", arnNamespace: "myservice")
-        @aws.iam#defineConditionKeys("otherservice:Bar": { type: String })
+        use trait aws.api#service
+        use trait aws.iam#defineConditionKeys
+        use trait aws.iam#conditionKeys
+
+        @service(sdkId: "My Value", arnNamespace: "myservice")
+        @defineConditionKeys("otherservice:Bar": { type: "String" })
         service MyService {
             version: "2017-02-11",
             resources: [MyResource],
         }
 
-        @aws.iam#conditionKeys(["otherservice:Bar"])
+        @conditionKeys(["otherservice:Bar"])
         resource MyResource {
-            identifiers: {
-                foo: String
-            },
+            identifiers: {foo: String},
             operations: [MyOperation],
             resources: [MyInnerResource],
         }
@@ -1181,7 +1219,7 @@ Given the following model,
             }
         }
 
-        @aws.iam#conditionKeys(["aws:region"])
+        @conditionKeys(["aws:region"])
         operation MyOperation
 
     .. code-tab:: json
