@@ -53,7 +53,9 @@ The following example sets the ``X-API-Key`` header as the API key source.
         $version: "0.2.0"
         namespace smithy.example
 
-        @aws.apigateway#apiKeySource("HEADER")
+        use trait aws.apigateway#apiKeySource
+
+        @apiKeySource("HEADER")
         service Weather {
           version: "2018-03-17"
         }
@@ -283,7 +285,9 @@ Then following example enables request validation on a service:
         $version: "0.2.0"
         namespace smithy.example
 
-        @aws.apigateway#requestValidator("full")
+        use trait aws.apigateway#requestValidator
+
+        @requestValidator("full")
         service Weather {
           version: "2018-03-17"
         }
