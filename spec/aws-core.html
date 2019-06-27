@@ -177,7 +177,6 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
-
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
 <span class="kd">use trait</span><span class="nc"> aws.api#service</span>
@@ -507,13 +506,12 @@ JSON</div>
 <span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
 <span class="kd">service</span><span class="nc"> FooBaz</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
+  <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
 }
 
 <span class="nd">@arn</span>(<span class="nl">template:</span> <span class="s2">&quot;myresource/{myId}&quot;</span>)
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
-  <span class="nl">identifiers:</span> {
-    <span class="nl">myId:</span> <span class="vc">MyResourceId</span>
-  },
+  <span class="nl">identifiers:</span> {<span class="nl">myId:</span> <span class="vc">MyResourceId</span>},
 }
 </pre></div>
 </div>
@@ -526,12 +524,14 @@ JSON</div>
       <span class="nt">&quot;FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
         <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyResource&quot;</span><span class="p">],</span>
         <span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span> <span class="p">{</span>
           <span class="nt">&quot;sdkId&quot;</span><span class="p">:</span> <span class="s2">&quot;Some Value&quot;</span>
         <span class="p">}</span>
       <span class="p">},</span>
       <span class="nt">&quot;MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;myId&quot;</span><span class="p">:</span> <span class="s2">&quot;MyResourceId&quot;</span><span class="p">},</span>
         <span class="nt">&quot;aws.api#arn&quot;</span><span class="p">:</span> <span class="p">{</span>
           <span class="nt">&quot;template&quot;</span><span class="p">:</span> <span class="s2">&quot;myresource/{myId}&quot;</span>
         <span class="p">}</span>
@@ -832,7 +832,7 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> aws.api#unsignedPayload</span>
 
-<span class="nd">@unsignedPayload</span>([<span class="vc">aws.v4</span>])
+<span class="nd">@unsignedPayload</span>([<span class="s2">&quot;aws.v4&quot;</span>])
 <span class="kd">operation</span><span class="nc"> PutThings</span>(<span class="vc">PutThingsInput</span>) <span class="nd">-&gt;</span> <span class="vc">PutThingsOutput</span>
 </pre></div>
 </div>
@@ -893,9 +893,9 @@ JSON</div>
 <span class="kd">use trait</span><span class="nc"> aws.api#service</span>
 
 <span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
+<span class="nd">@protocols</span>([{<span class="nl">name:</span> <span class="s2">&quot;aws.rest-json&quot;</span>, <span class="nl">auth:</span> [<span class="s2">&quot;aws.v4&quot;</span>]}])
 <span class="kd">service</span><span class="nc"> FooBaz</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
-  <span class="nl">authentication:</span> {<span class="nl">aws.v4:</span> {}}
 }
 </pre></div>
 </div>
@@ -1028,9 +1028,7 @@ JSON</div>
 
 <span class="nd">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
-    <span class="nl">identifiers:</span> {
-        <span class="nl">foo:</span> <span class="vc">String</span>
-    },
+    <span class="nl">identifiers:</span> {<span class="nl">foo:</span> <span class="vc">String</span>},
     <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
 }
 
@@ -1375,9 +1373,7 @@ JSON</div>
 }
 
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
-    <span class="nl">identifiers:</span> {
-        <span class="nl">foo:</span> <span class="vc">String</span>
-    },
+    <span class="nl">identifiers:</span> {<span class="nl">foo:</span> <span class="vc">String</span>},
     <span class="nl">operations:</span> [<span class="vc">MyOperation</span>],
 }
 
@@ -1465,9 +1461,7 @@ JSON</div>
 }
 
 <span class="kd">resource</span><span class="nc"> MyInnerResource</span> {
-    <span class="nl">identifiers:</span> {
-        <span class="nl">yum:</span> <span class="vc">String</span>
-    }
+    <span class="nl">identifiers:</span> {<span class="nl">yum:</span> <span class="vc">String</span>}
 }
 
 <span class="nd">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])

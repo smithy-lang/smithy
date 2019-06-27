@@ -47,7 +47,6 @@ The following example defines an AWS service that uses the default values of
     .. code-tab:: smithy
 
         $version: "0.2.0"
-
         namespace aws.fooBaz
 
         use trait aws.api#service
@@ -384,13 +383,12 @@ For example, given the following service:
         @service(sdkId: "Some Value")
         service FooBaz {
           version: "2018-03-17",
+          resources: [MyResource],
         }
 
         @arn(template: "myresource/{myId}")
         resource MyResource {
-          identifiers: {
-            myId: MyResourceId
-          },
+          identifiers: {myId: MyResourceId},
         }
 
     .. code-tab:: json
@@ -402,12 +400,14 @@ For example, given the following service:
               "FooBaz": {
                 "type": "service",
                 "version": "2018-03-17",
+                "resources": ["MyResource"],
                 "aws.api#service": {
                   "sdkId": "Some Value"
                 }
               },
               "MyResource": {
                 "type": "resource",
+                "identifiers": {"myId": "MyResourceId"},
                 "aws.api#arn": {
                   "template": "myresource/{myId}"
                 }
@@ -652,7 +652,7 @@ only when using the "aws.v4" authentication scheme:
 
         use trait aws.api#unsignedPayload
 
-        @unsignedPayload([aws.v4])
+        @unsignedPayload(["aws.v4"])
         operation PutThings(PutThingsInput) -> PutThingsOutput
 
     .. code-tab:: json
@@ -711,9 +711,9 @@ the service converted to lowercase characters).
         use trait aws.api#service
 
         @service(sdkId: "Some Value")
+        @protocols([{name: "aws.rest-json", auth: ["aws.v4"]}])
         service FooBaz {
           version: "2018-03-17",
-          authentication: {aws.v4: {}}
         }
 
     .. code-tab:: json
@@ -835,9 +835,7 @@ The following example's ``MyResource`` resource has the
 
         @conditionKeys(["otherservice:Bar"])
         resource MyResource {
-            identifiers: {
-                foo: String
-            },
+            identifiers: {foo: String},
             operations: [MyOperation],
         }
 
@@ -1129,9 +1127,7 @@ operation for it to complete successfully.
         }
 
         resource MyResource {
-            identifiers: {
-                foo: String
-            },
+            identifiers: {foo: String},
             operations: [MyOperation],
         }
 
@@ -1214,9 +1210,7 @@ Given the following model,
         }
 
         resource MyInnerResource {
-            identifiers: {
-                yum: String
-            }
+            identifiers: {yum: String}
         }
 
         @conditionKeys(["aws:region"])
