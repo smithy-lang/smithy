@@ -16,11 +16,9 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.validators.PaginatedTraitValidator;
 import software.amazon.smithy.utils.ListUtils;
@@ -34,8 +32,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuilder<PaginatedTrait> {
     public static final String NAME = "smithy.api#paginated";
-    private static final List<String> PAGINATED_PROPERTIES = ListUtils.of("items", "inputToken",
-            "outputToken", "pageSize");
+    private static final List<String> PAGINATED_PROPERTIES = ListUtils.of(
+            "items", "inputToken", "outputToken", "pageSize");
 
     private final String items;
     private final String inputToken;
@@ -44,8 +42,8 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
 
     private PaginatedTrait(Builder builder) {
         super(NAME, builder.sourceLocation);
-        inputToken = Objects.requireNonNull(builder.inputToken, "inputToken is required");
-        outputToken = Objects.requireNonNull(builder.outputToken, "outputToken is required");
+        inputToken = builder.inputToken;
+        outputToken = builder.outputToken;
         items = builder.items;
         pageSize = builder.pageSize;
     }
@@ -60,15 +58,15 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
     /**
      * @return The `inputToken` property of the trait.
      */
-    public String getInputToken() {
-        return inputToken;
+    public Optional<String> getInputToken() {
+        return Optional.ofNullable(inputToken);
     }
 
     /**
      * @return The `outputToken` property of the trait.
      */
-    public String getOutputToken() {
-        return outputToken;
+    public Optional<String> getOutputToken() {
+        return Optional.ofNullable(outputToken);
     }
 
     /**
@@ -78,11 +76,37 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
         return Optional.ofNullable(pageSize);
     }
 
+    /**
+     * Merges this paginated trait with another trait.
+     *
+     * <p>Values set on this trait take precedence over values of the
+     * other trait. This operation is typically performed to merge the
+     * paginated trait of an operation with the paginated trait of a service.
+     *
+     * <p>If {@code other} is null, the current trait is returned as-is.
+     *
+     * @param other Other trait to merge with.
+     * @return Returns a newly created trait that maintains the same source location.
+     */
+    public PaginatedTrait merge(PaginatedTrait other) {
+        if (other == null) {
+            return this;
+        }
+
+        return builder()
+                .inputToken(inputToken != null ? inputToken : other.inputToken)
+                .outputToken(outputToken != null ? outputToken : other.outputToken)
+                .pageSize(pageSize != null ? pageSize : other.pageSize)
+                .items(items != null ? items : other.items)
+                .sourceLocation(getSourceLocation())
+                .build();
+    }
+
     @Override
     protected Node createNode() {
         return new ObjectNode(MapUtils.of(), getSourceLocation())
-                .withMember("inputToken", Node.from(inputToken))
-                .withMember("outputToken", Node.from(outputToken))
+                .withOptionalMember("inputToken", getInputToken().map(Node::from))
+                .withOptionalMember("outputToken", getOutputToken().map(Node::from))
                 .withOptionalMember("items", getItems().map(Node::from))
                 .withOptionalMember("pageSize", getPageSize().map(Node::from));
     }
@@ -150,10 +174,10 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
             Builder builder = builder().sourceLocation(value);
             ObjectNode members = value.expectObjectNode();
             members.warnIfAdditionalProperties(PAGINATED_PROPERTIES);
-            builder.pageSize(members.getStringMember("pageSize").map(StringNode::getValue).orElse(null));
-            builder.items(members.getStringMember("items").map(StringNode::getValue).orElse(null));
-            builder.inputToken(members.expectMember("inputToken").expectStringNode().getValue());
-            builder.outputToken(members.expectMember("outputToken").expectStringNode().getValue());
+            builder.pageSize(members.getStringMemberOrDefault("pageSize", null));
+            builder.items(members.getStringMemberOrDefault("items", null));
+            builder.inputToken(members.getStringMemberOrDefault("inputToken", null));
+            builder.outputToken(members.getStringMemberOrDefault("outputToken", null));
             return builder.build();
         }
     }

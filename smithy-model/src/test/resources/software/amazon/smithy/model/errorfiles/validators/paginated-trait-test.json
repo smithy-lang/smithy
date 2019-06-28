@@ -2,6 +2,15 @@
     "smithy": "0.2.0",
     "ns.foo": {
         "shapes": {
+            "Service": {
+                "type": "service",
+                "version": "2019-06-27",
+                "operations": [
+                    "Valid1", "Valid2", "Valid3",
+                    "Invalid1", "Invalid2", "Invalid3", "Invalid4", "Invalid5", "Invalid6", "Invalid7", "Invalid8",
+                    "Invalid9"
+                ]
+            },
             "Valid1": {
                 "type": "operation",
                 "readonly": true,
@@ -270,6 +279,12 @@
                         "target": "smithy.api#String"
                     }
                 }
+            },
+            "Invalid9": {
+                "type": "operation",
+                "paginated": true,
+                "input": "ValidInput",
+                "output": "ValidOutput"
             },
             "ValidInput": {
                 "type": "structure",

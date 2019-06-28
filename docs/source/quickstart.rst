@@ -112,6 +112,7 @@ weather service.
         namespace example.weather
 
         /// Provides weather forecasts.
+        /// Triple slash comments attach documentation to shapes.
         service Weather {
           version: "2006-03-01"
         }
@@ -404,11 +405,19 @@ cities, so there's no way we could provide a City identifier.
 
     .. code-tab:: smithy
 
-        // The paginated trait indicates that the operation may
-        // return truncated results.
-        @readonly @collection
+        /// Provides weather forecasts.
         @paginated(inputToken: "nextToken", outputToken: "nextToken",
-                  pageSize: "pageSize", items: "items")
+                   pageSize: "pageSize")
+        service Weather {
+          version: "2006-03-01",
+          resources: [City]
+        }
+
+        // The paginated trait indicates that the operation may
+        // return truncated results. Applying this trait to the service
+        // sets default pagination configuration settings on each operation.
+        @paginated(items: "items")
+        @readonly @collection
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
         structure ListCitiesInput {
@@ -444,17 +453,18 @@ cities, so there's no way we could provide a City identifier.
             "smithy": "0.2.0",
             "example.weather": {
                 "shapes": {
+                    "Weather": {
+                        "type": "service",
+                        "version": "2006-03-01",
+                        "resources": ["City"],
+                        "paginated": {"inputToken": "nextToken", "outputToken": "nextToken", "pageSize": "pageSize"}
+                    },
                     "ListCities": {
                         "type": "operation",
                         "input": "ListCitiesInput",
                         "output": "ListCitiesOutput",
                         "readonly": true,
-                        "paginated": {
-                            "inputToken": "nextToken",
-                            "outputToken": "nextToken",
-                            "pageSize": "pageSize",
-                            "items": "items"
-                        }
+                        "paginated": {"items": "items"}
                     },
                     "ListCitiesInput": {
                         "type": "structure",
@@ -539,6 +549,8 @@ service.
     .. code-tab:: smithy
 
         /// Provides weather forecasts.
+        @paginated(inputToken: "nextToken", outputToken: "nextToken",
+                   pageSize: "pageSize")
         service Weather {
           version: "2006-03-01",
           resources: [City],
@@ -608,6 +620,8 @@ Complete example
         namespace example.weather
 
         /// Provides weather forecasts.
+        @paginated(inputToken: "nextToken", outputToken: "nextToken",
+                   pageSize: "pageSize")
         service Weather {
           version: "2006-03-01",
           resources: [City],
@@ -670,8 +684,7 @@ Complete example
         // The paginated trait indicates that the operation may
         // return truncated results.
         @readonly @collection
-        @paginated(inputToken: "nextToken", outputToken: "nextToken",
-                  pageSize: "pageSize", items: "items")
+        @paginated(items: "items")
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
         structure ListCitiesInput {
@@ -727,11 +740,22 @@ Complete example
 
         {
             "smithy": "0.2.0",
-            "example.weather":{
-                "shapes":{
-                    "City":{
+            "example.weather": {
+                "shapes": {
+                    "Weather": {
+                        "type":"service",
+                        "version":"2006-03-01",
+                        "operations":[
+                            "GetCurrentTime"
+                        ],
+                        "resources":[
+                            "City"
+                        ],
+                        "paginated": {"inputToken": "nextToken", "outputToken": "nextToken", "pageSize": "pageSize"}
+                    },
+                    "City": {
                         "type":"resource",
-                        "identifiers":{
+                        "identifiers": {
                             "cityId":"CityId"
                         },
                         "read":"GetCity",
@@ -740,56 +764,56 @@ Complete example
                             "Forecast"
                         ]
                     },
-                    "CityCoordinates":{
+                    "CityCoordinates": {
                         "type":"structure",
-                        "members":{
-                            "latitude":{
+                        "members": {
+                            "latitude": {
                                 "target":"Float",
                                 "required":true
                             },
-                            "longitude":{
+                            "longitude": {
                                 "target":"Float",
                                 "required":true
                             }
                         }
                     },
-                    "CityId":{
+                    "CityId": {
                         "type":"string",
                         "pattern":"^[A-Za-z0-9 ]+$"
                     },
-                    "CitySummaries":{
+                    "CitySummaries": {
                         "type":"list",
-                        "member":{
+                        "member": {
                             "target":"CitySummary"
                         }
                     },
-                    "CitySummary":{
+                    "CitySummary": {
                         "type":"structure",
-                        "members":{
-                            "cityId":{
+                        "members": {
+                            "cityId": {
                                 "target":"CityId",
                                 "required":true
                             },
-                            "name":{
+                            "name": {
                                 "target":"String",
                                 "required":true
                             }
                         },
-                        "references":{
-                            "city":{
+                        "references": {
+                            "city": {
                                 "resource":"City",
                                 "service":"Weather"
                             }
                         }
                     },
-                    "Forecast":{
+                    "Forecast": {
                         "type":"resource",
-                        "identifiers":{
+                        "identifiers": {
                             "cityId":"CityId"
                         },
                         "read":"GetForecast"
                     },
-                    "GetCity":{
+                    "GetCity": {
                         "type":"operation",
                         "input":"GetCityInput",
                         "output":"GetCityOutput",
@@ -798,120 +822,105 @@ Complete example
                         ],
                         "readonly":true
                     },
-                    "GetCityInput":{
+                    "GetCityInput": {
                         "type":"structure",
-                        "members":{
-                            "cityId":{
+                        "members": {
+                            "cityId": {
                                 "target":"CityId",
                                 "required":true
                             }
                         }
                     },
-                    "GetCityOutput":{
+                    "GetCityOutput": {
                         "type":"structure",
-                        "members":{
-                            "coordinates":{
+                        "members": {
+                            "coordinates": {
                                 "target":"CityCoordinates",
                                 "required":true
                             },
-                            "name":{
+                            "name": {
                                 "target":"String",
                                 "required":true
                             }
                         }
                     },
-                    "GetCurrentTime":{
+                    "GetCurrentTime": {
                         "type":"operation",
                         "output":"GetCurrentTimeOutput",
                         "readonly":true
                     },
-                    "GetCurrentTimeOutput":{
+                    "GetCurrentTimeOutput": {
                         "type":"structure",
-                        "members":{
-                            "time":{
+                        "members": {
+                            "time": {
                                 "target":"Timestamp",
                                 "required":true
                             }
                         }
                     },
-                    "GetForecast":{
+                    "GetForecast": {
                         "type":"operation",
                         "input":"GetForecastInput",
                         "output":"GetForecastOutput",
                         "readonly":true
                     },
-                    "GetForecastInput":{
+                    "GetForecastInput": {
                         "type":"structure",
-                        "members":{
-                            "cityId":{
+                        "members": {
+                            "cityId": {
                                 "target":"CityId",
                                 "required":true
                             }
                         }
                     },
-                    "GetForecastOutput":{
+                    "GetForecastOutput": {
                         "type":"structure",
-                        "members":{
-                            "chanceOfRain":{
+                        "members": {
+                            "chanceOfRain": {
                                 "target":"Float"
                             }
                         }
                     },
-                    "ListCities":{
+                    "ListCities": {
                         "type":"operation",
                         "input":"ListCitiesInput",
                         "output":"ListCitiesOutput",
-                        "paginated":{
-                            "inputToken":"nextToken",
-                            "outputToken":"nextToken",
-                            "items":"items",
-                            "pageSize":"pageSize"
-                        },
+                        "paginated": {"items":"items"},
                         "readonly":true,
                         "collection":true
                     },
-                    "ListCitiesInput":{
+                    "ListCitiesInput": {
                         "type":"structure",
-                        "members":{
-                            "nextToken":{
+                        "members": {
+                            "nextToken": {
                                 "target":"String"
                             },
-                            "pageSize":{
+                            "pageSize": {
                                 "target":"Integer"
                             }
                         }
                     },
-                    "ListCitiesOutput":{
+                    "ListCitiesOutput": {
                         "type":"structure",
-                        "members":{
-                            "items":{
+                        "members": {
+                            "items": {
                                 "target":"CitySummaries",
                                 "required":true
                             },
-                            "nextToken":{
+                            "nextToken": {
                                 "target":"String"
                             }
                         }
                     },
-                    "NoSuchResource":{
+                    "NoSuchResource": {
                         "type":"structure",
-                        "members":{
-                            "resourceType":{
+                        "members": {
+                            "resourceType": {
                                 "target":"String",
                                 "required":true
                             }
                         },
                         "error":"client"
-                    },
-                    "Weather":{
-                        "type":"service",
-                        "version":"2006-03-01",
-                        "operations":[
-                            "GetCurrentTime"
-                        ],
-                        "resources":[
-                            "City"
-                        ]
                     }
                 }
             }

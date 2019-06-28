@@ -18,35 +18,49 @@ package software.amazon.smithy.model.knowledge;
 import java.util.Optional;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.PaginatedTrait;
 
 /**
- * Resolved and valid pagination information about an operation.
+ * Resolved and valid pagination information about an operation in a service.
  */
 public final class PaginationInfo {
 
+    private final ServiceShape service;
     private final OperationShape operation;
     private final StructureShape input;
     private final StructureShape output;
     private final PaginatedTrait paginatedTrait;
     private final MemberShape inputToken;
     private final MemberShape outputToken;
+    private final MemberShape pageSize;
+    private final MemberShape items;
 
     PaginationInfo(
+            ServiceShape service,
             OperationShape operation,
             StructureShape input,
             StructureShape output,
             PaginatedTrait paginatedTrait,
             MemberShape inputToken,
-            MemberShape outputToken
+            MemberShape outputToken,
+            MemberShape pageSize,
+            MemberShape items
     ) {
+        this.service = service;
         this.operation = operation;
         this.input = input;
         this.output = output;
         this.paginatedTrait = paginatedTrait;
         this.inputToken = inputToken;
         this.outputToken = outputToken;
+        this.pageSize = pageSize;
+        this.items = items;
+    }
+
+    public ServiceShape getService() {
+        return service;
     }
 
     public OperationShape getOperation() {
@@ -61,8 +75,13 @@ public final class PaginationInfo {
         return output;
     }
 
+    /**
+     * Gets the paginated trait of the operation merged with the service.
+     *
+     * @return Returns the resolved paginated trait.
+     */
     public PaginatedTrait getPaginatedTrait() {
-        return paginatedTrait;
+        return paginatedTrait.merge(service.getTrait(PaginatedTrait.class).orElse(null));
     }
 
     public MemberShape getInputTokenMember() {
@@ -74,10 +93,10 @@ public final class PaginationInfo {
     }
 
     public Optional<MemberShape> getItemsMember() {
-        return paginatedTrait.getItems().flatMap(output::getMember);
+        return Optional.ofNullable(items);
     }
 
     public Optional<MemberShape> getPageSizeMember() {
-        return paginatedTrait.getPageSize().flatMap(input::getMember);
+        return Optional.ofNullable(pageSize);
     }
 }

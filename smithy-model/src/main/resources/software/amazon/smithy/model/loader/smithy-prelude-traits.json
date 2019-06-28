@@ -176,7 +176,7 @@
         "documentation": "Indicates that the items in a list MUST be unique."
       },
       "paginated": {
-        "selector": "operation",
+        "selector": ":each(service, operation)",
         "shape": "PaginatedObject",
         "documentation": "The paginated trait indicates that an operation intentionally limits the number of results returned in a single response and that multiple invocations might be necessary to retrieve all results.",
         "tags": ["diff.error.remove"]
@@ -472,12 +472,10 @@
         "members": {
           "inputToken": {
             "target": "NonEmptyString",
-            "required": true,
             "documentation": "The name of the operation input member that represents the continuation token. When this value is provided as operation input, the service returns results from where the previous response left off. This input member MUST NOT be required and MUST target a string shape."
           },
           "outputToken": {
             "target": "NonEmptyString",
-            "required": true,
             "documentation": "The name of the operation output member that represents the continuation token. When this value is present in operation output, it indicates that there are more results to retrieve. To get the next page of results, the client uses the output token as the input token of the next request. This output member MUST NOT be required and MUST target a string shape."
           },
           "items": {

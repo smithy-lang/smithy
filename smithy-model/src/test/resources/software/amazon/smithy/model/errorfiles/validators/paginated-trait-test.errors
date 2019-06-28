@@ -1,15 +1,20 @@
-[ERROR] ns.foo#Invalid1: `paginated` operations require an input | PaginatedTrait
-[ERROR] ns.foo#Invalid2: `paginated` trait `inputToken` property references a non-existent member named `nextToken` | PaginatedTrait
-[ERROR] ns.foo#Invalid3: `paginated` trait `inputToken` references input member `InputNotString`, a member that targets a integer shape, but inputToken must reference a member that targets a(n) `string`. | PaginatedTrait
-[ERROR] ns.foo#Invalid3: `paginated` trait `outputToken` references output member `InputNotString`, a member that targets a integer shape, but outputToken must reference a member that targets a(n) `string`. | PaginatedTrait
-[ERROR] ns.foo#Invalid4: `paginated` trait `inputToken` must reference an optional input structure member, but found a reference to `ns.foo#NonOptionalInput$nextToken`, a required member. | PaginatedTrait
-[ERROR] ns.foo#Invalid4: `paginated` trait `outputToken` must reference an optional output structure member, but found a reference to `ns.foo#NonOptionalOutput$nextToken`, a required member. | PaginatedTrait
-[ERROR] ns.foo#Invalid4: `paginated` trait `pageSize` must reference an optional input structure member, but found a reference to `ns.foo#NonOptionalInput$pageSize`, a required member. | PaginatedTrait
-[ERROR] ns.foo#Invalid6: `paginated` trait `pageSize` references input member `Invalid6Input`, a member that targets a string shape, but pageSize must reference a member that targets a(n) `integer`. | PaginatedTrait
-[ERROR] ns.foo#Invalid7: `paginated` trait `items` references output member `Invalid7Input`, a member that targets a string shape, but items must reference a member that targets one of the following types: `list`, `map`. | PaginatedTrait
-[ERROR] ns.foo#Invalid8: `paginated` trait `outputToken` property references a non-existent member named `missing` | PaginatedTrait
-[ERROR] ns.foo#InvalidNoOutput: `paginated` operations require an output | PaginatedTrait
+[ERROR] ns.foo#Invalid1: paginated operations require an input | PaginatedTrait
+[ERROR] ns.foo#Invalid2: paginated trait `inputToken` targets a member `nextToken` that does not exist | PaginatedTrait
+[ERROR] ns.foo#Invalid2: paginated trait `outputToken` targets a member `nextToken` that does not exist | PaginatedTrait
+[ERROR] ns.foo#Invalid3: paginated trait `inputToken` member `InputNotString` targets a integer shape, but must target one of the following: [`string`] | PaginatedTrait
+[ERROR] ns.foo#Invalid3: paginated trait `items` targets a member `items` that does not exist | PaginatedTrait
+[ERROR] ns.foo#Invalid3: paginated trait `outputToken` member `OutputNotString` targets a integer shape, but must target one of the following: [`string`] | PaginatedTrait
+[ERROR] ns.foo#Invalid4: paginated trait `inputToken` member `nextToken` must not be required | PaginatedTrait
+[ERROR] ns.foo#Invalid4: paginated trait `outputToken` member `nextToken` must not be required | PaginatedTrait
+[ERROR] ns.foo#Invalid4: paginated trait `pageSize` member `pageSize` must not be required | PaginatedTrait
+[ERROR] ns.foo#Invalid6: paginated trait `pageSize` member `Invalid6Input` targets a string shape, but must target one of the following: [`integer`] | PaginatedTrait
+[ERROR] ns.foo#Invalid7: paginated trait `items` member `Invalid7Input` targets a string shape, but must target one of the following: [`list`, `map`] | PaginatedTrait
+[ERROR] ns.foo#Invalid8: paginated trait `items` targets a member `items` that does not exist | PaginatedTrait
+[ERROR] ns.foo#Invalid8: paginated trait `outputToken` targets a member `missing` that does not exist | PaginatedTrait
+[ERROR] ns.foo#InvalidNoOutput: paginated operations require an output | PaginatedTrait
 [ERROR] ns.foo#UnresolvedInput$nextToken: member shape targets an unresolved shape `ns.foo#Missing` | Target
 [ERROR] ns.foo#UnresolvedInput$pageSize: member shape targets an unresolved shape `ns.foo#Missing` | Target
 [ERROR] ns.foo#UnresolvedOutput$items: member shape targets an unresolved shape `ns.foo#Missing` | Target
 [ERROR] ns.foo#UnresolvedOutput$nextToken: member shape targets an unresolved shape `ns.foo#Missing` | Target
+[ERROR] ns.foo#Invalid9: When bound within the `ns.foo#Service` service, paginated trait `inputToken` is not configured | PaginatedTrait
+[ERROR] ns.foo#Invalid9: When bound within the `ns.foo#Service` service, paginated trait `outputToken` is not configured | PaginatedTrait
