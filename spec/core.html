@@ -2231,9 +2231,7 @@ being listed.</li>
 <li>List operations SHOULD be <a class="reference internal" href="#paginated-trait"><span class="std std-ref">paginated</span></a>.</li>
 </ul>
 <p>For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@collection</span> <span class="nd">@readonly</span>
-<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">pageSize:</span> <span class="s2">&quot;maxResults&quot;</span>,
-           <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">items:</span> <span class="s2">&quot;forecasts&quot;</span>)
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@collection</span> <span class="nd">@readonly</span> <span class="nd">@paginated</span>
 <span class="kd">operation</span><span class="nc"> ListForecasts</span>(<span class="vc">ListForecastsInput</span>) <span class="nd">-&gt;</span> <span class="vc">ListForecastsOutput</span>
 
 <span class="kd">structure</span><span class="nc"> ListForecastsInput</span> {
@@ -4284,7 +4282,9 @@ Smithy</div>
 the number of results returned in a single response and that multiple
 invocations might be necessary to retrieve all results.</dd>
 <dt>Trait selector</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:test(operation,</span> <span class="pre">service)</span></code></p>
+<p class="last"><em>An operation or service</em></p>
+</dd>
 <dt>Value type</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">object</span></code> value</dd>
 </dl>
@@ -4307,25 +4307,34 @@ cursor.</p>
 <tbody valign="top">
 <tr class="row-even"><td>inputToken</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong>. The name of the operation input member that represents
-the continuation token. When this value is provided as operation input,
-the service returns results from where the previous response left off.
-This input member MUST NOT be required and MUST target a string shape.</td>
+<td><p class="first">The name of the operation input member that contains a continuation
+token. When this value is provided as input, the service returns
+results from where the previous response left off. This input member
+MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and MUST target a string shape.</p>
+<p class="last">When contained within a service, a paginated operation MUST either
+configure <code class="docutils literal notranslate"><span class="pre">inputToken</span></code> on the operation itself or inherit it from
+the service that contains the operation.</p>
+</td>
 </tr>
 <tr class="row-odd"><td>outputToken</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong>. The name of the operation output member that represents
-the continuation token. When this value is present in operation output,
+<td><p class="first">The name of the operation output member that contains an optional
+continuation token. When this value is present in operation output,
 it indicates that there are more results to retrieve. To get the next
-page of results, the client uses the output token as the input token of
-the next request. This  output member MUST NOT be required and MUST
-target a string shape.</td>
+page of results, the client passes the received output continuation
+token to the input continuation token of the next request. This
+output member MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and MUST target a
+string shape.</p>
+<p class="last">When contained within a service, a paginated operation MUST either
+configure <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> on the operation itself or inherit it from
+the service that contains the operation.</p>
+</td>
 </tr>
 <tr class="row-even"><td>items</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The name of a top-level output member of the operation that is the
-data that is being paginated across many responses. The named output
-member, if specified, MUST target a <a class="reference internal" href="#list"><span class="std std-ref">list</span></a> or <a class="reference internal" href="#map"><span class="std std-ref">map</span></a>.</td>
+<td>The name of a top-level output member of the operation that contains
+the data that is being paginated across many responses. The named
+output member, if specified, MUST target a list or map.</td>
 </tr>
 <tr class="row-odd"><td>pageSize</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
@@ -4343,7 +4352,8 @@ an unpredictable latency.</p>
 </tr>
 </tbody>
 </table>
-<p>In the example below, a resource defines a paginated operation.</p>
+<p>The following example defines a paginated operation that sets each value
+explicitly on the operation.</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
@@ -4360,7 +4370,7 @@ JSON</div>
 
 <span class="nd">@collection</span> <span class="nd">@readonly</span>
 <span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
-          <span class="nl">pageSize:</span> <span class="s2">&quot;maxResults&quot;</span>, <span class="nl">items:</span> <span class="s2">&quot;foos&quot;</span>)
+           <span class="nl">pageSize:</span> <span class="s2">&quot;maxResults&quot;</span>, <span class="nl">items:</span> <span class="s2">&quot;foos&quot;</span>)
 <span class="kd">operation</span><span class="nc"> GetFoos</span>(<span class="vc">GetFoosInput</span>) <span class="nd">-&gt;</span> <span class="vc">GetFoosOutput</span>
 
 <span class="kd">structure</span><span class="nc"> GetFoosInput</span> {
@@ -4370,6 +4380,7 @@ JSON</div>
 
 <span class="kd">structure</span><span class="nc"> GetFoosOutput</span> {
   <span class="nl">nextToken:</span> <span class="vc">String</span>,
+
   <span class="nd">@required</span>
   <span class="nl">foos:</span> <span class="vc">StringList</span>,
 }
@@ -4426,6 +4437,67 @@ JSON</div>
                 <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
                 <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Attaching the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait to a service provides default pagination
+configuration settings to all operations bound within the closure of the
+service. Pagination settings configured on an operation override any inherited
+service setting.</p>
+<p>The following example defines a paginated operation that inherits some
+settings from a service.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
+           <span class="nl">pageSize:</span> <span class="s2">&quot;maxResults&quot;</span>)
+<span class="kd">service</span><span class="nc"> Example</span> {
+  <span class="nl">version:</span> <span class="s2">&quot;2019-06-27&quot;</span>,
+  <span class="nl">operations:</span> [<span class="vc">GetFoos</span>],
+}
+
+<span class="nd">@collection</span> <span class="nd">@readonly</span> <span class="nd">@paginated</span>(<span class="nl">items:</span> <span class="s2">&quot;foos&quot;</span>)
+<span class="kd">operation</span><span class="nc"> GetFoos</span>(<span class="vc">GetFoosInput</span>) <span class="nd">-&gt;</span> <span class="vc">GetFoosOutput</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;Example&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-06-27&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;paginated&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;inputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;outputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;pageSize&quot;</span><span class="p">:</span> <span class="s2">&quot;maxResults&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;GetFoos&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;input&quot;</span> <span class="p">:</span><span class="s2">&quot;GetFoosInput&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;GetFoosOutput&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;readonly&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="nt">&quot;collection&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="nt">&quot;paginated&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="s2">&quot;foos&quot;</span><span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>

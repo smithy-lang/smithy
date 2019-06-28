@@ -253,6 +253,7 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> example.weather</span>
 
 <span class="cm">/// Provides weather forecasts.</span>
+<span class="cm">/// Triple slash comments attach documentation to shapes.</span>
 <span class="kd">service</span><span class="nc"> Weather</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>
 }
@@ -583,11 +584,19 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// The paginated trait indicates that the operation may</span>
-<span class="c">// return truncated results.</span>
-<span class="nd">@readonly</span> <span class="nd">@collection</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="cm">/// Provides weather forecasts.</span>
 <span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
-          <span class="nl">pageSize:</span> <span class="s2">&quot;pageSize&quot;</span>, <span class="nl">items:</span> <span class="s2">&quot;items&quot;</span>)
+           <span class="nl">pageSize:</span> <span class="s2">&quot;pageSize&quot;</span>)
+<span class="kd">service</span><span class="nc"> Weather</span> {
+  <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>,
+  <span class="nl">resources:</span> [<span class="vc">City</span>]
+}
+
+<span class="c">// The paginated trait indicates that the operation may</span>
+<span class="c">// return truncated results. Applying this trait to the service</span>
+<span class="c">// sets default pagination configuration settings on each operation.</span>
+<span class="nd">@paginated</span>(<span class="nl">items:</span> <span class="s2">&quot;items&quot;</span>)
+<span class="nd">@readonly</span> <span class="nd">@collection</span>
 <span class="kd">operation</span><span class="nc"> ListCities</span>(<span class="vc">ListCitiesInput</span>) <span class="nd">-&gt;</span> <span class="vc">ListCitiesOutput</span>
 
 <span class="kd">structure</span><span class="nc"> ListCitiesInput</span> {
@@ -624,17 +633,18 @@ JSON</div>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;example.weather&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;City&quot;</span><span class="p">],</span>
+                <span class="nt">&quot;paginated&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;inputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span> <span class="nt">&quot;outputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span> <span class="nt">&quot;pageSize&quot;</span><span class="p">:</span> <span class="s2">&quot;pageSize&quot;</span><span class="p">}</span>
+            <span class="p">},</span>
             <span class="nt">&quot;ListCities&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;ListCitiesInput&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;ListCitiesOutput&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;readonly&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                <span class="nt">&quot;paginated&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;inputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;outputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;pageSize&quot;</span><span class="p">:</span> <span class="s2">&quot;pageSize&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="s2">&quot;items&quot;</span>
-                <span class="p">}</span>
+                <span class="nt">&quot;paginated&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="s2">&quot;items&quot;</span><span class="p">}</span>
             <span class="p">},</span>
             <span class="nt">&quot;ListCitiesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
@@ -725,6 +735,8 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="cm">/// Provides weather forecasts.</span>
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
+           <span class="nl">pageSize:</span> <span class="s2">&quot;pageSize&quot;</span>)
 <span class="kd">service</span><span class="nc"> Weather</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>,
   <span class="nl">resources:</span> [<span class="vc">City</span>],
@@ -803,6 +815,8 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> example.weather</span>
 
 <span class="cm">/// Provides weather forecasts.</span>
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
+           <span class="nl">pageSize:</span> <span class="s2">&quot;pageSize&quot;</span>)
 <span class="kd">service</span><span class="nc"> Weather</span> {
   <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>,
   <span class="nl">resources:</span> [<span class="vc">City</span>],
@@ -865,8 +879,7 @@ JSON</div>
 <span class="c">// The paginated trait indicates that the operation may</span>
 <span class="c">// return truncated results.</span>
 <span class="nd">@readonly</span> <span class="nd">@collection</span>
-<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
-          <span class="nl">pageSize:</span> <span class="s2">&quot;pageSize&quot;</span>, <span class="nl">items:</span> <span class="s2">&quot;items&quot;</span>)
+<span class="nd">@paginated</span>(<span class="nl">items:</span> <span class="s2">&quot;items&quot;</span>)
 <span class="kd">operation</span><span class="nc"> ListCities</span>(<span class="vc">ListCitiesInput</span>) <span class="nd">-&gt;</span> <span class="vc">ListCitiesOutput</span>
 
 <span class="kd">structure</span><span class="nc"> ListCitiesInput</span> {
@@ -923,11 +936,22 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;example.weather&quot;</span><span class="p">:{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:{</span>
-            <span class="nt">&quot;City&quot;</span><span class="p">:{</span>
+    <span class="nt">&quot;example.weather&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;operations&quot;</span><span class="p">:[</span>
+                    <span class="s2">&quot;GetCurrentTime&quot;</span>
+                <span class="p">],</span>
+                <span class="nt">&quot;resources&quot;</span><span class="p">:[</span>
+                    <span class="s2">&quot;City&quot;</span>
+                <span class="p">],</span>
+                <span class="nt">&quot;paginated&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;inputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span> <span class="nt">&quot;outputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span> <span class="nt">&quot;pageSize&quot;</span><span class="p">:</span> <span class="s2">&quot;pageSize&quot;</span><span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;City&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;identifiers&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;cityId&quot;</span><span class="p">:</span><span class="s2">&quot;CityId&quot;</span>
                 <span class="p">},</span>
                 <span class="nt">&quot;read&quot;</span><span class="p">:</span><span class="s2">&quot;GetCity&quot;</span><span class="p">,</span>
@@ -936,56 +960,56 @@ JSON</div>
                     <span class="s2">&quot;Forecast&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span>
-            <span class="nt">&quot;CityCoordinates&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;CityCoordinates&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;latitude&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;latitude&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;Float&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;longitude&quot;</span><span class="p">:{</span>
+                    <span class="nt">&quot;longitude&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;Float&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;CityId&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;CityId&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;pattern&quot;</span><span class="p">:</span><span class="s2">&quot;^[A-Za-z0-9 ]+$&quot;</span>
             <span class="p">},</span>
-            <span class="nt">&quot;CitySummaries&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;CitySummaries&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;list&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;member&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;CitySummary&quot;</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;CitySummary&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;CitySummary&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;cityId&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;cityId&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;CityId&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;name&quot;</span><span class="p">:{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">},</span>
-                <span class="nt">&quot;references&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;city&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;references&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="s2">&quot;City&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="s2">&quot;Weather&quot;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;Forecast&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;Forecast&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;identifiers&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;cityId&quot;</span><span class="p">:</span><span class="s2">&quot;CityId&quot;</span>
                 <span class="p">},</span>
                 <span class="nt">&quot;read&quot;</span><span class="p">:</span><span class="s2">&quot;GetForecast&quot;</span>
             <span class="p">},</span>
-            <span class="nt">&quot;GetCity&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;GetCity&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="s2">&quot;GetCityInput&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="s2">&quot;GetCityOutput&quot;</span><span class="p">,</span>
@@ -994,120 +1018,105 @@ JSON</div>
                 <span class="p">],</span>
                 <span class="nt">&quot;readonly&quot;</span><span class="p">:</span><span class="kc">true</span>
             <span class="p">},</span>
-            <span class="nt">&quot;GetCityInput&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;GetCityInput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;cityId&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;cityId&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;CityId&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;GetCityOutput&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;GetCityOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;coordinates&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;CityCoordinates&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;name&quot;</span><span class="p">:{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;GetCurrentTime&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;GetCurrentTime&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="s2">&quot;GetCurrentTimeOutput&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;readonly&quot;</span><span class="p">:</span><span class="kc">true</span>
             <span class="p">},</span>
-            <span class="nt">&quot;GetCurrentTimeOutput&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;GetCurrentTimeOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;time&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;GetForecast&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;GetForecast&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="s2">&quot;GetForecastInput&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="s2">&quot;GetForecastOutput&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;readonly&quot;</span><span class="p">:</span><span class="kc">true</span>
             <span class="p">},</span>
-            <span class="nt">&quot;GetForecastInput&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;GetForecastInput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;cityId&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;cityId&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;CityId&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;GetForecastOutput&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;GetForecastOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;chanceOfRain&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;chanceOfRain&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;Float&quot;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;ListCities&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;ListCities&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="s2">&quot;ListCitiesInput&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="s2">&quot;ListCitiesOutput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;paginated&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;inputToken&quot;</span><span class="p">:</span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;outputToken&quot;</span><span class="p">:</span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="s2">&quot;items&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;pageSize&quot;</span><span class="p">:</span><span class="s2">&quot;pageSize&quot;</span>
-                <span class="p">},</span>
+                <span class="nt">&quot;paginated&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="s2">&quot;items&quot;</span><span class="p">},</span>
                 <span class="nt">&quot;readonly&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
                 <span class="nt">&quot;collection&quot;</span><span class="p">:</span><span class="kc">true</span>
             <span class="p">},</span>
-            <span class="nt">&quot;ListCitiesInput&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;ListCitiesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;nextToken&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;nextToken&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;String&quot;</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;pageSize&quot;</span><span class="p">:{</span>
+                    <span class="nt">&quot;pageSize&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;Integer&quot;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;ListCitiesOutput&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;ListCitiesOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;items&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;CitySummaries&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">},</span>
-                    <span class="nt">&quot;nextToken&quot;</span><span class="p">:{</span>
+                    <span class="nt">&quot;nextToken&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;String&quot;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;NoSuchResource&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;NoSuchResource&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:{</span>
-                    <span class="nt">&quot;resourceType&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;resourceType&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">},</span>
                 <span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="s2">&quot;client&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;Weather&quot;</span><span class="p">:{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;operations&quot;</span><span class="p">:[</span>
-                    <span class="s2">&quot;GetCurrentTime&quot;</span>
-                <span class="p">],</span>
-                <span class="nt">&quot;resources&quot;</span><span class="p">:[</span>
-                    <span class="s2">&quot;City&quot;</span>
-                <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
