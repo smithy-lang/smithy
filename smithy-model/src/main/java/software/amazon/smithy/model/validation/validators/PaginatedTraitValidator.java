@@ -16,16 +16,22 @@
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.PaginatedIndex;
-import software.amazon.smithy.model.knowledge.PaginationInfo;
+import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.traits.PaginatedTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -35,6 +41,8 @@ import software.amazon.smithy.utils.SetUtils;
  * Validates paginated traits.
  *
  * <ul>
+ *     <li>The inputToken and outputToken properties must be set when an
+ *      operation's properties are optionally merged with a service's.</li>
  *     <li>The items property, if set, must reference a list or map
  *      output member.</li>
  *     <li>The pageSize property, if set, must reference an optional integer
@@ -46,8 +54,6 @@ import software.amazon.smithy.utils.SetUtils;
  *     <li>The pageSize property, if set, must reference an optional input
  *      member that targets an integer.</li>
  * </ul>
- *
- * @see PaginatedIndex for more pagination validation.
  */
 public final class PaginatedTraitValidator extends AbstractValidator {
     private static final Set<ShapeType> ITEM_SHAPES = SetUtils.of(ShapeType.LIST, ShapeType.MAP);
@@ -57,68 +63,215 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         ShapeIndex shapeIndex = model.getShapeIndex();
-        PaginatedIndex paginatedIndex = model.getKnowledge(PaginatedIndex.class);
-        List<ValidationEvent> events = new ArrayList<>(paginatedIndex.getValidationEvents());
-        events.addAll(paginatedIndex.getAllPaginatedInfo().stream()
-                .flatMap(info -> validateInfo(shapeIndex, info).stream())
-                .collect(Collectors.toList()));
-        return events;
+        OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
+        TopDownIndex topDown = model.getKnowledge(TopDownIndex.class);
+
+        return shapeIndex.shapes(OperationShape.class)
+                .flatMap(shape -> Trait.flatMapStream(shape, PaginatedTrait.class))
+                .flatMap(pair -> validateOperation(shapeIndex, topDown, opIndex, pair.left, pair.right).stream())
+                .collect(Collectors.toList());
     }
 
-    private List<ValidationEvent> validateInfo(ShapeIndex index, PaginationInfo info) {
+    private List<ValidationEvent> validateOperation(
+            ShapeIndex index,
+            TopDownIndex topDownIndex,
+            OperationIndex opIndex,
+            OperationShape operation,
+            PaginatedTrait trait
+    ) {
         List<ValidationEvent> events = new ArrayList<>();
 
-        checkType(info, index, "input", "inputToken", info.getInputTokenMember(), STRING_SET).ifPresent(events::add);
-        if (!info.getInputTokenMember().isOptional()) {
-            events.add(mustBeOptional(info, "input", "inputToken", info.getInputTokenMember()));
+        if (!opIndex.getInput(operation).isPresent()) {
+            events.add(error(operation, trait, "paginated operations require an input"));
+        } else {
+            events.addAll(validateMember(opIndex, index, null, operation, trait, new InputTokenValidator()));
+            events.addAll(validateMember(opIndex, index, null, operation, trait, new PageSizeValidator()));
         }
 
-        checkType(info, index, "output", "outputToken", info.getInputTokenMember(), STRING_SET).ifPresent(events::add);
-        if (!info.getOutputTokenMember().isOptional()) {
-            events.add(mustBeOptional(info, "output", "outputToken", info.getOutputTokenMember()));
+        if (!opIndex.getOutput(operation).isPresent()) {
+            events.add(error(operation, trait, "paginated operations require an output"));
+        } else {
+            events.addAll(validateMember(opIndex, index, null, operation, trait, new OutputTokenValidator()));
+            events.addAll(validateMember(opIndex, index, null, operation, trait, new ItemValidator()));
         }
 
-        info.getItemsMember().ifPresent(items -> {
-            checkType(info, index, "output", "items", items, ITEM_SHAPES).ifPresent(events::add);
-        });
-
-        info.getPageSizeMember().ifPresent(member -> {
-            checkType(info, index, "input", "pageSize", member, PAGE_SHAPES).ifPresent(events::add);
-            if (member.isRequired()) {
-                events.add(mustBeOptional(info, "input", "pageSize", member));
-            }
-        });
+        if (events.isEmpty()) {
+            index.shapes(ServiceShape.class).forEach(svc -> {
+                if (topDownIndex.getContainedOperations(svc).contains(operation)) {
+                    events.addAll(validateMember(opIndex, index, svc, operation, trait, new InputTokenValidator()));
+                    events.addAll(validateMember(opIndex, index, svc, operation, trait, new PageSizeValidator()));
+                    events.addAll(validateMember(opIndex, index, svc, operation, trait, new OutputTokenValidator()));
+                    events.addAll(validateMember(opIndex, index, svc, operation, trait, new ItemValidator()));
+                }
+            });
+        }
 
         return events;
     }
 
-    private Optional<ValidationEvent> checkType(
-            PaginationInfo info,
+    private List<ValidationEvent> validateMember(
+            OperationIndex opIndex,
             ShapeIndex index,
-            String inputOrOutput,
-            String propertyName,
-            MemberShape member,
-            Set<ShapeType> types
+            ServiceShape service,
+            OperationShape operation,
+            PaginatedTrait trait,
+            PropertyValidator validator
     ) {
-        return index.getShape(member.getTarget())
-                .filter(target -> !types.contains(target.getType()))
-                .map(target -> {
-                    String typePrefix = types.size() == 1 ? "a(n)" : "one of the following types:";
-                    return error(info.getOperation(), info.getPaginatedTrait(), String.format(
-                            "`paginated` trait `%s` references %s member `%s`, a member that targets a %s "
-                            + "shape, but %s must reference a member that targets %s %s.",
-                            propertyName, inputOrOutput, member.getId().getName(),
-                            target.getType(), propertyName, typePrefix, ValidationUtils.tickedList(types)));
-                });
+        String prefix = service != null ? "When bound within the `" + service.getId() + "` service, " : "";
+        String memberName = validator.getMemberName(opIndex, operation, trait).orElse(null);
+
+        if (memberName == null) {
+            return service != null && validator.isRequiredToBePresent()
+                   ? Collections.singletonList(error(operation, trait, String.format(
+                    "%spaginated trait `%s` is not configured", prefix, validator.propertyName())))
+                   : Collections.emptyList();
+        }
+
+        MemberShape member = validator.getMember(opIndex, operation, trait).orElse(null);
+        if (member == null) {
+            return Collections.singletonList(error(operation, trait, String.format(
+                    "%spaginated trait `%s` targets a member `%s` that does not exist",
+                    prefix, validator.propertyName(), memberName)));
+        }
+
+        List<ValidationEvent> events = new ArrayList<>();
+        if (validator.mustBeOptional() && member.isRequired()) {
+            events.add(error(operation, trait, String.format(
+                    "%spaginated trait `%s` member `%s` must not be required",
+                    prefix, validator.propertyName(), member.getMemberName())));
+        }
+
+        Shape target = index.getShape(member.getTarget()).orElse(null);
+        if (target != null && !validator.validTargets().contains(target.getType())) {
+            events.add(error(operation, trait, String.format(
+                    "%spaginated trait `%s` member `%s` targets a %s shape, but must target one of "
+                    + "the following: [%s]",
+                    prefix, validator.propertyName(), member.getId().getName(), target.getType(),
+                    ValidationUtils.tickedList(validator.validTargets()))));
+        }
+
+        return events;
     }
 
-    private ValidationEvent mustBeOptional(
-            PaginationInfo info,
-            String struct, String prop,
-            MemberShape member
-    ) {
-        return error(info.getOperation(), info.getPaginatedTrait(), String.format(
-                "`paginated` trait `%s` must reference an optional %s structure member, but found a "
-                + "reference to `%s`, a required member.", prop, struct, member.getId()));
+    private abstract static class PropertyValidator {
+        abstract boolean mustBeOptional();
+
+        abstract boolean isRequiredToBePresent();
+
+        abstract String propertyName();
+
+        abstract Set<ShapeType> validTargets();
+
+        abstract Optional<String> getMemberName(OperationIndex index, OperationShape operation, PaginatedTrait trait);
+
+        abstract Optional<MemberShape> getMember(OperationIndex index, OperationShape operation, PaginatedTrait trait);
+    }
+
+    private static final class InputTokenValidator extends PropertyValidator {
+        boolean mustBeOptional() {
+            return true;
+        }
+
+        boolean isRequiredToBePresent() {
+            return true;
+        }
+
+        String propertyName() {
+            return "inputToken";
+        }
+
+        Set<ShapeType> validTargets() {
+            return STRING_SET;
+        }
+
+        Optional<String> getMemberName(OperationIndex index, OperationShape operation, PaginatedTrait trait) {
+            return trait.getInputToken();
+        }
+
+        Optional<MemberShape> getMember(OperationIndex index, OperationShape operation, PaginatedTrait trait) {
+            return getMemberName(index, operation, trait)
+                    .flatMap(memberName -> index.getInput(operation).flatMap(input -> input.getMember(memberName)));
+        }
+    }
+
+    private static final class OutputTokenValidator extends PropertyValidator {
+        boolean mustBeOptional() {
+            return true;
+        }
+
+        boolean isRequiredToBePresent() {
+            return true;
+        }
+
+        String propertyName() {
+            return "outputToken";
+        }
+
+        Set<ShapeType> validTargets() {
+            return STRING_SET;
+        }
+
+        Optional<String> getMemberName(OperationIndex index, OperationShape operation, PaginatedTrait trait) {
+            return trait.getOutputToken();
+        }
+
+        Optional<MemberShape> getMember(OperationIndex index, OperationShape operation, PaginatedTrait trait) {
+            return getMemberName(index, operation, trait)
+                    .flatMap(memberName -> index.getOutput(operation).flatMap(output -> output.getMember(memberName)));
+        }
+    }
+
+    private static final class PageSizeValidator extends PropertyValidator {
+        boolean mustBeOptional() {
+            return true;
+        }
+
+        boolean isRequiredToBePresent() {
+            return false;
+        }
+
+        String propertyName() {
+            return "pageSize";
+        }
+
+        Set<ShapeType> validTargets() {
+            return PAGE_SHAPES;
+        }
+
+        Optional<String> getMemberName(OperationIndex index, OperationShape operation, PaginatedTrait trait) {
+            return trait.getPageSize();
+        }
+
+        Optional<MemberShape> getMember(OperationIndex index, OperationShape operation, PaginatedTrait trait) {
+            return getMemberName(index, operation, trait)
+                    .flatMap(memberName -> index.getInput(operation).flatMap(input -> input.getMember(memberName)));
+        }
+    }
+
+    private static final class ItemValidator extends PropertyValidator {
+        boolean mustBeOptional() {
+            return false;
+        }
+
+        boolean isRequiredToBePresent() {
+            return false;
+        }
+
+        String propertyName() {
+            return "items";
+        }
+
+        Set<ShapeType> validTargets() {
+            return ITEM_SHAPES;
+        }
+
+        Optional<String> getMemberName(OperationIndex index, OperationShape operation, PaginatedTrait trait) {
+            return trait.getItems();
+        }
+
+        Optional<MemberShape> getMember(OperationIndex index, OperationShape operation, PaginatedTrait trait) {
+            return getMemberName(index, operation, trait)
+                    .flatMap(memberName -> index.getOutput(operation).flatMap(output -> output.getMember(memberName)));
+        }
     }
 }

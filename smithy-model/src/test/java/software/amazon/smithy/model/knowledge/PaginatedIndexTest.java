@@ -16,10 +16,8 @@
 package software.amazon.smithy.model.knowledge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -35,10 +33,10 @@ public class PaginatedIndexTest {
                 .assemble();
         Model model = result.getResult().get();
         PaginatedIndex index = model.getKnowledge(PaginatedIndex.class);
+        ShapeId service = ShapeId.from("ns.foo#Service");
 
-        assertThat(index.getValidationEvents(), not(empty()));
-        assertThat(index.getPaginationInfo(ShapeId.from("ns.foo#Valid2")).isPresent(), is(true));
-        PaginationInfo info = index.getPaginationInfo(ShapeId.from("ns.foo#Valid2")).get();
+        assertThat(index.getPaginationInfo(service, ShapeId.from("ns.foo#Valid2")).isPresent(), is(true));
+        PaginationInfo info = index.getPaginationInfo(service, ShapeId.from("ns.foo#Valid2")).get();
         assertThat(info.getOperation().getId(), is(ShapeId.from("ns.foo#Valid2")));
         assertThat(info.getInput().getId(), is(ShapeId.from("ns.foo#ValidInput")));
         assertThat(info.getOutput().getId(), is(ShapeId.from("ns.foo#ValidOutput")));

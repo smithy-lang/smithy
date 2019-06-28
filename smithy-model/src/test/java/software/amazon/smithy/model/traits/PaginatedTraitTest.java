@@ -21,9 +21,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -35,24 +33,6 @@ public class PaginatedTraitTest {
                 .withMember("outputToken", Node.from("outputToken")));
 
         assertThat(t.getItems(), equalTo(Optional.empty()));
-    }
-
-    @Test
-    public void requiresInputToken() {
-        Assertions.assertThrows(SourceException.class, () -> {
-            new PaginatedTrait.Provider().createTrait(ShapeId.from("ns.qux#foo"), Node.objectNode()
-                    .withMember("items", Node.from("value"))
-                    .withMember("outputToken", Node.from("outputToken")));
-        });
-    }
-
-    @Test
-    public void requiresOutputToken() {
-        Assertions.assertThrows(SourceException.class, () -> {
-            new PaginatedTrait.Provider().createTrait(ShapeId.from("ns.qux#foo"), Node.objectNode()
-                    .withMember("inputToken", Node.from("value"))
-                    .withMember("item", Node.from("value")));
-        });
     }
 
     @Test
@@ -69,8 +49,8 @@ public class PaginatedTraitTest {
         assertThat(trait.get(), instanceOf(PaginatedTrait.class));
         PaginatedTrait paginatedTrait = (PaginatedTrait) trait.get();
         assertThat(paginatedTrait.getItems(), equalTo(Optional.of("items")));
-        assertThat(paginatedTrait.getInputToken(), equalTo("inputToken"));
-        assertThat(paginatedTrait.getOutputToken(), equalTo("outputToken"));
+        assertThat(paginatedTrait.getInputToken(), equalTo(Optional.of("inputToken")));
+        assertThat(paginatedTrait.getOutputToken(), equalTo(Optional.of("outputToken")));
         assertThat(paginatedTrait.getPageSize(), is(Optional.of("pageSize")));
         assertThat(paginatedTrait.toNode(), equalTo(node));
         assertThat(paginatedTrait.toBuilder().build(), equalTo(paginatedTrait));
@@ -84,5 +64,33 @@ public class PaginatedTraitTest {
                 .withMember("items", Node.from("items"))
                 .withMember("inputToken", Node.from("inputToken"))
                 .withMember("outputToken", Node.from("outputToken"))).isPresent(), is(true));
+    }
+
+    @Test
+    public void mergesWithNullReturnsSelf() {
+        PaginatedTrait trait = PaginatedTrait.builder().build();
+
+        assertThat(trait.merge(null), is(trait));
+    }
+
+    @Test
+    public void mergesWithOtherTrait() {
+        PaginatedTrait trait1 = PaginatedTrait.builder()
+                .inputToken("foo")
+                .items("baz")
+                .build();
+        PaginatedTrait trait2 = PaginatedTrait.builder()
+                .inputToken("foo2")
+                .outputToken("output")
+                .items("baz2")
+                .pageSize("bar")
+                .items("qux")
+                .build();
+        PaginatedTrait trait3 = trait1.merge(trait2);
+
+        assertThat(trait3.getInputToken(), equalTo(Optional.of("foo")));
+        assertThat(trait3.getOutputToken(), equalTo(Optional.of("output")));
+        assertThat(trait3.getPageSize(), equalTo(Optional.of("bar")));
+        assertThat(trait3.getItems(), equalTo(Optional.of("baz")));
     }
 }

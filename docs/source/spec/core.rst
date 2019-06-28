@@ -1891,9 +1891,7 @@ For example:
 
 .. code-block:: smithy
 
-    @collection @readonly
-    @paginated(inputToken: "nextToken", pageSize: "maxResults",
-               outputToken: "nextToken", items: "forecasts")
+    @collection @readonly @paginated
     operation ListForecasts(ListForecastsInput) -> ListForecastsOutput
 
     structure ListForecastsInput {
@@ -3787,7 +3785,9 @@ Summary
     the number of results returned in a single response and that multiple
     invocations might be necessary to retrieve all results.
 Trait selector
-    ``operation``
+    ``:test(operation, service)``
+
+    *An operation or service*
 Value type
     ``object`` value
 
@@ -3806,23 +3806,32 @@ The ``paginated`` trait is an object that contains the following properties:
       - Description
     * - inputToken
       - ``string``
-      - **Required**. The name of the operation input member that represents
-        the continuation token. When this value is provided as operation input,
-        the service returns results from where the previous response left off.
-        This input member MUST NOT be required and MUST target a string shape.
+      - The name of the operation input member that contains a continuation
+        token. When this value is provided as input, the service returns
+        results from where the previous response left off. This input member
+        MUST NOT be marked as ``required`` and MUST target a string shape.
+
+        When contained within a service, a paginated operation MUST either
+        configure ``inputToken`` on the operation itself or inherit it from
+        the service that contains the operation.
     * - outputToken
       - ``string``
-      - **Required**. The name of the operation output member that represents
-        the continuation token. When this value is present in operation output,
+      - The name of the operation output member that contains an optional
+        continuation token. When this value is present in operation output,
         it indicates that there are more results to retrieve. To get the next
-        page of results, the client uses the output token as the input token of
-        the next request. This  output member MUST NOT be required and MUST
-        target a string shape.
+        page of results, the client passes the received output continuation
+        token to the input continuation token of the next request. This
+        output member MUST NOT be marked as ``required`` and MUST target a
+        string shape.
+
+        When contained within a service, a paginated operation MUST either
+        configure ``outputToken`` on the operation itself or inherit it from
+        the service that contains the operation.
     * - items
       - ``string``
-      - The name of a top-level output member of the operation that is the
-        data that is being paginated across many responses. The named output
-        member, if specified, MUST target a :ref:`list` or :ref:`map`.
+      - The name of a top-level output member of the operation that contains
+        the data that is being paginated across many responses. The named
+        output member, if specified, MUST target a list or map.
     * - pageSize
       - ``string``
       - The name of an operation input member that limits the maximum number
@@ -3836,7 +3845,8 @@ The ``paginated`` trait is an object that contains the following properties:
             match a target number of elements results in an unbounded API with
             an unpredictable latency.
 
-In the example below, a resource defines a paginated operation.
+The following example defines a paginated operation that sets each value
+explicitly on the operation.
 
 .. tabs::
 
@@ -3846,7 +3856,7 @@ In the example below, a resource defines a paginated operation.
 
         @collection @readonly
         @paginated(inputToken: "nextToken", outputToken: "nextToken",
-                  pageSize: "maxResults", items: "foos")
+                   pageSize: "maxResults", items: "foos")
         operation GetFoos(GetFoosInput) -> GetFoosOutput
 
         structure GetFoosInput {
@@ -3856,6 +3866,7 @@ In the example below, a resource defines a paginated operation.
 
         structure GetFoosOutput {
           nextToken: String,
+
           @required
           foos: StringList,
         }
@@ -3915,6 +3926,58 @@ In the example below, a resource defines a paginated operation.
                 }
             }
         }
+
+Attaching the ``paginated`` trait to a service provides default pagination
+configuration settings to all operations bound within the closure of the
+service. Pagination settings configured on an operation override any inherited
+service setting.
+
+The following example defines a paginated operation that inherits some
+settings from a service.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @paginated(inputToken: "nextToken", outputToken: "nextToken",
+                   pageSize: "maxResults")
+        service Example {
+          version: "2019-06-27",
+          operations: [GetFoos],
+        }
+
+        @collection @readonly @paginated(items: "foos")
+        operation GetFoos(GetFoosInput) -> GetFoosOutput
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.2.0",
+            "smithy.example": {
+                "shapes": {
+                    "Example": {
+                        "type": "service",
+                        "version": "2019-06-27",
+                        "paginated": {
+                            "inputToken": "nextToken",
+                            "outputToken": "nextToken",
+                            "pageSize": "maxResults"
+                        }
+                    },
+                    "GetFoos": {
+                        "type": "operation",
+                        "input" :"GetFoosInput",
+                        "output": "GetFoosOutput",
+                        "readonly": true,
+                        "collection": true,
+                        "paginated": {"items": "foos"}
+                    }
+                }
+            }
+        }
+
 
 Pagination Behavior
 ```````````````````
