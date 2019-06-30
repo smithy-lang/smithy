@@ -238,4 +238,17 @@ public class CodeWriterTest {
 
         assertThat(result, equalTo("lorem hi dolor hi\n"));
     }
+
+    @Test
+    public void writesBlocks() {
+        String result = CodeWriter.createDefault()
+                .openBlock("public final class %s {", "Foo")
+                    .openBlock("public void main(String[] args) {")
+                        .write("System.out.println(args[0]);")
+                    .closeBlock("}")
+                .closeBlock("}")
+                .toString();
+
+        assertThat(result, equalTo("public final class Foo {\n    public void main(String[] args) {\n        System.out.println(args[0]);\n    }\n}\n"));
+    }
 }

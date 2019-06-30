@@ -379,6 +379,40 @@ public final class CodeWriter {
     }
 
     /**
+     * Opens a block of syntax by writing text, a newline, then indenting.
+     *
+     * <pre>
+     * {@code
+     * String result = CodeWriter.createDefault()
+     *         .openBlock("public final class %s {", "Foo")
+     *             .openBlock("public void main(String[] args) {")
+     *                 .write("System.out.println(args[0]);")
+     *             .closeBlock("}")
+     *         .closeBlock("}")
+     *         .toString();
+     * }
+     * </pre>
+     *
+     * @param textBeforeNewline Text to write before writing a newline and indenting.
+     * @param args Arguments to pass to the {@link Formatter}.
+     * @return Returns the {@code CodeWriter}.
+     */
+    public CodeWriter openBlock(String textBeforeNewline, Object... args) {
+        return write(textBeforeNewline, args).indent();
+    }
+
+    /**
+     * Closes a block of syntax by writing a newline, dedenting, then writing text.
+     *
+     * @param textAfterNewline Text to write after writing a newline and dedenting.
+     * @param args Arguments to pass to the {@link Formatter}.
+     * @return Returns the {@code CodeWriter}.
+     */
+    public CodeWriter closeBlock(String textAfterNewline, Object... args) {
+        return dedent().write(textAfterNewline, args);
+    }
+
+    /**
      * Writes text to the CodeWriter and appends a newline.
      *
      * <p>The provided text is automatically formatted using a
