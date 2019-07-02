@@ -71,7 +71,7 @@ public class ShapeTest {
             this.sourceLocation = sourceLocation != null ? sourceLocation : SourceLocation.none();
         }
 
-        public String getName() {
+        public String getTraitName() {
             return name;
         }
 

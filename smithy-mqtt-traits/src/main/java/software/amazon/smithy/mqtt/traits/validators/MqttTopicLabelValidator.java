@@ -81,7 +81,7 @@ public class MqttTopicLabelValidator extends AbstractValidator {
         if (!labels.isEmpty() && input == null) {
             return Collections.singletonList(error(topics.operation, topics.trait, String.format(
                     "Operation MQTT trait, `%s`, contains topic labels, [%s], but the operation has no input",
-                    Trait.getIdiomaticTraitName(topics.trait.getName()),
+                    Trait.getIdiomaticTraitName(topics.trait.getTraitName()),
                     ValidationUtils.tickedList(labels))));
         }
 
@@ -101,7 +101,7 @@ public class MqttTopicLabelValidator extends AbstractValidator {
                             + "used as part of the input of the `%s` operation, a corresponding label cannot be "
                             + "found in the `%s` trait",
                             topics.operation.getId(),
-                            Trait.getIdiomaticTraitName(topics.trait.getName()))));
+                            Trait.getIdiomaticTraitName(topics.trait.getTraitName()))));
                 }
             }
         }
@@ -110,7 +110,7 @@ public class MqttTopicLabelValidator extends AbstractValidator {
             events.add(error(topics.operation, topics.trait, String.format(
                     "The `%s` trait contains the following topic labels that could not be found in the input "
                     + "structure of the operation or were not marked with the `smithy.mqtt#topicLabel` trait: [%s]",
-                    Trait.getIdiomaticTraitName(topics.trait.getName()),
+                    Trait.getIdiomaticTraitName(topics.trait.getTraitName()),
                     ValidationUtils.tickedList(labels))));
         }
 

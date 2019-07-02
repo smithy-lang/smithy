@@ -49,7 +49,7 @@ public final class TraitTargetValidator extends AbstractValidator {
                 .map(check -> error(check.shape, String.format(
                         "Trait `%s` cannot be applied to `%s`. This trait may only be applied to shapes "
                         + "that match the following selector: %s",
-                        Trait.getIdiomaticTraitName(check.trait.getName()),
+                        Trait.getIdiomaticTraitName(check.trait.getTraitName()),
                         check.shape.getId(), check.selector)))
                 .collect(Collectors.toList());
     }
@@ -72,7 +72,7 @@ public final class TraitTargetValidator extends AbstractValidator {
     }
 
     private Selector resolveSelector(Trait trait, Model model) {
-        return model.getTraitDefinition(trait.getName())
+        return model.getTraitDefinition(trait.getTraitName())
                 .map(TraitDefinition::getSelector)
                 .orElse(Selector.IDENTITY);
     }

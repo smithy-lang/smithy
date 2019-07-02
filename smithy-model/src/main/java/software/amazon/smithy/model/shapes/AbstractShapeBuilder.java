@@ -149,7 +149,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
             throw new IllegalArgumentException("trait must not be null");
         }
 
-        traits.put(trait.getName(), trait);
+        traits.put(trait.getTraitName(), trait);
         return (B) this;
     }
 

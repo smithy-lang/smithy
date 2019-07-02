@@ -27,15 +27,15 @@ public class TraitTest {
     public void returnsEmptyStringForNamespaceWhenEmpty() {
         Trait trait = new DynamicTrait("#foo", Node.from(true));
 
-        assertThat(trait.getRelativeName(), equalTo("foo"));
-        assertThat(trait.getNamespace(), equalTo(""));
+        assertThat(trait.getRelativeTraitName(), equalTo("foo"));
+        assertThat(trait.getTraitNamespace(), equalTo(""));
     }
 
     @Test
     public void returnsDefaultNamespaceWhenNotPresent() {
         Trait trait = new DynamicTrait("foo", Node.from(true));
 
-        assertThat(trait.getNamespace(), equalTo(Prelude.NAMESPACE));
+        assertThat(trait.getTraitNamespace(), equalTo(Prelude.NAMESPACE));
     }
 
     @Test
@@ -43,21 +43,21 @@ public class TraitTest {
         // foo# is invalid. We can't get the relative name for this.
         Trait trait = new DynamicTrait("foo#", Node.from(true));
 
-        assertThat(trait.getRelativeName(), equalTo(""));
+        assertThat(trait.getRelativeTraitName(), equalTo(""));
     }
 
     @Test
     public void doesNotSubstringRelativeNameWhenNoNamespace() {
         Trait trait = new DynamicTrait("foo", Node.from(true));
 
-        assertThat(trait.getRelativeName(), equalTo("foo"));
+        assertThat(trait.getRelativeTraitName(), equalTo("foo"));
     }
 
     @Test
     public void providesValidNamespaceAndRelativeTraitName() {
         Trait trait = new DynamicTrait("foo#bar", Node.from(true));
 
-        assertThat(trait.getNamespace(), equalTo("foo"));
-        assertThat(trait.getRelativeName(), equalTo("bar"));
+        assertThat(trait.getTraitNamespace(), equalTo("foo"));
+        assertThat(trait.getRelativeTraitName(), equalTo("bar"));
     }
 }

@@ -39,7 +39,7 @@ public final class TraitConflictValidator extends AbstractValidator {
                     Map<String, Trait> traits = shape.getAllTraits();
                     Map<String, List<String>> conflicts = new HashMap<>();
                     traits.forEach((k, v) -> {
-                        model.getTraitDefinition(v.getName()).ifPresent(definition -> {
+                        model.getTraitDefinition(v.getTraitName()).ifPresent(definition -> {
                             definition.getConflicts().forEach(conflict -> {
                                 if (traits.containsKey(conflict)) {
                                     conflicts.computeIfAbsent(k, key -> new ArrayList<>()).add(conflict);

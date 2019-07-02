@@ -32,8 +32,8 @@ import software.amazon.smithy.model.node.ToNode;
  */
 public abstract class AbstractTrait implements Trait {
 
-    private final String name;
-    private final SourceLocation sourceLocation;
+    private final String traitName;
+    private final SourceLocation traitSourceLocation;
     private int cachedHashCode = 0;
     private Node nodeCache;
 
@@ -42,24 +42,24 @@ public abstract class AbstractTrait implements Trait {
      * @param sourceLocation Where the trait was defined.
      */
     public AbstractTrait(String name, FromSourceLocation sourceLocation) {
-        this.name = Objects.requireNonNull(name, "name was not set on trait");
-        this.sourceLocation = Objects.requireNonNull(sourceLocation, "sourceLocation was not set on trait")
+        this.traitName = Objects.requireNonNull(name, "name was not set on trait");
+        this.traitSourceLocation = Objects.requireNonNull(sourceLocation, "sourceLocation was not set on trait")
                 .getSourceLocation();
     }
 
     @Override
-    public final String getName() {
-        return name;
+    public final String getTraitName() {
+        return traitName;
     }
 
     @Override
     public final SourceLocation getSourceLocation() {
-        return sourceLocation;
+        return traitSourceLocation;
     }
 
     @Override
     public String toString() {
-        return String.format("Trait `%s`, defined at %s", getName(), getSourceLocation());
+        return String.format("Trait `%s`, defined at %s", getTraitName(), getSourceLocation());
     }
 
     @Override
@@ -69,13 +69,13 @@ public abstract class AbstractTrait implements Trait {
         }
 
         Trait b = (Trait) other;
-        return this == other || (getName().equals(b.getName()) && toNode().equals(b.toNode()));
+        return this == other || (getTraitName().equals(b.getTraitName()) && toNode().equals(b.toNode()));
     }
 
     @Override
     public int hashCode() {
         if (cachedHashCode == 0) {
-            cachedHashCode = getName().hashCode() * 17 + toNode().hashCode();
+            cachedHashCode = getTraitName().hashCode() * 17 + toNode().hashCode();
         }
         return cachedHashCode;
     }

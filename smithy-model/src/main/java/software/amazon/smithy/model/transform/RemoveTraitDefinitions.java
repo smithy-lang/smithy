@@ -43,6 +43,6 @@ final class RemoveTraitDefinitions {
         // Remove any traits that are an instance of the removed trait definitions.
         return transformer.removeTraitsIf(
                 builder.build(),
-                (shape, trait) -> fullyQualifiedTraitNames.contains(trait.getName()));
+                (shape, trait) -> fullyQualifiedTraitNames.contains(trait.getTraitName()));
     }
 }

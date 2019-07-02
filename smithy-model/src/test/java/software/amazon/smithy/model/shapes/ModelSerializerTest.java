@@ -133,7 +133,7 @@ public class ModelSerializerTest {
                 .build();
         Model model = Model.assembler().addShape(shape).assemble().unwrap();
         ModelSerializer serializer = ModelSerializer.builder()
-                .traitFilter(trait -> trait.matchesTraitName("documentation"))
+                .traitFilter(trait -> trait.getTraitName().equals("smithy.api#documentation"))
                 .build();
         ObjectNode obj = serializer.serialize(model)
                 .expectMember("ns.foo").expectObjectNode()

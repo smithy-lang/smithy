@@ -49,6 +49,6 @@ public final class MqttUnsupportedErrorsValidator extends AbstractValidator {
                 .filter(trait -> trait instanceof PublishTrait || trait instanceof SubscribeTrait)
                 .map(trait -> danger(shape, trait, String.format(
                         "Operations marked with the `%s` trait do not support errors.",
-                        Trait.getIdiomaticTraitName(trait.getName()))));
+                        Trait.getIdiomaticTraitName(trait.getTraitName()))));
     }
 }

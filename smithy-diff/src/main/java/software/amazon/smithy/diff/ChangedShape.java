@@ -148,17 +148,17 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
     private static Map<String, Pair<Trait, Trait>> findTraitDifferences(Shape oldShape, Shape newShape) {
         Map<String, Pair<Trait, Trait>> changes = new HashMap<>();
         for (Trait oldTrait : oldShape.getAllTraits().values()) {
-            Trait newTrait = newShape.findTrait(oldTrait.getName()).orElse(null);
+            Trait newTrait = newShape.findTrait(oldTrait.getTraitName()).orElse(null);
             if (newTrait == null) {
-                changes.put(oldTrait.getName(), (Pair.of(oldTrait, null)));
+                changes.put(oldTrait.getTraitName(), (Pair.of(oldTrait, null)));
             } else if (!newTrait.equals(oldTrait)) {
-                changes.put(newTrait.getName(), Pair.of(oldTrait, newTrait));
+                changes.put(newTrait.getTraitName(), Pair.of(oldTrait, newTrait));
             }
         }
         // Find traits that were added.
         newShape.getAllTraits().values().stream()
-                .filter(newTrait -> !oldShape.findTrait(newTrait.getName()).isPresent())
-                .forEach(newTrait -> changes.put(newTrait.getName(), Pair.of(null, newTrait)));
+                .filter(newTrait -> !oldShape.findTrait(newTrait.getTraitName()).isPresent())
+                .forEach(newTrait -> changes.put(newTrait.getTraitName(), Pair.of(null, newTrait)));
 
         return changes;
     }
