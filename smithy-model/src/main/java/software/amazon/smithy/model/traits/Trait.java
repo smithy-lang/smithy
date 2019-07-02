@@ -52,21 +52,18 @@ import software.amazon.smithy.utils.Pair;
  */
 public interface Trait extends FromSourceLocation, ToNode {
     /**
-     * Gets the fully qualified name of the trait as it appears in models.
+     * Gets the fully qualified name of the trait.
      *
-     * <p>Built-in traits may or may not omit a namespace. Namespaces, if
-     * present, will always come before the trait name, separated by a "#"
-     * character. For example, {@code foo.bar#baz}, is a valid custom trait
-     * name, {@code deprecated} is a valid built-in trait name, and so is
-     * {@code smithy.api#deprecated}.
+     * <p>All traits should contain a namespace. Namespaces, if come before
+     * the trait name, separated by a "#" character. For example,
+     * {@code foo.bar#baz}, is a valid trait name. Do not attempt to parse
+     * the name and namespace yourself; use the {@link #getTraitNamespace()}
+     * and {@link #getRelativeTraitName()} method to get specific parts
+     * of the trait name.
      *
-     * <p>The returned name might not contain a namespace. Use the
-     * {@link #getNamespace()} and {@link #getRelativeName()} to safely
-     * access parts of the trait name.
-     *
-     * @return Returns the name of the trait.
+     * @return Returns the fully-qualified name of the trait.
      */
-    String getName();
+    String getTraitName();
 
     /**
      * Gets the namespace of the trait (e.g., {@code smithy.api}.
@@ -76,8 +73,8 @@ public interface Trait extends FromSourceLocation, ToNode {
      *
      * @return Returns the namespace of the trait.
      */
-    default String getNamespace() {
-        String name = getName();
+    default String getTraitNamespace() {
+        String name = getTraitName();
         int index = name.indexOf("#");
         return index == -1 ? Prelude.NAMESPACE : name.substring(0, index);
     }
@@ -88,8 +85,8 @@ public interface Trait extends FromSourceLocation, ToNode {
      *
      * @return Returns the relative name of the trait.
      */
-    default String getRelativeName() {
-        String name = getName();
+    default String getRelativeTraitName() {
+        String name = getTraitName();
         int index = name.indexOf("#");
         if (index == -1) {
             return name;
@@ -98,23 +95,6 @@ public interface Trait extends FromSourceLocation, ToNode {
         } else {
             return name.substring(index + 1);
         }
-    }
-
-    /**
-     * Returns true if the name of the trait matches the given name.
-     *
-     * <p>If the provided {@code traitName} value does not contain a
-     * namespace, this method with automatically prepend the "smithy.api#"
-     * namespace. This makes checking if a trait name matches a given trait
-     * easier since you can perform both an absolute check and a relative
-     * check with the same method.
-     *
-     * @param traitName Trait name to check.
-     * @return True if the trait has a name that matches the given string.
-     */
-    default boolean matchesTraitName(String traitName) {
-        return getName().equals(traitName)
-               || getNamespace().equals(Prelude.NAMESPACE) && getRelativeName().equals(traitName);
     }
 
     /**

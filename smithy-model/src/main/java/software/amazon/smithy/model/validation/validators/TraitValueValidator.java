@@ -46,7 +46,7 @@ public final class TraitValueValidator implements Validator {
                 // Get pairs of <Shape, Trait>
                 .flatMap(shape -> shape.getAllTraits().values().stream().map(t -> Pair.of(shape, t)))
                 // Get a triple of Shape, Trait, TraitDefinition.
-                .flatMap(pair -> OptionalUtils.stream(model.getTraitDefinition(pair.getRight().getName())
+                .flatMap(pair -> OptionalUtils.stream(model.getTraitDefinition(pair.getRight().getTraitName())
                         .map(traitDefinition -> Triple.fromPair(pair, traitDefinition))))
                 .flatMap(triple -> validateTrait(model.getShapeIndex(), triple.left, triple.middle, triple.right)
                         .stream())
@@ -70,7 +70,7 @@ public final class TraitValueValidator implements Validator {
                     .sourceLocation(trait)
                     .shapeId(targetShape.getId())
                     .message("Value provided for boolean trait `%s` can only be set to true. "
-                             + "Found %s", Trait.getIdiomaticTraitName(trait.getName()), trait.toNode().getType())
+                             + "Found %s", Trait.getIdiomaticTraitName(trait.getTraitName()), trait.toNode().getType())
                     .build());
         }
 
@@ -86,7 +86,7 @@ public final class TraitValueValidator implements Validator {
                 .value(trait.toNode())
                 .eventShapeId(targetShape.getId())
                 .eventId(NAME)
-                .startingContext("Error validating trait `" + Trait.getIdiomaticTraitName(trait.getName()) + "`")
+                .startingContext("Error validating trait `" + Trait.getIdiomaticTraitName(trait.getTraitName()) + "`")
                 .build();
 
         return schema.accept(cases);

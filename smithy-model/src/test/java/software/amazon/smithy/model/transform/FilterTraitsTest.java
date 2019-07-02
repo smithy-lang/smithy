@@ -47,7 +47,8 @@ public class FilterTraitsTest {
                 .build();
         Model model = Model.builder().shapeIndex(ShapeIndex.builder().addShapes(a, b).build()).build();
         ModelTransformer transformer = ModelTransformer.create();
-        Model result = transformer.filterTraits(model, (shape, trait) -> !trait.matchesTraitName("sensitive"));
+        Model result = transformer.filterTraits(
+                model, (shape, trait) -> !trait.getTraitName().equals("smithy.api#sensitive"));
         ShapeIndex index = result.getShapeIndex();
 
         assertThat(index.shapes().count(), Matchers.is(2L));
@@ -69,8 +70,8 @@ public class FilterTraitsTest {
         Model model = Model.builder().shapeIndex(ShapeIndex.builder().addShape(a).build()).build();
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.filterTraits(
-                model, (shape, trait) -> !trait.matchesTraitName("sensitive")
-                                         && !trait.matchesTraitName("documentation"));
+                model, (shape, trait) -> !trait.getTraitName().equals("smithy.api#sensitive")
+                                         && !trait.getTraitName().equals("smithy.api#documentation"));
         ShapeIndex index = result.getShapeIndex();
 
         assertThat(index.shapes().count(), Matchers.is(1L));

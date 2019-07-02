@@ -48,12 +48,14 @@ public class ExclusiveStructureMemberTraitValidator extends AbstractValidator {
         return shape.getAllMembers().values().stream()
                 .flatMap(member -> member.getAllTraits().values().stream())
                 .filter(trait -> isExclusive(model, trait))
-                .flatMap(t -> OptionalUtils.stream(validateExclusiveTrait(shape, t.getName())))
+                .flatMap(t -> OptionalUtils.stream(validateExclusiveTrait(shape, t.getTraitName())))
                 .collect(Collectors.toList());
     }
 
     private boolean isExclusive(Model model, Trait trait) {
-        return model.getTraitDefinition(trait.getName()).map(TraitDefinition::isStructurallyExclusive).orElse(false);
+        return model.getTraitDefinition(trait.getTraitName())
+                .map(TraitDefinition::isStructurallyExclusive)
+                .orElse(false);
     }
 
     private Optional<ValidationEvent> validateExclusiveTrait(StructureShape shape, String traitName) {

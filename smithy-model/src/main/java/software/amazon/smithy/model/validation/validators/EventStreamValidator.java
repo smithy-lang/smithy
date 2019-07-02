@@ -83,7 +83,7 @@ public class EventStreamValidator extends AbstractValidator {
             // The operation has no input/output, so this is the only check.
             return ListUtils.of(error(operation, trait, String.format(
                     "Operation has the `%s` but does not define an %s structure.",
-                    trait.getRelativeName(), inputOrOutputName)));
+                    trait.getRelativeTraitName(), inputOrOutputName)));
         }
 
         StructureShape struct = index.getShape(inputOutput).flatMap(Shape::asStructureShape).orElse(null);
@@ -97,14 +97,14 @@ public class EventStreamValidator extends AbstractValidator {
             // Stop because member-specific validation can't be performed.
             return ListUtils.of(error(operation, trait, String.format(
                     "Operation %s member `%s` was not found for the `%s` trait.",
-                    inputOrOutputName, member, trait.getRelativeName())));
+                    inputOrOutputName, member, trait.getRelativeTraitName())));
         }
 
         List<ValidationEvent> events = new ArrayList<>();
         if (actualMember.isRequired()) {
             events.add(error(operation, trait, String.format(
                     "Operation %s member `%s` is referenced by an `%s` trait, so it cannot be marked as required.",
-                    inputOrOutputName, actualMember.getId(), trait.getRelativeName())));
+                    inputOrOutputName, actualMember.getId(), trait.getRelativeTraitName())));
         }
 
         // Additional event stream specific validation can't be performed,
@@ -144,7 +144,7 @@ public class EventStreamValidator extends AbstractValidator {
             return ListUtils.of(error(operation, trait, String.format(
                     "Operation %s member `%s` is referenced by the `%s` trait, so it must target a structure "
                     + "or union, but found %s, a %s.",
-                    inputOrOutputName, member.getId(), trait.getRelativeName(),
+                    inputOrOutputName, member.getId(), trait.getRelativeTraitName(),
                     referencedMember.getId(), referencedMember.getType())));
         }
 

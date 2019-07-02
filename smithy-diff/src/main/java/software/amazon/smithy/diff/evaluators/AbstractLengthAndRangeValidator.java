@@ -64,13 +64,13 @@ abstract class AbstractLengthAndRangeValidator<T extends Trait> extends Abstract
         if (newMin.compareTo(oldMin) > 0) {
             events.add(error(change.getNewShape(), String.format(
                     "%s trait value `min` was made more restrictive by raising from %s to %s",
-                    newTrait.getName(), oldMin, newMin)));
+                    newTrait.getTraitName(), oldMin, newMin)));
         }
 
         if (newMax != null && (oldMax == null || oldMax.compareTo(newMax) > 0)) {
             events.add(error(change.getNewShape(), String.format(
                     "%s trait value `max` was made more restrictive by lowering from %s to %s",
-                    newTrait.getName(), oldMax, newMax)));
+                    newTrait.getTraitName(), oldMax, newMax)));
         }
 
         return events;

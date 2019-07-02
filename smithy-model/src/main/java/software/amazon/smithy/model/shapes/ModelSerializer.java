@@ -211,8 +211,8 @@ public final class ModelSerializer {
         private ObjectNode withTraits(Shape shape, ObjectNode node) {
             return node.merge(shape.getAllTraits().values().stream()
                     .filter(traitFilter)
-                    .sorted(Comparator.comparing(Trait::getName))
-                    .collect(ObjectNode.collectStringKeys(Trait::getName, Trait::toNode)));
+                    .sorted(Comparator.comparing(Trait::getTraitName))
+                    .collect(ObjectNode.collectStringKeys(Trait::getTraitName, Trait::toNode)));
         }
 
         @Override
