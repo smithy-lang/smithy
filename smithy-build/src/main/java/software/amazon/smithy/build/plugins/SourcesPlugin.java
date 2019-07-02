@@ -24,18 +24,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.build.SourcesConflictException;
-import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelDiscovery;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ModelSerializer;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
@@ -149,48 +146,18 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
     }
 
     private static void projectSources(PluginContext context) {
-        Model originalModel = context.getOriginalModel().get();
         Model updatedModel = context.getModel();
-        Set<Path> sources = context.getSources();
-        ShapeIndex oldIndex = context.getOriginalModel().get().getShapeIndex();
 
         // New shapes, trait definitions, and metadata are considered "sources".
         ObjectNode serialized = ModelSerializer
                 .builder()
-                .shapeFilter(shape -> isSource(sources, oldIndex.getShape(shape.getId()).orElse(null)))
-                .traitDefinitionFilter(def -> isSource(
-                        sources, originalModel.getTraitDefinition(def.getFullyQualifiedName()).orElse(null)))
-                .metadataFilter(key -> isSource(sources, originalModel.getMetadata().get(key)))
+                .shapeFilter(context::isSourceShape)
+                .traitDefinitionFilter(def -> context.isSourceTraitDef(def.getFullyQualifiedName()))
+                .metadataFilter(context::isSourceMetadata)
                 .build()
                 .serialize(updatedModel);
 
         context.getFileManifest().writeJson(PROJECTED_FILENAME, serialized);
-    }
-
-    private static boolean isSource(Set<Path> sources, FromSourceLocation sourceLocation) {
-        if (sourceLocation == null) {
-            return true;
-        }
-
-        String location = sourceLocation.getSourceLocation().getFilename();
-        int offsetFromStart = findOffsetFromStart(location);
-
-        for (Path path : sources) {
-            String pathString = path.toString();
-            int offsetFromStartInSource = findOffsetFromStart(pathString);
-            // Compare the strings in a way that normalizes them and strips off protocols.
-            if (location.regionMatches(offsetFromStart, pathString, offsetFromStartInSource, pathString.length())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static int findOffsetFromStart(String location) {
-        // This accounts for "jar:file:" and "file:".
-        int position = location.indexOf("file:");
-        return position == -1 ? 0 : position + "file:".length();
     }
 
     private static void copyModelsFromJar(List<String> names, FileManifest manifest, String jarRoot, Path jarPath)

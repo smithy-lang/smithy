@@ -24,9 +24,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.build.model.ProjectionConfig;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -155,6 +157,73 @@ public final class PluginContext {
      */
     public Set<Path> getSources() {
         return Collections.unmodifiableSet(sources);
+    }
+
+    /**
+     * Checks if the given shape/ID is either not present in the original
+     * model (thus a new, source shape), or is present and the filename of
+     * the shape in the original model matches one of the defined
+     * {@code sources}.
+     *
+     * @param shape Shape or Shape ID to check.
+     * @return Returns true if this shape is considered a source shape.
+     */
+    public boolean isSourceShape(ToShapeId shape) {
+        return originalModel == null
+               || isSource(originalModel.getShapeIndex().getShape(shape.toShapeId()).orElse(null));
+    }
+
+    /**
+     * Checks if the given fully qualified trait name is either not present
+     * in the old model (thus a new, source trait def), or is present and
+     * the filename of the definition in the original model matches one of
+     * the defined {@code sources}.
+     *
+     * @param fullyQualifiedTraitName Name of the trait to check.
+     * @return Returns true if this shape is considered a source trait def.
+     */
+    public boolean isSourceTraitDef(String fullyQualifiedTraitName) {
+        return originalModel == null
+               || isSource(originalModel.getTraitDefinition(fullyQualifiedTraitName).orElse(null));
+    }
+
+    /**
+     * Checks if the given metadata key-value pair is either not present
+     * in the old model (thus a new, source metadata), or is present and
+     * the filename of the entry in the original model matches one of
+     * the defined {@code sources}.
+     *
+     * @param metadataKey Metadata key to check.
+     * @return Returns true if this metadata is considered a source entry.
+     */
+    public boolean isSourceMetadata(String metadataKey) {
+        return originalModel == null || isSource(originalModel.getMetadataProperty(metadataKey).orElse(null));
+    }
+
+    private boolean isSource(FromSourceLocation sourceLocation) {
+        if (sourceLocation == null) {
+            return true;
+        }
+
+        String location = sourceLocation.getSourceLocation().getFilename();
+        int offsetFromStart = findOffsetFromStart(location);
+
+        for (Path path : sources) {
+            String pathString = path.toString();
+            int offsetFromStartInSource = findOffsetFromStart(pathString);
+            // Compare the strings in a way that normalizes them and strips off protocols.
+            if (location.regionMatches(offsetFromStart, pathString, offsetFromStartInSource, pathString.length())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private int findOffsetFromStart(String location) {
+        // This accounts for "jar:file:" and "file:".
+        int position = location.indexOf("file:");
+        return position == -1 ? 0 : position + "file:".length();
     }
 
     /**
