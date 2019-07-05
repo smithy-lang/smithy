@@ -18,6 +18,7 @@ package software.amazon.smithy.utils;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -250,5 +251,53 @@ public class CodeWriterTest {
                 .toString();
 
         assertThat(result, equalTo("public final class Foo {\n    public void main(String[] args) {\n        System.out.println(args[0]);\n    }\n}\n"));
+    }
+
+    @Test
+    public void supportsCall() {
+        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        w.call(() -> w.write("Hello!"));
+
+        assertThat(w.toString(), equalTo("Hello!\n"));
+    }
+
+    @Test
+    public void doesNotWriteNullOptionally() {
+        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        w.writeOptional(null);
+
+        assertThat(w.toString(), equalTo(""));
+    }
+
+    @Test
+    public void doesNotWriteEmptyOptionals() {
+        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        w.writeOptional(Optional.empty());
+
+        assertThat(w.toString(), equalTo(""));
+    }
+
+    @Test
+    public void doesNotWriteEmptyStrings() {
+        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        w.writeOptional("");
+
+        assertThat(w.toString(), equalTo(""));
+    }
+
+    @Test
+    public void doesNotWriteOptionalsThatContainEmptyStrings() {
+        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        w.writeOptional(Optional.of(""));
+
+        assertThat(w.toString(), equalTo(""));
+    }
+
+    @Test
+    public void writesOptionalsWithNonEmptyStringValues() {
+        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        w.writeOptional(Optional.of("hi!"));
+
+        assertThat(w.toString(), equalTo("hi!\n"));
     }
 }

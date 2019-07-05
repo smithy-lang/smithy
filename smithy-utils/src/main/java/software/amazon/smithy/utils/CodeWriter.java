@@ -18,6 +18,7 @@ package software.amazon.smithy.utils;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -82,7 +83,7 @@ import java.util.regex.Pattern;
  * }
  * </pre>
  */
-public final class CodeWriter {
+public class CodeWriter {
     private final StringBuilder builder = new StringBuilder();
     private final Deque<State> states = new ArrayDeque<>();
     private State currentState;
@@ -144,7 +145,7 @@ public final class CodeWriter {
      * @return Returns the generated code.
      */
     @Override
-    public String toString() {
+    public final String toString() {
         String result = builder.toString();
         // Insert a new line if one is pending or if trailing new lines are to be
         // added and the content doesn't already end with a newline.
@@ -166,7 +167,7 @@ public final class CodeWriter {
      *
      * @return Returns the code writer.
      */
-    public CodeWriter pushState() {
+    public final CodeWriter pushState() {
         State copiedState = new State(currentState);
         states.push(copiedState);
         currentState = copiedState;
@@ -183,7 +184,7 @@ public final class CodeWriter {
      * @return Returns the CodeWriter.
      * @throws IllegalStateException if there a no states to pop.
      */
-    public CodeWriter popState() {
+    public final CodeWriter popState() {
         if (states.size() == 1) {
             throw new IllegalStateException("Cannot pop CodeWriter state because at the root state");
         }
@@ -199,7 +200,7 @@ public final class CodeWriter {
      * @param newline Newline character to use.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter setNewline(String newline) {
+    public final CodeWriter setNewline(String newline) {
         currentState.newline = newline;
         currentState.newlineRegexQuoted = Pattern.quote(newline);
         return this;
@@ -212,7 +213,7 @@ public final class CodeWriter {
      * @param newlinePrefix Newline prefix to use.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter setNewlinePrefix(String newlinePrefix) {
+    public final CodeWriter setNewlinePrefix(String newlinePrefix) {
         currentState.newlinePrefix = newlinePrefix;
         return this;
     }
@@ -223,7 +224,7 @@ public final class CodeWriter {
      * @param indentText Indentation text.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter setIndentText(String indentText) {
+    public final CodeWriter setIndentText(String indentText) {
         currentState.indentText = indentText;
         return this;
     }
@@ -252,7 +253,7 @@ public final class CodeWriter {
      * @param formatter Formatter to use.s
      * @return Returns the CodeWriter.
      */
-    public CodeWriter setFormatter(Formatter formatter) {
+    public final CodeWriter setFormatter(Formatter formatter) {
         currentState.formatter = Objects.requireNonNull(formatter);
         return this;
     }
@@ -262,7 +263,7 @@ public final class CodeWriter {
      *
      * @return Returns the CodeWriter.
      */
-    public CodeWriter trimTrailingSpaces() {
+    public final CodeWriter trimTrailingSpaces() {
         return trimTrailingSpaces(true);
     }
 
@@ -272,7 +273,7 @@ public final class CodeWriter {
      * @param trimTrailingSpaces Set to true to trim trailing spaces.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter trimTrailingSpaces(boolean trimTrailingSpaces) {
+    public final CodeWriter trimTrailingSpaces(boolean trimTrailingSpaces) {
         currentState.trimTrailingSpaces = trimTrailingSpaces;
         return this;
     }
@@ -282,7 +283,7 @@ public final class CodeWriter {
      *
      * @return Returns the CodeWriter.
      */
-    public CodeWriter trimBlankLines() {
+    public final CodeWriter trimBlankLines() {
         return trimBlankLines(1);
     }
 
@@ -296,7 +297,7 @@ public final class CodeWriter {
      *  1 or more to allow for no more than N consecutive blank lines.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter trimBlankLines(int trimBlankLines) {
+    public final CodeWriter trimBlankLines(int trimBlankLines) {
         currentState.trimBlankLines = trimBlankLines;
         return this;
     }
@@ -309,7 +310,7 @@ public final class CodeWriter {
      *
      * @return Returns the CodeWriter.
      */
-    public CodeWriter insertTrailingNewline() {
+    public final CodeWriter insertTrailingNewline() {
         return insertTrailingNewline(true);
     }
 
@@ -323,7 +324,7 @@ public final class CodeWriter {
      *
      * @return Returns the CodeWriter.
      */
-    public CodeWriter insertTrailingNewline(boolean trailingNewline) {
+    public final CodeWriter insertTrailingNewline(boolean trailingNewline) {
         this.trailingNewline = trailingNewline;
         return this;
     }
@@ -333,7 +334,7 @@ public final class CodeWriter {
      *
      * @return Returns the CodeWriter.
      */
-    public CodeWriter indent() {
+    public final CodeWriter indent() {
         return indent(1);
     }
 
@@ -343,7 +344,7 @@ public final class CodeWriter {
      * @param levels Number of levels to indent.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter indent(int levels) {
+    public final CodeWriter indent(int levels) {
         currentState.indentation += levels;
         return this;
     }
@@ -353,7 +354,7 @@ public final class CodeWriter {
      *
      * @return Returns the CodeWriter.
      */
-    public CodeWriter dedent() {
+    public final CodeWriter dedent() {
         return dedent(1);
     }
 
@@ -366,7 +367,7 @@ public final class CodeWriter {
      * @return Returns the CodeWriter.
      * @throws IllegalStateException when trying to dedent too far.
      */
-    public CodeWriter dedent(int levels) {
+    public final CodeWriter dedent(int levels) {
         if (levels == -1) {
             currentState.indentation = 0;
         } else if (levels < 1 || currentState.indentation - levels < 0) {
@@ -397,7 +398,7 @@ public final class CodeWriter {
      * @param args Arguments to pass to the {@link Formatter}.
      * @return Returns the {@code CodeWriter}.
      */
-    public CodeWriter openBlock(String textBeforeNewline, Object... args) {
+    public final CodeWriter openBlock(String textBeforeNewline, Object... args) {
         return write(textBeforeNewline, args).indent();
     }
 
@@ -408,7 +409,7 @@ public final class CodeWriter {
      * @param args Arguments to pass to the {@link Formatter}.
      * @return Returns the {@code CodeWriter}.
      */
-    public CodeWriter closeBlock(String textAfterNewline, Object... args) {
+    public final CodeWriter closeBlock(String textAfterNewline, Object... args) {
         return dedent().write(textAfterNewline, args);
     }
 
@@ -422,7 +423,7 @@ public final class CodeWriter {
      * @param args String {@link Formatter} arguments to use for formatting.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter write(Object content, Object... args) {
+    public final CodeWriter write(Object content, Object... args) {
         writeInline(content, args);
         pendingNewline = true;
         return this;
@@ -438,8 +439,8 @@ public final class CodeWriter {
      * @param args String {@link Formatter} arguments to use for formatting.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter writeInline(Object content, Object... args) {
-        String formatted = currentState.formatter.format(String.valueOf(content), args);
+    public final CodeWriter writeInline(Object content, Object... args) {
+        String formatted = format(content, args);
         String[] lines = formatted.split(currentState.newlineRegexQuoted, -1);
 
         // Indent the given text.
@@ -492,6 +493,56 @@ public final class CodeWriter {
             }
         }
 
+        return this;
+    }
+
+    /**
+     * Formats the given string with placeholders provided by {@code args}.
+     *
+     * @param content Content to format.
+     * @param args Arguments to substitute into the content.
+     * @return Returns the formatted string.
+     */
+    public String format(Object content, Object... args) {
+        return currentState.formatter.format(String.valueOf(content), args);
+    }
+
+    /**
+     * Optionally writes text to the CodeWriter and appends a newline
+     * if a value is present.
+     *
+     * <p>If the provided {@code content} value is {@code null}, nothing is
+     * written. If the provided {@code content} value is an empty
+     * {@code Optional}, nothing is written. If the result of calling
+     * {@code toString} on {@code content} results in an empty string,
+     * nothing is written. Finally, if the value is a non-empty string,
+     * the content is written to the {@code CodeWriter} at the current
+     * level of indentation, and a newline is appended.
+     *
+     * @param content Content to write if present.
+     * @return Returns the CodeWriter.
+     */
+    public CodeWriter writeOptional(Object content) {
+        if (content == null) {
+            return this;
+        } else if (content instanceof Optional) {
+            Optional<?> contentOptional = (Optional<?>) content;
+            return contentOptional.isPresent() ? writeOptional(contentOptional.get()) : this;
+        } else {
+            String value = content.toString();
+            return !value.isEmpty() ? write(value) : this;
+        }
+    }
+
+    /**
+     * Allows calling out to arbitrary code for things like looping or
+     * conditional writes without breaking method chaining.
+     *
+     * @param task Method to invoke.
+     * @return Returns the CodeWriter.
+     */
+    public CodeWriter call(Runnable task) {
+        task.run();
         return this;
     }
 
