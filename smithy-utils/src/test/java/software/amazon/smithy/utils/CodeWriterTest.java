@@ -26,9 +26,9 @@ public class CodeWriterTest {
     @Test
     public void limitsBlankLines() {
         CodeWriter writer = new CodeWriter().trimBlankLines().trimTrailingSpaces();
-        writer.write("if (%s == \"foo\") {\n\n\n\n", "BAZ")
+        writer.write("if ($L == \"foo\") {\n\n\n\n", "BAZ")
                 .indent()
-                .write("print(%s)", "BAZ")
+                .write("print($L)", "BAZ")
                 .dedent()
                 .write("}");
 
@@ -38,9 +38,9 @@ public class CodeWriterTest {
     @Test
     public void doesNotLimitBlankLines() {
         CodeWriter writer = new CodeWriter().trimTrailingSpaces();
-        writer.write("if (%s == \"foo\") {\n\n\n\n", "BAZ")
+        writer.write("if ($L == \"foo\") {\n\n\n\n", "BAZ")
                 .indent()
-                .write("print(%s)", "BAZ")
+                .write("print($L)", "BAZ")
                 .dedent()
                 .write("}");
 
@@ -58,25 +58,25 @@ public class CodeWriterTest {
     @Test
     public void trimsTrailingSpaces() {
         CodeWriter writer = new CodeWriter().trimBlankLines().trimTrailingSpaces();
-        writer.write("hello ").writeInline("there  ");
+        writer.write("hello there  ");
 
-        assertThat(writer.toString(), equalTo("hello\nthere"));
+        assertThat(writer.toString(), equalTo("hello there\n"));
     }
 
     @Test
     public void trimsSpacesAndBlankLines() {
         CodeWriter writer = new CodeWriter().trimTrailingSpaces().trimBlankLines();
-        writer.write("hello\n\n\nthere, ").writeInline("bud");
+        writer.write("hello\n\n\nthere, bud");
 
-        assertThat(writer.toString(), equalTo("hello\n\nthere,\nbud"));
+        assertThat(writer.toString(), equalTo("hello\n\nthere, bud\n"));
     }
 
     @Test
-    public void canInsertTrailingNewlines() {
+    public void insertsTrailingNewlines() {
         CodeWriter writer = new CodeWriter().trimTrailingSpaces().trimBlankLines();
-        writer.write("hello\n\n\nthere, ").writeInline("bud");
+        writer.write("hello there, bud");
 
-        assertThat(writer.toString(), equalTo("hello\n\nthere,\nbud"));
+        assertThat(writer.toString(), equalTo("hello there, bud\n"));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class CodeWriterTest {
                 .write("/**")
                 .setNewlinePrefix(" * ")
                 .write("This is some docs.")
-                .write("And more docs.\n\n\n")
+                .write("And more docs.\n")
                 .write("Foo.")
                 .setNewlinePrefix("")
                 .write(" */");
@@ -105,7 +105,7 @@ public class CodeWriterTest {
          */
         assertThat(
                 writer.toString(),
-                equalTo("/**\n * This is some docs.\n * And more docs.\n * \n * Foo.\n */\n"));
+                equalTo("/**\n * This is some docs.\n * And more docs.\n *\n * Foo.\n */\n"));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class CodeWriterTest {
                 .write("/**")
                 .setNewlinePrefix(" * ")
                 .write("This is some docs.")
-                .write("And more docs.\n\n\n")
+                .write("And more docs.\n")
                 .write("Foo.")
                 .setNewlinePrefix("")
                 .write(" */")
@@ -158,7 +158,7 @@ public class CodeWriterTest {
         /* Becomes:
          *
          *
-         *     /**
+         *      /**
          *       * This is some docs.
          *       * And more docs.
          *       *
@@ -169,13 +169,13 @@ public class CodeWriterTest {
          */
         assertThat(
                 writer.toString(),
-                equalTo("    /**\n     * This is some docs.\n     * And more docs.\n     * \n     * Foo.\n     */\n"));
+                equalTo("    /**\n     * This is some docs.\n     * And more docs.\n     *\n     * Foo.\n     */\n"));
     }
 
     @Test
     public void injectsNewlineWhenNeeded() {
         CodeWriter writer = CodeWriter.createDefault();
-        writer.writeInline("foo");
+        writer.write("foo");
 
         assertThat(writer.toString(), equalTo("foo\n"));
     }
@@ -184,14 +184,6 @@ public class CodeWriterTest {
     public void doesNotInjectNewlineWhenNotNeeded() {
         CodeWriter writer = CodeWriter.createDefault();
         writer.write("foo");
-
-        assertThat(writer.toString(), equalTo("foo\n"));
-    }
-
-    @Test
-    public void doesNotInjectNewlineWhenNotNeededThroughInline() {
-        CodeWriter writer = CodeWriter.createDefault();
-        writer.writeInline("foo\n");
 
         assertThat(writer.toString(), equalTo("foo\n"));
     }
@@ -231,19 +223,9 @@ public class CodeWriterTest {
     }
 
     @Test
-    public void canChangeFormatter() {
-        String result = CodeWriter.createDefault()
-                .setFormatter((text, args) -> text.replace("{}", "hi"))
-                .write("lorem {} dolor {}", "ipsum", "qux")
-                .toString();
-
-        assertThat(result, equalTo("lorem hi dolor hi\n"));
-    }
-
-    @Test
     public void writesBlocks() {
         String result = CodeWriter.createDefault()
-                .openBlock("public final class %s {", "Foo")
+                .openBlock("public final class $L {", "Foo")
                     .openBlock("public void main(String[] args) {")
                         .write("System.out.println(args[0]);")
                     .closeBlock("}")
@@ -255,7 +237,7 @@ public class CodeWriterTest {
 
     @Test
     public void supportsCall() {
-        CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
+        CodeWriter w = CodeWriter.createDefault();
         w.call(() -> w.write("Hello!"));
 
         assertThat(w.toString(), equalTo("Hello!\n"));
@@ -298,6 +280,153 @@ public class CodeWriterTest {
         CodeWriter w = CodeWriter.createDefault().insertTrailingNewline(false);
         w.writeOptional(Optional.of("hi!"));
 
-        assertThat(w.toString(), equalTo("hi!\n"));
+        assertThat(w.toString(), equalTo("hi!"));
+    }
+
+    @Test
+    public void writesLiteralOptionalByUnwrappingIt() {
+        CodeWriter w = CodeWriter.createDefault();
+        w.write("$L", Optional.of("hi!"));
+        w.write("$L", Optional.empty());
+        w.write("$S", Optional.of("hi!"));
+        w.write("$S", Optional.empty());
+
+        assertThat(w.toString(), equalTo("hi!\n\n\"hi!\"\n\"\"\n"));
+    }
+
+    @Test
+    public void formatsNullAsEmptyString() {
+        CodeWriter w = CodeWriter.createDefault();
+        w.write("$L", (String) null);
+        w.write("$S", (String) null);
+
+        assertThat(w.toString(), equalTo("\n\"\"\n"));
+    }
+
+    @Test
+    public void writesWithNamedContext() {
+        CodeWriter w = CodeWriter.createDefault()
+                .putContext("foo", "Hello!")
+                .pushState()
+                .putContext("foo", "Hola!")
+                .write("Hi. $foo:L")
+                .popState()
+                .write("Hi. $foo:L");
+
+        assertThat(w.toString(), equalTo("Hi. Hola!\nHi. Hello!\n"));
+    }
+
+    @Test
+    public void hasSections() {
+        // Setup the code writer and section interceptors.
+        CodeWriter w = CodeWriter.createDefault().putContext("testing", "123");
+
+        w.onSection("foo", text -> w.write("Yes: " + text));
+        w.onSection("foo", text -> w.write("Si: " + text));
+        w.onSection("placeholder", text -> w.write("$testing:L"));
+
+        // Emit sections with their original values.
+        w.pushState("foo").write("Original!").popState();
+        w.pushState("placeholder").popState();
+        w.pushState("empty-placeholder").popState();
+
+        assertThat(w.toString(), equalTo("Si: Yes: Original!\n123\n"));
+    }
+
+    @Test
+    public void allowsForCustomFormatters() {
+        // Setup the code writer and section interceptors.
+        CodeWriter w = CodeWriter.createDefault();
+        w.putFormatter('X', (text, indent) -> text.toString().replace("\n", "\n" + indent + indent));
+        w.setIndentText(" ");
+        w.indent(2);
+        w.write("Hi.$X.Newline?", "^\n$");
+
+        assertThat(w.toString(), equalTo("  Hi.^\n    $.Newline?\n"));
+    }
+
+    @Test
+    public void canIntegrateSectionsWithComplexStates() {
+        CodeWriter writer = CodeWriter.createDefault();
+
+        writer.onSection("foo", text -> writer.write("Intercepted: " + text + "!\nYap!"));
+
+        writer.onSection("indented", text -> {
+            writer.indent();
+            writer.write("This is indented, in flow of parent.\nYap!");
+            writer.write("Yap?");
+            writer.setNewlinePrefix("# ");
+            writer.write("Has a prefix\nYes");
+        });
+
+        writer.pushState();
+        writer.write("/**");
+        writer.setNewlinePrefix(" * ");
+
+        writer.pushState("no_interceptors");
+        writer.write("Hi!");
+        writer.popState();
+
+        writer.write("");
+
+        writer.pushState("foo");
+        writer.write("baz");
+        writer.popState();
+
+        writer.pushState("indented").popState();
+
+        writer.popState();
+        writer.write(" */");
+
+        assertThat(writer.toString(), equalTo(
+                "/**\n"
+                + " * Hi!\n"
+                + " *\n"
+                + " * Intercepted: baz!\n"
+                + " * Yap!\n"
+                + " *     This is indented, in flow of parent.\n"
+                + " *     Yap!\n"
+                + " *     Yap?\n"
+                + " *     # Has a prefix\n"
+                + " *     # Yes\n"
+                + " */\n"));
+    }
+
+    @Test
+    public void canIntegrateInlineSectionsWithComplexStates() {
+        CodeWriter writer = CodeWriter.createDefault();
+
+        writer.onSection("foo", text -> writer.write(text + "!\nYap!"));
+
+        writer.onSection("indented", text -> {
+            writer.indent();
+            writer.write("This is indented, in flow of parent.\nYap!");
+            writer.write("Yap?");
+            writer.setNewlinePrefix("# ");
+            writer.write("Has a prefix\nYes");
+        });
+
+        writer.pushState();
+        writer.write("/**");
+        writer.setNewlinePrefix(" * ");
+        writer.write("Foo ${S@no_interceptors}", "foo!");
+        writer.write("");
+        writer.write("${S@foo}", "baz");
+        writer.write("${L@indented}", "");
+        writer.popState();
+        writer.write(" */");
+
+        assertThat(writer.toString(), equalTo(
+                "/**\n"
+                + " * Foo \"foo!\"\n"
+                + " *\n"
+                + " * \"baz\"!\n"
+                + " * Yap!\n"
+                + " *     This is indented, in flow of parent.\n"
+                + " *     Yap!\n"
+                + " *     Yap?\n"
+                + " *     # Has a prefix\n"
+                + " *     # Yes\n"
+                + " */\n"));
     }
 }

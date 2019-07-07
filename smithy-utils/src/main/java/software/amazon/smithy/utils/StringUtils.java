@@ -1231,4 +1231,43 @@ public final class StringUtils {
 
         return wrappedLine.toString();
     }
+
+    // Adapted from https://github.com/square/javapoet/blob/master/src/main/java/com/squareup/javapoet/Util.java
+    public static String escapeJavaString(Object object, String indent) {
+        String value = String.valueOf(object);
+        StringBuilder result = new StringBuilder(value.length() + 2);
+        result.append('"');
+
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            switch (c) {
+                case '"':
+                    result.append("\\\"");
+                    break;
+                case '\b':
+                    result.append("\\b"); /* \u0008: backspace (BS) */
+                    break;
+                case '\t':
+                    result.append("\\t"); /* \u0009: horizontal tab (HT) */
+                    break;
+                case '\n':
+                    result.append("\\n"); /* \u000a: linefeed (LF) */
+                    break;
+                case '\f':
+                    result.append("\\f"); /* \u000c: form feed (FF) */
+                    break;
+                case '\r':
+                    result.append("\\r"); /* \u000d: carriage return (CR) */
+                    break;
+                case '\\':
+                    result.append("\\\\"); /* \u005c: backslash (\) */
+                    break;
+                default:
+                    result.append(Character.isISOControl(c) ? String.format("\\u%04x", (int) c) : c);
+            }
+        }
+
+        result.append('"');
+        return result.toString();
+    }
 }

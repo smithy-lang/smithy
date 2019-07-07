@@ -60,4 +60,20 @@ public class StringUtilsTest {
     public void wrapsText() {
         assertThat(StringUtils.wrap("hello, there, bud", 6), equalTo(String.format("hello,%nthere,%nbud")));
     }
+
+    // These test cases are based on https://github.com/square/javapoet/blob/master/src/test/java/com/squareup/javapoet/UtilTest.java
+    @Test
+    public void stringLiteral() {
+        stringLiteral("abc", "abc", "");
+        stringLiteral("'", "'", "");
+        stringLiteral("♦♥♠♣", "♦♥♠♣", "");
+        stringLiteral("€\\t@\\t$", "€\t@\t$", "");
+        stringLiteral("abc();\\ndef();", "abc();\ndef();", "");
+        stringLiteral("This is \\\"quoted\\\"!", "This is \"quoted\"!", "");
+        stringLiteral("e^{i\\\\pi}+1=0", "e^{i\\pi}+1=0", "");
+    }
+
+    void stringLiteral(String expected, String value, String indent) {
+        assertThat("\"" + expected + "\"", equalTo(StringUtils.escapeJavaString(value, indent)));
+    }
 }
