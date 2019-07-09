@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.HttpBinding;
@@ -39,12 +40,25 @@ import software.amazon.smithy.utils.MapUtils;
  * semantically appropriate HTTP method according to RFC 7231.
  */
 public final class HttpMethodSemanticsValidator extends AbstractValidator {
+    /**
+     * Provides the configuration for each HTTP method name:
+     *
+     * <ul>
+     *     <li>Key: (String) method</li>
+     *     <li>(Boolean) isReadonly</li>
+     *     <li>(Boolean) isIdempotent</li>
+     *     <li>(Boolean) allowsRequestPayload</li>
+     * </ul>
+     *
+     * <p>Setting any of the Boolean properties to {@code null} means that
+     * the validator will have no enforced semantic on a specific property.
+     */
     private static final Map<String, HttpMethodSemantics> EXPECTED = MapUtils.of(
             "GET", new HttpMethodSemantics(true, false, false),
             "HEAD", new HttpMethodSemantics(true, false, false),
             "OPTIONS", new HttpMethodSemantics(true, false, false),
             "TRACE", new HttpMethodSemantics(true, false, false),
-            "POST", new HttpMethodSemantics(false, false, true),
+            "POST", new HttpMethodSemantics(false, null, true),
             "DELETE", new HttpMethodSemantics(false, true, true),
             "PUT", new HttpMethodSemantics(false, true, true),
             "PATCH", new HttpMethodSemantics(false, false, true));
@@ -73,14 +87,14 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
 
         HttpMethodSemantics semantics = EXPECTED.get(method);
         boolean isReadonly = shape.getTrait(ReadonlyTrait.class).isPresent();
-        if (isReadonly != semantics.isReadonly) {
+        if (semantics.isReadonly != null && semantics.isReadonly != isReadonly) {
             events.add(warning(shape, trait, String.format(
                     "This operation uses the `%s` method in the `http` trait, but %s marked with the readonly trait",
                     method, isReadonly ? "is" : "is not")));
         }
 
         boolean isIdempotent = shape.getTrait(IdempotentTrait.class).isPresent();
-        if (isIdempotent != semantics.isIdempotent) {
+        if (semantics.isIdempotent != null && semantics.isIdempotent != isIdempotent) {
             events.add(warning(shape, trait, String.format(
                     "This operation uses the `%s` method in the `http` trait, but %s marked with the idempotent trait",
                     method, isIdempotent ? "is" : "is not")));
@@ -88,7 +102,9 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
 
         List<HttpBinding> payloadBindings = bindingIndex.getRequestBindings(shape, HttpBinding.Location.PAYLOAD);
         List<HttpBinding> documentBindings = bindingIndex.getRequestBindings(shape, HttpBinding.Location.DOCUMENT);
-        if (!semantics.allowsRequestPayload && (!payloadBindings.isEmpty() || !documentBindings.isEmpty())) {
+        if (semantics.allowsRequestPayload != null
+                && !semantics.allowsRequestPayload
+                && (!payloadBindings.isEmpty() || !documentBindings.isEmpty())) {
             // Detect location and combine to one list for messages
             String document = payloadBindings.isEmpty() ? "document" : "payload";
             payloadBindings.addAll(documentBindings);
@@ -102,11 +118,11 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
     }
 
     private static final class HttpMethodSemantics {
-        private final boolean isReadonly;
-        private final boolean isIdempotent;
-        private final boolean allowsRequestPayload;
+        private final Boolean isReadonly;
+        private final Boolean isIdempotent;
+        private final Boolean allowsRequestPayload;
 
-        private HttpMethodSemantics(boolean isReadonly, boolean isIdempotent, boolean allowsRequestPayload) {
+        private HttpMethodSemantics(Boolean isReadonly, Boolean isIdempotent, Boolean allowsRequestPayload) {
             this.isReadonly = isReadonly;
             this.isIdempotent = isIdempotent;
             this.allowsRequestPayload = allowsRequestPayload;

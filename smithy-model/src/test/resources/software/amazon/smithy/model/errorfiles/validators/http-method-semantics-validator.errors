@@ -3,4 +3,3 @@
 [WARNING] ns.foo#G: This operation uses the `POST` method in the `http` trait, but is marked with the readonly trait | HttpMethodSemantics
 [WARNING] ns.foo#H: This operation uses the `DELETE` method in the `http` trait, but is not marked with the idempotent trait | HttpMethodSemantics
 [WARNING] ns.foo#I: This operation uses the `GET` method in the `http` trait, but is not marked with the readonly trait | HttpMethodSemantics
-[WARNING] ns.foo#J: This operation uses the `POST` method in the `http` trait, but is marked with the idempotent trait | HttpMethodSemantics
