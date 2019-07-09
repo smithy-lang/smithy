@@ -98,10 +98,12 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         if (events.isEmpty()) {
             index.shapes(ServiceShape.class).forEach(svc -> {
                 if (topDownIndex.getContainedOperations(svc).contains(operation)) {
-                    events.addAll(validateMember(opIndex, index, svc, operation, trait, new InputTokenValidator()));
-                    events.addAll(validateMember(opIndex, index, svc, operation, trait, new PageSizeValidator()));
-                    events.addAll(validateMember(opIndex, index, svc, operation, trait, new OutputTokenValidator()));
-                    events.addAll(validateMember(opIndex, index, svc, operation, trait, new ItemValidator()));
+                    // Create a merged trait if one is present on the service.
+                    PaginatedTrait merged = svc.getTrait(PaginatedTrait.class).map(trait::merge).orElse(trait);
+                    events.addAll(validateMember(opIndex, index, svc, operation, merged, new InputTokenValidator()));
+                    events.addAll(validateMember(opIndex, index, svc, operation, merged, new PageSizeValidator()));
+                    events.addAll(validateMember(opIndex, index, svc, operation, merged, new OutputTokenValidator()));
+                    events.addAll(validateMember(opIndex, index, svc, operation, merged, new ItemValidator()));
                 }
             });
         }
