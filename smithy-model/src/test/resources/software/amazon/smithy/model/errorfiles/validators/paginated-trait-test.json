@@ -320,6 +320,43 @@
             },
             "Number": {
                 "type": "integer"
+            },
+            "Service2": {
+                "type": "service",
+                "version": "2019-06-27",
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "pageSize": "pageSize"
+                },
+                "resources": ["Resource"]
+            },
+            "Resource": {
+                "type": "resource",
+                "identifiers": {"foo": "String"},
+                "list": "ListResources"
+            },
+            "ListResources": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {"items": "items"},
+                "collection": true,
+                "input": "ListResourcesInput",
+                "output": "ListResourcesOutput"
+            },
+            "ListResourcesInput": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {"target": "String"},
+                    "pageSize": {"target": "Integer"}
+                }
+            },
+            "ListResourcesOutput": {
+                "type": "structure",
+                "members": {
+                    "nextToken": {"target": "String"},
+                    "items": {"target": "StringList"}
+                }
             }
         }
     }
