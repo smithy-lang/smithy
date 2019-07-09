@@ -134,7 +134,7 @@
             "target": "Templates"
           },
           "responses": {
-            "target": "Responses"
+            "target": "IntegrationResponses"
           }
         },
         "private": true
@@ -161,7 +161,7 @@
             "target": "Templates"
           },
           "responses": {
-            "target": "Responses"
+            "target": "IntegrationResponses"
           }
         },
         "private": true
@@ -225,14 +225,14 @@
         "type": "list",
         "member": {"target": "smithy.api#String"}
       },
-      "Responses": {
+      "IntegrationResponses": {
         "type": "map",
         "documentation": "A map of response identifiers to responses.",
         "key": {"target": "smithy.api#String"},
-        "value": {"target": "Response"},
+        "value": {"target": "IntegrationResponse"},
         "private": true
       },
-      "Response": {
+      "IntegrationResponse": {
         "type": "structure",
         "documentation": "Defines a response and specifies parameter mappings.",
         "members": {
