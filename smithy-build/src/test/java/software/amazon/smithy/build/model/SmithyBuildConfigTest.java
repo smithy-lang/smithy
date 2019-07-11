@@ -16,6 +16,7 @@
 package software.amazon.smithy.build.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
@@ -106,6 +107,27 @@ public class SmithyBuildConfigTest {
         assertThat(config.getPlugins(), hasKey("build-info"));
         assertThat(config.getPlugins(), hasKey("model"));
         assertThat(config.getPlugins(), hasKey("sources"));
+    }
+
+    @Test
+    public void expandsEnvironmentVariables() {
+        System.setProperty("FOO", "Hi");
+        System.setProperty("NAME_KEY", "name");
+        SmithyBuildConfig config = SmithyBuildConfig.load(
+                Paths.get(getResourcePath("config-with-env.json")));
+        TransformConfig transform = config.getProjections().get("a").getTransforms().get(0);
+
+        // Did the key expand?
+        assertThat(transform.getName(), equalTo("includeByTag"));
+        // Did the array and string values in it expand?
+        assertThat(transform.getArgs(), contains("Hi", "${BAZ}"));
+    }
+
+    @Test
+    public void throwsForUnknownEnvironmentVariables() {
+        Assertions.assertThrows(SmithyBuildException.class, () -> {
+            SmithyBuildConfig.load(Paths.get(getResourcePath("config-with-invalid-env.json")));
+        });
     }
 
     private String getResourcePath(String name) {

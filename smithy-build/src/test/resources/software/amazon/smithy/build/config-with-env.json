@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "projections": {
+    "a": {
+      "transforms": [
+        {"${NAME_KEY}": "includeByTag", "args": ["${FOO}", "\\${BAZ}"]}
+      ]
+    }
+  }
+}
