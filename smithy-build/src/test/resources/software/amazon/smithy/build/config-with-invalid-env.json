@@ -1,0 +1,6 @@
+{
+  "version": "1.0",
+  "projections": {
+    "${INVALID_KEY_DOES_NOT_EXIST}": {}
+  }
+}
