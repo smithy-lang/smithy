@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -141,14 +142,14 @@ line endings.</p>
     [<a class="reference internal" href="#grammar-token-statement"><code class="xref docutils literal notranslate"><span class="pre">statement</span></code></a> *(1*<a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a> <a class="reference internal" href="#grammar-token-statement"><code class="xref docutils literal notranslate"><span class="pre">statement</span></code></a>)]
 
 <strong id="grammar-token-statement">statement</strong> =
-    <a class="reference internal" href="#grammar-token-control_statement"><code class="xref docutils literal notranslate"><span class="pre">control_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-metadata_statement"><code class="xref docutils literal notranslate"><span class="pre">metadata_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-use_statement"><code class="xref docutils literal notranslate"><span class="pre">use_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-namespace_statement"><code class="xref docutils literal notranslate"><span class="pre">namespace_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-apply_statement"><code class="xref docutils literal notranslate"><span class="pre">apply_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-documentation_comment"><code class="xref docutils literal notranslate"><span class="pre">documentation_comment</span></code></a>
-  / <a class="reference internal" href="#grammar-token-trait_statement"><code class="xref docutils literal notranslate"><span class="pre">trait_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-shape_statement"><code class="xref docutils literal notranslate"><span class="pre">shape_statement</span></code></a>
+    <a class="reference internal" href="#grammar-token-control-statement"><code class="xref docutils literal notranslate"><span class="pre">control_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-metadata-statement"><code class="xref docutils literal notranslate"><span class="pre">metadata_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-use-statement"><code class="xref docutils literal notranslate"><span class="pre">use_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-namespace-statement"><code class="xref docutils literal notranslate"><span class="pre">namespace_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-apply-statement"><code class="xref docutils literal notranslate"><span class="pre">apply_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-documentation-comment"><code class="xref docutils literal notranslate"><span class="pre">documentation_comment</span></code></a>
+  / <a class="reference internal" href="#grammar-token-trait-statement"><code class="xref docutils literal notranslate"><span class="pre">trait_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-shape-statement"><code class="xref docutils literal notranslate"><span class="pre">shape_statement</span></code></a>
 </pre>
 <div class="section" id="lexical-notes">
 <h3>Lexical notes<a class="headerlink" href="#lexical-notes" title="Permalink to this headline">¶</a></h3>
@@ -167,13 +168,13 @@ line endings.</p>
 is insignificant. Comments in Smithy are defined using two forward slashes
 followed by any character. A newline terminates a comment.</p>
 <pre>
-<strong id="grammar-token-line_comment">line_comment</strong> =
-    &quot;//&quot; *(start_comment *<a class="reference internal" href="#grammar-token-not_newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a>)
+<strong id="grammar-token-line-comment">line_comment</strong> =
+    &quot;//&quot; *(start_comment *<a class="reference internal" href="#grammar-token-not-newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a>)
 
-<strong id="grammar-token-start_comment">start_comment</strong> =
+<strong id="grammar-token-start-comment">start_comment</strong> =
     %x09 / %x20-%x46 / %x48-10FFFF ; Any character other than &quot;/&quot; or newline
 
-<strong id="grammar-token-not_newline">not_newline</strong> =
+<strong id="grammar-token-not-newline">not_newline</strong> =
     %x09 / %x20-10FFFF             ; Any character but new line
 </pre>
 <p>Example:</p>
@@ -191,8 +192,8 @@ followed by any character. A newline terminates a comment.</p>
 <p>Control statements apply metadata to a file. Control statements MUST be
 defined at the beginning of a Smithy file before any other statements.</p>
 <pre>
-<strong id="grammar-token-control_statement">control_statement</strong> =
-    &quot;$&quot; <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+<strong id="grammar-token-control-statement">control_statement</strong> =
+    &quot;$&quot; <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-node-value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
 </pre>
 <p>Implementations SHOULD ignore unknown control statements.</p>
 <div class="section" id="version-statement">
@@ -214,14 +215,14 @@ of a Smithy model file. The value of a version statement MUST be a string.</p>
 <p>The metadata statement is used to attach arbitrary <a class="reference internal" href="core.html#metadata"><span class="std std-ref">metadata</span></a>
 to a model.</p>
 <pre>
-<strong id="grammar-token-metadata_statement">metadata_statement</strong> =
-    &quot;metadata&quot; <a class="reference internal" href="#grammar-token-metadata_key"><code class="xref docutils literal notranslate"><span class="pre">metadata_key</span></code></a> &quot;=&quot; <a class="reference internal" href="#grammar-token-metadata_value"><code class="xref docutils literal notranslate"><span class="pre">metadata_value</span></code></a>
+<strong id="grammar-token-metadata-statement">metadata_statement</strong> =
+    &quot;metadata&quot; <a class="reference internal" href="#grammar-token-metadata-key"><code class="xref docutils literal notranslate"><span class="pre">metadata_key</span></code></a> &quot;=&quot; <a class="reference internal" href="#grammar-token-metadata-value"><code class="xref docutils literal notranslate"><span class="pre">metadata_value</span></code></a>
 
-<strong id="grammar-token-metadata_key">metadata_key</strong> =
+<strong id="grammar-token-metadata-key">metadata_key</strong> =
     <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a>
 
-<strong id="grammar-token-metadata_value">metadata_value</strong> =
-    <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+<strong id="grammar-token-metadata-value">metadata_value</strong> =
+    <a class="reference internal" href="#grammar-token-node-value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
 </pre>
 <p>Example:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> example.string1 </span><span class="nd">=</span> <span class="s2">&quot;hello there&quot;</span>
@@ -244,15 +245,15 @@ so that they can be referred to using relative shape IDs and trait names. A
 use statement MUST come before any shapes or traits have been defined in an
 IDL model file.</p>
 <pre>
-<strong id="grammar-token-use_statement">use_statement</strong> =
-    <a class="reference internal" href="#grammar-token-use_shape_statement"><code class="xref docutils literal notranslate"><span class="pre">use_shape_statement</span></code></a> / <a class="reference internal" href="#grammar-token-use_trait_statement"><code class="xref docutils literal notranslate"><span class="pre">use_trait_statement</span></code></a>
+<strong id="grammar-token-use-statement">use_statement</strong> =
+    <a class="reference internal" href="#grammar-token-use-shape-statement"><code class="xref docutils literal notranslate"><span class="pre">use_shape_statement</span></code></a> / <a class="reference internal" href="#grammar-token-use-trait-statement"><code class="xref docutils literal notranslate"><span class="pre">use_trait_statement</span></code></a>
 </pre>
 <div class="section" id="use-shape-statement">
 <span id="id8"></span><h4>Use shape statement<a class="headerlink" href="#use-shape-statement" title="Permalink to this headline">¶</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">use_shape_statement</span></code> imports one or more shapes.</p>
 <pre>
-<strong id="grammar-token-use_shape_statement">use_shape_statement</strong> =
-    &quot;use&quot; &quot;shape&quot; <a class="reference internal" href="#grammar-token-absolute_shape_id"><code class="xref docutils literal notranslate"><span class="pre">absolute_shape_id</span></code></a>
+<strong id="grammar-token-use-shape-statement">use_shape_statement</strong> =
+    &quot;use&quot; &quot;shape&quot; <a class="reference internal" href="#grammar-token-absolute-shape-id"><code class="xref docutils literal notranslate"><span class="pre">absolute_shape_id</span></code></a>
 </pre>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.hello</span>
 
@@ -278,8 +279,8 @@ shape IDs are resolved in the IDL.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">use_trait_statement</span></code> imports one or more traits into the current
 namespace so that the trait can be referred to using a relative trait name.</p>
 <pre>
-<strong id="grammar-token-use_trait_statement">use_trait_statement</strong> =
-    &quot;use&quot; &quot;trait&quot; <a class="reference internal" href="#grammar-token-absolute_shape_id"><code class="xref docutils literal notranslate"><span class="pre">absolute_shape_id</span></code></a>
+<strong id="grammar-token-use-trait-statement">use_trait_statement</strong> =
+    &quot;use&quot; &quot;trait&quot; <a class="reference internal" href="#grammar-token-absolute-shape-id"><code class="xref docutils literal notranslate"><span class="pre">absolute_shape_id</span></code></a>
 </pre>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.hello</span>
 
@@ -300,7 +301,7 @@ traits imported with a <code class="docutils literal notranslate"><span class="p
 can only be defined if a current namespace is defined. Any number of namespace
 statements can appear in a model.</p>
 <pre>
-<strong id="grammar-token-namespace_statement">namespace_statement</strong> =
+<strong id="grammar-token-namespace-statement">namespace_statement</strong> =
     &quot;namespace&quot; <a class="reference internal" href="#grammar-token-namespace"><code class="xref docutils literal notranslate"><span class="pre">namespace</span></code></a>
 </pre>
 <p>Example:</p>
@@ -314,66 +315,66 @@ statements can appear in a model.</p>
 be defined after a <em>current namespace</em> has been defined using a
 <a class="reference internal" href="#namespace-statement"><span class="std std-ref">namespace statement</span></a>.</p>
 <pre>
-<strong id="grammar-token-shape_statement">shape_statement</strong> =
-    [<a class="reference internal" href="#grammar-token-inline_traits"><code class="xref docutils literal notranslate"><span class="pre">inline_traits</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>] <a class="reference internal" href="#grammar-token-shape_body"><code class="xref docutils literal notranslate"><span class="pre">shape_body</span></code></a>
+<strong id="grammar-token-shape-statement">shape_statement</strong> =
+    [<a class="reference internal" href="#grammar-token-inline-traits"><code class="xref docutils literal notranslate"><span class="pre">inline_traits</span></code></a> <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a>] <a class="reference internal" href="#grammar-token-shape-body"><code class="xref docutils literal notranslate"><span class="pre">shape_body</span></code></a>
 
-<strong id="grammar-token-shape_body">shape_body</strong> =
-    <a class="reference internal" href="#grammar-token-service_statement"><code class="xref docutils literal notranslate"><span class="pre">service_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-resource_statement"><code class="xref docutils literal notranslate"><span class="pre">resource_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-operation_statement"><code class="xref docutils literal notranslate"><span class="pre">operation_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-structure_statement"><code class="xref docutils literal notranslate"><span class="pre">structure_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-union_statement"><code class="xref docutils literal notranslate"><span class="pre">union_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-list_statement"><code class="xref docutils literal notranslate"><span class="pre">list_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-set_statement"><code class="xref docutils literal notranslate"><span class="pre">set_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-map_statement"><code class="xref docutils literal notranslate"><span class="pre">map_statement</span></code></a>
-  / <a class="reference internal" href="#grammar-token-simple_shape"><code class="xref docutils literal notranslate"><span class="pre">simple_shape</span></code></a>
+<strong id="grammar-token-shape-body">shape_body</strong> =
+    <a class="reference internal" href="#grammar-token-service-statement"><code class="xref docutils literal notranslate"><span class="pre">service_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-resource-statement"><code class="xref docutils literal notranslate"><span class="pre">resource_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-operation-statement"><code class="xref docutils literal notranslate"><span class="pre">operation_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-structure-statement"><code class="xref docutils literal notranslate"><span class="pre">structure_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-union-statement"><code class="xref docutils literal notranslate"><span class="pre">union_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-list-statement"><code class="xref docutils literal notranslate"><span class="pre">list_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-set-statement"><code class="xref docutils literal notranslate"><span class="pre">set_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-map-statement"><code class="xref docutils literal notranslate"><span class="pre">map_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-simple-shape"><code class="xref docutils literal notranslate"><span class="pre">simple_shape</span></code></a>
 
-<strong id="grammar-token-service_statement">service_statement</strong> =
-    &quot;service&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
+<strong id="grammar-token-service-statement">service_statement</strong> =
+    &quot;service&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-node-object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
 
-<strong id="grammar-token-resource_statement">resource_statement</strong> =
-    &quot;resource&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
+<strong id="grammar-token-resource-statement">resource_statement</strong> =
+    &quot;resource&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-node-object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
 
-<strong id="grammar-token-operation_statement">operation_statement</strong> =
-    &quot;operation&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;(&quot; [<a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>] &quot;)&quot; <a class="reference internal" href="#grammar-token-operation_results"><code class="xref docutils literal notranslate"><span class="pre">operation_results</span></code></a>
+<strong id="grammar-token-operation-statement">operation_statement</strong> =
+    &quot;operation&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;(&quot; [<a class="reference internal" href="#grammar-token-shape-id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>] &quot;)&quot; <a class="reference internal" href="#grammar-token-operation-results"><code class="xref docutils literal notranslate"><span class="pre">operation_results</span></code></a>
 
-<strong id="grammar-token-operation_results">operation_results</strong> =
-    [&quot;-&gt;&quot; <a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>] [&quot;errors&quot; &quot;[&quot; [<a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>)] &quot;]&quot;]
+<strong id="grammar-token-operation-results">operation_results</strong> =
+    [&quot;-&gt;&quot; <a class="reference internal" href="#grammar-token-shape-id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>] [&quot;errors&quot; &quot;[&quot; [<a class="reference internal" href="#grammar-token-shape-id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-shape-id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>)] &quot;]&quot;]
 
-<strong id="grammar-token-structure_statement">structure_statement</strong> =
-    &quot;structure&quot; <a class="reference internal" href="#grammar-token-structured_body"><code class="xref docutils literal notranslate"><span class="pre">structured_body</span></code></a>
+<strong id="grammar-token-structure-statement">structure_statement</strong> =
+    &quot;structure&quot; <a class="reference internal" href="#grammar-token-structured-body"><code class="xref docutils literal notranslate"><span class="pre">structured_body</span></code></a>
 
-<strong id="grammar-token-union_statement">union_statement</strong> =
-    &quot;union&quot; <a class="reference internal" href="#grammar-token-structured_body"><code class="xref docutils literal notranslate"><span class="pre">structured_body</span></code></a>
+<strong id="grammar-token-union-statement">union_statement</strong> =
+    &quot;union&quot; <a class="reference internal" href="#grammar-token-structured-body"><code class="xref docutils literal notranslate"><span class="pre">structured_body</span></code></a>
 
-<strong id="grammar-token-structured_body">structured_body</strong> =
-    <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;{&quot; [<a class="reference internal" href="#grammar-token-structured_member"><code class="xref docutils literal notranslate"><span class="pre">structured_member</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-structured_member"><code class="xref docutils literal notranslate"><span class="pre">structured_member</span></code></a>)] &quot;}&quot;
+<strong id="grammar-token-structured-body">structured_body</strong> =
+    <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;{&quot; [<a class="reference internal" href="#grammar-token-structured-member"><code class="xref docutils literal notranslate"><span class="pre">structured_member</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-structured-member"><code class="xref docutils literal notranslate"><span class="pre">structured_member</span></code></a>)] &quot;}&quot;
 
-<strong id="grammar-token-structured_member">structured_member</strong> =
-    <a class="reference internal" href="#grammar-token-member_traits"><code class="xref docutils literal notranslate"><span class="pre">member_traits</span></code></a> <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>
+<strong id="grammar-token-structured-member">structured_member</strong> =
+    <a class="reference internal" href="#grammar-token-member-traits"><code class="xref docutils literal notranslate"><span class="pre">member_traits</span></code></a> <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-shape-id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>
 
-<strong id="grammar-token-list_statement">list_statement</strong> =
-    &quot;list&quot; <a class="reference internal" href="#grammar-token-list_and_set_body"><code class="xref docutils literal notranslate"><span class="pre">list_and_set_body</span></code></a>
+<strong id="grammar-token-list-statement">list_statement</strong> =
+    &quot;list&quot; <a class="reference internal" href="#grammar-token-list-and-set-body"><code class="xref docutils literal notranslate"><span class="pre">list_and_set_body</span></code></a>
 
-<strong id="grammar-token-set_statement">set_statement</strong> =
-    &quot;set&quot; <a class="reference internal" href="#grammar-token-list_and_set_body"><code class="xref docutils literal notranslate"><span class="pre">list_and_set_body</span></code></a>
+<strong id="grammar-token-set-statement">set_statement</strong> =
+    &quot;set&quot; <a class="reference internal" href="#grammar-token-list-and-set-body"><code class="xref docutils literal notranslate"><span class="pre">list_and_set_body</span></code></a>
 
-<strong id="grammar-token-list_and_set_body">list_and_set_body</strong> =
-    <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;{&quot; <a class="reference internal" href="#grammar-token-member_traits"><code class="xref docutils literal notranslate"><span class="pre">member_traits</span></code></a> &quot;member&quot; &quot;:&quot; <a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> [&quot;,&quot;] &quot;}&quot;
+<strong id="grammar-token-list-and-set-body">list_and_set_body</strong> =
+    <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;{&quot; <a class="reference internal" href="#grammar-token-member-traits"><code class="xref docutils literal notranslate"><span class="pre">member_traits</span></code></a> &quot;member&quot; &quot;:&quot; <a class="reference internal" href="#grammar-token-shape-id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> [&quot;,&quot;] &quot;}&quot;
 
-<strong id="grammar-token-map_statement">map_statement</strong> =
-    &quot;map&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;{&quot; <a class="reference internal" href="#grammar-token-map_body"><code class="xref docutils literal notranslate"><span class="pre">map_body</span></code></a> &quot;}&quot;
+<strong id="grammar-token-map-statement">map_statement</strong> =
+    &quot;map&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> &quot;{&quot; <a class="reference internal" href="#grammar-token-map-body"><code class="xref docutils literal notranslate"><span class="pre">map_body</span></code></a> &quot;}&quot;
 
-<strong id="grammar-token-map_body">map_body</strong> =
-    <a class="reference internal" href="#grammar-token-map_member"><code class="xref docutils literal notranslate"><span class="pre">map_member</span></code></a> &quot;,&quot; <a class="reference internal" href="#grammar-token-map_member"><code class="xref docutils literal notranslate"><span class="pre">map_member</span></code></a> [&quot;,&quot;]
+<strong id="grammar-token-map-body">map_body</strong> =
+    <a class="reference internal" href="#grammar-token-map-member"><code class="xref docutils literal notranslate"><span class="pre">map_member</span></code></a> &quot;,&quot; <a class="reference internal" href="#grammar-token-map-member"><code class="xref docutils literal notranslate"><span class="pre">map_member</span></code></a> [&quot;,&quot;]
 
-<strong id="grammar-token-map_member">map_member</strong> =
-    <a class="reference internal" href="#grammar-token-member_traits"><code class="xref docutils literal notranslate"><span class="pre">member_traits</span></code></a> (&quot;key&quot; / &quot;value&quot;) &quot;:&quot; <a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>
+<strong id="grammar-token-map-member">map_member</strong> =
+    <a class="reference internal" href="#grammar-token-member-traits"><code class="xref docutils literal notranslate"><span class="pre">member_traits</span></code></a> (&quot;key&quot; / &quot;value&quot;) &quot;:&quot; <a class="reference internal" href="#grammar-token-shape-id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a>
 
-<strong id="grammar-token-simple_shape">simple_shape</strong> =
-    <a class="reference internal" href="#grammar-token-simple_shape_name"><code class="xref docutils literal notranslate"><span class="pre">simple_shape_name</span></code></a> <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+<strong id="grammar-token-simple-shape">simple_shape</strong> =
+    <a class="reference internal" href="#grammar-token-simple-shape-name"><code class="xref docutils literal notranslate"><span class="pre">simple_shape_name</span></code></a> <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
 
-<strong id="grammar-token-simple_shape_name">simple_shape_name</strong> =
+<strong id="grammar-token-simple-shape-name">simple_shape_name</strong> =
     &quot;blob&quot; / &quot;boolean&quot; / &quot;document&quot; / &quot;string&quot; / &quot;byte&quot; / &quot;short&quot;
   / &quot;integer&quot; / &quot;long&quot; / &quot;float&quot; / &quot;double&quot; / &quot;bigInteger&quot;
   / &quot;bigDecimal&quot; / &quot;timestamp&quot;
@@ -384,8 +385,8 @@ be defined after a <em>current namespace</em> has been defined using a
 <p>The apply statement is used to attach a trait to a shape outside of a shape's
 definition.</p>
 <pre>
-<strong id="grammar-token-apply_statement">apply_statement</strong> =
-    &quot;apply&quot; <a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> <a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a>
+<strong id="grammar-token-apply-statement">apply_statement</strong> =
+    &quot;apply&quot; <a class="reference internal" href="#grammar-token-shape-id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> <a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a>
 </pre>
 <p>The following example applies the <a class="reference internal" href="core.html#deprecated-trait"><span class="std std-ref">deprecated trait</span></a> trait to a shape
 named <code class="docutils literal notranslate"><span class="pre">MyShape</span></code> using a <a class="reference internal" href="core.html#relative-shape-id"><span class="std std-ref">relative shape id</span></a>.</p>
@@ -400,8 +401,8 @@ documentation for shapes and trait definitions. A documentation comment
 is formed when three forward slashes (&quot;///&quot;) appear as the first
 non-whitespace characters on a line.</p>
 <pre>
-<strong id="grammar-token-documentation_comment">documentation_comment</strong> =
-    &quot;///&quot; *(<a class="reference internal" href="#grammar-token-not_newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a>)
+<strong id="grammar-token-documentation-comment">documentation_comment</strong> =
+    &quot;///&quot; *(<a class="reference internal" href="#grammar-token-not-newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a>)
 </pre>
 <p>Documentation comments are defined using <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a>. The text after the
 forward slashes is considered the contents of the line. If the text starts
@@ -493,10 +494,10 @@ all invalid.</p>
 can only be defined after a <em>current namespace</em> has been defined using a
 <a class="reference internal" href="#namespace-statement"><span class="std std-ref">namespace statement</span></a>.</p>
 <pre>
-<strong id="grammar-token-trait_statement">trait_statement</strong> =
-    &quot;trait&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
+<strong id="grammar-token-trait-statement">trait_statement</strong> =
+    &quot;trait&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> <a class="reference internal" href="#grammar-token-node-object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
 </pre>
-<p>The body of a trait statement is a <a class="reference internal" href="#grammar-token-node_object"><code class="xref std std-token docutils literal notranslate"><span class="pre">node</span> <span class="pre">object</span></code></a> that
+<p>The body of a trait statement is a <a class="reference internal" href="#grammar-token-node-object"><code class="xref std std-token docutils literal notranslate"><span class="pre">node</span> <span class="pre">object</span></code></a> that
 supports the same key-value pairs defined in <a class="reference internal" href="core.html#trait-definition"><span class="std std-ref">Trait definitions</span></a>.</p>
 </div>
 <div class="section" id="trait-values">
@@ -505,23 +506,23 @@ supports the same key-value pairs defined in <a class="reference internal" href=
 Trait values can only appear immediately before a shape or
 <a class="reference internal" href="core.html#member"><span class="std std-ref">member</span></a> definition.</p>
 <pre>
-<strong id="grammar-token-inline_traits">inline_traits</strong> =
+<strong id="grammar-token-inline-traits">inline_traits</strong> =
     [<a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a> *<a class="reference internal" href="#grammar-token-trait"><code class="xref docutils literal notranslate"><span class="pre">trait</span></code></a>]
 
 <strong id="grammar-token-trait">trait</strong> =
-    &quot;&#64;&quot; <a class="reference internal" href="#grammar-token-shape_id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> [&quot;(&quot; <a class="reference internal" href="#grammar-token-trait_body_value"><code class="xref docutils literal notranslate"><span class="pre">trait_body_value</span></code></a> &quot;)&quot;]
+    &quot;&#64;&quot; <a class="reference internal" href="#grammar-token-shape-id"><code class="xref docutils literal notranslate"><span class="pre">shape_id</span></code></a> [&quot;(&quot; <a class="reference internal" href="#grammar-token-trait-body-value"><code class="xref docutils literal notranslate"><span class="pre">trait_body_value</span></code></a> &quot;)&quot;]
 
-<strong id="grammar-token-trait_body_value">trait_body_value</strong> =
-    <a class="reference internal" href="#grammar-token-trait_structure"><code class="xref docutils literal notranslate"><span class="pre">trait_structure</span></code></a> / <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+<strong id="grammar-token-trait-body-value">trait_body_value</strong> =
+    <a class="reference internal" href="#grammar-token-trait-structure"><code class="xref docutils literal notranslate"><span class="pre">trait_structure</span></code></a> / <a class="reference internal" href="#grammar-token-node-value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
 
-<strong id="grammar-token-trait_structure">trait_structure</strong> =
-    <a class="reference internal" href="#grammar-token-trait_structure_kvp"><code class="xref docutils literal notranslate"><span class="pre">trait_structure_kvp</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-trait_structure_kvp"><code class="xref docutils literal notranslate"><span class="pre">trait_structure_kvp</span></code></a>)
+<strong id="grammar-token-trait-structure">trait_structure</strong> =
+    <a class="reference internal" href="#grammar-token-trait-structure-kvp"><code class="xref docutils literal notranslate"><span class="pre">trait_structure_kvp</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-trait-structure-kvp"><code class="xref docutils literal notranslate"><span class="pre">trait_structure_kvp</span></code></a>)
 
-<strong id="grammar-token-trait_structure_kvp">trait_structure_kvp</strong> =
-    <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+<strong id="grammar-token-trait-structure-kvp">trait_structure_kvp</strong> =
+    <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-node-value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
 
-<strong id="grammar-token-member_traits">member_traits</strong> =
-    [<a class="reference internal" href="#grammar-token-inline_traits"><code class="xref docutils literal notranslate"><span class="pre">inline_traits</span></code></a>]
+<strong id="grammar-token-member-traits">member_traits</strong> =
+    [<a class="reference internal" href="#grammar-token-inline-traits"><code class="xref docutils literal notranslate"><span class="pre">inline_traits</span></code></a>]
 </pre>
 <p>The following example applies various traits to a structure shape and its
 members.</p>
@@ -543,60 +544,60 @@ members.</p>
 <div class="section" id="string-values">
 <h3>String values<a class="headerlink" href="#string-values" title="Permalink to this headline">¶</a></h3>
 <p>String values are utilized in various contexts. String values can be unquoted
-if they adhere to the <a class="reference internal" href="#grammar-token-unquoted_text"><code class="xref std std-token docutils literal notranslate"><span class="pre">unquoted_text</span></code></a> production.</p>
+if they adhere to the <a class="reference internal" href="#grammar-token-unquoted-text"><code class="xref std std-token docutils literal notranslate"><span class="pre">unquoted_text</span></code></a> production.</p>
 <p>Smithy strings are considered <em>raw strings</em>, meaning they do not support any
 form of escapes other than to escape a closing quote (using <code class="docutils literal notranslate"><span class="pre">\&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">\'</span></code>)
 or to escape an escape (using <code class="docutils literal notranslate"><span class="pre">\\</span></code>).</p>
 <pre>
 <strong id="grammar-token-text">text</strong> =
-    <a class="reference internal" href="#grammar-token-unquoted_text"><code class="xref docutils literal notranslate"><span class="pre">unquoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-quoted_text"><code class="xref docutils literal notranslate"><span class="pre">quoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-text_block"><code class="xref docutils literal notranslate"><span class="pre">text_block</span></code></a>
+    <a class="reference internal" href="#grammar-token-unquoted-text"><code class="xref docutils literal notranslate"><span class="pre">unquoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-quoted-text"><code class="xref docutils literal notranslate"><span class="pre">quoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-text-block"><code class="xref docutils literal notranslate"><span class="pre">text_block</span></code></a>
 
-<strong id="grammar-token-unquoted_text">unquoted_text</strong> =
+<strong id="grammar-token-unquoted-text">unquoted_text</strong> =
     (ALPHA / &quot;_&quot;) *(ALPHA / DIGIT / &quot;-&quot; / &quot;_&quot; / &quot;$&quot; / &quot;.&quot; / &quot;#&quot;)
 
-<strong id="grammar-token-quoted_text">quoted_text</strong> =
-    <a class="reference internal" href="#grammar-token-single_quoted_text"><code class="xref docutils literal notranslate"><span class="pre">single_quoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-double_quoted_text"><code class="xref docutils literal notranslate"><span class="pre">double_quoted_text</span></code></a>
+<strong id="grammar-token-quoted-text">quoted_text</strong> =
+    <a class="reference internal" href="#grammar-token-single-quoted-text"><code class="xref docutils literal notranslate"><span class="pre">single_quoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-double-quoted-text"><code class="xref docutils literal notranslate"><span class="pre">double_quoted_text</span></code></a>
 
-<strong id="grammar-token-single_quoted_text">single_quoted_text</strong> =
-    &quot;'&quot; *<a class="reference internal" href="#grammar-token-single_quoted_char"><code class="xref docutils literal notranslate"><span class="pre">single_quoted_char</span></code></a> &quot;'&quot;
+<strong id="grammar-token-single-quoted-text">single_quoted_text</strong> =
+    &quot;'&quot; *<a class="reference internal" href="#grammar-token-single-quoted-char"><code class="xref docutils literal notranslate"><span class="pre">single_quoted_char</span></code></a> &quot;'&quot;
 
-<strong id="grammar-token-single_quoted_char">single_quoted_char</strong> =
+<strong id="grammar-token-single-quoted-char">single_quoted_char</strong> =
     %x20-26
   / %x28-5B
   / %x5D-10FFFF
-  / <a class="reference internal" href="#grammar-token-escaped_char"><code class="xref docutils literal notranslate"><span class="pre">escaped_char</span></code></a>
-  / <a class="reference internal" href="#grammar-token-preserved_single"><code class="xref docutils literal notranslate"><span class="pre">preserved_single</span></code></a>
+  / <a class="reference internal" href="#grammar-token-escaped-char"><code class="xref docutils literal notranslate"><span class="pre">escaped_char</span></code></a>
+  / <a class="reference internal" href="#grammar-token-preserved-single"><code class="xref docutils literal notranslate"><span class="pre">preserved_single</span></code></a>
 
-<strong id="grammar-token-escaped_char">escaped_char</strong> =
-    <a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> (<a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> / &quot;'&quot; / DQUOTE / &quot;b&quot; / &quot;f&quot; / &quot;n&quot; / &quot;r&quot; / &quot;t&quot; / &quot;/&quot; / <a class="reference internal" href="#grammar-token-unicode_escape"><code class="xref docutils literal notranslate"><span class="pre">unicode_escape</span></code></a>)
+<strong id="grammar-token-escaped-char">escaped_char</strong> =
+    <a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> (<a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> / &quot;'&quot; / DQUOTE / &quot;b&quot; / &quot;f&quot; / &quot;n&quot; / &quot;r&quot; / &quot;t&quot; / &quot;/&quot; / <a class="reference internal" href="#grammar-token-unicode-escape"><code class="xref docutils literal notranslate"><span class="pre">unicode_escape</span></code></a>)
 
-<strong id="grammar-token-unicode_escape">unicode_escape</strong> =
+<strong id="grammar-token-unicode-escape">unicode_escape</strong> =
     &quot;u&quot; <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a> <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a> <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a> <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a>
 
 <strong id="grammar-token-hex">hex</strong> =
      DIGIT / %x41-46 / %x61-66
 
-<strong id="grammar-token-preserved_single">preserved_single</strong> =
+<strong id="grammar-token-preserved-single">preserved_single</strong> =
     <a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> (%x20-26 / %x28-5B / %x5D-10FFFF)
 
-<strong id="grammar-token-double_quoted_text">double_quoted_text</strong> =
-    DQUOTE *<a class="reference internal" href="#grammar-token-double_quoted_char"><code class="xref docutils literal notranslate"><span class="pre">double_quoted_char</span></code></a> DQUOTE
+<strong id="grammar-token-double-quoted-text">double_quoted_text</strong> =
+    DQUOTE *<a class="reference internal" href="#grammar-token-double-quoted-char"><code class="xref docutils literal notranslate"><span class="pre">double_quoted_char</span></code></a> DQUOTE
 
-<strong id="grammar-token-double_quoted_char">double_quoted_char</strong> =
+<strong id="grammar-token-double-quoted-char">double_quoted_char</strong> =
     %x20-21
   / %x23-5B
   / %x5D-10FFFF
-  / <a class="reference internal" href="#grammar-token-escaped_char"><code class="xref docutils literal notranslate"><span class="pre">escaped_char</span></code></a>
-  / <a class="reference internal" href="#grammar-token-preserved_double"><code class="xref docutils literal notranslate"><span class="pre">preserved_double</span></code></a>
+  / <a class="reference internal" href="#grammar-token-escaped-char"><code class="xref docutils literal notranslate"><span class="pre">escaped_char</span></code></a>
+  / <a class="reference internal" href="#grammar-token-preserved-double"><code class="xref docutils literal notranslate"><span class="pre">preserved_double</span></code></a>
 
-<strong id="grammar-token-preserved_double">preserved_double</strong> =
+<strong id="grammar-token-preserved-double">preserved_double</strong> =
     <a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> (%x20-21 / %x23-5B / %x5D-10FFFF)
 
 <strong id="grammar-token-escape">escape</strong> =
     %x5C ; backslash
 
-<strong id="grammar-token-text_block">text_block</strong> =
-    DQUOTE DQUOTE DQUOTE <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a> <a class="reference internal" href="#grammar-token-double_quoted_char"><code class="xref docutils literal notranslate"><span class="pre">double_quoted_char</span></code></a> DQUOTE DQUOTE DQUOTE
+<strong id="grammar-token-text-block">text_block</strong> =
+    DQUOTE DQUOTE DQUOTE <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a> <a class="reference internal" href="#grammar-token-double-quoted-char"><code class="xref docutils literal notranslate"><span class="pre">double_quoted_char</span></code></a> DQUOTE DQUOTE DQUOTE
 </pre>
 <p>New lines in strings are normalized from CR (u000D) and CRLF (u000Du000A)
 to LF (u000A). This ensures that strings defined in a Smithy model are
@@ -885,25 +886,25 @@ quotes.</p>
 unquoted keys, unquoted strings, single quoted strings, long strings,
 and trailing commas.</p>
 <pre>
-<strong id="grammar-token-node_value">node_value</strong> =
-    <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> / <a class="reference internal" href="#grammar-token-number"><code class="xref docutils literal notranslate"><span class="pre">number</span></code></a> / <a class="reference internal" href="#grammar-token-node_array"><code class="xref docutils literal notranslate"><span class="pre">node_array</span></code></a> / <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
+<strong id="grammar-token-node-value">node_value</strong> =
+    <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> / <a class="reference internal" href="#grammar-token-number"><code class="xref docutils literal notranslate"><span class="pre">number</span></code></a> / <a class="reference internal" href="#grammar-token-node-array"><code class="xref docutils literal notranslate"><span class="pre">node_array</span></code></a> / <a class="reference internal" href="#grammar-token-node-object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
 
-<strong id="grammar-token-node_array">node_array</strong> =
-    &quot;[&quot; [<a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>)] (( &quot;,&quot; &quot;]&quot; ) / &quot;]&quot; )
+<strong id="grammar-token-node-array">node_array</strong> =
+    &quot;[&quot; [<a class="reference internal" href="#grammar-token-node-value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-node-value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>)] (( &quot;,&quot; &quot;]&quot; ) / &quot;]&quot; )
 
-<strong id="grammar-token-node_object">node_object</strong> =
-    &quot;{&quot; [<a class="reference internal" href="#grammar-token-node_object_kvp"><code class="xref docutils literal notranslate"><span class="pre">node_object_kvp</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-node_object_kvp"><code class="xref docutils literal notranslate"><span class="pre">node_object_kvp</span></code></a>)] (( &quot;,&quot; &quot;}&quot; ) / &quot;}&quot; )
+<strong id="grammar-token-node-object">node_object</strong> =
+    &quot;{&quot; [<a class="reference internal" href="#grammar-token-node-object-kvp"><code class="xref docutils literal notranslate"><span class="pre">node_object_kvp</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-node-object-kvp"><code class="xref docutils literal notranslate"><span class="pre">node_object_kvp</span></code></a>)] (( &quot;,&quot; &quot;}&quot; ) / &quot;}&quot; )
 
-<strong id="grammar-token-node_object_kvp">node_object_kvp</strong> =
-    <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+<strong id="grammar-token-node-object-kvp">node_object_kvp</strong> =
+    <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-node-value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
 
 <strong id="grammar-token-number">number</strong> =
     [<a class="reference internal" href="#grammar-token-minus"><code class="xref docutils literal notranslate"><span class="pre">minus</span></code></a>] <a class="reference internal" href="#grammar-token-int"><code class="xref docutils literal notranslate"><span class="pre">int</span></code></a> [<a class="reference internal" href="#grammar-token-frac"><code class="xref docutils literal notranslate"><span class="pre">frac</span></code></a>] [<a class="reference internal" href="#grammar-token-exp"><code class="xref docutils literal notranslate"><span class="pre">exp</span></code></a>]
 
-<strong id="grammar-token-decimal_point">decimal_point</strong> =
+<strong id="grammar-token-decimal-point">decimal_point</strong> =
     %x2E ; .
 
-<strong id="grammar-token-digit1_9">digit1_9</strong> =
+<strong id="grammar-token-digit1-9">digit1_9</strong> =
     %x31-39 ; 1-9
 
 <strong id="grammar-token-e">e</strong> =
@@ -913,10 +914,10 @@ and trailing commas.</p>
     <a class="reference internal" href="#grammar-token-e"><code class="xref docutils literal notranslate"><span class="pre">e</span></code></a> [<a class="reference internal" href="#grammar-token-minus"><code class="xref docutils literal notranslate"><span class="pre">minus</span></code></a> / <a class="reference internal" href="#grammar-token-plus"><code class="xref docutils literal notranslate"><span class="pre">plus</span></code></a>] 1*DIGIT
 
 <strong id="grammar-token-frac">frac</strong> =
-    <a class="reference internal" href="#grammar-token-decimal_point"><code class="xref docutils literal notranslate"><span class="pre">decimal_point</span></code></a> 1*DIGIT
+    <a class="reference internal" href="#grammar-token-decimal-point"><code class="xref docutils literal notranslate"><span class="pre">decimal_point</span></code></a> 1*DIGIT
 
 <strong id="grammar-token-int">int</strong> =
-    <a class="reference internal" href="#grammar-token-zero"><code class="xref docutils literal notranslate"><span class="pre">zero</span></code></a> / (<a class="reference internal" href="#grammar-token-digit1_9"><code class="xref docutils literal notranslate"><span class="pre">digit1_9</span></code></a> *DIGIT)
+    <a class="reference internal" href="#grammar-token-zero"><code class="xref docutils literal notranslate"><span class="pre">zero</span></code></a> / (<a class="reference internal" href="#grammar-token-digit1-9"><code class="xref docutils literal notranslate"><span class="pre">digit1_9</span></code></a> *DIGIT)
 
 <strong id="grammar-token-minus">minus</strong> =
     %x2D ; -
@@ -969,16 +970,16 @@ and trailing commas.</p>
 <strong id="grammar-token-namespace">namespace</strong> =
     <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>)
 
-<strong id="grammar-token-shape_id">shape_id</strong> =
-    <a class="reference internal" href="#grammar-token-absolute_shape_id"><code class="xref docutils literal notranslate"><span class="pre">absolute_shape_id</span></code></a> / <a class="reference internal" href="#grammar-token-relative_shape_id"><code class="xref docutils literal notranslate"><span class="pre">relative_shape_id</span></code></a>
+<strong id="grammar-token-shape-id">shape_id</strong> =
+    <a class="reference internal" href="#grammar-token-absolute-shape-id"><code class="xref docutils literal notranslate"><span class="pre">absolute_shape_id</span></code></a> / <a class="reference internal" href="#grammar-token-relative-shape-id"><code class="xref docutils literal notranslate"><span class="pre">relative_shape_id</span></code></a>
 
-<strong id="grammar-token-absolute_shape_id">absolute_shape_id</strong> =
-    <a class="reference internal" href="#grammar-token-namespace"><code class="xref docutils literal notranslate"><span class="pre">namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="#grammar-token-relative_shape_id"><code class="xref docutils literal notranslate"><span class="pre">relative_shape_id</span></code></a>
+<strong id="grammar-token-absolute-shape-id">absolute_shape_id</strong> =
+    <a class="reference internal" href="#grammar-token-namespace"><code class="xref docutils literal notranslate"><span class="pre">namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="#grammar-token-relative-shape-id"><code class="xref docutils literal notranslate"><span class="pre">relative_shape_id</span></code></a>
 
-<strong id="grammar-token-relative_shape_id">relative_shape_id</strong> =
+<strong id="grammar-token-relative-shape-id">relative_shape_id</strong> =
     <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> [&quot;$&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>]
 
-<strong id="grammar-token-LOALPHA">LOALPHA</strong> =
+<strong id="grammar-token-loalpha">LOALPHA</strong> =
     %x61-7A ; a-z
 </pre>
 </div>

@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
     <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -793,6 +794,45 @@ JSON</div>
 </div>
 </div>
 </div>
+<div class="section" id="environment-variables">
+<span id="build-envars"></span><h2>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
+<p>Strings in <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> files can contain environment variable place
+holders that are expanded at load-time into the value of a Java system
+property or environment variable. The syntax of a placeholder is
+<code class="docutils literal notranslate"><span class="pre">${NAME}</span></code> where &quot;NAME&quot; is the name of the system property or environment
+variable. A placeholder can be escaped using a backslash (<code class="docutils literal notranslate"><span class="pre">\</span></code>) before the
+&quot;$&quot;. For example, <code class="docutils literal notranslate"><span class="pre">\${FOO}</span></code> expands to the literal string <code class="docutils literal notranslate"><span class="pre">${FOO}</span></code>.
+A non-existent system property or environment variable will cause the file
+to fail to load. System property values take precedence over environment
+variables.</p>
+<p>Consider the following <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;${NAME_KEY}&quot;</span><span class="p">:</span> <span class="s2">&quot;includeByTag&quot;</span><span class="p">,</span> <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;${FOO}&quot;</span><span class="p">,</span> <span class="s2">&quot;\\${BAZ}&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Assuming that <code class="docutils literal notranslate"><span class="pre">NAME_KEY</span></code> is a system property set to &quot;name&quot;, and <code class="docutils literal notranslate"><span class="pre">FOO</span></code> is an
+environment variable set to &quot;hi&quot;, this file is equivalent to:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;includeByTag&quot;</span><span class="p">,</span> <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Hi&quot;</span><span class="p">,</span> <span class="s2">&quot;${BAZ}&quot;</span><span class="p">]}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="plugins">
 <span id="id4"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
 <p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
@@ -879,6 +919,7 @@ All model names referenced by the manifest are relative to <code class="docutils
 <li><a class="reference internal" href="#removeunusedshapes">removeUnusedShapes</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#environment-variables">Environment variables</a></li>
 <li><a class="reference internal" href="#plugins">Plugins</a><ul>
 <li><a class="reference internal" href="#model-plugin">model plugin</a></li>
 <li><a class="reference internal" href="#build-info-plugin">build-info plugin</a></li>

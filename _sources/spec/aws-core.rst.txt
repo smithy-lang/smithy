@@ -940,7 +940,7 @@ Each condition key object supports the following key-value pairs:
                 type: "String",
                 documentation: "The Bar string",
                 externalDocumentation: "http://example.com"
-            }})
+            })
         service MyService {
             version: "2017-02-11",
             resources: [MyResource],

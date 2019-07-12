@@ -627,6 +627,53 @@ but keeps the shape if it has any of the provided tags:
         }
 
 
+.. _build_envars:
+
+Environment variables
+=====================
+
+Strings in ``smithy-build.json`` files can contain environment variable place
+holders that are expanded at load-time into the value of a Java system
+property or environment variable. The syntax of a placeholder is
+``${NAME}`` where "NAME" is the name of the system property or environment
+variable. A placeholder can be escaped using a backslash (``\``) before the
+"$". For example, ``\${FOO}`` expands to the literal string ``${FOO}``.
+A non-existent system property or environment variable will cause the file
+to fail to load. System property values take precedence over environment
+variables.
+
+Consider the following ``smithy-build.json`` file:
+
+.. code-block:: json
+
+    {
+      "version": "1.0",
+      "projections": {
+        "a": {
+          "transforms": [
+            {"${NAME_KEY}": "includeByTag", "args": ["${FOO}", "\\${BAZ}"]}
+          ]
+        }
+      }
+    }
+
+Assuming that ``NAME_KEY`` is a system property set to "name", and ``FOO`` is an
+environment variable set to "hi", this file is equivalent to:
+
+.. code-block:: json
+
+    {
+      "version": "1.0",
+      "projections": {
+        "a": {
+          "transforms": [
+            {"name": "includeByTag", "args": ["Hi", "${BAZ}"]}
+          ]
+        }
+      }
+    }
+
+
 .. _plugins:
 
 Plugins
