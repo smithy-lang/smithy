@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+description = "This module contains support for converting a Smithy model to OpenAPI."
+extra["displayName"] = "Smithy :: OpenAPI Conversion"
 extra["moduleName"] = "software.amazon.smithy.openapi"
 
 dependencies {

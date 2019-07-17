@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+description = "This module provides the implementation of MQTT binding traits for Smithy."
+extra["displayName"] = "Smithy :: MQTT Traits"
 extra["moduleName"] = "software.amazon.smithy.mqtt.traits"
 
 dependencies {

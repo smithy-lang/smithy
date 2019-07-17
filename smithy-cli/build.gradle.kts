@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+description = "This module implements the Smithy command line interface."
+extra["displayName"] = "Smithy :: CLI"
 extra["moduleName"] = "software.amazon.smithy.cli"
 
 plugins {

@@ -13,6 +13,9 @@
  * permissions and limitations under the License.
  */
 
+description = "This module provides support for customizable linters declared in the " +
+        "metadata section of a Smithy model."
+extra["displayName"] = "Smithy :: Linters"
 extra["moduleName"] = "software.amazon.smithy.linters"
 
 dependencies {

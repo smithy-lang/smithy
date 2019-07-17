@@ -13,6 +13,9 @@
  * permissions and limitations under the License.
  */
 
+description = "This module is a library used to validate Smithy models, create filtered " +
+        "projections of a model, and generate build artifacts."
+extra["displayName"] = "Smithy :: Build"
 extra["moduleName"] = "software.amazon.smithy.build"
 
 dependencies {
