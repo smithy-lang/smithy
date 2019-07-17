@@ -13,6 +13,6 @@
  * permissions and limitations under the License.
  */
 
-description = "Smithy :: Utilities"
-
+description = "This module contains utility classes and interfaces for Smithy."
+extra["displayName"] = "Smithy :: Utilities"
 extra["moduleName"] = "software.amazon.smithy.utils"

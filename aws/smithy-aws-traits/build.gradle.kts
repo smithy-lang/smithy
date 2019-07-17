@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+description = "This module provides Smithy traits and validators that are used by most AWS services."
+extra["displayName"] = "Smithy :: AWS Core Traits"
 extra["moduleName"] = "software.amazon.smithy.aws.traits"
 
 dependencies {

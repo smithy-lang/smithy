@@ -13,6 +13,9 @@
  * permissions and limitations under the License.
  */
 
+description = "This module detects differences between two Smithy models, identifying " +
+        "changes that are safe and changes that are backward incompatible."
+extra["displayName"] = "Smithy :: Diff"
 extra["moduleName"] = "software.amazon.smithy.diff"
 
 dependencies {

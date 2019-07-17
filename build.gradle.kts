@@ -16,9 +16,11 @@
 plugins {
     `java-library`
     `maven-publish`
+    signing
     checkstyle
     jacoco
     id("com.github.spotbugs") version "1.6.10"
+    id("io.codearte.nexus-staging") version "0.21.0"
 }
 
 // Set a global group ID and version on each project. This version might
@@ -26,11 +28,36 @@ plugins {
 // of band with the rest of the projects.
 allprojects {
     group = "software.amazon.smithy"
-    version = "0.7.0"
+    version = "0.7.1"
 }
 
 // The root project doesn't produce a JAR.
 tasks["jar"].enabled = false
+
+// Load the Sonatype user/password for use in publishing tasks.
+val sonatypeUser: String? by project
+val sonatypePassword: String? by project
+
+/*
+ * Sonatype Staging Finalization
+ * ====================================================
+ *
+ * When publishing to Maven Central, we need to close the staging
+ * repository and release the artifacts after they have been
+ * validated. This configuration is for the root project because
+ * it operates at the "group" level.
+ */
+if (sonatypeUser != null && sonatypePassword != null){
+    apply(plugin = "io.codearte.nexus-staging")
+
+    nexusStaging {
+        packageGroup = "software.amazon"
+        stagingProfileId = "e789115b6c941"
+
+        username = sonatypeUser
+        password = sonatypePassword
+    }
+}
 
 subprojects {
     val subproject = this
@@ -52,7 +79,7 @@ subprojects {
             targetCompatibility = JavaVersion.VERSION_1_8
         }
 
-        tasks.withType(JavaCompile::class) {
+        tasks.withType<JavaCompile> {
             options.encoding = "UTF-8"
         }
 
@@ -109,6 +136,7 @@ subprojects {
      */
     if (plugins.hasPlugin("java")) {
         apply(plugin = "maven-publish")
+        apply(plugin = "signing")
 
         repositories {
             mavenLocal()
@@ -118,6 +146,16 @@ subprojects {
         }
 
         publishing {
+            repositories {
+                mavenCentral {
+                    url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                    credentials {
+                        username = sonatypeUser
+                        password = sonatypePassword
+                    }
+                }
+            }
+
             publications {
                 create<MavenPublication>("mavenJava") {
                     from(components["java"])
@@ -125,7 +163,45 @@ subprojects {
                     // Ship the source and javadoc jars.
                     artifact(tasks["sourcesJar"])
                     artifact(tasks["javadocJar"])
+
+                    // Include extra information in the POMs.
+                    afterEvaluate {
+                        pom {
+                            name.set(subproject.extra["displayName"].toString())
+                            description.set(subproject.description)
+                            url.set("https://github.com/awslabs/smithy")
+                            licenses {
+                                license {
+                                    name.set("The Apache License, Version 2.0")
+                                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                                    distribution.set("repo")
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id.set("smithy")
+                                    name.set("Smithy")
+                                    organization.set("Amazon Web Services")
+                                    organizationUrl.set("https://aws.amazon.com")
+                                    roles.add("developer")
+                                }
+                            }
+                            scm {
+                                url.set("https://github.com/awslabs/smithy.git")
+                            }
+                        }
+                    }
                 }
+            }
+        }
+
+        // Don't sign the artifacts if we didn't get a key and password to use.
+        val signingKey: String? by project
+        val signingPassword: String? by project
+        if (signingKey != null && signingPassword != null) {
+            signing {
+                useInMemoryPgpKeys(signingKey, signingPassword)
+                sign(publishing.publications["mavenJava"])
             }
         }
     }
@@ -177,7 +253,7 @@ subprojects {
         tasks["spotbugsTest"].enabled = false
 
         // Configure the bug filter for spotbugs.
-        tasks.withType(com.github.spotbugs.SpotBugsTask::class) {
+        tasks.withType<com.github.spotbugs.SpotBugsTask> {
             effort = "max"
             excludeFilterConfig = project.resources.text.fromFile("${project.rootDir}/config/spotbugs/filter.xml")
         }

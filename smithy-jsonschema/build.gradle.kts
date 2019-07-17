@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+description = "This module contains support for converting a Smithy model to JSON Schema."
+extra["displayName"] = "Smithy :: JSON Schema Conversion"
 extra["moduleName"] = "software.amazon.smithy.jsonschema"
 
 dependencies {

@@ -13,6 +13,9 @@
  * permissions and limitations under the License.
  */
 
+description = "This package integrates the Freemarker template system with Smithy's " +
+        "code generation framework."
+extra["displayName"] = "Smithy :: Code Generation Freemarker Support"
 extra["moduleName"] = "software.amazon.smithy.codegen.freemarker"
 
 dependencies {

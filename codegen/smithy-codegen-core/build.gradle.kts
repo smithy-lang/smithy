@@ -13,6 +13,9 @@
  * permissions and limitations under the License.
  */
 
+description = "This module provides a code generation framework for generating clients, " +
+        "servers, documentation, and other artifacts for various languages from Smithy models."
+extra["displayName"] = "Smithy :: Code Generation Framework"
 extra["moduleName"] = "software.amazon.smithy.codegen.core"
 
 dependencies {

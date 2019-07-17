@@ -13,7 +13,9 @@
  * permissions and limitations under the License.
  */
 
-description = "Smithy :: Model"
+description = "This module provides the core implementation of loading, validating, " +
+        "traversing, mutating, and serializing a Smithy model."
+extra["displayName"] = "Smithy :: Model"
 extra["moduleName"] = "software.amazon.smithy.model"
 
 dependencies {
