@@ -39,7 +39,8 @@ public class RangeTraitTest {
         values.put(Node.from("min"), Node.from(1L));
         values.put(Node.from("max"), Node.from(10L));
         Node node = Node.objectNode(values);
-        Optional<Trait> trait = provider.createTrait("smithy.api#range", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#range"), ShapeId.from("ns.qux#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(RangeTrait.class));
@@ -59,7 +60,7 @@ public class RangeTraitTest {
         values.put(Node.from("min"), Node.from(1e0));
         values.put(Node.from("max"), Node.from(10e0));
         Node node = Node.objectNode(values);
-        Optional<Trait> trait = provider.createTrait("smithy.api#range", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(ShapeId.from("smithy.api#range"), ShapeId.from("ns.qux#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(RangeTrait.class));
@@ -77,7 +78,7 @@ public class RangeTraitTest {
         Assertions.assertThrows(SourceException.class, () -> {
             TraitFactory provider = TraitFactory.createServiceFactory();
             Map<StringNode, Node> values = new HashMap<>();
-            provider.createTrait("smithy.api#range", ShapeId.from("ns.qux#foo"), Node.objectNode(values));
+            provider.createTrait(ShapeId.from("smithy.api#range"), ShapeId.from("ns.qux#foo"), Node.objectNode(values));
         });
     }
 }

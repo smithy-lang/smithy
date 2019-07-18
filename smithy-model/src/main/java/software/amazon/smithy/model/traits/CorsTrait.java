@@ -32,13 +32,14 @@ import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<CorsTrait> {
-    public static final String NAME = "smithy.api#cors";
+    public static final ShapeId ID = ShapeId.from("smithy.api#cors");
+
     private static final String DEFAULT_ORIGIN = "*";
     private static final int DEFAULT_MAX_AGE = 600;
-    private static final String ORIGIN_MEMBER_NAME = "origin";
-    private static final String MAX_AGE_MEMBER_NAME = "maxAge";
-    private static final String ALLOWED_HEADERS_MEMBER_NAME = "additionalAllowedHeaders";
-    private static final String EXPOSED_HEADERS_MEMBER_NAME = "additionalExposedHeaders";
+    private static final String ORIGIN_MEMBER_ID = "origin";
+    private static final String MAX_AGE_MEMBER_ID = "maxAge";
+    private static final String ALLOWED_HEADERS_MEMBER_ID = "additionalAllowedHeaders";
+    private static final String EXPOSED_HEADERS_MEMBER_ID = "additionalExposedHeaders";
 
     private final String origin;
     private final int maxAge;
@@ -46,7 +47,7 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
     private final Set<String> additionalExposedHeaders;
 
     private CorsTrait(Builder builder) {
-        super(NAME, builder.sourceLocation);
+        super(ID, builder.sourceLocation);
         origin = builder.origin;
         maxAge = builder.maxAge;
         additionalAllowedHeaders = SetUtils.copyOf(builder.additionalAllowedHeaders);
@@ -82,16 +83,16 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
     @Override
     protected Node createNode() {
         return new ObjectNode(MapUtils.of(), getSourceLocation())
-                .withOptionalMember(ORIGIN_MEMBER_NAME, Optional.of(origin)
+                .withOptionalMember(ORIGIN_MEMBER_ID, Optional.of(origin)
                         .filter(val -> !val.equals(DEFAULT_ORIGIN))
                         .map(Node::from))
-                .withOptionalMember(MAX_AGE_MEMBER_NAME, Optional.of(maxAge)
+                .withOptionalMember(MAX_AGE_MEMBER_ID, Optional.of(maxAge)
                         .filter(val -> !val.equals(DEFAULT_MAX_AGE))
                         .map(Node::from))
-                .withOptionalMember(ALLOWED_HEADERS_MEMBER_NAME, Optional.of(additionalAllowedHeaders)
+                .withOptionalMember(ALLOWED_HEADERS_MEMBER_ID, Optional.of(additionalAllowedHeaders)
                         .filter(FunctionalUtils.not(Set::isEmpty))
                         .map(Node::fromStrings))
-                .withOptionalMember(EXPOSED_HEADERS_MEMBER_NAME, Optional.of(additionalExposedHeaders)
+                .withOptionalMember(EXPOSED_HEADERS_MEMBER_ID, Optional.of(additionalExposedHeaders)
                         .filter(FunctionalUtils.not(Set::isEmpty))
                         .map(Node::fromStrings));
     }
@@ -137,25 +138,25 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
 
     public static final class Provider implements TraitService {
         @Override
-        public String getTraitName() {
-            return NAME;
+        public ShapeId getShapeId() {
+            return ID;
         }
 
         @Override
         public CorsTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             ObjectNode node = value.expectObjectNode();
-            node.getStringMember(ORIGIN_MEMBER_NAME)
+            node.getStringMember(ORIGIN_MEMBER_ID)
                     .map(StringNode::getValue)
                     .ifPresent(builder::origin);
-            node.getNumberMember(MAX_AGE_MEMBER_NAME)
+            node.getNumberMember(MAX_AGE_MEMBER_ID)
                     .map(NumberNode::getValue)
                     .map(Number::intValue)
                     .ifPresent(builder::maxAge);
-            node.getArrayMember(ALLOWED_HEADERS_MEMBER_NAME)
+            node.getArrayMember(ALLOWED_HEADERS_MEMBER_ID)
                     .map(Provider::stringSetFromNode)
                     .ifPresent(builder::additionalAllowedHeaders);
-            node.getArrayMember(EXPOSED_HEADERS_MEMBER_NAME)
+            node.getArrayMember(EXPOSED_HEADERS_MEMBER_ID)
                     .map(Provider::stringSetFromNode)
                     .ifPresent(builder::additionalExposedHeaders);
             return builder.build();

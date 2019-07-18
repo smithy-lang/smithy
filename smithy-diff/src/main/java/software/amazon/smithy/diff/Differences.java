@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.Pair;
 
 /**
@@ -31,7 +30,6 @@ public final class Differences {
     private final Model oldModel;
     private final Model newModel;
     private final List<ChangedShape<Shape>> changedShapes = new ArrayList<>();
-    private final List<ChangedTraitDefinition> changedTraitDefinitions = new ArrayList<>();
     private final List<ChangedMetadata> changedMetadata = new ArrayList<>();
 
     private Differences(Model oldModel, Model newModel) {
@@ -39,7 +37,6 @@ public final class Differences {
         this.newModel = newModel;
         detectMetadataChanges(oldModel, newModel, this);
         detectShapeChanges(oldModel, newModel, this);
-        detectTraitDefinitionChanges(oldModel, newModel, this);
     }
 
     static Differences detect(Model oldModel, Model newModel) {
@@ -86,16 +83,6 @@ public final class Differences {
     }
 
     /**
-     * Gets all added trait definitions.
-     *
-     * @return Returns a stream of added trait definitions.
-     */
-    public Stream<TraitDefinition> addedTraitDefinitions() {
-        return newModel.getTraitDefinitions().stream()
-                .filter(definition -> !oldModel.getTraitDefinition(definition.getFullyQualifiedName()).isPresent());
-    }
-
-    /**
      * Gets all added metadata.
      *
      * <p>Each Pair returned contains the name of the metadata key on
@@ -128,16 +115,6 @@ public final class Differences {
      */
     public <T extends Shape> Stream<T> removedShapes(Class<T> shapeType) {
         return removedShapes().filter(shapeType::isInstance).map(shapeType::cast);
-    }
-
-    /**
-     * Gets all removed trait definitions.
-     *
-     * @return Returns a stream of removed trait definitions.
-     */
-    public Stream<TraitDefinition> removedTraitDefinitions() {
-        return oldModel.getTraitDefinitions().stream()
-                .filter(definition -> !newModel.getTraitDefinition(definition.getFullyQualifiedName()).isPresent());
     }
 
     /**
@@ -178,31 +155,12 @@ public final class Differences {
     }
 
     /**
-     * Gets a stream of all changed trait definitions.
-     *
-     * @return Returns the changed trait definitions.
-     */
-    public Stream<ChangedTraitDefinition> changedTraitDefinitions() {
-        return changedTraitDefinitions.stream();
-    }
-
-    /**
      * Gets a stream of all changed metadata.
      *
      * @return Returns the changed metadata.
      */
     public Stream<ChangedMetadata> changedMetadata() {
         return changedMetadata.stream();
-    }
-
-    private static void detectTraitDefinitionChanges(Model oldModel, Model newModel, Differences differences) {
-        oldModel.getTraitDefinitions().forEach(oldDef -> {
-            newModel.getTraitDefinition(oldDef.getFullyQualifiedName()).ifPresent(newDef -> {
-                if (!newDef.equals(oldDef)) {
-                    differences.changedTraitDefinitions.add(new ChangedTraitDefinition(oldDef, newDef));
-                }
-            });
-        });
     }
 
     private static void detectShapeChanges(Model oldModel, Model newModel, Differences differences) {

@@ -40,7 +40,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * API Gateway integration.
  */
 public final class IntegrationTrait extends AbstractTrait implements ToSmithyBuilder<IntegrationTrait> {
-    public static final String NAME = "aws.apigateway#integration";
+    public static final ShapeId ID = ShapeId.from("aws.apigateway#integration");
 
     private static final String SERVICE_NAME_LABEL = "{serviceName}";
     private static final String OPERATION_NAME_LABEL = "{operationName}";
@@ -80,7 +80,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     private final Map<String, IntegrationResponse> responses;
 
     private IntegrationTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(ID, builder.getSourceLocation());
         type = SmithyBuilder.requiredState(TYPE_KEY, builder.type);
         uri = SmithyBuilder.requiredState(URI_KEY, builder.uri);
         httpMethod = SmithyBuilder.requiredState(HTTP_METHOD_KEY, builder.httpMethod);
@@ -99,7 +99,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override

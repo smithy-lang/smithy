@@ -1,9 +1,7 @@
 namespace com.foo
 
-trait foo {
-  shape: String,
-  selector: "*"
-}
+@trait
+string foo
 
 // A null trait value cannot be coerced to a string.
 @foo

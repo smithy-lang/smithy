@@ -68,12 +68,12 @@ example sets the version to "|version|":
 
     .. code-tab:: smithy
 
-        $version: "0.2.0"
+        $version: "0.3.0"
 
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0"
+            "smithy": "0.3.0"
         }
 
 When no version number is specified in the IDL, an implementation will assume
@@ -128,7 +128,7 @@ statements start with ``metadata``, followed by the key to set, followed by
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "metadata": {
                 "foo": "baz",
                 "hello": "bar",
@@ -147,13 +147,13 @@ Top-level metadata key-value pair conflicts are resolved by
 Namespaces
 ==========
 
-Shapes and traits are defined inside a :dfn:`namespace`. A namespace is
-mechanism for logically grouping shapes in a way that makes them reusable
-alongside other models without naming conflicts.
+Shapes are defined inside a :dfn:`namespace`. A namespace is mechanism for
+logically grouping shapes in a way that makes them reusable alongside other
+models without naming conflicts.
 
 A :ref:`namespace statement <namespace-statement>` is used to change the
-*current namespace*. A namespace MUST be defined before a shape or trait
-definition can be defined. Any number of namespaces can appear in a model.
+*current namespace*. A namespace MUST be defined before a shape can be
+defined. Any number of namespaces can appear in a model.
 
 The following example defines a string shape named ``MyString`` in the
 ``smithy.example`` namespace and a string shape named ``MyString`` in the
@@ -172,7 +172,7 @@ The following example defines a string shape named ``MyString`` in the
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyString": {
@@ -198,9 +198,8 @@ Shapes
 
 *Shapes* are instances of *types* that describe the structure of an API.
 :ref:`Traits <traits>` can be applied to shapes to describe custom facets
-of the shape. Shapes are defined inside of :ref:`namespaces <namespaces>`.
-Shape definitions in the IDL always start with the type name of the shape
-followed by the name of the shape.
+of the shape. Shape definitions in the IDL always start with the type name
+of the shape followed by the name of the shape.
 
 
 .. _simple-types:
@@ -279,7 +278,7 @@ The following example defines a shape for each simple type in the
     .. code-tab:: json
 
         {
-          "smithy": "0.2.0",
+          "smithy": "0.3.0",
           "smithy.example": {
             "shapes": {
               "Blob": {
@@ -432,7 +431,7 @@ The following example defines a list with a string member from the
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyList": {
@@ -459,7 +458,7 @@ Traits can be applied to the list shape and its member:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyList": {
@@ -492,7 +491,7 @@ definition using an ``apply`` statement:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "traits": {
                     "MyList": {
@@ -529,7 +528,7 @@ The following example defines a set of strings:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "StringSet": {
@@ -559,7 +558,7 @@ Traits can be applied to the set shape and its members:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "StringSet": {
@@ -610,7 +609,7 @@ The following example defines a map of strings to integers:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "IntegerMap": {
@@ -648,7 +647,7 @@ Traits can be applied to the map shape and its members:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "IntegerMap": {
@@ -691,7 +690,7 @@ A member name maps to exactly one structure :ref:`member <member>` definition.
 
 A structure is defined using a :token:`structure_statement`. A structure
 statement is a map of structure :ref:`member` names to the shape targeted by
-the member. Any number of inline trait definitions can precede each member.
+the member. Any number of inline traits can precede each member.
 
 The following example defines a structure with two members:
 
@@ -707,7 +706,7 @@ The following example defines a structure with two members:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -745,7 +744,7 @@ using the ``apply`` statement:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -801,7 +800,7 @@ The following example defines a union shape with several members:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyUnion": {
@@ -836,15 +835,18 @@ member
 
 :dfn:`Members` are defined in :ref:`aggregate types <aggregate-types>` to
 reference other shapes using a :ref:`shape ID <shape-id>`. A member MUST NOT
-target an ``operation``, ``resource``, ``service``, or ``member`` shape.
+target an ``operation``, ``resource``, ``service``, ``member``, or
+:ref:`trait definition <trait-definition>`.
 
 The following example defines a list shape. The member of the list is a
-member shape with a shape ID of ``MyList$member``. The member targets
-the ``MyString`` shape in the same namespace.
+member shape with a shape ID of ``smithy.example#MyList$member``. The member
+targets the ``MyString`` shape in the same namespace.
 
 .. tabs::
 
     .. code-tab:: smithy
+
+        namespace smithy.example
 
         list MyList {
           member: MyString
@@ -853,7 +855,7 @@ the ``MyString`` shape in the same namespace.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyList": {
@@ -865,7 +867,7 @@ the ``MyString`` shape in the same namespace.
             }
         }
 
-Traits can be attached to members inline before the member definition:
+Traits can be attached to members before the member definition:
 
 .. tabs::
 
@@ -879,7 +881,7 @@ Traits can be attached to members inline before the member definition:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyList": {
@@ -906,7 +908,7 @@ applied to shapes outside of their definition in the JSON AST using the
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "traits": {
                     "MyList$member": {
@@ -1023,7 +1025,7 @@ that do not fit within a resource hierarchy.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyService": {
@@ -1069,7 +1071,7 @@ shape ID of a resource to the ``resources`` property of a service.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyService": {
@@ -1117,7 +1119,7 @@ can potentially return the ``NotFound`` or ``BadRequest``
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyOperation": {
@@ -1151,7 +1153,7 @@ named ``Input``:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyOperation": {
@@ -1175,7 +1177,7 @@ input and returns no output:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyOperation": {
@@ -1206,7 +1208,7 @@ structure named ``Output``:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyOperation": {
@@ -1241,7 +1243,7 @@ returns no output, and can potentially return the
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyOperation": {
@@ -1329,7 +1331,7 @@ single identifier named ``forecastId`` that targets the ``ForecastId`` shape:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "Forecast": {
@@ -1388,7 +1390,7 @@ For example, given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "ResourceA": {
@@ -1455,7 +1457,7 @@ define an ``identifiers`` property that is compatible with their parents:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "ResourceA": {
@@ -1559,7 +1561,7 @@ For example, given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "Forecast": {
@@ -1631,7 +1633,7 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "Forecast": {
@@ -1985,8 +1987,8 @@ See the :ref:`references-trait` for more information about references.
 Shape ID
 --------
 
-A :dfn:`shape ID` is used to refer to other shapes in the model. Shape IDs
-adhere to the following syntax:
+A :dfn:`shape ID` is used to refer to shapes and traits in the model.
+Shape IDs adhere to the following syntax:
 
 ::
 
@@ -2017,7 +2019,7 @@ Relative shape ID resolution
 
 In the Smithy IDL, relative shape IDs are resolved using the following process:
 
-#. If a :token:`use_shape_statement` has imported a shape with the same name,
+#. If a :token:`use_statement` has imported a shape with the same name,
    the shape ID resolves to the imported shape ID.
 #. If a shape is defined in the same namespace as the shape with the same name,
    the namespace of the shape resolves to the *current namespace*.
@@ -2035,7 +2037,7 @@ to.
 
     namespace smithy.example
 
-    use shape foo.baz#Bar
+    use foo.baz#Bar
 
     string MyString
 
@@ -2049,7 +2051,7 @@ to.
         b: smithy.example#MyString,
 
         // Resolves to foo.baz#Bar
-        // The "use shape foo.baz#Bar" statement imported the Bar symbol,
+        // The "use foo.baz#Bar" statement imported the Bar symbol,
         // allowing the shape to be referenced using a relative shape ID.
         c: Bar,
 
@@ -2093,7 +2095,7 @@ For example, given the following Smithy model:
 .. code-block:: json
 
     {
-        "smithy": "0.2.0",
+        "smithy": "0.3.0",
         "smithy.example": {
             "shapes": {
                 "MyStructure": {
@@ -2238,7 +2240,7 @@ following JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "0.2.0",
+        "smithy": "0.3.0",
         "metadata": {
             "MyString": "smithy.example#MyString"
         },
@@ -2268,7 +2270,7 @@ defined in the prelude are available inside of the ``smithy.api`` namespace.
     :caption: Smithy prelude
     :name: prelude-shapes
 
-    $version: "0.2.0"
+    $version: "0.3.0"
 
     namespace smithy.api
 
@@ -2329,6 +2331,8 @@ Traits
 *Traits* are model components that can be attached to :doc:`shapes <index>`
 to describe additional information about the shape; shapes provide the
 structure and layout of an API, while traits provide refinement and style.
+Traits are defined by applying the :ref:`trait definition <trait-definition>`
+trait to a shape.
 
 Trait names are case-sensitive; it is invalid, for example, to write the
 :ref:`documentation-trait` as "Documentation").
@@ -2343,13 +2347,35 @@ shape.
 The following example applies the ``sensitive`` and ``documentation`` trait
 to ``MyString``:
 
-.. code-block:: smithy
 
-    namespace smithy.example
+.. tabs::
 
-    @sensitive
-    @documentation("Contains a string")
-    string MyString
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @sensitive
+        @documentation("Contains a string")
+        string MyString
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "MyString": {
+                        "type": "string",
+                        "documentation": "Contains a string",
+                        "sensitive": true
+                    }
+                }
+            }
+        }
+
+The shape ID of a trait is *resolved* against :token:`use_statement`\s and the
+current namespace in exactly the same same way as
+:ref:`other shape IDs <relative-shape-id>`.
 
 Traits can be applied to shapes outside of a shape's definition using the
 ``apply`` statement. This can be useful for allowing different teams within
@@ -2361,12 +2387,28 @@ model that applies documentation traits to the shapes.
 The following example applies the :ref:`documentation-trait` and
 :ref:`length-trait` to the ``smithy.example#MyString`` shape:
 
-.. code-block:: smithy
+.. tabs::
 
-    namespace smithy.example
+    .. code-tab:: smithy
 
-    apply MyString @documentation("This is my string!")
-    apply MyString @length(min: 1, max: 10)
+        namespace smithy.example
+
+        apply MyString @documentation("This is my string!")
+        apply MyString @length(min: 1, max: 10)
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "traits": {
+                    "MyString": {
+                        "documentation": "This is my string!",
+                        "length": { "min": 1, "max": 10 }
+                    }
+                }
+            }
+        }
 
 
 .. _trait-values:
@@ -2374,49 +2416,17 @@ The following example applies the :ref:`documentation-trait` and
 Trait values
 ============
 
-The value provided for a trait depends on the trait is an annotation trait
-or a modeled trait.
-
-
-Annotation trait values
------------------------
-
-*Annotation traits* are traits that have no value and are either
-present or not present. Annotation trait values can be set to ``true``,
-``null``, and can be omitted in the IDL.
-
-For example, the :ref:`sensitive-trait` is an annotation trait:
-
-.. code-block:: smithy
-
-    @sensitive
-    string MyString
-
-This trait could also have been defined as ``@sensitive(true)`` or
-``@sensitive(null)``.
-
-
-Modeled trait values
---------------------
-
-Modeled traits are traits that define a ``shape`` in their :ref:`trait definition <trait-definition>`.
-
-Modeled trait values are defined in the IDL by enclosing the value in
-parenthesis. A trait that accepts a ``list``, ``map``, ``set``, or
-``structure`` with no required members does not require a value and can
-omit parenthesis. Omitting a trait value is the same as explicitly setting the
-trait to ``null``.
+The value that can be provided for a trait depends on its type. A value for a
+trait is defined in the IDL by enclosing the value in parenthesis.
 
 
 Structure, map, and union trait values
-``````````````````````````````````````
+--------------------------------------
 
-Traits that accept a ``structure``, ``union``, or ``map`` are defined using
+Traits that are a ``structure``, ``union``, or ``map`` are defined using
 a JSON-like object in the Smithy IDL or a JSON object in the
-:ref:`JSON AST <json-ast>`.
-
-The wrapping braces for the object MUST be omitted in the Smithy IDL.
-For example:
+:ref:`JSON AST <json-ast>`. The wrapping braces ({}) for the object MUST be
+omitted in the Smithy IDL. For example:
 
 .. code-block:: smithy
 
@@ -2434,131 +2444,138 @@ using the :ref:`node value <node-values>` productions:
         }
     )
 
-If the structure of ``structuredTrait`` has no required properties,
-the value can be omitted:
+Omitting a value is allowed on ``list``, ``set``, ``map``, and ``structure``
+traits if the shapes have no ``length`` constraints or ``required`` members.
 
-.. code-block:: smithy
 
-    @structuredTrait
+Annotation traits
+-----------------
 
-This is equivalent to setting the trait to ``null`` or ``true``:
+A structure trait with no members is called an *annotation trait*. The
+following example defines an annotation trait named ``foo``:
 
-.. code-block:: smithy
+.. tabs::
 
-    @structuredTrait(null)
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @trait
+        structure foo {}
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "foo": {
+                        "type": "structure",
+                        "trait": true
+                    }
+                }
+            }
+        }
+
+It's hard to predict what information a trait needs to capture when modeling
+a domain; a trait might start out as a simple annotation, but later might need
+additional information. Smithy explicitly supports this use case by allowing
+``null`` and ``true`` to be provided for traits that have a structure value.
+
+The following applications of the ``foo`` annotation trait are all equivalent:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @foo
+        string MyString1
+
+        @foo()
+        string MyString2
+
+        @foo(true)
+        string MyString3
+
+        @foo(null)
+        string MyString4
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "MyString1": {
+                        "type": "string",
+                        "foo": null
+                    },
+                    "MyString2": {
+                        "type": "string",
+                        "foo": {}
+                    },
+                    "MyString3": {
+                        "type": "string",
+                        "foo": true
+                    },
+                    "MyString4": {
+                        "type": "string",
+                        "foo": null
+                    }
+                }
+            }
+        }
+
+A member can be safely added to an annotation trait structure if the member is
+not marked as required. The applications of the ``foo`` trait in the previous
+example and the following example are all valid even after adding a member to the
+``foo`` trait:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @trait
+        structure foo {
+            baz: String,
+        }
+
+        @foo(baz: "bar")
+        string MyString5
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "foo": {
+                        "type": "structure",
+                        "trait": true,
+                        "members": {
+                            "baz": {"target": "String"}
+                        }
+                    },
+                    "MyString5": {
+                        "type": "string",
+                        "foo": {
+                            "baz": "bar"
+                        }
+                    }
+                }
+            }
+        }
 
 
 Other trait values
-``````````````````
+------------------
 
 All other trait values MUST adhere to the JSON type mappings defined
 in :ref:`trait-definition-values` table.
-
-
-Trait value coercion
-````````````````````
-
-It's hard to predict what information a trait needs to capture when modeling
-a domain; a trait might start out as an annotation trait but later might need
-to capture additional information. Smithy explicitly supports this use case by
-allowing both ``null`` and ``true`` to be provided for traits that have a
-structure value.
-
-For example, consider the following valid annotation trait definition
-and usage:
-
-.. code-block:: smithy
-
-    trait foo {
-      selector: "*"
-    }
-
-    @foo
-    string MyString1
-
-    @foo(true)
-    string MyString2
-
-    @foo(null)
-    string MyString3
-
-An annotation trait can later be updated to use a structure shape that has
-no required members without breaking existing uses of the trait. The
-applications of the ``foo`` trait in the previous example and the following
-example are all valid even after changing the shape of the ``foo`` trait:
-
-.. code-block:: smithy
-
-    trait foo {
-      selector: "*",
-      shape: FooTrait,
-    }
-
-    structure FooTrait {
-      baz: String,
-    }
-
-    @foo(baz: "bar")
-    string MyString4
-
-
-.. _trait-name-resolution:
-
-Trait name resolution
-=====================
-
-When a trait is added to a shape, the trait is *resolved* against a namespace.
-If the trait name includes a namespace, no resolution is necessary. For
-example, the following definition unambiguously references a trait named
-``hello`` in the ``foo.baz`` namespace:
-
-.. code-block:: smithy
-
-    @foo.baz#hello("test")
-    string MyString
-
-If the trait name does not contain a namespace, trait resolution occurs.
-If a trait names matches the name of a trait that was imported into the
-current namespace using a :token:`use_trait_statement`, then the trait
-resolves to the fully-qualified trait name of the imported trait.
-
-.. code-block:: smithy
-
-    namespace smithy.example
-
-    use trait smithy.other#hello
-
-    @hello("test") // resolves to smithy.other#hello
-    string MyString
-
-If the trait name matches a trait defined in the *current namespace*, then
-that trait is resolved as the trait to apply to the shape. For example, the
-following definition applies a trait using a relative trait name in the current
-namespace:
-
-.. code-block:: smithy
-
-    namespace smithy.example
-
-    trait hello {
-      selector: "*",
-    }
-
-    @hello("test") // Resolves to smithy.example#hello
-    string MyString
-
-If no trait can be found by name in a use statement or in the current
-namespace, then the trait is assumed to be one of the built-in traits
-defined inside of the ``smithy.api`` namespace. The following definition
-applies the sensitive trait without specifying the ``smithy.api`` namespace
-in the trait name:
-
-.. code-block:: smithy
-
-    namespace smithy.example
-
-    @sensitive
-    string MyString
 
 
 .. _trait-conflict-resolution:
@@ -2568,10 +2585,10 @@ Trait conflict resolution
 
 Trait conflict resolution is used when the same trait is applied multiple
 times to a shape. Duplicate traits applied to shapes are allowed if, and only
-if, both trait values are arrays or both values are exactly equal. If both
-values are arrays, then the traits are concatenated into a single array. If
-both values are equal, then the conflict is ignored. All other instances of
-trait collisions are prohibited.
+if, the trait is a ``list`` or ``set`` shape or if both values are exactly
+equal. If both values target ``list`` or ``set`` shapes, then the traits are
+concatenated into a single trait value. If both values are equal, then the
+conflict is ignored. All other instances of trait collisions are prohibited.
 
 The following model definition is **invalid** because the ``length`` trait is
 duplicated on the ``MyList`` shape with different values:
@@ -2602,7 +2619,7 @@ duplicated on the ``MyList`` shape with the same values:
     apply MyList @length(min: 0, max: 10)
 
 The following model definition is **valid** because the ``tags`` trait is
-uses a :ref:`list` shape:
+a :ref:`list` shape:
 
 .. code-block:: smithy
 
@@ -2621,36 +2638,84 @@ uses a :ref:`list` shape:
 Trait definitions
 =================
 
-All Smithy traits are defined in the model using a trait definition.
-Custom traits can be used in a model to extend Smithy beyond its built-in
-capabilities. Traits MUST be declared before they can be used.
+A *trait definition* defines a trait for use in a model. Custom traits can be
+used in a model to extend Smithy beyond its built-in capabilities. All traits
+applied to a shape MUST have a valid trait definition.
 
-Traits are defined inside of a namespace using a
-:ref:`trait statement <trait-statement>`. The following example
-defines a trait named ``myTraitName`` in the ``smithy.example`` namespace:
+Traits are a specialization of shapes. Traits are defined inside of a
+namespace by applying the ``trait`` definition trait to a shape. Trait
+definitions can only be applied to simple types, ``list``, ``map``, ``set``,
+``structure``, and ``union`` shapes.
 
-.. code-block:: smithy
+The following example defines a trait named ``myTraitName`` in the
+``smithy.example`` namespace:
 
-    namespace smithy.example
+.. tabs::
 
-    trait myTraitName {
-      selector: "*",
-    }
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @trait(selector: "*")
+        structure myTraitName {}
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "myTraitName": {
+                        "type": "structure",
+                        "trait": {
+                            "selector": "*"
+                        }
+                    }
+                }
+            }
+        }
+
+.. tip::
+
+    By convention, trait shape names SHOULD use a lowercase name so that they
+    visually stand out from normal shapes.
 
 After a trait is defined, it can be applied to any shape that matches its
 selector. The following example applies the ``myTraitName`` trait to the
-``MyString`` shape using a trait name that is relative to the current
+``MyString`` shape using a trait shape ID that is relative to the current
 namespace:
 
-.. code-block:: smithy
+.. tabs::
 
-    namespace smithy.example
+    .. code-tab:: smithy
 
-    @myTraitName
-    string MyString
+        namespace smithy.example
 
-Built-in traits are all defined in the Smithy :ref:`prelude <prelude>`
-and are automatically available in every Smithy model.
+        @myTraitName
+        string MyString
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "MyString": {
+                        "type": "string",
+                        "myTraitName": true
+                    }
+                }
+            }
+        }
+
+Built-in traits are defined in the Smithy :ref:`prelude <prelude>` and are
+automatically available in every Smithy model through relative shape IDs.
+
+.. important::
+
+    The only valid reference to a trait definition is through applying the
+    trait to a shape. Members and references within a model MUST NOT refer
+    to trait shapes.
 
 
 .. _trait-definition-properties:
@@ -2658,7 +2723,7 @@ and are automatically available in every Smithy model.
 Trait definition properties
 ---------------------------
 
-Trait definitions are objects that accept the following key-value pairs:
+The trait definition trait is an object that supports the following properties:
 
 .. list-table::
     :header-rows: 1
@@ -2674,90 +2739,101 @@ Trait definitions are objects that accept the following key-value pairs:
         means that the trait can be applied to a :ref:`list` or :ref:`map`
         shape. This value defaults to ``*`` if not set, meaning the trait can
         be applied to any shape.
-    * - shape
-      - :ref:`shape-id`
-      - A shape ID that describes the format of the trait.
-        :ref:`Values <trait-definition-values>` provided for the trait MUST
-        be compatible with the referenced shape.
-
-        If not defined, the trait is considered an *annotation trait*, meaning
-        the trait has no value.
     * - conflicts
       - [string]
-      - Defines traits that MUST NOT be applied to the same shape as the trait
-        being defined. This allows traits to be defined as mutually exclusive.
-        Each string value is the name of a trait (for example,
-        ``smithy.example#foo``). The conflicts list does not support relative
-        trait references to other traits defined in the same namespace; traits
-        with no namespace are assumed to refer to shapes defined in
-        ``smithy.api``. Each value MAY reference unknown traits that are not
-        defined in the model.
+      - Defines the shape IDs of traits that MUST NOT be applied to the same
+        shape as the trait being defined. This allows traits to be defined as
+        mutually exclusive. Relative shape IDs that are not resolved in the IDL
+        while parsing are assumed to refer to traits defined in the prelude
+        namespace, ``smithy.api``. Conflict shape IDs MAY reference unknown
+        trait definitions that are not defined in the model.
     * - structurallyExclusive
       - boolean
       - Requires that only a single member of a structure can be marked with
         the trait.
-    * - documentation
-      - string
-      - Defines documentation about the trait in the CommonMark_ format.
-    * - externalDocumentation
-      - string
-      - A valid URL that defines more information about the trait.
-    * - tags
-      - [string]
-      - Attaches a list of tags to the trait definition that allow the trait
-        definition and all instances of the trait definition to be categorized
-        and grouped. For example, these tags can be used filter certain traits
-        from appearing in different representations of a Smithy model.
-    * - deprecated
-      - boolean
-      - Indicates that a trait is deprecated and should no longer be used.
-    * - deprecationReason
-      - string
-      - Text that explains why the trait is marked as deprecated.
-        ``deprecationReason`` can only be set if ``deprecated`` is set to
-        ``true``.
 
 The following example defines two custom traits: ``beta`` and
 ``structuredTrait``:
 
-.. code-block:: smithy
+.. tabs::
 
-    namespace smithy.example
+    .. code-tab:: smithy
 
-    // Define an annotation that can be applied to a structure member.
-    trait beta {
-      selector: "member:of(structure)",
-    }
+        namespace smithy.example
 
-    // Define a trait that has a shape.
-    trait structuredTrait {
-      selector: "string",
-      shape: StructuredTraitShape,
-      conflicts: ["smithy.example#beta"],
-    }
+        /// A trait that can be applied to a member.
+        @trait(selector: "member:of(structure)")
+        structure beta {}
 
-    // The shape of the "structuredTrait".
-    structure StructuredTraitShape {
-      @required
-      lorem: StringShape,
-      @required
-      ipsum: StringShape,
-      dolor: StringShape,
-    }
+        /// A trait that has members.
+        @trait(selector: "string", conflicts: [beta])
+        structure structuredTrait {
+            @required
+            lorem: StringShape,
 
-    // Apply the "beta" trait to the "foo" member.
-    structure MyShape {
-      @required
-      @beta
-      foo: StringShape,
-    }
+            @required
+            ipsum: StringShape,
 
-    // Apply the structuredTrait to the string.
-    @structuredTrait(
-      lorem: "This is a custom trait!",
-      ipsum: "lorem and ipsum are both required values."
-    )
-    string StringShape
+            dolor: StringShape,
+        }
+
+        // Apply the "beta" trait to the "foo" member.
+        structure MyShape {
+            @required
+            @beta
+            foo: StringShape,
+        }
+
+        // Apply the structuredTrait to the string.
+        @structuredTrait(
+            lorem: "This is a custom trait!",
+            ipsum: "lorem and ipsum are both required values.")
+        string StringShape
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "traits": {
+                    "beta": {
+                        "type": "structure",
+                        "trait": {"selector": "member:of(structure)"},
+                        "documentation": "A trait that can be applied to a member."
+                    },
+                    "structuredTrait": {
+                        "type": "structure",
+                        "trait": {
+                            "selector": "string",
+                            "conflicts": ["smithy.example#beta"]
+                        },
+                        "members": {
+                            "lorem": {"target": "StringShape", "required": true},
+                            "lorem": {"target": "StringShape", "required": true},
+                            "dolor": {"target": "StringShape"}
+                        },
+                        "documentation": "A trait that has members."
+                    },
+                    "MyShape": {
+                        "type": "structure",
+                        "members": {
+                            "beta": {
+                                "target": "StringShape",
+                                "required": true,
+                                "beta": true
+                            }
+                        }
+                    },
+                    "StringShape": {
+                        "type": "string",
+                        "structuredTrait": {
+                            "lorem": "This is a custom trait!",
+                            "ipsum": "lorem and ipsum are both required values."
+                        }
+                    }
+                }
+            }
+        }
 
 
 .. _trait-definition-values:
@@ -2843,19 +2919,6 @@ Trait values MUST be compatible with any constraint traits found related to the
 shape being validated.
 
 
-.. _trait-selector:
-
-Trait selector
---------------
-
-A *trait selector* is a :ref:`selector <selectors>` used to define where in the
-model it is acceptable for the trait to be applied. Built-in traits listed in
-the Smithy specification define where they can be applied using the same syntax
-that is used when defining the valid targets of
-:ref:`trait definitions <trait-definition>`.
-
-
-
 Scope of member traits
 ======================
 
@@ -2908,7 +2971,7 @@ is wrapped in an `Option type`_.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "BoxedInteger": {
@@ -2965,7 +3028,7 @@ The ``deprecated`` trait is an object that supports the following properties:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "SomeString": {
@@ -2998,6 +3061,8 @@ Trait selector
 Value type
     ``string`` that MUST be set to "client" or "server" to indicate if the
     client or server is at fault for the error.
+Conflicts with
+    :ref:`trait definition <trait-definition>`
 
 The following structure defines a throttling error.
 
@@ -3159,7 +3224,7 @@ The following example defines an enum of valid string values for ``MyString``.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyString": {
@@ -3249,27 +3314,18 @@ contain a valid shape ID that targets an integer shape in the model.
 
         namespace smithy.example
 
-        trait integerRef {
-          selector: "*",
-          shape: IntegerRefTraitValue,
-        }
-
+        @trait
         @idRef(failWhenMissing: true, selector: "integer")
         string IntegerRefTraitValue
 
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
-                "traitDefs": {
-                    "integerRef": {
-                        "selector": "*",
-                        "shape": "IntegerRefTraitValue"
-                    }
-                },
                 "shapes": {
-                    "IntegerRefTraitValue": {
+                    "integerRef": {
+                        "trait": true,
                         "type": "string",
                         "idRef": {
                             "failWhenMissing": true,
@@ -3308,7 +3364,7 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "InvalidShape1": {
@@ -3402,7 +3458,7 @@ blob         The size of the blob in bytes
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyString": {
@@ -3447,7 +3503,7 @@ languages.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyString": {
@@ -3525,7 +3581,7 @@ of the targeted numeric shape to which it is applied.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyInt": {
@@ -3574,7 +3630,7 @@ in a response.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -3617,7 +3673,7 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyList": {
@@ -3878,7 +3934,7 @@ explicitly on the operation.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "GetFoos": {
@@ -3954,7 +4010,7 @@ settings from a service.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "Example": {
@@ -4360,7 +4416,7 @@ The following example defines a service that supports both the
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "WeatherService": {
@@ -4478,7 +4534,7 @@ The following example defines two operations:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "AuthenticatedService": {
@@ -4534,7 +4590,7 @@ protocols can define different authentication schemes for each protocol.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "AuthenticatedService": {
@@ -4599,7 +4655,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -4771,7 +4827,7 @@ For example, given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "Foo": {
@@ -4886,12 +4942,9 @@ These values use the same semantics and format as
 -------------------------------
 
 Summary
-    Links a service or operation to a URL that contains additional
-    documentation.
+    Provides a link to external documentation for a shape.
 Trait selector
-    ``:test(service, operation)``
-
-    *Any service or operation*
+    ``*``
 Value type
     ``string`` value containing a valid URL.
 
@@ -5064,7 +5117,7 @@ The following example defines an operation that uses a custom endpoint:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "GetStatus": {
@@ -5122,7 +5175,7 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "GetStatus": {
@@ -5182,7 +5235,7 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "GetStatus": {
@@ -5236,7 +5289,7 @@ invalid because the ``{foo}`` and ``{bar}`` labels are adjacent:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "GetStatus": {
@@ -5298,7 +5351,7 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "GetStatus": {
@@ -5379,7 +5432,7 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "GetStatus": {

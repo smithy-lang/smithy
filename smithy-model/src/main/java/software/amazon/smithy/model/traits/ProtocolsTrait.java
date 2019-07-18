@@ -34,20 +34,21 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Defines the protocols supported by a service.
  */
 public final class ProtocolsTrait extends AbstractTrait implements ToSmithyBuilder<ProtocolsTrait> {
-    public static final String NAME = "smithy.api#protocols";
+    public static final ShapeId ID = ShapeId.from("smithy.api#protocols");
+
     public static final String NONE_AUTH = "none";
     private static final List<String> PROPERTIES = ListUtils.of("name", "auth", "tags");
 
     private final List<Protocol> protocols;
 
     private ProtocolsTrait(Builder builder) {
-        super(NAME, builder.sourceLocation);
+        super(ID, builder.sourceLocation);
         this.protocols = ListUtils.copyOf(builder.protocols);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override

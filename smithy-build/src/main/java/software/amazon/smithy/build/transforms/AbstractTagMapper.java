@@ -21,15 +21,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import software.amazon.smithy.build.ProjectionTransformer;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TagsTrait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
-// TODO: remove tags from authentication and protocols.
+// TODO: remove tags from protocols.
 abstract class AbstractTagMapper implements ProjectionTransformer {
     private final boolean exclude;
 
@@ -40,7 +38,7 @@ abstract class AbstractTagMapper implements ProjectionTransformer {
     @Override
     public BiFunction<ModelTransformer, Model, Model> createTransformer(List<String> arguments) {
         Set<String> tags = new HashSet<>(arguments);
-        return (transformer, model) -> removeTraitDefTags(removeShapeTags(transformer, model, tags), tags);
+        return (transformer, model) -> removeShapeTags(transformer, model, tags);
     }
 
     private Model removeShapeTags(ModelTransformer transformer, Model model, Set<String> tags) {
@@ -51,28 +49,6 @@ abstract class AbstractTagMapper implements ProjectionTransformer {
                     return Shape.shapeToBuilder(shape).addTrait(builder.build()).build();
                 })
                 .orElse(shape));
-    }
-
-    private Model removeTraitDefTags(Model model, Set<String> tags) {
-        Set<TraitDefinition> definitions = model.getTraitDefinitions().stream()
-                .map(definition -> intersectIfChanged(definition.getTags(), tags)
-                        .map(intersection -> {
-                            TraitDefinition.Builder builder = definition.toBuilder();
-                            builder.clearTags();
-                            intersection.forEach(builder::addTag);
-                            return builder.build();
-                        })
-                        .orElse(definition))
-                .collect(Collectors.toSet());
-
-        if (definitions.equals(model.getTraitDefinitions())) {
-            return model;
-        }
-
-        Model.Builder builder = model.toBuilder();
-        builder.clearTraitDefinitions();
-        definitions.forEach(builder::addTraitDefinition);
-        return builder.build();
     }
 
     private Optional<Set<String>> intersectIfChanged(Collection<String> subject, Collection<String> other) {

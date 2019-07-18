@@ -1,5 +1,5 @@
 {
-  "smithy": "0.2.0",
+  "smithy": "0.3.0",
   "com.example": {
     "shapes": {
       "A": {
@@ -126,12 +126,10 @@
       "U": {
         "type": "string",
         "documentation": "This is a\nstring defined on multiple lines.\nIt can span\n\ngreat\nmany\nlines."
-      }
-    },
-    "traitDefs": {
+      },
       "numeric": {
-        "selector": "*",
-        "shape": "smithy.api#Integer"
+        "type": "integer",
+        "trait": true
       }
     }
   }

@@ -31,7 +31,8 @@ public class MediaTypeTraitTest {
     public void loadsTrait() {
         Node node = Node.from("application/json");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("smithy.api#mediaType", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#mediaType"), ShapeId.from("ns.qux#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(MediaTypeTrait.class));

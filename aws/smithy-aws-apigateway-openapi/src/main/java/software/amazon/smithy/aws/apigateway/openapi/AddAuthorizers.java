@@ -18,7 +18,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import software.amazon.smithy.aws.traits.apigateway.Authorizer;
+import software.amazon.smithy.aws.traits.apigateway.AuthorizerDefinition;
 import software.amazon.smithy.aws.traits.apigateway.AuthorizerIndex;
 import software.amazon.smithy.aws.traits.apigateway.AuthorizerTrait;
 import software.amazon.smithy.aws.traits.apigateway.AuthorizersTrait;
@@ -90,10 +90,10 @@ final class AddAuthorizers implements OpenApiMapper {
         OpenApi.Builder builder = openApi.toBuilder();
         ComponentsObject.Builder components = openApi.getComponents().toBuilder();
 
-        for (Map.Entry<String, Authorizer> entry : trait.getAllAuthorizers().entrySet()) {
+        for (Map.Entry<String, AuthorizerDefinition> entry : trait.getAllAuthorizers().entrySet()) {
             String scheme = entry.getValue().getScheme();
             for (SecuritySchemeConverter converter : context.getSecuritySchemeConverters()) {
-                Authorizer authorizer = entry.getValue();
+                AuthorizerDefinition authorizer = entry.getValue();
                 if (converter.getAuthSchemeName().equals(scheme)) {
                     SecurityScheme createdScheme = converter.createSecurityScheme(context);
                     SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();

@@ -19,7 +19,7 @@ Smithy models SHOULD resemble the following example:
 
 .. code-block:: smithy
 
-    $version: "0.2.0"
+    $version: "0.3.0"
 
     metadata validators = []
     metadata suppressions = []
@@ -33,10 +33,8 @@ Smithy models SHOULD resemble the following example:
     apply AnotherShape @documentation("Documentation")
 
     // Example of creating custom traits.
-    trait myTrait {
-      selector: "string",
-      booleanTrait: true
-    }
+    @trait(selector: "string")
+    structure myTrait {}
 
 
 File encoding
@@ -112,6 +110,22 @@ Member names
 ------------
 
 Member names use a strict form of lowerCamelCase (e.g., "xmlRequest", "fooId").
+
+
+Trait names
+-----------
+
+By convention, traits use lowerCamelCase (e.g., "xmlRequest", "fooId").
+
+.. code-block:: smithy
+
+    namespace smithy.example.namespace
+
+    /// This is the documentation about the trait.
+    ///
+    /// This is more documentation.
+    @trait(selector: "string")
+    structure myTrait {}
 
 
 Abbreviations

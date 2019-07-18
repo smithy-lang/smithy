@@ -49,11 +49,13 @@ public class InvalidSmithyModelLoaderRunnerTest {
                     .unwrap();
             throw new IllegalStateException("Expected a parse error for " + file);
         } catch (RuntimeException e) {
-            if (!e.getMessage().contains(expectedError)) {
+            String actualMessage = e.getMessage().replace("\n", "\\n");
+            String expectedMessage = expectedError.replace("\n", "\\n");
+            if (!actualMessage.contains(expectedMessage)) {
                 new SmithyModelLexer(file, contents).forEachRemaining(System.out::println);
                 throw new IllegalStateException(
                         String.format("Expected a different parse error for %s.\nExpected (%s)\nFound (%s)",
-                                      file, expectedError, e.getMessage()),
+                                      file, expectedMessage, actualMessage),
                         e);
             }
         }

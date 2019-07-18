@@ -16,7 +16,6 @@
 package software.amazon.smithy.build.plugins;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.model.Model;
@@ -27,7 +26,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
@@ -74,8 +73,10 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
                         .map(ValidationEvent::toNode)
                         .collect(ArrayNode.collect()))
                 .withMember("traitNames", findTraitNames(context.getModel()))
-                .withMember("traitDefNames", context.getModel().getTraitDefinitions().stream()
-                        .map(TraitDefinition::getFullyQualifiedName)
+                .withMember("traitDefNames", context.getModel().getTraitShapes().stream()
+                        .map(Shape::getId)
+                        .map(ShapeId::toString)
+                        .sorted()
                         .map(Node::from)
                         .collect(ArrayNode.collect()))
                 .withMember("serviceShapeIds", findShapeIds(context.getModel(), ServiceShape.class))
@@ -89,8 +90,9 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
     private static Node findTraitNames(Model model) {
         return model.getShapeIndex().shapes()
                 .flatMap(shape -> shape.getAllTraits().keySet().stream())
-                .collect(Collectors.toSet())
-                .stream()
+                .map(ShapeId::toString)
+                .distinct()
+                .sorted()
                 .map(Node::from)
                 .collect(ArrayNode.collect());
     }
@@ -99,6 +101,7 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
         return model.getShapeIndex().shapes(clazz)
                 .map(Shape::getId)
                 .map(Object::toString)
+                .sorted()
                 .map(Node::from)
                 .collect(ArrayNode.collect());
     }

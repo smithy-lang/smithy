@@ -17,15 +17,16 @@ package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Indicates that a structure can be used as an error.
  */
 public final class ErrorTrait extends StringTrait {
-    public static final String NAME = "smithy.api#error";
+    public static final ShapeId ID = ShapeId.from("smithy.api#error");
 
     public ErrorTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
 
         if (!isClientError() && !isServerError()) {
             throw new SourceException(String.format(
@@ -39,7 +40,7 @@ public final class ErrorTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<ErrorTrait> {
         public Provider() {
-            super(NAME, ErrorTrait::new);
+            super(ID, ErrorTrait::new);
         }
     }
 

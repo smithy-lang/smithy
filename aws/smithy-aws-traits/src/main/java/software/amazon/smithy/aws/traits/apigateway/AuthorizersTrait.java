@@ -44,25 +44,25 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html">API Gateway Authorizers</a>
  */
 public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBuilder<AuthorizersTrait> {
-    public static final String NAME = "aws.apigateway#authorizers";
+    public static final ShapeId ID = ShapeId.from("aws.apigateway#authorizers");
 
-    private final Map<String, Authorizer> authorizers;
+    private final Map<String, AuthorizerDefinition> authorizers;
 
     private AuthorizersTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(ID, builder.getSourceLocation());
         authorizers = MapUtils.copyOf(builder.authorizers);
     }
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             value.expectObjectNode().getMembers().forEach((key, node) -> {
-                Authorizer authorizer = Authorizer.fromNode(node.expectObjectNode());
+                AuthorizerDefinition authorizer = AuthorizerDefinition.fromNode(node.expectObjectNode());
                 builder.putAuthorizer(key.getValue(), authorizer);
             });
             return builder.build();
@@ -84,7 +84,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
      * @param name Name of the authorizer to get.
      * @return Returns the optionally found authorizer.
      */
-    public Optional<Authorizer> getAuthorizer(String name) {
+    public Optional<AuthorizerDefinition> getAuthorizer(String name) {
         return Optional.ofNullable(authorizers.get(name));
     }
 
@@ -93,7 +93,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
      *
      * @return Returns the authorizers.
      */
-    public Map<String, Authorizer> getAllAuthorizers() {
+    public Map<String, AuthorizerDefinition> getAllAuthorizers() {
         return authorizers;
     }
 
@@ -113,7 +113,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
      * Builds an {@link AuthorizersTrait}.
      */
     public static final class Builder extends AbstractTraitBuilder<AuthorizersTrait, Builder> {
-        private final Map<String, Authorizer> authorizers = new HashMap<>();
+        private final Map<String, AuthorizerDefinition> authorizers = new HashMap<>();
 
         @Override
         public AuthorizersTrait build() {
@@ -127,7 +127,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
          * @param authorizer Authorizer definition.
          * @return Returns the builder.
          */
-        public Builder putAuthorizer(String name, Authorizer authorizer) {
+        public Builder putAuthorizer(String name, AuthorizerDefinition authorizer) {
             authorizers.put(name, Objects.requireNonNull(authorizer));
             return this;
         }
@@ -138,7 +138,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
          * @param authorizers Map of authorizer names to their definitions.
          * @return Returns the builder.
          */
-        public Builder authorizers(Map<String, Authorizer> authorizers) {
+        public Builder authorizers(Map<String, AuthorizerDefinition> authorizers) {
             clearAuthorizers();
             authorizers.forEach(this::putAuthorizer);
             return this;

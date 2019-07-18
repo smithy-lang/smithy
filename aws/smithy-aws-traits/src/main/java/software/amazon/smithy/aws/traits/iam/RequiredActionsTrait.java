@@ -18,14 +18,15 @@ package software.amazon.smithy.aws.traits.iam;
 import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class RequiredActionsTrait extends StringListTrait implements ToSmithyBuilder<RequiredActionsTrait> {
-    public static final String NAME = "aws.iam#requiredActions";
+    public static final ShapeId ID = ShapeId.from("aws.iam#requiredActions");
 
     public RequiredActionsTrait(List<String> actions, FromSourceLocation sourceLocation) {
-        super(NAME, actions, sourceLocation);
+        super(ID, actions, sourceLocation);
     }
 
     public RequiredActionsTrait(List<String> actions) {
@@ -34,7 +35,7 @@ public final class RequiredActionsTrait extends StringListTrait implements ToSmi
 
     public static final class Provider extends StringListTrait.Provider<RequiredActionsTrait> {
         public Provider() {
-            super(NAME, RequiredActionsTrait::new);
+            super(ID, RequiredActionsTrait::new);
         }
     }
 

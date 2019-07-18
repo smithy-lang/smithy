@@ -36,12 +36,10 @@ class SmithyLexer(RegexLexer):
             (r'errors', Name.Decorator),
             (r'^(\$version)(:)(.+)', bygroups(Keyword.Declaration, Name.Decorator, Name.Class)),
             (r'^(namespace)(\s+' + identifier + r')\b', bygroups(Keyword.Declaration, Name.Class)),
-            (r'^(byte|short|integer|long|float|'
+            (r'^(use|byte|short|integer|long|float|'
              r'document|double|bigInteger|bigDecimal|boolean|blob|string|timestamp)(\s+' + identifier + r')\b',
              bygroups(Keyword.Declaration, Name.Class)),
             (r'^(apply|list|map|set|structure|union|resource|operation|service|trait)(\s+' + identifier + r')',
-             bygroups(Keyword.Declaration, Name.Class)),
-            (r'^(use shape|use trait)(\s+' + identifier + r')',
              bygroups(Keyword.Declaration, Name.Class)),
             (r'^(metadata)(\s+.+)\s*(=)',
              bygroups(Keyword.Declaration, Name.Class, Name.Decorator)),

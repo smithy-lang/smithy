@@ -33,12 +33,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Constrains string values to one of the predefined enum constants.
  */
 public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrait> {
-    public static final String NAME = "smithy.api#enum";
+    public static final ShapeId ID = ShapeId.from("smithy.api#enum");
 
     private final Map<String, EnumConstantBody> constants;
 
     private EnumTrait(Builder builder) {
-        super(NAME, builder.sourceLocation);
+        super(ID, builder.sourceLocation);
         this.constants = Collections.unmodifiableMap(new LinkedHashMap<>(builder.constants));
         if (constants.isEmpty()) {
             throw new SourceException("enum must have at least one entry", getSourceLocation());
@@ -115,8 +115,8 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
 
     public static final class Provider implements TraitService {
         @Override
-        public String getTraitName() {
-            return NAME;
+        public ShapeId getShapeId() {
+            return ID;
         }
 
         @Override

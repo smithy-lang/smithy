@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 import software.amazon.smithy.build.ProjectionTransformer;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
 /**
@@ -53,19 +52,16 @@ public final class RemoveUnusedShapes implements ProjectionTransformer {
     public BiFunction<ModelTransformer, Model, Model> createTransformer(List<String> arguments) {
         Set<String> includeTags = new HashSet<>(arguments);
         Predicate<Shape> keepShapesByTag = shape -> includeTags.stream().noneMatch(shape::hasTag);
-        Predicate<TraitDefinition> keepTraitDefsByTag = traitDef -> includeTags.stream().noneMatch(traitDef::hasTag);
+        Predicate<Shape> keepTraitDefsByTag = trait -> includeTags.stream().noneMatch(trait::hasTag);
+
         return (transformer, model) -> {
             int currentShapeCount;
-            int currentTraitDefCount;
 
             do {
                 currentShapeCount = model.getShapeIndex().toSet().size();
-                currentTraitDefCount = model.getTraitDefinitions().size();
-
                 model = transformer.removeUnreferencedShapes(model, keepShapesByTag);
                 model = transformer.removeUnreferencedTraitDefinitions(model, keepTraitDefsByTag);
-            } while (currentShapeCount != model.getShapeIndex().toSet().size()
-                    || currentTraitDefCount != model.getTraitDefinitions().size());
+            } while (currentShapeCount != model.getShapeIndex().toSet().size());
 
             return model;
         };

@@ -23,10 +23,13 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import software.amazon.smithy.build.ProjectionTransformer;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
 /**
  * Removes shapes if they are tagged with one or more of the given arguments.
+ *
+ * <p>Prelude shapes are not removed by this transformer.
  */
 public final class ExcludeShapesByTag implements ProjectionTransformer {
     @Override
@@ -43,6 +46,7 @@ public final class ExcludeShapesByTag implements ProjectionTransformer {
     public BiFunction<ModelTransformer, Model, Model> createTransformer(List<String> arguments) {
         Set<String> includeTags = new HashSet<>(arguments);
         return (transformer, model) -> transformer.filterShapes(
-                model, shape -> shape.getTags().stream().noneMatch(includeTags::contains));
+                model, shape -> Prelude.isPreludeShape(shape)
+                                || shape.getTags().stream().noneMatch(includeTags::contains));
     }
 }

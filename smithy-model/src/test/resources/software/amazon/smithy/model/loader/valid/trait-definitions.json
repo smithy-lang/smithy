@@ -1,5 +1,5 @@
 {
-  "smithy": "0.2.0",
+  "smithy": "0.3.0",
   "example.namespace": {
     "shapes": {
       "MyString1": {
@@ -20,17 +20,20 @@
       "MyString4": {
         "type": "string",
         "numeric": 10
-      }
-    },
-    "traitDefs": {
-      "customTrait": {},
+      },
+      "customTrait": {
+        "type": "structure",
+        "trait": true
+      },
       "documentation": {
-        "selector": "*",
-        "shape": "smithy.api#String"
+        "type": "string",
+        "trait": {
+          "selector": "*"
+        }
       },
       "numeric": {
-        "selector": "*",
-        "shape": "Integer"
+        "type": "integer",
+        "trait": {}
       }
     }
   }

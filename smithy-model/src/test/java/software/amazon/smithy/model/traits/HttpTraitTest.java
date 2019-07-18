@@ -34,7 +34,8 @@ public class HttpTraitTest {
                 .withMember("method", Node.from("PUT"))
                 .withMember("uri", Node.from("/foo.baz"))
                 .withMember("code", Node.from(200));
-        Optional<Trait> trait = provider.createTrait("smithy.api#http", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#http"), ShapeId.from("ns.qux#foo"), node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(HttpTrait.class));
         HttpTrait http = (HttpTrait) trait.get();

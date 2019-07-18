@@ -39,7 +39,8 @@ public class ExamplesTraitTest {
                         .withMember("input", Node.objectNode().withMember("a", Node.from("b")))
                         .withMember("output", Node.objectNode().withMember("c", Node.from("d"))));
 
-        Optional<Trait> trait = provider.createTrait("smithy.api#examples", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#examples"), ShapeId.from("ns.qux#foo"), node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(ExamplesTrait.class));
         ExamplesTrait examples = (ExamplesTrait) trait.get();

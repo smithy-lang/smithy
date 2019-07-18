@@ -15,25 +15,27 @@
 
 package software.amazon.smithy.model;
 
-import static java.util.function.Function.identity;
-
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -50,12 +52,13 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class Model implements ToSmithyBuilder<Model> {
     /** Specifies the highest supported version of the IDL. */
-    public static final String MODEL_VERSION = "0.2.0";
+    public static final String MODEL_VERSION = "0.3.0";
 
     private final Map<String, Node> metadata;
     private final ShapeIndex shapeIndex;
-    private final Map<String, TraitDefinition> traitDefinitions;
     private final String smithyVersion;
+
+    private volatile Map<Shape, TraitDefinition> traitDefinitions;
 
     /** Cache of computed {@link KnowledgeIndex} instances. */
     private final Map<Class<? extends KnowledgeIndex>, KnowledgeIndex> blackboard = new ConcurrentHashMap<>();
@@ -67,8 +70,6 @@ public final class Model implements ToSmithyBuilder<Model> {
         smithyVersion = builder.smithyVersion;
         shapeIndex = builder.shapeIndex != null ? builder.shapeIndex : ShapeIndex.builder().build();
         metadata = builder.metadata.isEmpty() ? MapUtils.of() : MapUtils.copyOf(builder.metadata);
-        traitDefinitions = builder.traitDefinitions.isEmpty() ? MapUtils.of() : builder.traitDefinitions.stream()
-                .collect(MapUtils.toUnmodifiableMap(TraitDefinition::getFullyQualifiedName, identity()));
     }
 
     /**
@@ -141,21 +142,46 @@ public final class Model implements ToSmithyBuilder<Model> {
     }
 
     /**
+     * Returns are trait shapes in the model as a map of {@code Shape}
+     * objects to their {@link TraitDefinition} traits.
+     *
      * @return Returns all trait definitions in the model.
      */
-    public Set<TraitDefinition> getTraitDefinitions() {
-        return new HashSet<>(traitDefinitions.values());
+    public Map<Shape, TraitDefinition> getTraitDefinitions() {
+        if (traitDefinitions == null) {
+            traitDefinitions = Collections.unmodifiableMap(shapeIndex.shapes()
+                    .flatMap(shape -> Trait.flatMapStream(shape, TraitDefinition.class))
+                    .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
+        }
+
+        return traitDefinitions;
     }
 
     /**
-     * Get a trait definition by fully qualified name.
+     * Gets the trait definition of a specific trait shape ID.
      *
-     * @param traitName Trait definition name to retrieve.
-     * @return Returns the optionally found definition.
+     * @param traitId ID of the shape to get the trait definition of.
+     * @return Returns the optionally found trait definition.
      */
-    public Optional<TraitDefinition> getTraitDefinition(String traitName) {
-        String resolved = Trait.makeAbsoluteName(traitName);
-        return Optional.ofNullable(traitDefinitions.get(resolved));
+    public Optional<TraitDefinition> getTraitDefinition(ToShapeId traitId) {
+        return shapeIndex.getShape(traitId.toShapeId()).flatMap(shape -> shape.getTrait(TraitDefinition.class));
+    }
+
+    /**
+     * Gets the trait definition of a specific trait shape ID.
+     *
+     * @param traitId ID of the shape to get the trait definition of.
+     * @return Returns the optionally found trait definition.
+     */
+    public Optional<TraitDefinition> getTraitDefinition(String traitId) {
+        return getTraitDefinition(ShapeId.from(Trait.makeAbsoluteName(traitId)));
+    }
+
+    /**
+     * @return Returns all trait definition shapes in the model.
+     */
+    public Collection<Shape> getTraitShapes() {
+        return getTraitDefinitions().keySet();
     }
 
     @Override
@@ -169,7 +195,6 @@ public final class Model implements ToSmithyBuilder<Model> {
         Model otherModel = (Model) other;
         return getSmithyVersion().equals(otherModel.getSmithyVersion())
                && getMetadata().equals(otherModel.getMetadata())
-               && getTraitDefinitions().equals(otherModel.getTraitDefinitions())
                && getShapeIndex().equals(otherModel.getShapeIndex());
     }
 
@@ -177,7 +202,7 @@ public final class Model implements ToSmithyBuilder<Model> {
     public int hashCode() {
         int result = hash;
         if (result == 0) {
-            result = Objects.hash(getSmithyVersion(), getMetadata(), getTraitDefinitions(), getShapeIndex());
+            result = Objects.hash(getSmithyVersion(), getMetadata(), getShapeIndex());
             hash = result;
         }
         return result;
@@ -185,12 +210,10 @@ public final class Model implements ToSmithyBuilder<Model> {
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder()
+        return builder()
                 .smithyVersion(smithyVersion)
                 .metadata(getMetadata())
                 .shapeIndex(getShapeIndex());
-        traitDefinitions.values().forEach(builder::addTraitDefinition);
-        return builder;
     }
 
     /**
@@ -235,7 +258,6 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     public static final class Builder implements SmithyBuilder<Model> {
         private Map<String, Node> metadata = new HashMap<>();
-        private Set<TraitDefinition> traitDefinitions = new HashSet<>();
         private String smithyVersion = MODEL_VERSION;
         private ShapeIndex shapeIndex;
 
@@ -264,21 +286,6 @@ public final class Model implements ToSmithyBuilder<Model> {
 
         public Builder shapeIndex(ShapeIndex shapeIndex) {
             this.shapeIndex = Objects.requireNonNull(shapeIndex);
-            return this;
-        }
-
-        public Builder addTraitDefinition(TraitDefinition traitDefinition) {
-            traitDefinitions.add(Objects.requireNonNull(traitDefinition));
-            return this;
-        }
-
-        public Builder addTraitDefinitions(Collection<TraitDefinition> traitDefinitions) {
-            this.traitDefinitions.addAll(traitDefinitions);
-            return this;
-        }
-
-        public Builder clearTraitDefinitions() {
-            traitDefinitions.clear();
             return this;
         }
 

@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * A general-purpose trait used to represent traits that are defined in the
@@ -25,8 +26,8 @@ public class DynamicTrait extends AbstractTrait {
 
     private final Node value;
 
-    public DynamicTrait(String name, Node value) {
-        super(name, value);
+    public DynamicTrait(ShapeId id, Node value) {
+        super(id, value);
         this.value = value;
     }
 

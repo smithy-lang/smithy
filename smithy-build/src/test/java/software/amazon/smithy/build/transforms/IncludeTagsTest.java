@@ -26,7 +26,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.TagsTrait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
 public class IncludeTagsTest {
@@ -51,29 +50,5 @@ public class IncludeTagsTest {
         assertThat(result.getShapeIndex().getShape(shape1.getId()).get().getTags(), contains("foo"));
         assertThat(result.getShapeIndex().getShape(shape2.getId()).get(), equalTo(shape2));
         assertThat(result.getShapeIndex().getShape(shape3.getId()).get(), equalTo(shape3));
-    }
-
-    @Test
-    public void removesTagsFromTraitDefsNotInList() {
-        TraitDefinition foo = TraitDefinition.builder()
-                .name("ns#foo")
-                .addTag("foo")
-                .addTag("baz")
-                .build();
-        TraitDefinition baz = TraitDefinition.builder().name("ns#baz").addTag("foo").build();
-        TraitDefinition yuck = TraitDefinition.builder().name("ns#yuck").build();
-        Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder().build())
-                .addTraitDefinition(foo)
-                .addTraitDefinition(baz)
-                .addTraitDefinition(yuck)
-                .build();
-        Model result = new IncludeTags()
-                .createTransformer(Collections.singletonList("foo"))
-                .apply(ModelTransformer.create(), model);
-
-        assertThat(result.getTraitDefinition(foo.getFullyQualifiedName()).get().getTags(), contains("foo"));
-        assertThat(result.getTraitDefinition(baz.getFullyQualifiedName()).get(), equalTo(baz));
-        assertThat(result.getTraitDefinition(yuck.getFullyQualifiedName()).get(), equalTo(yuck));
     }
 }

@@ -16,12 +16,13 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 public class CollectionTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#collection";
+    public static final ShapeId ID = ShapeId.from("smithy.api#collection");
 
     public CollectionTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public CollectionTrait() {
@@ -30,7 +31,7 @@ public class CollectionTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<CollectionTrait> {
         public Provider() {
-            super(NAME, CollectionTrait::new);
+            super(ID, CollectionTrait::new);
         }
     }
 }

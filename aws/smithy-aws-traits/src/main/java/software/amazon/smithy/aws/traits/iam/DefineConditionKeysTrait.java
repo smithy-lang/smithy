@@ -33,12 +33,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Defines condition keys used in a service.
  */
 public final class DefineConditionKeysTrait extends AbstractTrait implements ToSmithyBuilder<DefineConditionKeysTrait> {
-    public static final String NAME = "aws.iam#defineConditionKeys";
+    public static final ShapeId ID = ShapeId.from("aws.iam#defineConditionKeys");
 
     private final Map<String, ConditionKeyDefinition> conditionKeys;
 
     private DefineConditionKeysTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(ID, builder.getSourceLocation());
         conditionKeys = MapUtils.copyOf(builder.conditionKeys);
     }
 
@@ -48,7 +48,7 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override

@@ -16,36 +16,22 @@
 package software.amazon.smithy.model.neighbor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.contains;
 
-import java.util.Collections;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 public class UnreferencedTraitDefinitionsTest {
-
-    private static Model model;
-
-    @BeforeAll
-    public static void before() {
-        model = Model.assembler()
+    @Test
+    public void shouldReportDefinitionsForTraitsThatAreNotUsed() {
+        Model model = Model.assembler()
                 .addImport(UnreferencedTraitDefinitionsTest.class.getResource("unreferenced-test.json"))
                 .assemble()
                 .unwrap();
-    }
-
-    @AfterAll
-    public static void after() {
-        model = null;
-    }
-
-    @Test
-    public void shouldReportDefinitionsForTraitsThatAreNotUsed() {
         UnreferencedTraitDefinitions unreferencedTraitDefinitions = new UnreferencedTraitDefinitions();
 
         assertThat(unreferencedTraitDefinitions.compute(model),
-                equalTo(model.getTraitDefinition("ns.foo#quux").map(Collections::singleton).get()));
+                contains(model.getShapeIndex().getShape(ShapeId.from("ns.foo#quux")).get()));
     }
 }

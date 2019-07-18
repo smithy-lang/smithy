@@ -1,36 +1,7 @@
 {
-    "smithy": "0.2.0",
+    "smithy": "0.3.0",
     "ns.foo": {
         "shapes": {
-            "IdRefTrait1": {
-                "type": "string",
-                "private": true,
-                "idRef": {
-                    "selector": "string",
-                    "failWhenMissing": true
-                }
-            },
-            "IdRefTrait2": {
-                "type": "string",
-                "private": true,
-                "idRef": {
-                }
-            },
-            "IdRefTrait3": {
-                "type": "string",
-                "private": true,
-                "idRef": {
-                    "selector": "number"
-                }
-            },
-            "IdRefTrait4": {
-                "type": "string",
-                "private": true,
-                "idRef": {
-                    "selector": "number",
-                    "errorMessage": "Custom error message"
-                }
-            },
             "Invalid1": {
                 "type": "string",
                 "ns.foo#usesIdRef": "invalid-shape-id!"
@@ -72,24 +43,27 @@
             },
             "SomeNumber": {
                 "type": "integer"
-            }
-        },
-        "traitDefs": {
+            },
+
             "usesIdRef": {
-                "selector": "string",
-                "shape": "IdRefTrait1"
+                "type": "string",
+                "idRef": {"selector": "string", "failWhenMissing": true},
+                "trait": {"selector": "string"}
             },
             "grammarOnly": {
-                "selector": "string",
-                "shape": "IdRefTrait2"
+                "type": "string",
+                "idRef": {},
+                "trait": {"selector": "string"}
             },
             "allowsMissing": {
-                "selector": "string",
-                "shape": "IdRefTrait3"
+                "type": "string",
+                "idRef": {"selector": "number"},
+                "trait": {"selector": "string"}
             },
             "customErrorMessage": {
-                "selector": "string",
-                "shape": "IdRefTrait4"
+                "type": "string",
+                "idRef": {"selector": "number", "errorMessage": "Custom error message"},
+                "trait": {"selector": "string"}
             }
         }
     }

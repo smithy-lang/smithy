@@ -30,7 +30,8 @@ public class TitleTraitTest {
     public void loadsTraitWithString() {
         Node node = Node.from("Title");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("smithy.api#title", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#title"), ShapeId.from("ns.qux#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(TitleTrait.class));

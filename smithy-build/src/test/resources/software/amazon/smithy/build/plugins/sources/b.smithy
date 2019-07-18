@@ -4,6 +4,5 @@ namespace smithy.example
 
 string BString
 
-trait Btrait {
-    selector: "*"
-}
+@trait
+structure Btrait {}

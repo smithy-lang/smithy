@@ -1,5 +1,5 @@
 {
-  "smithy": "0.2.0",
+  "smithy": "0.3.0",
   "foo.alpha": {
     "shapes": {
       "MyString1": {
@@ -17,11 +17,10 @@
       "MyString4": {
         "type": "string",
         "foo.gamma#hello": true
-      }
-    },
-    "traitDefs": {
+      },
       "hello": {
-        "selector": "*"
+        "type": "structure",
+        "trait": {"selector": "*"}
       }
     }
   },
@@ -42,11 +41,12 @@
       "MyString4": {
         "type": "string",
         "foo.gamma#hello": true
-      }
-    },
-    "traitDefs": {
+      },
       "hello": {
-        "selector": "*"
+        "type": "structure",
+        "trait": {
+          "selector": "*"
+        }
       }
     }
   },
@@ -67,11 +67,10 @@
       "MyString4": {
         "type": "string",
         "foo.gamma#hello": true
-      }
-    },
-    "traitDefs": {
+      },
       "hello": {
-        "selector": "*"
+        "type": "structure",
+        "trait": {"selector": "*"}
       }
     }
   }

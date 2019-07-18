@@ -16,16 +16,17 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Binds an operation input member to a named identifier of the resource to
  * which the operation is bound.
  */
 public final class ResourceIdentifierTrait extends StringTrait {
-    public static final String NAME = "smithy.api#resourceIdentifier";
+    public static final ShapeId ID = ShapeId.from("smithy.api#resourceIdentifier");
 
     public ResourceIdentifierTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
     }
 
     public ResourceIdentifierTrait(String value) {
@@ -34,7 +35,7 @@ public final class ResourceIdentifierTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<ResourceIdentifierTrait> {
         public Provider() {
-            super(NAME, ResourceIdentifierTrait::new);
+            super(ID, ResourceIdentifierTrait::new);
         }
     }
 }

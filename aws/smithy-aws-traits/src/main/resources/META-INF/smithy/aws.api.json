@@ -1,41 +1,11 @@
 {
-  "smithy": "0.2.0",
+  "smithy": "0.3.0",
   "aws.api": {
-    "traitDefs": {
-      "arn": {
-        "selector": "resource",
-        "shape": "aws.api#ArnTrait",
-        "externalDocumentation": "https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html",
-        "documentation": "Specifies an ARN template for the resource."
-      },
-      "service": {
-        "selector": "service",
-        "shape": "aws.api#AwsServiceTrait"
-      },
-      "arnReference": {
-        "selector": "string",
-        "shape": "aws.api#ArnReferenceTrait",
-        "documentation": "Marks a string as containing an ARN."
-      },
-      "unsignedPayload": {
-        "selector": "operation",
-        "shape": "aws.api#StringList",
-        "documentation": "Indicates that the request payload of a signed request is not to be used as part of the signature. Providing a list of strings will limit the effect of this trait to only specific authentication schemes by name."
-      },
-      "data": {
-        "selector": ":test(simpleType, collection, structure, union, member)",
-        "shape": "aws.api#DataLevel",
-        "documentation": "Designates the target as containing data of a known classification level."
-      },
-      "cognitoUserPoolsSettings": {
-        "selector": "service",
-        "shape": "aws.api#CognitoUserPoolsSettingsTrait",
-        "documentation": "Configures an Amazon Cognito User Pools auth scheme.",
-        "tags": ["internal"]
-      }
-    },
     "shapes": {
-      "ArnTrait": {
+      "arn": {
+        "trait": {
+          "selector": "resource"
+        },
         "type": "structure",
         "members": {
           "template": {
@@ -52,9 +22,13 @@
             "target": "smithy.api#Boolean"
           }
         },
-        "private": true
+        "externalDocumentation": "https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html",
+        "documentation": "Specifies an ARN template for the resource."
       },
-      "AwsServiceTrait": {
+      "service": {
+        "trait": {
+          "selector": "service"
+        },
         "type": "structure",
         "members": {
           "sdkId": {
@@ -70,20 +44,12 @@
           "cloudTrailEventSource": {
             "target": "smithy.api#String"
           }
+        }
+      },
+      "arnReference": {
+        "trait": {
+          "selector": "string"
         },
-        "private": true
-      },
-      "ArnNamespace": {
-        "type": "string",
-        "pattern": "^[a-z0-9.\\-]{1,63}$",
-        "private": true
-      },
-      "CloudFormationName": {
-        "type": "string",
-        "pattern": "^[A-Z][A-Za-z0-9]+$",
-        "private": true
-      },
-      "ArnReferenceTrait": {
         "type": "structure",
         "members": {
           "type": {
@@ -96,11 +62,23 @@
             "target": "smithy.api#String"
           }
         },
-        "private": true
+        "documentation": "Marks a string as containing an ARN."
       },
-      "DataLevel": {
+      "unsignedPayload": {
+        "trait": {
+          "selector": "operation"
+        },
+        "type": "list",
+        "member": {
+          "target": "smithy.api#String"
+        },
+        "documentation": "Indicates that the request payload of a signed request is not to be used as part of the signature. Providing a list of strings will limit the effect of this trait to only specific authentication schemes by name."
+      },
+      "data": {
+        "trait": {
+          "selector": ":test(simpleType, collection, structure, union, member)"
+        },
         "type": "string",
-        "private": true,
         "enum": {
           "content": {
             "name": "CUSTOMER_CONTENT",
@@ -121,22 +99,37 @@
             "name": "PERMISSIONS_DATA",
             "documentation": "Designates security and access roles, rules, usage policies, and permissions."
           }
-        }
+        },
+        "documentation": "Designates the target as containing data of a known classification level."
       },
-      "StringList": {
-        "type": "list",
-        "member": {
-          "target": "smithy.api#String"
-        }
-      },
-      "CognitoUserPoolsSettingsTrait": {
+      "cognitoUserPoolsSettings": {
+        "trait": {
+          "selector": "service"
+        },
         "type": "structure",
-        "private": true,
         "members": {
           "providerArns": {
             "required": true,
             "target": "StringList"
           }
+        },
+        "documentation": "Configures an Amazon Cognito User Pools auth scheme.",
+        "tags": ["internal"]
+      },
+      "ArnNamespace": {
+        "type": "string",
+        "pattern": "^[a-z0-9.\\-]{1,63}$",
+        "private": true
+      },
+      "CloudFormationName": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Za-z0-9]+$",
+        "private": true
+      },
+      "StringList": {
+        "type": "list",
+        "member": {
+          "target": "smithy.api#String"
         }
       }
     }

@@ -16,15 +16,16 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Indicates that a shape is boxed, meaning a value may or may not be present.
  */
 public final class BoxTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#box";
+    public static final ShapeId ID = ShapeId.from("smithy.api#box");
 
     public BoxTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public BoxTrait() {
@@ -33,7 +34,7 @@ public final class BoxTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<BoxTrait> {
         public Provider() {
-            super(NAME, BoxTrait::new);
+            super(ID, BoxTrait::new);
         }
     }
 }

@@ -16,16 +16,17 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Defines an operation input member that is used to prevent
  * replayed requests.
  */
 public final class IdempotencyTokenTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#idempotencyToken";
+    public static final ShapeId ID = ShapeId.from("smithy.api#idempotencyToken");
 
     public IdempotencyTokenTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public IdempotencyTokenTrait() {
@@ -34,7 +35,7 @@ public final class IdempotencyTokenTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<IdempotencyTokenTrait> {
         public Provider() {
-            super(NAME, IdempotencyTokenTrait::new);
+            super(ID, IdempotencyTokenTrait::new);
         }
     }
 }

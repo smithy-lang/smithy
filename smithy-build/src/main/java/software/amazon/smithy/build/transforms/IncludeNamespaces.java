@@ -21,12 +21,14 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import software.amazon.smithy.build.ProjectionTransformer;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
 /**
- * Filters out shapes that are not part of one of the given namespaces.
+ * Filters out shapes and trait definitions that are not part of one of the
+ * given namespaces.
  *
- * <p>Note that this does not filter out traits based on namespaces.
+ * <p>Note that this does not filter out prelude shapes or namespaces.
  */
 public final class IncludeNamespaces implements ProjectionTransformer {
     @Override
@@ -38,6 +40,7 @@ public final class IncludeNamespaces implements ProjectionTransformer {
     public BiFunction<ModelTransformer, Model, Model> createTransformer(List<String> arguments) {
         Set<String> includeNamespaces = new HashSet<>(arguments);
         return (transformer, model) -> transformer.filterShapes(
-                model, shape -> includeNamespaces.contains(shape.getId().getNamespace()));
+                model, shape -> Prelude.isPreludeShape(shape)
+                                || includeNamespaces.contains(shape.getId().getNamespace()));
     }
 }

@@ -19,15 +19,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Provides a link to external documentation of a service or operation.
  */
 public final class ExternalDocumentationTrait extends StringTrait {
-    public static final String NAME = "smithy.api#externalDocumentation";
+    public static final ShapeId ID = ShapeId.from("smithy.api#externalDocumentation");
 
     public ExternalDocumentationTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
         validateUrl(value, sourceLocation);
     }
 
@@ -37,7 +38,7 @@ public final class ExternalDocumentationTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<ExternalDocumentationTrait> {
         public Provider() {
-            super(NAME, ExternalDocumentationTrait::new);
+            super(ID, ExternalDocumentationTrait::new);
         }
     }
 

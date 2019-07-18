@@ -1,1 +1,0 @@
-[ERROR] -: Invalid trait name `invalid-name`. Trait names must adhere to the identifier grammar: ^[a-zA-Z_][a-zA-Z0-9_]*$ | Model

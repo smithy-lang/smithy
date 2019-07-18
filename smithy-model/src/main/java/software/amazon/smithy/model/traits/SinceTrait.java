@@ -16,15 +16,16 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Defines when a shape or member was added to the model.
  */
 public final class SinceTrait extends StringTrait {
-    public static final String NAME = "smithy.api#since";
+    public static final ShapeId ID = ShapeId.from("smithy.api#since");
 
     public SinceTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
     }
 
     public SinceTrait(String value) {
@@ -33,7 +34,7 @@ public final class SinceTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<SinceTrait> {
         public Provider() {
-            super(NAME, SinceTrait::new);
+            super(ID, SinceTrait::new);
         }
     }
 }

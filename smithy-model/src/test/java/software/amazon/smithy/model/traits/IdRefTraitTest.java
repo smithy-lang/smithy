@@ -35,7 +35,8 @@ public class IdRefTraitTest {
                 .withMember("selector", Node.from("integer"))
                 .withMember("failWhenMissing", Node.from(true))
                 .withMember("errorMessage", Node.from("foo"));
-        Optional<Trait> trait = provider.createTrait("smithy.api#idRef", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#idRef"), ShapeId.from("ns.qux#foo"), node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(IdRefTrait.class));
         IdRefTrait idRef = (IdRefTrait) trait.get();
@@ -45,7 +46,7 @@ public class IdRefTraitTest {
         assertThat(idRef.failWhenMissing(), is(true));
         assertThat(idRef.toBuilder().build(), equalTo(idRef));
         Trait duplicateTrait = provider.createTrait(
-                "smithy.api#idRef", ShapeId.from("ns.qux#foo"), idRef.toNode()).get();
+                ShapeId.from("smithy.api#idRef"), ShapeId.from("ns.qux#foo"), idRef.toNode()).get();
         assertThat(duplicateTrait, equalTo(idRef));
     }
 }

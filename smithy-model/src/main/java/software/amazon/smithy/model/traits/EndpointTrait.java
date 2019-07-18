@@ -34,12 +34,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Defines custom endpoint bindings of an operation.
  */
 public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilder<EndpointTrait> {
-    public static final String NAME = "smithy.api#endpoint";
+    public static final ShapeId ID = ShapeId.from("smithy.api#endpoint");
 
     private final Pattern hostPrefix;
 
     private EndpointTrait(Builder builder) {
-        super(NAME, builder.sourceLocation);
+        super(ID, builder.sourceLocation);
         String hostPrefix = Objects.requireNonNull(builder.hostPrefix, "hostPrefix not set");
 
         StringTokenizer tokenizer = new StringTokenizer(hostPrefix, "{}", true);
@@ -76,7 +76,7 @@ public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilde
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override

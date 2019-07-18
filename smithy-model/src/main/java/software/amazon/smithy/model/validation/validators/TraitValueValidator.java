@@ -18,19 +18,16 @@ package software.amazon.smithy.model.validation.validators;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
-import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
-import software.amazon.smithy.utils.Triple;
 
 /**
  * Validates that trait values are valid for their trait definitions.
@@ -45,48 +42,27 @@ public final class TraitValueValidator implements Validator {
                 .shapes()
                 // Get pairs of <Shape, Trait>
                 .flatMap(shape -> shape.getAllTraits().values().stream().map(t -> Pair.of(shape, t)))
-                // Get a triple of Shape, Trait, TraitDefinition.
-                .flatMap(pair -> OptionalUtils.stream(model.getTraitDefinition(pair.getRight().getTraitName())
-                        .map(traitDefinition -> Triple.fromPair(pair, traitDefinition))))
-                .flatMap(triple -> validateTrait(model.getShapeIndex(), triple.left, triple.middle, triple.right)
-                        .stream())
+                .flatMap(pair -> validateTrait(model.getShapeIndex(), pair.left, pair.right).stream())
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationEvent> validateTrait(
-            ShapeIndex index,
-            Shape targetShape,
-            Trait trait,
-            TraitDefinition definition
-    ) {
-        if (definition.isAnnotationTrait()) {
-            if (trait.toNode().isBooleanNode() && trait.toNode().expectBooleanNode().getValue()) {
-                return ListUtils.of();
-            }
+    private List<ValidationEvent> validateTrait(ShapeIndex index, Shape targetShape, Trait trait) {
+        ShapeId shape = trait.toShapeId();
 
-            return ListUtils.of(ValidationEvent.builder()
-                    .severity(Severity.ERROR)
-                    .eventId(NAME)
-                    .sourceLocation(trait)
-                    .shapeId(targetShape.getId())
-                    .message("Value provided for boolean trait `%s` can only be set to true. "
-                             + "Found %s", Trait.getIdiomaticTraitName(trait.getTraitName()), trait.toNode().getType())
-                    .build());
-        }
-
-        ShapeId shape = definition.getShape().get();
         if (!index.getShape(shape).isPresent()) {
-            // This is validated in TraitDefinitionShapeValidator.
+            // Punt; invalid ID targets are validated in TraitDefinitionShapeValidator.
             return ListUtils.of();
         }
 
-        Shape schema = index.getShape(definition.getShape().get()).get();
+        Shape schema = index.getShape(shape).get();
+        Node coerced = Trait.coerceTraitValue(trait.toNode(), schema.getType());
+
         NodeValidationVisitor cases = NodeValidationVisitor.builder()
                 .index(index)
-                .value(trait.toNode())
+                .value(coerced)
                 .eventShapeId(targetShape.getId())
                 .eventId(NAME)
-                .startingContext("Error validating trait `" + Trait.getIdiomaticTraitName(trait.getTraitName()) + "`")
+                .startingContext("Error validating trait `" + Trait.getIdiomaticTraitName(trait) + "`")
                 .build();
 
         return schema.accept(cases);

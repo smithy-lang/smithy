@@ -20,16 +20,18 @@ import java.util.regex.PatternSyntaxException;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Restricts string values to a specified regular expression.
  */
 public final class PatternTrait extends StringTrait {
-    public static final String NAME = "smithy.api#pattern";
+    public static final ShapeId ID = ShapeId.from("smithy.api#pattern");
+
     private final Pattern pattern;
 
     public PatternTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
         this.pattern = compilePattern(value, sourceLocation);
     }
 
@@ -39,7 +41,7 @@ public final class PatternTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<PatternTrait> {
         public Provider() {
-            super(NAME, PatternTrait::new);
+            super(ID, PatternTrait::new);
         }
     }
 

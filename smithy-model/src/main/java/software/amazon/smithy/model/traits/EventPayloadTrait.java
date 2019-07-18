@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Marks a structure member of an event as the event payload.
@@ -24,10 +25,10 @@ import software.amazon.smithy.model.SourceLocation;
  * that targets a blob or structure.
  */
 public final class EventPayloadTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#eventPayload";
+    public static final ShapeId ID = ShapeId.from("smithy.api#eventPayload");
 
     public EventPayloadTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public EventPayloadTrait() {
@@ -36,7 +37,7 @@ public final class EventPayloadTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<EventPayloadTrait> {
         public Provider() {
-            super(NAME, EventPayloadTrait::new);
+            super(ID, EventPayloadTrait::new);
         }
     }
 }

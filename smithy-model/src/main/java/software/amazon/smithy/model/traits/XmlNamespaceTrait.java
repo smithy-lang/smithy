@@ -29,13 +29,14 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 * Defines the XML Namespace prefix and URI.
 */
 public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBuilder<XmlNamespaceTrait> {
-    public static final String NAME = "smithy.api#xmlNamespace";
+    public static final ShapeId ID = ShapeId.from("smithy.api#xmlNamespace");
+
     private static final List<String> XML_NAMESPACE_PROPERTIES = ListUtils.of("uri");
 
     private final String uri;
 
     private XmlNamespaceTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(ID, builder.getSourceLocation());
         uri = SmithyBuilder.requiredState("uri", builder.uri);
     }
 
@@ -82,8 +83,8 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
 
     public static final class Provider implements TraitService {
         @Override
-        public String getTraitName() {
-            return NAME;
+        public ShapeId getShapeId() {
+            return ID;
         }
 
         @Override

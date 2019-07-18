@@ -58,12 +58,12 @@ metadata foo.20 = {
   a: "b",
 }
 
-metadata trailing-commas1 = {
+metadata trailing_commas1 = {
   a: "b",
 }
-metadata trailing-commas2 = ["a", "b",]
+metadata trailing_commas2 = ["a", "b",]
 
 namespace foo.baz
 
 // Unquoted strings resolve to shape IDs.
-metadata shape-id = Bam
+metadata shape_id = Bam

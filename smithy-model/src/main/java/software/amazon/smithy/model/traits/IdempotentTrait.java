@@ -16,15 +16,16 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Indicates that an operation is idempotent.
  */
 public final class IdempotentTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#idempotent";
+    public static final ShapeId ID = ShapeId.from("smithy.api#idempotent");
 
     public IdempotentTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public IdempotentTrait() {
@@ -33,7 +34,7 @@ public final class IdempotentTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<IdempotentTrait> {
         public Provider() {
-            super(NAME, IdempotentTrait::new);
+            super(ID, IdempotentTrait::new);
         }
     }
 }

@@ -16,18 +16,19 @@
 package software.amazon.smithy.aws.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringTrait;
 
 public final class DataTrait extends StringTrait {
-    public static final String NAME = "aws.api#data";
+    public static final ShapeId ID = ShapeId.from("aws.api#data");
 
     public DataTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
     }
 
     public static final class Provider extends StringTrait.Provider<DataTrait> {
         public Provider() {
-            super(NAME, DataTrait::new);
+            super(ID, DataTrait::new);
         }
     }
 }

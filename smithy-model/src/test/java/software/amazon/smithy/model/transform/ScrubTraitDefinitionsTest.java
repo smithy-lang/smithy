@@ -41,6 +41,7 @@ public class ScrubTraitDefinitionsTest {
         assertThat(index.getShape(ShapeId.from("ns.foo#BarString")), Matchers.is(Optional.empty()));
         assertThat(index.getShape(ShapeId.from("ns.foo#BarStringList")), Matchers.is(Optional.empty()));
         assertThat(index.getShape(ShapeId.from("ns.foo#ComplexRemoved")), Matchers.is(Optional.empty()));
+
         assertThat(index.getShape(ShapeId.from("ns.foo#IpsumString")), Matchers.not(Optional.empty()));
         assertThat(index.getShape(ShapeId.from("ns.foo#IpsumList")), Matchers.not(Optional.empty()));
         assertThat(index.getShape(ShapeId.from("ns.foo#KeepStructure")), Matchers.not(Optional.empty()));

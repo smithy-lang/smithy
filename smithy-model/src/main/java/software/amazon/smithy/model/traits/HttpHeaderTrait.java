@@ -19,13 +19,15 @@ import java.util.Locale;
 import java.util.Set;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Binds a member to an HTTP header.
  */
 public final class HttpHeaderTrait extends StringTrait {
-    public static final String NAME = "smithy.api#httpHeader";
+    public static final ShapeId ID = ShapeId.from("smithy.api#httpHeader");
+
     private static final Set<String> BLACKLIST = SetUtils.of(
             "authorization",
             "connection",
@@ -44,7 +46,7 @@ public final class HttpHeaderTrait extends StringTrait {
             "x-forwarded-for");
 
     public HttpHeaderTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
 
         if (getValue().isEmpty()) {
             throw new SourceException("httpHeader field name binding must not be empty", getSourceLocation());
@@ -61,7 +63,7 @@ public final class HttpHeaderTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<HttpHeaderTrait> {
         public Provider() {
-            super(NAME, HttpHeaderTrait::new);
+            super(ID, HttpHeaderTrait::new);
         }
     }
 }

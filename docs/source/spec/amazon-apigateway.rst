@@ -50,10 +50,10 @@ The following example sets the ``X-API-Key`` header as the API key source.
 
     .. code-tab:: smithy
 
-        $version: "0.2.0"
+        $version: "0.3.0"
         namespace smithy.example
 
-        use trait aws.apigateway#apiKeySource
+        use aws.apigateway#apiKeySource
 
         @apiKeySource("HEADER")
         service Weather {
@@ -63,7 +63,7 @@ The following example sets the ``X-API-Key`` header as the API key source.
     .. code-tab:: json
 
         {
-          "smithy": "0.2.0",
+          "smithy": "0.3.0",
           "smithy.example": {
             "shapes": {
               "Weather": {
@@ -183,7 +183,7 @@ An *authorizer* definition is an object that supports the following properties:
 .. code-block:: json
 
     {
-        "smithy": "0.2.0",
+        "smithy": "0.3.0",
         "ns.foo": {
             "shapes": {
                 "Weather": {
@@ -282,10 +282,10 @@ Then following example enables request validation on a service:
 
     .. code-tab:: smithy
 
-        $version: "0.2.0"
+        $version: "0.3.0"
         namespace smithy.example
 
-        use trait aws.apigateway#requestValidator
+        use aws.apigateway#requestValidator
 
         @requestValidator("full")
         service Weather {
@@ -295,7 +295,7 @@ Then following example enables request validation on a service:
     .. code-tab:: json
 
         {
-          "smithy": "0.2.0",
+          "smithy": "0.3.0",
           "smithy.example": {
             "shapes": {
               "Weather": {
@@ -422,7 +422,7 @@ operation within the service.
 .. code-block:: json
 
     {
-        "smithy": "0.2.0",
+        "smithy": "0.3.0",
         "smithy.example": {
             "shapes": {
                 "Weather": {
@@ -527,7 +527,7 @@ The following example defines an operation that uses a mock integration.
 .. code-block:: json
 
     {
-        "smithy": "0.2.0",
+        "smithy": "0.3.0",
         "smithy.example": {
             "shapes": {
                 "MyOperation": {

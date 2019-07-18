@@ -32,7 +32,7 @@ public class ActionPermissionDescriptionTraitTest {
         Node node = Node.from("Foo baz bar");
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(
-                "aws.iam#actionPermissionDescription", ShapeId.from("ns.foo#foo"), node);
+                ActionPermissionDescriptionTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
         assertTrue(trait.isPresent());
         ActionPermissionDescriptionTrait actionDescription = (ActionPermissionDescriptionTrait) trait.get();

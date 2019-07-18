@@ -35,12 +35,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * @see ExamplesTraitValidator
  */
 public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilder<ExamplesTrait> {
-    public static final String NAME = "smithy.api#examples";
+    public static final ShapeId ID = ShapeId.from("smithy.api#examples");
 
     private final List<Example> examples;
 
     private ExamplesTrait(Builder builder) {
-        super(NAME, builder.sourceLocation);
+        super(ID, builder.sourceLocation);
         this.examples = new ArrayList<>(builder.examples);
     }
 
@@ -199,8 +199,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
 
     public static final class Provider implements TraitService {
         @Override
-        public String getTraitName() {
-            return NAME;
+        public ShapeId getShapeId() {
+            return ID;
         }
 
         public ExamplesTrait createTrait(ShapeId target, Node value) {

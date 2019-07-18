@@ -1,9 +1,7 @@
 namespace com.foo
 
-trait foo {
-  shape: Struct,
-  selector: "*"
-}
+@trait
+structure foo {}
 
 structure Struct {}
 

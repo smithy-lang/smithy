@@ -32,7 +32,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  *
  * @see AuthorizersTrait
  */
-public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
+public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<AuthorizerDefinition> {
     private static final String SCHEME_KEY = "scheme";
     private static final String TYPE_KEY = "type";
     private static final String URI_KEY = "uri";
@@ -52,7 +52,7 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
     private final String identityValidationExpression;
     private final Integer resultTtlInSeconds;
 
-    private Authorizer(Builder builder) {
+    private AuthorizerDefinition(Builder builder) {
         type = SmithyBuilder.requiredState(TYPE_KEY, builder.type);
         scheme = SmithyBuilder.requiredState(SCHEME_KEY, builder.scheme);
         uri = SmithyBuilder.requiredState(URI_KEY, builder.uri);
@@ -179,11 +179,11 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } else if (!(o instanceof Authorizer)) {
+        } else if (!(o instanceof AuthorizerDefinition)) {
             return false;
         }
 
-        Authorizer that = (Authorizer) o;
+        AuthorizerDefinition that = (AuthorizerDefinition) o;
         return Objects.equals(scheme, that.scheme)
                && type.equals(that.type)
                && uri.equals(that.uri)
@@ -198,7 +198,7 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
         return Objects.hash(scheme, type, uri);
     }
 
-    static Authorizer fromNode(ObjectNode node) {
+    static AuthorizerDefinition fromNode(ObjectNode node) {
         node.warnIfAdditionalProperties(PROPERTIES);
         Builder builder = builder();
         node.getStringMember(SCHEME_KEY)
@@ -223,9 +223,9 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
     }
 
     /**
-     * Builder used to create an {@link Authorizer}.
+     * Builder used to create an {@link AuthorizerDefinition}.
      */
-    public static final class Builder implements SmithyBuilder<Authorizer> {
+    public static final class Builder implements SmithyBuilder<AuthorizerDefinition> {
         private String scheme;
         private String type;
         private String uri;
@@ -235,8 +235,8 @@ public final class Authorizer implements ToNode, ToSmithyBuilder<Authorizer> {
         private Integer resultTtlInSeconds;
 
         @Override
-        public Authorizer build() {
-            return new Authorizer(this);
+        public AuthorizerDefinition build() {
+            return new AuthorizerDefinition(this);
         }
 
         /**

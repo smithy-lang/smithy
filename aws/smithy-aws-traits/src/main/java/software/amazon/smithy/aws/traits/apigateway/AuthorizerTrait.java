@@ -16,16 +16,17 @@
 package software.amazon.smithy.aws.traits.apigateway;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringTrait;
 
 /**
  * Attaches an API Gateway authorizer to a service, resource, or operation.
  */
 public final class AuthorizerTrait extends StringTrait {
-    public static final String NAME = "aws.apigateway#authorizer";
+    public static final ShapeId ID = ShapeId.from("aws.apigateway#authorizer");
 
     public AuthorizerTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
     }
 
     public AuthorizerTrait(String value) {
@@ -34,7 +35,7 @@ public final class AuthorizerTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<AuthorizerTrait> {
         public Provider() {
-            super(NAME, AuthorizerTrait::new);
+            super(ID, AuthorizerTrait::new);
         }
     }
 }

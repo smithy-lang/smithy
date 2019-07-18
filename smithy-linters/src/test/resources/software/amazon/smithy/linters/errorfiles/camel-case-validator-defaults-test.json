@@ -1,5 +1,5 @@
 {
-    "smithy": "0.2.0",
+    "smithy": "0.3.0",
     "metadata": {
         "validators": [
             {
@@ -10,7 +10,6 @@
                 "name": "CamelCase",
                 "id": "OppositeOfDefaults",
                 "configuration": {
-                    "shapeNames": "lower",
                     "memberNames": "upper"
                 }
             }
@@ -18,6 +17,14 @@
     },
     "ns.foo": {
         "shapes": {
+            "InvalidTrait": {
+                "trait": true,
+                "type": "string"
+            },
+            "validTrait": {
+                "trait": true,
+                "type": "string"
+            },
             "Foo": {
                 "type": "string"
             },

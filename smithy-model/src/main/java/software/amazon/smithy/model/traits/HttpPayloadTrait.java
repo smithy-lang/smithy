@@ -16,15 +16,16 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Binds a single structure member to the payload of an HTTP request.
  */
 public final class HttpPayloadTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#httpPayload";
+    public static final ShapeId ID = ShapeId.from("smithy.api#httpPayload");
 
     public HttpPayloadTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public HttpPayloadTrait() {
@@ -33,7 +34,7 @@ public final class HttpPayloadTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<HttpPayloadTrait> {
         public Provider() {
-            super(NAME, HttpPayloadTrait::new);
+            super(ID, HttpPayloadTrait::new);
         }
     }
 }

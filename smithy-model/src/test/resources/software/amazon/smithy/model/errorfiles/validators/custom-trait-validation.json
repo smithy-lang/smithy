@@ -1,5 +1,5 @@
 {
-    "smithy": "0.2.0",
+    "smithy": "0.3.0",
     "ns.foo": {
         "shapes": {
             "String1": {
@@ -22,7 +22,11 @@
                     "baz": "hello"
                 }
             },
-            "Schema": {
+            "custom1": {
+                "type": "structure",
+                "trait": {"selector": "string"}
+            },
+            "custom2": {
                 "type": "structure",
                 "members": {
                     "foo": {
@@ -32,16 +36,8 @@
                     "baz": {
                         "target": "String1"
                     }
-                }
-            }
-        },
-        "traitDefs": {
-            "custom1": {
-                "selector": "string"
-            },
-            "custom2": {
-                "shape": "Schema",
-                "selector": "string"
+                },
+                "trait": {"selector": "string"}
             }
         }
     }

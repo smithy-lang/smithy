@@ -18,7 +18,6 @@ package software.amazon.smithy.model.loader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -75,27 +74,11 @@ public class SmithyModelLoaderTest {
     }
 
     @Test
-    public void loadsTraitDefinitions() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("valid/trait-definitions.smithy"))
-                .assemble()
-                .unwrap();
-
-        assertTrue(model.getTraitDefinition("example.namespace#customTrait").isPresent());
-        assertTrue(model.getTraitDefinition("example.namespace#documentation").isPresent());
-        assertTrue(model.getTraitDefinition("example.namespace#numeric").isPresent());
-        assertThat(model.getTraitDefinition("example.namespace#numeric").get().getShape().get(),
-                   equalTo(ShapeId.from("smithy.api#Integer")));
-    }
-
-    @Test
     public void canLoadAndAliasShapesAndTraits() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("first-namespace.smithy"))
                 .addImport(getClass().getResource("second-namespace.smithy"))
                 .assemble()
                 .unwrap();
-
-        System.out.println(Node.prettyPrintJson(ModelSerializer.builder().build().serialize(model)));
     }
 }

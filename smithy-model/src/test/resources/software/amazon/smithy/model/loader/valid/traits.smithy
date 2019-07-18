@@ -109,10 +109,8 @@ string Q
 
 // Number
 
-trait numeric {
-  shape: smithy.api#Integer,
-  selector: "*",
-}
+@trait
+integer numeric
 
 @com.example#numeric(100)
 string R

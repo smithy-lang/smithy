@@ -1,79 +1,67 @@
 {
-    "smithy": "0.2.0",
+    "smithy": "0.3.0",
     "ns.foo": {
-        "traitDefs": {
-            "foo": {
-                "selector": "*",
-                "shape": "FooStructure"
-            },
-            "baz": {
-                "selector": "*",
-                "shape": "FooStructure"
-            },
-            "bar": {
-                "selector": "*",
-                "shape": "BarString"
-            },
-            "bam": {
-                "selector": "*",
-                "shape": "smithy.api#String"
-            },
-            "qux": {
-                "selector": "*",
-                "shape": "BarStringList"
-            },
-            "lorem": {
-                "selector": "*",
-                "shape": "ComplexRemoved"
-            },
-            "ipsum": {
-                "selector": "*",
-                "shape": "IpsumString"
-            }
-        },
         "shapes": {
-            "FooStructure": {
+            "foo": {
+                "trait": true,
                 "type": "structure",
                 "members": {
-                    "foo": {
-                        "target": "smithy.api#String"
-                    },
-                    "bar": {
-                        "target": "BarString"
-                    },
-                    "ipsum": {
-                        "target": "IpsumString"
-                    }
-                }
-            },
-            "BarString": {
-                "type": "string"
-            },
-            "BarStringList": {
-                "type": "list",
-                "member": {
-                    "target": "BarString"
-                }
-            },
-            "ComplexRemoved": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "FooStructure"
-                    },
-                    "bar": {
-                        "target": "ComplexRemoved"
-                    }
+                    "foo": {"target": "smithy.api#String"},
+                    "bar": {"target": "BarString"},
+                    "ipsum": {"target": "IpsumString"}
                 }
             },
             "IpsumString": {
                 "type": "string"
             },
+            "BarString": {
+                "type": "string"
+            },
+
+            "baz": {
+                "trait": true,
+                "type": "structure",
+                "members": {
+                    "foo": {"target": "smithy.api#String"},
+                    "bar": {"target": "BarString"},
+                    "ipsum": {"target": "IpsumString"}
+                }
+            },
+
+            "bam": {
+                "type": "string",
+                "trait": true
+            },
+
+            "qux": {
+                "trait": true,
+                "type": "list",
+                "member": {"target": "BarString"}
+            },
+
+            "lorem": {
+                "trait": true,
+                "type": "structure",
+                "members": {
+                    "foo": {"target": "Struct"},
+                    "bar": {"target": "ComplexRemoved"}
+                }
+            },
+            "ComplexRemoved": {
+                "type": "structure",
+                "members": {
+                    "foo": {"target": "Struct"},
+                    "bar": {"target": "ComplexRemoved"}
+                }
+            },
+            "Struct": {
+                "type": "structure",
+                "members": {}
+            },
+
             "IpsumList": {
                 "type": "list",
-                "member": {
-                    "target": "IpsumString"
-                }
+                "member": {"target": "IpsumString"}
             },
             "KeepStructure": {
                 "type": "structure"

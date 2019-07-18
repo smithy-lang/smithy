@@ -29,6 +29,7 @@ public class SmithyModelLexerTest {
         SmithyModelLexer lexer = new SmithyModelLexer("/foo.smithy", input);
         SmithyModelLexer.Token token = lexer.next();
 
+        assertThat(token.type, equalTo(SmithyModelLexer.TokenType.QUOTED));
         assertThat(token.lexeme, equalTo(lexeme));
         assertThat(lexer.hasNext(), is(false));
     }
@@ -94,12 +95,12 @@ public class SmithyModelLexerTest {
 
                 // Text blocks
                 Arguments.of("\"\"\"\nfoo\"\"\"", "foo"),
-                Arguments.of("\"\"\"\nfoo\\\"\"\"\"\"", "foo\"\""),
+                Arguments.of("\"\"\"\nfoo\\\"\"\"\"", "foo\""),
                 Arguments.of("\"\"\"\n    foo\n    baz\"\"\"", "foo\nbaz"),
                 Arguments.of("\"\"\"\n\n\n\"\"\"", "\n\n"),
                 Arguments.of("\"\"\"\n  foo\n  baz\n  \"\"\"", "foo\nbaz\n"),
                 Arguments.of("\"\"\"\n  foo\n    baz\n  \"\"\"", "foo\n  baz\n"),
-                Arguments.of("\"\"\"\n\"foo\"\"\"\"", "\"foo\""),
+                Arguments.of("\"\"\"\n\"foo\\\"\"\"\"", "\"foo\""),
                 Arguments.of("\"\"\"\n  foo\\n    bar\n  baz\"\"\"", "foo\n    bar\nbaz"),
                 // Empty lines and lines with only ws do not contribute to incidental ws.
                 Arguments.of("\"\"\"\n\n    foo\n  \n\n      \n    \"\"\"", "\nfoo\n\n\n\n"),
@@ -185,5 +186,57 @@ public class SmithyModelLexerTest {
                 Arguments.of("\"\"\"\n  Foo\\\n  Baz\"\"\" 'bar'", new String[]{"1:1", "3:10"}),
                 Arguments.of("\"\"\"\r  Foo\\\r  Baz\"\"\" 'bar'", new String[]{"1:1", "3:10"}),
                 Arguments.of("\"\"\"\r\n  Foo\\\r\n  Baz\"\"\" 'bar'", new String[]{"1:1", "3:10"}));
+    }
+
+    @ParameterizedTest
+    @MethodSource("numberProvider")
+    public void parsesNumbers(String input, String expected, String errorContains) {
+        SmithyModelLexer lexer = new SmithyModelLexer("/foo.smithy", input);
+        SmithyModelLexer.Token token = lexer.next();
+
+        if (errorContains != null) {
+            assertThat(token.type, equalTo(SmithyModelLexer.TokenType.ERROR));
+            assertThat(token.errorMessage, containsString(errorContains));
+        } else {
+            assertThat(token.lexeme, equalTo(expected));
+        }
+    }
+
+    private static Stream<Arguments> numberProvider() {
+        return Stream.of(
+                // Valid numbers
+                Arguments.of("0", "0", null),
+                Arguments.of("1", "1", null),
+                Arguments.of("2", "2", null),
+                Arguments.of("3", "3", null),
+                Arguments.of("4", "4", null),
+                Arguments.of("5", "5", null),
+                Arguments.of("6", "6", null),
+                Arguments.of("7", "7", null),
+                Arguments.of("8", "8", null),
+                Arguments.of("9", "9", null),
+                Arguments.of("0.1", "0.1", null),
+                Arguments.of("0.12", "0.12", null),
+                Arguments.of("1.0", "1.0", null),
+                Arguments.of("-1", "-1", null),
+                Arguments.of("-1.1", "-1.1", null),
+                Arguments.of("-0", "-0", null),
+                Arguments.of("1e1", "1e1", null),
+                Arguments.of("1.1e2", "1.1e2", null),
+                Arguments.of("2.000e10", "2.000e10", null),
+                Arguments.of("2.000e-10", "2.000e-10", null),
+                Arguments.of("2.000e+10", "2.000e+10", null),
+                Arguments.of("1E1", "1E1", null),
+                Arguments.of("1.1E2", "1.1E2", null),
+                Arguments.of("2.000E10", "2.000E10", null),
+                Arguments.of("2.000E-10", "2.000E-10", null),
+                Arguments.of("2.000E+10", "2.000E+10", null),
+
+                // Invalid
+                Arguments.of("1.1E", null, "Invalid number"),
+                Arguments.of("1.", null, "Invalid number"),
+                Arguments.of("1..", null, "Invalid number"),
+                Arguments.of("01", null, "Invalid number"),
+                Arguments.of("-.", null, "Invalid number"));
     }
 }

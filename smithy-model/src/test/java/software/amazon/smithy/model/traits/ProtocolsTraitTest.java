@@ -41,7 +41,8 @@ public class ProtocolsTraitTest {
                         .withMember("tags", ArrayNode.fromStrings(ListUtils.of("foo", "bar", "baz")))
                         .withMember("auth", ArrayNode.fromStrings(ListUtils.of("abc", "def"))));
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("smithy.api#protocols", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#protocols"), ShapeId.from("ns.qux#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(ProtocolsTrait.class));

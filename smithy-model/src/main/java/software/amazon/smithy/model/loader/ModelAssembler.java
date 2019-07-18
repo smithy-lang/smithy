@@ -36,7 +36,6 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -74,7 +73,6 @@ public final class ModelAssembler {
     private final List<Node> documentNodes = new ArrayList<>();
     private final List<Model> mergeModels = new ArrayList<>();
     private final List<AbstractShapeBuilder<?, ?>> shapes = new ArrayList<>();
-    private final List<TraitDefinition> traitDefinitions = new ArrayList<>();
     private final Map<String, Node> metadata = new HashMap<>();
     private final Map<String, Object> properties = new HashMap<>();
     private boolean disablePrelude;
@@ -106,7 +104,6 @@ public final class ModelAssembler {
         assembler.documentNodes.addAll(documentNodes);
         assembler.mergeModels.addAll(mergeModels);
         assembler.shapes.addAll(shapes);
-        assembler.traitDefinitions.addAll(traitDefinitions);
         assembler.metadata.putAll(metadata);
         assembler.disablePrelude = disablePrelude;
         assembler.properties.putAll(properties);
@@ -127,7 +124,6 @@ public final class ModelAssembler {
      *     <li>Models registered via {@link #addUnparsedModel}</li>
      *     <li>Models registered via {@link #addModel}</li>
      *     <li>Shape registered via {@link #addModel}</li>
-     *     <li>Trait definitions registered via {@link #addTraitDefinition}</li>
      *     <li>Metadata registered via {@link #putMetadata}</li>
      *     <li>Custom properties set via {@link #putProperty}</li>
      * </ul>
@@ -139,7 +135,6 @@ public final class ModelAssembler {
      */
     public ModelAssembler reset() {
         shapes.clear();
-        traitDefinitions.clear();
         metadata.clear();
         mergeModels.clear();
         stringModels.clear();
@@ -344,17 +339,6 @@ public final class ModelAssembler {
     }
 
     /**
-     * Adds a trait definition to the model.
-     *
-     * @param definition Trait definition to add.
-     * @return Returns the model assembler.
-     */
-    public ModelAssembler addTraitDefinition(TraitDefinition definition) {
-        traitDefinitions.add(Objects.requireNonNull(definition));
-        return this;
-    }
-
-    /**
      * Adds metadata to the model.
      *
      * @param name Metadata key to set.
@@ -469,7 +453,6 @@ public final class ModelAssembler {
         }
 
         shapes.forEach(visitor::onShape);
-        traitDefinitions.forEach(visitor::onTraitDef);
         metadata.forEach(visitor::onMetadata);
 
         for (Model model : mergeModels) {
@@ -488,7 +471,6 @@ public final class ModelAssembler {
 
     private static void mergeModelIntoVisitor(Model model, LoaderVisitor visitor) {
         visitor.onVersion(SourceLocation.NONE, model.getSmithyVersion());
-        model.getTraitDefinitions().forEach(visitor::onTraitDef);
         model.getMetadata().forEach(visitor::onMetadata);
         model.getShapeIndex().shapes().forEach(visitor::onShape);
     }

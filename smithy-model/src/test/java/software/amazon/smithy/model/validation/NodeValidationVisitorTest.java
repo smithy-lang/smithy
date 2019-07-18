@@ -186,10 +186,6 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#String3", "\"bar\"", null},
                 {"ns.foo#String4", "\"ABC\"", null},
                 {"ns.foo#String4", "\"abc\"", new String[] {"String value provided for `ns.foo#String4` must match regular expression: [A-Z]+"}},
-                {"ns.foo#String5", "\"2011-06-05\"", null},
-                {"ns.foo#String6", "\"2011-06-05T00:01:00Z\"", null},
-                {"ns.foo#String7", "\"12:12:01\"", null},
-                {"ns.foo#String7", "\"12:12:01.04\"", null},
 
                 // list
                 {"ns.foo#List", "[\"a\"]", null},

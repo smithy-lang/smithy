@@ -28,13 +28,13 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * TODO: Ensure that there is only one streaming blob per operation in/out.
  */
 public final class StreamingTrait extends AbstractTrait implements ToSmithyBuilder<StreamingTrait> {
-    public static final String NAME = "smithy.api#streaming";
+    public static final ShapeId ID = ShapeId.from("smithy.api#streaming");
     private static final String REQUIRES_LENGTH = "requiresLength";
 
     private final boolean requiresLength;
 
     private StreamingTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(ID, builder.getSourceLocation());
         requiresLength = builder.requiresLength;
     }
 
@@ -66,8 +66,8 @@ public final class StreamingTrait extends AbstractTrait implements ToSmithyBuild
 
     public static final class Provider implements TraitService {
         @Override
-        public String getTraitName() {
-            return NAME;
+        public ShapeId getShapeId() {
+            return ID;
         }
 
         @Override

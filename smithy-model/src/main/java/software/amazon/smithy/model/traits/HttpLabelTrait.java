@@ -16,16 +16,17 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Binds a member to a URI label of an input of an operation using
  * the member name.
  */
 public final class HttpLabelTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#httpLabel";
+    public static final ShapeId ID = ShapeId.from("smithy.api#httpLabel");
 
     public HttpLabelTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public HttpLabelTrait() {
@@ -34,7 +35,7 @@ public final class HttpLabelTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<HttpLabelTrait> {
         public Provider() {
-            super(NAME, HttpLabelTrait::new);
+            super(ID, HttpLabelTrait::new);
         }
     }
 }

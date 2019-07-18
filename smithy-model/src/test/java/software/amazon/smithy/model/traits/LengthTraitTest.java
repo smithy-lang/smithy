@@ -38,7 +38,8 @@ public class LengthTraitTest {
         values.put(Node.from("min"), Node.from(1L));
         values.put(Node.from("max"), Node.from(10L));
         Node node = Node.objectNode(values);
-        Optional<Trait> trait = provider.createTrait("smithy.api#length", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#length"), ShapeId.from("ns.qux#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(LengthTrait.class));
@@ -57,7 +58,7 @@ public class LengthTraitTest {
             TraitFactory provider = TraitFactory.createServiceFactory();
             Map<StringNode, Node> values = new HashMap<>();
 
-            provider.createTrait("smithy.api#length", ShapeId.from("ns.qux#foo"), Node.objectNode(values));
+            provider.createTrait(ShapeId.from("smithy.api#length"), ShapeId.from("ns.qux#foo"), Node.objectNode(values));
         });
     }
 }

@@ -39,7 +39,7 @@ public class CorsTraitTest {
                 .withMember("maxAge", Node.from(86400))
                 .withMember("additionalAllowedHeaders", Node.fromStrings("foo", "bar"))
                 .withMember("additionalExposedHeaders", Node.fromStrings("fizz", "buzz"));
-        Optional<Trait> trait = provider.createTrait("smithy.api#cors", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(ShapeId.from("smithy.api#cors"), ShapeId.from("ns.qux#foo"), node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(CorsTrait.class));
         CorsTrait cors = (CorsTrait) trait.get();
@@ -53,7 +53,8 @@ public class CorsTraitTest {
     @Test
     public void injectsDefaults() {
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("smithy.api#cors", ShapeId.from("ns.qux#foo"), Node.objectNode());
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#cors"), ShapeId.from("ns.qux#foo"), Node.objectNode());
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(CorsTrait.class));
         CorsTrait cors = (CorsTrait) trait.get();
@@ -72,7 +73,7 @@ public class CorsTraitTest {
                 .withMember("maxAge", Node.from(600))
                 .withMember("additionalAllowedHeaders", Node.fromStrings())
                 .withMember("additionalExposedHeaders", Node.fromStrings());
-        Optional<Trait> trait = provider.createTrait("smithy.api#cors", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(ShapeId.from("smithy.api#cors"), ShapeId.from("ns.qux#foo"), node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(CorsTrait.class));
         ObjectNode serialized = ((CorsTrait) trait.get()).createNode().expectObjectNode();

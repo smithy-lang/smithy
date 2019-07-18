@@ -16,16 +16,17 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Indicates that a shape cannot be targeted outside of the namespace in
  * which it was defined.
  */
 public final class PrivateTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#private";
+    public static final ShapeId ID = ShapeId.from("smithy.api#private");
 
     public PrivateTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public PrivateTrait() {
@@ -34,7 +35,7 @@ public final class PrivateTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<PrivateTrait> {
         public Provider() {
-            super(NAME, PrivateTrait::new);
+            super(ID, PrivateTrait::new);
         }
     }
 }

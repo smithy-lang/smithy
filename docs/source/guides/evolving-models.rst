@@ -97,8 +97,7 @@ Updating traits
 
 The following changes to trait definitions are backward compatible:
 
-#. Changing a trait from an annotation trait to target a structure with no
-   required members.
 #. Relaxing the selector of a trait.
-#. Changing ``tags``, ``documentation``, or ``deprecationReason`` values.
+#. Removing a trait from the ``conflicts`` list.
+#. Removing the ``structurallyExclusive`` property.
 #. Marking a trait as deprecated.

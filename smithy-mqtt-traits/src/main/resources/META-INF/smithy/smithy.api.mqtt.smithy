@@ -1,26 +1,20 @@
-$version: "0.2.0"
+$version: "0.3.0"
 
 namespace smithy.mqtt
 
-trait publish {
-  shape: TopicString,
-  selector: "operation:not(-[output]->)",
-  conflicts: ["smithy.mqtt#subscribe", "inputEventStream"],
-  tags: ["diff.error.const"]
-}
-
-trait subscribe {
-  shape: TopicString,
-  selector: "operation[trait|outputEventStream]",
-  conflicts: ["smithy.mqtt#publish"],
-  tags: ["diff.error.const"]
-}
-
+@trait(selector: "operation:not(-[output]->)",
+       conflicts: ["smithy.mqtt#subscribe", "inputEventStream"])
+@tags(["diff.error.const"])
 // Matches one or more characters that are not "#" or "+".
 @pattern("^[^#+]+$")
-@private
-string TopicString
+string publish
 
-trait topicLabel {
-  selector: "member[trait|required]:test(> :test(string, byte, short, integer, long, boolean, timestamp))",
-}
+@trait(selector: "operation[trait|outputEventStream]",
+       conflicts: ["smithy.mqtt#publish"])
+@tags(["diff.error.const"])
+// Matches one or more characters that are not "#" or "+".
+@pattern("^[^#+]+$")
+string subscribe
+
+@trait(selector: "member[trait|required]:test(> :test(string, byte, short, integer, long, boolean, timestamp))")
+structure topicLabel {}

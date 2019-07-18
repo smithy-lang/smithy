@@ -46,7 +46,7 @@ public class ReferencesTraitTest {
                         .withMember("resource", Node.from("ns.foo#OtherShape"))
                         .withMember("ids", Node.parse("{\"c\": \"c\"}"))
                         .withMember("service", Node.from("com.foo#Baz")));
-        Optional<Trait> trait = provider.createTrait("smithy.api#references", id, values);
+        Optional<Trait> trait = provider.createTrait(ShapeId.from("smithy.api#references"), id, values);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(ReferencesTrait.class));
         ReferencesTrait referencesTrait = (ReferencesTrait) trait.get();

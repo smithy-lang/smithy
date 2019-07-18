@@ -31,7 +31,7 @@ public class UniqueItemsTraitTest {
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(
-                "smithy.api#uniqueItems", ShapeId.from("ns.qux#foo"), Node.from(true));
+                ShapeId.from("smithy.api#uniqueItems"), ShapeId.from("ns.qux#foo"), Node.from(true));
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(UniqueItemsTrait.class));

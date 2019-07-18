@@ -32,7 +32,8 @@ public class XmlAttributeTraitTest {
     public void loadsTraitWithString() {
         Node node = Node.from(true);
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("smithy.api#xmlAttribute", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#xmlAttribute"), ShapeId.from("ns.qux#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(XmlAttributeTrait.class));
@@ -44,7 +45,7 @@ public class XmlAttributeTraitTest {
     public void validatesInput() {
         Assertions.assertThrows(SourceException.class, () -> {
             TraitFactory provider = TraitFactory.createServiceFactory();
-            provider.createTrait("smithy.api#xmlAttribute", ShapeId.from("ns.qux#foo"), Node.from("abc"));
+            provider.createTrait(ShapeId.from("smithy.api#xmlAttribute"), ShapeId.from("ns.qux#foo"), Node.from("abc"));
         });
     }
 }

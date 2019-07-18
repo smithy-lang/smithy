@@ -38,7 +38,7 @@ public class ArnTraitTest {
     public void loadsTraitWithFromNode() {
         Node node = Node.parse("{\"template\": \"resourceName\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("aws.api#arn", ShapeId.from("ns.foo#foo"), node);
+        Optional<Trait> trait = provider.createTrait(ArnTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(ArnTrait.class));
@@ -53,7 +53,7 @@ public class ArnTraitTest {
     public void canSetRegionAndServiceToNo() {
         Node node = Node.parse("{\"noAccount\": true, \"noRegion\": true, \"absolute\": false, \"template\": \"foo\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("aws.api#arn", ShapeId.from("ns.foo#foo"), node);
+        Optional<Trait> trait = provider.createTrait(ArnTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
         assertTrue(trait.isPresent());
         ArnTrait arnTrait = (ArnTrait) trait.get();
@@ -68,7 +68,7 @@ public class ArnTraitTest {
     public void canSetIncludeTemplateExpressions() {
         Node node = Node.parse("{\"noAccount\": false, \"noRegion\": false, \"template\": \"foo/{Baz}/bar/{Bam}/boo/{Boo}\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("aws.api#arn", ShapeId.from("ns.foo#foo"), node);
+        Optional<Trait> trait = provider.createTrait(ArnTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
         assertTrue(trait.isPresent());
         ArnTrait arnTrait = (ArnTrait) trait.get();
@@ -80,7 +80,8 @@ public class ArnTraitTest {
     public void resourcePartCannotStartWithSlash() {
         assertThrows(SourceException.class, () -> {
             Node node = Node.parse("{\"template\": \"/resource\"}");
-            TraitFactory.createServiceFactory().createTrait("aws.api#arn", ShapeId.from("ns.foo#foo"), node);
+            TraitFactory.createServiceFactory().createTrait(ArnTrait.ID,
+                                                            ShapeId.from("ns.foo#foo"), node);
         });
     }
 
@@ -88,7 +89,8 @@ public class ArnTraitTest {
     public void validatesAccountValue() {
         assertThrows(SourceException.class, () -> {
             Node node = Node.parse("{\"template\": \"foo\", \"noAccount\": \"invalid\"}");
-            TraitFactory.createServiceFactory().createTrait("aws.api#arn", ShapeId.from("ns.foo#foo"), node);
+            TraitFactory.createServiceFactory().createTrait(ArnTrait.ID,
+                                                            ShapeId.from("ns.foo#foo"), node);
         });
     }
 
@@ -96,7 +98,8 @@ public class ArnTraitTest {
     public void validatesRegionValue() {
         assertThrows(SourceException.class, () -> {
             Node node = Node.parse("{\"template\": \"foo\", \"noRegion\": \"invalid\"}");
-            TraitFactory.createServiceFactory().createTrait("aws.api#arn", ShapeId.from("ns.foo#foo"), node);
+            TraitFactory.createServiceFactory().createTrait(ArnTrait.ID,
+                                                            ShapeId.from("ns.foo#foo"), node);
         });
     }
 }

@@ -16,15 +16,16 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Indicates that a structure member is required.
  */
 public final class RequiredTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#required";
+    public static final ShapeId ID = ShapeId.from("smithy.api#required");
 
     public RequiredTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public RequiredTrait() {
@@ -33,7 +34,7 @@ public final class RequiredTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<RequiredTrait> {
         public Provider() {
-            super(NAME, RequiredTrait::new);
+            super(ID, RequiredTrait::new);
         }
     }
 }

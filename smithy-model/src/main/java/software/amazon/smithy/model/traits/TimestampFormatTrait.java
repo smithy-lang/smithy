@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Defines a custom serialization format for a timestamp.
@@ -24,10 +25,10 @@ public final class TimestampFormatTrait extends StringTrait {
     public static final String EPOCH_SECONDS = "epoch-seconds";
     public static final String DATE_TIME = "date-time";
     public static final String HTTP_DATE = "http-date";
-    public static final String NAME = "smithy.api#timestampFormat";
+    public static final ShapeId ID = ShapeId.from("smithy.api#timestampFormat");
 
     public TimestampFormatTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
     }
 
     public TimestampFormatTrait(String value) {
@@ -36,7 +37,7 @@ public final class TimestampFormatTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<TimestampFormatTrait> {
         public Provider() {
-            super(NAME, TimestampFormatTrait::new);
+            super(ID, TimestampFormatTrait::new);
         }
     }
 }

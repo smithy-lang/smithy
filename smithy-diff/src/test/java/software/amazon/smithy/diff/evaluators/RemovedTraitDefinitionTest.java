@@ -22,14 +22,20 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class RemovedTraitDefinitionTest {
     @Test
     public void detectsRemovedTraitDefinition() {
-        TraitDefinition definition = TraitDefinition.builder().name("foo.baz#bam").build();
-        Model modelA = Model.assembler().addTraitDefinition(definition).assemble().unwrap();
+        Shape definition = StringShape.builder()
+                .id("foo.baz#bam")
+                .addTrait(TraitDefinition.builder().build())
+                .build();
+
+        Model modelA = Model.assembler().addShape(definition).assemble().unwrap();
         Model modelB = Model.assembler().assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 

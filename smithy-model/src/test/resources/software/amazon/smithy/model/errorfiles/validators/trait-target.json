@@ -1,5 +1,5 @@
 {
-    "smithy": "0.2.0",
+    "smithy": "0.3.0",
     "ns.foo": {
         "shapes": {
             "String": {
@@ -30,11 +30,10 @@
                         "test": true
                     }
                 }
-            }
-        },
-        "traitDefs": {
+            },
             "test": {
-                "selector": "operation -[input]-> structure > member"
+                "type": "structure",
+                "trait": {"selector": "operation -[input]-> structure > member"}
             }
         }
     }

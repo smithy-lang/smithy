@@ -17,13 +17,14 @@ package software.amazon.smithy.aws.traits.apigateway;
 
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringTrait;
 
 public final class RequestValidatorTrait extends StringTrait {
-    public static final String NAME = "aws.apigateway#requestValidator";
+    public static final ShapeId ID = ShapeId.from("aws.apigateway#requestValidator");
 
     public RequestValidatorTrait(String value, FromSourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
     }
 
     public RequestValidatorTrait(String value) {
@@ -32,7 +33,7 @@ public final class RequestValidatorTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<RequestValidatorTrait> {
         public Provider() {
-            super(NAME, RequestValidatorTrait::new);
+            super(ID, RequestValidatorTrait::new);
         }
     }
 }

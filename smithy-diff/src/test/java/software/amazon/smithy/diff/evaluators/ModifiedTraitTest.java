@@ -31,11 +31,12 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.DynamicTrait;
+import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class ModifiedTraitTest {
-    private static final String NAME = "com.foo#baz";
+    private static final ShapeId ID = ShapeId.from("com.foo#baz");
 
     private static final class TestCaseData {
         private Shape oldShape;
@@ -44,13 +45,13 @@ public class ModifiedTraitTest {
         public TestCaseData(String oldValue, String newValue) {
             StringShape.Builder builder1 = StringShape.builder().id("com.foo#String");
             if (oldValue != null) {
-                builder1.addTrait(new DynamicTrait(NAME, Node.from(oldValue)));
+                builder1.addTrait(new DynamicTrait(ID, Node.from(oldValue)));
             }
             oldShape = builder1.build();
 
             StringShape.Builder builder2 = StringShape.builder().id("com.foo#String");
             if (newValue != null) {
-                builder2.addTrait(new DynamicTrait(NAME, Node.from(newValue)));
+                builder2.addTrait(new DynamicTrait(ID, Node.from(newValue)));
             }
             newShape = builder2.build();
         }
@@ -60,9 +61,9 @@ public class ModifiedTraitTest {
     @MethodSource("data")
     public void testConst(String oldValue, String newValue, String tag, String searchString) {
         TestCaseData data = new TestCaseData(oldValue, newValue);
-        TraitDefinition definition = createDefinition(ModifiedTrait.DIFF_ERROR_CONST);
-        Model modelA = Model.assembler().addTraitDefinition(definition).addShape(data.oldShape).assemble().unwrap();
-        Model modelB = Model.assembler().addTraitDefinition(definition).addShape(data.newShape).assemble().unwrap();
+        Shape definition = createDefinition(ModifiedTrait.DIFF_ERROR_CONST);
+        Model modelA = Model.assembler().addShape(definition).addShape(data.oldShape).assemble().unwrap();
+        Model modelB = Model.assembler().addShape(definition).addShape(data.newShape).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ModifiedTrait").size(), equalTo(1));
@@ -73,9 +74,9 @@ public class ModifiedTraitTest {
     public void testWithTag(String oldValue, String newValue, String tag, String searchString) {
         TestCaseData data = new TestCaseData(oldValue, newValue);
 
-        TraitDefinition definition = createDefinition(tag);
-        Model modelA = Model.assembler().addTraitDefinition(definition).addShape(data.oldShape).assemble().unwrap();
-        Model modelB = Model.assembler().addTraitDefinition(definition).addShape(data.newShape).assemble().unwrap();
+        Shape definition = createDefinition(tag);
+        Model modelA = Model.assembler().addShape(definition).addShape(data.oldShape).assemble().unwrap();
+        Model modelB = Model.assembler().addShape(definition).addShape(data.newShape).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ModifiedTrait").size(), equalTo(1));
@@ -84,17 +85,17 @@ public class ModifiedTraitTest {
 
     public static Collection<String[]> data() {
         return Arrays.asList(new String[][] {
-                {null, "hi", ModifiedTrait.DIFF_ERROR_ADD,  "to add"},
-                {"hi", null, ModifiedTrait.DIFF_ERROR_REMOVE,  "to remove"},
-                {"foo", "baz", ModifiedTrait.DIFF_ERROR_UPDATE,  "to change"},
+                {null, "hi", ModifiedTrait.DIFF_ERROR_ADD, "to add"},
+                {"hi", null, ModifiedTrait.DIFF_ERROR_REMOVE, "to remove"},
+                {"foo", "baz", ModifiedTrait.DIFF_ERROR_UPDATE, "to change"},
         });
     }
 
-    private static TraitDefinition createDefinition(String tag) {
-        return TraitDefinition.builder()
-                .name(NAME)
-                .addTag(tag)
-                .shape(ShapeId.from("smithy.api#String"))
+    private static Shape createDefinition(String tag) {
+        return StringShape.builder()
+                .id(ID)
+                .addTrait(TagsTrait.builder().addValue(tag).build())
+                .addTrait(TraitDefinition.builder().build())
                 .build();
     }
 }

@@ -30,7 +30,7 @@ public class StreamingTraitTest {
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(
-                "smithy.api#streaming", ShapeId.from("ns.qux#foo"), Node.objectNode());
+                ShapeId.from("smithy.api#streaming"), ShapeId.from("ns.qux#foo"), Node.objectNode());
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(StreamingTrait.class));

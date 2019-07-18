@@ -16,16 +16,17 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Indicates that the data stored in the shape or member is sensitive and
  * should be handled with care.
  */
 public final class SensitiveTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#sensitive";
+    public static final ShapeId ID = ShapeId.from("smithy.api#sensitive");
 
     public SensitiveTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public SensitiveTrait() {
@@ -34,7 +35,7 @@ public final class SensitiveTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<SensitiveTrait> {
         public Provider() {
-            super(NAME, SensitiveTrait::new);
+            super(ID, SensitiveTrait::new);
         }
     }
 }

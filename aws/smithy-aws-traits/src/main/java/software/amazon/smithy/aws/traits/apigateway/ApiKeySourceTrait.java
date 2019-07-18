@@ -17,13 +17,14 @@ package software.amazon.smithy.aws.traits.apigateway;
 
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringTrait;
 
 public final class ApiKeySourceTrait extends StringTrait {
-    public static final String NAME = "aws.apigateway#apiKeySource";
+    public static final ShapeId ID = ShapeId.from("aws.apigateway#apiKeySource");
 
     public ApiKeySourceTrait(String value, FromSourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
     }
 
     public ApiKeySourceTrait(String value) {
@@ -32,7 +33,7 @@ public final class ApiKeySourceTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<ApiKeySourceTrait> {
         public Provider() {
-            super(NAME, ApiKeySourceTrait::new);
+            super(ID, ApiKeySourceTrait::new);
         }
     }
 }

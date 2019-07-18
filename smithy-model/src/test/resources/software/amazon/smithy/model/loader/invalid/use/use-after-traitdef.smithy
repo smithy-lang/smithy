@@ -1,6 +1,7 @@
-// Parse error at line 6, column 1 near `use`: A use statement must come before any shape or trait definition
+// Parse error at line 7, column 1 near `use`: A use statement must come before any shape definition
 namespace smithy.example
 
-trait foo {}
+@trait
+structure foo {}
 
-use trait smithy.api#String
+use smithy.api#String

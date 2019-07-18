@@ -24,13 +24,13 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Marks an error structure as retryable.
  */
 public final class RetryableTrait extends AbstractTrait implements ToSmithyBuilder<RetryableTrait> {
-    public static final String NAME = "smithy.api#retryable";
+    public static final ShapeId ID = ShapeId.from("smithy.api#retryable");
     private static final String THROTTLING = "throttling";
 
     private final boolean throttling;
 
     private RetryableTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(ID, builder.getSourceLocation());
         throttling = builder.throttling;
     }
 
@@ -62,8 +62,8 @@ public final class RetryableTrait extends AbstractTrait implements ToSmithyBuild
 
     public static final class Provider implements TraitService {
         @Override
-        public String getTraitName() {
-            return NAME;
+        public ShapeId getShapeId() {
+            return ID;
         }
 
         @Override

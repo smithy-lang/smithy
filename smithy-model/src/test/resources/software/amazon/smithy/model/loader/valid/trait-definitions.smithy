@@ -1,18 +1,14 @@
 namespace example.namespace
 
-trait customTrait {}
+@trait
+structure customTrait {}
 
 // Overrides the prelude documentation shape.
-trait documentation {
-  selector: "*",
-  shape: smithy.api#String,
-}
+@trait(selector: "*")
+string documentation
 
-// Uses a forward reference to a prelude shape.
-trait numeric {
-  selector: "*",
-  shape: Integer,
-}
+@trait
+integer numeric
 
 @customTrait
 @documentation("foo")

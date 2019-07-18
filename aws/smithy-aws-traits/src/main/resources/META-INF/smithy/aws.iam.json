@@ -1,48 +1,41 @@
 {
-  "smithy": "0.2.0",
+  "smithy": "0.3.0",
   "aws.iam": {
-    "traitDefs": {
+    "shapes": {
       "actionPermissionDescription": {
-        "selector": "operation",
-        "shape": "smithy.api#String",
+        "trait": {"selector": "operation"},
+        "type": "string",
         "documentation": "A brief description of what granting the user permission to invoke an operation would entail. This description should begin with something similar to 'Enables the user to...' or 'Grants permission to...'"
       },
       "defineConditionKeys": {
-        "selector": "service",
-        "shape": "aws.iam#DefineConditionKeysTrait",
+        "trait": {"selector": "service"},
+        "type": "map",
+        "key": {"target": "aws.iam#IamIdentifier"},
+        "value": {"target": "aws.iam#ConditionKeyDefinition"},
         "documentation": "Defines the set of condition keys that appear within a service in addition to inferred and global condition keys."
       },
       "conditionKeys": {
-        "selector": ":test(resource, operation)",
-        "shape": "aws.iam#IdentifierList",
+        "trait": {"selector": ":test(resource, operation)"},
+        "type": "list",
+        "member": { "target": "aws.iam#IamIdentifier" },
         "documentation": "Applies condition keys by name to a resource or operation."
       },
       "disableConditionKeyInference": {
-        "selector": "resource",
+        "trait": {"selector": "resource"},
+        "type": "structure",
         "documentation": "Disables the automatic inference of condition keys of a resource."
       },
       "requiredActions": {
-        "selector": "operation",
-        "shape": "aws.iam#IdentifierList",
-        "documentation": "Other actions that the invoker must be authorized to perform when executing the targeted operation."
-      }
-    },
-    "shapes": {
-      "IdentifierList": {
+        "trait": {"selector": "operation"},
         "type": "list",
-        "private": true,
-        "member": { "target": "aws.iam#IamIdentifier" }
+        "member": { "target": "aws.iam#IamIdentifier" },
+        "documentation": "Other actions that the invoker must be authorized to perform when executing the targeted operation."
       },
+
       "IamIdentifier": {
         "type": "string",
         "private": true,
         "pattern": "^([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:[^:]+)$"
-      },
-      "DefineConditionKeysTrait": {
-        "type": "map",
-        "private": true,
-        "key": {"target": "aws.iam#IamIdentifier"},
-        "value": {"target": "aws.iam#ConditionKeyDefinition"}
       },
       "ConditionKeyDefinition": {
         "type": "structure",

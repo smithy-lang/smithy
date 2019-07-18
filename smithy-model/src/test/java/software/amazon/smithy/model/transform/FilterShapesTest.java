@@ -17,19 +17,24 @@ package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.util.Map;
 import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.model.traits.TraitDefinition;
 
 public class FilterShapesTest {
 
@@ -112,5 +117,49 @@ public class FilterShapesTest {
                    Matchers.not(Optional.empty()));
         assertThat(outIndex.getShape(structure.getId()).get().asStructureShape().get().getMember("member2"),
                    Matchers.is(Optional.empty()));
+    }
+
+    @Test
+    public void removesTraitsWhenDefinitionIsRemoved() {
+        StringShape bazTrait = StringShape.builder()
+                .id("ns.foo#baz")
+                .addTrait(TraitDefinition.builder().build())
+                .build();
+        StringShape barTrait = StringShape.builder()
+                .id("ns.foo#bar")
+                .addTrait(TraitDefinition.builder().build())
+                .build();
+
+        ShapeId shapeId1 = ShapeId.from("ns.foo#id1");
+        StringShape shape1 = StringShape.builder()
+                .id(shapeId1)
+                .addTrait(new DynamicTrait(ShapeId.from("foo.baz#foo"), Node.from(true)))
+                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .build();
+        ShapeId shapeId2 = ShapeId.from("ns.foo#id2");
+        StringShape shape2 = StringShape.builder()
+                .id(shapeId2)
+                .addTrait(new DynamicTrait(ShapeId.from("ns.foo#baz"), Node.from(true)))
+                .addTrait(new DynamicTrait(ShapeId.from("ns.foo#bar"), Node.from(true)))
+                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .build();
+        Model model = Model.builder()
+                .shapeIndex(ShapeIndex.builder().addShapes(shape1, shape2, bazTrait, barTrait).build())
+                .build();
+
+        ModelTransformer transformer = ModelTransformer.create();
+        Model result = transformer.filterShapes(model, shape -> !shape.getId().toString().equals("ns.foo#baz"));
+        Map<Shape, TraitDefinition> definitions = result.getTraitDefinitions();
+        ShapeIndex index = result.getShapeIndex();
+
+        assertThat(definitions.size(), Matchers.is(1));
+        assertThat(definitions, Matchers.hasKey(barTrait));
+        assertThat(definitions, Matchers.hasValue(barTrait.getTrait(TraitDefinition.class).get()));
+
+        assertThat(index.getShape(shapeId1).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(index.getShape(shapeId1).get().findTrait("ns.foo#baz"), Matchers.is(Optional.empty()));
+        assertThat(index.getShape(shapeId2).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(index.getShape(shapeId2).get().findTrait("ns.foo#baz"), Matchers.is(Optional.empty()));
+        assertThat(index.getShape(shapeId2).get().findTrait("ns.foo#bar"), Matchers.not(Optional.empty()));
     }
 }

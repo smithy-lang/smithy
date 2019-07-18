@@ -17,6 +17,7 @@ package software.amazon.smithy.model.traits;
 
 import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.Tagged;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -24,15 +25,15 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Applies tags to a shape.
  */
 public final class TagsTrait extends StringListTrait implements ToSmithyBuilder<TagsTrait>, Tagged {
-    public static final String NAME = "smithy.api#tags";
+    public static final ShapeId ID = ShapeId.from("smithy.api#tags");
 
     private TagsTrait(List<String> values, FromSourceLocation sourceLocation) {
-        super(NAME, values, sourceLocation);
+        super(ID, values, sourceLocation);
     }
 
     public static final class Provider extends StringListTrait.Provider<TagsTrait> {
         public Provider() {
-            super(NAME, TagsTrait::new);
+            super(ID, TagsTrait::new);
         }
     }
 
