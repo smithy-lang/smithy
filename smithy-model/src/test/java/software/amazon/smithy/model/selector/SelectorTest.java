@@ -25,10 +25,12 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.BooleanNode;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
@@ -65,8 +67,8 @@ public class SelectorTest {
                 .getShapeIndex();
         Set<Shape> result = Selector.parse("*[trait|'com.example#beta']").select(index);
 
-        Trait betaTrait = new DynamicTrait("com.example#beta", new BooleanNode(true, new SourceLocation("")));
-        Trait requiredTrait = new RequiredTrait(new SourceLocation(""));
+        Trait betaTrait = new DynamicTrait(ShapeId.from("com.example#beta"), Node.objectNode());
+        Trait requiredTrait = new RequiredTrait();
         assertThat(result, containsInAnyOrder(
                 MemberShape.builder()
                         .id("com.example#AnotherStructureShape$bar")

@@ -200,7 +200,7 @@ public class TopicBinding<T extends Trait> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(operation.getId(), mqttTrait.getTraitName());
+        return Objects.hash(operation.getId(), mqttTrait.toShapeId());
     }
 
     @Override
@@ -208,7 +208,7 @@ public class TopicBinding<T extends Trait> {
         return "TopicBinding{"
                + "operation=" + operation.getId()
                + ", input=" + getInput().map(Shape::getId).map(ShapeId::toString).orElse("null")
-               + ", mqttTrait=" + mqttTrait.getTraitName()
+               + ", mqttTrait=" + mqttTrait.toShapeId()
                + ", topic=" + topic
                + ", payloadShape=" + String.valueOf(payloadShape)
                + '}';

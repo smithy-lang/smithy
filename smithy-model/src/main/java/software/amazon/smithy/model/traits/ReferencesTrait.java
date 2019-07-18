@@ -41,12 +41,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * @see ReferencesTraitValidator
  */
 public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuilder<ReferencesTrait> {
-    public static final String NAME = "smithy.api#references";
+    public static final ShapeId ID = ShapeId.from("smithy.api#references");
 
     private final List<Reference> references;
 
     private ReferencesTrait(Builder builder) {
-        super(NAME, builder.sourceLocation);
+        super(ID, builder.sourceLocation);
         this.references = ListUtils.copyOf(builder.references);
     }
 
@@ -257,8 +257,8 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
     public static final class Provider implements TraitService {
         @Override
-        public String getTraitName() {
-            return NAME;
+        public ShapeId getShapeId() {
+            return ID;
         }
 
         @Override

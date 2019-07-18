@@ -18,6 +18,7 @@ package software.amazon.smithy.diff.evaluators;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.diff.Differences;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -27,14 +28,13 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public class RemovedTraitDefinition extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
-        return differences.removedTraitDefinitions()
-                .map(definition -> ValidationEvent.builder()
+        return differences.removedShapes()
+                .filter(shape -> shape.hasTrait(TraitDefinition.class))
+                .map(shape -> ValidationEvent.builder()
                         .eventId(getEventId())
                         .severity(Severity.ERROR)
-                        .sourceLocation(definition)
-                        .message(String.format(
-                                "Trait definition `%s` was removed",
-                                definition.getFullyQualifiedName()))
+                        .shape(shape)
+                        .message(String.format("Trait definition `%s` was removed", shape.getId()))
                         .build())
                 .collect(Collectors.toList());
     }

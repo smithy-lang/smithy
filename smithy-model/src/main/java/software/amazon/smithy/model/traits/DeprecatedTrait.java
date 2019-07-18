@@ -26,20 +26,20 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Marks a shape as deprecated.
  */
 public final class DeprecatedTrait extends AbstractTrait implements ToSmithyBuilder<DeprecatedTrait> {
-    public static final String NAME = "smithy.api#deprecated";
+    public static final ShapeId ID = ShapeId.from("smithy.api#deprecated");
 
     private final String since;
     private final String message;
 
     private DeprecatedTrait(DeprecatedTrait.Builder builder) {
-        super(NAME, builder.sourceLocation);
+        super(ID, builder.sourceLocation);
         this.since = builder.since;
         this.message = builder.message;
     }
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override

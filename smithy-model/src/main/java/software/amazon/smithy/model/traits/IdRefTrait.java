@@ -39,8 +39,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * defaults to "*" when not set.
  */
 public final class IdRefTrait extends AbstractTrait implements ToSmithyBuilder<IdRefTrait> {
-    public static final String NAME = "smithy.api#idRef";
-    private static final String SELECTOR_MEMBER_NAME = "selector";
+    public static final ShapeId ID = ShapeId.from("smithy.api#idRef");
+
+    private static final String SELECTOR_MEMBER_ID = "selector";
     private static final String FAIL_WHEN_MISSING_MEMBER = "failWhenMissing";
     private static final String ERROR_MESSAGE = "errorMessage";
 
@@ -49,7 +50,7 @@ public final class IdRefTrait extends AbstractTrait implements ToSmithyBuilder<I
     private final String errorMessage;
 
     private IdRefTrait(Builder builder) {
-        super(NAME, builder.sourceLocation);
+        super(ID, builder.sourceLocation);
         selector = builder.selector;
         failWhenMissing = builder.failWhenMissing;
         errorMessage = builder.errorMessage;
@@ -79,7 +80,7 @@ public final class IdRefTrait extends AbstractTrait implements ToSmithyBuilder<I
     protected Node createNode() {
         ObjectNode result = Node.objectNode()
                 .withOptionalMember(
-                        SELECTOR_MEMBER_NAME,
+                        SELECTOR_MEMBER_ID,
                         Optional.ofNullable(selector).map(Selector::toString).map(Node::from))
                 .withOptionalMember(ERROR_MESSAGE, getErrorMessage().map(Node::from));
         if (failWhenMissing) {
@@ -122,15 +123,15 @@ public final class IdRefTrait extends AbstractTrait implements ToSmithyBuilder<I
 
     public static final class Provider implements TraitService {
         @Override
-        public String getTraitName() {
-            return NAME;
+        public ShapeId getShapeId() {
+            return ID;
         }
 
         @Override
         public IdRefTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             ObjectNode objectNode = value.expectObjectNode();
-            objectNode.getStringMember(SELECTOR_MEMBER_NAME)
+            objectNode.getStringMember(SELECTOR_MEMBER_ID)
                     .map(StringNode::getValue)
                     .map(Selector::parse)
                     .ifPresent(builder::selector);

@@ -4,8 +4,8 @@
 
 namespace smithy.example
 
-use trait smithy.mqtt#topicLabel
-use trait smithy.mqtt#subscribe
+use smithy.mqtt#topicLabel
+use smithy.mqtt#subscribe
 
 @subscribe("events/{foo}")
 @outputEventStream("messages")

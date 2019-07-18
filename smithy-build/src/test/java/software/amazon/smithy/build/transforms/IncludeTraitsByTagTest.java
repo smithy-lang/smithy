@@ -24,7 +24,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
 public class IncludeTraitsByTagTest {
@@ -37,8 +38,9 @@ public class IncludeTraitsByTagTest {
         Model result = new IncludeTraitsByTag()
                 .createTransformer(Collections.singletonList("baz"))
                 .apply(ModelTransformer.create(), model);
-        Set<String> traits = result.getTraitDefinitions().stream()
-                .map(TraitDefinition::getFullyQualifiedName)
+        Set<String> traits = result.getTraitShapes().stream()
+                .map(Shape::getId)
+                .map(ShapeId::toString)
                 .collect(Collectors.toSet());
 
         assertFalse(traits.contains("ns.foo#quux"));

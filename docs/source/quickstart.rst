@@ -120,7 +120,7 @@ weather service.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "example.weather": {
                 "shapes": {
                     "Weather": {
@@ -176,7 +176,7 @@ identifiers, operations, and any number of child resources.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
 
             "example.weather": {
                 "shapes": {
@@ -233,7 +233,7 @@ Each ``City`` has a single ``Forecast``. This can be defined by adding the
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "example.weather": {
                 "shapes": {
                     "City": {
@@ -323,7 +323,7 @@ Let's define the operation used to "read" a ``City``.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "example.weather": {
                 "shapes": {
                     "GetCity": {
@@ -450,7 +450,7 @@ cities, so there's no way we could provide a City identifier.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "example.weather": {
                 "shapes": {
                     "Weather": {
@@ -568,7 +568,7 @@ service.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "example.weather": {
                 "shapes": {
                     "Weather": {
@@ -739,7 +739,7 @@ Complete example
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "example.weather": {
                 "shapes": {
                     "Weather": {

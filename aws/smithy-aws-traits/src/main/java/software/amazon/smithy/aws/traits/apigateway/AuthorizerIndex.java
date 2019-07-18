@@ -104,7 +104,7 @@ public class AuthorizerIndex implements KnowledgeIndex {
      * @param service Service shape to query.
      * @return Returns the optionally resolved authorizer name.
      */
-    public Optional<Authorizer> getAuthorizerValue(ToShapeId service) {
+    public Optional<AuthorizerDefinition> getAuthorizerValue(ToShapeId service) {
         return getAuthorizerValue(service, service);
     }
 
@@ -115,7 +115,7 @@ public class AuthorizerIndex implements KnowledgeIndex {
      * @param shape Shape to get the authorizer of within the service.
      * @return Returns the optionally resolved authorizer name.
      */
-    public Optional<Authorizer> getAuthorizerValue(ToShapeId service, ToShapeId shape) {
+    public Optional<AuthorizerDefinition> getAuthorizerValue(ToShapeId service, ToShapeId shape) {
         return getAuthorizer(service, shape)
                 .flatMap(name -> Optional.ofNullable(authorizerTraits.get(service.toShapeId()))
                         .flatMap(trait -> trait.getAuthorizer(name)));

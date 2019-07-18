@@ -17,18 +17,19 @@ package software.amazon.smithy.build.transforms;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import software.amazon.smithy.build.ProjectionTransformer;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.Tagged;
 
 /**
- * Removes traits and trait definitions from a model if the trait definition
- * does not contain at least one of the provided tags.
+ * Removes trait definitions from a model if the definition does
+ * not contain at least one of the provided tags.
+ *
+ * <p>This transformer does not remove prelude traits.
  */
 public final class IncludeTraitsByTag implements ProjectionTransformer {
     @Override
@@ -38,14 +39,11 @@ public final class IncludeTraitsByTag implements ProjectionTransformer {
 
     @Override
     public BiFunction<ModelTransformer, Model, Model> createTransformer(List<String> arguments) {
-        return (transformer, model) -> {
-            Set<String> definitions = model.getTraitDefinitions().stream()
-                    .filter(definition -> !hasAnyTag(definition, arguments))
-                    .map(TraitDefinition::getFullyQualifiedName)
-                    .collect(Collectors.toSet());
-
-            return transformer.removeTraitDefinitions(model, definitions);
-        };
+        return (transformer, model) -> transformer.removeShapesIf(
+                model,
+                shape -> !Prelude.isPreludeShape(shape)
+                         && shape.hasTrait(TraitDefinition.class)
+                         && !hasAnyTag(shape, arguments));
     }
 
     private boolean hasAnyTag(Tagged tagged, Collection<String> tags) {

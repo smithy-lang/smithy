@@ -33,7 +33,7 @@ public class TopicLabelTraitTest {
         ShapeId id = ShapeId.from("foo.bar#Baz$bam");
         Node node = Node.from(true);
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait(TopicLabelTrait.NAME, id, node);
+        Optional<Trait> trait = provider.createTrait(TopicLabelTrait.ID, id, node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(TopicLabelTrait.class));

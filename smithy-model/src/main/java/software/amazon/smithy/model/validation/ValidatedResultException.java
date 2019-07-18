@@ -27,7 +27,7 @@ public class ValidatedResultException extends RuntimeException {
 
     public ValidatedResultException(List<ValidationEvent> events) {
         super("Result contained ERROR severity validation events: \n"
-                + events.stream().map(ValidationEvent::toString).collect(Collectors.joining("\n")));
+                + events.stream().map(ValidationEvent::toString).sorted().collect(Collectors.joining("\n")));
         this.events = events;
     }
 

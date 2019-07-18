@@ -16,15 +16,16 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
 * Marks a structure member to be serialized to/from an XML attribute.
 */
 public final class XmlAttributeTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#xmlAttribute";
+    public static final ShapeId ID = ShapeId.from("smithy.api#xmlAttribute");
 
     public XmlAttributeTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public XmlAttributeTrait() {
@@ -33,7 +34,7 @@ public final class XmlAttributeTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<XmlAttributeTrait> {
         public Provider() {
-            super(NAME, XmlAttributeTrait::new);
+            super(ID, XmlAttributeTrait::new);
         }
     }
 }

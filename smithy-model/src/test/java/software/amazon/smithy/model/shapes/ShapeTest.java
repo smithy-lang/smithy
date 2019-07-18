@@ -63,16 +63,16 @@ public class ShapeTest {
     }
 
     private static class MyTrait implements Trait {
-        private String name;
+        private ShapeId id;
         private SourceLocation sourceLocation;
 
-        MyTrait(String name, SourceLocation sourceLocation) {
-            this.name = name;
+        MyTrait(ShapeId id, SourceLocation sourceLocation) {
+            this.id = id;
             this.sourceLocation = sourceLocation != null ? sourceLocation : SourceLocation.none();
         }
 
-        public String getTraitName() {
-            return name;
+        public ShapeId toShapeId() {
+            return id;
         }
 
         public SourceLocation getSourceLocation() {
@@ -86,14 +86,14 @@ public class ShapeTest {
     }
 
     private static class OtherTrait extends MyTrait {
-        OtherTrait(String name, SourceLocation sourceLocation) {
-            super(name, sourceLocation);
+        OtherTrait(ShapeId id, SourceLocation sourceLocation) {
+            super(id, sourceLocation);
         }
     }
 
     private static class AnotherTrait extends OtherTrait {
-        AnotherTrait(String name, SourceLocation sourceLocation) {
-            super(name, sourceLocation);
+        AnotherTrait(ShapeId id, SourceLocation sourceLocation) {
+            super(id, sourceLocation);
         }
     }
 
@@ -135,8 +135,8 @@ public class ShapeTest {
 
     @Test
     public void hasTraits() {
-        MyTrait trait = new MyTrait("foo.baz#foo", null);
-        MyTrait otherTrait = new OtherTrait("other", null);
+        MyTrait trait = new MyTrait(ShapeId.from("foo.baz#foo"), null);
+        MyTrait otherTrait = new OtherTrait(ShapeId.from("foo.baz#other"), null);
         ShapeId id = ShapeId.from("ns.foo#baz");
         DocumentationTrait documentationTrait = new DocumentationTrait("docs", SourceLocation.NONE);
         Shape shape = SubShape.builder()
@@ -151,8 +151,8 @@ public class ShapeTest {
         assertTrue(shape.hasTrait("foo.baz#foo"));
         assertTrue(shape.getTrait(OtherTrait.class).isPresent());
         assertFalse(shape.getTrait(AnotherTrait.class).isPresent());
-        assertFalse(shape.findTrait("not-there").isPresent());
-        assertFalse(shape.hasTrait("not-there"));
+        assertFalse(shape.findTrait("notThere").isPresent());
+        assertFalse(shape.hasTrait("notThere"));
 
         assertTrue(shape.getTrait(DocumentationTrait.class).isPresent());
         assertTrue(shape.hasTrait(DocumentationTrait.class));
@@ -176,17 +176,17 @@ public class ShapeTest {
 
     @Test
     public void removesTraits() {
-        MyTrait trait = new MyTrait("foo", null);
-        MyTrait otherTrait = new OtherTrait("other", null);
+        MyTrait trait = new MyTrait(ShapeId.from("foo.baz#foo"), null);
+        MyTrait otherTrait = new OtherTrait(ShapeId.from("foo.baz#other"), null);
         Shape shape = SubShape.builder()
                 .id("ns.foo#baz")
                 .addTrait(trait)
                 .addTrait(otherTrait)
-                .removeTrait("other")
+                .removeTrait("foo.baz#other")
                 .build();
 
-        assertThat(shape.getAllTraits(), hasKey("foo"));
-        assertThat(shape.getAllTraits(), not(hasKey("other")));
+        assertThat(shape.getAllTraits(), hasKey(ShapeId.from("foo.baz#foo")));
+        assertThat(shape.getAllTraits(), not(hasKey(ShapeId.from("foo.baz#other"))));
     }
 
     @Test
@@ -206,8 +206,8 @@ public class ShapeTest {
 
     @Test
     public void differentTraitNamesNotEqual() {
-        MyTrait traitA = new MyTrait("foo", null);
-        MyTrait traitB = new MyTrait("other", null);
+        MyTrait traitA = new MyTrait(ShapeId.from("foo.baz#foo"), null);
+        MyTrait traitB = new MyTrait(ShapeId.from("foo.baz#other"), null);
         Shape shapeA = SubShape.builder().id("ns.foo#baz").addTrait(traitA).build();
         Shape shapeB = SubShape.builder().id("ns.foo#baz").addTrait(traitB).build();
 
@@ -216,8 +216,8 @@ public class ShapeTest {
 
     @Test
     public void differentTraitsNotEqual() {
-        MyTrait traitA = new MyTrait("foo", null);
-        MyTrait traitB = new OtherTrait("foo", null);
+        MyTrait traitA = new MyTrait(ShapeId.from("foo.ba#foo"), null);
+        MyTrait traitB = new OtherTrait(ShapeId.from("foo.baz#other"), null);
         Shape shapeA = SubShape.builder().id("ns.foo#baz").addTrait(traitA).build();
         Shape shapeB = SubShape.builder().id("ns.foo#baz").addTrait(traitB).build();
 
@@ -249,7 +249,7 @@ public class ShapeTest {
 
     @Test
     public void samesTraitsIsEqual() {
-        MyTrait traitA = new MyTrait("foo", null);
+        MyTrait traitA = new MyTrait(ShapeId.from("foo.baz#foo"), null);
         Shape shapeA = SubShape.builder().id("ns.foo#baz").addTrait(traitA).build();
         Shape shapeB = SubShape.builder().id("ns.foo#baz").addTrait(traitA).build();
 

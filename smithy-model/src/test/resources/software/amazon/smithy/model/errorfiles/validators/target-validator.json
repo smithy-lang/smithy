@@ -1,5 +1,5 @@
 {
-    "smithy": "0.2.0",
+    "smithy": "0.3.0",
     "ns.foo": {
         "shapes": {
             "ValidList": {
@@ -165,6 +165,14 @@
                 "value": {
                     "target": "String"
                 }
+            },
+            "fooTrait": {
+                "type": "string",
+                "trait": true
+            },
+            "InvalidTraitReference": {
+                "type": "list",
+                "member": {"target": "fooTrait"}
             }
         }
     },

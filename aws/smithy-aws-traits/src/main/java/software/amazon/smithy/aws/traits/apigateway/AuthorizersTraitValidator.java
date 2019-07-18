@@ -65,7 +65,7 @@ public class AuthorizersTraitValidator extends AbstractValidator {
                 "Each `scheme` of the `%s` trait must target one of the auth schemes defined in the "
                 + "`protocols` trait of a service (i.e., [%s]). The following mappings of authorizer names to "
                 + "schemes are invalid: %s",
-                AuthorizersTrait.NAME,
+                AuthorizersTrait.ID,
                 ValidationUtils.tickedList(schemeNames),
                 invalidMappings)));
     }

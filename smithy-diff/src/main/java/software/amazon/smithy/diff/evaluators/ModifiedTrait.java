@@ -22,8 +22,9 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
@@ -60,12 +61,12 @@ public class ModifiedTrait extends AbstractDiffEvaluator {
 
         // Find trait definitions that are tagged with any of the known diff tags.
         List<ValidationEvent> events = new ArrayList<>();
-        Set<String> errorOnAdd = findMatchingTraitDefNamesWithTag(newModel, DIFF_ERROR_ADD);
-        Set<String> errorOnRemove = findMatchingTraitDefNamesWithTag(newModel, DIFF_ERROR_REMOVE);
-        Set<String> errorOnReplace = findMatchingTraitDefNamesWithTag(newModel, DIFF_ERROR_UPDATE);
+        Set<ShapeId> errorOnAdd = findMatchingTraitDefNamesWithTag(newModel, DIFF_ERROR_ADD);
+        Set<ShapeId> errorOnRemove = findMatchingTraitDefNamesWithTag(newModel, DIFF_ERROR_REMOVE);
+        Set<ShapeId> errorOnReplace = findMatchingTraitDefNamesWithTag(newModel, DIFF_ERROR_UPDATE);
 
         // Merge "diff.error.const" into the other categories.
-        Set<String> errorOnAddOrRemove = findMatchingTraitDefNamesWithTag(newModel, DIFF_ERROR_CONST);
+        Set<ShapeId> errorOnAddOrRemove = findMatchingTraitDefNamesWithTag(newModel, DIFF_ERROR_CONST);
         errorOnAdd.addAll(errorOnAddOrRemove);
         errorOnRemove.addAll(errorOnAddOrRemove);
         errorOnReplace.addAll(errorOnAddOrRemove);
@@ -106,10 +107,10 @@ public class ModifiedTrait extends AbstractDiffEvaluator {
         return events;
     }
 
-    private static Set<String> findMatchingTraitDefNamesWithTag(Model model, String tag) {
-        return model.getTraitDefinitions().stream()
+    private static Set<ShapeId> findMatchingTraitDefNamesWithTag(Model model, String tag) {
+        return model.getTraitShapes().stream()
                 .filter(def -> def.getTags().contains(tag))
-                .map(TraitDefinition::getFullyQualifiedName)
+                .map(Shape::getId)
                 .collect(Collectors.toSet());
     }
 }

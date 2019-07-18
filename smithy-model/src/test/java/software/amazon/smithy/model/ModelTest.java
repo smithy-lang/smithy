@@ -32,29 +32,27 @@ public class ModelTest {
 
     @Test
     public void buildsModel() {
-        ShapeIndex index = ShapeIndex.builder().build();
-        TraitDefinition customTrait = TraitDefinition.builder()
-                .name("ns.foo#baz")
+        ShapeIndex index = ShapeIndex.builder()
+                .addShape(StringShape.builder()
+                                  .id("smithy.example#String")
+                                  .addTrait(TraitDefinition.builder().build())
+                                  .build())
                 .build();
+
         Model model = Model.builder()
                 .putMetadataProperty("name.name", Node.objectNode())
                 .shapeIndex(index)
-                .addTraitDefinition(customTrait)
                 .smithyVersion(Model.MODEL_VERSION)
                 .build();
 
         assertTrue(model.getMetadataProperty("name.name").isPresent());
         assertEquals(model.getSmithyVersion(), Model.MODEL_VERSION);
-        assertThat(model.getTraitDefinitions(), hasSize(1));
-        assertThat(model.getTraitDefinitions().iterator().next().getFullyQualifiedName(), equalTo("ns.foo#baz"));
+        assertThat(model.getTraitDefinitions().entrySet(), hasSize(1));
     }
 
     @Test
     public void modelEquality() {
         Model modelA = Model.builder()
-                .addTraitDefinition(TraitDefinition.builder()
-                        .name("ns.foo#baz")
-                        .build())
                 .putMetadataProperty("foo", Node.from("baz"))
                 .shapeIndex(ShapeIndex.builder()
                         .addShape(StringShape.builder().id("ns.foo#baz").build())

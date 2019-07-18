@@ -31,7 +31,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Indicates that a string shape contains an ARN.
  */
 public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBuilder<ArnReferenceTrait> {
-    public static final String NAME = "aws.api#arnReference";
+    public static final ShapeId ID = ShapeId.from("aws.api#arnReference");
+
     private static final String TYPE = "type";
     private static final String SERVICE = "service";
     private static final String RESOURCE = "resource";
@@ -42,7 +43,7 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
     private ShapeId resource;
 
     private ArnReferenceTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(ID, builder.getSourceLocation());
         this.type = builder.type;
         this.service = builder.service;
         this.resource = builder.resource;
@@ -50,7 +51,7 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override

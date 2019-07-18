@@ -26,6 +26,7 @@ public class TraitFactoryTest {
     @Test
     public void returnsEmptyIfNoCustomTraitDefined() {
         TraitFactory factory = TraitFactory.createServiceFactory(ListUtils.of());
-        assertFalse(factory.createTrait("ns.foo#baz", ShapeId.from("ns.qux#foo"), Node.objectNode()).isPresent());
+        assertFalse(factory.createTrait(ShapeId.from("ns.foo#baz"), ShapeId.from("ns.qux#foo"), Node.objectNode())
+                            .isPresent());
     }
 }

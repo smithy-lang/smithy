@@ -16,15 +16,16 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Trait implementation of outputEventStream.
  */
 public final class OutputEventStreamTrait extends StringTrait {
-    public static final String NAME = "smithy.api#outputEventStream";
+    public static final ShapeId ID = ShapeId.from("smithy.api#outputEventStream");
 
     public OutputEventStreamTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
     }
 
     public OutputEventStreamTrait(String value) {
@@ -33,7 +34,7 @@ public final class OutputEventStreamTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<OutputEventStreamTrait> {
         public Provider() {
-            super(NAME, OutputEventStreamTrait::new);
+            super(ID, OutputEventStreamTrait::new);
         }
     }
 }

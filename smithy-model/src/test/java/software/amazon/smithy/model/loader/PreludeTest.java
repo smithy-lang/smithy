@@ -38,7 +38,7 @@ public class PreludeTest {
     public void checksIfShapeIdIsInPrelude() {
         assertTrue(Prelude.isPreludeShape(ShapeId.from("smithy.api#String")));
         assertTrue(Prelude.isPreludeShape(ShapeId.from("smithy.api#PrimitiveLong")));
-        assertFalse(Prelude.isPreludeShape(ShapeId.from("smithy.api#Foo")));
+        assertTrue(Prelude.isPreludeShape(ShapeId.from("smithy.api#Foo")));
         assertFalse(Prelude.isPreludeShape(ShapeId.from("foo.baz#Bar")));
     }
 
@@ -48,14 +48,6 @@ public class PreludeTest {
         assertTrue(Prelude.isPublicPreludeShape(ShapeId.from("smithy.api#PrimitiveLong")));
         assertFalse(Prelude.isPublicPreludeShape(ShapeId.from("smithy.api#IdRefTrait")));
         assertFalse(Prelude.isPreludeShape(ShapeId.from("foo.baz#Bar")));
-    }
-
-    @Test
-    public void checksIfTraitDefinitionIsFromPrelude() {
-        assertTrue(Prelude.isPreludeTraitDefinition("smithy.api#required"));
-        assertTrue(Prelude.isPreludeTraitDefinition("smithy.api#box"));
-        assertFalse(Prelude.isPreludeTraitDefinition("smithy.mqtt#publish"));
-        assertFalse(Prelude.isPreludeTraitDefinition("foo.baz#Bar"));
     }
 
     @Test

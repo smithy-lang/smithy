@@ -1,1 +1,0 @@
-[ERROR] -: Trait definition `ns.foo#custom` targets an unresolvable shape `ns.foo#Invalid` | TraitDefinitionShape

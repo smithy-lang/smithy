@@ -1,19 +1,35 @@
 {
-  "smithy": "0.2.0",
+  "smithy": "0.3.0",
 
   "com.example": {
-    "traitDefs": {
+    "shapes": {
       "beta": {
-        "selector": "member:of(structure)"
+        "type": "structure",
+        "trait": {"selector": "member:of(structure)"}
       },
       "structuredTrait": {
-        "selector": "string",
-        "shape": "StructuredTraitShape",
-        "conflicts": ["com.example#beta"]
-      }
-    },
+        "type": "structure",
+        "members": {
+          "lorem": {
+            "target": "StringShape",
+            "required": true
+          },
+          "ipsum": {
+            "target": "StringShape",
+            "required": true
+          },
+          "dolor": {
+            "target": "StringShape"
+          }
+        },
+        "trait": {
+          "selector": "string",
+          "conflicts": [
+            "com.example#beta"
+          ]
+        }
+      },
 
-    "shapes": {
       "MyShape": {
         "type": "structure",
         "members": {
@@ -41,15 +57,6 @@
             "required": true,
             "com.example#beta" : true
           }
-        }
-      },
-
-      "StructuredTraitShape": {
-        "type": "structure",
-        "members": {
-          "lorem": {"target": "StringShape", "required": true},
-          "ipsum": {"target": "StringShape", "required": true},
-          "dolor": {"target": "StringShape"}
         }
       }
     }

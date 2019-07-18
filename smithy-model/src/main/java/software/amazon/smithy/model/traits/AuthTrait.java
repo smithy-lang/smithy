@@ -17,6 +17,7 @@ package software.amazon.smithy.model.traits;
 
 import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -24,15 +25,15 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * schemes supported by default for operations bound to a service.
  */
 public final class AuthTrait extends StringListTrait implements ToSmithyBuilder<AuthTrait> {
-    public static final String NAME = "smithy.api#auth";
+    public static final ShapeId ID = ShapeId.from("smithy.api#auth");
 
     private AuthTrait(List<String> values, FromSourceLocation sourceLocation) {
-        super(NAME, values, sourceLocation);
+        super(ID, values, sourceLocation);
     }
 
     public static final class Provider extends StringListTrait.Provider<AuthTrait> {
         public Provider() {
-            super(NAME, AuthTrait::new);
+            super(ID, AuthTrait::new);
         }
     }
 

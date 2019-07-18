@@ -16,15 +16,16 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Indicates that an operation is read-only.
  */
 public final class ReadonlyTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#readonly";
+    public static final ShapeId ID = ShapeId.from("smithy.api#readonly");
 
     public ReadonlyTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public ReadonlyTrait() {
@@ -33,7 +34,7 @@ public final class ReadonlyTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<ReadonlyTrait> {
         public Provider() {
-            super(NAME, ReadonlyTrait::new);
+            super(ID, ReadonlyTrait::new);
         }
     }
 }

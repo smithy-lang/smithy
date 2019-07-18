@@ -91,8 +91,8 @@ and ``{second}``, in the MQTT topic template:
 
     .. code-tab:: smithy
 
-        use trait smithy.mqtt#publish
-        use trait smithy.mqtt#topicLabel
+        use smithy.mqtt#publish
+        use smithy.mqtt#topicLabel
 
         @publish("{first}/{second}")
         operation ExampleOperation(ExampleOperationInput)
@@ -112,7 +112,7 @@ and ``{second}``, in the MQTT topic template:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "ExampleOperation": {
@@ -195,8 +195,8 @@ The following example defines an operation that publishes messages to the
 
         namespace smithy.example
 
-        use trait smithy.mqtt#publish
-        use trait smithy.mqtt#topicLabel
+        use smithy.mqtt#publish
+        use smithy.mqtt#topicLabel
 
         @publish("foo/{bar}")
         operation PostFoo(PostFooInput)
@@ -213,7 +213,7 @@ The following example defines an operation that publishes messages to the
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "PostFoo": {
@@ -302,8 +302,8 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
 
     .. code-tab:: smithy
 
-        use trait smithy.mqtt#subscribe
-        use trait smithy.mqtt#topicLabel
+        use smithy.mqtt#subscribe
+        use smithy.mqtt#topicLabel
 
         @subscribe("events/{id}")
         @outputEventStream("events")
@@ -326,7 +326,7 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "SubscribeForEvents": {
@@ -484,29 +484,27 @@ MQTT protocol bindings.
 
 .. code-block:: smithy
 
-    $version: "0.2.0"
+    $version: "0.3.0"
+
     namespace smithy.mqtt
 
-    trait publish {
-      shape: MqttTopicString,
-      selector: "operation:not(-[output]->)",
-      conflicts: ["smithy.mqtt#subscribe", "inputEventStream"]
-    }
-
-    trait subscribe {
-      shape: TopicString,
-      selector: "operation[trait|outputEventStream]",
-      conflicts: ["smithy.mqtt#publish"]
-    }
-
+    @trait(selector: "operation:not(-[output]->)",
+           conflicts: ["smithy.mqtt#subscribe", "inputEventStream"])
+    @tags(["diff.error.const"])
     // Matches one or more characters that are not "#" or "+".
     @pattern("^[^#+]+$")
-    @private
-    string TopicString
+    string publish
 
-    trait topicLabel {
-      selector: "member[trait|required]:test(> :test(string, byte, short, integer, long, boolean, timestamp))",
-    }
+    @trait(selector: "operation[trait|outputEventStream]",
+           conflicts: ["smithy.mqtt#publish"])
+    @tags(["diff.error.const"])
+    // Matches one or more characters that are not "#" or "+".
+    @pattern("^[^#+]+$")
+    string subscribe
+
+    @trait(selector: "member[trait|required]:test(> :test(string, byte, short, integer, long, boolean, timestamp))")
+    structure topicLabel {}
+
 
 
 .. _MQTT PUBLISH: http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718037

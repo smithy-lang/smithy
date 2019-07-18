@@ -35,7 +35,7 @@ public class ArnReferenceTraitTest {
     public void loadsEmptyTrait() {
         Node node = Node.parse("{}");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("aws.api#arnReference", ShapeId.from("ns.foo#foo"), node);
+        Optional<Trait> trait = provider.createTrait(ArnReferenceTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(ArnReferenceTrait.class));
@@ -50,7 +50,7 @@ public class ArnReferenceTraitTest {
     public void loadsTraitWithOptionalValues() {
         Node node = Node.parse("{\"resource\": \"com.foo#Baz\", \"service\": \"com.foo#Bar\", \"type\": \"AWS::Foo::Baz\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("aws.api#arnReference", ShapeId.from("ns.foo#foo"), node);
+        Optional<Trait> trait = provider.createTrait(ArnReferenceTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
         ArnReferenceTrait arn = (ArnReferenceTrait) trait.get();
         assertThat(arn.toBuilder().build(), equalTo(arn));
@@ -63,7 +63,7 @@ public class ArnReferenceTraitTest {
     public void loadsTraitWithOptionalValuesAndRelativeShapeIds() {
         Node node = Node.parse("{\"resource\": \"Baz\", \"service\": \"Bar\", \"type\": \"AWS::Foo::Baz\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("aws.api#arnReference", ShapeId.from("ns.foo#String"), node);
+        Optional<Trait> trait = provider.createTrait(ArnReferenceTrait.ID, ShapeId.from("ns.foo#String"), node);
 
         ArnReferenceTrait arn = (ArnReferenceTrait) trait.get();
         assertThat(arn.toBuilder().build(), equalTo(arn));

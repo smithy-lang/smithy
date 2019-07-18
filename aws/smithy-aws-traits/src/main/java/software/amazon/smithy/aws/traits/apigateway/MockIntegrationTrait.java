@@ -34,7 +34,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * API Gateway mock integration.
  */
 public final class MockIntegrationTrait extends AbstractTrait implements ToSmithyBuilder<MockIntegrationTrait> {
-    public static final String NAME = "aws.apigateway#mockIntegration";
+    public static final ShapeId ID = ShapeId.from("aws.apigateway#mockIntegration");
+
     private static final String PASS_THROUGH_BEHAVIOR_KEY = "passThroughBehavior";
     private static final String REQUEST_PARAMETERS_KEY = "requestParameters";
     private static final String REQUEST_TEMPLATES_KEY = "requestTemplates";
@@ -48,7 +49,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
     private final Map<String, IntegrationResponse> responses;
 
     private MockIntegrationTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(ID, builder.getSourceLocation());
         passThroughBehavior = builder.passThroughBehavior;
         requestParameters = MapUtils.copyOf(builder.requestParameters);
         requestTemplates = MapUtils.copyOf(builder.requestTemplates);
@@ -57,7 +58,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override

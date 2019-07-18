@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.traits;
 import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -29,10 +30,10 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * only specific authentication schemes by name.
  */
 public final class UnsignedPayloadTrait extends StringListTrait implements ToSmithyBuilder<UnsignedPayloadTrait> {
-    public static final String NAME = "aws.api#unsignedPayload";
+    public static final ShapeId ID = ShapeId.from("aws.api#unsignedPayload");
 
     public UnsignedPayloadTrait(List<String> values, FromSourceLocation sourceLocation) {
-        super(NAME, values, sourceLocation);
+        super(ID, values, sourceLocation);
     }
 
     public UnsignedPayloadTrait(FromSourceLocation sourceLocation) {
@@ -45,7 +46,7 @@ public final class UnsignedPayloadTrait extends StringListTrait implements ToSmi
 
     public static final class Provider extends StringListTrait.Provider<UnsignedPayloadTrait> {
         public Provider() {
-            super(NAME, UnsignedPayloadTrait::new);
+            super(ID, UnsignedPayloadTrait::new);
         }
     }
 

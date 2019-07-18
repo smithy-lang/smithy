@@ -18,6 +18,7 @@ package software.amazon.smithy.model.loader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -95,7 +96,7 @@ public class NodeModelLoaderTest {
         assertTrue(model.getTraitDefinition("example.namespace#customTrait").isPresent());
         assertTrue(model.getTraitDefinition("example.namespace#documentation").isPresent());
         assertTrue(model.getTraitDefinition("example.namespace#numeric").isPresent());
-        assertThat(model.getTraitDefinition("example.namespace#numeric").get().getShape().get(),
-                   equalTo(ShapeId.from("smithy.api#Integer")));
+        assertThat(model.getTraitShapes(),
+                   hasItem(model.getShapeIndex().getShape(ShapeId.from("example.namespace#numeric")).get()));
     }
 }

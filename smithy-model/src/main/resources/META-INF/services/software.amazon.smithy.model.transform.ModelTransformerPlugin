@@ -2,3 +2,4 @@ software.amazon.smithy.model.transform.plugins.CleanBindings
 software.amazon.smithy.model.transform.plugins.CleanOperationStructures
 software.amazon.smithy.model.transform.plugins.CleanResourceReferences
 software.amazon.smithy.model.transform.plugins.CleanStructureAndUnionMembers
+software.amazon.smithy.model.transform.plugins.RemoveTraits

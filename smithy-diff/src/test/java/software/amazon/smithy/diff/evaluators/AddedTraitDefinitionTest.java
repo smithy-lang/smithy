@@ -22,15 +22,21 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class AddedTraitDefinitionTest {
     @Test
     public void detectsAddedTraitDefinition() {
-        TraitDefinition definition = TraitDefinition.builder().name("foo.baz#bam").build();
+        Shape definition = StringShape.builder()
+                .id("foo.baz#bam")
+                .addTrait(TraitDefinition.builder().build())
+                .build();
+
         Model modelA = Model.assembler().assemble().unwrap();
-        Model modelB = Model.assembler().addTraitDefinition(definition).assemble().unwrap();
+        Model modelB = Model.assembler().addShape(definition).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "AddedTraitDefinition").size(), equalTo(1));

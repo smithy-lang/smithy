@@ -16,16 +16,17 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Binds an input member to a label in the hostPrefix of an endpoint
  * trait on an operation.
  */
 public final class HostLabelTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#hostLabel";
+    public static final ShapeId ID = ShapeId.from("smithy.api#hostLabel");
 
     public HostLabelTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public HostLabelTrait() {
@@ -34,7 +35,7 @@ public final class HostLabelTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<HostLabelTrait> {
         public Provider() {
-            super(NAME, HostLabelTrait::new);
+            super(ID, HostLabelTrait::new);
         }
     }
 }

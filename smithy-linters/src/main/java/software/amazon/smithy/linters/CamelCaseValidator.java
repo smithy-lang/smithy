@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
@@ -34,34 +35,28 @@ import software.amazon.smithy.model.validation.ValidatorService;
  * <p>This validator accepts the following optional configuration options:
  *
  * <ul>
- *     <li>shapeNames: (string) one of "upper" (default) or "lower".</li>
  *     <li>memberNames: (string) one of "upper" or "lower" (default).</li>
  * </ul>
  */
 public final class CamelCaseValidator extends AbstractValidator {
-    private static final String DEFAULT_SHAPE_CASE = "upper";
-    private static final String DEFAULT_MEMBER_CASE = "lower";
+    private static final String UPPER = "upper";
+    private static final String LOWER = "lower";
     private static final Pattern UPPER_CAMEL_CASE = Pattern.compile("^[A-Z]+[A-Za-z0-9]*$");
     private static final Pattern LOWER_CAMEL_CASE = Pattern.compile("^[a-z]+[A-Za-z0-9]*$");
 
-    private final String shapeNames;
     private final String memberNames;
 
-    private CamelCaseValidator(String shapeNames, String memberNames) {
-        this.shapeNames = shapeNames;
+    private CamelCaseValidator(String memberNames) {
         this.memberNames = memberNames;
     }
 
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
             super(CamelCaseValidator.class, configuration -> {
-                String shapeNames = configuration.getStringMember("shapeName")
-                        .orElseGet(() -> Node.from(DEFAULT_SHAPE_CASE))
-                        .expectOneOf("upper", "lower");
                 String memberNames = configuration.getStringMember("memberNames")
-                        .orElseGet(() -> Node.from(DEFAULT_MEMBER_CASE))
+                        .orElseGet(() -> Node.from(LOWER))
                         .expectOneOf("upper", "lower");
-                return new CamelCaseValidator(shapeNames, memberNames);
+                return new CamelCaseValidator(memberNames);
             });
         }
     }
@@ -69,11 +64,21 @@ public final class CamelCaseValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        Pattern isValidShapeName = getPattern(shapeNames);
+
+        // Normal shapes are expected to be upper camel.
         model.getShapeIndex().shapes()
-                .filter(shape -> !isValidShapeName.matcher(shape.getId().getName()).find())
+                .filter(shape -> !shape.hasTrait(TraitDefinition.class))
+                .filter(shape -> !getPattern(UPPER).matcher(shape.getId().getName()).find())
                 .map(shape -> danger(shape, format("%s shape name, `%s`, is not %s camel case",
-                                                   shape.getType(), shape.getId().getName(), shapeNames)))
+                                                   shape.getType(), shape.getId().getName(), UPPER)))
+                .forEach(events::add);
+
+        // Trait shapes are expected to be lower camel.
+        model.getShapeIndex().shapes()
+                .filter(shape -> shape.hasTrait(TraitDefinition.class))
+                .filter(shape -> !getPattern(LOWER).matcher(shape.getId().getName()).find())
+                .map(shape -> danger(shape, format("%s trait definition, `%s`, is not lower camel case",
+                                                   shape.getType(), shape.getId().getName())))
                 .forEach(events::add);
 
         Pattern isValidMemberName = getPattern(memberNames);
@@ -82,6 +87,7 @@ public final class CamelCaseValidator extends AbstractValidator {
                 .map(shape -> danger(shape, format("Member shape member name, `%s`, is not %s camel case",
                                                    shape.getMemberName(), memberNames)))
                 .forEach(events::add);
+
         return events;
     }
 

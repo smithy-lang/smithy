@@ -16,17 +16,18 @@
 package software.amazon.smithy.mqtt.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringTrait;
 
 /**
  * {@code smithy.mqtt#publish} trait.
  */
 public final class PublishTrait extends StringTrait {
-    public static final String NAME = "smithy.mqtt#publish";
+    public static final ShapeId ID = ShapeId.from("smithy.mqtt#publish");
     private final Topic topic;
 
     public PublishTrait(String topic, SourceLocation sourceLocation) {
-        super(NAME, topic, sourceLocation);
+        super(ID, topic, sourceLocation);
         this.topic = Topic.parse(topic);
     }
 
@@ -36,7 +37,7 @@ public final class PublishTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<PublishTrait> {
         public Provider() {
-            super(NAME, PublishTrait::new);
+            super(ID, PublishTrait::new);
         }
     }
 

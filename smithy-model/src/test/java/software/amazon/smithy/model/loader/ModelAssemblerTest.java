@@ -43,14 +43,12 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -245,7 +243,7 @@ public class ModelAssemblerTest {
 
         assertThat(result.getValidationEvents(), empty());
         // Each namespace had a separate name.
-        assertThat(result.unwrap().getShapeIndex().shapes().count(), equalTo(3L));
+        assertThat(result.unwrap().getShapeIndex().shapes().count(), equalTo(4L));
         // Each shape had a documentation trait in each namespace.
         assertThat(result.unwrap().getShapeIndex().shapes()
                            .filter(shape -> shape.findTrait("ns.shared#customTrait").isPresent())
@@ -307,17 +305,6 @@ public class ModelAssemblerTest {
 
         assertEquals("hi", model2.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).get()
                 .getTrait(DocumentationTrait.class).get().getValue());
-    }
-
-    @Test
-    public void canAddExplicitTraitDefs() {
-        TraitDefinition def = TraitDefinition.builder()
-                .name("foo.baz#bar")
-                .selector(Selector.IDENTITY)
-                .build();
-        Model model = new ModelAssembler().addTraitDefinition(def).assemble().unwrap();
-
-        assertThat(model.getTraitDefinition("foo.baz#bar"), equalTo(Optional.of(def)));
     }
 
     @Test

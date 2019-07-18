@@ -27,11 +27,13 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
+import software.amazon.smithy.model.neighbor.RelationshipDirection;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.FunctionalUtils;
@@ -69,6 +71,13 @@ public class TargetValidator extends AbstractValidator {
 
     private Optional<ValidationEvent> validateTarget(ShapeIndex index, Shape shape, Shape target, Relationship rel) {
         RelationshipType relType = rel.getRelationshipType();
+
+        if (relType.getDirection() == RelationshipDirection.DIRECTED && target.hasTrait(TraitDefinition.class)) {
+            return Optional.of(error(shape, format(
+                    "Found a %s reference to trait definition `%s`. Trait definitions cannot be targeted by "
+                    + "members or referenced by shapes in any other context other than applying them as "
+                    + "traits.", relType, rel.getNeighborShapeId())));
+        }
 
         switch (relType) {
             case MEMBER_TARGET:

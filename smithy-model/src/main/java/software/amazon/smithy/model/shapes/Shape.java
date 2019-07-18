@@ -40,7 +40,7 @@ import software.amazon.smithy.utils.Tagged;
  */
 public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Comparable<Shape> {
     private final ShapeId id;
-    private final Map<String, Trait> traits;
+    private final Map<ShapeId, Trait> traits;
     private final SourceLocation source;
     private final ShapeType type;
 
@@ -135,12 +135,24 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     /**
      * Checks if the shape has a specific trait by name.
      *
-     * @param traitName The trait name, including the namespace for
-     *  custom traits.
+     * <p>Relative shape IDs are assumed to refer to the "smithy.api"
+     * namespace.
+     *
+     * @param id The possibly relative trait ID.
      * @return Returns true if the shape has the given trait.
      */
-    public boolean hasTrait(String traitName) {
-        return findTrait(traitName).isPresent();
+    public boolean hasTrait(String id) {
+        return findTrait(id).isPresent();
+    }
+
+    /**
+     * Checks if the shape has a specific trait by name.
+     *
+     * @param id The fully-qualified trait ID.
+     * @return Returns true if the shape has the given trait.
+     */
+    public boolean hasTrait(ShapeId id) {
+        return findTrait(id).isPresent();
     }
 
     /**
@@ -156,12 +168,24 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     /**
      * Attempts to find a trait applied to the shape by name.
      *
-     * @param traitName The trait name, including the namespace for
-     *  custom traits.
+     * @param id The trait shape ID.
      * @return Returns the optionally found trait.
      */
-    public Optional<Trait> findTrait(String traitName) {
-        return Optional.ofNullable(traits.get(Trait.makeAbsoluteName(traitName)));
+    public Optional<Trait> findTrait(ShapeId id) {
+        return Optional.ofNullable(traits.get(id));
+    }
+
+    /**
+     * Attempts to find a trait applied to the shape by ID.
+     *
+     * <p>Relative shape IDs are assumed to refer to the "smithy.api"
+     * namespace.
+     *
+     * @param id The trait ID.
+     * @return Returns the optionally found trait.
+     */
+    public Optional<Trait> findTrait(String id) {
+        return findTrait(ShapeId.from(Trait.makeAbsoluteName(id)));
     }
 
     /**
@@ -186,7 +210,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      *
      * @return Returns the attached traits.
      */
-    public final Map<String, Trait> getAllTraits() {
+    public final Map<ShapeId, Trait> getAllTraits() {
         return traits;
     }
 

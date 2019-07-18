@@ -1,5 +1,5 @@
 {
-  "smithy": "0.2.0",
+  "smithy": "0.3.0",
   "metadata": {
     "exp1": 10e0,
     "exp2": 10e0,
@@ -67,13 +67,13 @@
     "foo.7": true,
     "foo.8": false,
     "foo.9": null,
-    "trailing-commas1": {
+    "trailing_commas1": {
       "a": "b"
     },
-    "trailing-commas2": [
+    "trailing_commas2": [
       "a",
       "b"
     ],
-    "shape-id": "foo.baz#Bam"
+    "shape_id": "foo.baz#Bam"
   }
 }

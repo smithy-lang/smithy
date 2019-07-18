@@ -73,7 +73,7 @@ public final class MqttTopicConflictValidator extends AbstractValidator {
     private String createConflictingBindingDescriptor(TopicBinding<? extends Trait> binding) {
         return String.format(
                 "`%s` trait payload %s of `%s`",
-                Trait.getIdiomaticTraitName(binding.getMqttTrait().getTraitName()),
+                Trait.getIdiomaticTraitName(binding.getMqttTrait().toShapeId()),
                 binding.getPayloadShape().map(Shape::getId).map(id -> "`" + id + "`").orElse("N/A"),
                 binding.getOperation().getId());
     }

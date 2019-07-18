@@ -15,26 +15,18 @@
 
 package software.amazon.smithy.model.loader;
 
-import static software.amazon.smithy.model.node.Node.loadArrayOfString;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.selector.Selector;
-import software.amazon.smithy.model.selector.SelectorSyntaxException;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -57,11 +49,6 @@ final class LoaderUtils {
             IDENTIFIERS_KEY, RESOURCES_KEY, OPERATIONS_KEY);
     static final List<String> SERVICE_PROPERTY_NAMES = ListUtils.of(
             TYPE_KEY, VERSION_KEY, OPERATIONS_KEY, RESOURCES_KEY);
-    private static final List<String> TRAIT_DEFINITION_PROPERTY_NAMES = ListUtils.of(
-            TraitDefinition.SELECTOR_KEY, TraitDefinition.STRUCTURALLY_EXCLUSIVE_KEY, TraitDefinition.SHAPE_KEY,
-            TraitDefinition.TAGS_KEY, TraitDefinition.CONFLICTS_KEY, TraitDefinition.DOCUMENTATION_KEY,
-            TraitDefinition.EXTERNAL_DOCUMENTATION_KEY, TraitDefinition.DEPRECATED_KEY,
-            TraitDefinition.DEPRECATION_REASON_KEY);
 
     private LoaderUtils() {}
 
@@ -106,82 +93,5 @@ final class LoaderUtils {
                         .map(s -> s.expectShapeId(namespace))
                         .collect(Collectors.toList()))
                 .orElseGet(Collections::emptyList);
-    }
-
-    /**
-     * Registers a trait definition with a {@code LoaderVisitor}.
-     *
-     * @param namespace Namespace that contains the definition.
-     * @param name Name of the trait definition.
-     * @param node Value that contains the definition.
-     * @param visitor Visitor to add the loaded definition to.
-     * @param docs External documentation string to inject into the definition.
-     */
-    static void loadTraitDefinition(String namespace, String name, Node node, LoaderVisitor visitor, String docs) {
-        ObjectNode members = node.expectObjectNode("Trait definitions must be defined using object nodes.");
-        members.warnIfAdditionalProperties(TRAIT_DEFINITION_PROPERTY_NAMES);
-        validateTraitDefinitionName(name, node);
-
-        TraitDefinition.Builder builder = TraitDefinition.builder()
-                .name(namespace + "#" + name)
-                .sourceLocation(node.getSourceLocation());
-
-        if (docs != null) {
-            builder.documentation(docs);
-        }
-
-        members.getMember(TraitDefinition.SELECTOR_KEY)
-                .map(LoaderUtils::loadSelector)
-                .ifPresent(builder::selector);
-
-        members.getBooleanMember(TraitDefinition.STRUCTURALLY_EXCLUSIVE_KEY)
-                .map(BooleanNode::getValue)
-                .ifPresent(builder::structurallyExclusive);
-
-        // Resolve shape targets only after all shapes have been loaded by the assembler.
-        members.getStringMember(TraitDefinition.SHAPE_KEY)
-                .ifPresent(stringNode -> visitor.onShapeTarget(stringNode.getValue(), stringNode, builder::shape));
-
-        members.getMember(TraitDefinition.TAGS_KEY)
-                .ifPresent(values -> loadArrayOfString(TraitDefinition.TAGS_KEY, values)
-                        .forEach(builder::addTag));
-
-        members.getMember(TraitDefinition.CONFLICTS_KEY)
-                .ifPresent(values -> loadArrayOfString(TraitDefinition.CONFLICTS_KEY, values)
-                        .forEach(builder::addConflict));
-
-        members.getStringMember(TraitDefinition.DOCUMENTATION_KEY)
-                .map(StringNode::getValue)
-                .ifPresent(builder::documentation);
-
-        members.getStringMember(TraitDefinition.EXTERNAL_DOCUMENTATION_KEY)
-                .map(StringNode::getValue)
-                .ifPresent(builder::externalDocumentation);
-
-        members.getBooleanMember(TraitDefinition.DEPRECATED_KEY)
-                .map(BooleanNode::getValue)
-                .ifPresent(builder::deprecated);
-
-        members.getStringMember(TraitDefinition.DEPRECATION_REASON_KEY)
-                .map(StringNode::getValue)
-                .ifPresent(builder::deprecationReason);
-
-        visitor.onTraitDef(builder);
-    }
-
-    private static void validateTraitDefinitionName(String name, FromSourceLocation sourceLocation) {
-        if (!ShapeId.IDENTIFIER_PATTERN.matcher(name).find()) {
-            throw new SourceException(
-                    "Invalid trait name `" + name + "`. Trait names must adhere to the identifier grammar: "
-                    + "^" + ShapeId.IDENTIFIER + "$", sourceLocation);
-        }
-    }
-
-    private static Selector loadSelector(Node node) {
-        try {
-            return Selector.parse(node.expectStringNode().getValue());
-        } catch (SelectorSyntaxException e) {
-            throw new SourceException(e.getMessage(), node, e);
-        }
     }
 }

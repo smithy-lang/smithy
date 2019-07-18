@@ -35,7 +35,8 @@ public class EndpointTraitTest {
         TraitFactory provider = TraitFactory.createServiceFactory();
         ObjectNode node = Node.objectNode()
                 .withMember("hostPrefix", Node.from("foo.baz-"));
-        Optional<Trait> trait = provider.createTrait("smithy.api#endpoint", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#endpoint"), ShapeId.from("ns.qux#foo"), node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(EndpointTrait.class));
         EndpointTrait endpoint = (EndpointTrait) trait.get();

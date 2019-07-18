@@ -1,3 +1,5 @@
+metadata suppressions = [{"ids": ["UnstableFeature"], "shapes": ["aws.iotjobs#JobDocument"]}]
+
 namespace aws.iotjobs
 
 @protocols([{name: "aws.mqtt-json"}])
@@ -320,15 +322,7 @@ structure JobExecutionState {
   versionNumber: smithy.api#Integer,
 }
 
-// Smithy doesn't have official support for unstructured data like a json document.
-// The code-generators will have to figure out how to handle it in each language.
-trait propertyBag {
-  selector: structure,
-  tags: [internal, hack],
-}
-
-@propertyBag
-structure JobDocument {}
+document JobDocument
 
 
 // ------- JobExecutionsChanged ----------

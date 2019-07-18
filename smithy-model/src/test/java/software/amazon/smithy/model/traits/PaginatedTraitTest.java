@@ -44,7 +44,8 @@ public class PaginatedTraitTest {
                 .withMember("outputToken", Node.from("outputToken"))
                 .withMember("pageSize", Node.from("pageSize"));
 
-        Optional<Trait> trait = provider.createTrait("smithy.api#paginated", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#paginated"), ShapeId.from("ns.qux#foo"), node);
         assertThat(trait.isPresent(), is(true));
         assertThat(trait.get(), instanceOf(PaginatedTrait.class));
         PaginatedTrait paginatedTrait = (PaginatedTrait) trait.get();
@@ -60,10 +61,13 @@ public class PaginatedTraitTest {
     public void allowsMissingPageSize() {
         TraitFactory provider = TraitFactory.createServiceFactory();
 
-        assertThat(provider.createTrait("smithy.api#paginated", ShapeId.from("ns.qux#foo"), Node.objectNode()
-                .withMember("items", Node.from("items"))
-                .withMember("inputToken", Node.from("inputToken"))
-                .withMember("outputToken", Node.from("outputToken"))).isPresent(), is(true));
+        assertThat(provider.createTrait(
+                ShapeId.from("smithy.api#paginated"),
+                ShapeId.from("ns.qux#foo"),
+                Node.objectNode()
+                        .withMember("items", Node.from("items"))
+                        .withMember("inputToken", Node.from("inputToken"))
+                        .withMember("outputToken", Node.from("outputToken"))).isPresent(), is(true));
     }
 
     @Test

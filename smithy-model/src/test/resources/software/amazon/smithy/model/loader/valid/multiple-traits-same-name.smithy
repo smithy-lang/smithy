@@ -12,9 +12,8 @@ string MyString3
 @foo.gamma#hello
 string MyString4
 
-trait hello {
-  selector: "*"
-}
+@trait(selector: "*")
+structure hello {}
 
 
 namespace foo.beta
@@ -31,9 +30,8 @@ string MyString3
 @foo.gamma#hello
 string MyString4
 
-trait hello {
-  selector: "*"
-}
+@trait(selector: "*")
+structure hello {}
 
 
 namespace foo.gamma
@@ -50,6 +48,5 @@ string MyString3
 @foo.gamma#hello
 string MyString4
 
-trait hello {
-  selector: "*"
-}
+@trait(selector: "*")
+structure hello {}

@@ -31,9 +31,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -62,6 +60,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
 final class LoaderVisitor {
     private static final String[] SUPPORTED_VERSION_PARTS = Model.MODEL_VERSION.split("\\.");
     private static final Logger LOGGER = Logger.getLogger(LoaderVisitor.class.getName());
+    private static final TraitDefinition.Provider TRAIT_DEF_PROVIDER = new TraitDefinition.Provider();
 
     /** Whether or not a call to {@link #onEnd()} has been made. */
     private boolean calledOnEnd;
@@ -99,11 +98,8 @@ final class LoaderVisitor {
     /** Built shapes to add to the Model. Keys are not allowed to conflict with pendingShapes. */
     private final Map<ShapeId, Shape> builtShapes = new HashMap<>();
 
-    /** Trait definitions yet to be built (for example, waiting on a forward shape reference. */
-    private final Map<String, TraitDefinition.Builder> pendingTraitDefinitions = new HashMap<>();
-
-    /** Built trait definitions. Keys are not allowed to conflict with pendingTraitDefinitions. */
-    private final Map<String, TraitDefinition> builtTraitDefinitions = new HashMap<>();
+    /** Built trait definitions. */
+    private final Map<ShapeId, TraitDefinition> builtTraitDefinitions = new HashMap<>();
 
     /** Current namespace being parsed. */
     private String namespace;
@@ -111,18 +107,23 @@ final class LoaderVisitor {
     /** Map of shape aliases to their alias. */
     private final Map<String, ShapeId> useShapes = new HashMap<>();
 
-    /** Map of trait aliases to their alias. */
-    private final Map<String, ShapeId> useTraits = new HashMap<>();
-
     private static final class PendingTrait {
-        final String relativeNamespace;
-        final String name;
+        final ShapeId id;
         final Node value;
+        final Trait trait;
 
-        PendingTrait(String relativeNamespace, String name, Node value) {
-            this.relativeNamespace = relativeNamespace;
-            this.name = name;
+        // A pending trait that needs to be created.
+        PendingTrait(ShapeId id, Node value) {
+            this.id = id;
             this.value = value;
+            this.trait = null;
+        }
+
+        // A pending trait that's already created.
+        PendingTrait(ShapeId id, Trait trait) {
+            this.id = id;
+            this.trait = trait;
+            this.value = null;
         }
     }
 
@@ -176,7 +177,6 @@ final class LoaderVisitor {
         LOGGER.fine(() -> "Beginning to parse " + filename);
         namespace = null;
         useShapes.clear();
-        useTraits.clear();
     }
 
     /**
@@ -235,8 +235,9 @@ final class LoaderVisitor {
 
         try {
             ShapeId expectedId = ShapeId.fromOptionalNamespace(namespace, target);
-            if (hasDefinedShape(expectedId) || target.contains("#")) {
-                // Account for previously seen shapes in this namespace and absolute shapes.
+            if (namespace.equals(Prelude.NAMESPACE) || hasDefinedShape(expectedId) || target.contains("#")) {
+                // Account for previously seen shapes in this namespace, absolute shapes, and prelude namespaces
+                // always resolve to prelude shapes.
                 resolver.accept(expectedId);
             } else if (useShapes.containsKey(target)) {
                 // Account for aliased shapes.
@@ -405,39 +406,19 @@ final class LoaderVisitor {
      * @return Returns the parsed and loaded shape ID.
      */
     public ShapeId onShapeDefName(String name, FromSourceLocation source) {
-        return shapeId(name, "shape", source, useShapes);
-    }
-
-    /**
-     * Invoked when a trait definition name is defined, validates the name,
-     * and returns the resolved ID of the name.
-     *
-     * <p>This method ensures a namespace has been set, the syntax is valid,
-     * and that the name does not conflict with any previously defined use
-     * statements.
-     *
-     * @param name Name being defined.
-     * @param source The location of where it is defined.
-     * @return Returns the parsed and loaded shape ID.
-     */
-    public ShapeId onTraitDefName(String name, FromSourceLocation source) {
-        return shapeId(name, "trait", source, useTraits);
-    }
-
-    private ShapeId shapeId(String name, String descriptor, FromSourceLocation source, Map<String, ShapeId> map) {
         validateState(source);
         assertNamespaceIsPresent(source);
 
-        if (map.containsKey(name)) {
-            String msg = String.format("%s name `%s` conflicts with imported shape `%s`",
-                                       descriptor, name, map.get(name));
+        if (useShapes.containsKey(name)) {
+            String msg = String.format("shape name `%s` conflicts with imported shape `%s`",
+                                       name, useShapes.get(name));
             throw new UseException(msg, source);
         }
 
         try {
             return ShapeId.fromRelative(namespace, name);
         } catch (ShapeIdSyntaxException e) {
-            throw new ModelSyntaxException("Invalid " + descriptor + " name: " + name, source);
+            throw new ModelSyntaxException("Invalid shape name: " + name, source);
         }
     }
 
@@ -470,6 +451,14 @@ final class LoaderVisitor {
         if (validateOnShape(shape.getId(), shape)) {
             builtShapes.put(shape.getId(), shape);
         }
+
+        // Whether or not a shape defines a trait needs to be tracked when
+        // adding already built shapes (e.g., this happens with the prelude model).
+        shape.getTrait(TraitDefinition.class).ifPresent(def -> onTraitDefinition(shape.getId(), def));
+    }
+
+    private void onTraitDefinition(ShapeId target, TraitDefinition definition) {
+        builtTraitDefinitions.put(target, definition);
     }
 
     private boolean validateOnShape(ShapeId id, FromSourceLocation source) {
@@ -513,70 +502,31 @@ final class LoaderVisitor {
      * @param traitValue Trait value as a Node object.
      */
     public void onTrait(ShapeId target, String traitName, Node traitValue) {
-        validateState(traitValue);
-
-        if (!traitName.contains("#")) {
-            assertNamespaceIsPresent(traitValue);
-        }
-
-        // Account for trait aliases.
-        if (useTraits.containsKey(traitName)) {
-            traitName = useTraits.get(traitName).toString();
-        }
-
-        PendingTrait pendingTrait = new PendingTrait(namespace, traitName, traitValue);
-        pendingTraits.computeIfAbsent(target, id -> new ArrayList<>()).add(pendingTrait);
-    }
-
-    /**
-     * Adds a trait definition to the loader.
-     *
-     * @param definition Trait definition to add.
-     */
-    public void onTraitDef(TraitDefinition.Builder definition) {
-        if (validateOnTraitDef(definition.getFullyQualifiedName(), definition)) {
-            pendingTraitDefinitions.put(definition.getFullyQualifiedName(), definition);
-        }
-    }
-
-    /**
-     * Adds a trait definition to the loader.
-     *
-     * @param definition Trait definition to add.
-     */
-    public void onTraitDef(TraitDefinition definition) {
-        if (validateOnTraitDef(definition.getFullyQualifiedName(), definition)) {
-            builtTraitDefinitions.put(definition.getFullyQualifiedName(), definition);
-        }
-    }
-
-    private boolean validateOnTraitDef(String name, FromSourceLocation source) {
-        validateState(source);
-        if (!pendingTraitDefinitions.containsKey(name) && !builtTraitDefinitions.containsKey(name)) {
-            return true;
-        } else if (Prelude.isPreludeTraitDefinition(name)) {
-            // Duplicate trait defined in the prelude are ignored.
-        } else {
-            // The trait definition has been duplicated.
-            SourceLocation previous = Optional.<FromSourceLocation>ofNullable(pendingTraitDefinitions.get(name))
-                    .orElseGet(() -> builtTraitDefinitions.get(name)).getSourceLocation();
-            // Ignore duplicate trait defs from the same file location.
-            if (previous != SourceLocation.NONE && previous.equals(source.getSourceLocation())) {
-                LOGGER.warning(() -> "Ignoring duplicate trait definition defined in the same file: "
-                                     + name + " defined at " + source.getSourceLocation());
+        onShapeTarget(traitName, traitValue.getSourceLocation(), id -> {
+            // Special handling for the loading of trait definitions. These need to be
+            // loaded first before other traits can be resolved.
+            if (id.equals(TraitDefinition.ID)) {
+                TraitDefinition traitDef = TRAIT_DEF_PROVIDER.createTrait(target, traitValue);
+                // Register this as a trait definition to resolve against pending traits.
+                onTraitDefinition(target, traitDef);
+                // Add the definition trait to the shape.
+                onTrait(target, traitDef);
             } else {
-                onError(ValidationEvent.builder()
-                                .eventId(Validator.MODEL_ERROR)
-                                .severity(Severity.ERROR)
-                                .sourceLocation(source)
-                                .message(String.format(
-                                        "Duplicate trait definitions for `%s` found at `%s` and `%s`",
-                                        name, previous.getSourceLocation(), source))
-                                .build());
+                PendingTrait pendingTrait = new PendingTrait(id, traitValue);
+                pendingTraits.computeIfAbsent(target, targetId -> new ArrayList<>()).add(pendingTrait);
             }
-        }
+        });
+    }
 
-        return false;
+    /**
+     * Adds a resolved and parsed trait to a shape.
+     *
+     * @param target Shape to add the trait to.
+     * @param trait Trait to add to the shape.
+     */
+    public void onTrait(ShapeId target, Trait trait) {
+        PendingTrait pending = new PendingTrait(target, trait);
+        pendingTraits.computeIfAbsent(target, targetId -> new ArrayList<>()).add(pending);
     }
 
     /**
@@ -611,18 +561,6 @@ final class LoaderVisitor {
     }
 
     /**
-     * Registers a fully-qualified trait name as an alias.
-     *
-     * <p>These aliases are cleared when {@link #onOpenFile} is called.
-     *
-     * @param id Shape ID to use.
-     * @param location The location of where it is registered.
-     */
-    void onUseTrait(ShapeId id, FromSourceLocation location) {
-        addUseAlias("use trait", id, useTraits, location);
-    }
-
-    /**
      * Registers an absolute shape ID as an alias.
      *
      * <p>These aliases are cleared when {@link #onOpenFile} is called.
@@ -631,15 +569,11 @@ final class LoaderVisitor {
      * @param location The location of where it is registered.
      */
     void onUseShape(ShapeId id, FromSourceLocation location) {
-        addUseAlias("use shape", id, useShapes, location);
-    }
-
-    private void addUseAlias(String key, ShapeId id, Map<String, ShapeId> map, FromSourceLocation location) {
         validateState(location);
-        ShapeId previous = map.put(id.getName(), id);
+        ShapeId previous = useShapes.put(id.getName(), id);
         if (previous != null) {
             throw new UseException(String.format(
-                    "Cannot `%s` name `%s` because it conflicts with `%s`", key, id, previous), location);
+                    "Cannot use name `%s` because it conflicts with `%s`", id, previous), location);
         }
     }
 
@@ -655,9 +589,7 @@ final class LoaderVisitor {
         ShapeIndex.Builder shapeIndexBuilder = ShapeIndex.builder();
 
         finalizeShapeTargets();
-        finalizePendingTraitDefinitions();
         finalizePendingTraits();
-        modelBuilder.addTraitDefinitions(builtTraitDefinitions.values());
 
         // Ensure that shape builders are created for the container shapes of
         // each modified member (builders were already created if a shape has
@@ -724,12 +656,6 @@ final class LoaderVisitor {
         forwardReferenceResolvers.clear();
     }
 
-    private void finalizePendingTraitDefinitions() {
-        for (Map.Entry<String, TraitDefinition.Builder> definition : pendingTraitDefinitions.entrySet()) {
-            builtTraitDefinitions.put(definition.getKey(), definition.getValue().build());
-        }
-    }
-
     private void finalizePendingTraits() {
         // Build trait nodes and add them to their shape builders.
         for (Map.Entry<ShapeId, List<PendingTrait>> entry : pendingTraits.entrySet()) {
@@ -739,10 +665,22 @@ final class LoaderVisitor {
             if (builder == null) {
                 // The shape was not found, so emit a validation event for every trait applied to it.
                 emitErrorsForEachInvalidTraitTarget(target, pendingTraits);
-            } else {
-                for (Map.Entry<String, Node> computedEntry : computeTraits(builder, pendingTraits).entrySet()) {
-                    createAndApplyTraitToShape(builder, computedEntry.getKey(), computedEntry.getValue());
+                continue;
+            }
+
+            // Add already built traits to the shape. Note that these kinds of
+            // traits *could* be overwritten by traits defined in the model.
+            // However, that is only technically possible with the documentation
+            // trait since one is manually created for documentation comments.
+            for (PendingTrait pending : pendingTraits) {
+                if (pending.trait != null) {
+                    builder.addTrait(pending.trait);
                 }
+            }
+
+            // Compute the shapes to add and merge into the shape.
+            for (Map.Entry<ShapeId, Node> computedEntry : computeTraits(builder, pendingTraits).entrySet()) {
+                createAndApplyTraitToShape(builder, computedEntry.getKey(), computedEntry.getValue());
             }
         }
     }
@@ -767,9 +705,8 @@ final class LoaderVisitor {
                     .eventId(Validator.MODEL_ERROR)
                     .severity(Severity.ERROR)
                     .sourceLocation(pendingTrait.value.getSourceLocation())
-                    .message(format(
-                            "Trait `%s` applied to unknown shape `%s`",
-                            pendingTrait.name, target))
+                    .message(format("Trait `%s` applied to unknown shape `%s`",
+                                    Trait.getIdiomaticTraitName(pendingTrait.id), target))
                     .build());
         }
     }
@@ -801,108 +738,57 @@ final class LoaderVisitor {
      * @param pending The list of pending traits to resolve.
      * @return Returns the resolved map of pending traits.
      */
-    private Map<String, Node> computeTraits(AbstractShapeBuilder shapeBuilder, List<PendingTrait> pending) {
-        Map<String, Node> traits = new HashMap<>();
+    private Map<ShapeId, Node> computeTraits(AbstractShapeBuilder shapeBuilder, List<PendingTrait> pending) {
+        Map<ShapeId, Node> traits = new HashMap<>();
         for (PendingTrait trait : pending) {
-            TraitDefinition definition = resolveTraitDefinition(trait);
+            // Already resolved traits don't need to be computed.
+            if (trait.trait != null) {
+                continue;
+            }
+
+            TraitDefinition definition = builtTraitDefinitions.get(trait.id);
 
             if (definition == null) {
                 onUnresolvedTraitName(shapeBuilder, trait);
                 continue;
             }
 
-            String traitName = definition.getFullyQualifiedName();
-            Node value = coerceTraitValue(trait.value, definition);
-            Node previous = traits.get(traitName);
+            ShapeId traitId = trait.id;
+            Node value = coerceTraitValue(trait.value, trait.id);
+            Node previous = traits.get(traitId);
 
             if (previous == null) {
-                traits.put(traitName, value);
+                traits.put(traitId, value);
             } else if (previous.isArrayNode() && value.isArrayNode()) {
                 // You can merge trait arrays.
-                traits.put(traitName, value.asArrayNode().get().merge(previous.asArrayNode().get()));
+                traits.put(traitId, value.asArrayNode().get().merge(previous.asArrayNode().get()));
             } else if (previous.equals(value)) {
                 LOGGER.fine(() -> String.format(
-                        "Ignoring duplicate %s trait value on %s", traitName, shapeBuilder.getId()));
+                        "Ignoring duplicate %s trait value on %s", traitId, shapeBuilder.getId()));
             } else {
-                onDuplicateTrait(shapeBuilder.getId(), traitName, previous, value);
+                onDuplicateTrait(shapeBuilder.getId(), traitId, previous, value);
             }
         }
 
         return traits;
     }
 
-    /**
-     * Null values provided for traits are coerced in some cases to fit the
-     * type referenced by the shape. This is used in the .smithy format to
-     * make is so that you can write "@foo" rather than "@foo(true)",
-     * "@foo()", or "@foo([])".
-     *
-     * 1. Boolean traits are converted to `true`.
-     * 2. Structure and map traits are converted to an empty object.
-     * 3. List and set traits are converted to an empty array.
-     *
-     * Boolean values can be coerced from `true` to an empty object if the
-     * shape targeted by the trait is a structure. This allows traits to
-     * evolve over time from being an annotation trait to a structured
-     * trait (with optional members only to make it backward-compatible).
-     *
-     * @param value Value to coerce.
-     * @param definition Trait definition to base the coercion on.
-     * @return Returns the coerced value.
-     */
-    private Node coerceTraitValue(Node value, TraitDefinition definition) {
-        if (value.isNullNode()) {
-            ShapeType targetType = determineTraitDefinitionType(definition);
-            if (targetType == null) {
-                return new BooleanNode(true, value.getSourceLocation());
-            } else if (targetType == ShapeType.STRUCTURE || targetType == ShapeType.MAP) {
-                return new ObjectNode(Collections.emptyMap(), value.getSourceLocation());
-            } else if (targetType == ShapeType.LIST || targetType == ShapeType.SET) {
-                return new ArrayNode(Collections.emptyList(), value.getSourceLocation());
-            } else {
-                return value;
-            }
-        } else if (value.isBooleanNode()
-                   && value.asBooleanNode().get().getValue()
-                   && determineTraitDefinitionType(definition) == ShapeType.STRUCTURE) {
-            return new ObjectNode(Collections.emptyMap(), value.getSourceLocation());
-        }
-
-        return value;
+    private Node coerceTraitValue(Node value, ShapeId traitId) {
+        return Trait.coerceTraitValue(value, determineTraitDefinitionType(traitId));
     }
 
-    private ShapeType determineTraitDefinitionType(TraitDefinition definition) {
-        ShapeId target = definition.getShape().orElse(null);
-        if (pendingShapes.containsKey(target)) {
-            return pendingShapes.get(target).getShapeType();
-        } else if (builtShapes.containsKey(target)) {
-            return builtShapes.get(target).getType();
+    private ShapeType determineTraitDefinitionType(ShapeId traitId) {
+        if (pendingShapes.containsKey(traitId)) {
+            return pendingShapes.get(traitId).getShapeType();
+        } else if (builtShapes.containsKey(traitId)) {
+            return builtShapes.get(traitId).getType();
         } else {
-            // The trait is an annotation trait.
-            return null;
+            // This should be unreachable.
+            throw new IllegalStateException("Trait definition trait is applied to a non-existent shape: " + traitId);
         }
     }
 
-    /**
-     * Resolves the given pending trait name against all known trait
-     * definitions.
-     *
-     * 1. If the trait uses an absolute ID, then use that.
-     * 2. If there is a trait definition by the relative name in the same
-     *    namespace the trait was defined, then use that.
-     * 3. Check to see if one of the prelude traits match the given name.
-     *
-     * @param trait Trait name to resolve.
-     * @return Returns the resolved definition or null if not found.
-     */
-    private TraitDefinition resolveTraitDefinition(PendingTrait trait) {
-        String absoluteName = trait.name.contains("#") ? trait.name : trait.relativeNamespace + "#" + trait.name;
-        return builtTraitDefinitions.containsKey(absoluteName)
-               ? builtTraitDefinitions.get(absoluteName)
-               : builtTraitDefinitions.get(Prelude.NAMESPACE + "#" + trait.name);
-    }
-
-    private void onDuplicateTrait(ShapeId target, String traitName, FromSourceLocation previous, Node duplicate) {
+    private void onDuplicateTrait(ShapeId target, ShapeId traitName, FromSourceLocation previous, Node duplicate) {
         onError(ValidationEvent.builder()
                 .eventId(Validator.MODEL_ERROR)
                 .severity(Severity.ERROR)
@@ -925,10 +811,8 @@ final class LoaderVisitor {
                 .severity(severity)
                 .sourceLocation(trait.value.getSourceLocation())
                 .shapeId(shapeBuilder.getId())
-                .message(format(
-                        "Unable to resolve trait `%s` (%s value defined in the `%s` namespace). If this is a "
-                        + "custom trait, then it must be defined before it can be used in a model.",
-                        trait.name, trait.value.getType(), trait.relativeNamespace))
+                .message(format("Unable to resolve trait `%s`. If this is a custom trait, then it must be "
+                                + "defined before it can be used in a model.", trait.id))
                 .build());
     }
 
@@ -939,18 +823,18 @@ final class LoaderVisitor {
      * event is logged.
      *
      * @param shapeBuilder Shape builder to update.
-     * @param traitName Name of the fully-qualified trait to add.
+     * @param traitId ID of the fully-qualified trait to add.
      * @param traitValue The trait value to set.
      */
-    private void createAndApplyTraitToShape(AbstractShapeBuilder shapeBuilder, String traitName, Node traitValue) {
+    private void createAndApplyTraitToShape(AbstractShapeBuilder shapeBuilder, ShapeId traitId, Node traitValue) {
         try {
             // Create the trait using a factory, or default to an un-typed modeled trait.
-            Trait createdTrait = traitFactory.createTrait(traitName, shapeBuilder.getId(), traitValue)
-                    .orElseGet(() -> new DynamicTrait(traitName, traitValue));
+            Trait createdTrait = traitFactory.createTrait(traitId, shapeBuilder.getId(), traitValue)
+                    .orElseGet(() -> new DynamicTrait(traitId, traitValue));
             shapeBuilder.addTrait(createdTrait);
         } catch (SourceException e) {
             events.add(ValidationEvent.fromSourceException(e, format("Error creating trait `%s`: ",
-                            Trait.getIdiomaticTraitName(traitName)))
+                            Trait.getIdiomaticTraitName(traitId)))
                     .toBuilder()
                     .shapeId(shapeBuilder.getId())
                     .build());

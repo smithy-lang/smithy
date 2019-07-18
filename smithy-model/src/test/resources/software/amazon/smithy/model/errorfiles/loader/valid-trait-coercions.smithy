@@ -1,43 +1,26 @@
 namespace com.foo
 
-trait a {
-  shape: StringList,
-  selector: "*"
+@trait(selector: "*")
+list a {
+  member: String,
 }
 
-trait b {
-  shape: StringSet,
-  selector: "*"
+@trait(selector: "*")
+set b {
+  member: String,
 }
 
-trait c {
-  shape: EmptyStruct,
-  selector: "*"
-}
+@trait
+structure c {}
 
-trait d {
-  shape: StringMap,
-  selector: "*"
-}
-
-trait e {
-  selector: "*"
-}
-
-list StringList {
-  member: String
-}
-
-set StringSet {
-  member: String
-}
-
-structure EmptyStruct {}
-
-map StringMap {
+@trait(selector: "*")
+map d {
   key: String,
   value: String,
 }
+
+@trait(selector: "*")
+structure e {}
 
 @a @b @c @d @e
 structure Test {}

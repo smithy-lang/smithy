@@ -20,6 +20,7 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Base implementation of traits.
@@ -32,24 +33,24 @@ import software.amazon.smithy.model.node.ToNode;
  */
 public abstract class AbstractTrait implements Trait {
 
-    private final String traitName;
+    private final ShapeId traitId;
     private final SourceLocation traitSourceLocation;
     private int cachedHashCode = 0;
     private Node nodeCache;
 
     /**
-     * @param name Fully-qualified Name of the trait.
+     * @param id ID of the trait.
      * @param sourceLocation Where the trait was defined.
      */
-    public AbstractTrait(String name, FromSourceLocation sourceLocation) {
-        this.traitName = Objects.requireNonNull(name, "name was not set on trait");
+    public AbstractTrait(ShapeId id, FromSourceLocation sourceLocation) {
+        this.traitId = Objects.requireNonNull(id, "id was not set on trait");
         this.traitSourceLocation = Objects.requireNonNull(sourceLocation, "sourceLocation was not set on trait")
                 .getSourceLocation();
     }
 
     @Override
-    public final String getTraitName() {
-        return traitName;
+    public final ShapeId toShapeId() {
+        return traitId;
     }
 
     @Override
@@ -59,7 +60,7 @@ public abstract class AbstractTrait implements Trait {
 
     @Override
     public String toString() {
-        return String.format("Trait `%s`, defined at %s", getTraitName(), getSourceLocation());
+        return String.format("Trait `%s`, defined at %s", toShapeId(), getSourceLocation());
     }
 
     @Override
@@ -69,13 +70,13 @@ public abstract class AbstractTrait implements Trait {
         }
 
         Trait b = (Trait) other;
-        return this == other || (getTraitName().equals(b.getTraitName()) && toNode().equals(b.toNode()));
+        return this == other || (toShapeId().equals(b.toShapeId()) && toNode().equals(b.toNode()));
     }
 
     @Override
     public int hashCode() {
         if (cachedHashCode == 0) {
-            cachedHashCode = getTraitName().hashCode() * 17 + toNode().hashCode();
+            cachedHashCode = toShapeId().hashCode() * 17 + toNode().hashCode();
         }
         return cachedHashCode;
     }
@@ -102,18 +103,18 @@ public abstract class AbstractTrait implements Trait {
      * provided trait.
      */
     public abstract static class Provider implements TraitService {
-        private final String name;
+        private final ShapeId id;
 
         /**
-         * @param name Name of the trait that the provider creates.
+         * @param id ID of the trait that the provider creates.
          */
-        public Provider(String name) {
-            this.name = name;
+        public Provider(ShapeId id) {
+            this.id = id;
         }
 
         @Override
-        public String getTraitName() {
-            return name;
+        public ShapeId getShapeId() {
+            return id;
         }
     }
 }

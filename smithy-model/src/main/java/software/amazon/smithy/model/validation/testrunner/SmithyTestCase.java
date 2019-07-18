@@ -122,7 +122,8 @@ public final class SmithyTestCase {
         return expected.getSeverity() == actual.getSeverity()
                && expected.getEventId().equals(actual.getEventId())
                && expected.getShapeId().equals(actual.getShapeId())
-               && actual.getMessage().startsWith(expected.getMessage());
+               // Normalize new lines.
+               && actual.getMessage().replace("\n", "\\n").startsWith(expected.getMessage().replace("\n", "\\n"));
     }
 
     private static String inferErrorFileLocation(String modelLocation) {

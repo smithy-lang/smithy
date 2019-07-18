@@ -16,12 +16,13 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 public class XmlFlattenedTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#xmlFlattened";
+    public static final ShapeId ID = ShapeId.from("smithy.api#xmlFlattened");
 
     public XmlFlattenedTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public XmlFlattenedTrait() {
@@ -30,7 +31,7 @@ public class XmlFlattenedTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<XmlFlattenedTrait> {
         public Provider() {
-            super(NAME, XmlFlattenedTrait::new);
+            super(ID, XmlFlattenedTrait::new);
         }
     }
 }

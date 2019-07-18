@@ -24,7 +24,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
 public class ExcludeTraitsByTagTest {
@@ -37,11 +38,11 @@ public class ExcludeTraitsByTagTest {
         Model result = new ExcludeTraitsByTag()
                 .createTransformer(Collections.singletonList("qux"))
                 .apply(ModelTransformer.create(), model);
-        Set<String> traits = result.getTraitDefinitions().stream()
-                .map(TraitDefinition::getFullyQualifiedName)
+        Set<ShapeId> traits = result.getTraitShapes().stream()
+                .map(Shape::getId)
                 .collect(Collectors.toSet());
 
-        assertFalse(traits.contains("ns.foo#quux"));
-        assertTrue(traits.contains("ns.foo#bar"));
+        assertFalse(traits.contains(ShapeId.from("ns.foo#quux")));
+        assertTrue(traits.contains(ShapeId.from("ns.foo#bar")));
     }
 }

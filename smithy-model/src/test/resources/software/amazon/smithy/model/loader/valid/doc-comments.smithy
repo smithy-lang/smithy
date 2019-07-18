@@ -16,4 +16,5 @@ structure MyStructure {
 
 /// The documentation
 /// of this trait!
-trait MyTrait {}
+@trait
+structure MyTrait {}

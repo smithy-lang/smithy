@@ -42,7 +42,7 @@ public class EnumTraitTest {
     public void expectsAtLeastOneConstant() {
         Assertions.assertThrows(SourceException.class, () -> {
             TraitFactory provider = TraitFactory.createServiceFactory();
-            provider.createTrait("smithy.api#enum", ShapeId.from("ns.qux#foo"), Node.objectNode());
+            provider.createTrait(ShapeId.from("smithy.api#enum"), ShapeId.from("ns.qux#foo"), Node.objectNode());
         });
     }
 }

@@ -1,4 +1,4 @@
-$version: "0.2.0"
+$version: "0.3.0"
 
 namespace smithy.example1
 
@@ -8,8 +8,11 @@ string Baz
 
 string Bar
 
-trait trait1 {}
+@trait
+structure trait1 {}
 
-trait trait2 {}
+@trait
+structure trait2 {}
 
-trait trait3 {}
+@trait
+structure trait3 {}

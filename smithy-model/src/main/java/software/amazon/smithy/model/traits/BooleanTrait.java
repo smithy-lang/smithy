@@ -23,11 +23,12 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
- * Trait implementation that expects a boolean value of true.
+ * Trait implementation that expects an empty object or a boolean
+ * value of true.
  */
 public abstract class BooleanTrait extends AbstractTrait {
-    public BooleanTrait(String name, SourceLocation sourceLocation) {
-        super(name, sourceLocation);
+    public BooleanTrait(ShapeId id, SourceLocation sourceLocation) {
+        super(id, sourceLocation);
     }
 
     @Override
@@ -42,21 +43,26 @@ public abstract class BooleanTrait extends AbstractTrait {
         private final Function<SourceLocation, T> traitFactory;
 
         /**
-         * @param name Name of the trait being created.
+         * @param id ID of the trait being created.
          * @param traitFactory Factory function used to create the trait.
          */
-        public Provider(String name, Function<SourceLocation, T> traitFactory) {
-            super(name);
+        public Provider(ShapeId id, Function<SourceLocation, T> traitFactory) {
+            super(id);
             this.traitFactory = traitFactory;
         }
 
         @Override
         public T createTrait(ShapeId id, Node value) {
+            if (value.asObjectNode().isPresent() && value.asObjectNode().get().getMembers().isEmpty()) {
+                return traitFactory.apply(value.getSourceLocation());
+            }
+
             BooleanNode booleanNode = value.expectBooleanNode();
             if (!booleanNode.getValue()) {
                 throw new SourceException(String.format(
-                        "Boolean trait `%s` expects a value of `true`, but found `false`", getTraitName()), value);
+                        "Boolean trait `%s` expects a value of `true`, but found `false`", getShapeId()), value);
             }
+
             return traitFactory.apply(value.getSourceLocation());
         }
     }

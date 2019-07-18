@@ -1,5 +1,5 @@
 {
-    "smithy": "0.2.0",
+    "smithy": "0.3.0",
     "metadata": {
         "foo": "baz",
         "bar": {
@@ -135,11 +135,15 @@
             },
             "BasicResource": {
                 "type": "resource"
+            },
+            "b": {
+                "type": "structure",
+                "trait": true
+            },
+            "a": {
+                "type": "structure",
+                "trait": true
             }
-        },
-        "traitDefs": {
-            "b": {},
-            "a": {}
         }
     },
     "ns.baz": {

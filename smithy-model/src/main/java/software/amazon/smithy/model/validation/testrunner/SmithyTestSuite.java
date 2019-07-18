@@ -189,6 +189,7 @@ public final class SmithyTestSuite {
                 builder.append("\n* Did not match the following events: \n");
                 builder.append(result.getUnmatchedEvents().stream()
                                        .map(Object::toString)
+                                       .map(SmithyTestSuite::formatString)
                                        .sorted()
                                        .collect(Collectors.joining("\n")));
                 builder.append("\n");
@@ -198,11 +199,16 @@ public final class SmithyTestSuite {
                 builder.append("\n* Encountered unexpected events: \n");
                 builder.append(result.getExtraEvents().stream()
                                        .map(Object::toString)
+                                       .map(SmithyTestSuite::formatString)
                                        .sorted()
                                        .collect(Collectors.joining("\n")));
                 builder.append("\n");
             }
         }
+    }
+
+    private static String formatString(String value) {
+        return value.replace("\n", "\\n");
     }
 
     /**

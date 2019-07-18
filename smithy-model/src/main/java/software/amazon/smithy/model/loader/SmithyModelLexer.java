@@ -15,37 +15,45 @@
 
 package software.amazon.smithy.model.loader;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Tokenizes a .smithy formatted string into a list of tokens.
  *
- * <p>This lexer uses a regular expression to tokenize. Each token is defined
- * using a {@code TokenType} that contains partial regular expression used to
- * match the token. The order in which these tokens are defined is
- * significant. All of the tokens and their expressions are combined into a
- * single regular expressions that uses named captures. The name of each
- * capture is the name of the enum. Any unrecognized token is tokenized as
- * {@code ERROR}.
+ * <p>This lexer does not use a regular expression based lexer because:
  *
- * <p>\r\n and \n within strings are normalized into just "\n". This removes
- * any element of surprise when using Smithy models with different operating
- * systems. \r and \r\n can be added to models within quoted strings using
- * unicode escapes or by escaping \r and \n.
+ * <ul>
+ *     <li>A regex lexer would require many nested captures with
+ *     alternation which can lead to stack overflows while evaluating
+ *     large inputs with the compiled Pattern.</li>
+ *     <li>This style of scanner is easier to reason about, particularly
+ *     when it comes to deciding the location of tokens and the handling
+ *     of quoted strings.</li>
+ * </ul>
+ *
+ * <p>{@code \r\n} and {@code \n} within strings are normalized into just
+ * "\n". This removes any element of surprise when using Smithy models with
+ * different operating systems. {@code \r} and {@code \r\n} can be added to
+ * models within quoted strings using unicode escapes or by escaping
+ * {@code \r} and {@code \n}.
  */
 final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
 
-    private static final Pattern COMPILED;
     private final String filename;
+    private final String input;
     private Token peeked;
     private int line = 1;
-    private int lastLineOffset;
-    private final Matcher matcher;
+    private int column = 1;
+
+    // The position is incremented to 0 in the first call to consume()
+    private int position = -1;
 
     SmithyModelLexer(String filename, String input) {
         this.filename = filename;
@@ -55,45 +63,27 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
             input = input.replaceAll("\r\n?", "\n");
         }
 
-        matcher = COMPILED.matcher(input);
+        this.input = input;
     }
 
-    /** Represents a parsed token type, in order of precedence. */
     enum TokenType {
-        NEWLINE("\n"),
-        WS("\\s+"),
-        DOC("///[^\\n]*"),
-        COMMENT("//[^\\n]*"),
-        RETURN(Pattern.quote("->")),
-        CONTROL("\\$[A-Za-z_][ A-Za-z0-9_#$.-]*:"),
-        UNQUOTED("[A-Za-z_][A-Za-z0-9_#$.-]*"),
-        LPAREN(Pattern.quote("(")),
-        RPAREN(Pattern.quote(")")),
-        LBRACE(Pattern.quote("{")),
-        RBRACE(Pattern.quote("}")),
-        LBRACKET(Pattern.quote("[")),
-        RBRACKET(Pattern.quote("]")),
-        EQUAL("="),
-        COLON(":"),
-        COMMA(","),
-        ANNOTATION("@[A-Za-z0-9.$#]+"),
-        // Quoted strings support escaped quotes, escaped escapes, and escaped newlines.
-        QUOTED("(\"\"\"(((?!\"\"\")|[^\\\\])*(?:\\\\(.|\n)((?!\"\"\")|[^\\\\])*)*)\"\"\")"
-               + "|(\"([^\"\\\\]*(?:\\\\(.|\n)[^\"\\\\]*)*)\")"
-               + "|('([^'\\\\]*(?:\\\\(.|\n)[^'\\\\]*)*)')"),
-        NUMBER("-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?"),
-        ERROR(".");
-
-        private final String pattern;
-
-        TokenType(String pattern) {
-            this.pattern = pattern;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + "(" + pattern.replace("\\Q", "").replace("\\E", "") + ")";
-        }
+        DOC,
+        RETURN,
+        CONTROL,
+        UNQUOTED,
+        LPAREN,
+        RPAREN,
+        LBRACE,
+        RBRACE,
+        LBRACKET,
+        RBRACKET,
+        EQUAL,
+        COLON,
+        COMMA,
+        ANNOTATION,
+        QUOTED,
+        NUMBER,
+        ERROR
     }
 
     /** Represents a parsed token. */
@@ -118,8 +108,8 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
 
         @Override
         public String toString() {
-            return errorMessage != null
-                   ? String.format("ERROR(%s, %d:%d)", errorMessage, line, column)
+            return !StringUtils.isBlank(errorMessage)
+                   ? String.format("%s(%s, %d:%d)", type.name(), errorMessage, line, column)
                    : String.format("%s(%s, %d:%d)", type.name(), lexeme, line, column);
         }
 
@@ -135,19 +125,9 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
 
             // Strip "///" and a leading space if present.
             return lexeme.startsWith("/// ")
-                     ? lexeme.substring(4)
-                     : lexeme.substring(3);
+                   ? lexeme.substring(4)
+                   : lexeme.substring(3);
         }
-    }
-
-    static {
-        // Compile the lexer tokens into a regular expression with capture
-        // groups matching the enum value name.
-        StringBuilder builder = new StringBuilder();
-        for (TokenType token : TokenType.values()) {
-            builder.append(String.format("|(?<%s>%s)", token.name(), token.pattern));
-        }
-        COMPILED = Pattern.compile(builder.substring(1));
     }
 
     /**
@@ -191,53 +171,264 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
             return value;
         }
 
-        next_token:
-        while (matcher.find()) {
-            for (TokenType token : TokenType.values()) {
-                if (matcher.group(token.name()) != null) {
-                    String lexeme = matcher.group(token.name());
-                    String errorMessage = null;
-                    final int startingLineNumber = line;
-                    final int column = 1 + (matcher.start() - lastLineOffset);
-                    final int span = matcher.end() - matcher.start();
-
-                    switch (token) {
-                        case NEWLINE:
-                            line++;
-                            lastLineOffset = matcher.end();
-                            // fallthru
-                        case WS: // fallthru
-                        case COMMENT:
-                            // Try to grab the next token before returning.
-                            continue next_token;
-                        case QUOTED:
-                            try {
-                                // Quoted text can contain newlines, so track the offsets.
-                                int lastNewline = lexeme.lastIndexOf('\n');
-                                if (lastNewline != -1) {
-                                    // Offset from the text position from start + the last new line (starting at 1).
-                                    lastLineOffset = matcher.start() + lastNewline + 1;
-                                }
-                                lexeme = parseStringContents(lexeme);
-                            } catch (IllegalArgumentException e) {
-                                token = TokenType.ERROR;
-                                errorMessage = e.getMessage();
-                            }
-                            break;
-                        case ANNOTATION:
-                            // Strip leading "@".
-                            lexeme = lexeme.substring(1);
-                            break;
-                        default:
-                            break;
-                    }
-
-                    return new Token(filename, token, lexeme, startingLineNumber, column, span, errorMessage);
-                }
+        while (position < input.length() - 1) {
+            Token token = parseCharacter(consume());
+            if (token != null) {
+                return token;
             }
         }
 
         return null;
+    }
+
+    private Token parseCharacter(char c) {
+        switch (c) {
+            case ' ':
+            case '\t':
+            case '\n':
+                break;
+            case '(':
+                return new Token(filename, TokenType.LPAREN, "(", line, column - 1, 1, null);
+            case ')':
+                return new Token(filename, TokenType.RPAREN, ")", line, column - 1, 1, null);
+            case '{':
+                return new Token(filename, TokenType.LBRACE, "{", line, column - 1, 1, null);
+            case '}':
+                return new Token(filename, TokenType.RBRACE, "}", line, column - 1, 1, null);
+            case '[':
+                return new Token(filename, TokenType.LBRACKET, "[", line, column - 1, 1, null);
+            case ']':
+                return new Token(filename, TokenType.RBRACKET, "]", line, column - 1, 1, null);
+            case '=':
+                return new Token(filename, TokenType.EQUAL, "=", line, column - 1, 1, null);
+            case ':':
+                return new Token(filename, TokenType.COLON, ":", line, column - 1, 1, null);
+            case ',':
+                return new Token(filename, TokenType.COMMA, ",", line, column - 1, 1, null);
+            case '/':
+                // Parse double and triple comments.
+                Token parsedToken = parseToken(TokenType.DOC, this::parseComment);
+                if (parsedToken != null) {
+                    return parsedToken;
+                }
+                break;
+            case '$':
+                // Parse control statements.
+                return parseToken(TokenType.CONTROL, this::parseControl);
+            case '@':
+                // Parse traits.
+                return parseToken(TokenType.ANNOTATION, this::parseTrait);
+            case '"':
+                // Parse double quoted strings.
+                return parseToken(TokenType.QUOTED, this::parseQuotes);
+            case '\'':
+                // Parse single quoted strings.
+                return parseToken(TokenType.QUOTED, this::parseSingleQuotes);
+            case '-':
+                // Return "->" or negative number.
+                if (peekChar() == '>') {
+                    consume();
+                    return new Token(filename, TokenType.RETURN, "->", line, column - 1, 2, null);
+                }
+                return parseToken(TokenType.NUMBER, this::parseNumber);
+            default:
+                if (isDigit(c)) {
+                    return parseToken(TokenType.NUMBER, this::parseNumber);
+                } else if (isIdentifierStart(c)) {
+                    // Offset the position to not consume the current character before parsing the identifier.
+                    return parseToken(TokenType.UNQUOTED, this::parseIdentifier);
+                } else {
+                    return new Token(filename, TokenType.ERROR, String.valueOf(c), line, column - 1, 1, null);
+                }
+        }
+
+        return null;
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    private boolean isIdentifierStart(char c) {
+        return c == '_' || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+    }
+
+    private char consume() {
+        if (position >= input.length() - 1) {
+            throw new RuntimeException("Unexpected EOF");
+        }
+
+        char c = input.charAt(++position);
+
+        if (c == '\n') {
+            line++;
+            column = 1;
+        } else {
+            column++;
+        }
+
+        return c;
+    }
+
+    private char expect(char... expectedChars) {
+        char c = consume();
+        for (char expected : expectedChars) {
+            if (c == expected) {
+                return c;
+            }
+        }
+
+        throw new RuntimeException("Expected one of the following characters: " + Arrays.toString(expectedChars));
+    }
+
+    private char peekChar() {
+        return peekChar(1);
+    }
+
+    private char peekChar(int offset) {
+        return position + offset < input.length() ? input.charAt(position + offset) : '\0';
+    }
+
+    private Token parseToken(TokenType type, Supplier<String> parser) {
+        int currentLine = line;
+        int currentColumn = column - 1;
+        int startPosition = position;
+
+        try {
+            String lexeme = parser.get();
+            return lexeme == null
+                   ? null
+                   : new Token(filename, type, lexeme, currentLine, currentColumn, 1 + position - startPosition, null);
+        } catch (RuntimeException e) {
+            return new Token(filename, TokenType.ERROR, input.substring(startPosition, position),
+                             currentLine, currentColumn, 1 + position - startPosition, e.getMessage());
+        }
+    }
+
+    private String parseComment() {
+        int startPosition = position;
+        expect('/');
+        boolean isDocComment = peekChar() == '/';
+        consumeUntilNoLongerMatches(c -> c != '\n');
+        return !isDocComment ? null : input.substring(startPosition, position + 1);
+    }
+
+    private int consumeUntilNoLongerMatches(Predicate<Character> predicate) {
+        int startPosition = position;
+        while (true) {
+            char peekedChar = peekChar();
+            if (peekedChar == '\0' || !predicate.test(peekedChar)) {
+                break;
+            }
+            consume();
+        }
+
+        return position - startPosition;
+    }
+
+    private String parseControl() {
+        consume(); // Skip '$'
+        String identifier = parseIdentifier();
+        consumeUntilNoLongerMatches(Character::isWhitespace);
+        expect(':');
+        return identifier;
+    }
+
+    private String parseTrait() {
+        consume(); // Skip '@'
+        return parseIdentifier();
+    }
+
+    private String parseIdentifier() {
+        // Identifier: [A-Za-z_][A-Za-z0-9_#$.-]*
+        int startPosition = position;
+        char start = input.charAt(position);
+
+        if (!isIdentifierStart(start)) {
+            throw new IllegalArgumentException("Expected [A-Za-z_]");
+        }
+
+        consumeUntilNoLongerMatches(c -> isIdentifierStart(c) || isDigit(c) || c == '#' || c == '$' || c == '.');
+
+        return input.substring(startPosition, position + 1);
+    }
+
+    private String parseSingleQuotes() {
+        int startPosition = position;
+
+        while (true) {
+            char next = consume();
+            if (next == '\'') {
+                break;
+            } else if (next == '\\') {
+                consume();
+            }
+        }
+
+        return parseStringContents(input.substring(startPosition, position + 1));
+    }
+
+    private String parseQuotes() {
+        int startPosition = position;
+        boolean triple = peekChar() == '"' && peekChar(2) == '"';
+
+        if (triple) {
+            consume();
+            consume();
+        }
+
+        while (true) {
+            char next = consume();
+            if (next == '"' && (!triple || (peekChar() == '"' && peekChar(2) == '"'))) {
+                if (triple) {
+                    consume();
+                    consume();
+                }
+                break;
+            } else if (next == '\\') {
+                consume();
+            }
+        }
+
+        return parseStringContents(input.substring(startPosition, position + 1));
+    }
+
+    // -?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?
+    private String parseNumber() {
+        int startPosition = position;
+
+        char current = input.charAt(position);
+
+        // 0 must not be followed by a number.
+        if (current == '0' && isDigit(peekChar())) {
+            throw new IllegalArgumentException("Invalid number");
+        }
+
+        consumeUntilNoLongerMatches(this::isDigit);
+
+        // Consume decimals.
+        char peek = peekChar();
+        if (peek == '.') {
+            consume();
+            if (consumeUntilNoLongerMatches(this::isDigit) == 0) {
+                throw new IllegalArgumentException("Invalid number");
+            }
+        }
+
+        // Consume scientific notation.
+        peek = peekChar();
+        if (peek == 'e' || peek == 'E') {
+            consume();
+            peek = peekChar();
+            if (peek == '+' || peek == '-') {
+                consume();
+            }
+            if (consumeUntilNoLongerMatches(this::isDigit) == 0) {
+                throw new IllegalArgumentException("Invalid number");
+            }
+        }
+
+        return input.substring(startPosition, position + 1);
     }
 
     enum LexerState { NORMAL, AFTER_ESCAPE, UNICODE }
@@ -266,11 +457,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         // Skip quotes from the start and end.
         for (int i = offset; i < lexeme.length() - offset; i++) {
             char c = lexeme.charAt(i);
-
-            if (c == '\n') {
-                line++;
-            }
-
             switch (state) {
                 case NORMAL:
                     if (c == '\\') {
@@ -367,7 +553,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
             throw new IllegalArgumentException("Invalid text block: text block must start with a new line (LF)");
         }
 
-        line++;
         StringBuilder buffer = new StringBuilder();
         int longestPadding = Integer.MAX_VALUE;
         String[] lines = lexeme.split("\n", -1);

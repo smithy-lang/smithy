@@ -16,21 +16,22 @@
 package software.amazon.smithy.aws.traits.iam;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringTrait;
 
 /**
  * Defines the description of what providing access to an operation entails.
  */
 public final class ActionPermissionDescriptionTrait extends StringTrait {
-    public static final String NAME = "aws.iam#actionPermissionDescription";
+    public static final ShapeId ID = ShapeId.from("aws.iam#actionPermissionDescription");
 
     private ActionPermissionDescriptionTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
     }
 
     public static final class Provider extends StringTrait.Provider<ActionPermissionDescriptionTrait> {
         public Provider() {
-            super(NAME, ActionPermissionDescriptionTrait::new);
+            super(ID, ActionPermissionDescriptionTrait::new);
         }
     }
 }

@@ -1,6 +1,7 @@
-// trait name `deprecated` conflicts with imported shape `smithy.api#deprecated`
-use trait smithy.api#deprecated
+// shape name `deprecated` conflicts with imported shape `smithy.api#deprecated`
+use smithy.api#deprecated
 
 namespace smithy.example
 
-trait deprecated {}
+@trait
+structure deprecated {}

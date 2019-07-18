@@ -35,12 +35,12 @@ public abstract class StringListTrait extends AbstractTrait {
     private final List<String> values;
 
     /**
-     * @param name The name of the trait being created.
+     * @param id The id of the trait being created.
      * @param values The string values of the trait.
      * @param sourceLocation Where the trait was defined.
      */
-    public StringListTrait(String name, List<String> values, FromSourceLocation sourceLocation) {
-        super(name, sourceLocation);
+    public StringListTrait(ShapeId id, List<String> values, FromSourceLocation sourceLocation) {
+        super(id, sourceLocation);
         this.values = Objects.requireNonNull(values, "values must not be null");
     }
 
@@ -146,17 +146,17 @@ public abstract class StringListTrait extends AbstractTrait {
         private final BiFunction<List<String>, SourceLocation, T> traitFactory;
 
         /**
-         * @param name The name of the trait being created.
+         * @param id The ID of the trait being created.
          * @param traitFactory The factory used to create the trait.
          */
-        public Provider(String name, BiFunction<List<String>, SourceLocation, T> traitFactory) {
-            super(name);
+        public Provider(ShapeId id, BiFunction<List<String>, SourceLocation, T> traitFactory) {
+            super(id);
             this.traitFactory = traitFactory;
         }
 
         @Override
         public T createTrait(ShapeId id, Node value) {
-            List<String> values = Node.loadArrayOfString(getTraitName(), value);
+            List<String> values = Node.loadArrayOfString(id.toString(), value);
             return traitFactory.apply(values, value.getSourceLocation());
         }
     }

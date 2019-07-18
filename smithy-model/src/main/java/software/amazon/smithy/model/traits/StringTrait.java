@@ -30,12 +30,12 @@ public abstract class StringTrait extends AbstractTrait {
     private final String value;
 
     /**
-     * @param name The name of the trait being created.
+     * @param id The ID of the trait being created.
      * @param value The string value of the trait.
      * @param sourceLocation Where the trait was defined.
      */
-    public StringTrait(String name, String value, FromSourceLocation sourceLocation) {
-        super(name, sourceLocation);
+    public StringTrait(ShapeId id, String value, FromSourceLocation sourceLocation) {
+        super(id, sourceLocation);
         this.value = Objects.requireNonNull(value, "Trait values must not be null");
     }
 
@@ -58,11 +58,11 @@ public abstract class StringTrait extends AbstractTrait {
         private final BiFunction<String, SourceLocation, T> traitFactory;
 
         /**
-         * @param name The name of the trait being created.
+         * @param id The name of the trait being created.
          * @param traitFactory The factory used to create the trait.
          */
-        public Provider(String name, BiFunction<String, SourceLocation, T> traitFactory) {
-            super(name);
+        public Provider(ShapeId id, BiFunction<String, SourceLocation, T> traitFactory) {
+            super(id);
             this.traitFactory = traitFactory;
         }
 

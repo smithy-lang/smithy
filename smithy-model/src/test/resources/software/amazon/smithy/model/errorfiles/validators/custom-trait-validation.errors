@@ -1,2 +1,2 @@
-[ERROR] ns.foo#String2: Value provided for boolean trait `ns.foo#custom1` can only be set to true. Found number | TraitValue
-[ERROR] ns.foo#String4: Error validating trait `ns.foo#custom2`: Missing required structure member `foo` for `ns.foo#Schema` | TraitValue
+[ERROR] ns.foo#String2: Error validating trait `ns.foo#custom1`: Expected object value for structure shape, `ns.foo#custom1`; found number value, `10` | TraitValue
+[ERROR] ns.foo#String4: Error validating trait `ns.foo#custom2`: Missing required structure member `foo` for `ns.foo#custom2` | TraitValue

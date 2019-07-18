@@ -1,19 +1,27 @@
 {
-    "smithy": "0.2.0",
+    "smithy": "0.3.0",
     "ns.foo": {
-        "traitDefs": {
+        "shapes": {
             "bar": {
-                "selector": "*",
-                "shape": "BarTraitShape",
-                "tags": ["foo", "baz"]
+                "trait": true,
+                "type": "structure",
+                "tags": ["foo", "baz"],
+                "members": {
+                    "member": {
+                        "target": "BarTraitShapeMember"
+                    }
+                }
             },
             "quux": {
-                "selector": "*",
-                "shape": "QuuxTraitShape",
-                "tags": ["foo", "qux"]
-            }
-        },
-        "shapes": {
+                "trait": true,
+                "tags": ["foo", "qux"],
+                "type": "structure",
+                "members": {
+                    "member": {
+                        "target": "QuuxTraitShapeMember"
+                    }
+                }
+            },
             "MyService": {
                 "type": "service",
                 "protocols": [{"name": "foo"}],
@@ -54,22 +62,6 @@
             },
             "Include2": {
                 "type": "string"
-            },
-            "BarTraitShape": {
-                "type": "structure",
-                "members": {
-                    "member": {
-                        "target": "BarTraitShapeMember"
-                    }
-                }
-            },
-            "QuuxTraitShape": {
-                "type": "structure",
-                "members": {
-                    "member": {
-                        "target": "QuuxTraitShapeMember"
-                    }
-                }
             },
             "BarTraitShapeMember": {
                 "type": "string"

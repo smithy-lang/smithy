@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -48,17 +49,15 @@ public class ExclusiveStructureMemberTraitValidator extends AbstractValidator {
         return shape.getAllMembers().values().stream()
                 .flatMap(member -> member.getAllTraits().values().stream())
                 .filter(trait -> isExclusive(model, trait))
-                .flatMap(t -> OptionalUtils.stream(validateExclusiveTrait(shape, t.getTraitName())))
+                .flatMap(t -> OptionalUtils.stream(validateExclusiveTrait(shape, t.toShapeId())))
                 .collect(Collectors.toList());
     }
 
     private boolean isExclusive(Model model, Trait trait) {
-        return model.getTraitDefinition(trait.getTraitName())
-                .map(TraitDefinition::isStructurallyExclusive)
-                .orElse(false);
+        return model.getTraitDefinition(trait).map(TraitDefinition::isStructurallyExclusive).orElse(false);
     }
 
-    private Optional<ValidationEvent> validateExclusiveTrait(StructureShape shape, String traitName) {
+    private Optional<ValidationEvent> validateExclusiveTrait(StructureShape shape, ShapeId traitName) {
         List<String> matches = shape.getAllMembers().values().stream()
                 .filter(member -> member.findTrait(traitName).isPresent())
                 .map(MemberShape::getMemberName)

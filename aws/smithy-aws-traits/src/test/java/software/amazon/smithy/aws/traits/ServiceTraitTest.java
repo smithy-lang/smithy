@@ -36,7 +36,7 @@ public class ServiceTraitTest {
     public void loadsTraitWithString() {
         Node node = Node.parse("{\"sdkServiceId\": \"Foo\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("aws.api#service", ShapeId.from("ns.foo#Foo"), node);
+        Optional<Trait> trait = provider.createTrait(ServiceTrait.ID, ShapeId.from("ns.foo#Foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(ServiceTrait.class));
@@ -52,7 +52,7 @@ public class ServiceTraitTest {
     public void loadsTraitWithOptionalValues() {
         Node node = Node.parse("{\"sdkServiceId\": \"Foo\", \"arnService\": \"service\", \"productName\": \"Baz\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("aws.api#service", ShapeId.from("ns.foo#foo"), node);
+        Optional<Trait> trait = provider.createTrait(ServiceTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(ServiceTrait.class));
@@ -66,7 +66,7 @@ public class ServiceTraitTest {
     public void loadsEventSource() {
         Node node = Node.parse("{\"sdkServiceId\": \"Foo\", \"cloudTrailEventSource\": \"foo.amazonaws.com\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("aws.api#service", ShapeId.from("ns.foo#foo"), node);
+        Optional<Trait> trait = provider.createTrait(ServiceTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(ServiceTrait.class));

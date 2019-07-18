@@ -19,12 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.UnreferencedShapes;
 import software.amazon.smithy.model.neighbor.UnreferencedTraitDefinitions;
@@ -180,40 +178,6 @@ public final class ModelTransformer {
     }
 
     /**
-     * Removes trait definitions from a model that do not match a predicate.
-     *
-     * <p>This transformation ensures that any time a trait definition is
-     * removed, instances of the trait are also removed.
-     *
-     * <p>This method does not remove trait definitions from the model that
-     * are part of the prelude. If you want to remove trait definitions that
-     * are part of the prelude, use {@link #removeTraitDefinitions} directly.
-     *
-     * @param model Model to transform.
-     * @param predicate Predicate that accepts a TraitDefinition. If the
-     *  predicate returns true, the definition is kept. Otherwise, it is
-     *  removed.
-     * @return Returns the transformed model.base.
-     */
-    public Model filterTraitDefinitions(Model model, Predicate<TraitDefinition> predicate) {
-        return new FilterTraitDefinitions(predicate).transform(this, model);
-    }
-
-    /**
-     * Removes trait definitions from a model by fully qualified trait name.
-     *
-     * <p>This transformation ensures that any time a trait definition is
-     * removed, instances of the trait are also removed.
-     *
-     * @param model Model to transform.
-     * @param traitNames Fully qualified trait definitions to remove.
-     * @return Returns the transformed model.base.
-     */
-    public Model removeTraitDefinitions(Model model, Set<String> traitNames) {
-        return new RemoveTraitDefinitions(traitNames).transform(this, model);
-    }
-
-    /**
      * Filters out metadata key-value pairs from a model that do not match
      * a predicate.
      *
@@ -341,21 +305,19 @@ public final class ModelTransformer {
     }
 
     /**
-     * Removes definitions for traits that are not used by any shape in the
-     * model.base.
+     * Removes trait definitions for traits that are not used by any shape
+     * in the model.
      *
-     * Trait definitions that are part of the prelude will not be removed.
+     * <p>Trait definitions that are part of the prelude will not be removed.
      *
      * @param model Model to transform
-     * @param keepFilter Predicate function that accepts an unreferenced
-     *  trait definition and returns true to remove the definition or false to
-     *  keep the definition in the model.base.
+     * @param keepFilter Predicate function that accepts an unreferenced trait
+     *  shape (that has the {@link TraitDefinition} trait) and returns true to
+     *  remove the definition or false to keep the definition in the model.base.
      * @return Returns the transformed model.base.
      */
-    public Model removeUnreferencedTraitDefinitions(Model model, Predicate<TraitDefinition> keepFilter) {
-        return removeTraitDefinitions(model, new UnreferencedTraitDefinitions(keepFilter).compute(model).stream()
-                .map(TraitDefinition::getFullyQualifiedName)
-                .collect(Collectors.toSet()));
+    public Model removeUnreferencedTraitDefinitions(Model model, Predicate<Shape> keepFilter) {
+        return removeShapes(model, new UnreferencedTraitDefinitions(keepFilter).compute(model));
     }
 
     /**

@@ -46,10 +46,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -130,19 +128,12 @@ final class SmithyModelLoader implements ModelLoader {
         STATEMENTS.put("timestamp", state -> parseSimpleShape(state, TimestampShape.builder()));
         STATEMENTS.put("metadata", SmithyModelLoader::parseMetadata);
         STATEMENTS.put("apply", SmithyModelLoader::parseApply);
-        STATEMENTS.put("trait", SmithyModelLoader::parseTraitDefinition);
     }
 
     private static final Set<String> SUPPORTS_TRAITS = SetUtils.of(
             "bigDecimal", "bigInteger", "blob", "boolean", "byte", "document",
             "double", "float", "integer", "list", "long", "map", "operation", "resource",
             "service", "set", "short", "string", "structure", "timestamp", "union");
-
-    private static final Set<String> SUPPORTS_DOCS = new HashSet<>(SUPPORTS_TRAITS);
-
-    static {
-        SUPPORTS_DOCS.add("trait");
-    }
 
     @Override
     public boolean load(String path, Supplier<String> contentSupplier, LoaderVisitor visitor) {
@@ -247,8 +238,10 @@ final class SmithyModelLoader implements ModelLoader {
                         : "Expected one of " + Arrays.toString(tokens));
             } else if (next.lexeme.contains("'") || next.lexeme.contains("\"")) {
                 throw syntax("Unexpected syntax. Perhaps an unclosed quote?");
-            } else {
+            } else if (next.errorMessage == null) {
                 throw syntax("Unexpected syntax");
+            } else {
+                throw syntax(next.errorMessage);
             }
         }
 
@@ -330,8 +323,7 @@ final class SmithyModelLoader implements ModelLoader {
             throw state.syntax("A control statement must come before any namespace, metadata, or shape");
         }
 
-        // Remove the starting "$" and ending ":".
-        String key = token.lexeme.substring(1, token.lexeme.length() - 1);
+        String key = token.lexeme;
         Node value = parseNodeValue(state, state.next());
 
         if (key.equals("version")) {
@@ -353,26 +345,12 @@ final class SmithyModelLoader implements ModelLoader {
 
     private static void parseUseStatement(State state) {
         if (state.definedShapesOrTraits) {
-            throw state.syntax("A use statement must come before any shape or trait definition");
+            throw state.syntax("A use statement must come before any shape definition");
         }
 
-        switch (state.expect(UNQUOTED).lexeme) {
-            case "shape":
-                parseUse(state, state.visitor::onUseShape);
-                break;
-            case "trait":
-                parseUse(state, state.visitor::onUseTrait);
-                break;
-            default:
-                throw state.syntax("Invalid use statement");
-        }
-    }
-
-    private static void parseUse(State state, BiConsumer<ShapeId, FromSourceLocation> consumer) {
         Token namespaceToken = state.expect(UNQUOTED);
-
         try {
-            consumer.accept(ShapeId.from(namespaceToken.lexeme), namespaceToken);
+            state.visitor.onUseShape(ShapeId.from(namespaceToken.lexeme), namespaceToken);
             state.expectNewline();
         } catch (ShapeIdSyntaxException e) {
             throw state.syntax(e.getMessage());
@@ -393,7 +371,7 @@ final class SmithyModelLoader implements ModelLoader {
 
         Token next = state.peek().get();
         if (next.type != ANNOTATION
-                && (next.type != UNQUOTED || (!memberScope && !SUPPORTS_DOCS.contains(next.lexeme)))) {
+                && (next.type != UNQUOTED || (!memberScope && !SUPPORTS_TRAITS.contains(next.lexeme)))) {
             throw state.syntax("Documentation cannot be applied to `" + next.lexeme + "`");
         }
     }
@@ -492,7 +470,7 @@ final class SmithyModelLoader implements ModelLoader {
         if (state.pendingDocComment != null) {
             Node value = new StringNode(state.pendingDocComment.content, state.pendingDocComment.sourceLocation);
             state.pendingDocComment = null;
-            state.visitor.onTrait(id, DocumentationTrait.NAME, value);
+            state.visitor.onTrait(id, new DocumentationTrait(value.toString(), value.getSourceLocation()));
         }
     }
 
@@ -686,20 +664,6 @@ final class SmithyModelLoader implements ModelLoader {
         state.expectNewline();
     }
 
-    private static void parseTraitDefinition(State state) {
-        state.definedShapesOrTraits = true;
-        Token nameToken = state.expect(UNQUOTED);
-        ShapeId resolved = state.visitor.onTraitDefName(nameToken.lexeme, nameToken);
-        // Grab any pending documentation comment.
-        String docs = state.pendingDocComment != null ? state.pendingDocComment.content : null;
-        state.pendingDocComment = null;
-        // Parse the opening of the trait, and the properties.
-        state.expect(LBRACE);
-        ObjectNode node = parseObjectNode(state, state.currentLocation(), RBRACE);
-        LoaderUtils.loadTraitDefinition(resolved.getNamespace(), resolved.getName(), node, state.visitor, docs);
-        state.expectNewline();
-    }
-
     private static Node parseNode(State state) {
         return parseNodeValue(state, state.expect(LBRACE, LBRACKET, QUOTED, UNQUOTED, NUMBER));
     }
@@ -711,7 +675,7 @@ final class SmithyModelLoader implements ModelLoader {
             case QUOTED: return new StringNode(token.lexeme, token.getSourceLocation());
             case NUMBER: return parseNumber(token);
             case UNQUOTED: return parseUnquotedNode(state, token);
-            default: throw new IllegalStateException("Parse node value not expected to be called with invalid token");
+            default: throw new IllegalStateException("Parse node value not expected to be called with: " + token);
         }
     }
 

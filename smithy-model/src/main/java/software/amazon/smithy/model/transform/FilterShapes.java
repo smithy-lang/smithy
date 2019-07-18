@@ -29,6 +29,9 @@ import software.amazon.smithy.utils.FunctionalUtils;
  * <p>Members of lists, sets, and maps are not passed to the filter
  * function or eligible for removal.
  *
+ * <p>If a shape is removed from the model that is a trait definition,
+ * all instances of that trait are automatically removed.
+ *
  * @see ModelTransformer#filterShapes
  */
 final class FilterShapes {

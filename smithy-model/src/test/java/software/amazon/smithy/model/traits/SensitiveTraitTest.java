@@ -30,7 +30,7 @@ public class SensitiveTraitTest {
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(
-                "smithy.api#sensitive", ShapeId.from("ns.qux#foo"), Node.from(true));
+                ShapeId.from("smithy.api#sensitive"), ShapeId.from("ns.qux#foo"), Node.from(true));
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(SensitiveTrait.class));

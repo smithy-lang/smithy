@@ -705,11 +705,14 @@ table.highlighttable pre {
   border-left: 8px solid #9B581F;
 }
 
+.admonition.note .admonition-title,
+.admonition.tip .admonition-title,
+.admonition.hint .admonition-title,
 .admonition.important .admonition-title,
 .admonition.warning .admonition-title,
 .admonition.attention .admonition-title,
 .admonition.caution .admonition-title {
-  color: #9B581F;
+  display: none;
 }
 
 .admonition.note,
@@ -717,17 +720,8 @@ table.highlighttable pre {
   border-left: 8px solid #31708f;
 }
 
-.admonition.note .admonition-title,
-.admonition.hint .admonition-title {
-  color: #31708f;
-}
-
 .admonition.tip {
   border-left: 8px solid #3c763d;
-}
-
-.admonition.tip .admonition-title {
-  color: #3c763d;
 }
 
 div.seealso {

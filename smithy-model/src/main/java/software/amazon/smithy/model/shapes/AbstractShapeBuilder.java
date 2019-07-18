@@ -33,7 +33,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
         implements SmithyBuilder<S>, FromSourceLocation {
 
     ShapeId id;
-    Map<String, Trait> traits = new HashMap<>();
+    Map<ShapeId, Trait> traits = new HashMap<>();
     SourceLocation source = SourceLocation.none();
 
     AbstractShapeBuilder() {}
@@ -149,7 +149,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
             throw new IllegalArgumentException("trait must not be null");
         }
 
-        traits.put(trait.getTraitName(), trait);
+        traits.put(trait.toShapeId(), trait);
         return (B) this;
     }
 
@@ -159,14 +159,22 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * <p>A relative trait name will attempt to remove a prelude trait
      * with the given name.
      *
-     * @param traitName Name of the trait to remove.
+     * @param traitId Absolute or relative ID of the trait to remove.
+     * @return Returns the builder.
+     */
+    public final B removeTrait(String traitId) {
+        return removeTrait(ShapeId.from(Trait.makeAbsoluteName(traitId)));
+    }
+
+    /**
+     * Removes a trait from the shape builder.
+     *
+     * @param traitId ID of the trait to remove.
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B removeTrait(String traitName) {
-        traits.remove(traitName);
-        // Remove absolute ID forms if needed.
-        traits.remove(Trait.makeAbsoluteName(traitName));
+    public final B removeTrait(ShapeId traitId) {
+        traits.remove(traitId);
         return (B) this;
     }
 

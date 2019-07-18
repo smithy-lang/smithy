@@ -1,8 +1,8 @@
-$version: "0.2.0"
+$version: "0.3.0"
 
-use shape smithy.api#String
-use shape smithy.api#Integer
-use shape smithy.api#Long
+use smithy.api#String
+use smithy.api#Integer
+use smithy.api#Long
 
 namespace smithy.example
 

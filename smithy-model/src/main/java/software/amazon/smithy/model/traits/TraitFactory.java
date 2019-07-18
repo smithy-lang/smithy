@@ -31,14 +31,14 @@ public interface TraitFactory {
     /**
      * Creates and configures a trait using model trait data.
      *
-     * @param name Name of the trait.
+     * @param id Shape ID of the trait.
      * @param target Shape that the trait is applied on.
      * @param value The Node value of the trait.
      * @return Returns the created trait wrapped in an Optional.
      * @throws SourceException on configuration error.
      * @throws RuntimeException if an error occurs while creating the trait.
      */
-    Optional<Trait> createTrait(String name, ShapeId target, Node value);
+    Optional<Trait> createTrait(ShapeId id, ShapeId target, Node value);
 
     /**
      * Creates a TraitFactory that uses a List of TraitService provider instances.
@@ -47,8 +47,8 @@ public interface TraitFactory {
      * @return Returns the created TraitFactory.
      */
     static TraitFactory createServiceFactory(Iterable<TraitService> services) {
-        Map<String, TraitService> serviceMap = new HashMap<>();
-        services.forEach(service -> serviceMap.put(service.getTraitName(), service));
+        Map<ShapeId, TraitService> serviceMap = new HashMap<>();
+        services.forEach(service -> serviceMap.put(service.getShapeId(), service));
         return (name, target, value) -> Optional.ofNullable(serviceMap.get(name))
                 .map(provider -> provider.createTrait(target, value));
     }

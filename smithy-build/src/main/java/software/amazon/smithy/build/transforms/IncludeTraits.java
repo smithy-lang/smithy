@@ -18,8 +18,11 @@ package software.amazon.smithy.build.transforms;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.Pair;
@@ -33,6 +36,8 @@ import software.amazon.smithy.utils.Pair;
  * namespace.
  */
 public final class IncludeTraits extends AbstractTraitRemoval {
+    private static final Logger LOGGER = Logger.getLogger(IncludeTraits.class.getName());
+
     @Override
     public String getName() {
         return "includeTraits";
@@ -40,17 +45,24 @@ public final class IncludeTraits extends AbstractTraitRemoval {
 
     @Override
     public BiFunction<ModelTransformer, Model, Model> createTransformer(List<String> arguments) {
-        Pair<Set<String>, Set<String>> namesAndNamespaces = parseTraits(arguments);
-        Set<String> names = namesAndNamespaces.getLeft();
+        Pair<Set<ShapeId>, Set<String>> namesAndNamespaces = parseTraits(arguments);
+        Set<ShapeId> names = namesAndNamespaces.getLeft();
         Set<String> namespaces = namesAndNamespaces.getRight();
+        LOGGER.info(() -> "Including traits by ID " + names + " and namespaces " + namespaces);
+
+        // Don't remove the trait definition trait because it breaks everything!
+        names.add(TraitDefinition.ID);
 
         return (transformer, model) -> {
-            Set<String> removeTraits = model.getTraitDefinitions().stream()
-                    .filter(def -> !matchesTraitDefinition(def, names, namespaces))
-                    .map(TraitDefinition::getFullyQualifiedName)
+            Set<Shape> removeTraits = model.getTraitShapes().stream()
+                    .filter(trait -> !matchesTraitDefinition(trait, names, namespaces))
                     .collect(Collectors.toSet());
 
-            return transformer.removeTraitDefinitions(model, removeTraits);
+            if (!removeTraits.isEmpty()) {
+                LOGGER.info(() -> "Removing traits that are not explicitly allowed: " + removeTraits);
+            }
+
+            return transformer.removeShapes(model, removeTraits);
         };
     }
 }

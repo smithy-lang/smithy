@@ -33,7 +33,8 @@ public class XmlNamespaceTraitTest {
         TraitFactory provider = TraitFactory.createServiceFactory();
         ObjectNode node = Node.objectNode()
                 .withMember("uri", Node.from("https://www.amazon.com"));
-        Optional<Trait> trait = provider.createTrait("smithy.api#xmlNamespace", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#xmlNamespace"), ShapeId.from("ns.qux#foo"), node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(XmlNamespaceTrait.class));
         XmlNamespaceTrait xmlNamespace = (XmlNamespaceTrait) trait.get();
@@ -46,7 +47,8 @@ public class XmlNamespaceTraitTest {
         TraitFactory provider = TraitFactory.createServiceFactory();
         ObjectNode node = Node.objectNode()
                 .withMember("uri", Node.from("https://www.amazon.com"));
-        Optional<Trait> trait = provider.createTrait("smithy.api#xmlNamespace", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#xmlNamespace"), ShapeId.from("ns.qux#foo"), node);
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(XmlNamespaceTrait.class));
         ObjectNode serialized = ((XmlNamespaceTrait) trait.get()).createNode().expectObjectNode();

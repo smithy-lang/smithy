@@ -67,8 +67,7 @@ final class NodeModelLoader implements ModelLoader {
     private static final String METADATA = "metadata";
     private static final String SHAPES = "shapes";
     private static final String TRAITS = "traits";
-    private static final String TRAIT_DEFS = "traitDefs";
-    private static final List<String> NAMESPACE_PROPERTIES = ListUtils.of("shapes", "traits", "traitDefs");
+    private static final List<String> NAMESPACE_PROPERTIES = ListUtils.of("shapes", "traits");
     private static final List<String> COLLECTION_PROPERTY_NAMES = ListUtils.of("type", "member");
     private static final List<String> MAP_PROPERTY_NAMES = ListUtils.of("type", "key", "value");
     private static final Set<String> MEMBER_PROPERTIES = SetUtils.of("target");
@@ -76,7 +75,6 @@ final class NodeModelLoader implements ModelLoader {
     private static final List<String> SIMPLE_PROPERTY_NAMES = ListUtils.of("type");
     private static final List<String> STRUCTURE_PROPERTY_NAMES = ListUtils.of("type", "members");
     private static final List<String> UNION_PROPERTY_NAMES = ListUtils.of("type", "members");
-    private static final Set<String> RESERVED_STRUCTURE_WORDS = SetUtils.of("isa");
 
     private final NodeFactory nodeFactory;
 
@@ -219,7 +217,6 @@ final class NodeModelLoader implements ModelLoader {
         members.warnIfAdditionalProperties(NAMESPACE_PROPERTIES);
         node.getObjectMember(SHAPES).ifPresent(shapes -> loadShapes(visitor, namespace, shapes));
         node.getObjectMember(TRAITS).ifPresent(traits -> loadTraits(visitor, namespace, traits));
-        node.getObjectMember(TRAIT_DEFS).ifPresent(traitDefs -> loadTraitDefs(visitor, namespace, traitDefs));
     }
 
     private void loadShapes(LoaderVisitor visitor, String namespace, ObjectNode members) {
@@ -241,9 +238,9 @@ final class NodeModelLoader implements ModelLoader {
         members.getMembers().forEach((k, v) -> {
             try {
                 ShapeId shapeId = ShapeId.fromRelative(namespace, k.getValue());
-                ObjectNode traitDefinitions = v.expectObjectNode(
+                ObjectNode traitValues = v.expectObjectNode(
                         "Each value in the inner object of `traits` must be an object; found {type}.");
-                for (Map.Entry<StringNode, Node> traitNode : traitDefinitions.getMembers().entrySet()) {
+                for (Map.Entry<StringNode, Node> traitNode : traitValues.getMembers().entrySet()) {
                     visitor.onTrait(shapeId, traitNode.getKey().getValue(), traitNode.getValue());
                 }
             } catch (ShapeIdSyntaxException e) {
@@ -259,16 +256,6 @@ final class NodeModelLoader implements ModelLoader {
                 .severity(Severity.ERROR)
                 .message("Each key in the `" + descriptor + "` object must be a valid relative shape ID; " + message)
                 .build();
-    }
-
-    private void loadTraitDefs(LoaderVisitor visitor, String namespace, ObjectNode members) {
-        for (Map.Entry<StringNode, Node> entry : members.getMembers().entrySet()) {
-            try {
-                LoaderUtils.loadTraitDefinition(namespace, entry.getKey().getValue(), entry.getValue(), visitor, null);
-            } catch (SourceException e) {
-                visitor.onError(ValidationEvent.fromSourceException(e));
-            }
-        }
     }
 
     private void loadShape(ShapeId id, ObjectNode value, LoaderVisitor visitor) throws SourceException {
@@ -377,18 +364,6 @@ final class NodeModelLoader implements ModelLoader {
                 .getMember("members")
                 .orElse(Node.objectNode())
                 .expectObjectNode("Expected structure `members` to be an object; found {type}.");
-
-        // Some properties are reserved for potential use in the future.
-        for (StringNode property : shapeNode.getMembers().keySet()) {
-            if (RESERVED_STRUCTURE_WORDS.contains(property.getValue())) {
-                visitor.onError(ValidationEvent.builder()
-                        .eventId(Validator.MODEL_ERROR)
-                        .severity(Severity.ERROR)
-                        .sourceLocation(property.getSourceLocation())
-                        .message(String.format("`%s` is a reserved word for a structure shape", property.getValue()))
-                        .build());
-            }
-        }
 
         extractTraits(shapeId, shapeNode, STRUCTURE_PROPERTY_NAMES, visitor);
         visitor.onShape(StructureShape.builder().id(shapeId).source(shapeNode.getSourceLocation()));

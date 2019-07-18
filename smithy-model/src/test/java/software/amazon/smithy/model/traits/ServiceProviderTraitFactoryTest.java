@@ -30,7 +30,7 @@ public class ServiceProviderTraitFactoryTest {
     public void createsTraitsUsingServiceLoader() {
         TraitFactory factory = TraitFactory.createServiceFactory();
         Optional<Trait> maybeTrait = factory.createTrait(
-                "smithy.api#jsonName", ShapeId.from("ns.qux#foo"), Node.from("hi"));
+                ShapeId.from("smithy.api#jsonName"), ShapeId.from("ns.qux#foo"), Node.from("hi"));
 
         assertTrue(maybeTrait.isPresent());
         assertThat(maybeTrait.get(), instanceOf(JsonNameTrait.class));
@@ -39,7 +39,8 @@ public class ServiceProviderTraitFactoryTest {
     @Test
     public void returnsEmptyWhenNoMatchingTraitIsFound() {
         TraitFactory factory = TraitFactory.createServiceFactory();
-        Optional<Trait> maybeTrait = factory.createTrait("missing?", ShapeId.from("ns.qux#foo"), Node.nullNode());
+        Optional<Trait> maybeTrait = factory.createTrait(
+                ShapeId.from("missing.baz#foo"), ShapeId.from("ns.qux#foo"), Node.nullNode());
         assertFalse(maybeTrait.isPresent());
     }
 }

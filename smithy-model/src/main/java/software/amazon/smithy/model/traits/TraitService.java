@@ -28,9 +28,9 @@ import software.amazon.smithy.model.shapes.ShapeId;
  */
 public interface TraitService {
     /**
-     * @return Gets the name of the trait that this provider created.
+     * @return Gets the shape ID of the trait that this provider created.
      */
-    String getTraitName();
+    ShapeId getShapeId();
 
     /**
      * Creates the trait from a node value.

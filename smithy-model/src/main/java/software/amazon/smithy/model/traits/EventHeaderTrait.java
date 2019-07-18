@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Marks a structure member of an event as an event header.
@@ -24,10 +25,10 @@ import software.amazon.smithy.model.SourceLocation;
  * trait that targets blob, boolean, integer, long, string, or timestamp.
  */
 public final class EventHeaderTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#eventHeader";
+    public static final ShapeId ID = ShapeId.from("smithy.api#eventHeader");
 
     public EventHeaderTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public EventHeaderTrait() {
@@ -36,7 +37,7 @@ public final class EventHeaderTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<EventHeaderTrait> {
         public Provider() {
-            super(NAME, EventHeaderTrait::new);
+            super(ID, EventHeaderTrait::new);
         }
     }
 }

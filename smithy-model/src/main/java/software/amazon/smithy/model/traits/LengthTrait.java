@@ -27,13 +27,13 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Constrains a shape to minimum and maximum number of elements or size.
  */
 public final class LengthTrait extends AbstractTrait implements ToSmithyBuilder<LengthTrait> {
-    public static final String NAME = "smithy.api#length";
+    public static final ShapeId ID = ShapeId.from("smithy.api#length");
 
     private final Long min;
     private final Long max;
 
     private LengthTrait(Builder builder) {
-        super(NAME, builder.sourceLocation);
+        super(ID, builder.sourceLocation);
         this.min = builder.min;
         this.max = builder.max;
         if (max == null && min == null) {
@@ -103,8 +103,8 @@ public final class LengthTrait extends AbstractTrait implements ToSmithyBuilder<
 
     public static final class Provider implements TraitService {
         @Override
-        public String getTraitName() {
-            return NAME;
+        public ShapeId getShapeId() {
+            return ID;
         }
 
         @Override

@@ -16,17 +16,18 @@
 package software.amazon.smithy.mqtt.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringTrait;
 
 /**
  * smithy.mqtt#subscribe trait.
  */
 public final class SubscribeTrait extends StringTrait {
-    public static final String NAME = "smithy.mqtt#subscribe";
+    public static final ShapeId ID = ShapeId.from("smithy.mqtt#subscribe");
     private final Topic topic;
 
     public SubscribeTrait(String topic, SourceLocation sourceLocation) {
-        super(NAME, topic, sourceLocation);
+        super(ID, topic, sourceLocation);
         this.topic = Topic.parse(topic);
     }
 
@@ -36,7 +37,7 @@ public final class SubscribeTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<SubscribeTrait> {
         public Provider() {
-            super(NAME, SubscribeTrait::new);
+            super(ID, SubscribeTrait::new);
         }
     }
 

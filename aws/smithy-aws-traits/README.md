@@ -30,7 +30,7 @@ See the Smithy specification for details on how these traits are used.
 Example usage:
 
 ```smithy
-$version: "0.2.0"
+$version: "0.3.0"
 namespace ns.foo
 
 @aws.api#service(sdkId: "Some Value")

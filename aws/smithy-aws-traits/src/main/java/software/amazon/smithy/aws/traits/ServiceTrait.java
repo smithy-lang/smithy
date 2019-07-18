@@ -36,7 +36,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * services modeled in Smithy.
  */
 public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder<ServiceTrait> {
-    public static final String NAME = "aws.api#service";
+    public static final ShapeId ID = ShapeId.from("aws.api#service");
     private static final Logger LOGGER = Logger.getLogger(ServiceTrait.class.getName());
 
     private final String abbreviation;
@@ -46,7 +46,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     private final String cloudTrailEventSource;
 
     private ServiceTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(ID, builder.getSourceLocation());
         this.sdkId = SmithyBuilder.requiredState("sdkId", builder.sdkId);
         this.arnNamespace = SmithyBuilder.requiredState("arnNamespace", builder.arnNamespace);
         this.cloudFormationName = SmithyBuilder.requiredState("cloudFormationName", builder.cloudFormationName);
@@ -57,7 +57,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override
@@ -88,7 +88,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         return OptionalUtils.or(object.getStringMember(key1), () -> {
             Optional<StringNode> result = object.getStringMember(key2);
             if (result.isPresent()) {
-                LOGGER.warning(() -> "The `" + NAME + "` property `" + key2 + "` is deprecated. Use `"
+                LOGGER.warning(() -> "The `" + ID + "` property `" + key2 + "` is deprecated. Use `"
                                      + key1 + "` instead.");
             }
             return result;

@@ -1,58 +1,24 @@
 {
-  "smithy": "0.2.0",
+  "smithy": "0.3.0",
   "aws.apigateway": {
-    "traitDefs": {
+    "shapes": {
       "apiKeySource": {
-        "selector": "service",
-        "shape": "smithy.api#String",
+        "trait": {"selector": "service"},
+        "type": "string",
         "documentation": "Specifies the source of the caller identifier that will be used to throttle API methods that require a key.",
         "externalDocumentation": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html",
         "tags": ["internal"]
       },
       "authorizers": {
-        "selector": "service",
-        "shape": "aws.apigateway#Authorizers",
-        "documentation": "Lambda authorizers to attach to the authentication schemes defined on this service.",
-        "tags": ["internal"]
-      },
-      "authorizer": {
-        "selector": ":test(service, resource, operation)",
-        "shape": "smithy.api#String",
-        "documentation": "Attaches an authorizer to a service, resource, or operation.",
-        "tags": ["internal"]
-      },
-      "requestValidator": {
-        "selector": ":test(service, operation)",
-        "shape": "smithy.api#String",
-        "documentation": "Selects which request validation strategy to use. One of: 'full', 'params-only', 'body-only'",
-        "tags": ["internal"]
-      },
-      "integration": {
-        "selector": ":test(service, resource, operation)",
-        "shape": "IntegrationTrait",
-        "documentation": "Defines an API Gateway integration.",
-        "tags": ["internal"],
-        "conflicts": ["aws.apigateway#mockIntegration"]
-      },
-      "mockIntegration": {
-        "selector": ":test(service, resource, operation)",
-        "shape": "MockIntegrationTrait",
-        "documentation": "Defines an API Gateway mock integration.",
-        "tags": ["internal"],
-        "conflicts": ["aws.apigateway#integration"]
-      }
-    },
-    "shapes": {
-      "Authorizers": {
+        "trait": {"selector": "service"},
         "type": "map",
-        "private": true,
         "documentation": "A list of API Gateway authorizers to augment the service's declared authentication mechanisms.",
         "key": {"target": "smithy.api#String"},
-        "value": {"target": "aws.apigateway#Authorizer"}
+        "value": {"target": "aws.apigateway#AuthorizerDefinition"},
+        "tags": ["internal"]
       },
-      "Authorizer": {
+      "AuthorizerDefinition": {
         "type": "structure",
-        "private": true,
         "documentation": "An object that associates an authorizer and associated metadata with an authentication mechanism.",
         "members": {
           "scheme": {
@@ -88,7 +54,25 @@
           }
         }
       },
-      "IntegrationTrait": {
+      "authorizer": {
+        "trait": {"selector": ":test(service, resource, operation)"},
+        "type": "string",
+        "documentation": "Attaches an authorizer to a service, resource, or operation.",
+        "tags": ["internal"]
+      },
+      "requestValidator": {
+        "trait": {"selector": ":test(service, operation)"},
+        "type": "string",
+        "documentation": "Selects which request validation strategy to use. One of: 'full', 'params-only', 'body-only'",
+        "tags": ["internal"]
+      },
+      "integration": {
+        "trait": {
+          "selector": ":test(service, resource, operation)",
+          "conflicts": ["aws.apigateway#mockIntegration"]
+        },
+        "documentation": "Defines an API Gateway integration.",
+        "tags": ["internal"],
         "type": "structure",
         "members": {
           "type": {
@@ -136,19 +120,12 @@
           "responses": {
             "target": "IntegrationResponses"
           }
-        },
-        "private": true
-      },
-      "IntegrationType": {
-        "type": "string",
-        "enum": {
-          "aws": {"name":  "AWS"},
-          "aws_proxy": {"name":  "AWS_PROXY"},
-          "http": {"name":  "HTTP"},
-          "http_proxy": {"name":  "HTTP_PROXY"}
         }
       },
-      "MockIntegrationTrait": {
+      "mockIntegration": {
+        "trait": {"selector": ":test(service, resource, operation)", "conflicts": ["aws.apigateway#integration"]},
+        "documentation": "Defines an API Gateway mock integration.",
+        "tags": ["internal"],
         "type": "structure",
         "members": {
           "passThroughBehavior": {
@@ -163,8 +140,16 @@
           "responses": {
             "target": "IntegrationResponses"
           }
-        },
-        "private": true
+        }
+      },
+      "IntegrationType": {
+        "type": "string",
+        "enum": {
+          "aws": {"name":  "AWS"},
+          "aws_proxy": {"name":  "AWS_PROXY"},
+          "http": {"name":  "HTTP"},
+          "http_proxy": {"name":  "HTTP_PROXY"}
+        }
       },
       "IamRoleArn": {
         "type": "string",

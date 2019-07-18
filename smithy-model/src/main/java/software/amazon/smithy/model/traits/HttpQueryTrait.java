@@ -17,15 +17,16 @@ package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Binds a member to an HTTP query string.
  */
 public final class HttpQueryTrait extends StringTrait {
-    public static final String NAME = "smithy.api#httpQuery";
+    public static final ShapeId ID = ShapeId.from("smithy.api#httpQuery");
 
     public HttpQueryTrait(String value, SourceLocation sourceLocation) {
-        super(NAME, value, sourceLocation);
+        super(ID, value, sourceLocation);
         if (getValue().isEmpty()) {
             throw new SourceException("httpQuery parameter name binding must not be empty", getSourceLocation());
         }
@@ -37,7 +38,7 @@ public final class HttpQueryTrait extends StringTrait {
 
     public static final class Provider extends StringTrait.Provider<HttpQueryTrait> {
         public Provider() {
-            super(NAME, HttpQueryTrait::new);
+            super(ID, HttpQueryTrait::new);
         }
     }
 }

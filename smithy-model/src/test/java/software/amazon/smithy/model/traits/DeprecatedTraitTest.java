@@ -32,7 +32,8 @@ public class DeprecatedTraitTest {
     public void loadsTraitWithString() {
         Node node = Node.objectNode();
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("smithy.api#deprecated", ShapeId.from("ns.qux#foo"), node);
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#deprecated"), ShapeId.from("ns.qux#foo"), node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(DeprecatedTrait.class));
@@ -44,7 +45,7 @@ public class DeprecatedTraitTest {
     public void validatesInput() {
         Assertions.assertThrows(SourceException.class, () -> {
             TraitFactory provider = TraitFactory.createServiceFactory();
-            provider.createTrait("smithy.api#deprecated", ShapeId.from("ns.qux#foo"), Node.from("abc"));
+            provider.createTrait(ShapeId.from("smithy.api#deprecated"), ShapeId.from("ns.qux#foo"), Node.from("abc"));
         });
     }
 }

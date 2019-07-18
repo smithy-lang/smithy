@@ -32,7 +32,7 @@ public class TagsTraitTest {
         Node node = Node.fromStrings("experimental");
         ShapeId id = ShapeId.from("ns.qux#foo");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait("smithy.api#tags", id, node);
+        Optional<Trait> trait = provider.createTrait(ShapeId.from("smithy.api#tags"), id, node);
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(TagsTrait.class));

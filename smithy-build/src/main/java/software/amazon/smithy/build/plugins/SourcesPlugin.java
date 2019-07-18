@@ -152,7 +152,6 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
         ObjectNode serialized = ModelSerializer
                 .builder()
                 .shapeFilter(context::isSourceShape)
-                .traitDefinitionFilter(def -> context.isSourceTraitDef(def.getFullyQualifiedName()))
                 .metadataFilter(context::isSourceMetadata)
                 .build()
                 .serialize(updatedModel);

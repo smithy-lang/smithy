@@ -6,3 +6,5 @@
 [DANGER] ns.foo#bam: string shape name, `bam`, is not upper camel case | OppositeOfDefaults
 [DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | DefaultCamelCase
 [DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | OppositeOfDefaults
+[DANGER] ns.foo#InvalidTrait: string trait definition, `InvalidTrait`, is not lower camel case | DefaultCamelCase
+[DANGER] ns.foo#InvalidTrait: string trait definition, `InvalidTrait`, is not lower camel case | OppositeOfDefaults

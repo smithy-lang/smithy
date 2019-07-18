@@ -16,15 +16,16 @@
 package software.amazon.smithy.model.traits;
 
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Indicates that the members of a list must be unique.
  */
 public final class UniqueItemsTrait extends BooleanTrait {
-    public static final String NAME = "smithy.api#uniqueItems";
+    public static final ShapeId ID = ShapeId.from("smithy.api#uniqueItems");
 
     public UniqueItemsTrait(SourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
     }
 
     public UniqueItemsTrait() {
@@ -33,7 +34,7 @@ public final class UniqueItemsTrait extends BooleanTrait {
 
     public static final class Provider extends BooleanTrait.Provider<UniqueItemsTrait> {
         public Provider() {
-            super(NAME, UniqueItemsTrait::new);
+            super(ID, UniqueItemsTrait::new);
         }
     }
 }

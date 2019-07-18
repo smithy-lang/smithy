@@ -36,7 +36,7 @@ import software.amazon.smithy.utils.Pair;
 public final class ChangedShape<S extends Shape> implements FromSourceLocation {
     private final S oldShape;
     private final S newShape;
-    private final Map<String, Pair<Trait, Trait>> traitDiff;
+    private final Map<ShapeId, Pair<Trait, Trait>> traitDiff;
 
     ChangedShape(S oldShape, S newShape) {
         this.oldShape = oldShape;
@@ -134,7 +134,7 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
      *
      * @return Returns a map of each changed trait name to a pair of the old and new trait values.
      */
-    public Map<String, Pair<Trait, Trait>> getTraitDifferences() {
+    public Map<ShapeId, Pair<Trait, Trait>> getTraitDifferences() {
         return traitDiff;
     }
 
@@ -143,22 +143,22 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
      *
      * @param oldShape Old shape.
      * @param newShape New shape.
-     * @return Returns a map of each changed trait name to a pair of the old and new trait values.
+     * @return Returns a map of each changed trait ID to a pair of the old and new trait values.
      */
-    private static Map<String, Pair<Trait, Trait>> findTraitDifferences(Shape oldShape, Shape newShape) {
-        Map<String, Pair<Trait, Trait>> changes = new HashMap<>();
+    private static Map<ShapeId, Pair<Trait, Trait>> findTraitDifferences(Shape oldShape, Shape newShape) {
+        Map<ShapeId, Pair<Trait, Trait>> changes = new HashMap<>();
         for (Trait oldTrait : oldShape.getAllTraits().values()) {
-            Trait newTrait = newShape.findTrait(oldTrait.getTraitName()).orElse(null);
+            Trait newTrait = newShape.findTrait(oldTrait.toShapeId()).orElse(null);
             if (newTrait == null) {
-                changes.put(oldTrait.getTraitName(), (Pair.of(oldTrait, null)));
+                changes.put(oldTrait.toShapeId(), (Pair.of(oldTrait, null)));
             } else if (!newTrait.equals(oldTrait)) {
-                changes.put(newTrait.getTraitName(), Pair.of(oldTrait, newTrait));
+                changes.put(newTrait.toShapeId(), Pair.of(oldTrait, newTrait));
             }
         }
         // Find traits that were added.
         newShape.getAllTraits().values().stream()
-                .filter(newTrait -> !oldShape.findTrait(newTrait.getTraitName()).isPresent())
-                .forEach(newTrait -> changes.put(newTrait.getTraitName(), Pair.of(null, newTrait)));
+                .filter(newTrait -> !oldShape.findTrait(newTrait.toShapeId()).isPresent())
+                .forEach(newTrait -> changes.put(newTrait.toShapeId(), Pair.of(null, newTrait)));
 
         return changes;
     }

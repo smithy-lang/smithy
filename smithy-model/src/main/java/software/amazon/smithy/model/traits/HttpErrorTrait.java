@@ -25,12 +25,12 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * Defines a custom HTTP status code for error structures.
  */
 public final class HttpErrorTrait extends AbstractTrait {
-    public static final String NAME = "smithy.api#httpError";
+    public static final ShapeId ID = ShapeId.from("smithy.api#httpError");
 
     private final int code;
 
     public HttpErrorTrait(int code, FromSourceLocation sourceLocation) {
-        super(NAME, sourceLocation);
+        super(ID, sourceLocation);
         this.code = code;
     }
 
@@ -40,7 +40,7 @@ public final class HttpErrorTrait extends AbstractTrait {
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override

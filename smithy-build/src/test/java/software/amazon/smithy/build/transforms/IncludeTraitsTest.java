@@ -31,6 +31,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.utils.ListUtils;
 
 public class IncludeTraitsTest {
 
@@ -38,21 +39,23 @@ public class IncludeTraitsTest {
     public void removesTraitsNotInList() {
         StringShape stringShape = StringShape.builder()
                 .id("ns.foo#baz")
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
-                .addTrait(new DocumentationTrait("docs", SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
+                .addTrait(new DocumentationTrait("docs"))
                 .build();
         Model model = Model.assembler()
                 .addShape(stringShape)
                 .assemble()
                 .unwrap();
         Model result = new IncludeTraits()
-                .createTransformer(Collections.singletonList("documentation"))
+                .createTransformer(ListUtils.of("documentation"))
                 .apply(ModelTransformer.create(), model);
 
         assertThat(result.getShapeIndex().getShape(ShapeId.from("ns.foo#baz")).get().getTrait(DocumentationTrait.class),
                    not(Optional.empty()));
         assertThat(result.getShapeIndex().getShape(ShapeId.from("ns.foo#baz")).get().getTrait(SensitiveTrait.class),
                    is(Optional.empty()));
+
+        result.getShapeIndex().shapes().forEach(System.out::println);
         assertTrue(result.getTraitDefinition("smithy.api#documentation").isPresent());
         assertFalse(result.getTraitDefinition("smithy.api#sensitive").isPresent());
     }

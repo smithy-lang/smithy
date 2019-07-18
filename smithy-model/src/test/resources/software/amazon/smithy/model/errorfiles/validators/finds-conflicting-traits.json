@@ -1,5 +1,5 @@
 {
-    "smithy": "0.2.0",
+    "smithy": "0.3.0",
     "ns.foo": {
         "shapes": {
             "String1": {
@@ -29,27 +29,37 @@
             "String6": {
                 "type": "string",
                 "ns.foo#qux": true
-            }
-        },
-        "traitDefs": {
+            },
             "foo": {
-                "selector": "*",
-                "conflicts": [
-                    "ns.foo#baz",
-                    "ns.foo#qux"
-                ]
+                "type": "structure",
+                "trait": {
+                    "selector": "*",
+                    "conflicts": [
+                        "ns.foo#baz",
+                        "ns.foo#qux"
+                    ]
+                }
             },
             "baz": {
-                "selector": "*"
+                "type": "structure",
+                "trait": {
+                    "selector": "*"
+                }
             },
             "qux": {
-                "selector": "*",
-                "conflicts": [
-                    "ns.foo#bam"
-                ]
+                "type": "structure",
+                "trait": {
+                    "selector": "*",
+                    "conflicts": [
+                        "ns.foo#bam"
+                    ]
+                }
             },
             "bam": {
-                "selector": "*"
+                "type": "structure",
+                "trait": {
+                    "selector": "*"
+                }
             }
         }
     }

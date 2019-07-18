@@ -36,7 +36,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * service to which a resource is bound.
  */
 public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<ArnTrait> {
-    public static final String NAME = "aws.api#arn";
+    public static final ShapeId ID = ShapeId.from("aws.api#arn");
+
     private static final String TEMPLATE = "template";
     private static final String ABSOLUTE = "absolute";
     private static final String NO_REGION = "noRegion";
@@ -51,7 +52,7 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
     private final List<String> labels;
 
     private ArnTrait(Builder builder) {
-        super(NAME, builder.getSourceLocation());
+        super(ID, builder.getSourceLocation());
         this.template = SmithyBuilder.requiredState(TEMPLATE, builder.template);
         this.noRegion = builder.noRegion;
         this.noAccount = builder.noAccount;
@@ -66,7 +67,7 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(NAME);
+            super(ID);
         }
 
         @Override

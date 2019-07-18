@@ -34,9 +34,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.FunctionalUtils;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -52,15 +50,12 @@ import software.amazon.smithy.utils.SmithyBuilder;
  */
 public final class ModelSerializer {
     private final Predicate<String> metadataFilter;
-    private final Predicate<TraitDefinition> traitDefinitionFilter;
     private final Predicate<Shape> shapeFilter;
     private final Predicate<Trait> traitFilter;
     private final ShapeSerializer shapeSerializer = new ShapeSerializer();
 
     private ModelSerializer(Builder builder) {
         metadataFilter = builder.metadataFilter;
-        traitDefinitionFilter = builder.traitDefinitionFilter
-                .and(def -> !Prelude.isPreludeTraitDefinition(def.getFullyQualifiedName()));
         shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
         traitFilter = builder.traitFilter;
     }
@@ -83,11 +78,11 @@ public final class ModelSerializer {
         return metadata.isEmpty() ? Optional.empty() : Optional.of(new ObjectNode(metadata, SourceLocation.NONE));
     }
 
-    private ObjectNode createNamespaceNode(Namespace namespace) {
+    private ObjectNode createNamespaceNode(List<Shape> shapes) {
         ObjectNode.Builder builder = Node.objectNodeBuilder();
 
-        if (!namespace.shapes.isEmpty()) {
-            builder.withMember("shapes", namespace.shapes.stream()
+        if (!shapes.isEmpty()) {
+            builder.withMember("shapes", shapes.stream()
                     // Members are serialized inside of other shapes, so filter them out.
                     .filter(FunctionalUtils.not(Shape::isMemberShape))
                     .map(shape -> Pair.of(shape, shape.accept(shapeSerializer)))
@@ -95,46 +90,25 @@ public final class ModelSerializer {
                     .collect(ObjectNode.collectStringKeys(pair -> pair.getLeft().getId().getName(), Pair::getRight)));
         }
 
-        if (!namespace.traitDefinitions.isEmpty()) {
-            builder.withMember("traitDefs", namespace.traitDefinitions.stream()
-                    .sorted(Comparator.comparing(TraitDefinition::getName))
-                    .collect(ObjectNode.collectStringKeys(TraitDefinition::getName, TraitDefinition::toNode)));
-        }
-
         return builder.build();
     }
 
     /**
-     * Groups shapes and trait definitions into namespaces.
+     * Groups shapes into namespaces.
      *
      * @param model Model to compute namespaces from.
      * @return Returns the grouped namespaces.
      */
-    private TreeMap<String, Namespace> createNamespaces(Model model) {
+    private TreeMap<String, List<Shape>> createNamespaces(Model model) {
         Map<String, List<Shape>> shapes = model.getShapeIndex().shapes()
                 .filter(shapeFilter)
                 .collect(Collectors.groupingBy(s -> s.getId().getNamespace()));
-        Map<String, List<TraitDefinition>> definitions = model.getTraitDefinitions().stream()
-                .filter(traitDefinitionFilter)
-                .collect(Collectors.groupingBy(TraitDefinition::getNamespace));
+
         // Sort the namespaces, and group shapes+traits into Namespaces.
-        return Stream.concat(shapes.keySet().stream(), definitions.keySet().stream())
+        return shapes.keySet().stream()
                 .sorted()
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        ns -> new Namespace(shapes.get(ns), definitions.get(ns)),
-                        (a, b) -> a, // Impossible to encounter duplicate keys.
-                        TreeMap::new));
-    }
-
-    private static final class Namespace {
-        final List<Shape> shapes;
-        final List<TraitDefinition> traitDefinitions;
-
-        Namespace(List<Shape> shapes, List<TraitDefinition> traitDefinitions) {
-            this.shapes = shapes != null ? shapes : ListUtils.of();
-            this.traitDefinitions = traitDefinitions != null ? traitDefinitions : ListUtils.of();
-        }
+                // Note that it's impossible to encounter duplicate keys.
+                .collect(Collectors.toMap(Function.identity(), shapes::get, (a, b) -> a, TreeMap::new));
     }
 
     /**
@@ -149,7 +123,6 @@ public final class ModelSerializer {
      */
     public static final class Builder implements SmithyBuilder<ModelSerializer> {
         private Predicate<String> metadataFilter = pair -> true;
-        private Predicate<TraitDefinition> traitDefinitionFilter = definition -> true;
         private Predicate<Shape> shapeFilter = shape -> true;
         private Predicate<Trait> traitFilter = trait -> true;
 
@@ -166,16 +139,6 @@ public final class ModelSerializer {
         }
 
         /**
-         * Predicate that determines if a trait definition is serialized.
-         * @param traitDefinitionFilter Predicate that accepts a traitDef.
-         * @return Returns the builder.
-         */
-        public Builder traitDefinitionFilter(Predicate<TraitDefinition> traitDefinitionFilter) {
-            this.traitDefinitionFilter = Objects.requireNonNull(traitDefinitionFilter);
-            return this;
-        }
-
-        /**
          * Predicate that determines if a shape and its traits are serialized.
          * @param shapeFilter Predicate that accepts a shape.
          * @return Returns the builder.
@@ -188,6 +151,9 @@ public final class ModelSerializer {
         /**
          * Sets a predicate that can be used to filter trait values from
          * appearing in the serialized model.
+         *
+         * <p>Note that this does not filter out trait definitions. It only filters
+         * out instances of traits from being serialized on shapes.
          *
          * @param traitFilter Predicate that filters out trait definitions.
          * @return Returns the builder.
@@ -211,8 +177,8 @@ public final class ModelSerializer {
         private ObjectNode withTraits(Shape shape, ObjectNode node) {
             return node.merge(shape.getAllTraits().values().stream()
                     .filter(traitFilter)
-                    .sorted(Comparator.comparing(Trait::getTraitName))
-                    .collect(ObjectNode.collectStringKeys(Trait::getTraitName, Trait::toNode)));
+                    .sorted(Comparator.comparing(Trait::toShapeId))
+                    .collect(ObjectNode.collectStringKeys(trait -> trait.toShapeId().toString(), Trait::toNode)));
         }
 
         @Override

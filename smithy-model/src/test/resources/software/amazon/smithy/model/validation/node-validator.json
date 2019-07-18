@@ -1,5 +1,5 @@
 {
-    "smithy": "0.2.0",
+    "smithy": "0.3.0",
     "ns.foo": {
         "shapes": {
             "Byte": {
@@ -83,18 +83,6 @@
             "String4": {
                 "type": "string",
                 "pattern": "[A-Z]+"
-            },
-            "String5": {
-                "type": "string",
-                "time": "full-date"
-            },
-            "String6": {
-                "type": "string",
-                "time": "date-time"
-            },
-            "String7": {
-                "type": "string",
-                "time": "partial-time"
             },
             "Blob1": {
                 "type": "blob"

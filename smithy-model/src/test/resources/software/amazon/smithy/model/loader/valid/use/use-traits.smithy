@@ -1,8 +1,8 @@
-$version: "0.2.0"
+$version: "0.3.0"
 
-use trait smithy.api#required
-use trait smithy.api#sensitive
-use trait smithy.api#deprecated
+use smithy.api#required
+use smithy.api#sensitive
+use smithy.api#deprecated
 
 namespace smithy.example
 

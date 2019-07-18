@@ -37,6 +37,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.ReferencesTrait;
@@ -77,9 +78,9 @@ public class LoaderVisitorTest {
     @Test
     public void acceptableVersionDifference() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, "0.2.0");
-        visitor.onVersion(SourceLocation.NONE, "0.2.1");
-        visitor.onVersion(SourceLocation.NONE, "0.2.3");
+        visitor.onVersion(SourceLocation.NONE, "0.3.0");
+        visitor.onVersion(SourceLocation.NONE, "0.3.1");
+        visitor.onVersion(SourceLocation.NONE, "0.3.3");
     }
 
     @Test
@@ -106,14 +107,17 @@ public class LoaderVisitorTest {
     public void cannotDuplicateTraitDefs() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
         visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
-        TraitDefinition.Builder def1 = TraitDefinition.builder()
-                .name("foo.baz#Bar")
-                .selector(Selector.IDENTITY);
-        TraitDefinition.Builder def2 = TraitDefinition.builder()
-                .name("foo.baz#Bar")
-                .selector(Selector.parse("string"));
-        visitor.onTraitDef(def1);
-        visitor.onTraitDef(def2);
+        StringShape def1 = StringShape.builder()
+                .id("foo.baz#Bar")
+                .addTrait(TraitDefinition.builder().build())
+                .build();
+        StringShape def2 = StringShape.builder()
+                .id("foo.baz#Bar")
+                .addTrait(TraitDefinition.builder().selector(Selector.parse("string")).build())
+                .build();
+
+        visitor.onShape(def1);
+        visitor.onShape(def2);
         List<ValidationEvent> events = visitor.onEnd().getValidationEvents();
 
         assertThat(events, not(empty()));
@@ -123,10 +127,17 @@ public class LoaderVisitorTest {
     public void ignoresDuplicateTraitDefsFromPrelude() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
         visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
-        TraitDefinition.Builder def = TraitDefinition.builder().name("smithy.api#deprecated")
-                .selector(Selector.IDENTITY);
-        visitor.onTraitDef(def);
-        visitor.onTraitDef(def);
+        Shape def1 = StructureShape.builder()
+                .id("smithy.api#deprecated")
+                .addTrait(TraitDefinition.builder().build())
+                .build();
+        Shape def2 = StructureShape.builder()
+                .id("smithy.api#deprecated")
+                .addTrait(TraitDefinition.builder().build())
+                .build();
+
+        visitor.onShape(def1);
+        visitor.onShape(def2);
         List<ValidationEvent> events = visitor.onEnd().getValidationEvents();
 
         assertThat(events, empty());
@@ -136,10 +147,17 @@ public class LoaderVisitorTest {
     public void cannotDuplicateNonPreludeTraitDefs() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
         visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
-        TraitDefinition.Builder def = TraitDefinition.builder().name("smithy.example#deprecated")
-                .selector(Selector.IDENTITY);
-        visitor.onTraitDef(def);
-        visitor.onTraitDef(def);
+        Shape def1 = StructureShape.builder()
+                .id("smithy.example#deprecated")
+                .addTrait(TraitDefinition.builder().build())
+                .build();
+        Shape def2 = StructureShape.builder()
+                .id("smithy.example#deprecated")
+                .addTrait(TraitDefinition.builder().build())
+                .build();
+
+        visitor.onShape(def1);
+        visitor.onShape(def2);
         List<ValidationEvent> events = visitor.onEnd().getValidationEvents();
 
         assertThat(events, not(empty()));
@@ -161,13 +179,16 @@ public class LoaderVisitorTest {
     }
 
     @Test
-    public void createsModeledTraitWhenTraitFactoryReturnsEmpty() {
+    public void createsDynamicTraitWhenTraitFactoryReturnsEmpty() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
         visitor.onOpenFile("/foo/baz.smithy");
         visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         visitor.onNamespace("foo.bam", SourceLocation.none());
-        TraitDefinition.Builder def = TraitDefinition.builder().name("foo.baz#Bar").selector(Selector.IDENTITY);
-        visitor.onTraitDef(def);
+        Shape def = StructureShape.builder()
+                .id("foo.baz#Bar")
+                .addTrait(TraitDefinition.builder().build())
+                .build();
+        visitor.onShape(def);
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));
         visitor.onTrait(id, "foo.baz#Bar", Node.from(true));
@@ -210,8 +231,8 @@ public class LoaderVisitorTest {
                 .addUnparsedModel("test.smithy", "namespace smithy.example\n"
                                                  + "@foo(true)\n"
                                                  + "string MyString\n"
-                                                 + "trait foo { shape: TraitValue, selector: '*'}\n"
-                                                 + "structure TraitValue {}\n")
+                                                 + "@trait(selector: '*')\n"
+                                                 + "structure foo {}\n")
                 .assemble()
                 .unwrap();
         Shape shape = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyString")).get();
@@ -224,7 +245,7 @@ public class LoaderVisitorTest {
                 .addUnparsedModel("test.smithy", "namespace smithy.example\n"
                                                  + "@foo\n"
                                                  + "string MyString\n"
-                                                 + "trait foo { shape: TraitValue, selector: '*'}\n"
+                                                 + "@trait(selector: '*')"
                                                  + traitType + "\n")
                 .assemble()
                 .unwrap();
@@ -232,7 +253,7 @@ public class LoaderVisitorTest {
 
     @Test
     public void coercesListTraitValues() {
-        Model model = createCoercionModel("list TraitValue { member: String }");
+        Model model = createCoercionModel("list foo { member: String }");
         Shape shape = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyString")).get();
 
         assertTrue(shape.hasTrait("smithy.example#foo"));
@@ -240,7 +261,7 @@ public class LoaderVisitorTest {
 
     @Test
     public void coercesBooleanTraitValuesToStructures() {
-        Model model = createCoercionModel("structure TraitValue {}");
+        Model model = createCoercionModel("structure foo {}");
         Shape shape = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyString")).get();
 
         assertTrue(shape.hasTrait("smithy.example#foo"));

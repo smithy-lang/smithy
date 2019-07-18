@@ -28,14 +28,14 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Defines the HTTP request and response code bindings of an operation.
  */
 public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<HttpTrait> {
-    public static final String NAME = "smithy.api#http";
+    public static final ShapeId ID = ShapeId.from("smithy.api#http");
 
     private final String method;
     private final UriPattern uri;
     private final int code;
 
     private HttpTrait(HttpTrait.Builder builder) {
-        super(NAME, builder.sourceLocation);
+        super(ID, builder.sourceLocation);
         method = Objects.requireNonNull(builder.method, "method not set");
         uri = Objects.requireNonNull(builder.uri, "uri not set");
         code = builder.code;
@@ -43,7 +43,7 @@ public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<Ht
 
     public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-                super(NAME);
+                super(ID);
         }
 
         @Override

@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.traits.iam;
 import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -25,10 +26,10 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Applies condition keys to an operation or resource.
  */
 public final class ConditionKeysTrait extends StringListTrait implements ToSmithyBuilder<ConditionKeysTrait> {
-    public static final String NAME = "aws.iam#conditionKeys";
+    public static final ShapeId ID = ShapeId.from("aws.iam#conditionKeys");
 
     public ConditionKeysTrait(List<String> keys, FromSourceLocation sourceLocation) {
-        super(NAME, keys, sourceLocation);
+        super(ID, keys, sourceLocation);
     }
 
     public ConditionKeysTrait(List<String> keys) {
@@ -41,7 +42,7 @@ public final class ConditionKeysTrait extends StringListTrait implements ToSmith
 
     public static final class Provider extends StringListTrait.Provider<ConditionKeysTrait> {
         public Provider() {
-            super(NAME, ConditionKeysTrait::new);
+            super(ID, ConditionKeysTrait::new);
         }
     }
 

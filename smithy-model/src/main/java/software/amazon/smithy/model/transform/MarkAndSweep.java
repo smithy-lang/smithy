@@ -63,11 +63,13 @@ final class MarkAndSweep {
             marker.accept(context);
             // Find shapes that are only referenced by a shape that has been marked for removal.
             index.shapes().filter(shape -> !shape.isMemberShape()).forEach(shape -> {
-                Set<Shape> targetedFrom = context.getTargetedFrom(shape);
-                if (!targetedFrom.isEmpty()) {
-                    targetedFrom.removeAll(context.getMarkedForRemoval());
-                    if (targetedFrom.isEmpty()) {
-                        context.markShape(shape);
+                if (!context.getMarkedForRemoval().contains(shape)) {
+                    Set<Shape> targetedFrom = context.getTargetedFrom(shape);
+                    if (!targetedFrom.isEmpty()) {
+                        targetedFrom.removeAll(context.getMarkedForRemoval());
+                        if (targetedFrom.isEmpty()) {
+                            context.markShape(shape);
+                        }
                     }
                 }
             });

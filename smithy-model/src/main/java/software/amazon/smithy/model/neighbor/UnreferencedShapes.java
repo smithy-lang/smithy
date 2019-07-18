@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.model.neighbor;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -25,12 +23,14 @@ import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
- * Finds shapes that are not connected to a service shape.
+ * Finds shapes that are not connected to a service shape, are not trait
+ * definitions, and are not referenced by trait definitions.
+ *
+ * <p>Prelude shapes are never considered unreferenced.
  */
 public final class UnreferencedShapes {
 
@@ -47,48 +47,33 @@ public final class UnreferencedShapes {
         this.keepFilter = keepFilter;
     }
 
+    /**
+     * Gets the set of shapes that are unreferenced.
+     *
+     * @param model Model to compute from.
+     * @return Returns the unreferenced shapes.
+     */
     public Set<Shape> compute(Model model) {
         Walker shapeWalker = new Walker(model.getKnowledge(NeighborProviderIndex.class).getProvider());
+
         // Find all shapes connected to any service shape.
         Set<Shape> connected = model.getShapeIndex().shapes(ServiceShape.class)
                 .flatMap(service -> shapeWalker.walkShapes(service).stream())
                 .collect(Collectors.toSet());
-        Predicate<Shape> matchesFilters = createPredicate(model, shapeWalker);
+
+        // Don't remove shapes that are traits or connected to traits.
+        model.getShapeIndex().shapes()
+                .filter(shape -> shape.hasTrait(TraitDefinition.class))
+                .flatMap(shape -> shapeWalker.walkShapes(shape).stream())
+                .forEach(connected::add);
+
         // Any shape that wasn't identified as connected to a service is considered unreferenced.
         return model.getShapeIndex().shapes()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(FunctionalUtils.not(connected::contains))
-                .filter(matchesFilters)
+                // Retain prelude shapes
+                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
                 .filter(keepFilter)
                 .collect(Collectors.toSet());
-    }
-
-    private Predicate<Shape> createPredicate(Model model, Walker walker) {
-        Map<String, Set<ShapeId>> traitShapes = findTraitShapes(model, walker);
-        // Retain prelude shapes
-        Predicate<Shape> predicate = FunctionalUtils.not(Prelude::isPreludeShape);
-        // Consider any shape used in a trait definition to be referenced.
-        Set<ShapeId> allTraitShapes = traitShapes.values().stream()
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
-
-        return predicate.and(shape -> !allTraitShapes.contains(shape.getId()));
-    }
-
-    private Map<String, Set<ShapeId>> findTraitShapes(Model model, Walker walker) {
-        ShapeIndex index = model.getShapeIndex();
-        Map<String, Set<ShapeId>> result = new HashMap<>();
-        model.getTraitDefinitions().forEach(def -> {
-            def.getShape().flatMap(index::getShape).ifPresent(shape -> {
-                result.put(def.getName(), findTraitNeighbors(shape, walker));
-            });
-        });
-        return result;
-    }
-
-    private Set<ShapeId> findTraitNeighbors(Shape shape, Walker walker) {
-        Set<ShapeId> result = walker.walkShapes(shape).stream().map(Shape::getId).collect(Collectors.toSet());
-        result.add(shape.getId());
-        return result;
     }
 }

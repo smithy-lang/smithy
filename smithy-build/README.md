@@ -161,7 +161,8 @@ projections are applied in the order provided. No cycles are allowed in
 
 Aliases: `excludeByTag` (deprecated)
 
-Removes shapes if they are tagged with one or more of the given arguments.
+Removes shapes if they are tagged with one or more of the given arguments
+This transformer does not remove shapes from the prelude.
 
 ```json
 {
@@ -182,6 +183,7 @@ Removes shapes if they are tagged with one or more of the given arguments.
 Aliases: `includeByTag` (deprecated)
 
 Removes shapes that are not tagged with at least one of the given arguments.
+This transformer does not remove shapes from the prelude.
 
 ```json
 {
@@ -201,6 +203,7 @@ Removes shapes that are not tagged with at least one of the given arguments.
 
 Filters out shapes that are not part of one of the given namespaces.
 Note that this does not filter out traits based on namespaces.
+This transformer does not remove shapes from the prelude.
 
 ```json
 {
@@ -299,11 +302,12 @@ all traits in the "example.foo" namespace:
 
 Removes trait definitions from a model if the trait definition has any of
 the provided tags. Any instance of a removed trait is also removed from
-shapes in the model.
+shapes in the model. This transformer does not remove shapes from the
+prelude.
 
-The shapes that make up trait definitions that are removed *are not*
-automatically removed from the model. Use `removeUnusedShapes` to remove
-orphaned shapes.
+The shapes that are used as part of a trait definition that are removed
+*are not* automatically removed from the model. Use `removeUnusedShapes`
+to remove orphaned shapes.
 
 ```json
 {
@@ -331,25 +335,6 @@ given arguments (a list of authentication schemes).
     "exampleProjection": {
       "transforms": [
         {"name": "includeAuth", "arguments": ["aws.v4", "http-basic"]}
-      ]
-    }
-  }
-}
-```
-
-
-#### includeEndpoints
-
-Removes endpoints from endpoints traits that do not have one of the
-allowed names.
-
-```json
-{
-  "version": "1.0",
-  "projections": {
-    "exampleProjection": {
-      "transforms": [
-        {"name": "includeEndpoints", "arguments": ["us-east-1", "us-west-2"]}
       ]
     }
   }
@@ -440,7 +425,8 @@ all traits in the "smithy.api" namespace:
 
 Removes trait definitions from a model if the trait definition does not
 contain one of the provided tags. Any instance of a removed trait definition
-is also removed from shapes in the model.
+is also removed from shapes in the model. This transformer does not remove
+shapes from the prelude.
 
 The shapes that make up trait definitions that are removed *are not*
 automatically removed from the model. Use `removeUnusedShapes` to remove
@@ -464,7 +450,8 @@ orphaned shapes.
 
 Aliases: `treeShaker` (deprecated)
 
-Removes shapes from the model that are not connected to any service shape.
+Removes shapes from the model that are not connected to any service shape
+or used as part of a trait definition.
 
 You can *export* shapes that are not connected to any service shape by
 applying specific tags to the shape and adding the list of export tags as

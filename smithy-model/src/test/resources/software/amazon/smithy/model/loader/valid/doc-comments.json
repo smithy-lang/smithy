@@ -1,5 +1,5 @@
 {
-  "smithy": "0.2.0",
+  "smithy": "0.3.0",
   "smithy.example": {
     "shapes": {
       "MyString": {
@@ -13,11 +13,11 @@
           "foo": {"target": "String", "documentation": "Docs on member!"},
           "baz": {"target": "String", "documentation": "Docs on another member!"}
         }
-      }
-    },
-    "traitDefs": {
+      },
       "MyTrait": {
-        "documentation": "The documentation\nof this trait!"
+        "type": "structure",
+        "documentation": "The documentation\nof this trait!",
+        "trait": {}
       }
     }
   }

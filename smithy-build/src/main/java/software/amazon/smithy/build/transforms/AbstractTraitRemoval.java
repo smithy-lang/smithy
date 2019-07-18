@@ -20,13 +20,14 @@ import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.build.ProjectionTransformer;
 import software.amazon.smithy.model.loader.Prelude;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.Pair;
 
 abstract class AbstractTraitRemoval implements ProjectionTransformer {
-    Pair<Set<String>, Set<String>> parseTraits(List<String> arguments) {
-        Set<String> traitNames = new HashSet<>();
+    Pair<Set<ShapeId>, Set<String>> parseTraits(List<String> arguments) {
+        Set<ShapeId> traitNames = new HashSet<>();
         Set<String> traitNamespaces = new HashSet<>();
 
         for (String arg : arguments) {
@@ -37,18 +38,14 @@ abstract class AbstractTraitRemoval implements ProjectionTransformer {
                 // of "smithy.api#".
                 traitNamespaces.add(arg);
             } else {
-                traitNames.add(Trait.makeAbsoluteName(arg));
+                traitNames.add(ShapeId.from(Trait.makeAbsoluteName(arg)));
             }
         }
 
         return Pair.of(traitNames, traitNamespaces);
     }
 
-    boolean matchesTraitDefinition(
-            TraitDefinition definition,
-            Set<String> traitNames,
-            Set<String> traitNamespaces) {
-        return traitNames.contains(definition.getFullyQualifiedName())
-               || traitNamespaces.contains(definition.getNamespace());
+    boolean matchesTraitDefinition(Shape traitShape, Set<ShapeId> traitNames, Set<String> traitNamespaces) {
+        return traitNames.contains(traitShape.getId()) || traitNamespaces.contains(traitShape.getId().getNamespace());
     }
 }

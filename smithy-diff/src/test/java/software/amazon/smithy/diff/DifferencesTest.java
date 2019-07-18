@@ -26,7 +26,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.SensitiveTrait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 
 public class DifferencesTest {
     @Test
@@ -97,47 +96,5 @@ public class DifferencesTest {
         ChangedShape<Shape> diff = differences.changedShapes().findFirst().get();
         assertThat(diff.getOldShape(), equalTo(shape1));
         assertThat(diff.getNewShape(), equalTo(shape2));
-    }
-
-    @Test
-    public void detectsAddedDefinitions() {
-        Model a = Model.builder().build();
-        Model b = Model.builder()
-                .addTraitDefinition(TraitDefinition.builder().name("foo.baz#Trait").build())
-                .build();
-        Differences differences = Differences.detect(a, b);
-
-        assertThat(differences.addedTraitDefinitions().count(), equalTo(1L));
-        assertThat(differences.addedTraitDefinitions().findFirst().get().getFullyQualifiedName(),
-                   equalTo("foo.baz#Trait"));
-    }
-
-    @Test
-    public void detectsRemovedDefinitions() {
-        Model a = Model.builder()
-                .addTraitDefinition(TraitDefinition.builder().name("foo.baz#Trait").build())
-                .build();
-        Model b = Model.builder().build();
-        Differences differences = Differences.detect(a, b);
-
-        assertThat(differences.removedTraitDefinitions().count(), equalTo(1L));
-        assertThat(differences.removedTraitDefinitions().findFirst().get().getFullyQualifiedName(),
-                   equalTo("foo.baz#Trait"));
-    }
-
-    @Test
-    public void detectsChangedDefinitions() {
-        Model a = Model.builder()
-                .addTraitDefinition(TraitDefinition.builder().name("foo.baz#Trait").build())
-                .build();
-        Model b = Model.builder()
-                .addTraitDefinition(TraitDefinition.builder()
-                        .name("foo.baz#Trait")
-                        .structurallyExclusive(true)
-                        .build())
-                .build();
-        Differences differences = Differences.detect(a, b);
-
-        assertThat(differences.changedTraitDefinitions().count(), equalTo(1L));
     }
 }

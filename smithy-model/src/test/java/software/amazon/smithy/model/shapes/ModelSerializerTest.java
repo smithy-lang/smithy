@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,6 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 
 public class ModelSerializerTest {
     @Test
@@ -74,33 +72,6 @@ public class ModelSerializerTest {
     }
 
     @Test
-    public void filtersTraitDefinitions() {
-        ModelSerializer serializer = ModelSerializer.builder()
-                .traitDefinitionFilter(definition -> definition.getFullyQualifiedName().equals("ns.foo#baz"))
-                .build();
-        Model model = Model.builder()
-                .addTraitDefinition(TraitDefinition.builder()
-                        .name("ns.foo#baz")
-                        .build())
-                .addTraitDefinition(TraitDefinition.builder()
-                        .name("ns.foo#bam")
-                        .build())
-                .shapeIndex(ShapeIndex.builder().build())
-                .build();
-        ObjectNode result = serializer.serialize(model);
-
-        assertThat(result.getMember("ns.foo"), not(Optional.empty()));
-        assertThat(result.getMember("ns.foo").get().expectObjectNode().getMember("traitDefs"), not(Optional.empty()));
-        assertThat(result.getMember("ns.foo").get().expectObjectNode().getMember("shapes"), is(Optional.empty()));
-        ObjectNode traitDefs = result.getMember("ns.foo").get()
-                .expectObjectNode()
-                .expectMember("traitDefs")
-                .expectObjectNode();
-        assertThat(traitDefs.getMember("baz"), not(Optional.empty()));
-        assertThat(traitDefs.getMember("bam"), is(Optional.empty()));
-    }
-
-    @Test
     public void filtersShapes() {
         ModelSerializer serializer = ModelSerializer.builder()
                 .shapeFilter(shape -> shape.getId().getName().equals("foo"))
@@ -133,7 +104,7 @@ public class ModelSerializerTest {
                 .build();
         Model model = Model.assembler().addShape(shape).assemble().unwrap();
         ModelSerializer serializer = ModelSerializer.builder()
-                .traitFilter(trait -> trait.getTraitName().equals("smithy.api#documentation"))
+                .traitFilter(trait -> trait.toShapeId().toString().equals("smithy.api#documentation"))
                 .build();
         ObjectNode obj = serializer.serialize(model)
                 .expectMember("ns.foo").expectObjectNode()
@@ -177,25 +148,5 @@ public class ModelSerializerTest {
         ObjectNode serialized = serializer.serialize(model);
 
         assertFalse(serialized.getMember("smithy.api").isPresent());
-    }
-
-    @Test
-    public void serializesShapesInSmithyApiNotInPrelude() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("test-model.json"))
-                .addTraitDefinition(TraitDefinition.builder().name("smithy.api#foo").build())
-                .assemble()
-                .unwrap();
-        ModelSerializer serializer = ModelSerializer.builder().build();
-        ObjectNode serialized = serializer.serialize(model);
-
-        assertTrue(serialized.getMember("smithy.api").isPresent());
-        ObjectNode smithyApi = serialized.expectMember("smithy.api").expectObjectNode();
-
-        assertTrue(smithyApi.getMember("traitDefs").isPresent());
-        assertFalse(smithyApi.getMember("shapes").isPresent());
-        ObjectNode traitDefs = smithyApi.expectMember("traitDefs").expectObjectNode();
-
-        assertTrue(traitDefs.getMember("foo").isPresent());
     }
 }

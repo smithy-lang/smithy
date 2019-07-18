@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -36,10 +37,13 @@ public final class TraitConflictValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         return model.getShapeIndex().shapes()
                 .flatMap(shape -> {
-                    Map<String, Trait> traits = shape.getAllTraits();
-                    Map<String, List<String>> conflicts = new HashMap<>();
+                    // Map of trait shape IDs to trait value.
+                    Map<ShapeId, Trait> traits = shape.getAllTraits();
+                    // Map of trait shape ID to a list of found conflicting traits.
+                    Map<ShapeId, List<ShapeId>> conflicts = new HashMap<>();
+
                     traits.forEach((k, v) -> {
-                        model.getTraitDefinition(v.getTraitName()).ifPresent(definition -> {
+                        model.getTraitDefinition(v.toShapeId()).ifPresent(definition -> {
                             definition.getConflicts().forEach(conflict -> {
                                 if (traits.containsKey(conflict)) {
                                     conflicts.computeIfAbsent(k, key -> new ArrayList<>()).add(conflict);
@@ -47,12 +51,13 @@ public final class TraitConflictValidator extends AbstractValidator {
                             });
                         });
                     });
+
                     return conflicts.isEmpty() ? Stream.empty() : Stream.of(foundConflicts(shape, conflicts));
                 })
                 .collect(Collectors.toList());
     }
 
-    private ValidationEvent foundConflicts(Shape shape, Map<String, List<String>> conflicts) {
+    private ValidationEvent foundConflicts(Shape shape, Map<ShapeId, List<ShapeId>> conflicts) {
         return error(shape, "Found conflicting traits on " + shape.getType() + " shape: "
                             + conflicts.entrySet().stream()
                                     .flatMap(this::lines)
@@ -60,7 +65,7 @@ public final class TraitConflictValidator extends AbstractValidator {
                                     .collect(Collectors.joining(", ")));
     }
 
-    private Stream<String> lines(Map.Entry<String, List<String>> entry) {
+    private Stream<String> lines(Map.Entry<ShapeId, List<ShapeId>> entry) {
         String prefix = "`" + Trait.getIdiomaticTraitName(entry.getKey()) + "` conflicts with `";
         return entry.getValue().stream().map(value -> prefix + Trait.getIdiomaticTraitName(value) + "`");
     }
