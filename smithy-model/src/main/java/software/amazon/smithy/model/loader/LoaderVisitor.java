@@ -198,9 +198,8 @@ final class LoaderVisitor {
      * @param source The source location of where the namespace is defined.
      */
     public void onNamespace(String namespace, FromSourceLocation source) {
-        if (!ShapeId.VALID_NAMESPACE.matcher(namespace).find()) {
-            String msg = String.format("Invalid namespace name `%s`. Namespaces must match the following pattern: %s",
-                                       namespace, ShapeId.VALID_NAMESPACE);
+        if (!ShapeId.isValidNamespace(namespace)) {
+            String msg = String.format("Invalid namespace name `%s`", namespace);
             throw new ModelSyntaxException(msg, source);
         }
 
