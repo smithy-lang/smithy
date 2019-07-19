@@ -668,9 +668,7 @@ table.highlighttable pre {
 
 .admonition {
   margin: 20px 0;
-  padding: 0 1em 0.2em 1em;
-  background-color: #fff;
-  box-shadow: 1px 1px 1px #eee;
+  padding: 1em 0.8em;
 }
 
 .admonition dt {
@@ -684,25 +682,20 @@ table.highlighttable pre {
 .admonition-title {
   margin: 0px 0 5px;
   padding: 0;
-  font-size: 1.2em;
+  font-size: 1em;
   line-height: 1.1;
 }
 
 .admonition.danger,
 .admonition.error {
-  border-left: 8px solid #d9534f;
-}
-
-.admonition.danger .admonition-title,
-.admonition.error .admonition-title {
-  color: #d9534f;
+  background-color: #f8d7da;
 }
 
 .admonition.important,
 .admonition.warning,
 .admonition.attention,
 .admonition.caution {
-  border-left: 8px solid #9B581F;
+  background-color: #fff3cd;
 }
 
 .admonition.note .admonition-title,
@@ -717,11 +710,11 @@ table.highlighttable pre {
 
 .admonition.note,
 .admonition.hint {
-  border-left: 8px solid #31708f;
+  background-color: #ddecfc;
 }
 
 .admonition.tip {
-  border-left: 8px solid #3c763d;
+  background-color: #dff6da;
 }
 
 div.seealso {
