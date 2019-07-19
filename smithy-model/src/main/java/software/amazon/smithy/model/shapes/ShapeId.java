@@ -17,8 +17,6 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Immutable identifier for each shape in a model.
@@ -40,14 +38,6 @@ import java.util.regex.Pattern;
  * </ul>
  */
 public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
-
-    public static final String IDENTIFIER = "[a-zA-Z_][a-zA-Z0-9_]*";
-    public static final Pattern IDENTIFIER_PATTERN = Pattern.compile("^" + IDENTIFIER + "$");
-    public static final Pattern NAMESPACE = Pattern.compile(String.format("%1$s(?:\\.%1$s)*", IDENTIFIER));
-    public static final Pattern VALID_NAMESPACE = Pattern.compile("^" + NAMESPACE.pattern() + "$");
-    // abc (invalid), abc.123 (invalid), abc.def (valid).
-    private static final Pattern ID_PATTERN = Pattern.compile(
-            String.format("^(?:(%s)#)?(%s)(?:\\$(%s))?$", NAMESPACE, IDENTIFIER, IDENTIFIER));
 
     private final String namespace;
     private final String name;
@@ -75,14 +65,89 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      * @throws ShapeIdSyntaxException when the ID is malformed.
      */
     public static ShapeId from(String absoluteShapeId) {
-        Matcher matcher = ID_PATTERN.matcher(absoluteShapeId);
-        if (!matcher.matches()) {
+        int namespacePosition = absoluteShapeId.indexOf('#');
+        if (namespacePosition <= 0 || namespacePosition == absoluteShapeId.length() - 1) {
             throw new ShapeIdSyntaxException("Invalid shape ID: " + absoluteShapeId);
-        } else if (matcher.group(1) == null) {
-            throw new ShapeIdSyntaxException("Shape ID must contain a namespace: " + absoluteShapeId);
         }
 
-        return new ShapeId(absoluteShapeId, matcher.group(1), matcher.group(2), matcher.group(3));
+        String namespace = absoluteShapeId.substring(0, namespacePosition);
+        String name;
+        String memberName = null;
+
+        int memberPosition = absoluteShapeId.indexOf('$');
+        if (memberPosition == -1) {
+            name = absoluteShapeId.substring(namespacePosition + 1);
+        } else if (memberPosition < namespacePosition) {
+            throw new ShapeIdSyntaxException("Invalid shape ID: " + absoluteShapeId);
+        } else {
+            name = absoluteShapeId.substring(namespacePosition + 1, memberPosition);
+            memberName = absoluteShapeId.substring(memberPosition + 1);
+        }
+
+        return fromParts(namespace, name, memberName);
+    }
+
+    /**
+     * Checks if the given string is a valid namespace.
+     *
+     * @param namespace Namespace value to check.
+     * @return Returns true if this is a valid namespace.
+     */
+    public static boolean isValidNamespace(CharSequence namespace) {
+        if (namespace == null) {
+            return false;
+        }
+
+        int position = 0;
+        boolean start = true;
+
+        while (position < namespace.length()) {
+            char c = namespace.charAt(position++);
+            if (start) {
+                start = false;
+                if (!isValidIdentifierStart(c)) {
+                    return false;
+                }
+            } else if (c == '.') {
+                start = true;
+            } else if (!isValidIdentifierAfterStart(c)) {
+                return false;
+            }
+        }
+
+        return !start;
+    }
+
+    /**
+     * Checks if the given string is a valid identifier.
+     *
+     * @param identifier Identifier value to check.
+     * @return Returns true if this is a valid identifier.
+     */
+    public static boolean isValidIdentifier(CharSequence identifier) {
+        if (identifier == null || identifier.length() == 0) {
+            return false;
+        }
+
+        if (!isValidIdentifierStart(identifier.charAt(0))) {
+            return false;
+        }
+
+        for (int i = 1; i < identifier.length(); i++) {
+            if (!isValidIdentifierAfterStart(identifier.charAt(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean isValidIdentifierStart(char c) {
+        return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_';
+    }
+
+    private static boolean isValidIdentifierAfterStart(char c) {
+        return isValidIdentifierStart(c) || (c >= '0' && c <= '9');
     }
 
     /**
@@ -95,7 +160,15 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      * @throws ShapeIdSyntaxException when the ID is malformed.
      */
     public static ShapeId fromParts(String namespace, String name, String member) {
-        return from(buildAbsoluteIdFromParts(namespace, name, member));
+        String idFromParts = buildAbsoluteIdFromParts(namespace, name, member);
+
+        if (!isValidNamespace(namespace)
+                || !isValidIdentifier(name)
+                || (member != null && !isValidIdentifier(member))) {
+            throw new ShapeIdSyntaxException("Invalid shape ID: " + idFromParts);
+        }
+
+        return new ShapeId(idFromParts, namespace, name, member);
     }
 
     private static String buildAbsoluteIdFromParts(String namespace, String name, String member) {
@@ -128,7 +201,7 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      * @param relativeName A relative shape reference.
      * @return Returns a {@code Id} extracted from {@code relativeName}.
      * @throws ShapeIdSyntaxException when the namespace or shape reference
-     *  is malformed.
+     * is malformed.
      */
     public static ShapeId fromRelative(String namespace, String relativeName) {
         Objects.requireNonNull(namespace, "Shape ID namespace must not be null");
@@ -148,11 +221,11 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      * is used.
      *
      * @param defaultNamespace The namespace to use when the shape reference
-     *  does not contain a namespace.
+     * does not contain a namespace.
      * @param shapeName A relative or absolute shape reference.
      * @return Returns a {@code Id} extracted from shape reference.
      * @throws ShapeIdSyntaxException when the namespace or shape reference
-     *  is malformed.
+     * is malformed.
      */
     public static ShapeId fromOptionalNamespace(String defaultNamespace, String shapeName) {
         Objects.requireNonNull(shapeName, "Shape name must not be null");
@@ -170,15 +243,11 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      * @throws ShapeIdSyntaxException if the member name syntax is invalid.
      */
     public ShapeId withMember(String member) {
-        if (!IDENTIFIER_PATTERN.matcher(member).matches()) {
+        if (!isValidIdentifier(member)) {
             throw new ShapeIdSyntaxException("Invalid shape ID member: " + member);
         }
 
         return new ShapeId(namespace, name, member);
-    }
-
-    public static boolean isValidNamespace(String namespace) {
-        return VALID_NAMESPACE.matcher(namespace).find();
     }
 
     @Override
