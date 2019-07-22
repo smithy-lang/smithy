@@ -592,6 +592,134 @@ previous example:
         }
 
 
+.. _aws.api#data-trait:
+
+``aws.api#data`` trait
+=================================
+
+Summary
+    Designates the target as containing data of a known classification level.
+Trait selector
+    ``:test(simpleType, collection, structure, union, member)``
+Value type
+    ``string`` that is one of: ``content``, ``account``, ``usage``,
+    ``tagging``, or ``permissions``. See :ref:`data-classifications` for more
+    information.
+
+Data classifications are resolved hierarchically: the data classification
+of a member inherits the effective data classification applied to a parent
+structure, union, or collection unless overridden.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        use aws.api#data
+
+        @data("permissions")
+        structure MyStructure {
+          name: String,
+
+          @data("content")
+          content: String,
+
+          tags: TagList,
+        }
+
+        @data("tagging")
+        list TagList {
+            member: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "MyStructure": {
+                        "type": "structure",
+                        "members": {
+                            "content": {
+                                "target": "String",
+                                "aws.api#data": "content"
+                            },
+                            "tags": {
+                                "target": "TagList"
+                            },
+                            "name": {
+                                "target": "String",
+                            }
+                        }
+                    },
+                    "TagList": {
+                        "type": "list",
+                        "member": {
+                            "target": "String"
+                        },
+                        "aws.api#data": "tagging"
+                    }
+                }
+            }
+        }
+
+The effective data classifications in the previous example are as follows:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 40 60
+
+    * - Shape ID
+      - Data Classification
+    * - ``smithy.example#MyStructure``
+      - "permissions"
+    * - ``smithy.example#MyStructure$name``
+      - "permissions"
+    * - ``smithy.example#MyStructure$content``
+      - "content"
+    * - ``smithy.example#MyStructure$tags``
+      - "tagging"
+    * - ``smithy.example#TagList``
+      - "tagging"
+
+
+.. _data-classifications:
+
+Data Classifications
+--------------------
+
+The following table describes the available data classifications that can be
+applied through the ``aws.api#data`` trait.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Type
+      - Description
+    * - ``content``
+      - Customer content means any software (including machine images), data,
+        text, audio, video or images that customers or any customer end user
+        transfers to AWS for processing, storage or hosting by AWS services in
+        connection with the customer’s accounts and any computational results
+        that customers or any customer end user derive from the foregoing
+        through their use of AWS services.
+    * - ``account``
+      - Account information means information about customers that customers
+        provide to AWS in connection with the creation or administration of
+        customers’ accounts.
+    * - ``usage``
+      - Service Attributes means service usage data related to a customer’s
+        account, such as resource identifiers, metadata tags, security and
+        access roles, rules, usage policies, permissions, usage statistics,
+        logging data, and analytics.
+    * - ``tagging``
+      - Designates metadata tags applied to AWS resources.
+    * - ``permissions``
+      - Designates security and access roles, rules, usage policies, and
+        permissions.
+
+
 .. _aws.api#unsignedPayload-trait:
 
 ``aws.api#unsignedPayload`` trait
