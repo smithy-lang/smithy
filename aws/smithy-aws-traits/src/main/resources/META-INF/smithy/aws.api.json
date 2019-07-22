@@ -85,11 +85,12 @@
             "documentation": "Customer content means any software (including machine images), data, text, audio, video or images that customers or any customer end user transfers to AWS for processing, storage or hosting by AWS services in connection with the customer’s accounts and any computational results that customers or any customer end user derive from the foregoing through their use of AWS services."
           },
           "account": {
-            "name": "CUSTOMER_ACCOUNT_INFORMATION"
+            "name": "CUSTOMER_ACCOUNT_INFORMATION",
+            "documentation": "Account information means information about customers that customers provide to AWS in connection with the creation or administration of customers’ accounts."
           },
           "usage": {
-            "name": "ACCOUNT_USAGE_DATA",
-            "documentation": "Account usage data means usage data related to a customer’s account, such as resource identifiers, usage statistics, logging data, and analytics."
+            "name": "SERVICE_ATTRIBUTES",
+            "documentation": "Service Attributes means service usage data related to a customer’s account, such as resource identifiers, metadata tags, security and access roles, rules, usage policies, permissions, usage statistics, logging data, and analytics."
           },
           "tagging": {
             "name": "TAG_DATA",
