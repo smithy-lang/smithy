@@ -28,6 +28,7 @@ import software.amazon.smithy.model.traits.ReferencesTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.transform.ModelTransformerPlugin;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Removes references to resources that are removed from
@@ -57,10 +58,10 @@ public final class CleanResourceReferences implements ModelTransformerPlugin {
 
                     // If the trait contains a reference to the resource, then create a new version of the
                     // trait and shape that no longer reference the resource.
-                    ReferencesTrait.Builder traitBuilder = trait.toBuilder();
+                    ReferencesTrait.Builder traitBuilder = trait.toBuilder().clearReferences();
                     trait.getReferences().stream()
-                            .filter(references::contains)
-                            .forEach(ref -> traitBuilder.removeReference(ref.getName()));
+                            .filter(FunctionalUtils.not(references::contains))
+                            .forEach(traitBuilder::addReference);
                     return Stream.of(subject.toBuilder().addTrait(traitBuilder.build()).build());
                 })
                 .collect(Collectors.toSet());

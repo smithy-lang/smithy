@@ -17,29 +17,29 @@
                         "target": "smithy.api#Float"
                     }
                 },
-                "references": {
-                    "notIdentifier": {
+                "references": [
+                    {
                         "resource": "MyResource",
                         "ids": {
                             "notId": "abc",
                             "def": "def"
                         }
                     },
-                    "notMember": {
+                    {
                         "resource": "MyResource",
                         "ids": {
                             "abc": "notMember",
                             "def": "def"
                         }
                     },
-                    "notStringTarget": {
+                    {
                         "resource": "MyResource",
                         "ids": {
                             "abc": "abc",
                             "def": "hij"
                         }
                     }
-                }
+                ]
             },
             "MyResource": {
                 "type": "resource",

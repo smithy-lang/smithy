@@ -14,17 +14,7 @@
                         "required": true
                     }
                 },
-                "references": {
-                    "self": {
-                        "resource": "MyResource"
-                    },
-                    "another": {
-                        "resource": "MyResource"
-                    },
-                    "resource2": {
-                        "resource": "MyResource2"
-                    }
-                }
+                "references": [{"resource": "MyResource"}, {"resource": "MyResource"}, {"resource": "MyResource2"}]
             },
             "AnotherStructure": {
                 "type": "structure",
@@ -37,19 +27,11 @@
                         "required": true
                     }
                 },
-                "references": {
-                    "membersDoNotNeedToBeRequired": {
-                        "resource": "MyResource"
-                    }
-                }
+                "references": [{"resource": "MyResource"}]
             },
             "MyString": {
                 "type": "string",
-                "references": {
-                    "resource2": {
-                        "resource": "MyResource2"
-                    }
-                }
+                "references": [{"resource": "MyResource2"}]
             },
             "MyResource": {
                 "type": "resource",

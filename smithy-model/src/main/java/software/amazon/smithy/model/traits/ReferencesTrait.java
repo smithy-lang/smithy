@@ -17,12 +17,13 @@ package software.amazon.smithy.model.traits;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -60,17 +61,6 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
     }
 
     /**
-     * Gets a reference by name.
-     *
-     * @param name Reference name to retrieve.
-     *
-     * @return Returns the optionally present reference.
-     */
-    public Optional<Reference> getReference(String name) {
-        return getReferences().stream().filter(reference -> reference.getName().equals(name)).findFirst();
-    }
-
-    /**
      * Gets a list of all references to a particular shape.
      *
      * @param shapeId Shape ID to search for.
@@ -85,9 +75,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
     @Override
     protected Node createNode() {
-        ObjectNode.Builder builder = Node.objectNodeBuilder();
-        references.forEach(reference -> builder.withMember(reference.getName(), reference.toNode()));
-        return builder.build();
+        return references.stream().map(Reference::toNode).collect(ArrayNode.collect());
     }
 
     @Override
@@ -120,8 +108,9 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
             return this;
         }
 
-        public Builder removeReference(String referenceName) {
-            references.removeIf(r -> r.getName().equals(referenceName));
+        public Builder references(List<Reference> references) {
+            this.references.clear();
+            this.references.addAll(references);
             return this;
         }
 
@@ -135,16 +124,14 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
      * Reference to a resource.
      */
     public static final class Reference implements ToSmithyBuilder<Reference>, ToNode {
-        private String name;
         private ShapeId resource;
         private Map<String, String> ids;
         private ShapeId service;
         private String rel;
 
         private Reference(Builder builder) {
-            name = SmithyBuilder.requiredState("name", builder.name);
             resource = SmithyBuilder.requiredState("resource", builder.resource);
-            ids = Collections.unmodifiableMap(new LinkedHashMap<>(builder.ids));
+            ids = Collections.unmodifiableMap(new TreeMap<>(builder.ids));
             rel = builder.rel;
             service = builder.service;
         }
@@ -155,16 +142,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
         @Override
         public Builder toBuilder() {
-            return builder().name(name).resource(resource).ids(ids).service(service).rel(rel);
-        }
-
-        /**
-         * Get the name of the reference.
-         *
-         * @return Returns the reference name.
-         */
-        public String getName() {
-            return name;
+            return builder().resource(resource).ids(ids).service(service).rel(rel);
         }
 
         /**
@@ -200,6 +178,31 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
         }
 
         @Override
+        public String toString() {
+            return "Reference" + Node.printJson(toNode());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            } else if (!(o instanceof Reference)) {
+                return false;
+            }
+
+            Reference reference = (Reference) o;
+            return resource.equals(reference.resource)
+                   && Objects.equals(ids, reference.ids)
+                   && Objects.equals(service, reference.service)
+                   && Objects.equals(rel, reference.rel);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(resource, ids, service, rel);
+        }
+
+        @Override
         public Node toNode() {
             return Node.objectNodeBuilder()
                     .withMember("resource", Node.from(resource.toString()))
@@ -219,18 +222,12 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
             private String rel;
             private Map<String, String> ids = MapUtils.of();
             private ShapeId service;
-            private String name;
 
             private Builder() {}
 
             @Override
             public Reference build() {
                 return new Reference(this);
-            }
-
-            public Builder name(String name) {
-                this.name = Objects.requireNonNull(name);
-                return this;
             }
 
             public Builder ids(Map<String, String> members) {
@@ -264,17 +261,15 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
         @Override
         public ReferencesTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
-            ObjectNode outerProperties = value.expectObjectNode();
-            outerProperties.getMembers().forEach((k, v) -> {
-                builder.addReference(referenceFromNode(target.getNamespace(), k.getValue(), v));
-            });
+            ArrayNode refs = value.expectArrayNode();
+            for (ObjectNode member : refs.getElementsAs(ObjectNode.class)) {
+                builder.addReference(referenceFromNode(target.getNamespace(), member));
+            }
             return builder.build();
         }
 
-        private static Reference referenceFromNode(String namespace, String name, Node value) {
-            ObjectNode referenceProperties = value.expectObjectNode();
+        private static Reference referenceFromNode(String namespace, ObjectNode referenceProperties) {
             return Reference.builder()
-                    .name(name)
                     .resource(referenceProperties
                                       .expectMember("resource")
                                       .expectStringNode()

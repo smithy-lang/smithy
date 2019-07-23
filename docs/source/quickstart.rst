@@ -438,7 +438,7 @@ cities, so there's no way we could provide a City identifier.
         }
 
         // CitySummary contains a reference to a City.
-        @references(city: { resource: City, service: Weather })
+        @references([{resource: City}])
         structure CitySummary {
           @required
           cityId: CityId,
@@ -705,7 +705,7 @@ Complete example
         }
 
         // CitySummary contains a reference to a City.
-        @references(city: { resource: City, service: Weather })
+        @references([{resource: City}])
         structure CitySummary {
           @required
           cityId: CityId,
@@ -799,12 +799,7 @@ Complete example
                                 "required":true
                             }
                         },
-                        "references": {
-                            "city": {
-                                "resource":"City",
-                                "service":"Weather"
-                            }
-                        }
+                        "references": [{"resource":"City"}]
                     },
                     "Forecast": {
                         "type":"resource",

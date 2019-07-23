@@ -48,11 +48,7 @@
             "required": true
           }
         },
-        "references": {
-          "city": {
-            "resource": "example.weather#City"
-          }
-        }
+        "references": [{"resource": "example.weather#City"}]
       },
       "Forecast": {
         "type": "resource",

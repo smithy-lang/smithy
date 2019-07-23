@@ -17,16 +17,15 @@ package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 public class ReferencesTraitTest {
@@ -34,15 +33,15 @@ public class ReferencesTraitTest {
     public void loadsTrait() {
         ShapeId id = ShapeId.from("ns.qux#foo");
         TraitFactory provider = TraitFactory.createServiceFactory();
-        ObjectNode values = Node.objectNode()
-                .withMember("name1", Node.objectNode()
+        ArrayNode values = Node.arrayNode()
+                .withValue(Node.objectNode()
                         .withMember("resource", Node.from("SomeShape"))
                         .withMember("ids", Node.parse("{\"a\": \"a\", \"b\": \"b\"}")))
-                .withMember("name2", Node.objectNode()
+                .withValue(Node.objectNode()
                         .withMember("resource", Node.from("ns.foo#OtherShape"))
                         .withMember("ids", Node.parse("{\"c\": \"c\"}"))
                         .withMember("rel", Node.from("rel")))
-                .withMember("name3", Node.objectNode()
+                .withValue(Node.objectNode()
                         .withMember("resource", Node.from("ns.foo#OtherShape"))
                         .withMember("ids", Node.parse("{\"c\": \"c\"}"))
                         .withMember("service", Node.from("com.foo#Baz")));
@@ -52,41 +51,35 @@ public class ReferencesTraitTest {
         ReferencesTrait referencesTrait = (ReferencesTrait) trait.get();
 
         assertThat(referencesTrait.getReferences(), hasSize(3));
-        assertTrue(referencesTrait.getReference("name1").isPresent());
-        assertTrue(referencesTrait.getReference("name2").isPresent());
-        assertTrue(referencesTrait.getReference("name3").isPresent());
 
-        assertEquals(referencesTrait.getReference("name1").get().getResource(), ShapeId.from("ns.qux#SomeShape"));
-        assertEquals(referencesTrait.getReference("name2").get().getResource(), ShapeId.from(("ns.foo#OtherShape")));
-        assertEquals(referencesTrait.getReference("name3").get().getResource(), ShapeId.from(("ns.foo#OtherShape")));
+        assertThat(referencesTrait.getReferences().get(0).getResource(),
+                   equalTo(ShapeId.from(id.getNamespace() + "#SomeShape")));
+        assertThat(referencesTrait.getReferences().get(0).getIds(), hasKey("a"));
+        assertThat(referencesTrait.getReferences().get(0).getIds(), hasKey("b"));
 
-        assertTrue(referencesTrait.getReference("name1").get().getIds().containsKey("a"));
-        assertTrue(referencesTrait.getReference("name1").get().getIds().containsKey("b"));
-        assertTrue(referencesTrait.getReference("name2").get().getIds().containsKey("c"));
-        assertTrue(referencesTrait.getReference("name3").get().getIds().containsKey("c"));
+        assertThat(referencesTrait.getReferences().get(1).getResource(),
+                   equalTo(ShapeId.from("ns.foo#OtherShape")));
+        assertThat(referencesTrait.getReferences().get(1).getIds(), hasKey("c"));
 
-        assertEquals(referencesTrait.getReference("name1").get().getRel(), Optional.empty());
-        assertEquals(referencesTrait.getReference("name2").get().getRel(), Optional.of("rel"));
-        assertEquals(referencesTrait.getReference("name3").get().getRel(), Optional.empty());
-
-        assertFalse(referencesTrait.getReference("name1").get().getService().isPresent());
-        assertFalse(referencesTrait.getReference("name2").get().getService().isPresent());
-        assertThat(referencesTrait.getReference("name3").get().getService(),
+        assertThat(referencesTrait.getReferences().get(2).getResource(),
+                   equalTo(ShapeId.from("ns.foo#OtherShape")));
+        assertThat(referencesTrait.getReferences().get(2).getService(),
                    equalTo(Optional.of(ShapeId.from("com.foo#Baz"))));
+        assertThat(referencesTrait.getReferences().get(2).getIds(), hasKey("c"));
     }
 
     @Test
     public void convertsToNodeAndBuilder() {
         ShapeId id = ShapeId.from("ns.qux#foo");
-        ObjectNode values = Node.objectNode()
-                .withMember("name1", Node.objectNode()
+        ArrayNode values = Node.arrayNode()
+                .withValue(Node.objectNode()
                         .withMember("resource", Node.from("ns.foo#SomeShape"))
                         .withMember("ids", Node.parse("{\"a\": \"a\", \"b\": \"b\"}")))
-                .withMember("name2", Node.objectNode()
+                .withValue(Node.objectNode()
                         .withMember("resource", Node.from("ns.foo#OtherShape"))
                         .withMember("ids", Node.parse("{\"c\": \"c\"}"))
                         .withMember("rel", Node.from("rel")))
-                .withMember("name3", Node.objectNode()
+                .withValue(Node.objectNode()
                         .withMember("resource", Node.from("ns.foo#OtherShape"))
                         .withMember("ids", Node.parse("{\"c\": \"c\"}"))
                         .withMember("service", Node.from("foo.baz#Bar")));

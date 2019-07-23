@@ -1,1 +1,1 @@
-[ERROR] ns.foo#MyString: Found an invalid references trait reference named `foo`. References applied to string shapes cannot contain 'ids'. | ReferencesTrait
+[ERROR] ns.foo#MyString: References applied to string shapes cannot contain 'ids': Reference{"resource":"ns.foo#NotFound","ids":{"foo":"baz"}} | ReferencesTrait
