@@ -45,31 +45,15 @@
       },
       "I": {
         "type": "string",
-        "smithy.api#references": {
-          "test": {
-            "resource": "com.example#Foo"
-          },
-          "baz": {
-            "resource": "com.example#Foo",
-            "rel": "baz"
-          }
-        }
+        "smithy.api#references": [{"resource": "com.example#Foo"}, {"resource": "com.example#Foo", "rel": "baz"}]
       },
       "J": {
         "type": "string",
-        "smithy.api#references": {
-          "test": {
-            "resource": "com.example#Foo"
-          },
-          "baz": {
-            "resource": "com.example#Foo",
-            "rel": "baz"
-          }
-        }
+        "smithy.api#references": [{"resource": "com.example#Foo"}, {"resource": "com.example#Foo", "rel": "baz"}]
       },
       "K": {
         "type": "string",
-        "smithy.api#references": {}
+        "smithy.api#deprecated": {}
       },
       "L": {
         "type": "string",
@@ -117,7 +101,7 @@
       },
       "S": {
         "type": "string",
-        "smithy.api#references": {}
+        "smithy.api#references": []
       },
       "T": {
         "type": "string",

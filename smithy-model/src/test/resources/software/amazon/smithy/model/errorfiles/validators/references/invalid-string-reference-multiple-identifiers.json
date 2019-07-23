@@ -4,11 +4,7 @@
         "shapes": {
             "MyString": {
                 "type": "string",
-                "references": {
-                    "another": {
-                        "resource": "MyResource"
-                    }
-                }
+                "references": [{"resource": "MyResource"}]
             },
             "MyResource": {
                 "type": "resource",

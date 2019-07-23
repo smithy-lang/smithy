@@ -9,17 +9,17 @@
                         "target": "smithy.api#String"
                     }
                 },
-                "references": {
-                    "foo": {
+                "references": [
+                    {
                         "resource": "MyResource",
                         "ids": {
                             "abc": "abc"
                         }
                     },
-                    "baz": {
+                    {
                         "resource": "MyResource"
                     }
-                }
+                ]
             },
             "MyResource": {
                 "type": "resource",

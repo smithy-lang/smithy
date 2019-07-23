@@ -87,7 +87,7 @@ list CitySummaries {
   member: CitySummary
 }
 
-@references(city: { resource: City })
+@references([{resource: City}])
 structure CitySummary {
   @required cityId: CityId,
   @required name: smithy.api#String

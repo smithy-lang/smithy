@@ -61,9 +61,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (ReferencesTrait.Reference reference : trait.getReferences()) {
             if (shape.isStringShape() && !reference.getIds().isEmpty()) {
-                events.add(error(shape, trait, format(
-                        "Found an invalid references trait reference named `%s`. References applied to string shapes "
-                        + "cannot contain 'ids'.", reference.getName())));
+                events.add(error(shape, trait, "References applied to string shapes cannot contain 'ids': "
+                                               + reference));
             }
 
             ShapeId shapeId = reference.getResource();
@@ -71,8 +70,8 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             if (targetedShape.isPresent()) {
                 if (!targetedShape.get().isResourceShape()) {
                     events.add(error(shape, trait, format(
-                            "`references` trait reference `%s` targets a shape, %s, that that is not a resource.",
-                            reference.getName(), targetedShape.get().toString())));
+                            "`references` trait reference targets a %s shape not a resource: %s",
+                            targetedShape.get().getType(), reference)));
                 } else {
                     ResourceShape resource = targetedShape.get().asResourceShape().get();
                     events.addAll(validateSingleReference(index, reference, shape, trait, resource));
@@ -105,11 +104,10 @@ public final class ReferencesTraitValidator extends AbstractValidator {
         // You can only reference a resource with a single ID on a string shape.
         if (target.getIdentifiers().size() != 1) {
             return ListUtils.of(error(shape, trait, String.format(
-                    "This string shape contains an invalid references trait reference named `%s` that targets the "
-                    + "`%s` resource. References on a string shape can only refer to resource shapes with exactly one "
-                    + "entry in its identifiers property, but this shape has the following identifiers: [%s]",
-                    reference.getName(), target.getId(),
-                    ValidationUtils.tickedList(target.getIdentifiers().keySet()))));
+                    "This string shape contains an invalid reference to %s: %s. References on a string shape can "
+                    + "only refer to resource shapes with exactly one entry in its identifiers property, but this "
+                    + "shape has the following identifiers: [%s]",
+                    target.getId(), reference, ValidationUtils.tickedList(target.getIdentifiers().keySet()))));
         }
 
         return ListUtils.of();
@@ -192,9 +190,9 @@ public final class ReferencesTraitValidator extends AbstractValidator {
                         ? "Too many identifiers"
                         : "Not enough identifiers";
         return error(shape, trait, String.format(
-                "%s were provided in the `ids` properties of the `%s` reference. Expected %d identifiers(s), but "
+                "%s were provided in the `ids` properties of %s. Expected %d identifiers(s), but "
                 + "found %d. This resource requires bindings for the following identifiers: [%s].",
-                prefix, reference.getName(), expectedNames.size(), reference.getIds().size(),
+                prefix, reference, expectedNames.size(), reference.getIds().size(),
                 ValidationUtils.tickedList(expectedNames)));
     }
 
@@ -206,10 +204,10 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             Collection<String> extraneousKeys
     ) {
         return error(shape, trait, String.format(
-                "`references` trait reference `%s` contains extraneous resource identifier bindings, [%s], that are "
+                "`references` trait %s contains extraneous resource identifier bindings, [%s], that are "
                 + "not actually identifier names of the resource, `%s`. This resource has the following identifier "
                 + "names: [%s]",
-                reference.getName(),
+                reference,
                 ValidationUtils.tickedList(extraneousKeys), reference.getResource(),
                 ValidationUtils.tickedList(resource.getIdentifiers().keySet())));
     }
@@ -247,7 +245,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
         }
 
         return Optional.of(error(shape, trait, format(
-                "`references` trait `%s` reference is invalid for the following reasons: %s",
-                reference.getName(), messages.stream().sorted().collect(Collectors.joining("; ")))));
+                "`references` trait %s is invalid for the following reasons: %s",
+                reference, messages.stream().sorted().collect(Collectors.joining("; ")))));
     }
 }

@@ -4,11 +4,7 @@
         "shapes": {
             "MyStructure": {
                 "type": "structure",
-                "references": {
-                    "foo": {
-                        "resource": "smithy.api#String"
-                    }
-                }
+                "references": [{"resource": "smithy.api#String"}]
             }
         }
     }

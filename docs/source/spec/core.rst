@@ -1928,12 +1928,10 @@ reference to a ``HistoricalForecast`` resource (a resource that requires the
 
 .. code-block:: smithy
 
-    @references(
-      historicalForecast: { resource: HistoricalForecast, service: Weather }
-    )
+    @references([{resource: HistoricalForecast}])
     structure HistoricalReference {
-      forecastId: ForecastId,
-      historicalId: HistoricalForecastId
+        forecastId: ForecastId,
+        historicalId: HistoricalForecastId
     }
 
 Notice that in the above example, the identifiers of the resource were not
@@ -1946,16 +1944,11 @@ defined if needed. For example:
 
 .. code-block:: smithy
 
-    @references(
-      historicalForecast: {
-        resource: HistoricalForecast,
-        service: Weather,
-        ids: { forecastId: "customForecastId", historicalId: "customHistoricalId" }
-      }
-    )
+    @references([{resource: HistoricalForecast,
+            ids: { forecastId: "customForecastId", historicalId: "customHistoricalId"}])
     structure AnotherHistoricalReference {
-      customForecastId: String,
-      customHistoricalId: String,
+        customForecastId: String,
+        customHistoricalId: String,
     }
 
 A reference can be formed on a string shape for resources that have one
@@ -1965,17 +1958,12 @@ property in the reference.
 .. code-block:: smithy
 
     resource SimpleResource {
-      identifiers: {
-        foo: 'String',
-      }
+        identifiers: {
+            foo: String,
+        }
     }
 
-    @references(
-      simpleResource: {
-        resource: SimpleResource,
-        service: MyService
-      }
-    )
+    @references([{resource: SimpleResource}])
     string SimpleResourceReference
 
 See the :ref:`references-trait` for more information about references.
@@ -4189,10 +4177,10 @@ Trait selector
 
     *Any structure or string*
 Value type
-    ``object``
+    ``array``
 
-The ``references`` trait is a map in which each key is the name of the
-reference, and each value is an object that contains the following properties:
+The ``references`` trait is an array of ``Reference`` objects that contain the
+following properties:
 
 .. list-table::
     :header-rows: 1
@@ -4203,9 +4191,9 @@ reference, and each value is an object that contains the following properties:
       - Description
     * - service
       - :ref:`shape-id`
-      - **Required**. The shape ID of the service to which the resource is
-        bound. As with the ``resource`` property, the provided shape ID is not
-        required to be resolvable at build time.
+      - The shape ID of the service to which the resource is bound. As with
+        the ``resource`` property, the provided shape ID is not required to
+        be resolvable at build time.
     * - resource
       - :ref:`shape-id`
       - **Required**. The shape ID of the referenced resource.
@@ -4246,36 +4234,33 @@ The following example defines several references:
 
     .. code-tab:: smithy
 
+        @references([
+            {resource: Forecast},
+            {resource: ShapeName},
+            {resource: Meteorologist},
+            {
+                resource: com.foo.baz#Object,
+                service: com.foo.baz#Service,
+                ids: {bucket: "bucketName", object: "objectKey"},
+            ])
         structure ForecastInformation {
-          someId: SomeShapeIdentifier,
-          @required forecastId: ForecastId,
-          @required meteorologistId: MeteorologistId,
-          @required otherData: SomeOtherShape,
-          @required bucketName: BucketName,
-          @required objectKey: ObjectKey,
+            someId: SomeShapeIdentifier,
+
+            @required
+            forecastId: ForecastId,
+
+            @required
+            meteorologistId: MeteorologistId,
+
+            @required
+            otherData: SomeOtherShape,
+
+            @required
+            bucketName: BucketName,
+
+            @required
+            objectKey: ObjectKey,
         }
-        apply ForecastInformation @references(
-          forecast: {
-            resource: Forecast,
-            service: Weather,
-          },
-          optionalReference: {
-            resource: ShapeName,
-            service: Weather,
-          },
-          meteorologist: {
-            resource: Meteorologist,
-            service: Weather,
-          },
-          externalObject: {
-            resource: com.foo.baz#Object,
-            service: com.foo.baz#Service,
-            ids: {
-              bucket: "bucketName",
-              object: "objectKey",
-            },
-          }
-        )
 
 
 .. _implicit-ids:

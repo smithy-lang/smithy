@@ -4,14 +4,14 @@
         "shapes": {
             "MyStructure": {
                 "type": "structure",
-                "references": {
-                    "foo": {
+                "references": [
+                    {
                         "resource": "MyResource",
                         "ids": {
                             "abc": "invalidMemberName"
                         }
                     }
-                }
+                ]
             },
             "MyResource": {
                 "type": "resource",

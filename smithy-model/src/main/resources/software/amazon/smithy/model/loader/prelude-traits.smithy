@@ -188,9 +188,8 @@ string mediaType
 /// structure shape and the members of the structure that provide values for
 /// the identifiers of the resource.
 @trait(selector: ":test(structure, string)")
-map references {
-    key: NonEmptyString,
-    value: Reference
+list references {
+    member: Reference
 }
 
 @private

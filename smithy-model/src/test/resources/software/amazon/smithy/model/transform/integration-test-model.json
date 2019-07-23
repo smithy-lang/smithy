@@ -27,14 +27,7 @@
             },
             "MyOperationOutput": {
                 "type": "structure",
-                "references": {
-                    "myResource": {
-                        "resource": "MyResource",
-                        "ids": {
-                            "id": "id"
-                        }
-                    }
-                },
+                "references": [{"resource": "MyResource", "ids": {"id": "id"}}],
                 "members": {
                     "id": {
                         "target": "MyResourceIdentifier",

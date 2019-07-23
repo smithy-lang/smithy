@@ -53,7 +53,7 @@ string H
 
 // Unquoted string array
 
-@references(test: { resource: Foo }, baz: { resource: Foo, rel: "baz" })
+@references([{resource: Foo}, {resource: Foo, rel: "baz"}])
 string I
 resource Foo {
   identifiers: { abc: smithy.api#String },
@@ -61,12 +61,12 @@ resource Foo {
 
 // Quoted string array
 
-@references("test": { "resource": "Foo" }, "baz": { "resource": "Foo", "rel": "baz" })
+@references([{ "resource": "Foo" }, { "resource": "Foo", "rel": "baz" }])
 string J
 
 // Empty object
 
-@references()
+@deprecated()
 string K
 
 // Empty list

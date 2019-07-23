@@ -4,14 +4,7 @@
         "shapes": {
             "MyString": {
                 "type": "string",
-                "references": {
-                    "foo": {
-                        "resource": "ns.foo#NotFound",
-                        "ids": {
-                            "foo": "baz"
-                        }
-                    }
-                }
+                "references": [{"resource": "ns.foo#NotFound", "ids": {"foo": "baz"}}]
             }
         }
     }
