@@ -417,7 +417,7 @@ or to escape an escape (using ``\\``).
 
 .. productionlist:: smithy
     text                :`unquoted_text` / `quoted_text` / `text_block`
-    unquoted_text       :(ALPHA / "_") *(ALPHA / DIGIT / "-" / "_" / "$" / "." / "#")
+    unquoted_text       :(ALPHA / "_") *(ALPHA / DIGIT / "_" / "$" / "." / "#")
     quoted_text         :`single_quoted_text` / `double_quoted_text`
     single_quoted_text  :"'" *`single_quoted_char` "'"
     single_quoted_char  :%x20-26

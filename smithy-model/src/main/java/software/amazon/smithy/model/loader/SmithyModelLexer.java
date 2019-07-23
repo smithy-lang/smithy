@@ -340,7 +340,7 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
     }
 
     private String parseIdentifier() {
-        // Identifier: [A-Za-z_][A-Za-z0-9_#$.-]*
+        // Identifier: [A-Za-z_][A-Za-z0-9_#$.]*
         int startPosition = position;
         char start = input.charAt(position);
 
