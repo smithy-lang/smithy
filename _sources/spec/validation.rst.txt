@@ -282,7 +282,8 @@ CamelCase
 
 Validates that shape names and member names adhere to a consistent style of
 camel casing. By default, this validator will ensure that shape names use
-UpperCamelCase, and that member names use lowerCamelCase.
+UpperCamelCase, trait shape names use lowerCamelCase, and that member names
+use lowerCamelCase.
 
 Rationale
     Utilizing a consistent camelCase style makes it easier to understand a
@@ -300,10 +301,6 @@ Configuration
        * - Property
          - Type
          - Description
-       * - shapeNames
-         - ``string``
-         - Specifies the camelCase style of shape names. Can be set to either
-           "upper" (the default) or "lower".
        * - memberNames
          - ``string``
          - Specifies the camelCase style of member names. Can be set to either

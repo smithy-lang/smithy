@@ -6,14 +6,14 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AWS Core Specification &#8212; Smithy 0.2.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    <title>AWS Core Specification &#8212; Smithy 0.3.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -113,28 +112,29 @@ AWS products like AWS CloudFormation and tools like the AWS SDKs.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title first">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#general-aws-traits" id="id12">General AWS Traits</a><ul>
-<li><a class="reference internal" href="#aws-api-service-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-arn-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-arnreference-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-api-unsignedpayload-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">aws.api#unsignedPayload</span></code> trait</a></li>
+<li><a class="reference internal" href="#general-aws-traits" id="id14">General AWS Traits</a><ul>
+<li><a class="reference internal" href="#aws-api-service-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-arn-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-arnreference-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-data-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-unsignedpayload-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">aws.api#unsignedPayload</span></code> trait</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#authentication" id="id17">Authentication</a><ul>
-<li><a class="reference internal" href="#aws-v4-authentication" id="id18"><code class="docutils literal notranslate"><span class="pre">aws.v4</span></code> Authentication</a></li>
+<li><a class="reference internal" href="#authentication" id="id20">Authentication</a><ul>
+<li><a class="reference internal" href="#aws-v4-authentication" id="id21"><code class="docutils literal notranslate"><span class="pre">aws.v4</span></code> Authentication</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#iam-policy-traits" id="id19">IAM Policy Traits</a><ul>
-<li><a class="reference internal" href="#aws-iam-actionpermissiondescription-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-conditionkeys-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-defineconditionkeys-trait" id="id22"><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-disableconditionkeyinference-trait" id="id23"><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-requiredactions-trait" id="id24"><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait</a></li>
-<li><a class="reference internal" href="#deriving-condition-keys" id="id25">Deriving Condition Keys</a></li>
+<li><a class="reference internal" href="#iam-policy-traits" id="id22">IAM Policy Traits</a><ul>
+<li><a class="reference internal" href="#aws-iam-actionpermissiondescription-trait" id="id23"><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-conditionkeys-trait" id="id24"><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-defineconditionkeys-trait" id="id25"><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-disableconditionkeyinference-trait" id="id26"><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-requiredactions-trait" id="id27"><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait</a></li>
+<li><a class="reference internal" href="#deriving-condition-keys" id="id28">Deriving Condition Keys</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#appendix" id="id26">Appendix</a><ul>
-<li><a class="reference internal" href="#appendix-a-example-sdk-service-ids" id="id27">Appendix A: Example SDK service IDs</a></li>
+<li><a class="reference internal" href="#appendix" id="id29">Appendix</a><ul>
+<li><a class="reference internal" href="#appendix-a-example-sdk-service-ids" id="id30">Appendix A: Example SDK service IDs</a></li>
 </ul>
 </li>
 </ul>
@@ -177,10 +177,10 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.3.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
 
 <span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
 <span class="kd">service</span><span class="nc"> FooBaz</span> {
@@ -191,7 +191,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;aws.fooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -221,10 +221,10 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.3.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
 
 <span class="nd">@service</span>(
     <span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>,
@@ -239,7 +239,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;aws.fooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -498,11 +498,11 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.3.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
-<span class="kd">use trait</span><span class="nc"> aws.api#arn</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.api#arn</span>
 
 <span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
 <span class="kd">service</span><span class="nc"> FooBaz</span> {
@@ -519,7 +519,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
   <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
       <span class="nt">&quot;FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -569,8 +569,8 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> aws.api#arn</span>
-<span class="kd">use trait</span><span class="nc"> aws.api#arnReference</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#arn</span>
+<span class="kd">use</span><span class="nc"> aws.api#arnReference</span>
 
 <span class="nd">@arn</span>(<span class="nl">template:</span> <span class="s2">&quot;{arn}&quot;</span>, <span class="nl">absolute:</span> <span class="kc">true</span>)
 <span class="kd">resource</span><span class="nc"> MyResource</span> {
@@ -584,7 +584,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
   <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
       <span class="nt">&quot;MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -683,10 +683,10 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.3.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#arnReference</span>
+<span class="kd">use</span><span class="nc"> aws.api#arnReference</span>
 
 <span class="nd">@arnReference</span>(
     <span class="nl">type:</span> <span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span>,
@@ -698,7 +698,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;SomeResourceId&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -731,10 +731,10 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.3.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#arnReference</span>
+<span class="kd">use</span><span class="nc"> aws.api#arnReference</span>
 
 <span class="nd">@arnReference</span>
 <span class="kd">string</span><span class="nc"> SomeResourceId</span>
@@ -743,7 +743,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;SomeResourceId&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -758,8 +758,162 @@ JSON</div>
 </div>
 </div>
 </div>
+<div class="section" id="aws-api-data-trait">
+<span id="id4"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait<a class="headerlink" href="#aws-api-data-trait" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Designates the target as containing data of a known classification level.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">:test(simpleType,</span> <span class="pre">collection,</span> <span class="pre">structure,</span> <span class="pre">union,</span> <span class="pre">member)</span></code></dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> that is one of: <code class="docutils literal notranslate"><span class="pre">content</span></code>, <code class="docutils literal notranslate"><span class="pre">account</span></code>, <code class="docutils literal notranslate"><span class="pre">usage</span></code>,
+<code class="docutils literal notranslate"><span class="pre">tagging</span></code>, or <code class="docutils literal notranslate"><span class="pre">permissions</span></code>. See <a class="reference internal" href="#data-classifications"><span class="std std-ref">Data Classifications</span></a> for more
+information.</dd>
+</dl>
+<p>Data classifications are resolved hierarchically: the data classification
+of a member inherits the effective data classification applied to a parent
+structure, union, or collection unless overridden.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#data</span>
+
+<span class="nd">@data</span>(<span class="s2">&quot;permissions&quot;</span>)
+<span class="kd">structure</span><span class="nc"> MyStructure</span> {
+  <span class="nl">name:</span> <span class="vc">String</span>,
+
+  <span class="nd">@data</span>(<span class="s2">&quot;content&quot;</span>)
+  <span class="nl">content:</span> <span class="vc">String</span>,
+
+  <span class="nl">tags:</span> <span class="vc">TagList</span>,
+}
+
+<span class="nd">@data</span>(<span class="s2">&quot;tagging&quot;</span>)
+<span class="kd">list</span><span class="nc"> TagList</span> {
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;aws.api#data&quot;</span><span class="p">:</span> <span class="s2">&quot;content&quot;</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;TagList&quot;</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;TagList&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;aws.api#data&quot;</span><span class="p">:</span> <span class="s2">&quot;tagging&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The effective data classifications in the previous example are as follows:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Shape ID</th>
+<th class="head">Data Classification</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">smithy.example#MyStructure</span></code></td>
+<td>&quot;permissions&quot;</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">smithy.example#MyStructure$name</span></code></td>
+<td>&quot;permissions&quot;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">smithy.example#MyStructure$content</span></code></td>
+<td>&quot;content&quot;</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">smithy.example#MyStructure$tags</span></code></td>
+<td>&quot;tagging&quot;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">smithy.example#TagList</span></code></td>
+<td>&quot;tagging&quot;</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="data-classifications">
+<span id="id5"></span><h4>Data Classifications<a class="headerlink" href="#data-classifications" title="Permalink to this headline">¶</a></h4>
+<p>The following table describes the available data classifications that can be
+applied through the <code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">content</span></code></td>
+<td>Customer content means any software (including machine images), data,
+text, audio, video or images that customers or any customer end user
+transfers to AWS for processing, storage or hosting by AWS services in
+connection with the customer’s accounts and any computational results
+that customers or any customer end user derive from the foregoing
+through their use of AWS services.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">account</span></code></td>
+<td>Account information means information about customers that customers
+provide to AWS in connection with the creation or administration of
+customers’ accounts.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">usage</span></code></td>
+<td>Service Attributes means service usage data related to a customer’s
+account, such as resource identifiers, metadata tags, security and
+access roles, rules, usage policies, permissions, usage statistics,
+logging data, and analytics.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">tagging</span></code></td>
+<td>Designates metadata tags applied to AWS resources.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">permissions</span></code></td>
+<td>Designates security and access roles, rules, usage policies, and
+permissions.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div class="section" id="aws-api-unsignedpayload-trait">
-<span id="id4"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.api#unsignedPayload</span></code> trait<a class="headerlink" href="#aws-api-unsignedpayload-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id6"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.api#unsignedPayload</span></code> trait<a class="headerlink" href="#aws-api-unsignedpayload-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd><p class="first">Indicates that the payload of an operation is not to be part of the
@@ -792,7 +946,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> aws.api#unsignedPayload</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#unsignedPayload</span>
 
 <span class="nd">@unsignedPayload</span>
 <span class="kd">operation</span><span class="nc"> PutThings</span>(<span class="vc">PutThingsInput</span>) <span class="nd">-&gt;</span> <span class="vc">PutThingsOutput</span>
@@ -801,7 +955,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;PutThings&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -831,7 +985,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use trait</span><span class="nc"> aws.api#unsignedPayload</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#unsignedPayload</span>
 
 <span class="nd">@unsignedPayload</span>([<span class="s2">&quot;aws.v4&quot;</span>])
 <span class="kd">operation</span><span class="nc"> PutThings</span>(<span class="vc">PutThingsInput</span>) <span class="nd">-&gt;</span> <span class="vc">PutThingsOutput</span>
@@ -840,7 +994,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;PutThings&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -888,10 +1042,10 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.2.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;0.3.0&quot;</span>
 <span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
 
 <span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
 <span class="nd">@protocols</span>([{<span class="nl">name:</span> <span class="s2">&quot;aws.rest-json&quot;</span>, <span class="nl">auth:</span> [<span class="s2">&quot;aws.v4&quot;</span>]}])
@@ -903,7 +1057,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;aws.fooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -936,7 +1090,7 @@ policies for resources in a service. Condition keys for services defined in
 Smithy are automatically inferred. These can be disabled or augmented. For
 more information, see <a class="reference internal" href="#deriving-condition-keys"><span class="std std-ref">Deriving Condition Keys</span></a>.</p>
 <div class="section" id="aws-iam-actionpermissiondescription-trait">
-<span id="id5"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait<a class="headerlink" href="#aws-iam-actionpermissiondescription-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id7"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait<a class="headerlink" href="#aws-iam-actionpermissiondescription-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>A brief description of what granting the user permission to invoke an
@@ -960,7 +1114,7 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.iam#actionPermissionDescription</span>
+<span class="kd">use</span><span class="nc"> aws.iam#actionPermissionDescription</span>
 
 <span class="nd">@actionPermissionDescription</span>(<span class="s2">&quot;This will allow the user to Foo.&quot;</span>)
 <span class="kd">operation</span><span class="nc"> FooOperation</span>()
@@ -969,7 +1123,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;FooOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -985,7 +1139,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="aws-iam-conditionkeys-trait">
-<span id="id6"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeys-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id8"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeys-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Applies condition keys, by name, to a resource or operation.</dd>
@@ -1014,9 +1168,9 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
-<span class="kd">use trait</span><span class="nc"> aws.iam#definedContextKeys</span>
-<span class="kd">use trait</span><span class="nc"> aws.iam#conditionKeys</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.iam#definedContextKeys</span>
+<span class="kd">use</span><span class="nc"> aws.iam#conditionKeys</span>
 
 <span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
 <span class="nd">@defineConditionKeys</span>([
@@ -1040,7 +1194,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1083,7 +1237,7 @@ without being defined on the service.</p>
 </div>
 </div>
 <div class="section" id="aws-iam-defineconditionkeys-trait">
-<span id="id7"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-defineconditionkeys-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id9"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-defineconditionkeys-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Defines the set of condition keys that appear within a service in
@@ -1144,8 +1298,8 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
-<span class="kd">use trait</span><span class="nc"> aws.iam#defineConditionKeys</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.iam#defineConditionKeys</span>
 
 <span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
 <span class="nd">@defineConditionKeys</span>(
@@ -1163,7 +1317,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1195,7 +1349,7 @@ JSON</div>
 defined on the service.</p>
 </div>
 <div class="section" id="condition-key-types">
-<span id="id8"></span><h4>Condition Key Types<a class="headerlink" href="#condition-key-types" title="Permalink to this headline">¶</a></h4>
+<span id="id10"></span><h4>Condition Key Types<a class="headerlink" href="#condition-key-types" title="Permalink to this headline">¶</a></h4>
 <p>The following table describes the available types a condition key can have.
 Condition keys in IAM policies can be evaluated with <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html">condition operators</a>.</p>
 <table border="1" class="colwidths-given docutils">
@@ -1256,7 +1410,7 @@ Condition keys in IAM policies can be evaluated with <a class="reference externa
 </div>
 </div>
 <div class="section" id="aws-iam-disableconditionkeyinference-trait">
-<span id="id9"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait<a class="headerlink" href="#aws-iam-disableconditionkeyinference-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id11"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait<a class="headerlink" href="#aws-iam-disableconditionkeyinference-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Declares that the condition keys of a resource should not be inferred.</dd>
@@ -1284,8 +1438,8 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
-<span class="kd">use trait</span><span class="nc"> aws.iam#disableConditionKeyInference</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.iam#disableConditionKeyInference</span>
 
 <span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
 <span class="kd">service</span><span class="nc"> MyService</span> {
@@ -1305,7 +1459,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1334,7 +1488,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="aws-iam-requiredactions-trait">
-<span id="id10"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait<a class="headerlink" href="#aws-iam-requiredactions-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id12"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait<a class="headerlink" href="#aws-iam-requiredactions-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Other actions that the invoker must be authorized to perform when
@@ -1364,8 +1518,8 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
-<span class="kd">use trait</span><span class="nc"> aws.iam#requiredActions</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.iam#requiredActions</span>
 
 <span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
 <span class="kd">service</span><span class="nc"> MyService</span> {
@@ -1385,7 +1539,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -1417,7 +1571,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="deriving-condition-keys">
-<span id="id11"></span><h3>Deriving Condition Keys<a class="headerlink" href="#deriving-condition-keys" title="Permalink to this headline">¶</a></h3>
+<span id="id13"></span><h3>Deriving Condition Keys<a class="headerlink" href="#deriving-condition-keys" title="Permalink to this headline">¶</a></h3>
 <p>Smithy will automatically derive condition key information for a service, as
 well as its resources and operations.</p>
 <p>A resource's condition keys include those that are inferred from their
@@ -1443,9 +1597,9 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
 
-<span class="kd">use trait</span><span class="nc"> aws.api#service</span>
-<span class="kd">use trait</span><span class="nc"> aws.iam#defineConditionKeys</span>
-<span class="kd">use trait</span><span class="nc"> aws.iam#conditionKeys</span>
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.iam#defineConditionKeys</span>
+<span class="kd">use</span><span class="nc"> aws.iam#conditionKeys</span>
 
 <span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;My Value&quot;</span>, <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>)
 <span class="nd">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span>: { <span class="nl">type:</span> <span class="s2">&quot;String&quot;</span> })
@@ -1472,7 +1626,7 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -2032,6 +2186,10 @@ existing AWS services.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#aws-api-arnreference-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-data-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul>
+<li><a class="reference internal" href="#data-classifications">Data Classifications</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#aws-api-unsignedpayload-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#unsignedPayload</span></code> trait</a><ul>
 <li><a class="reference internal" href="#unsigned-payloads-and-signature-version-4">Unsigned Payloads and signature version 4</a></li>
 </ul>

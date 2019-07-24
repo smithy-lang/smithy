@@ -34,7 +34,6 @@ The Smithy IDL is a series of statements separated by newlines.
                             :/ `namespace_statement`
                             :/ `apply_statement`
                             :/ `documentation_comment`
-                            :/ `trait_statement`
                             :/ `shape_statement`
 
 
@@ -100,7 +99,7 @@ Example:
 
 ::
 
-    $version: "0.2.0"
+    $version: "0.3.0"
 
 .. note::
 
@@ -143,30 +142,21 @@ Use statement
 -------------
 
 A use statement is used to import shapes and traits into the current namespace
-so that they can be referred to using relative shape IDs and trait names. A
-use statement MUST come before any shapes or traits have been defined in an
-IDL model file.
+so that they can be referred to using relative shape. A use statement MUST come
+before any shapes are defined in an IDL model file.
 
 .. productionlist:: smithy
-    use_statement         :`use_shape_statement` / `use_trait_statement`
+    use_statement         :"use" `absolute_shape_id`
 
-
-.. _use-shape-statement:
-
-Use shape statement
-~~~~~~~~~~~~~~~~~~~
-
-The ``use_shape_statement`` imports one or more shapes.
-
-.. productionlist:: smithy
-    use_shape_statement   :"use" "shape" `absolute_shape_id`
+The following example imports ``smithy.example#Foo`` and
+``smithy.example#Baz`` so that they can be referred to by relative shape IDs:
 
 .. code-block:: smithy
 
     namespace smithy.hello
 
-    use shape smithy.example#Foo
-    use shape smithy.example#Baz
+    use smithy.example#Foo
+    use smithy.example#Baz
 
     map MyMap {
         // Resolves to smithy.example#Foo
@@ -175,37 +165,28 @@ The ``use_shape_statement`` imports one or more shapes.
         value: Baz,
     }
 
-Shapes IDs with members names cannot be imported with a use statement.
-A shape cannot be defined in a file with the same name as one of the shapes
-imported with a ``use shape`` statement.
-
-See :ref:`relative-shape-id` for an in-depth description of how relative
-shape IDs are resolved in the IDL.
-
-
-.. _use-trait-statement:
-
-Use trait statement
-~~~~~~~~~~~~~~~~~~~
-
-The ``use_trait_statement`` imports one or more traits into the current
-namespace so that the trait can be referred to using a relative trait name.
-
-.. productionlist:: smithy
-    use_trait_statement   :"use" "trait" `absolute_shape_id`
+A use statement can import traits too. The following example imports the
+``smithy.example#test`` and ``smithy.example#anotherTrait`` traits so that
+they can be applied using relative shape IDs:
 
 .. code-block:: smithy
 
     namespace smithy.hello
 
-    use trait smithy.example#test
-    use trait smithy.example#anotherTrait
+    use smithy.example#test
+    use smithy.example#anotherTrait
 
     @test // <-- Resolves to smithy.example#test
     string MyString
 
-A trait cannot be defined in a file with the same name as one of the
-traits imported with a ``use trait`` statement.
+.. important::
+
+    #. A shape cannot be defined in a file with the same name as one of the
+       shapes imported with a ``use`` statement.
+    #. Shapes IDs with members names cannot be imported with a use statement.
+
+See :ref:`relative-shape-id` for an in-depth description of how relative
+shape IDs are resolved in the IDL.
 
 
 .. _namespace-statement:
@@ -288,9 +269,9 @@ Documentation comment
 ---------------------
 
 Documentation comments are a special kind of comment that provide
-documentation for shapes and trait definitions. A documentation comment
-is formed when three forward slashes ("///") appear as the first
-non-whitespace characters on a line.
+documentation for shapes. A documentation comment is formed when three
+forward slashes ("///") appear as the first non-whitespace characters
+on a line.
 
 .. productionlist:: smithy
     documentation_comment   :"///" *(`not_newline`)
@@ -320,32 +301,32 @@ The following Smithy IDL example,
 
     /// This is documentation about a trait definition.
     ///   More docs here.
-    trait myTrait {}
+    @trait
+    structure myTrait {}
 
 is equivalent to the following JSON model:
 
 .. code-block:: json
 
     {
-        "smithy": "0.2.0",
+        "smithy": "0.3.0",
         "smithy.example": {
             "shapes": {
                 "MyString": {
                     "type": "string",
                     "documentation": "This is documentation about a shape.\n\n- This is a list\n- More of the list."
-                }
-            },
-            "traitDefs": {
+                },
                 "myTrait": {
+                    "trait": {},
+                    "type": "structure",
                     "documentation": "This is documentation about a trait definition.\n  More docs here."
                 }
             }
         }
     }
 
-Documentation comments MUST appear immediately before the shape or trait
-definition that they document. When documenting a shape, documentation
-comments MUST appear **before** traits applied to the shape.
+Documentation comments MUST appear immediately before a shape, and they MUST
+appear **before** any traits applied to the shape.
 
 The following example is valid because the documentation comment comes
 before the traits applied to a shape:
@@ -367,14 +348,13 @@ Documentation comments can be applied to members of a shape.
         foo: String,
     }
 
-Documentation comments MUST NOT be applied to anything other than shapes,
-trait definitions, and members. The following documentation comments are
-all invalid.
+Documentation comments MUST NOT be applied to anything other than shapes.
+The following documentation comments are all invalid.
 
 ::
 
     /// Invalid (cannot apply to control statements)
-    $version: "0.2.0"
+    $version: "0.3.0"
 
     /// Invalid (cannot apply to namespaces)
     namespace smithy.example
@@ -389,22 +369,6 @@ all invalid.
     }
 
     /// Invalid (nothing comes after the comment)
-
-
-.. _trait-statement:
-
-Trait statement
----------------
-
-The trait statement is used to define a trait inside of a namespace. Traits
-can only be defined after a *current namespace* has been defined using a
-:ref:`namespace statement <namespace-statement>`.
-
-.. productionlist:: smithy
-    trait_statement         :"trait" `identifier` `node_object`
-
-The body of a trait statement is a :token:`node object <node_object>` that
-supports the same key-value pairs defined in :ref:`trait-definition`.
 
 
 Trait values
@@ -453,7 +417,7 @@ or to escape an escape (using ``\\``).
 
 .. productionlist:: smithy
     text                :`unquoted_text` / `quoted_text` / `text_block`
-    unquoted_text       :(ALPHA / "_") *(ALPHA / DIGIT / "-" / "_" / "$" / "." / "#")
+    unquoted_text       :(ALPHA / "_") *(ALPHA / DIGIT / "_" / "$" / "." / "#")
     quoted_text         :`single_quoted_text` / `double_quoted_text`
     single_quoted_text  :"'" *`single_quoted_char` "'"
     single_quoted_char  :%x20-26
@@ -955,22 +919,8 @@ A namespace is an object that contains the following properties:
         the shape. Each key is a relative shape ID that MUST be present in
         the model, and each value is a map of trait names to trait values.
 
-        Trait names referenced in the ``traits`` property MUST have a
-        corresponding trait definition defined in ``traitDefs`` or correspond
-        to a trait defined in the ``smithy.api`` namespace.
-
-        Trait names that do not include a namespace are
-        :ref:`resolved against the current namespace <trait-name-resolution>`.
-    * - traitDefs
-      - object
-      - Defines trait definitions in a namespace.
-
-        ``traitDefs`` is a map of trait names to trait definitions. Trait
-        definitions in the JSON format support the same key-value pairs as
-        :ref:`traits defined in the Smithy IDL <trait-definition>`.
-
-        Each trait name in ``traitDefs`` MUST adhere to the
-        :token:`identifier` ABNF grammar.
+        Trait IDs that do not include a namespace are assumed to refer to
+        traits in the current namespace, if present, or in the prelude.
 
 
 .. _json-shapes:
@@ -988,7 +938,7 @@ Any additional properties found in shape definitions are considered
 .. code-block:: json
 
     {
-      "smithy": "0.2.0",
+      "smithy": "0.3.0",
       "smithy.example": {
         "shapes": {
           "MyString": {
@@ -1009,7 +959,7 @@ example defines a shape for each simple type:
 .. code-block:: json
 
     {
-      "smithy": "0.2.0",
+      "smithy": "0.3.0",
       "smithy.example": {
         "shapes": {
           "Blob": {"type": "blob"},
@@ -1050,7 +1000,7 @@ The following example defines a list with a string member:
 .. code-block:: json
 
     {
-      "smithy": "0.2.0",
+      "smithy": "0.3.0",
       "smithy.example": {
         "shapes": {
           "MyList": {
@@ -1087,7 +1037,7 @@ The following example defines a map of strings to numbers:
 .. code-block:: json
 
     {
-      "smithy": "0.2.0",
+      "smithy": "0.3.0",
       "smithy.example": {
         "shapes": {
           "IntegerMap": {
@@ -1127,7 +1077,7 @@ member:
 .. code-block:: json
 
     {
-      "smithy": "0.2.0",
+      "smithy": "0.3.0",
       "smithy.example": {
         "shapes": {
           "MyStructure": {
@@ -1151,7 +1101,7 @@ The following example defines a union:
 .. code-block:: json
 
     {
-      "smithy": "0.2.0",
+      "smithy": "0.3.0",
       "smithy.example": {
         "shapes": {
           "MyUnion": {
@@ -1197,7 +1147,7 @@ documentation trait to the member:
 .. code-block:: json
 
     {
-      "smithy": "0.2.0",
+      "smithy": "0.3.0",
       "smithy.example": {
         "shapes": {
           "MyList": {
@@ -1264,7 +1214,7 @@ The following example defines an operation, its input, output, and errors:
 .. code-block:: json
 
     {
-      "smithy": "0.2.0",
+      "smithy": "0.3.0",
       "smithy.example": {
         "shapes": {
           "MyOperation": {

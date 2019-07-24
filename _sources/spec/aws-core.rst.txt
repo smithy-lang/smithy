@@ -46,10 +46,10 @@ The following example defines an AWS service that uses the default values of
 
     .. code-tab:: smithy
 
-        $version: "0.2.0"
+        $version: "0.3.0"
         namespace aws.fooBaz
 
-        use trait aws.api#service
+        use aws.api#service
 
         @service(sdkId: "Some Value")
         service FooBaz {
@@ -59,7 +59,7 @@ The following example defines an AWS service that uses the default values of
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "aws.fooBaz": {
                 "shapes": {
                     "FooBaz": {
@@ -79,10 +79,10 @@ The following example provides explicit values for all properties:
 
     .. code-tab:: smithy
 
-        $version: "0.2.0"
+        $version: "0.3.0"
         namespace aws.fooBaz
 
-        use trait aws.api#service
+        use aws.api#service
 
         @service(
             sdkId: "Some Value",
@@ -96,7 +96,7 @@ The following example provides explicit values for all properties:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "aws.fooBaz": {
                 "shapes": {
                     "FooBaz": {
@@ -374,11 +374,11 @@ For example, given the following service:
 
     .. code-tab:: smithy
 
-        $version: "0.2.0"
+        $version: "0.3.0"
         namespace aws.fooBaz
 
-        use trait aws.api#service
-        use trait aws.api#arn
+        use aws.api#service
+        use aws.api#arn
 
         @service(sdkId: "Some Value")
         service FooBaz {
@@ -394,7 +394,7 @@ For example, given the following service:
     .. code-tab:: json
 
         {
-          "smithy": "0.2.0",
+          "smithy": "0.3.0",
           "smithy.example": {
             "shapes": {
               "FooBaz": {
@@ -436,8 +436,8 @@ resource.
 
     .. code-tab:: smithy
 
-        use trait aws.api#arn
-        use trait aws.api#arnReference
+        use aws.api#arn
+        use aws.api#arnReference
 
         @arn(template: "{arn}", absolute: true)
         resource MyResource {
@@ -450,7 +450,7 @@ resource.
     .. code-tab:: json
 
         {
-          "smithy": "0.2.0",
+          "smithy": "0.3.0",
           "smithy.example": {
             "shapes": {
               "MyResource": {
@@ -532,10 +532,10 @@ referenced resource.
 
     .. code-tab:: smithy
 
-        $version: "0.2.0"
+        $version: "0.3.0"
         namespace smithy.example
 
-        use trait aws.api#arnReference
+        use aws.api#arnReference
 
         @arnReference(
             type: "AWS::SomeService::SomeResource",
@@ -546,7 +546,7 @@ referenced resource.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "SomeResourceId": {
@@ -569,10 +569,10 @@ previous example:
 
     .. code-tab:: smithy
 
-        $version: "0.2.0"
+        $version: "0.3.0"
         namespace smithy.example
 
-        use trait aws.api#arnReference
+        use aws.api#arnReference
 
         @arnReference
         string SomeResourceId
@@ -580,7 +580,7 @@ previous example:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "SomeResourceId": {
@@ -590,6 +590,134 @@ previous example:
                 }
             }
         }
+
+
+.. _aws.api#data-trait:
+
+``aws.api#data`` trait
+=================================
+
+Summary
+    Designates the target as containing data of a known classification level.
+Trait selector
+    ``:test(simpleType, collection, structure, union, member)``
+Value type
+    ``string`` that is one of: ``content``, ``account``, ``usage``,
+    ``tagging``, or ``permissions``. See :ref:`data-classifications` for more
+    information.
+
+Data classifications are resolved hierarchically: the data classification
+of a member inherits the effective data classification applied to a parent
+structure, union, or collection unless overridden.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        use aws.api#data
+
+        @data("permissions")
+        structure MyStructure {
+          name: String,
+
+          @data("content")
+          content: String,
+
+          tags: TagList,
+        }
+
+        @data("tagging")
+        list TagList {
+            member: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "MyStructure": {
+                        "type": "structure",
+                        "members": {
+                            "content": {
+                                "target": "String",
+                                "aws.api#data": "content"
+                            },
+                            "tags": {
+                                "target": "TagList"
+                            },
+                            "name": {
+                                "target": "String",
+                            }
+                        }
+                    },
+                    "TagList": {
+                        "type": "list",
+                        "member": {
+                            "target": "String"
+                        },
+                        "aws.api#data": "tagging"
+                    }
+                }
+            }
+        }
+
+The effective data classifications in the previous example are as follows:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 40 60
+
+    * - Shape ID
+      - Data Classification
+    * - ``smithy.example#MyStructure``
+      - "permissions"
+    * - ``smithy.example#MyStructure$name``
+      - "permissions"
+    * - ``smithy.example#MyStructure$content``
+      - "content"
+    * - ``smithy.example#MyStructure$tags``
+      - "tagging"
+    * - ``smithy.example#TagList``
+      - "tagging"
+
+
+.. _data-classifications:
+
+Data Classifications
+--------------------
+
+The following table describes the available data classifications that can be
+applied through the ``aws.api#data`` trait.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Type
+      - Description
+    * - ``content``
+      - Customer content means any software (including machine images), data,
+        text, audio, video or images that customers or any customer end user
+        transfers to AWS for processing, storage or hosting by AWS services in
+        connection with the customer’s accounts and any computational results
+        that customers or any customer end user derive from the foregoing
+        through their use of AWS services.
+    * - ``account``
+      - Account information means information about customers that customers
+        provide to AWS in connection with the creation or administration of
+        customers’ accounts.
+    * - ``usage``
+      - Service Attributes means service usage data related to a customer’s
+        account, such as resource identifiers, metadata tags, security and
+        access roles, rules, usage policies, permissions, usage statistics,
+        logging data, and analytics.
+    * - ``tagging``
+      - Designates metadata tags applied to AWS resources.
+    * - ``permissions``
+      - Designates security and access roles, rules, usage policies, and
+        permissions.
 
 
 .. _aws.api#unsignedPayload-trait:
@@ -622,7 +750,7 @@ operation MUST NOT be used as part of the request signature calculation:
 
     .. code-tab:: smithy
 
-        use trait aws.api#unsignedPayload
+        use aws.api#unsignedPayload
 
         @unsignedPayload
         operation PutThings(PutThingsInput) -> PutThingsOutput
@@ -630,7 +758,7 @@ operation MUST NOT be used as part of the request signature calculation:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "PutThings": {
@@ -650,7 +778,7 @@ only when using the "aws.v4" authentication scheme:
 
     .. code-tab:: smithy
 
-        use trait aws.api#unsignedPayload
+        use aws.api#unsignedPayload
 
         @unsignedPayload(["aws.v4"])
         operation PutThings(PutThingsInput) -> PutThingsOutput
@@ -658,7 +786,7 @@ only when using the "aws.v4" authentication scheme:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "smithy.example": {
                 "shapes": {
                     "PutThings": {
@@ -705,10 +833,10 @@ the service converted to lowercase characters).
 
     .. code-tab:: smithy
 
-        $version: "0.2.0"
+        $version: "0.3.0"
         namespace aws.fooBaz
 
-        use trait aws.api#service
+        use aws.api#service
 
         @service(sdkId: "Some Value")
         @protocols([{name: "aws.rest-json", auth: ["aws.v4"]}])
@@ -719,7 +847,7 @@ the service converted to lowercase characters).
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "aws.fooBaz": {
                 "shapes": {
                     "FooBaz": {
@@ -774,7 +902,7 @@ Value type
 
         namespace ns.example
 
-        use trait aws.iam#actionPermissionDescription
+        use aws.iam#actionPermissionDescription
 
         @actionPermissionDescription("This will allow the user to Foo.")
         operation FooOperation()
@@ -782,7 +910,7 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "ns.example": {
                 "shapes": {
                     "FooOperation": {
@@ -820,9 +948,9 @@ The following example's ``MyResource`` resource has the
 
         namespace ns.example
 
-        use trait aws.api#service
-        use trait aws.iam#definedContextKeys
-        use trait aws.iam#conditionKeys
+        use aws.api#service
+        use aws.iam#definedContextKeys
+        use aws.iam#conditionKeys
 
         @service(sdkId: "My Value", arnNamespace: "myservice")
         @defineConditionKeys([
@@ -845,7 +973,7 @@ The following example's ``MyResource`` resource has the
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -931,8 +1059,8 @@ Each condition key object supports the following key-value pairs:
 
         namespace ns.example
 
-        use trait aws.api#service
-        use trait aws.iam#defineConditionKeys
+        use aws.api#service
+        use aws.iam#defineConditionKeys
 
         @service(sdkId: "My Value", arnNamespace: "myservice")
         @defineConditionKeys(
@@ -949,7 +1077,7 @@ Each condition key object supports the following key-value pairs:
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -1046,8 +1174,8 @@ condition key inference disabled.
 
         namespace ns.example
 
-        use trait aws.api#service
-        use trait aws.iam#disableConditionKeyInference
+        use aws.api#service
+        use aws.iam#disableConditionKeyInference
 
         @service(sdkId: "My Value", arnNamespace: "myservice")
         service MyService {
@@ -1066,7 +1194,7 @@ condition key inference disabled.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -1117,8 +1245,8 @@ operation for it to complete successfully.
 
         namespace ns.example
 
-        use trait aws.api#service
-        use trait aws.iam#requiredActions
+        use aws.api#service
+        use aws.iam#requiredActions
 
         @service(sdkId: "My Value", arnNamespace: "myservice")
         service MyService {
@@ -1137,7 +1265,7 @@ operation for it to complete successfully.
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -1191,9 +1319,9 @@ Given the following model,
 
         namespace ns.example
 
-        use trait aws.api#service
-        use trait aws.iam#defineConditionKeys
-        use trait aws.iam#conditionKeys
+        use aws.api#service
+        use aws.iam#defineConditionKeys
+        use aws.iam#conditionKeys
 
         @service(sdkId: "My Value", arnNamespace: "myservice")
         @defineConditionKeys("otherservice:Bar": { type: "String" })
@@ -1219,7 +1347,7 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.2.0",
+            "smithy": "0.3.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {

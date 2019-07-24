@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Model Validation &#8212; Smithy 0.2.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    <title>Model Validation &#8212; Smithy 0.3.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,6 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -403,7 +402,8 @@ letters. Defaults to an empty list.</td>
 <span id="id3"></span><h3>CamelCase<a class="headerlink" href="#camelcase" title="Permalink to this headline">¶</a></h3>
 <p>Validates that shape names and member names adhere to a consistent style of
 camel casing. By default, this validator will ensure that shape names use
-UpperCamelCase, and that member names use lowerCamelCase.</p>
+UpperCamelCase, trait shape names use lowerCamelCase, and that member names
+use lowerCamelCase.</p>
 <dl class="docutils">
 <dt>Rationale</dt>
 <dd>Utilizing a consistent camelCase style makes it easier to understand a
@@ -425,12 +425,7 @@ models.</dd>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>shapeNames</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>Specifies the camelCase style of shape names. Can be set to either
-&quot;upper&quot; (the default) or &quot;lower&quot;.</td>
-</tr>
-<tr class="row-odd"><td>memberNames</td>
+<tr class="row-even"><td>memberNames</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>Specifies the camelCase style of member names. Can be set to either
 &quot;upper&quot; or &quot;lower&quot; (the default).</td>

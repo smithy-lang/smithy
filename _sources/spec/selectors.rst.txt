@@ -7,7 +7,7 @@ Selectors
 A :dfn:`Smithy selector` is a domain specific language (DSL) used to match
 specific shapes within a model. Selectors are used to build custom
 :ref:`validators <EmitEachSelector>` and to specify where it is valid to
-apply a :ref:`trait <trait-selector>`.
+apply a trait.
 
 .. contents:: Table of contents
     :depth: 2
