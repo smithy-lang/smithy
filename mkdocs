@@ -1,0 +1,55 @@
+#!/bin/bash
+# This script updates the documentation hosted at
+# http://awslabs.github.io/smithy/. There is a y/n prompt before a publish
+# is performed to allow for a spot-check of the changes.
+#
+# This script will run `pip install -r requirements.txt` in the docs
+# directory. If you don't want to globally install dependencies, ensure that
+# you are first in a virtual environment of some kind before running this
+# script.
+
+set -e
+
+# Clone a copy of smithy into a staging directory
+rm -rf /tmp/_smithy-docs
+git clone https://github.com/awslabs/smithy.git --branch gh-pages --single-branch /tmp/_smithy-docs
+cd /tmp/_smithy-docs
+git checkout gh-pages
+
+# Remove docs that might have been deleted or moved as part of the update.
+# These docs will get added back by copying them over from build directories.
+rm -rf {_sources, _static, guides, spec}
+
+cd -
+
+# Build javadoc
+./gradlew javadoc
+cp -R build/docs/javadoc/* /tmp/_smithy-docs/javadoc
+
+# Build Sphinx docs.
+cd docs
+pip install -r requirements.txt
+make clean && make html
+cp -R build/html/* /tmp/_smithy-docs
+
+# Delete unnecessary files
+rm /tmp/_smithy-docs/.buildinfo || true
+rm /tmp/_smithy-docs/objects.inv || true
+
+cd -
+
+cd /tmp/_smithy-docs
+git status
+
+# We can automate this eventually
+read -p "Publish docs? [y/n]" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    git add -A
+    git commit -m 'Update documentation'
+    git push origin gh-pages
+    echo "Documentation has been published"
+else
+    echo "Documentation was not published"
+fi
