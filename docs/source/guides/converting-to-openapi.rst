@@ -24,8 +24,7 @@ Smithy generators are not available.
 
 Smithy models can be converted to OpenAPI through smithy-build using the
 ``openapi`` plugin or through code using the
-`software.amazon.smithy:openapi <https://search.maven.org/search?q=g:software.amazon.smithy%20and%20a:openapi>`_
-Java package.
+`software.amazon.smithy:smithy-openapi`_ Java package.
 
 --------------------------------------
 Differences between Smithy and OpenAPI
@@ -89,7 +88,7 @@ a Smithy model are not currently supported in the OpenAPI conversion:
 Converting to OpenAPI with smithy-build
 ---------------------------------------
 
-The ``openapi`` plugin contained in the ``software.amazon.smithy:openapi``
+The ``openapi`` plugin contained in the ``software.amazon.smithy:smithy-openapi``
 package can be used with smithy-build and the `Smithy Gradle plugin`_ to build
 OpenAPI specifications from Smithy models.
 
@@ -102,12 +101,12 @@ specification from a Smithy model using a buildscript dependency:
 
     plugins {
         java
-        id("software.amazon.smithy").version("0.3.0")
+        id("software.amazon.smithy").version("0.2.0")
     }
 
     buildscript {
         dependencies {
-            classpath("software.amazon.smithy:openapi:0.7.0")
+            classpath("software.amazon.smithy:smithy-openapi:0.8.0")
         }
     }
 
@@ -115,7 +114,7 @@ The Smithy Gradle plugin relies on a ``smithy-build.json`` file found at the
 root of a project to define the actual process of building the OpenAPI
 specification. The following example defines a ``smithy-build.json`` file
 that builds an OpenAPI specification from a service for the
-``smithy.example#Weather`` service using the ``aws-rest-json-1.1`` protocol:
+``smithy.example#Weather`` service using the ``aws.rest-json-1.1`` protocol:
 
 .. code-block:: json
     :caption: smithy-build.json
@@ -126,14 +125,14 @@ that builds an OpenAPI specification from a service for the
         "plugins": {
             "openapi": {
                 "service": "smithy.example#Weather",
-                "protocol": "aws-rest-json-1.1"
+                "protocol": "aws.rest-json-1.1"
             }
         }
     }
 
 .. important::
 
-    A buildscript dependency on "software.amazon.smithy:openapi:0.7.0" is
+    A buildscript dependency on "software.amazon.smithy:smithy-openapi:0.8.0" is
     required in order for smithy-build to map the "openapi" plugin name to the
     correct Java library implementation.
 
@@ -157,7 +156,7 @@ service (string)
 
 protocol (string)
     The protocol name to use when converting Smithy to OpenAPI (for example,
-    ``aws-rest-json-1.1``.
+    ``aws.rest-json-1.1``.
 
     Smithy will try to match the provided protocol name with an implementation
     of ``software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol``
@@ -339,7 +338,7 @@ dependency on ``software.amazon.smithy:smithy-aws-apigateway-openapi``.
 
     buildscript {
         dependencies {
-            classpath("software.amazon.smithy:smithy-aws-apigateway-openapi:0.7.0")
+            classpath("software.amazon.smithy:smithy-aws-apigateway-openapi:0.8.0")
         }
     }
 
@@ -505,11 +504,11 @@ Converting to OpenAPI with code
 -------------------------------
 
 Developers that need more advanced control over the Smithy to OpenAPI
-conversion can use the ``software.amazon.smithy:openapi`` Java library
+conversion can use the ``software.amazon.smithy:smithy-openapi`` Java library
 to perform the conversion.
 
 First, you'll need to get a copy of the library. The following example
-shows how to install ``software.amazon.smithy:openapi`` through Gradle:
+shows how to install ``software.amazon.smithy:smithy-openapi`` through Gradle:
 
 .. code-block:: kotlin
     :caption: build.gradle.kts
@@ -517,7 +516,7 @@ shows how to install ``software.amazon.smithy:openapi`` through Gradle:
 
     buildscript {
         dependencies {
-            classpath("software.amazon.smithy:openapi:0.7.0")
+            classpath("software.amazon.smithy:smithy-openapi:0.8.0")
         }
     }
 
@@ -533,7 +532,7 @@ Next, you need to create and configure an ``OpenApiConverter``:
     OpenApiConverter converter = OpenApiConverter.create();
 
     // Add any necessary settings...
-    converter.putSetting(OpenApiConstants.PROTOCOL, "aws-rest-json-1.1");
+    converter.putSetting(OpenApiConstants.PROTOCOL, "aws.rest-json-1.1");
 
     // Create a shape ID that points to the service.
     ShapeId serviceShapeId = ShapeId.from("smithy.example#Weather");
@@ -546,6 +545,7 @@ The conversion process is highly extensible through
 
 .. _OpenAPI: https://github.com/OAI/OpenAPI-Specification
 .. _Amazon API Gateway: https://aws.amazon.com/api-gateway/
+.. _software.amazon.smithy:smithy-openapi: https://search.maven.org/search?q=g:software.amazon.smithy%20and%20a:smithy-openapi
 .. _x-amz-meta-* headers: https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html
 .. _Amazon API Gateway extensions: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions.html
 .. _service providers: https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html

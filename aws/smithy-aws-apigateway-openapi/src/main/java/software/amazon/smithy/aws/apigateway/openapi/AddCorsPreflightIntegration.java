@@ -192,8 +192,10 @@ final class AddCorsPreflightIntegration implements OpenApiMapper {
 
         // Add a request template for every mime-type of every response.
         for (OperationObject operation : pathItem.getOperations().values()) {
-            for (String mimeType : operation.getResponses().keySet()) {
-                integration.putRequestTemplate(mimeType, PREFLIGHT_SUCCESS);
+            for (ResponseObject response : operation.getResponses().values()) {
+                for (String mimeType : response.getContent().keySet()) {
+                    integration.putRequestTemplate(mimeType, PREFLIGHT_SUCCESS);
+                }
             }
         }
 

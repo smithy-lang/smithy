@@ -237,10 +237,8 @@
         "x-amazon-apigateway-integration": {
           "passThroughBehavior": "when_no_match",
           "requestTemplates": {
-            "200": "{\"statusCode\":200}",
-            "201": "{\"statusCode\":200}",
             "application/json": "{\"statusCode\":200}",
-            "204": "{\"statusCode\":200}"
+            "application/octet-stream": "{\"statusCode\":200}"
           },
           "responses": {
             "default": {
@@ -341,8 +339,7 @@
         "x-amazon-apigateway-integration": {
           "passThroughBehavior": "when_no_match",
           "requestTemplates": {
-            "application/json": "{\"statusCode\":200}",
-            "200": "{\"statusCode\":200}"
+            "application/json": "{\"statusCode\":200}"
           },
           "responses": {
             "default": {
