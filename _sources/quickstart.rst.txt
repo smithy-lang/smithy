@@ -114,7 +114,7 @@ weather service.
         /// Provides weather forecasts.
         /// Triple slash comments attach documentation to shapes.
         service Weather {
-          version: "2006-03-01"
+            version: "2006-03-01"
         }
 
     .. code-tab:: json
@@ -159,14 +159,14 @@ identifiers, operations, and any number of child resources.
 
         /// Provides weather forecasts.
         service Weather {
-          version: "2006-03-01",
-          resources: [City]
+            version: "2006-03-01",
+            resources: [City]
         }
 
         resource City {
-          identifiers: { cityId: CityId },
-          read: GetCity,
-          list: ListCities,
+            identifiers: { cityId: CityId },
+            read: GetCity,
+            list: ListCities,
         }
 
         // "pattern" is a trait.
@@ -219,15 +219,15 @@ Each ``City`` has a single ``Forecast``. This can be defined by adding the
     .. code-tab:: smithy
 
         resource City {
-          identifiers: { cityId: CityId },
-          read: GetCity,
-          list: ListCities,
-          resources: [Forecast],
+            identifiers: { cityId: CityId },
+            read: GetCity,
+            list: ListCities,
+            resources: [Forecast],
         }
 
         resource Forecast {
-          identifiers: { cityId: CityId },
-          read: GetForecast,
+            identifiers: { cityId: CityId },
+            read: GetForecast,
         }
 
     .. code-tab:: json
@@ -288,36 +288,36 @@ Let's define the operation used to "read" a ``City``.
         operation GetCity(GetCityInput) -> GetCityOutput errors [NoSuchResource]
 
         structure GetCityInput {
-          // "cityId" provides the identifier for the resource and
-          // has to be marked as required.
-          @required
-          cityId: CityId
+            // "cityId" provides the identifier for the resource and
+            // has to be marked as required.
+            @required
+            cityId: CityId
         }
 
         structure GetCityOutput {
-          // "required" is used on output to indicate if the service
-          // will always provide a value for the member.
-          @required
-          name: String,
+            // "required" is used on output to indicate if the service
+            // will always provide a value for the member.
+            @required
+            name: String,
 
-          @required
-          coordinates: CityCoordinates,
+            @required
+            coordinates: CityCoordinates,
         }
 
         structure CityCoordinates {
-          @required
-          latitude: Float,
+            @required
+            latitude: Float,
 
-          @required
-          longitude: Float,
+            @required
+            longitude: Float,
         }
 
         // "error" is a trait that is used to specialize
         // a structure as an error.
         @error("client")
         structure NoSuchResource {
-          @required
-          resourceType: String
+            @required
+            resourceType: String
         }
 
     .. code-tab:: json
@@ -409,8 +409,8 @@ cities, so there's no way we could provide a City identifier.
         @paginated(inputToken: "nextToken", outputToken: "nextToken",
                    pageSize: "pageSize")
         service Weather {
-          version: "2006-03-01",
-          resources: [City]
+            version: "2006-03-01",
+            resources: [City]
         }
 
         // The paginated trait indicates that the operation may
@@ -421,30 +421,30 @@ cities, so there's no way we could provide a City identifier.
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
         structure ListCitiesInput {
-          nextToken: String,
-          pageSize: Integer
+            nextToken: String,
+            pageSize: Integer
         }
 
         structure ListCitiesOutput {
-          nextToken: String,
+            nextToken: String,
 
-          @required
-          items: CitySummaries,
+            @required
+            items: CitySummaries,
         }
 
         // CitySummaries is a list of CitySummary structures.
         list CitySummaries {
-          member: CitySummary
+            member: CitySummary
         }
 
         // CitySummary contains a reference to a City.
         @references([{resource: City}])
         structure CitySummary {
-          @required
-          cityId: CityId,
+            @required
+            cityId: CityId,
 
-          @required
-          name: String,
+            @required
+            name: String,
         }
 
     .. code-tab:: json
@@ -552,17 +552,17 @@ service.
         @paginated(inputToken: "nextToken", outputToken: "nextToken",
                    pageSize: "pageSize")
         service Weather {
-          version: "2006-03-01",
-          resources: [City],
-          operations: [GetCurrentTime]
+            version: "2006-03-01",
+            resources: [City],
+            operations: [GetCurrentTime]
         }
 
         @readonly
         operation GetCurrentTime() -> GetCurrentTimeOutput
 
         structure GetCurrentTimeOutput {
-          @required
-          time: Timestamp
+            @required
+            time: Timestamp
         }
 
     .. code-tab:: json
@@ -623,21 +623,21 @@ Complete example
         @paginated(inputToken: "nextToken", outputToken: "nextToken",
                    pageSize: "pageSize")
         service Weather {
-          version: "2006-03-01",
-          resources: [City],
-          operations: [GetCurrentTime]
+            version: "2006-03-01",
+            resources: [City],
+            operations: [GetCurrentTime]
         }
 
         resource City {
-          identifiers: { cityId: CityId },
-          read: GetCity,
-          list: ListCities,
-          resources: [Forecast],
+            identifiers: { cityId: CityId },
+            read: GetCity,
+            list: ListCities,
+            resources: [Forecast],
         }
 
         resource Forecast {
-          identifiers: { cityId: CityId },
-          read: GetForecast,
+            identifiers: { cityId: CityId },
+            read: GetForecast,
         }
 
         // "pattern" is a trait.
@@ -648,37 +648,37 @@ Complete example
         operation GetCity(GetCityInput) -> GetCityOutput errors [NoSuchResource]
 
         structure GetCityInput {
-          // "cityId" provides the identifier for the resource and
-          // has to be marked as required.
-          @required
-          cityId: CityId
+            // "cityId" provides the identifier for the resource and
+            // has to be marked as required.
+            @required
+            cityId: CityId
         }
 
         structure GetCityOutput {
-          // "required" is used on output to indicate if the service
-          // will always provide a value for the member.
-          @required
-          name: String,
+            // "required" is used on output to indicate if the service
+            // will always provide a value for the member.
+            @required
+            name: String,
 
-          @required
-          coordinates: CityCoordinates,
+            @required
+            coordinates: CityCoordinates,
         }
 
         // This structure is nested within GetCityOutput.
         structure CityCoordinates {
-          @required
-          latitude: Float,
+            @required
+            latitude: Float,
 
-          @required
-          longitude: Float,
+            @required
+            longitude: Float,
         }
 
         // "error" is a trait that is used to specialize
         // a structure as an error.
         @error("client")
         structure NoSuchResource {
-          @required
-          resourceType: String
+            @required
+            resourceType: String
         }
 
         // The paginated trait indicates that the operation may
@@ -688,38 +688,38 @@ Complete example
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
         structure ListCitiesInput {
-          nextToken: String,
-          pageSize: Integer
+            nextToken: String,
+            pageSize: Integer
         }
 
         structure ListCitiesOutput {
-          nextToken: String,
+            nextToken: String,
 
-          @required
-          items: CitySummaries,
+            @required
+            items: CitySummaries,
         }
 
         // CitySummaries is a list of CitySummary structures.
         list CitySummaries {
-          member: CitySummary
+            member: CitySummary
         }
 
         // CitySummary contains a reference to a City.
         @references([{resource: City}])
         structure CitySummary {
-          @required
-          cityId: CityId,
+            @required
+            cityId: CityId,
 
-          @required
-          name: String,
+            @required
+            name: String,
         }
 
         @readonly
         operation GetCurrentTime() -> GetCurrentTimeOutput
 
         structure GetCurrentTimeOutput {
-          @required
-          time: Timestamp
+            @required
+            time: Timestamp
         }
 
         @readonly
@@ -728,8 +728,8 @@ Complete example
         // "cityId" provides the only identifier for the resource since
         // a Forecast doesn't have its own.
         structure GetForecastInput {
-          @required
-          cityId: CityId,
+            @required
+            cityId: CityId,
         }
 
         structure GetForecastOutput {

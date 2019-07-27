@@ -100,20 +100,20 @@ The following Smithy document applies a custom validator named "SomeValidator":
 .. code-block:: smithy
 
     metadata validators = [
-      {
-        // The name of the validator.
-        name: "SomeValidator",
-        // Uses a custom event ID for each validation event emitted.
-        id: "CustomEventId",
-        // Uses a custom message that also includes the default message.
-        message: "My custom message name. {super}",
-        // Applies the rule only to the following namespaces.
-        namespaces: ["foo.baz", "bar.qux"],
-        // The following properties are specific to the validator.
-        configuration: {
-          "someProperty": "foo",
+        {
+            // The name of the validator.
+            name: "SomeValidator",
+            // Uses a custom event ID for each validation event emitted.
+            id: "CustomEventId",
+            // Uses a custom message that also includes the default message.
+            message: "My custom message name. {super}",
+            // Applies the rule only to the following namespaces.
+            namespaces: ["foo.baz", "bar.qux"],
+            // The following properties are specific to the validator.
+            configuration: {
+              "someProperty": "foo",
+            }
         }
-      }
     ]
 
 
@@ -208,14 +208,14 @@ An example suppression for the "UnreferencedShape" validator:
 .. code-block:: smithy
 
     metadata suppressions = [
-      {
-        // The list of rules to suppress.
-        ids: ["UnreferencedShape"],
-        // The optional list of shapes that are suppressed.
-        shapes: ["foo.baz#SomeShape/members/someMemberName"],
-        // The optional reason that the rule is suppressed.
-        reason: "This shape is used for code generation."
-      }
+        {
+            // The list of rules to suppress.
+            ids: ["UnreferencedShape"],
+            // The optional list of shapes that are suppressed.
+            shapes: ["foo.baz#SomeShape/members/someMemberName"],
+            // The optional reason that the rule is suppressed.
+            reason: "This shape is used for code generation."
+        }
     ]
 
 An example suppression that suppresses all validation events for all shapes
@@ -224,11 +224,11 @@ within a specific namespace:
 .. code-block:: smithy
 
     metadata suppressions = [
-      {
-        ids: ["*"],
-        shapes: ["smithy.testing#"],
-        reason: "smithy.testing is used only for testing"
-      }
+        {
+            ids: ["*"],
+            shapes: ["smithy.testing#"],
+            reason: "smithy.testing is used only for testing"
+        }
     ]
 
 
@@ -369,18 +369,16 @@ Example:
 .. code-block:: smithy
 
     metadata validators = [{
-      id: "FooReservedWords"
-      name: "ReservedWords",
-      configuration: {
-        reserved: [
-          {
-            words: [
-              "Codename"
-            ],
-            reason: "This is the internal project name.",
-          },
-        ]
-      }
+        id: "FooReservedWords"
+        name: "ReservedWords",
+        configuration: {
+            reserved: [
+                {
+                    words: ["Codename"],
+                    reason: "This is the internal project name.",
+                },
+            ]
+        }
     }]
 
 
@@ -524,15 +522,15 @@ Example:
 .. code-block:: smithy
 
     metadata validators = [{
-      name: "StandardOperationVerb",
-      configuration: {
-        verbs: ["Register", "Deregister", "Associate"],
-        prefixes: ["Batch"],
-        suggestAlternatives: {
-          "Make": ["Create"],
-          "Transition": ["Update"],
+        name: "StandardOperationVerb",
+        configuration: {
+            verbs: ["Register", "Deregister", "Associate"],
+            prefixes: ["Batch"],
+            suggestAlternatives: {
+                "Make": ["Create"],
+                "Transition": ["Update"],
+            }
         }
-      }
     }]
 
 
@@ -595,14 +593,12 @@ Example:
 .. code-block:: smithy
 
     metadata validators = [{
-      id: "DeprecateFooScheme"
-      name: "DeprecatedAuthSchemes",
-      configuration: {
-        schemes: [
-          "foo"
-        ],
-        reason: "Please migrate to the foo2 scheme.",
-      }
+        id: "DeprecateFooScheme"
+        name: "DeprecatedAuthSchemes",
+        configuration: {
+            schemes: ["foo"],
+            reason: "Please migrate to the foo2 scheme.",
+        }
     }]
 
 
@@ -643,14 +639,12 @@ Example:
 .. code-block:: smithy
 
     metadata validators = [{
-      id: "DeprecateFooProtocol"
-      name: "DeprecatedProtocols",
-      configuration: {
-        protocols: [
-          "foo"
-        ],
-        reason: "Please migrate to the bar protocol.",
-      }
+        id: "DeprecateFooProtocol"
+        name: "DeprecatedProtocols",
+        configuration: {
+            protocols: ["foo"],
+            reason: "Please migrate to the bar protocol.",
+        }
     }]
 
 
@@ -855,16 +849,16 @@ following constraints:
 .. code-block:: smithy
 
     metadata validators = [{
-      name: "EmitEachSelector",
-      id: "MissingDocumentation",
-      message: "This shape is missing documentation"
-      configuration: {
-        selector: "
-            :not([trait|documentation])
-            :not(simpleType)
-            :not(member:of(:each(list, map)))
-            :not(:test(member > [trait|documentation]))"
-      }
+        name: "EmitEachSelector",
+        id: "MissingDocumentation",
+        message: "This shape is missing documentation"
+        configuration: {
+            selector: """
+                :not([trait|documentation])
+                :not(simpleType)
+                :not(member:of(:each(list, map)))
+                :not(:test(member > [trait|documentation]))"""
+        }
     }]
 
 The following example emits a validation event for each structure referenced as
@@ -874,22 +868,22 @@ input/output that has a shape name that does not case-insensitively end with
 .. code-block:: smithy
 
     metadata validators = [
-      {
-        name: "EmitEachSelector",
-        id: "OperationInputName",
-        message: "This shape is referenced as input but the name does not end with 'Input'",
-        configuration: {
-          selector: "operation -[input]-> :not([id|name$=Input i])"
+        {
+            name: "EmitEachSelector",
+            id: "OperationInputName",
+            message: "This shape is referenced as input but the name does not end with 'Input'",
+            configuration: {
+                selector: "operation -[input]-> :not([id|name$=Input i])"
+            }
+        },
+        {
+            name: "EmitEachSelector",
+            id: "OperationOutputName",
+            message: "This shape is referenced as output but the name does not end with 'Output'",
+            configuration: {
+                selector: "operation -[output]-> :not([id|name$=Output i])"
+            }
         }
-      },
-      {
-        name: "EmitEachSelector",
-        id: "OperationOutputName",
-        message: "This shape is referenced as output but the name does not end with 'Output'",
-        configuration: {
-          selector: "operation -[output]-> :not([id|name$=Output i])"
-        }
-      }
     ]
 
 The following example emits a validation event for each operation referenced
@@ -899,22 +893,22 @@ as lifecycle 'read' or 'delete' that has a shape name that does not start with
 .. code-block:: smithy
 
     metadata validators = [
-      {
-        name: "EmitEachSelector",
-        id: "LifecycleGetName",
-        message: "Lifecycle 'read' operation shape names should start with 'Get'",
-        configuration: {
-          selector: "operation [read]-> :not([id|name^=Get i])"
+        {
+            name: "EmitEachSelector",
+            id: "LifecycleGetName",
+            message: "Lifecycle 'read' operation shape names should start with 'Get'",
+            configuration: {
+                selector: "operation [read]-> :not([id|name^=Get i])"
+            }
+        },
+        {
+            name: "EmitEachSelector",
+            id: "LifecycleDeleteName",
+            message: "Lifecycle 'delete' operation shape names should start with 'Delete'",
+            configuration: {
+                selector: "operation -[delete]-> :not([id|name^=Delete i])"
+            }
         }
-      },
-      {
-        name: "EmitEachSelector",
-        id: "LifecycleDeleteName",
-        message: "Lifecycle 'delete' operation shape names should start with 'Delete'",
-        configuration: {
-          selector: "operation -[delete]-> :not([id|name^=Delete i])"
-        }
-      }
     ]
 
 
@@ -956,11 +950,12 @@ traits.
 .. code-block:: smithy
 
     metadata validators = [{
-      name: "EmitNoneSelector",
-      id: "MissingConstraintTraits",
-      message: "No instances of the enum, pattern, length, or range trait "
-          "could be found. Did you forget to apply these traits?",
-      configuration: {
-        selector: ":each([trait|enum], [trait|pattern], [trait|length], [trait|range])",
-      }
+        name: "EmitNoneSelector",
+        id: "MissingConstraintTraits",
+        message: """
+            No instances of the enum, pattern, length, or range trait
+            could be found. Did you forget to apply these traits?""",
+        configuration: {
+            selector: ":each([trait|enum], [trait|pattern], [trait|length], [trait|range])",
+        }
     }]

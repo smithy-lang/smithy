@@ -231,20 +231,20 @@ configuration properties are provided.</td>
 </table>
 <p>The following Smithy document applies a custom validator named &quot;SomeValidator&quot;:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-  {
-    <span class="c">// The name of the validator.</span>
-    <span class="nl">name:</span> <span class="s2">&quot;SomeValidator&quot;</span>,
-    <span class="c">// Uses a custom event ID for each validation event emitted.</span>
-    <span class="nl">id:</span> <span class="s2">&quot;CustomEventId&quot;</span>,
-    <span class="c">// Uses a custom message that also includes the default message.</span>
-    <span class="nl">message:</span> <span class="s2">&quot;My custom message name. {super}&quot;</span>,
-    <span class="c">// Applies the rule only to the following namespaces.</span>
-    <span class="nl">namespaces:</span> [<span class="s2">&quot;foo.baz&quot;</span>, <span class="s2">&quot;bar.qux&quot;</span>],
-    <span class="c">// The following properties are specific to the validator.</span>
-    <span class="nl">configuration:</span> {
-      <span class="s2">&quot;someProperty&quot;</span>: <span class="s2">&quot;foo&quot;</span>,
+    {
+        <span class="c">// The name of the validator.</span>
+        <span class="nl">name:</span> <span class="s2">&quot;SomeValidator&quot;</span>,
+        <span class="c">// Uses a custom event ID for each validation event emitted.</span>
+        <span class="nl">id:</span> <span class="s2">&quot;CustomEventId&quot;</span>,
+        <span class="c">// Uses a custom message that also includes the default message.</span>
+        <span class="nl">message:</span> <span class="s2">&quot;My custom message name. {super}&quot;</span>,
+        <span class="c">// Applies the rule only to the following namespaces.</span>
+        <span class="nl">namespaces:</span> [<span class="s2">&quot;foo.baz&quot;</span>, <span class="s2">&quot;bar.qux&quot;</span>],
+        <span class="c">// The following properties are specific to the validator.</span>
+        <span class="nl">configuration:</span> {
+          <span class="s2">&quot;someProperty&quot;</span>: <span class="s2">&quot;foo&quot;</span>,
+        }
     }
-  }
 ]
 </pre></div>
 </div>
@@ -331,25 +331,25 @@ on shapes in the &quot;foo.baz&quot; namespace.</td>
 suppressed.</p>
 <p>An example suppression for the &quot;UnreferencedShape&quot; validator:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span> [
-  {
-    <span class="c">// The list of rules to suppress.</span>
-    <span class="nl">ids:</span> [<span class="s2">&quot;UnreferencedShape&quot;</span>],
-    <span class="c">// The optional list of shapes that are suppressed.</span>
-    <span class="nl">shapes:</span> [<span class="s2">&quot;foo.baz#SomeShape/members/someMemberName&quot;</span>],
-    <span class="c">// The optional reason that the rule is suppressed.</span>
-    <span class="nl">reason:</span> <span class="s2">&quot;This shape is used for code generation.&quot;</span>
-  }
+    {
+        <span class="c">// The list of rules to suppress.</span>
+        <span class="nl">ids:</span> [<span class="s2">&quot;UnreferencedShape&quot;</span>],
+        <span class="c">// The optional list of shapes that are suppressed.</span>
+        <span class="nl">shapes:</span> [<span class="s2">&quot;foo.baz#SomeShape/members/someMemberName&quot;</span>],
+        <span class="c">// The optional reason that the rule is suppressed.</span>
+        <span class="nl">reason:</span> <span class="s2">&quot;This shape is used for code generation.&quot;</span>
+    }
 ]
 </pre></div>
 </div>
 <p>An example suppression that suppresses all validation events for all shapes
 within a specific namespace:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> suppressions </span><span class="nd">=</span> [
-  {
-    <span class="nl">ids:</span> [<span class="s2">&quot;*&quot;</span>],
-    <span class="nl">shapes:</span> [<span class="s2">&quot;smithy.testing#&quot;</span>],
-    <span class="nl">reason:</span> <span class="s2">&quot;smithy.testing is used only for testing&quot;</span>
-  }
+    {
+        <span class="nl">ids:</span> [<span class="s2">&quot;*&quot;</span>],
+        <span class="nl">shapes:</span> [<span class="s2">&quot;smithy.testing#&quot;</span>],
+        <span class="nl">reason:</span> <span class="s2">&quot;smithy.testing is used only for testing&quot;</span>
+    }
 ]
 </pre></div>
 </div>
@@ -498,18 +498,16 @@ evaluated instead of the shape name.</p>
 </dl>
 <p>Example:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
-  <span class="nl">id:</span> <span class="s2">&quot;FooReservedWords&quot;</span>
-  <span class="nl">name:</span> <span class="s2">&quot;ReservedWords&quot;</span>,
-  <span class="nl">configuration:</span> {
-    <span class="nl">reserved:</span> [
-      {
-        <span class="nl">words:</span> [
-          <span class="s2">&quot;Codename&quot;</span>
-        ],
-        <span class="nl">reason:</span> <span class="s2">&quot;This is the internal project name.&quot;</span>,
-      },
-    ]
-  }
+    <span class="nl">id:</span> <span class="s2">&quot;FooReservedWords&quot;</span>
+    <span class="nl">name:</span> <span class="s2">&quot;ReservedWords&quot;</span>,
+    <span class="nl">configuration:</span> {
+        <span class="nl">reserved:</span> [
+            {
+                <span class="nl">words:</span> [<span class="s2">&quot;Codename&quot;</span>],
+                <span class="nl">reason:</span> <span class="s2">&quot;This is the internal project name.&quot;</span>,
+            },
+        ]
+    }
 }]
 </pre></div>
 </div>
@@ -695,15 +693,15 @@ be provided.</p>
 </div>
 <p>Example:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
-  <span class="nl">name:</span> <span class="s2">&quot;StandardOperationVerb&quot;</span>,
-  <span class="nl">configuration:</span> {
-    <span class="nl">verbs:</span> [<span class="s2">&quot;Register&quot;</span>, <span class="s2">&quot;Deregister&quot;</span>, <span class="s2">&quot;Associate&quot;</span>],
-    <span class="nl">prefixes:</span> [<span class="s2">&quot;Batch&quot;</span>],
-    <span class="nl">suggestAlternatives:</span> {
-      <span class="s2">&quot;Make&quot;</span>: [<span class="s2">&quot;Create&quot;</span>],
-      <span class="s2">&quot;Transition&quot;</span>: [<span class="s2">&quot;Update&quot;</span>],
+    <span class="nl">name:</span> <span class="s2">&quot;StandardOperationVerb&quot;</span>,
+    <span class="nl">configuration:</span> {
+        <span class="nl">verbs:</span> [<span class="s2">&quot;Register&quot;</span>, <span class="s2">&quot;Deregister&quot;</span>, <span class="s2">&quot;Associate&quot;</span>],
+        <span class="nl">prefixes:</span> [<span class="s2">&quot;Batch&quot;</span>],
+        <span class="nl">suggestAlternatives:</span> {
+            <span class="s2">&quot;Make&quot;</span>: [<span class="s2">&quot;Create&quot;</span>],
+            <span class="s2">&quot;Transition&quot;</span>: [<span class="s2">&quot;Update&quot;</span>],
+        }
     }
-  }
 }]
 </pre></div>
 </div>
@@ -765,14 +763,12 @@ listed should be considered deprecated.</dd>
 </dl>
 <p>Example:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
-  <span class="nl">id:</span> <span class="s2">&quot;DeprecateFooScheme&quot;</span>
-  <span class="nl">name:</span> <span class="s2">&quot;DeprecatedAuthSchemes&quot;</span>,
-  <span class="nl">configuration:</span> {
-    <span class="nl">schemes:</span> [
-      <span class="s2">&quot;foo&quot;</span>
-    ],
-    <span class="nl">reason:</span> <span class="s2">&quot;Please migrate to the foo2 scheme.&quot;</span>,
-  }
+    <span class="nl">id:</span> <span class="s2">&quot;DeprecateFooScheme&quot;</span>
+    <span class="nl">name:</span> <span class="s2">&quot;DeprecatedAuthSchemes&quot;</span>,
+    <span class="nl">configuration:</span> {
+        <span class="nl">schemes:</span> [<span class="s2">&quot;foo&quot;</span>],
+        <span class="nl">reason:</span> <span class="s2">&quot;Please migrate to the foo2 scheme.&quot;</span>,
+    }
 }]
 </pre></div>
 </div>
@@ -817,14 +813,12 @@ considered deprecated.</dd>
 </dl>
 <p>Example:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
-  <span class="nl">id:</span> <span class="s2">&quot;DeprecateFooProtocol&quot;</span>
-  <span class="nl">name:</span> <span class="s2">&quot;DeprecatedProtocols&quot;</span>,
-  <span class="nl">configuration:</span> {
-    <span class="nl">protocols:</span> [
-      <span class="s2">&quot;foo&quot;</span>
-    ],
-    <span class="nl">reason:</span> <span class="s2">&quot;Please migrate to the bar protocol.&quot;</span>,
-  }
+    <span class="nl">id:</span> <span class="s2">&quot;DeprecateFooProtocol&quot;</span>
+    <span class="nl">name:</span> <span class="s2">&quot;DeprecatedProtocols&quot;</span>,
+    <span class="nl">configuration:</span> {
+        <span class="nl">protocols:</span> [<span class="s2">&quot;foo&quot;</span>],
+        <span class="nl">reason:</span> <span class="s2">&quot;Please migrate to the bar protocol.&quot;</span>,
+    }
 }]
 </pre></div>
 </div>
@@ -1035,16 +1029,16 @@ following constraints:</p>
 <li>List and map members are excluded.</li>
 </ul>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
-  <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-  <span class="nl">id:</span> <span class="s2">&quot;MissingDocumentation&quot;</span>,
-  <span class="nl">message:</span> <span class="s2">&quot;This shape is missing documentation&quot;</span>
-  <span class="nl">configuration:</span> {
-    <span class="nl">selector:</span> <span class="s2">&quot;</span>
-<span class="s2">        :not([trait|documentation])</span>
-<span class="s2">        :not(simpleType)</span>
-<span class="s2">        :not(member:of(:each(list, map)))</span>
-<span class="s2">        :not(:test(member &gt; [trait|documentation]))&quot;</span>
-  }
+    <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
+    <span class="nl">id:</span> <span class="s2">&quot;MissingDocumentation&quot;</span>,
+    <span class="nl">message:</span> <span class="s2">&quot;This shape is missing documentation&quot;</span>
+    <span class="nl">configuration:</span> {
+        <span class="nl">selector:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            :not([trait|documentation])</span>
+<span class="s2">            :not(simpleType)</span>
+<span class="s2">            :not(member:of(:each(list, map)))</span>
+<span class="s2">            :not(:test(member &gt; [trait|documentation]))&quot;&quot;&quot;</span>
+    }
 }]
 </pre></div>
 </div>
@@ -1052,22 +1046,22 @@ following constraints:</p>
 input/output that has a shape name that does not case-insensitively end with
 &quot;Input&quot;/&quot;Output&quot;:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-  {
-    <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-    <span class="nl">id:</span> <span class="s2">&quot;OperationInputName&quot;</span>,
-    <span class="nl">message:</span> <span class="s2">&quot;This shape is referenced as input but the name does not end with &#39;Input&#39;&quot;</span>,
-    <span class="nl">configuration:</span> {
-      <span class="nl">selector:</span> <span class="s2">&quot;operation -[input]-&gt; :not([id|name$=Input i])&quot;</span>
+    {
+        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
+        <span class="nl">id:</span> <span class="s2">&quot;OperationInputName&quot;</span>,
+        <span class="nl">message:</span> <span class="s2">&quot;This shape is referenced as input but the name does not end with &#39;Input&#39;&quot;</span>,
+        <span class="nl">configuration:</span> {
+            <span class="nl">selector:</span> <span class="s2">&quot;operation -[input]-&gt; :not([id|name$=Input i])&quot;</span>
+        }
+    },
+    {
+        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
+        <span class="nl">id:</span> <span class="s2">&quot;OperationOutputName&quot;</span>,
+        <span class="nl">message:</span> <span class="s2">&quot;This shape is referenced as output but the name does not end with &#39;Output&#39;&quot;</span>,
+        <span class="nl">configuration:</span> {
+            <span class="nl">selector:</span> <span class="s2">&quot;operation -[output]-&gt; :not([id|name$=Output i])&quot;</span>
+        }
     }
-  },
-  {
-    <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-    <span class="nl">id:</span> <span class="s2">&quot;OperationOutputName&quot;</span>,
-    <span class="nl">message:</span> <span class="s2">&quot;This shape is referenced as output but the name does not end with &#39;Output&#39;&quot;</span>,
-    <span class="nl">configuration:</span> {
-      <span class="nl">selector:</span> <span class="s2">&quot;operation -[output]-&gt; :not([id|name$=Output i])&quot;</span>
-    }
-  }
 ]
 </pre></div>
 </div>
@@ -1075,22 +1069,22 @@ input/output that has a shape name that does not case-insensitively end with
 as lifecycle 'read' or 'delete' that has a shape name that does not start with
 &quot;Get&quot; or &quot;Delete&quot;:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [
-  {
-    <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-    <span class="nl">id:</span> <span class="s2">&quot;LifecycleGetName&quot;</span>,
-    <span class="nl">message:</span> <span class="s2">&quot;Lifecycle &#39;read&#39; operation shape names should start with &#39;Get&#39;&quot;</span>,
-    <span class="nl">configuration:</span> {
-      <span class="nl">selector:</span> <span class="s2">&quot;operation [read]-&gt; :not([id|name^=Get i])&quot;</span>
+    {
+        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
+        <span class="nl">id:</span> <span class="s2">&quot;LifecycleGetName&quot;</span>,
+        <span class="nl">message:</span> <span class="s2">&quot;Lifecycle &#39;read&#39; operation shape names should start with &#39;Get&#39;&quot;</span>,
+        <span class="nl">configuration:</span> {
+            <span class="nl">selector:</span> <span class="s2">&quot;operation [read]-&gt; :not([id|name^=Get i])&quot;</span>
+        }
+    },
+    {
+        <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
+        <span class="nl">id:</span> <span class="s2">&quot;LifecycleDeleteName&quot;</span>,
+        <span class="nl">message:</span> <span class="s2">&quot;Lifecycle &#39;delete&#39; operation shape names should start with &#39;Delete&#39;&quot;</span>,
+        <span class="nl">configuration:</span> {
+            <span class="nl">selector:</span> <span class="s2">&quot;operation -[delete]-&gt; :not([id|name^=Delete i])&quot;</span>
+        }
     }
-  },
-  {
-    <span class="nl">name:</span> <span class="s2">&quot;EmitEachSelector&quot;</span>,
-    <span class="nl">id:</span> <span class="s2">&quot;LifecycleDeleteName&quot;</span>,
-    <span class="nl">message:</span> <span class="s2">&quot;Lifecycle &#39;delete&#39; operation shape names should start with &#39;Delete&#39;&quot;</span>,
-    <span class="nl">configuration:</span> {
-      <span class="nl">selector:</span> <span class="s2">&quot;operation -[delete]-&gt; :not([id|name^=Delete i])&quot;</span>
-    }
-  }
 ]
 </pre></div>
 </div>
@@ -1134,13 +1128,14 @@ is emitted.</td>
 <p>The following example detects if the model does not contain any constraint
 traits.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span> [{
-  <span class="nl">name:</span> <span class="s2">&quot;EmitNoneSelector&quot;</span>,
-  <span class="nl">id:</span> <span class="s2">&quot;MissingConstraintTraits&quot;</span>,
-  <span class="nl">message:</span> <span class="s2">&quot;No instances of the enum, pattern, length, or range trait &quot;</span>
-      <span class="s2">&quot;could be found. Did you forget to apply these traits?&quot;</span>,
-  <span class="nl">configuration:</span> {
-    <span class="nl">selector:</span> <span class="s2">&quot;:each([trait|enum], [trait|pattern], [trait|length], [trait|range])&quot;</span>,
-  }
+    <span class="nl">name:</span> <span class="s2">&quot;EmitNoneSelector&quot;</span>,
+    <span class="nl">id:</span> <span class="s2">&quot;MissingConstraintTraits&quot;</span>,
+    <span class="nl">message:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        No instances of the enum, pattern, length, or range trait</span>
+<span class="s2">        could be found. Did you forget to apply these traits?&quot;&quot;&quot;</span>,
+    <span class="nl">configuration:</span> {
+        <span class="nl">selector:</span> <span class="s2">&quot;:each([trait|enum], [trait|pattern], [trait|length], [trait|range])&quot;</span>,
+    }
 }]
 </pre></div>
 </div>

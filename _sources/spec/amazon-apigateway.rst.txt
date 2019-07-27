@@ -57,22 +57,22 @@ The following example sets the ``X-API-Key`` header as the API key source.
 
         @apiKeySource("HEADER")
         service Weather {
-          version: "2018-03-17"
+            version: "2018-03-17"
         }
 
     .. code-tab:: json
 
         {
-          "smithy": "0.3.0",
-          "smithy.example": {
-            "shapes": {
-              "Weather": {
-                "type": "service",
-                "version": "2018-03-17",
-                "aws.apigateway#apiKeySource": "HEADER"
-              }
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "Weather": {
+                        "type": "service",
+                        "version": "2018-03-17",
+                        "aws.apigateway#apiKeySource": "HEADER"
+                    }
+                }
             }
-          }
         }
 
 .. note::
@@ -289,22 +289,22 @@ Then following example enables request validation on a service:
 
         @requestValidator("full")
         service Weather {
-          version: "2018-03-17"
+            version: "2018-03-17"
         }
 
     .. code-tab:: json
 
         {
-          "smithy": "0.3.0",
-          "smithy.example": {
-            "shapes": {
-              "Weather": {
-                "type": "service",
-                "version": "2018-03-17",
-                "aws.apigateway#requestValidator": "full"
-              }
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "Weather": {
+                        "type": "service",
+                        "version": "2018-03-17",
+                        "aws.apigateway#requestValidator": "full"
+                    }
+                }
             }
-          }
         }
 
 .. note::

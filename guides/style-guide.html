@@ -140,11 +140,21 @@ Smithy models SHOULD resemble the following example:</p>
 
 <span class="kd">namespace</span><span class="nc"> smithy.example.namespace</span>
 
-<span class="nd">@documentation</span>(<span class="s2">&quot;Documentation&quot;</span>)
+<span class="cm">/// This is the documentation</span>
+<span class="nd">@sensitive</span>
 <span class="kd">string</span><span class="nc"> MyShape</span>
 
+<span class="cm">/// This is the documentation.</span>
 <span class="kd">integer</span><span class="nc"> AnotherShape</span>
-<span class="kd">apply</span><span class="nc"> AnotherShape</span> <span class="nd">@documentation</span>(<span class="s2">&quot;Documentation&quot;</span>)
+
+<span class="cm">/// Documentation about the structure.</span>
+<span class="cm">///</span>
+<span class="cm">/// More descriptive documentation if needed...</span>
+<span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="cm">/// Documentation about the member.</span>
+    <span class="nd">@required</span>
+    <span class="nl">foo:</span> <span class="vc">String</span>,
+}
 
 <span class="c">// Example of creating custom traits.</span>
 <span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;string&quot;</span>)
@@ -181,7 +191,7 @@ MAY appear when representing a model as a single build artifact.</p>
 <h2>Formatting<a class="headerlink" href="#formatting" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="indentation">
 <h3>Indentation<a class="headerlink" href="#indentation" title="Permalink to this headline">¶</a></h3>
-<p>Models are indented using two spaces.</p>
+<p>Models are indented using four spaces.</p>
 </div>
 <div class="section" id="whitespace">
 <h3>Whitespace<a class="headerlink" href="#whitespace" title="Permalink to this headline">¶</a></h3>

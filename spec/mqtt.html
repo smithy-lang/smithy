@@ -210,15 +210,15 @@ JSON</div>
 <span class="kd">operation</span><span class="nc"> ExampleOperation</span>(<span class="vc">ExampleOperationInput</span>)
 
 <span class="kd">structure</span><span class="nc"> ExampleOperationInput</span> {
-  <span class="nd">@required</span>
-  <span class="nd">@topicLabel</span>
-  <span class="nl">first:</span> <span class="vc">String</span>,
+    <span class="nd">@required</span>
+    <span class="nd">@topicLabel</span>
+    <span class="nl">first:</span> <span class="vc">String</span>,
 
-  <span class="nd">@required</span>
-  <span class="nd">@topicLabel</span>
-  <span class="nl">second:</span> <span class="vc">String</span>,
+    <span class="nd">@required</span>
+    <span class="nd">@topicLabel</span>
+    <span class="nl">second:</span> <span class="vc">String</span>,
 
-  <span class="nl">message:</span> <span class="vc">String</span>,
+    <span class="nl">message:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -321,12 +321,12 @@ JSON</div>
 <span class="kd">operation</span><span class="nc"> PostFoo</span>(<span class="vc">PostFooInput</span>)
 
 <span class="kd">structure</span><span class="nc"> PostFooInput</span> {
-  <span class="nd">@required</span>
-  <span class="nd">@topicLabel</span>
-  <span class="nl">bar:</span> <span class="vc">String</span>,
+    <span class="nd">@required</span>
+    <span class="nd">@topicLabel</span>
+    <span class="nl">bar:</span> <span class="vc">String</span>,
 
-  <span class="nl">someValue:</span> <span class="vc">String</span>,
-  <span class="nl">anotherValue:</span> <span class="vc">Boolean</span>,
+    <span class="nl">someValue:</span> <span class="vc">String</span>,
+    <span class="nl">anotherValue:</span> <span class="vc">Boolean</span>,
 }
 </pre></div>
 </div>
@@ -434,17 +434,17 @@ JSON</div>
 <span class="kd">operation</span><span class="nc"> SubscribeForEvents</span>(<span class="vc">SubscribeForEventsInput</span>) <span class="nd">-&gt;</span> <span class="vc">SubscribeForEventsOutput</span>
 
 <span class="kd">structure</span><span class="nc"> SubscribeForEventsInput</span> {
-  <span class="nd">@required</span>
-  <span class="nd">@topicLabel</span>
-  <span class="nl">id:</span> <span class="vc">String</span>,
+    <span class="nd">@required</span>
+    <span class="nd">@topicLabel</span>
+    <span class="nl">id:</span> <span class="vc">String</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> SubscribeForEventsOutput</span> {
-  <span class="nl">events:</span> <span class="vc">Event</span>,
+    <span class="nl">events:</span> <span class="vc">Event</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> Event</span> {
-  <span class="nl">message:</span> <span class="vc">String</span>,
+    <span class="nl">message:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>

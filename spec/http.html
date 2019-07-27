@@ -184,29 +184,29 @@ Smithy</div>
 <span class="kd">operation</span><span class="nc"> PutObject</span>(<span class="vc">PutObjectInput</span>)
 
 <span class="kd">structure</span><span class="nc"> PutObjectInput</span> {
-  <span class="c">// Sent in the URI label named &quot;key&quot;.</span>
-  <span class="nd">@required</span>
-  <span class="nd">@httpLabel</span>
-  <span class="nl">key:</span> <span class="vc">ObjectKey</span>,
+    <span class="c">// Sent in the URI label named &quot;key&quot;.</span>
+    <span class="nd">@required</span>
+    <span class="nd">@httpLabel</span>
+    <span class="nl">key:</span> <span class="vc">ObjectKey</span>,
 
-  <span class="c">// Sent in the URI label named &quot;bucketName&quot;.</span>
-  <span class="nd">@required</span>
-  <span class="nd">@httpLabel</span>
-  <span class="nl">bucketName:</span> <span class="vc">String</span>,
+    <span class="c">// Sent in the URI label named &quot;bucketName&quot;.</span>
+    <span class="nd">@required</span>
+    <span class="nd">@httpLabel</span>
+    <span class="nl">bucketName:</span> <span class="vc">String</span>,
 
-  <span class="c">// Sent in the X-Foo header</span>
-  <span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)
-  <span class="nl">foo:</span> <span class="vc">String</span>,
+    <span class="c">// Sent in the X-Foo header</span>
+    <span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)
+    <span class="nl">foo:</span> <span class="vc">String</span>,
 
-  <span class="c">// Sent in the query string as paramName</span>
-  <span class="nd">@httpQuery</span>(<span class="s2">&quot;paramName&quot;</span>)
-  <span class="nl">someValue:</span> <span class="vc">String</span>,
+    <span class="c">// Sent in the query string as paramName</span>
+    <span class="nd">@httpQuery</span>(<span class="s2">&quot;paramName&quot;</span>)
+    <span class="nl">someValue:</span> <span class="vc">String</span>,
 
-  <span class="c">// Sent in the body</span>
-  <span class="nl">data:</span> <span class="vc">MyBlob</span>,
+    <span class="c">// Sent in the body</span>
+    <span class="nl">data:</span> <span class="vc">MyBlob</span>,
 
-  <span class="c">// Sent in the body</span>
-  <span class="nl">additional:</span> <span class="vc">String</span>,
+    <span class="c">// Sent in the body</span>
+    <span class="nl">additional:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -647,10 +647,10 @@ Smithy</div>
 <dd>Binds a structure member to an HTTP header.</dd>
 <dt>Trait selector</dt>
 <dd><div class="first highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-  <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-    <span class="nt">boolean</span><span class="o">,</span> <span class="nt">number</span><span class="o">,</span> <span class="nt">string</span><span class="o">,</span> <span class="nt">timestamp</span><span class="o">,</span>
-    <span class="nt">collection</span> <span class="o">&gt;</span> <span class="nt">member</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span><span class="nt">boolean</span><span class="o">,</span> <span class="nt">number</span><span class="o">,</span> <span class="nt">string</span><span class="o">,</span> <span class="nt">timestamp</span><span class="o">)</span>
-  <span class="o">)</span>
+    <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
+        <span class="nt">boolean</span><span class="o">,</span> <span class="nt">number</span><span class="o">,</span> <span class="nt">string</span><span class="o">,</span> <span class="nt">timestamp</span><span class="o">,</span>
+        <span class="nt">collection</span> <span class="o">&gt;</span> <span class="nt">member</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span><span class="nt">boolean</span><span class="o">,</span> <span class="nt">number</span><span class="o">,</span> <span class="nt">string</span><span class="o">,</span> <span class="nt">timestamp</span><span class="o">)</span>
+    <span class="o">)</span>
 <span class="o">)</span>
 </pre></div>
 </div>
@@ -702,47 +702,51 @@ member that is bound to an HTTP header.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>Connection</td>
+<tr class="row-even"><td>Authorization</td>
+<td>This header is controlled by the <a class="reference internal" href="core.html#protocols-trait"><span class="std std-ref">protocols trait</span></a> and
+<a class="reference internal" href="core.html#auth-trait"><span class="std std-ref">auth trait</span></a>.</td>
+</tr>
+<tr class="row-odd"><td>Connection</td>
 <td>This is controlled at a lower level by the HTTP client or server.</td>
 </tr>
-<tr class="row-odd"><td>Content-Length</td>
+<tr class="row-even"><td>Content-Length</td>
 <td>HTTP clients and servers are responsible for providing a
 Content-Length header.</td>
 </tr>
-<tr class="row-even"><td>Expect</td>
+<tr class="row-odd"><td>Expect</td>
 <td>This is controlled at a lower level by the HTTP client.</td>
 </tr>
-<tr class="row-odd"><td>Host</td>
+<tr class="row-even"><td>Host</td>
 <td>The Host header is controlled by the HTTP client, not the model.</td>
 </tr>
-<tr class="row-even"><td>Max-Forwards</td>
+<tr class="row-odd"><td>Max-Forwards</td>
 <td>This is controlled at a lower level by the HTTP client.</td>
 </tr>
-<tr class="row-odd"><td>Proxy-Authenticate</td>
+<tr class="row-even"><td>Proxy-Authenticate</td>
 <td>Use the <a class="reference internal" href="core.html#protocols-trait"><span class="std std-ref">protocols trait</span></a> of a service.</td>
 </tr>
-<tr class="row-even"><td>Server</td>
+<tr class="row-odd"><td>Server</td>
 <td>The Server header is controlled by the HTTP server, not the model.</td>
 </tr>
-<tr class="row-odd"><td>TE</td>
+<tr class="row-even"><td>TE</td>
 <td>This is controlled at a lower level by the HTTP client and server.</td>
 </tr>
-<tr class="row-even"><td>Trailer</td>
+<tr class="row-odd"><td>Trailer</td>
 <td>This is controlled at a lower level by the HTTP client and server.</td>
 </tr>
-<tr class="row-odd"><td>Transfer-Encoding</td>
+<tr class="row-even"><td>Transfer-Encoding</td>
 <td>This is controlled at a lower level by the HTTP client and server.</td>
 </tr>
-<tr class="row-even"><td>Upgrade</td>
+<tr class="row-odd"><td>Upgrade</td>
 <td>This is controlled at a lower level by the HTTP server.</td>
 </tr>
-<tr class="row-odd"><td>User-Agent</td>
+<tr class="row-even"><td>User-Agent</td>
 <td>Setting a User-Agent is the responsibility of an HTTP client.</td>
 </tr>
-<tr class="row-even"><td>WWW-Authenticate</td>
+<tr class="row-odd"><td>WWW-Authenticate</td>
 <td>Use the <a class="reference internal" href="core.html#protocols-trait"><span class="std std-ref">protocols trait</span></a> of a service.</td>
 </tr>
-<tr class="row-odd"><td>X-Forwarded-For</td>
+<tr class="row-even"><td>X-Forwarded-For</td>
 <td>X-Forwarded-For is an implementation detail of HTTP that does not
 need to be modeled.</td>
 </tr>
@@ -757,9 +761,9 @@ need to be modeled.</td>
 <dd>Binds an operation input structure member to an HTTP label.</dd>
 <dt>Trait selector</dt>
 <dd><div class="first highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-  <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-    <span class="nt">string</span><span class="o">,</span> <span class="nt">number</span><span class="o">,</span> <span class="nt">boolean</span><span class="o">,</span> <span class="nt">timestamp</span>
-  <span class="o">)</span>
+    <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
+        <span class="nt">string</span><span class="o">,</span> <span class="nt">number</span><span class="o">,</span> <span class="nt">boolean</span><span class="o">,</span> <span class="nt">timestamp</span>
+    <span class="o">)</span>
 <span class="o">)</span>
 </pre></div>
 </div>
@@ -807,9 +811,9 @@ Smithy</div>
 <span class="kd">operation</span><span class="nc"> GetStatus</span>(<span class="vc">GetStatusInput</span>) <span class="nd">-&gt;</span> <span class="vc">GetStatusOutput</span>
 
 <span class="kd">structure</span><span class="nc"> GetStatusInput</span> {
-  <span class="nd">@required</span>
-  <span class="nd">@httpLabel</span>
-  <span class="nl">foo:</span> <span class="vc">String</span>
+    <span class="nd">@required</span>
+    <span class="nd">@httpLabel</span>
+    <span class="nl">foo:</span> <span class="vc">String</span>
 }
 </pre></div>
 </div>
@@ -823,9 +827,9 @@ Smithy</div>
 <dd>Binds a single structure member to the body of an HTTP request.</dd>
 <dt>Trait selector</dt>
 <dd><div class="first highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-  <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-    <span class="nt">string</span><span class="o">,</span> <span class="nt">blob</span><span class="o">,</span> <span class="nt">structure</span><span class="o">,</span> <span class="nt">union</span>
-  <span class="o">)</span>
+    <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
+        <span class="nt">string</span><span class="o">,</span> <span class="nt">blob</span><span class="o">,</span> <span class="nt">structure</span><span class="o">,</span> <span class="nt">union</span>
+    <span class="o">)</span>
 <span class="o">)</span>
 </pre></div>
 </div>
@@ -867,10 +871,10 @@ is sent as the body of the message.</li>
 <dd>Binds a map of key-value pairs to prefixed HTTP headers.</dd>
 <dt>Trait selector</dt>
 <dd><div class="first highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-  <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="nt">map</span> <span class="o">&gt;</span> <span class="nt">member</span><span class="o">[</span><span class="nt">id</span><span class="o">|</span><span class="nt">member</span><span class="o">=</span><span class="nt">value</span><span class="o">]</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-    <span class="nt">simpleType</span><span class="o">,</span>
-    <span class="nt">collection</span> <span class="o">&gt;</span> <span class="nt">member</span> <span class="o">&gt;</span> <span class="nt">simpleType</span>
-  <span class="o">)</span>
+    <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="nt">map</span> <span class="o">&gt;</span> <span class="nt">member</span><span class="o">[</span><span class="nt">id</span><span class="o">|</span><span class="nt">member</span><span class="o">=</span><span class="nt">value</span><span class="o">]</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
+        <span class="nt">simpleType</span><span class="o">,</span>
+        <span class="nt">collection</span> <span class="o">&gt;</span> <span class="nt">member</span> <span class="o">&gt;</span> <span class="nt">simpleType</span>
+    <span class="o">)</span>
 <span class="o">)</span>
 </pre></div>
 </div>
@@ -905,13 +909,13 @@ Smithy</div>
 <span class="kd">operation</span><span class="nc"> MyOperation</span>(<span class="vc">MyOperationInput</span>)
 
 <span class="kd">structure</span><span class="nc"> MyOperationInput</span> {
-  <span class="nd">@httpPrefixHeaders</span>(<span class="s2">&quot;X-Foo-&quot;</span>)
-  <span class="nl">headers:</span> <span class="vc">StringMap</span>
+    <span class="nd">@httpPrefixHeaders</span>(<span class="s2">&quot;X-Foo-&quot;</span>)
+    <span class="nl">headers:</span> <span class="vc">StringMap</span>
 }
 
 <span class="kd">map</span><span class="nc"> StringMap</span> {
-  <span class="nl">key:</span> <span class="vc">String</span>,
-  <span class="nl">value:</span> <span class="vc">String</span>
+    <span class="nl">key:</span> <span class="vc">String</span>,
+    <span class="nl">value:</span> <span class="vc">String</span>
 }
 </pre></div>
 </div>
@@ -919,10 +923,10 @@ Smithy</div>
 </div>
 <p>And given the following input to <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;first&quot;</span><span class="p">:</span> <span class="s2">&quot;hi&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;second&quot;</span><span class="p">:</span> <span class="s2">&quot;there&quot;</span>
-  <span class="p">}</span>
+    <span class="nt">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;first&quot;</span><span class="p">:</span> <span class="s2">&quot;hi&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;second&quot;</span><span class="p">:</span> <span class="s2">&quot;there&quot;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -941,10 +945,10 @@ Smithy</div>
 <dd>Binds an operation input structure member to a query string parameter.</dd>
 <dt>Trait selector</dt>
 <dd><div class="first highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-  <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-    <span class="nt">simpleType</span><span class="o">,</span>
-    <span class="nt">collection</span> <span class="o">&gt;</span> <span class="nt">member</span> <span class="o">&gt;</span> <span class="nt">simpleType</span>
-  <span class="o">)</span>
+    <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
+        <span class="nt">simpleType</span><span class="o">,</span>
+        <span class="nt">collection</span> <span class="o">&gt;</span> <span class="nt">member</span> <span class="o">&gt;</span> <span class="nt">simpleType</span>
+    <span class="o">)</span>
 <span class="o">)</span>
 </pre></div>
 </div>
@@ -1127,12 +1131,12 @@ JSON</div>
 <span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
-  <span class="nd">@httpPayload</span>
-  <span class="nl">messages:</span> <span class="vc">Message</span>,
+    <span class="nd">@httpPayload</span>
+    <span class="nl">messages:</span> <span class="vc">Message</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> Message</span> {
-  <span class="nl">message:</span> <span class="vc">String</span>,
+    <span class="nl">message:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -1177,7 +1181,7 @@ references a member that is not marked with the <code class="docutils literal no
 <span class="kd">operation</span><span class="nc"> InvalidOperation</span>(<span class="vc">InvalidOperationInput</span>)
 
 <span class="kd">structure</span><span class="nc"> InvalidOperationInput</span> {
-  <span class="nl">invalid:</span> <span class="vc">Message</span>, <span class="c">// &lt;-- Missing the @httpPayload trait</span>
+    <span class="nl">invalid:</span> <span class="vc">Message</span>, <span class="c">// &lt;-- Missing the @httpPayload trait</span>
 }
 </pre></div>
 </div>

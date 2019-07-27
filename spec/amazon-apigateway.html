@@ -74,7 +74,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Smithy Guides" href="../guides/index.html" />
-    <link rel="prev" title="AWS Core Specification" href="aws-core.html" /> 
+    <link rel="prev" title="AWS IAM traits" href="aws-iam.html" /> 
   </head><body>
     <header>
         <div class="header-flex width-wrapper">
@@ -186,23 +186,23 @@ JSON</div>
 
 <span class="nd">@apiKeySource</span>(<span class="s2">&quot;HEADER&quot;</span>)
 <span class="kd">service</span><span class="nc"> Weather</span> {
-  <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>
+    <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;aws.apigateway#apiKeySource&quot;</span><span class="p">:</span> <span class="s2">&quot;HEADER&quot;</span>
-      <span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;aws.apigateway#apiKeySource&quot;</span><span class="p">:</span> <span class="s2">&quot;HEADER&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-  <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -444,23 +444,23 @@ JSON</div>
 
 <span class="nd">@requestValidator</span>(<span class="s2">&quot;full&quot;</span>)
 <span class="kd">service</span><span class="nc"> Weather</span> {
-  <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>
+    <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>
 }
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;aws.apigateway#requestValidator&quot;</span><span class="p">:</span> <span class="s2">&quot;full&quot;</span>
-      <span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;aws.apigateway#requestValidator&quot;</span><span class="p">:</span> <span class="s2">&quot;full&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-  <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1062,7 +1062,7 @@ integration response to two <code class="docutils literal notranslate"><span cla
                     
                     <section class="relations">
                         
-                        <a href="aws-core.html" title="previous chapter" class="previous-page clearfix hidden-xs">← AWS Core Specification</a>
+                        <a href="aws-iam.html" title="previous chapter" class="previous-page clearfix hidden-xs">← AWS IAM traits</a>
                         
                         <a href="../guides/index.html" title="next chapter" class="next-page clearfix">Smithy Guides →</a>
                     </section>

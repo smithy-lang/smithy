@@ -49,12 +49,12 @@ stream in its input by referencing a member that targets a structure:
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
-          room: String,
-          messages: Message,
+            room: String,
+            messages: Message,
         }
 
         structure Message {
-          message: String,
+            message: String,
         }
 
     .. code-tab:: json
@@ -106,12 +106,12 @@ stream in its output:
         operation SubscribeToMovements() -> SubscribeToMovementsOutput
 
         structure SubscribeToMovementsOutput {
-          movements: Movement,
+            movements: Movement,
         }
 
         structure Movement {
-          angle: Float,
-          velocity: Float,
+            angle: Float,
+            velocity: Float,
         }
 
     .. code-tab:: json
@@ -190,17 +190,17 @@ stream in its input by referencing a member that targets a union:
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
-          room: String,
-          messages: PublishEvents,
+            room: String,
+            messages: PublishEvents,
         }
 
         union PublishEvents {
-          message: Message,
-          leave: LeaveEvent,
+            message: Message,
+            leave: LeaveEvent,
         }
 
         structure Message {
-          message: String,
+            message: String,
         }
 
         structure LeaveEvent {}
@@ -261,18 +261,18 @@ stream in its output:
         operation SubscribeToMovements() -> SubscribeToMovementsOutput
 
         structure SubscribeToMovementsOutput {
-          movements: MovementEvents,
+            movements: MovementEvents,
         }
 
         union MovementEvents {
-          up: Movement,
-          down: Movement,
-          left: Movement,
-          right: Movement,
+            up: Movement,
+            down: Movement,
+            left: Movement,
+            right: Movement,
         }
 
         structure Movement {
-          velocity: Float,
+            velocity: Float,
         }
 
     .. code-tab:: json
@@ -346,13 +346,13 @@ on the name of an event. For example, given the following event stream,
     operation SubscribeToEvents() -> SubscribeToEventsOutput
 
     structure SubscribeToEventsOutput {
-      events: Events,
+        events: Events,
     }
 
     union Events {
-      a: Event1,
-      b: Event2,
-      c: Event3,
+        a: Event1,
+        b: Event2,
+        c: Event3,
     }
 
     structure Event1 {}
@@ -415,15 +415,15 @@ service, followed by the events sent in the payload of the HTTP message.
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
-          @httpLabel
-          room: String,
+            @httpLabel
+            room: String,
 
-          @httpPayload
-          messages: Message,
+            @httpPayload
+            messages: Message,
         }
 
         structure Message {
-          message: String,
+            message: String,
         }
 
     .. code-tab:: json
@@ -499,16 +499,16 @@ message.
         operation SubscribeToMessages(SubscribeToMessagesInput) -> SubscribeToMessagesOutput
 
         structure SubscribeToMessagesInput {
-          @httpLabel
-          room: String
+            @httpLabel
+            room: String
         }
 
         structure SubscribeToMessagesOutput {
-          @httpHeader("X-Connection-Lifetime")
-          connectionLifetime: Integer,
+            @httpHeader("X-Connection-Lifetime")
+            connectionLifetime: Integer,
 
-          @httpPayload
-          messages: Message,
+            @httpPayload
+            messages: Message,
         }
 
     .. code-tab:: json
@@ -591,14 +591,14 @@ headers and the "c" member as the payload.
     .. code-tab:: smithy
 
         structure ExampleEvent {
-          @eventHeader
-          a: String,
+            @eventHeader
+            a: String,
 
-          @eventHeader
-          b: String,
+            @eventHeader
+            b: String,
 
-          @eventPayload
-          c: Blob,
+            @eventPayload
+            c: Blob,
         }
 
     .. code-tab:: json
@@ -637,9 +637,9 @@ based protocol, the event payload is serialized as a JSON object:
     .. code-tab:: smithy
 
         structure ExampleEvent {
-          a: String,
-          b: String,
-          c: Blob,
+            a: String,
+            b: String,
+            c: Blob,
         }
 
     .. code-tab:: json
@@ -739,11 +739,11 @@ The following example defines multiple event headers:
     .. code-tab:: smithy
 
         structure ExampleEvent {
-          @eventHeader
-          a: String,
+            @eventHeader
+            a: String,
 
-          @eventHeader
-          b: String,
+            @eventHeader
+            b: String,
         }
 
     .. code-tab:: json
@@ -808,11 +808,11 @@ of an event:
     .. code-tab:: smithy
 
         structure ExampleEvent {
-          @eventPayload
-          a: String,
+            @eventPayload
+            a: String,
 
-          @eventHeader
-          b: String,
+            @eventHeader
+            b: String,
         }
 
     .. code-tab:: json
@@ -844,9 +844,9 @@ The following structure is **invalid** because the "a" member is bound to the
 .. code-block:: smithy
 
     structure ExampleEvent {
-      @eventPayload
-      a: String,
+        @eventPayload
+        a: String,
 
-      b: String,
-      // ^ Error: not bound to an eventHeader.
+        b: String,
+        // ^ Error: not bound to an eventHeader.
     }

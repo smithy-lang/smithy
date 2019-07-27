@@ -171,12 +171,12 @@ JSON</div>
 <span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
-  <span class="nl">room:</span> <span class="vc">String</span>,
-  <span class="nl">messages:</span> <span class="vc">Message</span>,
+    <span class="nl">room:</span> <span class="vc">String</span>,
+    <span class="nl">messages:</span> <span class="vc">Message</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> Message</span> {
-  <span class="nl">message:</span> <span class="vc">String</span>,
+    <span class="nl">message:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -237,12 +237,12 @@ JSON</div>
 <span class="kd">operation</span><span class="nc"> SubscribeToMovements</span>() <span class="nd">-&gt;</span> <span class="vc">SubscribeToMovementsOutput</span>
 
 <span class="kd">structure</span><span class="nc"> SubscribeToMovementsOutput</span> {
-  <span class="nl">movements:</span> <span class="vc">Movement</span>,
+    <span class="nl">movements:</span> <span class="vc">Movement</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> Movement</span> {
-  <span class="nl">angle:</span> <span class="vc">Float</span>,
-  <span class="nl">velocity:</span> <span class="vc">Float</span>,
+    <span class="nl">angle:</span> <span class="vc">Float</span>,
+    <span class="nl">velocity:</span> <span class="vc">Float</span>,
 }
 </pre></div>
 </div>
@@ -323,17 +323,17 @@ JSON</div>
 <span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
-  <span class="nl">room:</span> <span class="vc">String</span>,
-  <span class="nl">messages:</span> <span class="vc">PublishEvents</span>,
+    <span class="nl">room:</span> <span class="vc">String</span>,
+    <span class="nl">messages:</span> <span class="vc">PublishEvents</span>,
 }
 
 <span class="kd">union</span><span class="nc"> PublishEvents</span> {
-  <span class="nl">message:</span> <span class="vc">Message</span>,
-  <span class="nl">leave:</span> <span class="vc">LeaveEvent</span>,
+    <span class="nl">message:</span> <span class="vc">Message</span>,
+    <span class="nl">leave:</span> <span class="vc">LeaveEvent</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> Message</span> {
-  <span class="nl">message:</span> <span class="vc">String</span>,
+    <span class="nl">message:</span> <span class="vc">String</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> LeaveEvent</span> {}
@@ -403,18 +403,18 @@ JSON</div>
 <span class="kd">operation</span><span class="nc"> SubscribeToMovements</span>() <span class="nd">-&gt;</span> <span class="vc">SubscribeToMovementsOutput</span>
 
 <span class="kd">structure</span><span class="nc"> SubscribeToMovementsOutput</span> {
-  <span class="nl">movements:</span> <span class="vc">MovementEvents</span>,
+    <span class="nl">movements:</span> <span class="vc">MovementEvents</span>,
 }
 
 <span class="kd">union</span><span class="nc"> MovementEvents</span> {
-  <span class="nl">up:</span> <span class="vc">Movement</span>,
-  <span class="nl">down:</span> <span class="vc">Movement</span>,
-  <span class="nl">left:</span> <span class="vc">Movement</span>,
-  <span class="nl">right:</span> <span class="vc">Movement</span>,
+    <span class="nl">up:</span> <span class="vc">Movement</span>,
+    <span class="nl">down:</span> <span class="vc">Movement</span>,
+    <span class="nl">left:</span> <span class="vc">Movement</span>,
+    <span class="nl">right:</span> <span class="vc">Movement</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> Movement</span> {
-  <span class="nl">velocity:</span> <span class="vc">Float</span>,
+    <span class="nl">velocity:</span> <span class="vc">Float</span>,
 }
 </pre></div>
 </div>
@@ -486,13 +486,13 @@ on the name of an event. For example, given the following event stream,</p>
 <span class="kd">operation</span><span class="nc"> SubscribeToEvents</span>() <span class="nd">-&gt;</span> <span class="vc">SubscribeToEventsOutput</span>
 
 <span class="kd">structure</span><span class="nc"> SubscribeToEventsOutput</span> {
-  <span class="nl">events:</span> <span class="vc">Events</span>,
+    <span class="nl">events:</span> <span class="vc">Events</span>,
 }
 
 <span class="kd">union</span><span class="nc"> Events</span> {
-  <span class="nl">a:</span> <span class="vc">Event1</span>,
-  <span class="nl">b:</span> <span class="vc">Event2</span>,
-  <span class="nl">c:</span> <span class="vc">Event3</span>,
+    <span class="nl">a:</span> <span class="vc">Event1</span>,
+    <span class="nl">b:</span> <span class="vc">Event2</span>,
+    <span class="nl">c:</span> <span class="vc">Event3</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> Event1</span> {}
@@ -552,15 +552,15 @@ JSON</div>
 <span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
-  <span class="nd">@httpLabel</span>
-  <span class="nl">room:</span> <span class="vc">String</span>,
+    <span class="nd">@httpLabel</span>
+    <span class="nl">room:</span> <span class="vc">String</span>,
 
-  <span class="nd">@httpPayload</span>
-  <span class="nl">messages:</span> <span class="vc">Message</span>,
+    <span class="nd">@httpPayload</span>
+    <span class="nl">messages:</span> <span class="vc">Message</span>,
 }
 
 <span class="kd">structure</span><span class="nc"> Message</span> {
-  <span class="nl">message:</span> <span class="vc">String</span>,
+    <span class="nl">message:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -642,16 +642,16 @@ JSON</div>
 <span class="kd">operation</span><span class="nc"> SubscribeToMessages</span>(<span class="vc">SubscribeToMessagesInput</span>) <span class="nd">-&gt;</span> <span class="vc">SubscribeToMessagesOutput</span>
 
 <span class="kd">structure</span><span class="nc"> SubscribeToMessagesInput</span> {
-  <span class="nd">@httpLabel</span>
-  <span class="nl">room:</span> <span class="vc">String</span>
+    <span class="nd">@httpLabel</span>
+    <span class="nl">room:</span> <span class="vc">String</span>
 }
 
 <span class="kd">structure</span><span class="nc"> SubscribeToMessagesOutput</span> {
-  <span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Connection-Lifetime&quot;</span>)
-  <span class="nl">connectionLifetime:</span> <span class="vc">Integer</span>,
+    <span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Connection-Lifetime&quot;</span>)
+    <span class="nl">connectionLifetime:</span> <span class="vc">Integer</span>,
 
-  <span class="nd">@httpPayload</span>
-  <span class="nl">messages:</span> <span class="vc">Message</span>,
+    <span class="nd">@httpPayload</span>
+    <span class="nl">messages:</span> <span class="vc">Message</span>,
 }
 </pre></div>
 </div>
@@ -737,14 +737,14 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span> {
-  <span class="nd">@eventHeader</span>
-  <span class="nl">a:</span> <span class="vc">String</span>,
+    <span class="nd">@eventHeader</span>
+    <span class="nl">a:</span> <span class="vc">String</span>,
 
-  <span class="nd">@eventHeader</span>
-  <span class="nl">b:</span> <span class="vc">String</span>,
+    <span class="nd">@eventHeader</span>
+    <span class="nl">b:</span> <span class="vc">String</span>,
 
-  <span class="nd">@eventPayload</span>
-  <span class="nl">c:</span> <span class="vc">Blob</span>,
+    <span class="nd">@eventPayload</span>
+    <span class="nl">c:</span> <span class="vc">Blob</span>,
 }
 </pre></div>
 </div>
@@ -794,9 +794,9 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span> {
-  <span class="nl">a:</span> <span class="vc">String</span>,
-  <span class="nl">b:</span> <span class="vc">String</span>,
-  <span class="nl">c:</span> <span class="vc">Blob</span>,
+    <span class="nl">a:</span> <span class="vc">String</span>,
+    <span class="nl">b:</span> <span class="vc">String</span>,
+    <span class="nl">c:</span> <span class="vc">Blob</span>,
 }
 </pre></div>
 </div>
@@ -905,11 +905,11 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span> {
-  <span class="nd">@eventHeader</span>
-  <span class="nl">a:</span> <span class="vc">String</span>,
+    <span class="nd">@eventHeader</span>
+    <span class="nl">a:</span> <span class="vc">String</span>,
 
-  <span class="nd">@eventHeader</span>
-  <span class="nl">b:</span> <span class="vc">String</span>,
+    <span class="nd">@eventHeader</span>
+    <span class="nl">b:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -986,11 +986,11 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span> {
-  <span class="nd">@eventPayload</span>
-  <span class="nl">a:</span> <span class="vc">String</span>,
+    <span class="nd">@eventPayload</span>
+    <span class="nl">a:</span> <span class="vc">String</span>,
 
-  <span class="nd">@eventHeader</span>
-  <span class="nl">b:</span> <span class="vc">String</span>,
+    <span class="nd">@eventHeader</span>
+    <span class="nl">b:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -1023,11 +1023,11 @@ JSON</div>
 <p>The following structure is <strong>invalid</strong> because the &quot;a&quot; member is bound to the
 <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code>, and the &quot;b&quot; member is not bound to an <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code>.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span> {
-  <span class="nd">@eventPayload</span>
-  <span class="nl">a:</span> <span class="vc">String</span>,
+    <span class="nd">@eventPayload</span>
+    <span class="nl">a:</span> <span class="vc">String</span>,
 
-  <span class="nl">b:</span> <span class="vc">String</span>,
-  <span class="c">// ^ Error: not bound to an eventHeader.</span>
+    <span class="nl">b:</span> <span class="vc">String</span>,
+    <span class="c">// ^ Error: not bound to an eventHeader.</span>
 }
 </pre></div>
 </div>

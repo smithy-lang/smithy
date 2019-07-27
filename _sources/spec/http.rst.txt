@@ -65,29 +65,29 @@ The following example defines an operation that uses HTTP bindings:
         operation PutObject(PutObjectInput)
 
         structure PutObjectInput {
-          // Sent in the URI label named "key".
-          @required
-          @httpLabel
-          key: ObjectKey,
+            // Sent in the URI label named "key".
+            @required
+            @httpLabel
+            key: ObjectKey,
 
-          // Sent in the URI label named "bucketName".
-          @required
-          @httpLabel
-          bucketName: String,
+            // Sent in the URI label named "bucketName".
+            @required
+            @httpLabel
+            bucketName: String,
 
-          // Sent in the X-Foo header
-          @httpHeader("X-Foo")
-          foo: String,
+            // Sent in the X-Foo header
+            @httpHeader("X-Foo")
+            foo: String,
 
-          // Sent in the query string as paramName
-          @httpQuery("paramName")
-          someValue: String,
+            // Sent in the query string as paramName
+            @httpQuery("paramName")
+            someValue: String,
 
-          // Sent in the body
-          data: MyBlob,
+            // Sent in the body
+            data: MyBlob,
 
-          // Sent in the body
-          additional: String,
+            // Sent in the body
+            additional: String,
         }
 
 
@@ -475,10 +475,10 @@ Trait selector
     .. code-block:: css
 
         :test(
-          member:of(structure) > :test(
-            boolean, number, string, timestamp,
-            collection > member > :test(boolean, number, string, timestamp)
-          )
+            member:of(structure) > :test(
+                boolean, number, string, timestamp,
+                collection > member > :test(boolean, number, string, timestamp)
+            )
         )
 
     *Structure members that target boolean, number, string, or timestamp; or a structure member that targets a list/set of these types*
@@ -528,6 +528,9 @@ Various HTTP headers are not allowed for the ``httpHeader`` and
 
     * - Header
       - Reason
+    * - Authorization
+      - This header is controlled by the :ref:`protocols-trait` and
+        :ref:`auth-trait`.
     * - Connection
       - This is controlled at a lower level by the HTTP client or server.
     * - Content-Length
@@ -571,9 +574,9 @@ Trait selector
     .. code-block:: css
 
         :test(
-          member:of(structure) > :test(
-            string, number, boolean, timestamp
-          )
+            member:of(structure) > :test(
+                string, number, boolean, timestamp
+            )
         )
 
     *Structure members that target any simple type other than blobs*
@@ -620,9 +623,9 @@ Serialization rules:
         operation GetStatus(GetStatusInput) -> GetStatusOutput
 
         structure GetStatusInput {
-          @required
-          @httpLabel
-          foo: String
+            @required
+            @httpLabel
+            foo: String
         }
 
 
@@ -637,9 +640,9 @@ Trait selector
     .. code-block:: css
 
         :test(
-          member:of(structure) > :test(
-            string, blob, structure, union
-          )
+            member:of(structure) > :test(
+                string, blob, structure, union
+            )
         )
 
     *Structure members that target a string, blob, structure, or union*
@@ -686,10 +689,10 @@ Trait selector
     .. code-block:: css
 
         :test(
-          member:of(structure) > map > member[id|member=value] > :test(
-            simpleType,
-            collection > member > simpleType
-          )
+            member:of(structure) > map > member[id|member=value] > :test(
+                simpleType,
+                collection > member > simpleType
+            )
         )
 
     *Structure member that targets a map of simple types or a map of [simple types]*
@@ -722,13 +725,13 @@ Given the following Smithy model:
         operation MyOperation(MyOperationInput)
 
         structure MyOperationInput {
-          @httpPrefixHeaders("X-Foo-")
-          headers: StringMap
+            @httpPrefixHeaders("X-Foo-")
+            headers: StringMap
         }
 
         map StringMap {
-          key: String,
-          value: String
+            key: String,
+            value: String
         }
 
 And given the following input to ``MyOperation``:
@@ -736,10 +739,10 @@ And given the following input to ``MyOperation``:
 .. code-block:: json
 
     {
-      "headers": {
-        "first": "hi",
-        "second": "there"
-      }
+        "headers": {
+            "first": "hi",
+            "second": "there"
+        }
     }
 
 An example HTTP request would be serialized as:
@@ -763,10 +766,10 @@ Trait selector
     .. code-block:: css
 
         :test(
-          member:of(structure) > :test(
-            simpleType,
-            collection > member > simpleType
-          )
+            member:of(structure) > :test(
+                simpleType,
+                collection > member > simpleType
+            )
         )
 
     *Structure members that target simple types or lists/sets of simple types*
@@ -935,12 +938,12 @@ HTTP bindings:
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
-          @httpPayload
-          messages: Message,
+            @httpPayload
+            messages: Message,
         }
 
         structure Message {
-          message: String,
+            message: String,
         }
 
     .. code-tab:: json
@@ -984,7 +987,7 @@ references a member that is not marked with the ``httpPayload`` trait:
     operation InvalidOperation(InvalidOperationInput)
 
     structure InvalidOperationInput {
-      invalid: Message, // <-- Missing the @httpPayload trait
+        invalid: Message, // <-- Missing the @httpPayload trait
     }
 
 

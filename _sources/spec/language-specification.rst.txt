@@ -365,7 +365,7 @@ The following documentation comments are all invalid.
     @deprecated
     /// Invalid (comes after the @deprecated trait)
     structure Example {
-      /// Invalid (cannot apply docs to '}')
+        /// Invalid (cannot apply docs to '}')
     }
 
     /// Invalid (nothing comes after the comment)
@@ -393,15 +393,15 @@ members.
 
     @documentation("An animal in the animal kingdom")
     structure Animal {
-      @required
-      name: smithy.api#String,
+        @required
+        name: smithy.api#String,
 
-      @deprecated
-      @deprecationReason("Use name instead")
-      subject: smithy.api#String,
+        @deprecated
+        @deprecationReason("Use name instead")
+        subject: smithy.api#String,
 
-      @length(min: 0)
-      age: smithy.api#Integer,
+        @length(min: 0)
+        age: smithy.api#Integer,
     }
 
 
@@ -813,15 +813,15 @@ The following example defines a complex object metadata key:
 ::
 
     metadata foo = {
-      hello: 123,
-      'foo': "456",
-      testing: """
-          Hello!
-          """,
-      an_array: [10.5],
-      nested-object: {
-        hello-there$: true
-      }, // <-- Trailing comma
+        hello: 123,
+        'foo': "456",
+        testing: """
+            Hello!
+            """,
+        an_array: [10.5],
+        nested-object: {
+            hello-there$: true
+        }, // <-- Trailing comma
     }
 
 
@@ -938,15 +938,15 @@ Any additional properties found in shape definitions are considered
 .. code-block:: json
 
     {
-      "smithy": "0.3.0",
-      "smithy.example": {
-        "shapes": {
-          "MyString": {
-            "type": "string",
-            "documentation": "My documentation string"
-          }
+        "smithy": "0.3.0",
+        "smithy.example": {
+            "shapes": {
+                "MyString": {
+                    "type": "string",
+                    "documentation": "My documentation string"
+                }
+            }
         }
-      }
     }
 
 
@@ -959,23 +959,23 @@ example defines a shape for each simple type:
 .. code-block:: json
 
     {
-      "smithy": "0.3.0",
-      "smithy.example": {
-        "shapes": {
-          "Blob": {"type": "blob"},
-          "Boolean": {"type": "boolean"},
-          "String": {"type": "string"},
-          "Byte": {"type": "byte"},
-          "Short": {"type": "short"},
-          "Integer": {"type": "integer"},
-          "Long": {"type": "long"},
-          "Float": {"type": "float"},
-          "Double": {"type": "double"},
-          "BigInteger": {"type": "bigInteger"},
-          "BigDecimal": {"type": "bigDecimal"},
-          "Timestamp": {"type": "timestamp"}
+        "smithy": "0.3.0",
+        "smithy.example": {
+            "shapes": {
+                "Blob": {"type": "blob"},
+                "Boolean": {"type": "boolean"},
+                "String": {"type": "string"},
+                "Byte": {"type": "byte"},
+                "Short": {"type": "short"},
+                "Integer": {"type": "integer"},
+                "Long": {"type": "long"},
+                "Float": {"type": "float"},
+                "Double": {"type": "double"},
+                "BigInteger": {"type": "bigInteger"},
+                "BigDecimal": {"type": "bigDecimal"},
+                "Timestamp": {"type": "timestamp"}
+            }
         }
-      }
     }
 
 
@@ -1000,15 +1000,15 @@ The following example defines a list with a string member:
 .. code-block:: json
 
     {
-      "smithy": "0.3.0",
-      "smithy.example": {
-        "shapes": {
-          "MyList": {
-            "type": "list",
-            "member": { "target": "smithy.api#String" }
-          }
+        "smithy": "0.3.0",
+        "smithy.example": {
+            "shapes": {
+                "MyList": {
+                    "type": "list",
+                    "member": { "target": "smithy.api#String" }
+                }
+            }
         }
-      }
     }
 
 
@@ -1037,16 +1037,16 @@ The following example defines a map of strings to numbers:
 .. code-block:: json
 
     {
-      "smithy": "0.3.0",
-      "smithy.example": {
-        "shapes": {
-          "IntegerMap": {
-            "type": "map",
-            "key": { "target": "smithy.api#String" },
-            "value": { "target": "smithy.api#Integer" }
-          }
+        "smithy": "0.3.0",
+        "smithy.example": {
+            "shapes": {
+                "IntegerMap": {
+                    "type": "map",
+                    "key": { "target": "smithy.api#String" },
+                    "value": { "target": "smithy.api#Integer" }
+                }
+            }
         }
-      }
     }
 
 
@@ -1077,23 +1077,23 @@ member:
 .. code-block:: json
 
     {
-      "smithy": "0.3.0",
-      "smithy.example": {
-        "shapes": {
-          "MyStructure": {
-            "type": "structure",
-            "members": {
-              "stringMember": {
-                "target": "smithy.api#String",
-                "required": true
-              },
-              "numberMember": {
-                "target": "smithy.api#Integer"
+        "smithy": "0.3.0",
+        "smithy.example": {
+          "shapes": {
+              "MyStructure": {
+                  "type": "structure",
+                  "members": {
+                      "stringMember": {
+                          "target": "smithy.api#String",
+                          "required": true
+                      },
+                      "numberMember": {
+                          "target": "smithy.api#Integer"
+                      }
+                  }
               }
-            }
           }
         }
-      }
     }
 
 The following example defines a union:
@@ -1101,22 +1101,22 @@ The following example defines a union:
 .. code-block:: json
 
     {
-      "smithy": "0.3.0",
-      "smithy.example": {
-        "shapes": {
-          "MyUnion": {
-            "type": "union",
-            "members": {
-              "a": {
-                "target": "smithy.api#String"
-              },
-              "b": {
-                "target": "smithy.api#Integer"
-              }
+        "smithy": "0.3.0",
+        "smithy.example": {
+            "shapes": {
+                "MyUnion": {
+                    "type": "union",
+                    "members": {
+                        "a": {
+                            "target": "smithy.api#String"
+                        },
+                        "b": {
+                            "target": "smithy.api#Integer"
+                        }
+                    }
+                }
             }
-          }
         }
-      }
     }
 
 
@@ -1147,18 +1147,18 @@ documentation trait to the member:
 .. code-block:: json
 
     {
-      "smithy": "0.3.0",
-      "smithy.example": {
-        "shapes": {
-          "MyList": {
-            "type": "list",
-            "member": {
-              "target": "MyString",
-              "documentation": "Documentation specific to the member of the list."
+        "smithy": "0.3.0",
+        "smithy.example": {
+            "shapes": {
+                "MyList": {
+                    "type": "list",
+                    "member": {
+                        "target": "MyString",
+                        "documentation": "Documentation specific to the member of the list."
+                    }
+                }
             }
-          }
         }
-      }
     }
 
 
@@ -1214,31 +1214,31 @@ The following example defines an operation, its input, output, and errors:
 .. code-block:: json
 
     {
-      "smithy": "0.3.0",
-      "smithy.example": {
-        "shapes": {
-          "MyOperation": {
-            "type": "operation",
-            "input": "MyOperationInput",
-            "output": "MyOperationOutput",
-            "errors": ["BadRequestError", "NotFoundError"]
-          },
-          "MyOperationInput": {
-            "type": "structure",
-          },
-          "MyOperationOutput": {
-            "type": "structure",
-          },
-          "BadRequestError": {
-            "type": "structure",
-            "error": "client"
-          },
-          "NotFoundError": {
-            "type": "structure",
-            "error": "client"
-          }
+        "smithy": "0.3.0",
+        "smithy.example": {
+            "shapes": {
+                "MyOperation": {
+                    "type": "operation",
+                    "input": "MyOperationInput",
+                    "output": "MyOperationOutput",
+                    "errors": ["BadRequestError", "NotFoundError"]
+                },
+                "MyOperationInput": {
+                    "type": "structure",
+                },
+                "MyOperationOutput": {
+                    "type": "structure",
+                },
+                "BadRequestError": {
+                    "type": "structure",
+                    "error": "client"
+                },
+                "NotFoundError": {
+                    "type": "structure",
+                    "error": "client"
+                }
+            }
         }
-      }
     }
 
 .. _ABNF: https://tools.ietf.org/html/rfc5234

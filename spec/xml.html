@@ -128,9 +128,9 @@ payloads.</p>
 structure.</dd>
 <dt>Trait selector</dt>
 <dd><div class="first highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-  <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
-    <span class="nt">boolean</span><span class="o">,</span> <span class="nt">number</span><span class="o">,</span> <span class="nt">string</span><span class="o">,</span> <span class="nt">timestamp</span>
-  <span class="o">)</span>
+    <span class="nt">member</span><span class="p">:</span><span class="nd">of</span><span class="o">(</span><span class="nt">structure</span><span class="o">)</span> <span class="o">&gt;</span> <span class="p">:</span><span class="nd">test</span><span class="o">(</span>
+        <span class="nt">boolean</span><span class="o">,</span> <span class="nt">number</span><span class="o">,</span> <span class="nt">string</span><span class="o">,</span> <span class="nt">timestamp</span>
+    <span class="o">)</span>
 <span class="o">)</span>
 </pre></div>
 </div>
@@ -155,10 +155,10 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> MyStructure</span> {
-  <span class="nd">@xmlAttribute</span>
-  <span class="nl">foo:</span> <span class="vc">String</span>,
+    <span class="nd">@xmlAttribute</span>
+    <span class="nl">foo:</span> <span class="vc">String</span>,
 
-  <span class="nl">bar:</span> <span class="vc">String</span>,
+    <span class="nl">bar:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -228,7 +228,7 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@xmlFlattened</span>
 <span class="kd">list</span><span class="nc"> MyList</span> {
-  <span class="nl">member:</span> <span class="vc">String</span>
+    <span class="nl">member:</span> <span class="vc">String</span>
 }
 </pre></div>
 </div>
@@ -289,10 +289,10 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> MyStructure</span> {
-  <span class="nd">@xmlName</span>(<span class="s2">&quot;Foo&quot;</span>)
-  <span class="nl">foo:</span> <span class="vc">String</span>,
+    <span class="nd">@xmlName</span>(<span class="s2">&quot;Foo&quot;</span>)
+    <span class="nl">foo:</span> <span class="vc">String</span>,
 
-  <span class="nl">bar:</span> <span class="vc">String</span>,
+    <span class="nl">bar:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -393,8 +393,8 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@xmlNamespace</span>(<span class="nl">uri:</span> <span class="s2">&quot;http://foo.com&quot;</span>)
 <span class="kd">structure</span><span class="nc"> MyStructure</span> {
-  <span class="nl">foo:</span> <span class="vc">String</span>,
-  <span class="nl">bar:</span> <span class="vc">String</span>,
+    <span class="nl">foo:</span> <span class="vc">String</span>,
+    <span class="nl">bar:</span> <span class="vc">String</span>,
 }
 </pre></div>
 </div>
@@ -456,19 +456,19 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> MyStructure</span> {
-  <span class="nd">@xmlAttribute</span>
-  <span class="nl">foo:</span> <span class="vc">String</span>,
+    <span class="nd">@xmlAttribute</span>
+    <span class="nl">foo:</span> <span class="vc">String</span>,
 
-  <span class="nd">@xmlName</span>(<span class="s2">&quot;Bar&quot;</span>)
-  <span class="nl">bar:</span> <span class="vc">String</span>,
+    <span class="nd">@xmlName</span>(<span class="s2">&quot;Bar&quot;</span>)
+    <span class="nl">bar:</span> <span class="vc">String</span>,
 
-  <span class="nl">baz:</span> <span class="vc">MyList</span>
+    <span class="nl">baz:</span> <span class="vc">MyList</span>
 }
 
 <span class="nd">@xmlFlattened</span>
 <span class="kd">list</span><span class="nc"> MyList</span> {
-  <span class="nd">@xmlName</span>(<span class="s2">&quot;Item&quot;</span>)
-  <span class="nl">member:</span> <span class="vc">String</span>
+    <span class="nd">@xmlName</span>(<span class="s2">&quot;Item&quot;</span>)
+    <span class="nl">member:</span> <span class="vc">String</span>
 }
 </pre></div>
 </div>
