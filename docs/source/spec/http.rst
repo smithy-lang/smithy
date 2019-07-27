@@ -528,6 +528,9 @@ Various HTTP headers are not allowed for the ``httpHeader`` and
 
     * - Header
       - Reason
+    * - Authorization
+      - This header is controlled by the :ref:`protocols-trait` and
+        :ref:`auth-trait`.
     * - Connection
       - This is controlled at a lower level by the HTTP client or server.
     * - Content-Length
