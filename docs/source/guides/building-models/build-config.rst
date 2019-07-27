@@ -198,23 +198,23 @@ projections are applied in the order provided. No cycles are allowed in
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "my-abstract-projection": {
-              "abstract": true,
-              "transforms": [
-                {"name": "foo"}
-              ]
-            },
-            "projection-name": {
-              "imports": ["projection-specific-imports/"],
-              "transforms": [
-                {"name": "baz"},
-                {"name": "apply", "arguments": ["my-abstract-projection"]},
-                {"name": "bar"}
-              ]
+            "version": "1.0",
+            "projections": {
+                "my-abstract-projection": {
+                    "abstract": true,
+                    "transforms": [
+                        {"name": "foo"}
+                    ]
+                },
+                "projection-name": {
+                    "imports": ["projection-specific-imports/"],
+                    "transforms": [
+                        {"name": "baz"},
+                        {"name": "apply", "arguments": ["my-abstract-projection"]},
+                        {"name": "bar"}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -233,14 +233,14 @@ the :ref:`tags trait <tags-trait>`.
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "excludeByTag", "arguments": ["foo", "baz"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "excludeByTag", "arguments": ["foo", "baz"]}
+                    ]
+                }
             }
-          }
         }
 
 .. note::
@@ -263,14 +263,14 @@ via the :ref:`tags trait <tags-trait>`.
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "includeByTag", "arguments": ["foo", "baz"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "includeByTag", "arguments": ["foo", "baz"]}
+                    ]
+                }
             }
-          }
         }
 
 .. note::
@@ -291,14 +291,14 @@ Note that this does not filter out traits based on namespaces.
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "includeNamespaces", "arguments": ["com.foo.bar", "my.api"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "includeNamespaces", "arguments": ["com.foo.bar", "my.api"]}
+                    ]
+                }
             }
-          }
         }
 
 .. note::
@@ -319,14 +319,14 @@ service shape IDs.
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "includeServices", "arguments": ["my.api#MyService"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "includeServices", "arguments": ["my.api#MyService"]}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -344,14 +344,14 @@ provided arguments (a list of allowed tags).
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "excludeTags", "arguments": ["tagA", "tagB"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "excludeTags", "arguments": ["tagA", "tagB"]}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -373,14 +373,14 @@ orphaned shapes.
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "excludeTraits", "arguments": ["since", "com.foo#customTrait"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "excludeTraits", "arguments": ["since", "com.foo#customTrait"]}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -393,14 +393,14 @@ all traits in the "example.foo" namespace:
     .. code-tab:: json
     
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "excludeTraits", "arguments": ["example.foo#"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "excludeTraits", "arguments": ["example.foo#"]}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -422,14 +422,14 @@ orphaned shapes.
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "excludeTraitsByTag", "arguments": ["internal"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "excludeTraitsByTag", "arguments": ["internal"]}
+                    ]
+                }
             }
-          }
         }
 
 .. note::
@@ -450,14 +450,14 @@ given arguments (a list of authentication schemes).
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "includeAuth", "arguments": ["aws.v4", "http-basic"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "includeAuth", "arguments": ["aws.v4", "http-basic"]}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -474,14 +474,14 @@ arguments (a list of protocol names).
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "includeProtocols", "arguments": ["aws.rest-json"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "includeProtocols", "arguments": ["aws.rest-json"]}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -498,14 +498,14 @@ argument list (a list of allowed tags).
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "includeTags", "arguments": ["foo", "baz"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "includeTags", "arguments": ["foo", "baz"]}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -527,14 +527,14 @@ orphaned shapes.
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "includeTraits", "arguments": ["sensitive", "com.foo.baz#customTrait"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "includeTraits", "arguments": ["sensitive", "com.foo.baz#customTrait"]}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -547,14 +547,14 @@ all traits in the "smithy.api" namespace:
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "includeTraits", "arguments": ["smithy.api#"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "includeTraits", "arguments": ["smithy.api#"]}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -576,14 +576,14 @@ orphaned shapes.
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "includeTraitsByTag", "arguments": ["public"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "includeTraitsByTag", "arguments": ["public"]}
+                    ]
+                }
             }
-          }
         }
 
 .. note::
@@ -613,14 +613,14 @@ but keeps the shape if it has any of the provided tags:
     .. code-tab:: json
 
         {
-          "version": "1.0",
-          "projections": {
-            "exampleProjection": {
-              "transforms": [
-                {"name": "removeUnusedShapes", "arguments": ["export-tag1", "another-export-tag"]}
-              ]
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {"name": "removeUnusedShapes", "arguments": ["export-tag1", "another-export-tag"]}
+                    ]
+                }
             }
-          }
         }
 
 
@@ -644,14 +644,14 @@ Consider the following ``smithy-build.json`` file:
 .. code-block:: json
 
     {
-      "version": "1.0",
-      "projections": {
-        "a": {
-          "transforms": [
-            {"${NAME_KEY}": "includeByTag", "args": ["${FOO}", "\\${BAZ}"]}
-          ]
+        "version": "1.0",
+        "projections": {
+            "a": {
+                "transforms": [
+                    {"${NAME_KEY}": "includeByTag", "args": ["${FOO}", "\\${BAZ}"]}
+                ]
+            }
         }
-      }
     }
 
 Assuming that ``NAME_KEY`` is a system property set to "name", and ``FOO`` is an
@@ -660,14 +660,14 @@ environment variable set to "hi", this file is equivalent to:
 .. code-block:: json
 
     {
-      "version": "1.0",
-      "projections": {
-        "a": {
-          "transforms": [
-            {"name": "includeByTag", "args": ["Hi", "${BAZ}"]}
-          ]
+        "version": "1.0",
+        "projections": {
+            "a": {
+                "transforms": [
+                    {"name": "includeByTag", "args": ["Hi", "${BAZ}"]}
+                ]
+            }
         }
-      }
     }
 
 

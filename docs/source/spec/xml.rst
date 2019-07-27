@@ -25,9 +25,9 @@ Trait selector
     .. code-block:: css
 
         :test(
-          member:of(structure) > :test(
-            boolean, number, string, timestamp
-          )
+            member:of(structure) > :test(
+                boolean, number, string, timestamp
+            )
         )
 
     *Structure members that target boolean, number, string, or timestamp*
@@ -43,10 +43,10 @@ Given the following structure definition,
     .. code-tab:: smithy
 
         structure MyStructure {
-          @xmlAttribute
-          foo: String,
+            @xmlAttribute
+            foo: String,
 
-          bar: String,
+            bar: String,
         }
 
     .. code-tab:: json
@@ -112,7 +112,7 @@ Given the following structure definition,
 
         @xmlFlattened
         list MyList {
-          member: String
+            member: String
         }
 
     .. code-tab:: json
@@ -169,10 +169,10 @@ Given the following structure definition,
     .. code-tab:: smithy
 
         structure MyStructure {
-          @xmlName("Foo")
-          foo: String,
+            @xmlName("Foo")
+            foo: String,
 
-          bar: String,
+            bar: String,
         }
 
     .. code-tab:: json
@@ -261,8 +261,8 @@ Given the following structure definition,
 
         @xmlNamespace(uri: "http://foo.com")
         structure MyStructure {
-          foo: String,
-          bar: String,
+            foo: String,
+            bar: String,
         }
 
     .. code-tab:: json
@@ -321,19 +321,19 @@ influence the overall structure of the payload.
     .. code-tab:: smithy
 
         structure MyStructure {
-          @xmlAttribute
-          foo: String,
+            @xmlAttribute
+            foo: String,
 
-          @xmlName("Bar")
-          bar: String,
+            @xmlName("Bar")
+            bar: String,
 
-          baz: MyList
+            baz: MyList
         }
 
         @xmlFlattened
         list MyList {
-          @xmlName("Item")
-          member: String
+            @xmlName("Item")
+            member: String
         }
 
     .. code-tab:: json

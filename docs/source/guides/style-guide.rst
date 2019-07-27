@@ -26,11 +26,21 @@ Smithy models SHOULD resemble the following example:
 
     namespace smithy.example.namespace
 
-    @documentation("Documentation")
+    /// This is the documentation
+    @sensitive
     string MyShape
 
+    /// This is the documentation.
     integer AnotherShape
-    apply AnotherShape @documentation("Documentation")
+
+    /// Documentation about the structure.
+    ///
+    /// More descriptive documentation if needed...
+    structure MyStructure {
+        /// Documentation about the member.
+        @required
+        foo: String,
+    }
 
     // Example of creating custom traits.
     @trait(selector: "string")
@@ -78,7 +88,7 @@ Formatting
 Indentation
 -----------
 
-Models are indented using two spaces.
+Models are indented using four spaces.
 
 
 Whitespace

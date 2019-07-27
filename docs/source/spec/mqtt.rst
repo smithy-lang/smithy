@@ -98,15 +98,15 @@ and ``{second}``, in the MQTT topic template:
         operation ExampleOperation(ExampleOperationInput)
 
         structure ExampleOperationInput {
-          @required
-          @topicLabel
-          first: String,
+            @required
+            @topicLabel
+            first: String,
 
-          @required
-          @topicLabel
-          second: String,
+            @required
+            @topicLabel
+            second: String,
 
-          message: String,
+            message: String,
         }
 
     .. code-tab:: json
@@ -202,12 +202,12 @@ The following example defines an operation that publishes messages to the
         operation PostFoo(PostFooInput)
 
         structure PostFooInput {
-          @required
-          @topicLabel
-          bar: String,
+            @required
+            @topicLabel
+            bar: String,
 
-          someValue: String,
-          anotherValue: Boolean,
+            someValue: String,
+            anotherValue: Boolean,
         }
 
     .. code-tab:: json
@@ -310,17 +310,17 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
         operation SubscribeForEvents(SubscribeForEventsInput) -> SubscribeForEventsOutput
 
         structure SubscribeForEventsInput {
-          @required
-          @topicLabel
-          id: String,
+            @required
+            @topicLabel
+            id: String,
         }
 
         structure SubscribeForEventsOutput {
-          events: Event,
+            events: Event,
         }
 
         structure Event {
-          message: String,
+            message: String,
         }
 
     .. code-tab:: json

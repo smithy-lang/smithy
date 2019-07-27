@@ -46,7 +46,7 @@ The following example defines an AWS service that uses the default values of
 
         @service(sdkId: "Some Value")
         service FooBaz {
-          version: "2018-03-17",
+            version: "2018-03-17",
         }
 
     .. code-tab:: json
@@ -83,7 +83,7 @@ The following example provides explicit values for all properties:
             arnNamespace: "myservice",
             cloudTrailEventSource: "myservice.amazon.aws")
         service FooBaz {
-          version: "2018-03-17",
+            version: "2018-03-17",
         }
 
     .. code-tab:: json
@@ -376,38 +376,38 @@ For example, given the following service:
 
         @service(sdkId: "Some Value")
         service FooBaz {
-          version: "2018-03-17",
-          resources: [MyResource],
+            version: "2018-03-17",
+            resources: [MyResource],
         }
 
         @arn(template: "myresource/{myId}")
         resource MyResource {
-          identifiers: {myId: MyResourceId},
+            identifiers: {myId: MyResourceId},
         }
 
     .. code-tab:: json
 
         {
-          "smithy": "0.3.0",
-          "smithy.example": {
-            "shapes": {
-              "FooBaz": {
-                "type": "service",
-                "version": "2018-03-17",
-                "resources": ["MyResource"],
-                "aws.api#service": {
-                  "sdkId": "Some Value"
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "FooBaz": {
+                        "type": "service",
+                        "version": "2018-03-17",
+                        "resources": ["MyResource"],
+                        "aws.api#service": {
+                            "sdkId": "Some Value"
+                        }
+                    },
+                    "MyResource": {
+                        "type": "resource",
+                        "identifiers": {"myId": "MyResourceId"},
+                        "aws.api#arn": {
+                            "template": "myresource/{myId}"
+                        }
+                    }
                 }
-              },
-              "MyResource": {
-                "type": "resource",
-                "identifiers": {"myId": "MyResourceId"},
-                "aws.api#arn": {
-                  "template": "myresource/{myId}"
-                }
-              }
             }
-          }
         }
 
 The ARN template assigned to ``MyResource`` when used with the ``FooBaz``
@@ -435,7 +435,7 @@ resource.
 
         @arn(template: "{arn}", absolute: true)
         resource MyResource {
-          identifiers: {arn: Arn}
+            identifiers: {arn: Arn}
         }
 
         @arnReference(service: FooBaz, resource: MyResource)
@@ -444,28 +444,28 @@ resource.
     .. code-tab:: json
 
         {
-          "smithy": "0.3.0",
-          "smithy.example": {
-            "shapes": {
-              "MyResource": {
-                "type": "resource",
-                "identifiers": {
-                  "arn": "Arn"
-                },
-                "aws.api#arn": {
-                  "template": "{arn}",
-                  "absolute": true
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "MyResource": {
+                        "type": "resource",
+                        "identifiers": {
+                            "arn": "Arn"
+                        },
+                        "aws.api#arn": {
+                            "template": "{arn}",
+                            "absolute": true
+                        }
+                    },
+                    "Arn": {
+                        "type": "string",
+                        "aws.api#arnReference": {
+                            "service": "FooBaz",
+                            "resource": "MyResource"
+                        }
+                    }
                 }
-              },
-              "Arn": {
-                "type": "string",
-                "aws.api#arnReference": {
-                  "service": "FooBaz",
-                  "resource": "MyResource"
-                }
-              }
             }
-          }
         }
 
 
@@ -614,12 +614,12 @@ structure, union, or collection unless overridden.
 
         @data("permissions")
         structure MyStructure {
-          name: String,
+            name: String,
 
-          @data("content")
-          content: String,
+            @data("content")
+            content: String,
 
-          tags: TagList,
+            tags: TagList,
         }
 
         @data("tagging")
@@ -838,7 +838,7 @@ the service converted to lowercase characters).
         @service(sdkId: "Some Value")
         @protocols([{name: "aws.rest-json", auth: ["aws.v4"]}])
         service FooBaz {
-          version: "2018-03-17",
+            version: "2018-03-17",
         }
 
     .. code-tab:: json

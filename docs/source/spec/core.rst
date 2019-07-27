@@ -122,7 +122,7 @@ statements start with ``metadata``, followed by the key to set, followed by
         metadata foo = "baz"
         metadata hello = "bar"
         metadata "lorem" = {
-          ipsum: ["dolor"]
+            ipsum: ["dolor"]
         }
 
     .. code-tab:: json
@@ -278,50 +278,50 @@ The following example defines a shape for each simple type in the
     .. code-tab:: json
 
         {
-          "smithy": "0.3.0",
-          "smithy.example": {
-            "shapes": {
-              "Blob": {
-                "type": "blob",
-              },
-              "Boolean": {
-                "type": "boolean"
-              },
-              "String": {
-                "type": "string"
-              },
-              "Byte": {
-                "type": "byte"
-              },
-              "Short": {
-                "type": "short"
-              },
-              "Integer": {
-                "type": "integer"
-              },
-              "Long": {
-                "type": "long"
-              },
-              "Float": {
-                "type": "float"
-              },
-              "Double": {
-                "type": "double"
-              },
-              "BigInteger": {
-                "type": "bigInteger"
-              },
-              "BigDecimal": {
-                "type": "bigDecimal"
-              },
-              "Timestamp": {
-                "type": "timestamp"
-              },
-              "Document": {
-                "type": "document"
-              }
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "Blob": {
+                        "type": "blob",
+                    },
+                    "Boolean": {
+                        "type": "boolean"
+                    },
+                    "String": {
+                        "type": "string"
+                    },
+                    "Byte": {
+                        "type": "byte"
+                    },
+                    "Short": {
+                        "type": "short"
+                    },
+                    "Integer": {
+                        "type": "integer"
+                    },
+                    "Long": {
+                        "type": "long"
+                    },
+                    "Float": {
+                        "type": "float"
+                    },
+                    "Double": {
+                        "type": "double"
+                    },
+                    "BigInteger": {
+                        "type": "bigInteger"
+                    },
+                    "BigDecimal": {
+                        "type": "bigDecimal"
+                    },
+                    "Timestamp": {
+                        "type": "timestamp"
+                    },
+                    "Document": {
+                        "type": "document"
+                    }
+                }
             }
-          }
         }
 
 .. tip::
@@ -425,7 +425,7 @@ The following example defines a list with a string member from the
     .. code-tab:: smithy
 
         list MyList {
-          member: String
+            member: String
         }
 
     .. code-tab:: json
@@ -451,8 +451,8 @@ Traits can be applied to the list shape and its member:
 
         @length(min: 3, max: 10)
         list MyList {
-          @length(min: 1, max: 100)
-          member: String
+            @length(min: 1, max: 100)
+            member: String
         }
 
     .. code-tab:: json
@@ -522,7 +522,7 @@ The following example defines a set of strings:
     .. code-tab:: smithy
 
         set StringSet {
-          member: String
+            member: String
         }
 
     .. code-tab:: json
@@ -548,8 +548,8 @@ Traits can be applied to the set shape and its members:
 
         @deprecated
         set StringSet {
-          @sensitive
-          member: String
+            @sensitive
+            member: String
         }
 
         // Apply additional traits to the set member.
@@ -602,8 +602,8 @@ The following example defines a map of strings to integers:
     .. code-tab:: smithy
 
         map IntegerMap {
-          key: String,
-          value: Integer
+            key: String,
+            value: Integer
         }
 
     .. code-tab:: json
@@ -633,11 +633,11 @@ Traits can be applied to the map shape and its members:
 
         @length(min: 0, max: 100)
         map IntegerMap {
-          @length(min: 1, max: 10)
-          key: String,
+            @length(min: 1, max: 10)
+            key: String,
 
-          @sensitive
-          value: Integer
+            @sensitive
+            value: Integer
         }
 
         // Apply more traits to the key and value members.
@@ -699,8 +699,8 @@ The following example defines a structure with two members:
     .. code-tab:: smithy
 
         structure MyStructure {
-          foo: String,
-          baz: Integer,
+            foo: String,
+            baz: Integer,
         }
 
     .. code-tab:: json
@@ -732,11 +732,11 @@ using the ``apply`` statement:
     .. code-tab:: smithy
 
         structure MyStructure {
-          @required
-          foo: String,
+            @required
+            foo: String,
 
-          @deprecated
-          baz: Integer,
+            @deprecated
+            baz: Integer,
         }
 
         apply MyStructure$foo @documentation("Documentation content...")
@@ -789,9 +789,9 @@ The following example defines a union shape with several members:
     .. code-tab:: smithy
 
         union MyUnion {
-          i32: Integer,
-          stringA: String,
-          @sensitive stringB: String,
+            i32: Integer,
+            stringA: String,
+            @sensitive stringB: String,
         }
 
         // Apply additional traits to the member named "i32".
@@ -849,7 +849,7 @@ targets the ``MyString`` shape in the same namespace.
         namespace smithy.example
 
         list MyList {
-          member: MyString
+            member: MyString
         }
 
     .. code-tab:: json
@@ -874,8 +874,8 @@ Traits can be attached to members before the member definition:
     .. code-tab:: smithy
 
         list MyList {
-          @sensitive
-          member: MyString
+            @sensitive
+            member: MyString
         }
 
     .. code-tab:: json
@@ -1015,8 +1015,8 @@ that do not fit within a resource hierarchy.
     .. code-tab:: smithy
 
         service MyService {
-          version: "2017-02-11",
-          operations: [GetServerTime],
+            version: "2017-02-11",
+            operations: [GetServerTime],
         }
 
         @readonly
@@ -1062,8 +1062,8 @@ shape ID of a resource to the ``resources`` property of a service.
     .. code-tab:: smithy
 
         service MyService {
-          version: "2017-02-11",
-          resources: [MyResource],
+            version: "2017-02-11",
+            resources: [MyResource],
         }
 
         resource MyResource {}
@@ -1321,9 +1321,9 @@ single identifier named ``forecastId`` that targets the ``ForecastId`` shape:
         namespace smithy.example
 
         resource Forecast {
-          identifiers: {
-            forecastId: ForecastId
-          }
+            identifiers: {
+                forecastId: ForecastId
+            }
         }
 
         string ForecastId
@@ -1365,26 +1365,26 @@ For example, given the following model,
     .. code-tab:: smithy
 
         resource ResourceA {
-          identifiers: {
-            a: String
-          },
-          resources: [ResourceB],
+            identifiers: {
+                a: String
+            },
+            resources: [ResourceB],
         }
 
         resource ResourceB {
-          identifiers: {
-            a: String,
-            b: String,
-          },
-          resources: [ResourceC],
+            identifiers: {
+                a: String,
+                b: String,
+            },
+            resources: [ResourceC],
         }
 
         resource ResourceC {
-          identifiers: {
-            a: String,
-            b: String,
-            c: String,
-          }
+            identifiers: {
+                a: String,
+                b: String,
+                c: String,
+            }
         }
 
     .. code-tab:: json
@@ -1432,26 +1432,26 @@ define an ``identifiers`` property that is compatible with their parents:
     .. code-tab:: smithy
 
         resource ResourceA {
-          identifiers: {
-            a: String,
-            b: String,
-          },
-          resources: [Invalid1, Invalid2],
+            identifiers: {
+                a: String,
+                b: String,
+            },
+            resources: [Invalid1, Invalid2],
         }
 
         resource Invalid1 {
-          // Invalid: missing "a".
-          identifiers: {
-            b: String,
-          },
+            // Invalid: missing "a".
+            identifiers: {
+                b: String,
+            },
         }
 
         resource Invalid2 {
-          identifiers: {
-            a: String,
-            // Invalid: does not target the same shape.
-            b: SomeOtherString,
-          },
+            identifiers: {
+                a: String,
+                // Invalid: does not target the same shape.
+                b: SomeOtherString,
+            },
         }
 
     .. code-tab:: json
@@ -1539,23 +1539,23 @@ For example, given the following model,
     .. code-tab:: smithy
 
         resource Forecast {
-          identifiers: {
-            forecastId: ForecastId,
-          },
-          read: GetForecast,
+            identifiers: {
+                forecastId: ForecastId,
+            },
+            read: GetForecast,
         }
 
         @readonly
         operation GetForecast(GetForecastInput) -> GetForecastOutput
 
         structure GetForecastInput {
-          @required
-          forecastId: ForecastId,
+            @required
+            forecastId: ForecastId,
         }
 
         structure GetForecastOutput {
-          @required
-          weather: WeatherData,
+            @required
+            weather: WeatherData,
         }
 
     .. code-tab:: json
@@ -1616,18 +1616,18 @@ Given the following model,
     .. code-tab:: smithy
 
         resource Forecast {
-          identifiers: {
-            forecastId: ForecastId,
-          },
-          operations: [BatchPutForecasts],
+            identifiers: {
+                forecastId: ForecastId,
+            },
+            operations: [BatchPutForecasts],
         }
 
         @collection
         operation BatchPutForecasts(BatchPutForecastsInput) -> BatchPutForecastsOutput
 
         structure BatchPutForecastsInput {
-          @required
-          forecasts: BatchPutForecastList,
+            @required
+            forecasts: BatchPutForecastList,
         }
 
     .. code-tab:: json
@@ -1682,30 +1682,31 @@ For example, given the following,
 .. code-block:: smithy
 
     resource Forecast {
-      // continued from above
-      resources: [HistoricalForecast],
+        // continued from above
+        resources: [HistoricalForecast],
     }
 
     resource HistoricalForecast {
-      identifiers: {
-        forecastId: ForecastId,
-        historicalId: HistoricalForecastId,
-      },
-      read: GetHistoricalForecast,
-      list: ListHistoricalForecasts,
+        identifiers: {
+            forecastId: ForecastId,
+            historicalId: HistoricalForecastId,
+        },
+        read: GetHistoricalForecast,
+        list: ListHistoricalForecasts,
     }
 
     @readonly
-    operation GetHistoricalForecast(GetHistoricalForecastInput) -> GetHistoricalForecastOutput
+    operation GetHistoricalForecast(GetHistoricalForecastInput)
+        -> GetHistoricalForecastOutput
 
     structure GetHistoricalForecastInput {
-      @required
-      @resourceIdentifier("forecastId")
-      customForecastIdName: ForecastId,
+        @required
+        @resourceIdentifier("forecastId")
+        customForecastIdName: ForecastId,
 
-      @required
-      @resourceIdentifier("historicalId")
-      customHistoricalIdName: String
+        @required
+        @resourceIdentifier("historicalId")
+        customHistoricalIdName: String
     }
 
 the :ref:`resourceIdentifier-trait` on ``GetHistoricalForecastInput$customForecastIdName``
@@ -1730,14 +1731,14 @@ The following snippet defines a resource with each lifecycle method:
 .. code-block:: smithy
 
     resource Forecast {
-      identifiers: {
-        forecastId: ForecastId,
-      },
-      create: CreateForecast,
-      read: GetForecast,
-      update: UpdateForecast,
-      delete: DeleteForecast,
-      list: ListForecasts,
+        identifiers: {
+            forecastId: ForecastId,
+        },
+        create: CreateForecast,
+        read: GetForecast,
+        update: UpdateForecast,
+        delete: DeleteForecast,
+        list: ListForecasts,
     }
 
 
@@ -1769,11 +1770,11 @@ the :ref:`idempotent-trait`. For example:
 .. code-block:: smithy
 
     structure CreateForecastInput {
-      // The client provides the resource identifier.
-      @required
-      forecastId: ForecastId,
+        // The client provides the resource identifier.
+        @required
+        forecastId: ForecastId,
 
-      chanceOfRain: Float
+        chanceOfRain: Float
     }
 
 A create operation can be defined as a :ref:`collection operation <collection-operations>`
@@ -1787,9 +1788,9 @@ is marked with the :ref:`collection-trait`. For example:
     operation CreateForecast(CreateForecastInput) -> CreateForecastOutput
 
     structure CreateForecastInput {
-      // No identifier is provided by the client, so the service is
-      // responsible for providing the identifier of the resource.
-      chanceOfRain: Float,
+        // No identifier is provided by the client, so the service is
+        // responsible for providing the identifier of the resource.
+        chanceOfRain: Float,
     }
 
 
@@ -1811,11 +1812,13 @@ For example:
 .. code-block:: smithy
 
     @readonly
-    operation GetForecast(GetForecastInput) -> GetForecastOutput errors [ResourceNotFound]
+    operation GetForecast(GetForecastInput)
+        -> GetForecastOutput
+        errors [ResourceNotFound]
 
     structure GetForecastInput {
-      @required
-      forecastId: ForecastId,
+        @required
+        forecastId: ForecastId,
     }
 
 
@@ -1836,13 +1839,15 @@ For example:
 
 .. code-block:: smithy
 
-    operation UpdateForecast(UpdateForecastInput) -> UpdateForecastOutput errors [ResourceNotFound]
+    operation UpdateForecast(UpdateForecastInput)
+        -> UpdateForecastOutput
+        errors [ResourceNotFound]
 
     structure UpdateForecastInput {
-      @required
-      forecastId: ForecastId,
+        @required
+        forecastId: ForecastId,
 
-      chanceOfRain: Float,
+        chanceOfRain: Float,
     }
 
 
@@ -1864,11 +1869,13 @@ For example:
 .. code-block:: smithy
 
     @idempotent
-    operation DeleteForecast(DeleteForecastInput) -> DeleteForecastOutput errors [ResourceNotFound]
+    operation DeleteForecast(DeleteForecastInput)
+        -> DeleteForecastOutput
+        errors [ResourceNotFound]
 
     structure DeleteForecastInput {
-      @required
-      forecastId: ForecastId,
+        @required
+        forecastId: ForecastId,
     }
 
 
@@ -1897,18 +1904,18 @@ For example:
     operation ListForecasts(ListForecastsInput) -> ListForecastsOutput
 
     structure ListForecastsInput {
-      maxResults: Integer,
-      nextToken: String
+        maxResults: Integer,
+        nextToken: String
     }
 
     structure ListForecastsOutput {
-      nextToken: String,
-      @required
-      forecasts: ForecastList
+        nextToken: String,
+        @required
+        forecasts: ForecastList
     }
 
     list ForecastList {
-      member: ForecastId
+        member: ForecastId
     }
 
 
@@ -2587,7 +2594,7 @@ duplicated on the ``MyList`` shape with different values:
 
     @length(min: 0, max: 10)
     list MyList {
-      member: String
+        member: String
     }
 
     apply MyList @length(min: 10, max: 20)
@@ -2601,7 +2608,7 @@ duplicated on the ``MyList`` shape with the same values:
 
     @length(min: 0, max: 10)
     list MyList {
-      member: String
+        member: String
     }
 
     apply MyList @length(min: 0, max: 10)
@@ -3099,8 +3106,8 @@ in Java).
         @retryable
         @httpError(429)
         structure ThrottlingError {
-          @required
-          message: String,
+            @required
+            message: String,
         }
 
 
@@ -3184,28 +3191,28 @@ The following example defines an enum of valid string values for ``MyString``.
     .. code-tab:: smithy
 
         @enum(
-          t2.nano: {
-            name: "T2_NANO",
-            documentation: """
-                T2 instances are Burstable Performance
-                Instances that provide a baseline level of CPU
-                performance with the ability to burst above the
-                baseline.""",
-            tags: ["ebsOnly"]
-          },
-          t2.micro: {
-            name: "T2_MICRO",
-            documentation: """
-                T2 instances are Burstable Performance
-                Instances that provide a baseline level of CPU
-                performance with the ability to burst above the
-                baseline.""",
-            tags: ["ebsOnly"]
-          },
-          m256.mega: {
-            name: "M256_MEGA",
-            deprecated: true
-          }
+            t2.nano: {
+                name: "T2_NANO",
+                documentation: """
+                    T2 instances are Burstable Performance
+                    Instances that provide a baseline level of CPU
+                    performance with the ability to burst above the
+                    baseline.""",
+                tags: ["ebsOnly"]
+            },
+            t2.micro: {
+                name: "T2_MICRO",
+                documentation: """
+                    T2 instances are Burstable Performance
+                    Instances that provide a baseline level of CPU
+                    performance with the ability to burst above the
+                    baseline.""",
+                tags: ["ebsOnly"]
+            },
+            m256.mega: {
+                name: "M256_MEGA",
+                deprecated: true
+            }
         )
         string MyString
 
@@ -3611,8 +3618,8 @@ in a response.
     .. code-tab:: smithy
 
         structure MyStructure {
-          @required
-          foo: FooString,
+            @required
+            foo: FooString,
         }
 
     .. code-tab:: json
@@ -3719,8 +3726,8 @@ member if and only if the member is not explicitly provided.
         operation AllocateWidget(AllocateWidgetInput)
 
         structure AllocateWidgetInput {
-          @idempotencyToken
-          clientToken: String,
+            @idempotencyToken
+            clientToken: String,
         }
 
 
@@ -3904,19 +3911,19 @@ explicitly on the operation.
         operation GetFoos(GetFoosInput) -> GetFoosOutput
 
         structure GetFoosInput {
-          maxResults: Integer,
-          nextToken: String
+            maxResults: Integer,
+            nextToken: String
         }
 
         structure GetFoosOutput {
-          nextToken: String,
+            nextToken: String,
 
-          @required
-          foos: StringList,
+            @required
+            foos: StringList,
         }
 
         list StringList {
-          member: String
+            member: String
         }
 
     .. code-tab:: json
@@ -3988,8 +3995,8 @@ settings from a service.
         @paginated(inputToken: "nextToken", outputToken: "nextToken",
                    pageSize: "maxResults")
         service Example {
-          version: "2019-06-27",
-          operations: [GetFoos],
+            version: "2019-06-27",
+            operations: [GetFoos],
         }
 
         @collection @readonly @paginated(items: "foos")
@@ -4303,25 +4310,25 @@ match for the name of the resource identifier.
     .. code-tab:: smithy
 
         resource File {
-          identifiers: {
-            directory: "String",
-            fileName: "String",
-          },
-          read: GetFile,
+            identifiers: {
+                directory: "String",
+                fileName: "String",
+            },
+            read: GetFile,
         }
 
         @readonly
         operation GetFile(GetFileInput) -> GetFileOutput errors [NoSuchResource]
 
         structure GetFileInput {
-          @required
-          directory: String,
+            @required
+            directory: String,
 
-          // resourceIdentifier is used because the input member name
-          // does not match the resource identifier name
-          @resourceIdentifier("fileName")
-          @required
-          name: String,
+            // resourceIdentifier is used because the input member name
+            // does not match the resource identifier name
+            @resourceIdentifier("fileName")
+            @required
+            name: String,
         }
 
 
@@ -4395,7 +4402,7 @@ The following example defines a service that supports both the
             {name: "smithy.example", auth: ["http-basic"]},
             {name: "aws.mqtt", auth: ["x.509"], tags: ["internal"]}])
         service WeatherService {
-          version: "2017-02-11",
+            version: "2017-02-11",
         }
 
     .. code-tab:: json
@@ -4631,10 +4638,10 @@ Given the following structure definition,
     .. code-tab:: smithy
 
         structure MyStructure {
-          @jsonName("Foo")
-          foo: String,
+            @jsonName("Foo")
+            foo: String,
 
-          bar: String,
+            bar: String,
         }
 
     .. code-tab:: json
@@ -4900,24 +4907,24 @@ These values use the same semantics and format as
         operation MyOperation(MyOperationInput) -> MyOperationOutput
 
         apply MyOperation @examples([
-          {
-            title: "Invoke MyOperation",
-            input: {
-              tags: ["foo", "baz", "bar"],
+            {
+                title: "Invoke MyOperation",
+                input: {
+                    tags: ["foo", "baz", "bar"],
+                },
+                output: {
+                    status: "PENDING",
+                }
             },
-            output: {
-              status: "PENDING",
-            }
-          },
-          {
-            title: "Another example for MyOperation",
-            input: {
-              foo: "baz",
+            {
+                title: "Another example for MyOperation",
+                input: {
+                    foo: "baz",
+                },
+                output: {
+                    status: "PENDING",
+                }
             },
-            output: {
-              status: "PENDING",
-            }
-          },
         ])
 
 
@@ -4939,7 +4946,7 @@ Value type
 
         @externalDocumentation("https://www.example.com/")
         service MyService {
-          version: "2006-03-01",
+            version: "2006-03-01",
         }
 
 
@@ -5033,7 +5040,7 @@ Value type
 
         @title("ACME Simple Image Service")
         service MySimpleImageService {
-          version: "2006-03-01",
+            version: "2006-03-01",
         }
 
 
@@ -5094,9 +5101,9 @@ The following example defines an operation that uses a custom endpoint:
         operation GetStatus(GetStatusInput) -> GetStatusOutput
 
         structure GetStatusInput {
-          @required
-          @hostLabel
-          foo: String
+            @required
+            @hostLabel
+            foo: String
         }
 
     .. code-tab:: json
@@ -5152,9 +5159,9 @@ Given the following operation,
         operation GetStatus(GetStatusInput) -> GetStatusOutput
 
         structure GetStatusInput {
-          @required
-          @hostLabel
-          foo: String
+            @required
+            @hostLabel
+            foo: String
         }
 
     .. code-tab:: json
@@ -5208,13 +5215,13 @@ Given the following operation,
         operation GetStatus(GetStatusInput) -> GetStatusOutput
 
         structure GetStatusInput {
-          @required
-          @hostLabel
-          foo: String
+            @required
+            @hostLabel
+            foo: String
 
-          @required
-          @hostLabel
-          bar: String
+            @required
+            @hostLabel
+            bar: String
         }
 
     .. code-tab:: json
@@ -5327,10 +5334,10 @@ Given the following operation,
         operation GetStatus(GetStatusInput) -> GetStatusOutput
 
         structure GetStatusInput {
-          @required
-          @hostLabel
-          @httpHeader("X-Foo")
-          foo: String
+            @required
+            @hostLabel
+            @httpHeader("X-Foo")
+            foo: String
         }
 
     .. code-tab:: json
@@ -5409,9 +5416,9 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
         operation GetStatus(GetStatusInput) -> GetStatusOutput
 
         structure GetStatusInput {
-          @required
-          @hostLabel
-          foo: String
+            @required
+            @hostLabel
+            foo: String
         }
 
     .. code-tab:: json
