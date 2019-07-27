@@ -79,6 +79,7 @@ AWS specifications
     :maxdepth: 1
 
     aws-core
+    aws-iam
     amazon-apigateway
 
 AWS-specific specifications are defined below.
@@ -88,5 +89,7 @@ AWS-specific specifications are defined below.
 
     * - :doc:`aws-core`
       - Defines core traits used to integrate Smithy models with AWS.
+    * - :doc:`aws-iam`
+      - Defines AWS IAM traits.
     * - :doc:`amazon-apigateway`
-      - Defines Amazon API Gateway traits and integrations.
+      - Defines Amazon API Gateway integrations.
