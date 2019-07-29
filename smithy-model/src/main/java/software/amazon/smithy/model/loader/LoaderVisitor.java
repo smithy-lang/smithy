@@ -470,12 +470,17 @@ final class LoaderVisitor {
             // The shape has been duplicated, so get the previously defined pending shape or built shape.
             SourceLocation previous = Optional.<FromSourceLocation>ofNullable(pendingShapes.get(id))
                     .orElseGet(() -> builtShapes.get(id)).getSourceLocation();
-            // Ignore duplicate shapes defined in the same file.
-            if (previous != SourceLocation.NONE && previous.equals(source.getSourceLocation())) {
+            // Cannot ignore duplicate member definitions.
+            boolean canIgnore = !id.getMember().isPresent()
+                                // Ignore duplicate shapes defined in the same file.
+                                && previous != SourceLocation.NONE
+                                && previous.equals(source.getSourceLocation());
+            if (canIgnore) {
                 LOGGER.warning(() -> "Ignoring duplicate shape definition defined in the same file: "
                                      + id + " defined at " + source.getSourceLocation());
             } else {
                 onError(ValidationEvent.builder()
+                                .shapeId(id)
                                 .eventId(Validator.MODEL_ERROR)
                                 .severity(Severity.ERROR)
                                 .sourceLocation(source)
