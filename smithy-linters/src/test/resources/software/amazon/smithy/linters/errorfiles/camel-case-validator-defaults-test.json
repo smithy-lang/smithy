@@ -25,6 +25,27 @@
                 "trait": true,
                 "type": "string"
             },
+            "lowerStructureTrait": {
+                "trait": true,
+                "type": "structure",
+                "members": {
+                    "lowerCamelCase": {
+                        "target": "Foo"
+                    }
+                }
+            },
+            "upperStructureTrait": {
+                "trait": true,
+                "type": "structure",
+                "members": {
+                    "UpperCamelCase": {
+                        "target": "Foo"
+                    },
+                    "snake_case": {
+                        "target": "Foo"
+                    }
+                }
+            },
             "Foo": {
                 "type": "string"
             },

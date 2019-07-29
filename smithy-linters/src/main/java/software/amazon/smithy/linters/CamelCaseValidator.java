@@ -23,10 +23,12 @@ import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
+import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Emits a validation event if shapes at a specific location do not match the
@@ -67,6 +69,7 @@ public final class CamelCaseValidator extends AbstractValidator {
 
         // Normal shapes are expected to be upper camel.
         model.getShapeIndex().shapes()
+                .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(shape -> !shape.hasTrait(TraitDefinition.class))
                 .filter(shape -> !getPattern(UPPER).matcher(shape.getId().getName()).find())
                 .map(shape -> danger(shape, format("%s shape name, `%s`, is not %s camel case",
