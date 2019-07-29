@@ -1,6 +1,8 @@
 software.amazon.smithy.aws.traits.ArnTrait$Provider
 software.amazon.smithy.aws.traits.ArnReferenceTrait$Provider
 software.amazon.smithy.aws.traits.CognitoUserPoolsSettingsTrait$Provider
+software.amazon.smithy.aws.traits.ControlPlaneTrait$Provider
+software.amazon.smithy.aws.traits.DataPlaneTrait$Provider
 software.amazon.smithy.aws.traits.DataTrait$Provider
 software.amazon.smithy.aws.traits.ServiceTrait$Provider
 software.amazon.smithy.aws.traits.UnsignedPayloadTrait$Provider
