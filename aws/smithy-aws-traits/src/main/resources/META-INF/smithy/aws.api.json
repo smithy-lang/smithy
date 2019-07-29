@@ -117,6 +117,22 @@
         "documentation": "Configures an Amazon Cognito User Pools auth scheme.",
         "tags": ["internal"]
       },
+      "controlPlane": {
+        "trait": {
+          "selector": ":test(service, resource, operation)",
+          "conflicts": ["aws.api#dataPlane"]
+        },
+        "type": "structure",
+        "documentation": "Defines a service, resource, or operation as operating on the control plane."
+      },
+      "dataPlane": {
+        "trait": {
+          "selector": ":test(service, resource, operation)",
+          "conflicts": ["aws.api#controlPlane"]
+        },
+        "type": "structure",
+        "documentation": "Defines a service, resource, or operation as operating on the data plane."
+      },
       "ArnNamespace": {
         "type": "string",
         "pattern": "^[a-z0-9.\\-]{1,63}$",

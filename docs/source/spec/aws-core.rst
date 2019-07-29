@@ -716,6 +716,102 @@ applied through the ``aws.api#data`` trait.
         permissions.
 
 
+.. _aws.api#controlPlane-trait:
+
+------------------------------
+``aws.api#controlPlane`` trait
+------------------------------
+
+Summary
+    Indicates that a service, resource, or operation is considered part of
+    the *control plane*.
+Trait selector
+    ``:test(service, resource, operation)``
+Value type
+    Annotation trait
+Conflicts with
+    :ref:`aws.api#dataPlane-trait`
+
+This trait is effectively inherited by shapes bound within a service or
+resource. When applied to a service or resource shape, all resources and
+operations bound within the shape are also considered part of the control
+plane unless an operation or resource is marked with the
+:ref:`aws.api#dataPlane-trait`.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        use aws.api#controlPlane
+
+        @controlPlane
+        operation PutThings(PutThingsInput) -> PutThingsOutput
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "PutThings": {
+                        "type": "operation",
+                        "input": "PutThingsInput",
+                        "output": "PutThingsOutput",
+                        "aws.api#controlPlane": true
+                    }
+                }
+            }
+        }
+
+
+.. _aws.api#dataPlane-trait:
+
+---------------------------
+``aws.api#dataPlane`` trait
+---------------------------
+
+Summary
+    Indicates that a service, resource, or operation is considered part of
+    the *data plane*.
+Trait selector
+    ``:test(service, resource, operation)``
+Value type
+    Annotation trait
+Conflicts with
+    :ref:`aws.api#controlPlane-trait`
+
+This trait is effectively inherited by shapes bound within a service or
+resource. When applied to a service or resource shape, all resources and
+operations bound within the shape are also considered part of the data
+plane unless an operation or resource is marked with the
+:ref:`aws.api#controlPlane-trait`.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        use aws.api#controlPlane
+
+        @dataPlane
+        operation PutThings(PutThingsInput) -> PutThingsOutput
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.3.0",
+            "smithy.example": {
+                "shapes": {
+                    "PutThings": {
+                        "type": "operation",
+                        "input": "PutThingsInput",
+                        "output": "PutThingsOutput",
+                        "aws.api#dataPlane": true
+                    }
+                }
+            }
+        }
+
+
 .. _aws.api#unsignedPayload-trait:
 
 ---------------------------------
