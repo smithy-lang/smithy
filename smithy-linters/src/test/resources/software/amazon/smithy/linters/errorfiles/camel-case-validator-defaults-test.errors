@@ -8,3 +8,7 @@
 [DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | OppositeOfDefaults
 [DANGER] ns.foo#InvalidTrait: string trait definition, `InvalidTrait`, is not lower camel case | DefaultCamelCase
 [DANGER] ns.foo#InvalidTrait: string trait definition, `InvalidTrait`, is not lower camel case | OppositeOfDefaults
+[DANGER] ns.foo#upperStructureTrait$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case | DefaultCamelCase
+[DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not lower camel case | DefaultCamelCase
+[DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not upper camel case | OppositeOfDefaults
+[DANGER] ns.foo#lowerStructureTrait$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case | OppositeOfDefaults
