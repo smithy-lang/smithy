@@ -36,7 +36,10 @@
             "qux": {
                 "trait": true,
                 "type": "list",
-                "member": {"target": "BarString"}
+                "member": {"target": "BarString"},
+                "length": {
+                    "min": 1
+                }
             },
 
             "lorem": {
