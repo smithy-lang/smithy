@@ -63,6 +63,6 @@ final class ScrubTraitDefinitions {
     }
 
     private static boolean notPublicPreludeShape(Shape shape) {
-        return !Prelude.isPublicPreludeShape(shape.getId());
+        return !(Prelude.isPublicPreludeShape(shape.getId()) && !shape.hasTrait(TraitDefinition.class));
     }
 }

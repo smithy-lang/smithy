@@ -59,5 +59,8 @@ public class ScrubTraitDefinitionsTest {
         assertThat(index.getShape(ShapeId.from("smithy.api#BigInteger")), Matchers.not(Optional.empty()));
         assertThat(index.getShape(ShapeId.from("smithy.api#BigDecimal")), Matchers.not(Optional.empty()));
         assertThat(index.getShape(ShapeId.from("smithy.api#Timestamp")), Matchers.not(Optional.empty()));
+
+        // Make sure public prelude trait definition shapes were removed.
+        assertThat(index.getShape(ShapeId.from("smithy.api#length")), Matchers.is(Optional.empty()));
     }
 }
