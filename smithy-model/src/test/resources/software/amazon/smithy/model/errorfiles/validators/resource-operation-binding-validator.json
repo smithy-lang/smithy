@@ -27,7 +27,6 @@
       },
       "ValidResourceOperation2": {
         "type": "operation",
-        "collection": true,
         "input": "ValidResourceOperation2Input"
       },
       "ValidResourceOperation2Input": {
@@ -50,7 +49,6 @@
       },
       "InvalidResourceOperation2": {
         "type": "operation",
-        "collection": true,
         "input": "InvalidResourceOperation2Input"
       },
       "InvalidResourceOperation2Input": {

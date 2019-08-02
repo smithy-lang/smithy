@@ -227,12 +227,14 @@ public class BottomUpNeighborVisitorTest {
         ResourceShape resource = ResourceShape.builder()
                 .id("ns.foo#Resource")
                 .addIdentifier("id", "smithy.api#String")
+                .put(ShapeId.from("ns.foo#Put"))
                 .create(ShapeId.from("ns.foo#Create"))
                 .read(ShapeId.from("ns.foo#Get"))
                 .update(ShapeId.from("ns.foo#Update"))
                 .delete(ShapeId.from("ns.foo#Delete"))
                 .list(ShapeId.from("ns.foo#List"))
                 .addOperation("ns.foo#Named")
+                .addCollectionOperation("ns.foo#GenericCollection")
                 .build();
         OperationShape createOperation = OperationShape.builder().id("ns.foo#Create").build();
         OperationShape getOperation = OperationShape.builder()
@@ -251,10 +253,16 @@ public class BottomUpNeighborVisitorTest {
         OperationShape namedOperation = OperationShape.builder()
                 .id("ns.foo#Named")
                 .build();
+        OperationShape collectionOperation = OperationShape.builder()
+                .id("ns.foo#GenericCollection")
+                .build();
+        OperationShape putOperation = OperationShape.builder()
+                .id("ns.foo#Put")
+                .build();
         ShapeIndex shapeIndex = ShapeIndex.builder()
                 .addShape(parent)
                 .addShapes(resource, createOperation, getOperation, updateOperation, deleteOperation, listOperation)
-                .addShapes(otherService, namedOperation)
+                .addShapes(otherService, namedOperation, collectionOperation, putOperation)
                 .build();
         NeighborProvider neighborVisitor = NeighborProvider.bottomUp(shapeIndex);
 
@@ -263,7 +271,8 @@ public class BottomUpNeighborVisitorTest {
                 Relationship.create(otherService, RelationshipType.OPERATION, namedOperation)));
         assertThat(neighborVisitor.getNeighbors(createOperation), containsInAnyOrder(
                 Relationship.create(resource, RelationshipType.CREATE, createOperation),
-                Relationship.create(resource, RelationshipType.OPERATION, createOperation)));
+                Relationship.create(resource, RelationshipType.OPERATION, createOperation),
+                Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, createOperation)));
         assertThat(neighborVisitor.getNeighbors(getOperation), containsInAnyOrder(
                 Relationship.create(resource, RelationshipType.READ, getOperation),
                 Relationship.create(resource, RelationshipType.OPERATION, getOperation)));
@@ -275,7 +284,14 @@ public class BottomUpNeighborVisitorTest {
                 Relationship.create(resource, RelationshipType.OPERATION, deleteOperation)));
         assertThat(neighborVisitor.getNeighbors(listOperation), containsInAnyOrder(
                 Relationship.create(resource, RelationshipType.LIST, listOperation),
-                Relationship.create(resource, RelationshipType.OPERATION, listOperation)));
+                Relationship.create(resource, RelationshipType.OPERATION, listOperation),
+                Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, listOperation)));
+        assertThat(neighborVisitor.getNeighbors(putOperation), containsInAnyOrder(
+                Relationship.create(resource, RelationshipType.PUT, putOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, putOperation)));
+        assertThat(neighborVisitor.getNeighbors(collectionOperation), containsInAnyOrder(
+                Relationship.create(resource, RelationshipType.OPERATION, collectionOperation),
+                Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, collectionOperation)));
     }
 
     @Test

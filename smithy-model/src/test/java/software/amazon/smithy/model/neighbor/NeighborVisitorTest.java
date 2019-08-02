@@ -224,12 +224,14 @@ public class NeighborVisitorTest {
         ResourceShape resource = ResourceShape.builder()
                 .id("ns.foo#Resource")
                 .addIdentifier("id", "ns.foo#ResourceIdentifier")
+                .put(ShapeId.from("ns.foo#Put"))
                 .create(ShapeId.from("ns.foo#Create"))
                 .read(ShapeId.from("ns.foo#Get"))
                 .update(ShapeId.from("ns.foo#Update"))
                 .delete(ShapeId.from("ns.foo#Delete"))
                 .list(ShapeId.from("ns.foo#List"))
                 .addOperation("ns.foo#Named")
+                .addCollectionOperation("ns.foo#GenericCollection")
                 .addResource("ns.foo#Child1")
                 .build();
         StringShape identifier = StringShape.builder().id("ns.foo#ResourceIdentifier").build();
@@ -250,12 +252,18 @@ public class NeighborVisitorTest {
         OperationShape namedOperation = OperationShape.builder()
                 .id("ns.foo#Named")
                 .build();
+        OperationShape collectionOperation = OperationShape.builder()
+                .id("ns.foo#GenericCollection")
+                .build();
+        OperationShape putOperation = OperationShape.builder()
+                .id("ns.foo#Put")
+                .build();
         ResourceShape child1 = ResourceShape.builder().id("ns.foo#Child1").addResource("ns.foo#Child2").build();
         ResourceShape child2 = ResourceShape.builder().id("ns.foo#Child2").build();
         ShapeIndex shapeIndex = ShapeIndex.builder()
                 .addShapes(parent, resource, identifier, child1, child2)
                 .addShapes(createOperation, getOperation, updateOperation, deleteOperation, listOperation)
-                .addShape(namedOperation)
+                .addShapes(namedOperation, collectionOperation, putOperation)
                 .build();
         NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
         List<Relationship> relationships = resource.accept(neighborVisitor);
@@ -270,12 +278,18 @@ public class NeighborVisitorTest {
                 Relationship.create(resource, RelationshipType.UPDATE, updateOperation),
                 Relationship.create(resource, RelationshipType.DELETE, deleteOperation),
                 Relationship.create(resource, RelationshipType.LIST, listOperation),
+                Relationship.create(resource, RelationshipType.PUT, putOperation),
+                Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, createOperation),
+                Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, listOperation),
+                Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, collectionOperation),
                 Relationship.create(resource, RelationshipType.OPERATION, createOperation),
                 Relationship.create(resource, RelationshipType.OPERATION, getOperation),
                 Relationship.create(resource, RelationshipType.OPERATION, updateOperation),
                 Relationship.create(resource, RelationshipType.OPERATION, deleteOperation),
                 Relationship.create(resource, RelationshipType.OPERATION, listOperation),
                 Relationship.create(resource, RelationshipType.OPERATION, namedOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, putOperation),
+                Relationship.create(resource, RelationshipType.OPERATION, collectionOperation),
                 Relationship.create(resource, RelationshipType.RESOURCE, child1),
 
                 Relationship.create(namedOperation, RelationshipType.BOUND, resource),
@@ -284,6 +298,8 @@ public class NeighborVisitorTest {
                 Relationship.create(updateOperation, RelationshipType.BOUND, resource),
                 Relationship.create(deleteOperation, RelationshipType.BOUND, resource),
                 Relationship.create(listOperation, RelationshipType.BOUND, resource),
+                Relationship.create(putOperation, RelationshipType.BOUND, resource),
+                Relationship.create(collectionOperation, RelationshipType.BOUND, resource),
 
                 Relationship.create(child1, RelationshipType.BOUND, resource)
         ));

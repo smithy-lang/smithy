@@ -54,7 +54,6 @@
             },
             "CreateMyResource": {
                 "type": "operation",
-                "collection": true,
                 "output": "CreateMyResourceOutput"
             },
             "CreateMyResourceOutput": {

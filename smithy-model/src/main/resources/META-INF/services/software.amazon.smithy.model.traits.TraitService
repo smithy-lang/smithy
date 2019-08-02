@@ -1,6 +1,5 @@
 software.amazon.smithy.model.traits.AuthTrait$Provider
 software.amazon.smithy.model.traits.BoxTrait$Provider
-software.amazon.smithy.model.traits.CollectionTrait$Provider
 software.amazon.smithy.model.traits.CorsTrait$Provider
 software.amazon.smithy.model.traits.DeprecatedTrait$Provider
 software.amazon.smithy.model.traits.DocumentationTrait$Provider

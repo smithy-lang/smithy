@@ -45,6 +45,13 @@ public enum RelationshipType {
     OPERATION("operation", RelationshipDirection.DIRECTED),
 
     /**
+     * A collection operation relationship exists between a resource and the
+     * operations bound to the resource only in the "collectionOperations"
+     * property.
+     */
+    COLLECTION_OPERATION("collectionOperation", RelationshipDirection.DIRECTED),
+
+    /**
      * A BINDING relationship exists between the following shapes:
      *
      * <ul>
@@ -58,6 +65,12 @@ public enum RelationshipType {
      * target is the shape that declared the binding.
      */
     BOUND("bound", RelationshipDirection.INVERTED),
+
+    /**
+     * Relationships that exist between a resource and the put lifecycle
+     * operation.
+     */
+    PUT("put", RelationshipDirection.DIRECTED),
 
     /**
      * Relationships that exist between a resource and the create lifecycle

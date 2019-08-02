@@ -1,4 +1,6 @@
 [ERROR] ns.foo#Resource: The `create` lifecycle operation of this resource targets an invalid operation, `ns.foo#CreateResource`. The targeted operation must not be marked with the readonly trait. | ResourceLifecycle
+[ERROR] ns.foo#Resource: The `put` lifecycle operation of this resource targets an invalid operation, `ns.foo#PutResource`. The targeted operation must be marked as idempotent. | ResourceLifecycle
+[ERROR] ns.foo#Resource: The `put` lifecycle operation of this resource targets an invalid operation, `ns.foo#PutResource`. The targeted operation must not be marked with the readonly trait. | ResourceLifecycle
 [ERROR] ns.foo#Resource: The `delete` lifecycle operation of this resource targets an invalid operation, `ns.foo#DeleteResource`. The targeted operation must be marked as idempotent. | ResourceLifecycle
 [ERROR] ns.foo#Resource: The `delete` lifecycle operation of this resource targets an invalid operation, `ns.foo#DeleteResource`. The targeted operation must not be marked with the readonly trait. | ResourceLifecycle
 [ERROR] ns.foo#Resource: The `list` lifecycle operation of this resource targets an invalid operation, `ns.foo#ListResource`. The targeted operation must be marked with the readonly trait. | ResourceLifecycle

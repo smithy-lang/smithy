@@ -17,14 +17,13 @@
                     "a": "smithy.api#String",
                     "b": "smithy.api#String"
                 },
-                "operations": [
+                "collectionOperations": [
                     "InvokeB"
                 ]
             },
             "InvokeB": {
                 "type": "operation",
-                "input": "InvokeBInput",
-                "collection": true
+                "input": "InvokeBInput"
             },
             "InvokeBInput": {
                 "type": "structure"

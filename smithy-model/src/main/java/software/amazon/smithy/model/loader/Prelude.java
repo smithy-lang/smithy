@@ -45,7 +45,6 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.BoxTrait;
-import software.amazon.smithy.model.traits.CollectionTrait;
 import software.amazon.smithy.model.traits.CorsTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -149,7 +148,6 @@ public final class Prelude {
     private static final Set<ShapeId> PRELUDE_TRAITS = SetUtils.of(
             AuthTrait.ID,
             BoxTrait.ID,
-            CollectionTrait.ID,
             CorsTrait.ID,
             DeprecatedTrait.ID,
             DocumentationTrait.ID,

@@ -1,2 +1,2 @@
-[ERROR] ns.foo#Resource: The `create` lifecycle operation of this resource targets an invalid operation, `ns.foo#CreateResource`. The targeted operation must be marked as idempotent. Alternatively, apply the `collection` trait to allow this operation to not be idempotent. | ResourceLifecycle
+[ERROR] ns.foo#Resource: The `put` lifecycle operation of this resource targets an invalid operation, `ns.foo#PutResource`. The targeted operation must be marked as idempotent. | ResourceLifecycle
 [ERROR] ns.foo#Resource: The `delete` lifecycle operation of this resource targets an invalid operation, `ns.foo#DeleteResource`. The targeted operation must be marked as idempotent. | ResourceLifecycle

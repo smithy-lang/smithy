@@ -17,8 +17,7 @@
                 "type": "string"
             },
             "CreateValidA": {
-                "type": "operation",
-                "collection": true
+                "type": "operation"
             },
             "GetValidA": {
                 "type": "operation",
@@ -36,7 +35,6 @@
             },
             "ListValidA": {
                 "type": "operation",
-                "collection": true,
                 "readonly": true
             },
             "ResourceInput": {
@@ -53,19 +51,19 @@
                 "identifiers": {
                     "validB": "smithy.api#String"
                 },
-                "create": "CreateValidB",
-                "update": "CreateValidB",
+                "put": "PutValidB",
+                "update": "PutValidB",
                 "resources": [
                     "ValidC",
                     "ValidD"
                 ]
             },
-            "CreateValidB": {
+            "PutValidB": {
                 "type": "operation",
                 "idempotent": true,
-                "input": "CreateValidBInput"
+                "input": "PutValidBInput"
             },
-            "CreateValidBInput": {
+            "PutValidBInput": {
                 "type": "structure",
                 "members": {
                     "validB": {
@@ -80,17 +78,17 @@
                     "validB": "smithy.api#String",
                     "validC": "ValidCIdentifier"
                 },
-                "create": "CreateValidC"
+                "put": "PutValidC"
             },
             "ValidCIdentifier": {
                 "type": "string"
             },
-            "CreateValidC": {
+            "PutValidC": {
                 "type": "operation",
                 "idempotent": true,
-                "input": "CreateValidCInput"
+                "input": "PutValidCInput"
             },
-            "CreateValidCInput": {
+            "PutValidCInput": {
                 "type": "structure",
                 "members": {
                     "validB": {
@@ -114,8 +112,7 @@
             },
             "CreateValidD": {
                 "type": "operation",
-                "input": "CreateValidDInput",
-                "collection": true
+                "input": "CreateValidDInput"
             },
             "CreateValidDInput": {
                 "type": "structure",
@@ -129,7 +126,6 @@
             "ListValidD": {
                 "type": "operation",
                 "readonly": true,
-                "collection": true,
                 "input": "ListValidDInput"
             },
             "ListValidDInput": {
@@ -143,9 +139,9 @@
             },
             "ValidE": {
                 "type": "resource",
-                "create": "CreateValidE"
+                "put": "PutValidE"
             },
-            "CreateValidE": {
+            "PutValidE": {
                 "type": "operation",
                 "idempotent": true
             }

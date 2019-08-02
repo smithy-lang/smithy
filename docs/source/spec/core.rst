@@ -1278,7 +1278,10 @@ the following properties:
       - Defines identifier names and shape IDs used to identify the resource.
     * - :ref:`create <create-lifecycle>`
       - :ref:`shape-id`
-      - Defines the lifecycle operation used to create the resource.
+      - Defines the lifecycle operation used to create a resource without all its identifiers.
+    * - :ref:`put <put-lifecycle>`
+      - :ref:`shape-id`
+      - Defines an idempotent lifecycle operation used to create a resource with all its identifiers.
     * - :ref:`read <read-lifecycle>`
       - :ref:`shape-id`
       - Defines the lifecycle operation used to retrieve the resource.
@@ -1293,7 +1296,10 @@ the following properties:
       - Defines the lifecycle operation used to list resources of this type.
     * - operations
       - [:ref:`shape-id`]
-      - Binds a list of non-lifecycle operations to the resource.
+      - Binds a list of non-lifecycle instance operations to the resource.
+    * - collectionOperations
+      - [:ref:`shape-id`]
+      - Binds a list of non-lifecycle collection operations to the resource.
     * - resources
       - [:ref:`shape-id`]
       - Binds a list of resources to this resource as a child resource,
@@ -1507,20 +1513,18 @@ of an operation provide values for the identifiers of a resource.
 
 :dfn:`Instance operations` are formed when all of the identifiers of a resource
 are bound to the input structure of an operation or when a resource has no
-identifiers. The :ref:`read <read-lifecycle>` , :ref:`update <update-lifecycle>`,
-and :ref:`delete <delete-lifecycle>` lifecycle operations are examples
-of instance operations. An operation bound to a resource MUST form a valid
-instance operation if it is not marked with the :ref:`collection-trait`.
+identifiers. The :ref:`put <put-lifecycle>`, :ref:`read <read-lifecycle>`,
+:ref:`update <update-lifecycle>`, and :ref:`delete <delete-lifecycle>`
+lifecycle operations are examples of instance operations. An operation bound
+to a resource using `operations` MUST form a valid instance operation.
 
 .. _collection-operations:
 
 :dfn:`Collection operations` are used when an operation is meant to operate on
 a collection of resources rather than a specific resource. Collection
-operations are formed when an operation bound to a resource is marked with the
-``collectionTrait`` and one or more of the child identifiers of a resource
-are not bound to the input structure of an operation. The
-:ref:`list <list-lifecycle>` lifecycle operation is an example of a collection
-operation.
+operations are formed when an operation is bound to a resource with `collectionOperations`,
+or when bound to the :ref:`list <list-lifecycle>` or :ref:`create <create-lifecycle>`
+lifecycle operations.
 
 
 .. _implicit-identifier-bindings:
@@ -1723,8 +1727,8 @@ Lifecycle operations
 
 :dfn:`Lifecycle operations` are used to transition the state of a resource
 using well-defined semantics. Lifecycle operations are defined by setting the
-``create``, ``read``, ``update``, ``delete``, and ``list`` properties of a
-resource to target an operation shape.
+``put``, ``create``, ``read``, ``update``, ``delete``, and ``list`` properties
+of a resource to target an operation shape.
 
 The following snippet defines a resource with each lifecycle method:
 
@@ -1734,6 +1738,7 @@ The following snippet defines a resource with each lifecycle method:
         identifiers: {
             forecastId: ForecastId,
         },
+        put: PutForecast,
         create: CreateForecast,
         read: GetForecast,
         update: UpdateForecast,
@@ -1742,34 +1747,28 @@ The following snippet defines a resource with each lifecycle method:
     }
 
 
-.. _create-lifecycle:
+.. _put-lifecycle:
 
-Create lifecycle
-````````````````
+Put lifecycle
+`````````````
 
-The ``create`` operation defines the canonical operation used to create the
-resource.
+The ``put`` lifecycle operation defines an idempotent operation used to create
+a resource with all its identifiers.
 
 **Validation**
 
-- Create operations MUST NOT be marked as :ref:`readonly-trait`.
-- Create operations MUST form valid :ref:`instance operations <instance-operations>`
-  or :ref:`collection operations <collection-operations>`.
+- Put operations MUST NOT be marked as :ref:`readonly-trait`.
+- Put operations MUST be marked as :ref:`idempotent-trait`.
+- Put operations MUST form valid :ref:`instance operations <instance-operations>`.
 
-The following snippet defines the ``CreateForecast`` operation.
-
-.. code-block:: smithy
-
-    operation CreateForecast(CreateForecastInput) -> CreateForecastOutput
-
-A create operation can be defined as an :ref:`instance operation <instance-operations>`
-such that the client is responsible for providing the identifiers of the
-resource when it is created. This kind of create operation SHOULD be marked with
-the :ref:`idempotent-trait`. For example:
+The following snippet defines the ``PutForecast`` operation.
 
 .. code-block:: smithy
 
-    structure CreateForecastInput {
+    operation PutForecast(PutForecastInput) -> PutForecastOutput
+
+    @idempotent
+    structure PutForecastInput {
         // The client provides the resource identifier.
         @required
         forecastId: ForecastId,
@@ -1777,12 +1776,24 @@ the :ref:`idempotent-trait`. For example:
         chanceOfRain: Float
     }
 
-A create operation can be defined as a :ref:`collection operation <collection-operations>`
-such that the identifier(s) of a resource are defined by the service when a
-resource is created. This kind of create operation is formed when the operation
-is marked with the :ref:`collection-trait`. For example:
+.. _create-lifecycle:
+
+Create lifecycle
+````````````````
+
+The ``create`` operation defines an operation used to create a resource
+without all its identifiers.
+
+**Validation**
+
+- Create operations MUST NOT be marked as :ref:`readonly-trait`.
+- Create operations MUST form valid :ref:`collection operations <collection-operations>`.
+
+The following snippet defines the ``CreateForecast`` operation.
 
 .. code-block:: smithy
+
+    operation CreateForecast(CreateForecastInput) -> CreateForecastOutput
 
     @collection
     operation CreateForecast(CreateForecastInput) -> CreateForecastOutput
@@ -1792,6 +1803,8 @@ is marked with the :ref:`collection-trait`. For example:
         // responsible for providing the identifier of the resource.
         chanceOfRain: Float,
     }
+
+The ``create`` operation MAY be marked as :ref:`idempotent-trait`
 
 
 .. _read-lifecycle:
@@ -1889,8 +1902,7 @@ collection of resources.
 
 **Validation**
 
-- List operations MUST be marked with the :ref:`collection-trait` and MUST
-  form valid :ref:`collection operations <collection-operations>`.
+- List operations MUST form valid :ref:`collection operations <collection-operations>`.
 - List operations MUST be marked as :ref:`readonly-trait`.
 - The output of a list operation SHOULD contain references to the resource
   being listed.
@@ -4142,27 +4154,6 @@ to request additional results from the operation.
 
 Resource traits
 ===============
-
-
-.. _collection-trait:
-
-``collection`` trait
---------------------
-
-Summary
-    Indicates that when an operation is bound to a resource, it MUST use a
-    :ref:`collection operation binding <collection-operations>`.
-Trait selector
-    ``operation``
-Value type
-    Annotation trait
-
-Applying this trait is required in order to bind an operation to a resource
-using a collection binding, meaning that one or more of the identifiers of
-the resource should not appear as required members of the operation's input.
-For example, the list lifecycle operation of a resource MUST be marked with
-this trait.
-
 
 .. _references-trait:
 

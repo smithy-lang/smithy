@@ -7,10 +7,22 @@
                 "identifiers": {
                     "id": "smithy.api#String"
                 },
+                "put": "PutValidA",
+                "create": "CreateValidA",
                 "read": "GetValidA",
                 "update": "UpdateValidA",
                 "delete": "DeleteValidA",
-                "list": "ListValidA"
+                "list": "ListValidA",
+                "operations": ["GenericInstanceOperation"],
+                "collectionOperations": ["GenericCollectionOperation"]
+            },
+            "PutValidA": {
+                "type": "operation",
+                "idempotent": true
+            },
+            "CreateValidA": {
+                "type": "operation",
+                "input": "ResourceAInput"
             },
             "GetValidA": {
                 "type": "operation",
@@ -26,7 +38,13 @@
             "ListValidA": {
                 "type": "operation",
                 "readonly": true,
-                "collection": true,
+                "input": "ResourceAInput"
+            },
+            "GenericInstanceOperation": {
+                "type": "operation"
+            },
+            "GenericCollectionOperation": {
+                "type": "operation",
                 "input": "ResourceAInput"
             },
             "ResourceAInput": {
