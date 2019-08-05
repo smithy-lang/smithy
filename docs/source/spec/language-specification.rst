@@ -418,26 +418,18 @@ or to escape an escape (using ``\\``).
 .. productionlist:: smithy
     text                :`unquoted_text` / `quoted_text` / `text_block`
     unquoted_text       :(ALPHA / "_") *(ALPHA / DIGIT / "_" / "$" / "." / "#")
-    quoted_text         :`single_quoted_text` / `double_quoted_text`
-    single_quoted_text  :"'" *`single_quoted_char` "'"
-    single_quoted_char  :%x20-26
-                        :/ %x28-5B
-                        :/ %x5D-10FFFF
-                        :/ `escaped_char`
-                        :/ `preserved_single`
     escaped_char        :`escape` (`escape` / "'" / DQUOTE / "b" / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
     unicode_escape      :"u" `hex` `hex` `hex` `hex`
     hex                 : DIGIT / %x41-46 / %x61-66
-    preserved_single    :`escape` (%x20-26 / %x28-5B / %x5D-10FFFF)
-    double_quoted_text  :DQUOTE *`double_quoted_char` DQUOTE
-    double_quoted_char  :%x20-21
+    quoted_text         :DQUOTE *`quoted_char` DQUOTE
+    quoted_char         :%x20-21
                         :/ %x23-5B
                         :/ %x5D-10FFFF
                         :/ `escaped_char`
                         :/ `preserved_double`
     preserved_double    :`escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
     escape              :%x5C ; backslash
-    text_block          :DQUOTE DQUOTE DQUOTE `br` `double_quoted_char` DQUOTE DQUOTE DQUOTE
+    text_block          :DQUOTE DQUOTE DQUOTE `br` `quoted_char` DQUOTE DQUOTE DQUOTE
 
 New lines in strings are normalized from CR (\u000D) and CRLF (\u000D\u000A)
 to LF (\u000A). This ensures that strings defined in a Smithy model are

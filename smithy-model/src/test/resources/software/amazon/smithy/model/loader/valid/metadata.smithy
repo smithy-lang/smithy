@@ -1,7 +1,5 @@
 metadata foo = "abc"
 metadata "foo.1" = "def"
-metadata "foo.2" = 'def'
-metadata "foo.3"='def'
 metadata foo.4="def"
 metadata foo.5   =    "def"
 metadata "foo.6"   =    "def"
@@ -25,12 +23,12 @@ metadata foo.13 = {}
 metadata foo.14 = {abc: 123}
 metadata foo.15 = {abc: "def"}
 metadata foo.16 = {abc: "def", foo: "baz"}
-metadata foo.17 = {'abc': 'def', "foo": "baz"}
+metadata foo.17 = {"abc": "def", "foo": "baz"}
 
 metadata foo.18 = {
-'abc'
+"abc"
 :
-'def'
+"def"
 ,
 "foo"
 :

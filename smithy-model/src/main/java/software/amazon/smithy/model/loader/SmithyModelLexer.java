@@ -221,9 +221,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
             case '"':
                 // Parse double quoted strings.
                 return parseToken(TokenType.QUOTED, this::parseQuotes);
-            case '\'':
-                // Parse single quoted strings.
-                return parseToken(TokenType.QUOTED, this::parseSingleQuotes);
             case '-':
                 // Return "->" or negative number.
                 if (peekChar() == '>') {
@@ -353,21 +350,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         return input.substring(startPosition, position + 1);
     }
 
-    private String parseSingleQuotes() {
-        int startPosition = position;
-
-        while (true) {
-            char next = consume();
-            if (next == '\'') {
-                break;
-            } else if (next == '\\') {
-                consume();
-            }
-        }
-
-        return parseStringContents(input.substring(startPosition, position + 1));
-    }
-
     private String parseQuotes() {
         int startPosition = position;
         boolean triple = peekChar() == '"' && peekChar(2) == '"';
@@ -470,9 +452,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                     switch (c) {
                         case '"':
                             result.append('"');
-                            continue;
-                        case '\'':
-                            result.append('\'');
                             continue;
                         case '\\':
                             result.append('\\');

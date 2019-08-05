@@ -33,18 +33,11 @@ string E
 @documentation("
 Hello! This is a test.
 
+Ignore these tokens: {}[](),:->$version//<> +10 -10 =
+
 Is it working? Is \"This\" the 'expected' result?
 Is this a backslash? \"\\\".")
 string F
-
-@documentation('
-Hello! This is a test.
-
-Ignore these tokens: {}[](),:->$version//<> +10 -10 =
-
-Is it working? Is \'This\' the "expected" result?
-Is this a backslash? \'\\\'.')
-string G
 
 // Unquoted string resolves to a shape ID
 
@@ -86,18 +79,18 @@ string N
 
 // List with quoted values.
 
-@tags(['a', "b", 'c'])
+@tags(["a", "b", "c"])
 string O
 
 // List with quoted values spanning multiple lines.
 
 @tags(
 [
-'a'
+"a"
 ,
 "b"
 ,
-'c'
+"c"
 ]
 )
 string P
