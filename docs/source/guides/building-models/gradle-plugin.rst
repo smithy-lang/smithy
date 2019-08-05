@@ -22,7 +22,7 @@ The following example configures a project to use the Smithy Gradle plugin:
 
         plugins {
             java
-            id("software.amazon.smithy").version("0.3.0")
+            id("software.amazon.smithy").version("0.4.0")
         }
 
 
@@ -140,7 +140,7 @@ The following example ``build.gradle.kts`` will build a Smithy model using a
 
         plugins {
             java
-            id("software.amazon.smithy").version("0.3.0")
+            id("software.amazon.smithy").version("0.4.0")
         }
 
         // The SmithyExtension is used to customize the build. This example
@@ -187,7 +187,7 @@ build that uses the "external" projection.
 
         plugins {
             java
-            id("software.amazon.smithy").version("0.3.0")
+            id("software.amazon.smithy").version("0.4.0")
         }
 
         buildscript {

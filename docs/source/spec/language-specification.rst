@@ -99,7 +99,7 @@ Example:
 
 ::
 
-    $version: "0.3.0"
+    $version: "0.4.0"
 
 .. note::
 
@@ -309,7 +309,7 @@ is equivalent to the following JSON model:
 .. code-block:: json
 
     {
-        "smithy": "0.3.0",
+        "smithy": "0.4.0",
         "smithy.example": {
             "shapes": {
                 "MyString": {
@@ -354,7 +354,7 @@ The following documentation comments are all invalid.
 ::
 
     /// Invalid (cannot apply to control statements)
-    $version: "0.3.0"
+    $version: "0.4.0"
 
     /// Invalid (cannot apply to namespaces)
     namespace smithy.example
@@ -938,7 +938,7 @@ Any additional properties found in shape definitions are considered
 .. code-block:: json
 
     {
-        "smithy": "0.3.0",
+        "smithy": "0.4.0",
         "smithy.example": {
             "shapes": {
                 "MyString": {
@@ -959,7 +959,7 @@ example defines a shape for each simple type:
 .. code-block:: json
 
     {
-        "smithy": "0.3.0",
+        "smithy": "0.4.0",
         "smithy.example": {
             "shapes": {
                 "Blob": {"type": "blob"},
@@ -1000,7 +1000,7 @@ The following example defines a list with a string member:
 .. code-block:: json
 
     {
-        "smithy": "0.3.0",
+        "smithy": "0.4.0",
         "smithy.example": {
             "shapes": {
                 "MyList": {
@@ -1037,7 +1037,7 @@ The following example defines a map of strings to numbers:
 .. code-block:: json
 
     {
-        "smithy": "0.3.0",
+        "smithy": "0.4.0",
         "smithy.example": {
             "shapes": {
                 "IntegerMap": {
@@ -1077,7 +1077,7 @@ member:
 .. code-block:: json
 
     {
-        "smithy": "0.3.0",
+        "smithy": "0.4.0",
         "smithy.example": {
           "shapes": {
               "MyStructure": {
@@ -1101,7 +1101,7 @@ The following example defines a union:
 .. code-block:: json
 
     {
-        "smithy": "0.3.0",
+        "smithy": "0.4.0",
         "smithy.example": {
             "shapes": {
                 "MyUnion": {
@@ -1147,7 +1147,7 @@ documentation trait to the member:
 .. code-block:: json
 
     {
-        "smithy": "0.3.0",
+        "smithy": "0.4.0",
         "smithy.example": {
             "shapes": {
                 "MyList": {
@@ -1214,7 +1214,7 @@ The following example defines an operation, its input, output, and errors:
 .. code-block:: json
 
     {
-        "smithy": "0.3.0",
+        "smithy": "0.4.0",
         "smithy.example": {
             "shapes": {
                 "MyOperation": {
