@@ -1278,10 +1278,12 @@ the following properties:
       - Defines identifier names and shape IDs used to identify the resource.
     * - :ref:`create <create-lifecycle>`
       - :ref:`shape-id`
-      - Defines the lifecycle operation used to create a resource without all its identifiers.
+      - Defines the lifecycle operation used to create a resource using one
+        or more identifiers created by the service.
     * - :ref:`put <put-lifecycle>`
       - :ref:`shape-id`
-      - Defines an idempotent lifecycle operation used to create a resource with all its identifiers.
+      - Defines an idempotent lifecycle operation used to create a resource
+        using identifiers provided by the client.
     * - :ref:`read <read-lifecycle>`
       - :ref:`shape-id`
       - Defines the lifecycle operation used to retrieve the resource.
@@ -1524,7 +1526,9 @@ to a resource using `operations` MUST form a valid instance operation.
 a collection of resources rather than a specific resource. Collection
 operations are formed when an operation is bound to a resource with `collectionOperations`,
 or when bound to the :ref:`list <list-lifecycle>` or :ref:`create <create-lifecycle>`
-lifecycle operations.
+lifecycle operations. A collection operation MUST omit one or more identifiers
+of the resource it is bound to, but MUST bind all identifiers of any parent
+resource.
 
 
 .. _implicit-identifier-bindings:
@@ -1752,13 +1756,13 @@ The following snippet defines a resource with each lifecycle method:
 Put lifecycle
 `````````````
 
-The ``put`` lifecycle operation defines an idempotent operation used to create
-a resource with all its identifiers.
+The ``put`` lifecycle operation is used to create a resource using identifiers
+provided by the client.
 
 **Validation**
 
-- Put operations MUST NOT be marked as :ref:`readonly-trait`.
-- Put operations MUST be marked as :ref:`idempotent-trait`.
+- Put operations MUST NOT be marked with :ref:`readonly-trait`.
+- Put operations MUST be marked with :ref:`idempotent-trait`.
 - Put operations MUST form valid :ref:`instance operations <instance-operations>`.
 
 The following snippet defines the ``PutForecast`` operation.
@@ -1781,12 +1785,12 @@ The following snippet defines the ``PutForecast`` operation.
 Create lifecycle
 ````````````````
 
-The ``create`` operation defines an operation used to create a resource
-without all its identifiers.
+The ``create`` operation is used to create a resource using one or more
+identifiers created by the service.
 
 **Validation**
 
-- Create operations MUST NOT be marked as :ref:`readonly-trait`.
+- Create operations MUST NOT be marked with :ref:`readonly-trait`.
 - Create operations MUST form valid :ref:`collection operations <collection-operations>`.
 
 The following snippet defines the ``CreateForecast`` operation.
@@ -1804,7 +1808,7 @@ The following snippet defines the ``CreateForecast`` operation.
         chanceOfRain: Float,
     }
 
-The ``create`` operation MAY be marked as :ref:`idempotent-trait`
+The ``create`` operation MAY be marked with :ref:`idempotent-trait`
 
 
 .. _read-lifecycle:
@@ -1818,7 +1822,7 @@ representation of a resource.
 **Validation**
 
 - Read operations MUST be valid :ref:`instance operations <instance-operations>`.
-- Read operations MUST be marked as :ref:`readonly-trait`.
+- Read operations MUST be marked with :ref:`readonly-trait`.
 
 For example:
 
@@ -1846,7 +1850,7 @@ resource.
 **Validation**
 
 - Update operations MUST be valid :ref:`instance operations <instance-operations>`.
-- Update operations MUST NOT be marked as :ref:`readonly-trait`.
+- Update operations MUST NOT be marked with :ref:`readonly-trait`.
 
 For example:
 
@@ -1874,8 +1878,8 @@ The ``delete`` operation is canonical operation used to delete a resource.
 **Validation**
 
 - Delete operations MUST be valid :ref:`instance operations <instance-operations>`.
-- Delete operations MUST NOT be marked as :ref:`readonly-trait`.
-- Delete operations MUST be marked as :ref:`idempotent-trait`.
+- Delete operations MUST NOT be marked with :ref:`readonly-trait`.
+- Delete operations MUST be marked with :ref:`idempotent-trait`.
 
 For example:
 
@@ -1903,7 +1907,7 @@ collection of resources.
 **Validation**
 
 - List operations MUST form valid :ref:`collection operations <collection-operations>`.
-- List operations MUST be marked as :ref:`readonly-trait`.
+- List operations MUST be marked with :ref:`readonly-trait`.
 - The output of a list operation SHOULD contain references to the resource
   being listed.
 - List operations SHOULD be :ref:`paginated <paginated-trait>`.

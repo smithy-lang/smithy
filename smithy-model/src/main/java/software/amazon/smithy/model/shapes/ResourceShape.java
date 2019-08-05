@@ -126,7 +126,9 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
     }
 
     /**
-     * Gets the put lifecycle operation of the resource
+     * Gets the put lifecycle operation of the resource.
+     *
+     * @return Returns the optionally found lifecycle.
      */
     public Optional<ShapeId> getPut() {
         return Optional.ofNullable(put);
