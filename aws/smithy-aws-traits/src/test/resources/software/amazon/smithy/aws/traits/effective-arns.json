@@ -17,7 +17,8 @@
         "type": "resource",
         "identifiers": {"id": "String"},
         "aws.api#arn": {"template": "foo/{id}"},
-        "operations": ["InstanceOperation", "CollectionOperation"]
+        "operations": ["InstanceOperation"],
+        "collectionOperations": ["CollectionOperation"]
       },
       "InstanceOperation": {
         "type": "operation",
@@ -34,8 +35,7 @@
       },
       "CollectionOperation": {
         "type": "operation",
-        "input": "CollectionOperationInput",
-        "collection": true
+        "input": "CollectionOperationInput"
       },
       "CollectionOperationInput": {
         "type": "structure"

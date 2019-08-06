@@ -43,7 +43,7 @@ structure GetResource2Input {
 @documentation("This is Foo")
 string FooString
 
-@readonly @collection
+@readonly
 operation ListResource2(ListResource2Input) -> ListResource2Output
 
 structure ListResource2Input {
