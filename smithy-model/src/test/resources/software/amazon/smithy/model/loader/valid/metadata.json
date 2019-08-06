@@ -56,11 +56,9 @@
         ]
       }
     },
-    "foo.2": "def",
     "foo.20": {
       "a": "b"
     },
-    "foo.3": "def",
     "foo.4": "def",
     "foo.5": "def",
     "foo.6": "def",

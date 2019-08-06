@@ -231,7 +231,7 @@ public class LoaderVisitorTest {
                 .addUnparsedModel("test.smithy", "namespace smithy.example\n"
                                                  + "@foo(true)\n"
                                                  + "string MyString\n"
-                                                 + "@trait(selector: '*')\n"
+                                                 + "@trait(selector: \"*\")\n"
                                                  + "structure foo {}\n")
                 .assemble()
                 .unwrap();
@@ -245,7 +245,7 @@ public class LoaderVisitorTest {
                 .addUnparsedModel("test.smithy", "namespace smithy.example\n"
                                                  + "@foo\n"
                                                  + "string MyString\n"
-                                                 + "@trait(selector: '*')"
+                                                 + "@trait(selector: \"*\")"
                                                  + traitType + "\n")
                 .assemble()
                 .unwrap();

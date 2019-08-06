@@ -61,37 +61,8 @@ public class SmithyModelLexerTest {
                 Arguments.of("\"foo\\\r\nbaz\"", "foobaz"),
                 Arguments.of("\"\\\r\"", ""),
                 Arguments.of("\"\\\n\"", ""),
-                Arguments.of("\"\\'\"", "'"),
                 Arguments.of("\"\\\"\"", "\""),
                 Arguments.of("\"\\ud83d\\ude00\"", "\uD83D\uDE00"),
-
-                // single quotes
-                Arguments.of("'foo'", "foo"),
-                Arguments.of("'foo\\\\bar'", "foo\\bar"),
-                Arguments.of("'\t'", "\t"),
-                Arguments.of("'\r'", "\n"),
-                Arguments.of("'\n'", "\n"),
-                Arguments.of("'\b'", "\b"),
-                Arguments.of("'\f'", "\f"),
-                Arguments.of("'\\t'", "\t"),
-                Arguments.of("'\\r'", "\r"),
-                Arguments.of("'\\n'", "\n"),
-                Arguments.of("'\\b'", "\b"),
-                Arguments.of("'\\f'", "\f"),
-                Arguments.of("'\\uffff'", "\uffff"),
-                Arguments.of("'\\u000A'", "\n"),
-                Arguments.of("'\\u000D\\u000A'", "\r\n"),
-                Arguments.of("'\r\\u000A\r\n'", "\n\n\n"),
-                Arguments.of("'\\''", "'"),
-                Arguments.of("'foo\\\\'", "foo\\"),
-                Arguments.of("'\\/'", "/"),
-                Arguments.of("'foo\\\nbaz'", "foobaz"),
-                Arguments.of("'foo\\\rbaz'", "foobaz"),
-                Arguments.of("'foo\\\r\nbaz'", "foobaz"),
-                Arguments.of("'\\\r'", ""),
-                Arguments.of("'\\\n'", ""),
-                Arguments.of("'\\''", "'"),
-                Arguments.of("'\\\"'", "\""),
 
                 // Text blocks
                 Arguments.of("\"\"\"\nfoo\"\"\"", "foo"),
@@ -140,15 +111,6 @@ public class SmithyModelLexerTest {
                 Arguments.of("\"\\uaaa\"", "Invalid unclosed unicode escape"),
                 Arguments.of("\"\\uaaat\"", "Invalid unicode escape character: `t`"),
 
-                // Now for SQUOTE.
-                Arguments.of("'\\ '", "Invalid escape found in string: `\\ `"),
-                Arguments.of("'\\a'", "Invalid escape found in string: `\\a`"),
-                Arguments.of("'\\ua'", "Invalid unclosed unicode escape"),
-                Arguments.of("'\\ua'", "Invalid unclosed unicode escape"),
-                Arguments.of("'\\uaa'", "Invalid unclosed unicode escape"),
-                Arguments.of("'\\uaaa'", "Invalid unclosed unicode escape"),
-                Arguments.of("'\\uaaat'", "Invalid unicode escape character: `t`"),
-
                 // Text blocks
                 Arguments.of("\"\"\"foo\"\"\"", "text block must start with a new line"),
                 Arguments.of("\"\"\"\"\"\"", "text block is empty"));
@@ -178,14 +140,14 @@ public class SmithyModelLexerTest {
         return Stream.of(
                 Arguments.of("foo baz", new String[]{"1:1", "1:5"}),
                 Arguments.of("foo\n baz", new String[]{"1:1", "2:2"}),
-                Arguments.of("'foo\n  \nbaz' bar", new String[]{"1:1", "3:6"}),
-                Arguments.of("'foo\n  \nbaz'   bar", new String[]{"1:1", "3:8"}),
+                Arguments.of("\"foo\n  \nbaz\" bar", new String[]{"1:1", "3:6"}),
+                Arguments.of("\"foo\n  \nbaz\"   bar", new String[]{"1:1", "3:8"}),
                 Arguments.of("\"\"\"\nfoo\"\"\"  baz", new String[]{"1:1", "2:9"}),
-                Arguments.of("'foo\n ' '\nbaz '   'bar'", new String[]{"1:1", "2:4", "3:9"}),
-                Arguments.of("'foo\r\n\r\\n\\t' boo", new String[]{"1:1", "3:7"}),
-                Arguments.of("\"\"\"\n  Foo\\\n  Baz\"\"\" 'bar'", new String[]{"1:1", "3:10"}),
-                Arguments.of("\"\"\"\r  Foo\\\r  Baz\"\"\" 'bar'", new String[]{"1:1", "3:10"}),
-                Arguments.of("\"\"\"\r\n  Foo\\\r\n  Baz\"\"\" 'bar'", new String[]{"1:1", "3:10"}));
+                Arguments.of("\"foo\n \" \"\nbaz \"   \"bar\"", new String[]{"1:1", "2:4", "3:9"}),
+                Arguments.of("\"foo\r\n\r\\n\\t\" boo", new String[]{"1:1", "3:7"}),
+                Arguments.of("\"\"\"\n  Foo\\\n  Baz\"\"\" \"bar\"", new String[]{"1:1", "3:10"}),
+                Arguments.of("\"\"\"\r  Foo\\\r  Baz\"\"\" \"bar\"", new String[]{"1:1", "3:10"}),
+                Arguments.of("\"\"\"\r\n  Foo\\\r\n  Baz\"\"\" \"bar\"", new String[]{"1:1", "3:10"}));
     }
 
     @ParameterizedTest

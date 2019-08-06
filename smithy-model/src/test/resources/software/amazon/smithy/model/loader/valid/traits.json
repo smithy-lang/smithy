@@ -27,17 +27,13 @@
       },
       "F": {
         "type": "string",
-        "smithy.api#documentation": "\nHello! This is a test.\n\nIs it working? Is \"This\" the 'expected' result?\nIs this a backslash? \"\\\"."
+        "smithy.api#documentation": "\nHello! This is a test.\n\nIgnore these tokens: {}[](),:->$version//<> +10 -10 =\n\nIs it working? Is \"This\" the 'expected' result?\nIs this a backslash? \"\\\"."
       },
       "Foo": {
         "type": "resource",
         "identifiers": {
           "abc": "smithy.api#String"
         }
-      },
-      "G": {
-        "type": "string",
-        "smithy.api#documentation": "\nHello! This is a test.\n\nIgnore these tokens: {}[](),:->$version//<> +10 -10 =\n\nIs it working? Is 'This' the \"expected\" result?\nIs this a backslash? '\\'."
       },
       "H": {
         "type": "string",
