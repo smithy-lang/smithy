@@ -28,11 +28,27 @@
                 "identifiers": {
                     "id": "MyResourceId"
                 },
+                "put": "PutMyResource",
                 "read": "GetMyResource",
-                "delete": "DeleteMyResource"
+                "delete": "DeleteMyResource",
+                "collectionOperations": ["BatchDeleteMyResource"]
             },
             "MyResourceId": {
                 "type": "string"
+            },
+            "BatchDeleteMyResource": {
+                "type": "operation",
+                "idempotent": true,
+                "input": "BatchDeleteMyResourceInput"
+            },
+            "BatchDeleteMyResourceInput": {
+                "type": "structure",
+                "members": {
+                    "ids": {
+                        "target": "AList",
+                        "required": true
+                    }
+                }
             },
             "DeleteMyResource": {
                 "type": "operation",
@@ -71,6 +87,20 @@
                 "members": {
                     "someValue": {
                         "target": "AList"
+                    }
+                }
+            },
+            "PutMyResource": {
+                "type": "operation",
+                "idempotent": true,
+                "input": "PutMyResourceInput"
+            },
+            "PutMyResourceInput": {
+                "type": "structure",
+                "members": {
+                    "id": {
+                        "target": "MyResourceId",
+                        "required": true
                     }
                 }
             },

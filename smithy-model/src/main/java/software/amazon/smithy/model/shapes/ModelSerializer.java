@@ -225,12 +225,14 @@ public final class ModelSerializer {
 
             return withTraits(shape, createTypedNode(shape)
                     .withOptionalMember("identifiers", identifiers)
+                    .withOptionalMember("put", shape.getPut().map(ShapeId::toString).map(Node::from))
                     .withOptionalMember("create", shape.getCreate().map(ShapeId::toString).map(Node::from))
                     .withOptionalMember("read", shape.getRead().map(ShapeId::toString).map(Node::from))
                     .withOptionalMember("update", shape.getUpdate().map(ShapeId::toString).map(Node::from))
                     .withOptionalMember("delete", shape.getDelete().map(ShapeId::toString).map(Node::from))
                     .withOptionalMember("list", shape.getList().map(ShapeId::toString).map(Node::from))
                     .withOptionalMember("operations", createOptionalIdList(shape.getOperations()))
+                    .withOptionalMember("collectionOperations", createOptionalIdList(shape.getCollectionOperations()))
                     .withOptionalMember("resources", createOptionalIdList(shape.getResources())));
         }
 
