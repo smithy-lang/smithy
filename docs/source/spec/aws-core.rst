@@ -39,7 +39,7 @@ The following example defines an AWS service that uses the default values of
 
     .. code-tab:: smithy
 
-        $version: "0.3.0"
+        $version: "0.4.0"
         namespace aws.fooBaz
 
         use aws.api#service
@@ -52,7 +52,7 @@ The following example defines an AWS service that uses the default values of
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "aws.fooBaz": {
                 "shapes": {
                     "FooBaz": {
@@ -72,7 +72,7 @@ The following example provides explicit values for all properties:
 
     .. code-tab:: smithy
 
-        $version: "0.3.0"
+        $version: "0.4.0"
         namespace aws.fooBaz
 
         use aws.api#service
@@ -89,7 +89,7 @@ The following example provides explicit values for all properties:
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "aws.fooBaz": {
                 "shapes": {
                     "FooBaz": {
@@ -368,7 +368,7 @@ For example, given the following service:
 
     .. code-tab:: smithy
 
-        $version: "0.3.0"
+        $version: "0.4.0"
         namespace aws.fooBaz
 
         use aws.api#service
@@ -388,7 +388,7 @@ For example, given the following service:
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "smithy.example": {
                 "shapes": {
                     "FooBaz": {
@@ -444,7 +444,7 @@ resource.
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "smithy.example": {
                 "shapes": {
                     "MyResource": {
@@ -527,7 +527,7 @@ referenced resource.
 
     .. code-tab:: smithy
 
-        $version: "0.3.0"
+        $version: "0.4.0"
         namespace smithy.example
 
         use aws.api#arnReference
@@ -541,7 +541,7 @@ referenced resource.
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "smithy.example": {
                 "shapes": {
                     "SomeResourceId": {
@@ -564,7 +564,7 @@ previous example:
 
     .. code-tab:: smithy
 
-        $version: "0.3.0"
+        $version: "0.4.0"
         namespace smithy.example
 
         use aws.api#arnReference
@@ -575,7 +575,7 @@ previous example:
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "smithy.example": {
                 "shapes": {
                     "SomeResourceId": {
@@ -630,7 +630,7 @@ structure, union, or collection unless overridden.
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "smithy.example": {
                 "shapes": {
                     "MyStructure": {
@@ -750,7 +750,7 @@ plane unless an operation or resource is marked with the
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "smithy.example": {
                 "shapes": {
                     "PutThings": {
@@ -798,7 +798,7 @@ plane unless an operation or resource is marked with the
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "smithy.example": {
                 "shapes": {
                     "PutThings": {
@@ -851,7 +851,7 @@ operation MUST NOT be used as part of the request signature calculation:
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "smithy.example": {
                 "shapes": {
                     "PutThings": {
@@ -879,7 +879,7 @@ only when using the "aws.v4" authentication scheme:
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "smithy.example": {
                 "shapes": {
                     "PutThings": {
@@ -926,7 +926,7 @@ the service converted to lowercase characters).
 
     .. code-tab:: smithy
 
-        $version: "0.3.0"
+        $version: "0.4.0"
         namespace aws.fooBaz
 
         use aws.api#service
@@ -940,7 +940,7 @@ the service converted to lowercase characters).
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "aws.fooBaz": {
                 "shapes": {
                     "FooBaz": {

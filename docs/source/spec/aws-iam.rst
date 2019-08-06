@@ -51,7 +51,7 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "ns.example": {
                 "shapes": {
                     "FooOperation": {
@@ -113,7 +113,7 @@ The following example's ``MyResource`` resource has the
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -218,7 +218,7 @@ Each condition key object supports the following key-value pairs:
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -337,7 +337,7 @@ condition key inference disabled.
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -409,7 +409,7 @@ operation for it to complete successfully.
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {
@@ -492,7 +492,7 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.3.0",
+            "smithy": "0.4.0",
             "ns.example": {
                 "shapes": {
                     "MyService": {

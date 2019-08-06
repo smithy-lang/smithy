@@ -52,7 +52,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class Model implements ToSmithyBuilder<Model> {
     /** Specifies the highest supported version of the IDL. */
-    public static final String MODEL_VERSION = "0.3.0";
+    public static final String MODEL_VERSION = "0.4.0";
 
     private final Map<String, Node> metadata;
     private final ShapeIndex shapeIndex;
