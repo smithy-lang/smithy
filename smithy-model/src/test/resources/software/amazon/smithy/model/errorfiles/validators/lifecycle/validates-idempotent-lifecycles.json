@@ -7,10 +7,10 @@
                 "identifiers": {
                     "id": "smithy.api#String"
                 },
-                "create": "CreateResource",
+                "put": "PutResource",
                 "delete": "DeleteResource"
             },
-            "CreateResource": {
+            "PutResource": {
                 "type": "operation",
                 "input": "ResourceInput"
             },

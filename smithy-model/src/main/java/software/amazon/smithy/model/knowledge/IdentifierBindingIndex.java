@@ -17,10 +17,8 @@ package software.amazon.smithy.model.knowledge;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
@@ -104,12 +102,16 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
                     .orElseGet(HashMap::new);
             bindings.get(resource.getId()).put(operationId, computedBindings);
 
-            Set<String> remainingIdentifiers = new HashSet<>(resource.getIdentifiers().keySet());
-            remainingIdentifiers.removeAll(computedBindings.keySet());
-            bindingTypes.get(resource.getId()).put(operationId, remainingIdentifiers.isEmpty()
-                    ? BindingType.INSTANCE
-                    : BindingType.COLLECTION);
+            bindingTypes.get(resource.getId()).put(operationId, isCollection(resource, operationId)
+                    ? BindingType.COLLECTION
+                    : BindingType.INSTANCE);
         });
+    }
+
+    private boolean isCollection(ResourceShape resource, ToShapeId operationId) {
+        return resource.getCollectionOperations().contains(operationId)
+                || (resource.getCreate().isPresent() && resource.getCreate().get().toShapeId().equals(operationId))
+                || (resource.getList().isPresent() && resource.getList().get().toShapeId().equals(operationId));
     }
 
     private boolean isImplicitIdentifierBinding(Map.Entry<String, MemberShape> memberEntry, ResourceShape resource) {

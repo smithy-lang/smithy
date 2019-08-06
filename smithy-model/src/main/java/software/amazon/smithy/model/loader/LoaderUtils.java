@@ -34,6 +34,7 @@ import software.amazon.smithy.utils.ListUtils;
  */
 @SuppressWarnings("checkstyle:declarationorder")
 final class LoaderUtils {
+    private static final String PUT_KEY = "put";
     private static final String CREATE_KEY = "create";
     private static final String READ_KEY = "read";
     private static final String UPDATE_KEY = "update";
@@ -41,12 +42,13 @@ final class LoaderUtils {
     private static final String LIST_KEY = "list";
     private static final String RESOURCES_KEY = "resources";
     private static final String OPERATIONS_KEY = "operations";
+    private static final String COLLECTION_OPERATIONS_KEY = "collectionOperations";
     private static final String IDENTIFIERS_KEY = "identifiers";
     private static final String TYPE_KEY = "type";
     private static final String VERSION_KEY = "version";
     static final Collection<String> RESOURCE_PROPERTY_NAMES = ListUtils.of(
             TYPE_KEY, CREATE_KEY, READ_KEY, UPDATE_KEY, DELETE_KEY, LIST_KEY,
-            IDENTIFIERS_KEY, RESOURCES_KEY, OPERATIONS_KEY);
+            IDENTIFIERS_KEY, RESOURCES_KEY, OPERATIONS_KEY, PUT_KEY, COLLECTION_OPERATIONS_KEY);
     static final List<String> SERVICE_PROPERTY_NAMES = ListUtils.of(
             TYPE_KEY, VERSION_KEY, OPERATIONS_KEY, RESOURCES_KEY);
 
@@ -64,6 +66,7 @@ final class LoaderUtils {
             ObjectNode shapeNode,
             LoaderVisitor visitor
     ) {
+        optionalId(shapeNode, shapeId.getNamespace(), PUT_KEY).ifPresent(builder::put);
         optionalId(shapeNode, shapeId.getNamespace(), CREATE_KEY).ifPresent(builder::create);
         optionalId(shapeNode, shapeId.getNamespace(), READ_KEY).ifPresent(builder::read);
         optionalId(shapeNode, shapeId.getNamespace(), UPDATE_KEY).ifPresent(builder::update);
@@ -71,6 +74,8 @@ final class LoaderUtils {
         optionalId(shapeNode, shapeId.getNamespace(), LIST_KEY).ifPresent(builder::list);
         optionalIdList(shapeNode, shapeId.getNamespace(), OPERATIONS_KEY).forEach(builder::addOperation);
         optionalIdList(shapeNode, shapeId.getNamespace(), RESOURCES_KEY).forEach(builder::addResource);
+        optionalIdList(shapeNode, shapeId.getNamespace(), COLLECTION_OPERATIONS_KEY)
+                .forEach(builder::addCollectionOperation);
 
         // Load identifiers and resolve forward references.
         shapeNode.getObjectMember(IDENTIFIERS_KEY).ifPresent(ids -> {

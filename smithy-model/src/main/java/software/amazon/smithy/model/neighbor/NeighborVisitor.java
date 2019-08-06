@@ -91,11 +91,38 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
         // Add all operation BINDING relationships (resource -> operation) and BOUND relations (operation -> resource).
         shape.getAllOperations().forEach(id -> addBinding(result, shape, id, RelationshipType.OPERATION));
         // Do the same, but for all of the lifecycle operations. Note: does not yet another BOUND relationships.
-        shape.getCreate().ifPresent(id -> result.add(relationship(shape, RelationshipType.CREATE, id)));
-        shape.getRead().ifPresent(id -> result.add(relationship(shape, RelationshipType.READ, id)));
-        shape.getUpdate().ifPresent(id -> result.add(relationship(shape, RelationshipType.UPDATE, id)));
-        shape.getDelete().ifPresent(id -> result.add(relationship(shape, RelationshipType.DELETE, id)));
-        shape.getList().ifPresent(id -> result.add(relationship(shape, RelationshipType.LIST, id)));
+        // READ, UPDATE, DELETE, and PUT are all instance operations by definition
+        shape.getRead().ifPresent(id -> {
+            result.add(relationship(shape, RelationshipType.READ, id));
+            result.add(relationship(shape, RelationshipType.INSTANCE_OPERATION, id));
+        });
+        shape.getUpdate().ifPresent(id -> {
+            result.add(relationship(shape, RelationshipType.UPDATE, id));
+            result.add(relationship(shape, RelationshipType.INSTANCE_OPERATION, id));
+        });
+        shape.getDelete().ifPresent(id -> {
+            result.add(relationship(shape, RelationshipType.DELETE, id));
+            result.add(relationship(shape, RelationshipType.INSTANCE_OPERATION, id));
+        });
+        shape.getPut().ifPresent(id -> {
+            result.add(relationship(shape, RelationshipType.PUT, id));
+            result.add(relationship(shape, RelationshipType.INSTANCE_OPERATION, id));
+        });
+        // LIST and CREATE are, by definition, collection operations
+        shape.getCreate().ifPresent(id -> {
+            result.add(relationship(shape, RelationshipType.CREATE, id));
+            result.add(relationship(shape, RelationshipType.COLLECTION_OPERATION, id));
+        });
+        shape.getList().ifPresent(id -> {
+            result.add(relationship(shape, RelationshipType.LIST, id));
+            result.add(relationship(shape, RelationshipType.COLLECTION_OPERATION, id));
+        });
+        // Add in all the other collection operations
+        shape.getCollectionOperations().forEach(id -> result.add(
+                relationship(shape, RelationshipType.COLLECTION_OPERATION, id)));
+        // Add in all the other instance operations
+        shape.getOperations().forEach(id -> result.add(
+                relationship(shape, RelationshipType.INSTANCE_OPERATION, id)));
         // Find shapes that bind this resource to it.
         Stream.concat(shapeIndex.shapes(ResourceShape.class), shapeIndex.shapes(ServiceShape.class))
                 .filter(parent -> parent.getResources().contains(shape.getId()))

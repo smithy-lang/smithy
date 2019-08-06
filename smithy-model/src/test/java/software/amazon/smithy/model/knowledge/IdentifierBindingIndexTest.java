@@ -30,7 +30,7 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.CollectionTrait;
+import software.amazon.smithy.model.traits.ReadonlyTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 
@@ -81,19 +81,40 @@ public class IdentifierBindingIndexTest {
         OperationShape operation = OperationShape.builder()
                 .id("ns.foo#Operation")
                 .input(input.getId())
-                .addTrait(new CollectionTrait())
+                .build();
+        OperationShape listOperation = OperationShape.builder()
+                .id("ns.foo#ListResources")
+                .addTrait(new ReadonlyTrait())
+                .input(input.getId())
+                .build();
+        OperationShape createOperation = OperationShape.builder()
+                .id("ns.foo#CreateResource")
+                .input(input.getId())
                 .build();
         ResourceShape resource = ResourceShape.builder()
                 .id("ns.foo#Resource")
                 .addIdentifier("abc", "ns.foo#Id")
-                .addOperation(operation.getId())
+                .create(createOperation.getId())
+                .list(listOperation.getId())
+                .addCollectionOperation(operation.getId())
                 .build();
-        Model model = Model.assembler().addShapes(id, resource, operation, input).assemble().unwrap();
+        Model model = Model.assembler()
+                .addShapes(id, resource, operation, input, listOperation, createOperation)
+                .assemble()
+                .unwrap();
         IdentifierBindingIndex index = model.getKnowledge(IdentifierBindingIndex.class);
 
         assertThat(index.getOperationBindingType(resource.getId(), operation.getId()),
                    equalTo(IdentifierBindingIndex.BindingType.COLLECTION));
         assertThat(index.getOperationBindings(resource.getId(), operation.getId()), equalTo(Collections.emptyMap()));
+        assertThat(index.getOperationBindingType(resource.getId(), listOperation.getId()),
+                equalTo(IdentifierBindingIndex.BindingType.COLLECTION));
+        assertThat(index.getOperationBindings(
+                resource.getId(), listOperation.getId()), equalTo(Collections.emptyMap()));
+        assertThat(index.getOperationBindingType(resource.getId(), createOperation.getId()),
+                equalTo(IdentifierBindingIndex.BindingType.COLLECTION));
+        assertThat(index.getOperationBindings(
+                resource.getId(), createOperation.getId()), equalTo(Collections.emptyMap()));
     }
 
     @Test

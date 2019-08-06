@@ -26,12 +26,6 @@ structure trait {
 @tags(["diff.error.const"])
 structure box {}
 
-/// Indicates that an operation is intended to be used as a
-/// resource collection operation.
-@trait(selector: "operation")
-@tags(["diff.error.const"])
-structure collection {}
-
 /// Marks a shape or member as deprecated.
 @trait
 structure deprecated {

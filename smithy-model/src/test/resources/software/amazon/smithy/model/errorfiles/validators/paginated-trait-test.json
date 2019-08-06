@@ -340,7 +340,6 @@
                 "type": "operation",
                 "readonly": true,
                 "paginated": {"items": "items"},
-                "collection": true,
                 "input": "ListResourcesInput",
                 "output": "ListResourcesOutput"
             },

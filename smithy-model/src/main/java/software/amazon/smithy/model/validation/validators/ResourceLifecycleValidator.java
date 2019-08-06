@@ -18,7 +18,6 @@ package software.amazon.smithy.model.validation.validators;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,7 +26,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
-import software.amazon.smithy.model.traits.CollectionTrait;
 import software.amazon.smithy.model.traits.IdempotentTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -48,77 +46,35 @@ public final class ResourceLifecycleValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateResource(ShapeIndex index, ResourceShape resource) {
         List<ValidationEvent> events = new ArrayList<>();
-        events.addAll(resource.getCreate().flatMap(index::getShape).flatMap(Shape::asOperationShape)
-                .map(operation -> validateCreate(resource, operation))
-                .orElseGet(Collections::emptyList));
+
+        // Note: Whether or not these use a valid bindings is validated in ResourceIdentifierBindingValidator.
+        resource.getPut().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
+            validateReadonly(resource, operation, "put", false).ifPresent(events::add);
+            validateIdempotent(resource, operation, "put", "").ifPresent(events::add);
+        });
+
+        resource.getCreate().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
+            validateReadonly(resource, operation, "create", false).ifPresent(events::add);
+        });
 
         resource.getRead().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            ensureIsInstance(resource, operation, "read").ifPresent(events::add);
             validateReadonly(resource, operation, "read", true).ifPresent(events::add);
         });
 
         resource.getUpdate().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            ensureIsInstance(resource, operation, "update").ifPresent(events::add);
             validateReadonly(resource, operation, "update", false).ifPresent(events::add);
         });
 
         resource.getDelete().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            ensureIsInstance(resource, operation, "delete").ifPresent(events::add);
             validateReadonly(resource, operation, "delete", false).ifPresent(events::add);
             validateIdempotent(resource, operation, "delete", "").ifPresent(events::add);
         });
 
         resource.getList().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
-            ensureIsCollection(resource, operation, "list").ifPresent(events::add);
             validateReadonly(resource, operation, "list", true).ifPresent(events::add);
         });
 
         return events;
-    }
-
-    private List<ValidationEvent> validateCreate(ResourceShape resource, OperationShape operation) {
-        List<ValidationEvent> events = new ArrayList<>(2);
-        validateReadonly(resource, operation, "create", false).ifPresent(events::add);
-        if (!operation.hasTrait(CollectionTrait.class)) {
-            validateIdempotent(
-                    resource, operation, "create", " Alternatively, apply the `collection` trait to allow "
-                                                   + "this operation to not be idempotent."
-            ).ifPresent(events::add);
-        }
-
-        // Note: Whether or not it uses a valid bindings is validated in ResourceIdentifierBindingValidator.
-        return events;
-    }
-
-    private Optional<ValidationEvent> ensureIsInstance(
-            ResourceShape resource,
-            OperationShape operation,
-            String lifecycle
-    ) {
-        if (operation.hasTrait(CollectionTrait.class)) {
-            return Optional.of(error(resource, format(
-                    "The `%s` operation bound to this resource as the `%s` lifecycle operation must form a valid "
-                    + "instance operation, but this operation is marked with the `collection` trait",
-                    operation.getId(), lifecycle)));
-        }
-
-        return Optional.empty();
-    }
-
-    private Optional<ValidationEvent> ensureIsCollection(
-            ResourceShape resource,
-            OperationShape operation,
-            String lifecycle
-    ) {
-        if (operation.hasTrait(CollectionTrait.class)) {
-            return Optional.empty();
-        }
-
-        // Note: whether or not grandparent bindings are present and whether or not the operation is a valid
-        // collection operation is validated in ResourceIdentifierBindingValidator.
-        return Optional.of(error(resource, format(
-                "The `%s` operation bound to this resource as the %s lifecycle operation must be marked with the "
-                + "`collection` trait", operation.getId(), lifecycle)));
     }
 
     private Optional<ValidationEvent> validateReadonly(

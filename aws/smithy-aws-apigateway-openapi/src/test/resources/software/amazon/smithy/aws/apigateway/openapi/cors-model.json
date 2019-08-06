@@ -31,7 +31,7 @@
         "identifiers": {
           "id": "smithy.api#String"
         },
-        "create": "PutPayload",
+        "put": "PutPayload",
         "read": "GetPayload",
         "delete": "DeletePayload",
         "list": "ListPayloads"
@@ -69,7 +69,6 @@
       "ListPayloads": {
         "type": "operation",
         "readonly": true,
-        "collection": true,
         "output": "ListPayloadsOutput",
         "http": {
           "uri": "/payload",
