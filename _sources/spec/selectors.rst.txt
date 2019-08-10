@@ -205,7 +205,7 @@ Available attributes
 Neighbors
 =========
 
-The *current* shape evaulated by a selector is changed using a neighbor token,
+The *current* shape evaluated by a selector is changed using a neighbor token,
 ``>``. A neighbor token returns every shape that is connected to the current
 shape. For example, the following selector returns the key and value members of
 every map:
@@ -285,8 +285,16 @@ The table below lists the labeled directed relationships from each shape.
     * - resource
       - operation
       - Each operation that is bound to a resource through the
-        "operations", "create", "read", "update", "delete", and "list"
+        "operations", "create", "put", "read", "update", "delete", and "list"
         properties.
+    * - resource
+      - instanceOperation
+      - Each operation that is bound to a resource through the
+      - "operations", "put", "read", "update", and "delete" properties.
+    * - resource
+      - collectionOperation
+      - Each operation that is bound to a resource through the
+      - "collectionOperations", "create", and "list" properties.
     * - resource
       - resource
       - Each resource that is bound to a resource.
@@ -558,6 +566,8 @@ Selectors are defined by the following ABNF_ grammar.
                          :/ "output"
                          :/ "error"
                          :/ "operation"
+                         :/ "collectionOperation"
+                         :/ "instanceOperation"
                          :/ "resource"
                          :/ "bound"
     attr                   :"[" `attr_key` *(`comparator` `attr_value` ["i"]) "]"

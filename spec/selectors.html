@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Selectors &#8212; Smithy 0.3.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    <title>Selectors &#8212; Smithy 0.4.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -310,7 +310,7 @@ converted to &quot;true&quot; or &quot;false&quot;.</td>
 </div>
 <div class="section" id="neighbors">
 <h2>Neighbors<a class="headerlink" href="#neighbors" title="Permalink to this headline">¶</a></h2>
-<p>The <em>current</em> shape evaulated by a selector is changed using a neighbor token,
+<p>The <em>current</em> shape evaluated by a selector is changed using a neighbor token,
 <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>. A neighbor token returns every shape that is connected to the current
 shape. For example, the following selector returns the key and value members of
 every map:</p>
@@ -353,113 +353,6 @@ an identifier:</p>
 <div class="section" id="relationships">
 <span id="selector-relationships"></span><h3>Relationships<a class="headerlink" href="#relationships" title="Permalink to this headline">¶</a></h3>
 <p>The table below lists the labeled directed relationships from each shape.</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="15%" />
-<col width="15%" />
-<col width="70%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Shape</th>
-<th class="head">Relationship</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>service</td>
-<td>operation</td>
-<td>Each operation that is bound to a service.</td>
-</tr>
-<tr class="row-odd"><td>service</td>
-<td>resource</td>
-<td>Each resource that is bound to a service.</td>
-</tr>
-<tr class="row-even"><td>resource</td>
-<td>identifier</td>
-<td>The identifier referenced by the resource (if specified).</td>
-</tr>
-<tr class="row-odd"><td>resource</td>
-<td>operation</td>
-<td>Each operation that is bound to a resource through the
-&quot;operations&quot;, &quot;create&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;, and &quot;list&quot;
-properties.</td>
-</tr>
-<tr class="row-even"><td>resource</td>
-<td>resource</td>
-<td>Each resource that is bound to a resource.</td>
-</tr>
-<tr class="row-odd"><td>resource</td>
-<td>create</td>
-<td>The operation referenced by the <a class="reference internal" href="core.html#create-lifecycle"><span class="std std-ref">Create lifecycle</span></a> property of
-a resource (if present).</td>
-</tr>
-<tr class="row-even"><td>resource</td>
-<td>read</td>
-<td>The operation referenced by the <a class="reference internal" href="core.html#read-lifecycle"><span class="std std-ref">Read lifecycle</span></a> property of
-a resource (if present).</td>
-</tr>
-<tr class="row-odd"><td>resource</td>
-<td>update</td>
-<td>The operation referenced by the <a class="reference internal" href="core.html#update-lifecycle"><span class="std std-ref">Update lifecycle</span></a> property of
-a resource (if present).</td>
-</tr>
-<tr class="row-even"><td>resource</td>
-<td>delete</td>
-<td>The operation referenced by the <a class="reference internal" href="core.html#delete-lifecycle"><span class="std std-ref">Delete lifecycle</span></a> property of
-a resource (if present).</td>
-</tr>
-<tr class="row-odd"><td>resource</td>
-<td>list</td>
-<td>The operation referenced by the <a class="reference internal" href="core.html#list-lifecycle"><span class="std std-ref">List lifecycle</span></a> property of
-a resource (if present).</td>
-</tr>
-<tr class="row-even"><td>resource</td>
-<td>bound</td>
-<td>The service or resource to which the resource is bound.</td>
-</tr>
-<tr class="row-odd"><td>operation</td>
-<td>bound</td>
-<td>The service or resource to which the operation is bound.</td>
-</tr>
-<tr class="row-even"><td>operation</td>
-<td>input</td>
-<td>The input structure of the operation (if present).</td>
-</tr>
-<tr class="row-odd"><td>operation</td>
-<td>output</td>
-<td>The output structure of the operation (if present).</td>
-</tr>
-<tr class="row-even"><td>operation</td>
-<td>error</td>
-<td>Each error structure referenced by the operation (if present).</td>
-</tr>
-<tr class="row-odd"><td>list</td>
-<td>member</td>
-<td>The <a class="reference internal" href="core.html#member"><span class="std std-ref">member</span></a> of the list. Note that this is not the shape targeted
-by the member.</td>
-</tr>
-<tr class="row-even"><td>map</td>
-<td>member</td>
-<td>The key and value members of the map. Note that these are not the
-shapes targeted by the member.</td>
-</tr>
-<tr class="row-odd"><td>structure</td>
-<td>member</td>
-<td>Each structure member. Note that these are not the shapes targeted by
-the members.</td>
-</tr>
-<tr class="row-even"><td>union</td>
-<td>member</td>
-<td>Each union member. Note that these are not the shapes targeted by
-the members.</td>
-</tr>
-<tr class="row-odd"><td>member</td>
-<td>&#160;</td>
-<td>The shape targeted by the member. Note that member targets have no
-relationship name.</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 <div class="section" id="functions">
@@ -639,6 +532,8 @@ changing the semantics of a selector.</p>
   / &quot;output&quot;
   / &quot;error&quot;
   / &quot;operation&quot;
+  / &quot;collectionOperation&quot;
+  / &quot;instanceOperation&quot;
   / &quot;resource&quot;
   / &quot;bound&quot;
 
