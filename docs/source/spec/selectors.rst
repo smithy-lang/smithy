@@ -290,11 +290,11 @@ The table below lists the labeled directed relationships from each shape.
     * - resource
       - instanceOperation
       - Each operation that is bound to a resource through the
-      - "operations", "put", "read", "update", and "delete" properties.
+        "operations", "put", "read", "update", and "delete" properties.
     * - resource
       - collectionOperation
       - Each operation that is bound to a resource through the
-      - "collectionOperations", "create", and "list" properties.
+        "collectionOperations", "create", and "list" properties.
     * - resource
       - resource
       - Each resource that is bound to a resource.
