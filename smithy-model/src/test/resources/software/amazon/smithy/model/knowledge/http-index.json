@@ -112,6 +112,70 @@
                     }
                 }
             },
+            "ServiceOperationWithStructurePayload": {
+                "type": "operation",
+                "output": "ServiceOperationWithStructurePayloadOutput",
+                "http": {
+                    "uri": "/ServiceOperationWithStructurePayload",
+                    "method": "POST",
+                    "code": 200
+                }
+            },
+            "ServiceOperationWithStructurePayloadOutput": {
+                "type": "structure",
+                "members": {
+                    "baz": {
+                        "target": "StructurePayload",
+                        "httpPayload": true
+                    }
+                }
+            },
+            "ServiceOperationWithMediaType": {
+                "type": "operation",
+                "output": "ServiceOperationWithMediaTypeOutput",
+                "http": {
+                    "uri": "/ServiceOperationWithMediaType",
+                    "method": "POST",
+                    "code": 200
+                }
+            },
+            "ServiceOperationWithMediaTypeOutput": {
+                "type": "structure",
+                "members": {
+                    "baz": {
+                        "target": "XmlBlob",
+                        "httpPayload": true
+                    }
+                }
+            },
+            "ServiceOperationWithBlobPayload": {
+                "type": "operation",
+                "output": "ServiceOperationWithBlobPayloadOutput",
+                "http": {
+                    "uri": "/ServiceOperationWithMediaType",
+                    "method": "POST",
+                    "code": 200
+                }
+            },
+            "ServiceOperationWithBlobPayloadOutput": {
+                "type": "structure",
+                "members": {
+                    "baz": {
+                        "target": "Blob",
+                        "httpPayload": true
+                    }
+                }
+            },
+            "XmlBlob": {
+                "type": "blob",
+                "mediaType": "application/xml"
+            },
+            "StructurePayload": {
+                "type": "structure",
+                "members": {
+                    "foo": {"target": "String"}
+                }
+            },
             "WithLabels": {
                 "type": "operation",
                 "input": "WithLabelsInput",

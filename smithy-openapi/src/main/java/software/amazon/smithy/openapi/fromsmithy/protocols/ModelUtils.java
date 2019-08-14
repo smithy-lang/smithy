@@ -20,7 +20,6 @@ import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.model.ParameterObject;
@@ -32,6 +31,7 @@ import software.amazon.smithy.openapi.model.ParameterObject;
  * public if needed.
  */
 final class ModelUtils {
+
     private ModelUtils() {}
 
     /**
@@ -47,29 +47,6 @@ final class ModelUtils {
     static <T extends Trait> Optional<T> getMemberTrait(Context context, Shape shape, Class<T> trait) {
         return shape.asMemberShape()
                 .flatMap(member -> member.getMemberTrait(context.getModel().getShapeIndex(), trait));
-    }
-
-    /**
-     * Gets the mediaType trait value of the shape targeted by a member.
-     *
-     * @param context Context used to resolve targets.
-     * @param member Members to resolve.
-     * @return Returns the resolved media type.
-     */
-    static String getMediaType(Context context, MemberShape member) {
-        return getMemberTrait(context, member, MediaTypeTrait.class)
-                .map(MediaTypeTrait::getValue)
-                .orElseGet(() -> context.getModel().getShapeIndex().getShape(member.getTarget())
-                        .map(target -> {
-                            if (target.isStringShape()) {
-                                return "text/plain";
-                            } else if (target.isBlobShape()) {
-                                return "application/octet-stream";
-                            } else {
-                                return "application/octet-stream";
-                            }
-                        })
-                        .orElse("application/octet-stream"));
     }
 
     /**

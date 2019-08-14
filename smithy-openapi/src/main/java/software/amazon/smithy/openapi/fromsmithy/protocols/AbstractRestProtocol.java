@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -73,6 +74,10 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
 
     /**
      * Gets the media type of a document sent in a request or response.
+     *
+     * <p>This method may be invoked even for operations that do not send a
+     * document payload, and in these cases, this method should return a
+     * {@code String} and not throw.
      *
      * @param context Conversion context.
      * @param operationOrError Operation shape or error shape.
@@ -194,23 +199,26 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     ) {
         List<HttpBinding> payloadBindings = bindingIndex.getRequestBindings(
                 operation, HttpBinding.Location.PAYLOAD);
+        String documentMediaType = getDocumentMediaType(context, operation, MessageType.REQUEST);
+        String mediaType = bindingIndex.determineRequestContentType(operation, documentMediaType).orElse(null);
         return payloadBindings.isEmpty()
-               ? createRequestDocument(context, bindingIndex, operation)
-               : createRequestPayload(context, payloadBindings.get(0));
+               ? createRequestDocument(mediaType, context, bindingIndex, operation)
+               : createRequestPayload(mediaType, context, payloadBindings.get(0));
     }
 
-    private Optional<RequestBodyObject> createRequestPayload(Context context, HttpBinding binding) {
+    private Optional<RequestBodyObject> createRequestPayload(
+            String mediaTypeRange, Context context, HttpBinding binding) {
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(context.createRef(binding.getMember()))
                 .build();
-        String mediaTypeRange = ModelUtils.getMediaType(context, binding.getMember());
         RequestBodyObject requestBodyObject = RequestBodyObject.builder()
-                .putContent(mediaTypeRange, mediaTypeObject)
+                .putContent(Objects.requireNonNull(mediaTypeRange), mediaTypeObject)
                 .build();
         return Optional.of(requestBodyObject);
     }
 
     private Optional<RequestBodyObject> createRequestDocument(
+            String mediaType,
             Context context,
             HttpBindingIndex bindingIndex,
             OperationShape operation
@@ -222,7 +230,6 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         }
 
         Schema schema = createDocumentSchema(context, operation, bindings, MessageType.REQUEST);
-        String mediaType = getDocumentMediaType(context, operation, MessageType.REQUEST);
         return Optional.of(RequestBodyObject.builder()
                 .putContent(mediaType, MediaTypeObject.builder().schema(schema).build())
                 .build());
@@ -279,19 +286,21 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     ) {
         List<HttpBinding> payloadBindings = bindingIndex.getResponseBindings(
                 operationOrError, HttpBinding.Location.PAYLOAD);
+        String documentMediaType = getDocumentMediaType(context, operationOrError, MessageType.RESPONSE);
+        String mediaType = bindingIndex.determineResponseContentType(operationOrError, documentMediaType).orElse(null);
         if (!payloadBindings.isEmpty()) {
-            createResponsePayload(context, payloadBindings.get(0), responseBuilder);
+            createResponsePayload(mediaType, context, payloadBindings.get(0), responseBuilder);
         } else {
-            createResponseDocument(context, bindingIndex, responseBuilder, operationOrError);
+            createResponseDocument(mediaType, context, bindingIndex, responseBuilder, operationOrError);
         }
     }
 
     private void createResponsePayload(
+            String mediaType,
             Context context,
             HttpBinding binding,
             ResponseObject.Builder responseBuilder
     ) {
-        String mediaType = ModelUtils.getMediaType(context, binding.getMember());
         responseBuilder.putContent(mediaType, MediaTypeObject
                 .builder()
                 .schema(context.createRef(binding.getMember()))
@@ -299,6 +308,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     }
 
     private void createResponseDocument(
+            String mediaType,
             Context context,
             HttpBindingIndex bindingIndex,
             ResponseObject.Builder responseBuilder,
@@ -311,7 +321,6 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                     ? MessageType.RESPONSE
                     : MessageType.ERROR;
             Schema schema = createDocumentSchema(context, operationOrError, bindings, messageType);
-            String mediaType = getDocumentMediaType(context, operationOrError, messageType);
             responseBuilder.putContent(mediaType, MediaTypeObject.builder().schema(schema).build());
         }
     }
