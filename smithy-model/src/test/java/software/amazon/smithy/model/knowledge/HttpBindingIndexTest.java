@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -227,6 +228,42 @@ public class HttpBindingIndexTest {
 
         assertThat(HttpBindingIndex.hasHttpRequestBindings(shape), is(true));
         assertThat(HttpBindingIndex.hasHttpResponseBindings(shape), is(true));
+    }
+
+    @Test
+    public void resolvesStructureBodyContentType() {
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        ShapeId operation = ShapeId.from("ns.foo#ServiceOperationWithStructurePayload");
+        Optional<String> contentType = index.determineResponseContentType(operation, "application/json");
+
+        assertThat(contentType, equalTo(Optional.of("application/json")));
+    }
+
+    @Test
+    public void resolvesStringBodyContentType() {
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        ShapeId operation = ShapeId.from("ns.foo#ServiceOperationExplicitMembers");
+        Optional<String> contentType = index.determineRequestContentType(operation, "application/json");
+
+        assertThat(contentType, equalTo(Optional.of("text/plain")));
+    }
+
+    @Test
+    public void resolvesBlobBodyContentType() {
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        ShapeId operation = ShapeId.from("ns.foo#ServiceOperationWithBlobPayload");
+        Optional<String> contentType = index.determineResponseContentType(operation, "application/json");
+
+        assertThat(contentType, equalTo(Optional.of("application/octet-stream")));
+    }
+
+    @Test
+    public void resolvesMediaTypeContentType() {
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        ShapeId operation = ShapeId.from("ns.foo#ServiceOperationWithMediaType");
+        Optional<String> contentType = index.determineResponseContentType(operation, "application/json");
+
+        assertThat(contentType, equalTo(Optional.of("application/xml")));
     }
 
     private static MemberShape expectMember(Model model, String id) {

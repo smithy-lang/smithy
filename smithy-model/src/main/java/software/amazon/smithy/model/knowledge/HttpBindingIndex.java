@@ -16,10 +16,12 @@
 package software.amazon.smithy.model.knowledge;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -38,6 +40,7 @@ import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
+import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -106,11 +109,14 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                || shape.hasTrait(HttpPayloadTrait.class);
     }
 
-    private HttpTrait getHttpTrait(ShapeId operation) {
-        return index.getShape(operation)
-                .filter(Shape::isOperationShape)
-                .flatMap(shape -> shape.getTrait(HttpTrait.class))
-                .orElseThrow(() -> new IllegalArgumentException(operation + " is not an operation"));
+    private HttpTrait getHttpTrait(ToShapeId operation) {
+        ShapeId id = operation.toShapeId();
+        return index.getShape(id)
+                .orElseThrow(() -> new IllegalArgumentException(id + " is not a valid shape"))
+                .asOperationShape()
+                .orElseThrow(() -> new IllegalArgumentException(id + " is not an operation shape"))
+                .getTrait(HttpTrait.class)
+                .orElseThrow(() -> new IllegalArgumentException(id + " has no http binding trait"));
     }
 
     /**
@@ -212,6 +218,96 @@ public final class HttpBindingIndex implements KnowledgeIndex {
         return responseBindings.get(id).stream()
                 .filter(binding -> binding.getLocation() == bindingLocation)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the expected request Content-Type of the given operation.
+     *
+     * <p>If members are sent in the "document" body, then the default
+     * {@code documentContentType} value is returned. If a member is bound
+     * to the payload, then the following checks are made:
+     *
+     * <ul>
+     *     <li>If the targeted shape has the {@link MediaTypeTrait}, then
+     *     the value of the trait is returned.</li>
+     *     <li>If the targeted shape is a blob, then "application/octet-stream"
+     *     is returned.</li>
+     *     <li>If the targeted shape is a string, then "text/plain" is
+     *     returned.</li>
+     *     <li>If the targeted shape is a structure or document type, then
+     *     the {@code documentContentType} is returned.</li>
+     * </ul>
+     *
+     * <p>If no members are sent in the payload, an empty Optional is
+     * returned.
+     *
+     * @param operation Operation to determine the content-type of.
+     * @param documentContentType Content-Type to use for protocol documents.
+     * @return Returns the optionally resolved content-type of the request.
+     */
+    public Optional<String> determineRequestContentType(ToShapeId operation, String documentContentType) {
+        String contentType = determineContentType(getRequestBindings(operation).values(), documentContentType);
+        return Optional.ofNullable(contentType);
+    }
+
+    /**
+     * Returns the expected response Content-Type of the given operation
+     * or error.
+     *
+     * <p>If members are sent in the "document" body, then the default
+     * {@code documentContentType} value is returned. If a member is bound
+     * to the payload, then the following checks are made:
+     *
+     * <ul>
+     *     <li>If the targeted shape has the {@link MediaTypeTrait}, then
+     *     the value of the trait is returned.</li>
+     *     <li>If the targeted shape is a blob, then "application/octet-stream"
+     *     is returned.</li>
+     *     <li>If the targeted shape is a string, then "text/plain" is
+     *     returned.</li>
+     *     <li>If the targeted shape is a structure or document type, then
+     *     the {@code documentContentType} is returned.</li>
+     * </ul>
+     *
+     * <p>If no members are sent in the payload, an empty Optional is
+     * returned.
+     *
+     * @param operationOrError Operation or error to determine the content-type of.
+     * @param documentContentType Content-Type to use for protocol documents.
+     * @return Returns the optionally resolved content-type of the response.
+     */
+    public Optional<String> determineResponseContentType(ToShapeId operationOrError, String documentContentType) {
+        String contentType = determineContentType(getResponseBindings(operationOrError).values(), documentContentType);
+        return Optional.ofNullable(contentType);
+    }
+
+    private String determineContentType(Collection<HttpBinding> bindings, String documentContentType) {
+        for (HttpBinding binding : bindings) {
+            if (binding.getLocation() == HttpBinding.Location.DOCUMENT) {
+                return documentContentType;
+            }
+
+            if (binding.getLocation() == HttpBinding.Location.PAYLOAD) {
+                Shape target = index.getShape(binding.getMember().getTarget()).orElse(null);
+
+                if (target == null) {
+                    break;
+                }
+
+                // Use the @mediaType trait if available.
+                if (target.getTrait(MediaTypeTrait.class).isPresent()) {
+                    return target.getTrait(MediaTypeTrait.class).get().getValue();
+                } else if (target.isBlobShape()) {
+                    return "application/octet-stream";
+                } else if (target.isStringShape()) {
+                    return "text/plain";
+                } else if (target.isDocumentShape() || target.isStructureShape()) {
+                    return documentContentType;
+                }
+            }
+        }
+
+        return null;
     }
 
     private List<HttpBinding> computeRequestBindings(OperationIndex opIndex, OperationShape shape) {
