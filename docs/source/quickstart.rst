@@ -71,13 +71,13 @@ Smithy supports the following types:
     * - :ref:`document <document-type>`
       - An untyped JSON-like value.
     * - :ref:`list`
-      - Homogenous collection of values.
+      - Homogeneous collection of values.
     * - :ref:`set`
-      - Unordered collection of unique homogenous values.
+      - Unordered collection of unique homogeneous values.
     * - :ref:`map`
-      - Map data structure that maps string keys to homogenous values
+      - Map data structure that maps string keys to homogeneous values
     * - :ref:`structure`
-      - Fixed set of named heterogenous members
+      - Fixed set of named heterogeneous members
     * - :ref:`union`
       - `Tagged union`_ data structure that can take on several different,
         but fixed, types
