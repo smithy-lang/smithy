@@ -379,7 +379,7 @@ events.
 
 .. important::
 
-    Not all protocols support intial messages. Check trait binding and
+    Not all protocols support initial messages. Check trait binding and
     protocol documentation before adding initial messages to an operation.
 
 
