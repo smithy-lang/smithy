@@ -262,6 +262,54 @@ public class SmithyBuildTest {
     }
 
     @Test
+    public void appliesSerialPlugins() throws Exception {
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
+                "test1Serial", new Test1SerialPlugin(),
+                "test2Serial", new Test2SerialPlugin(),
+                "test1Parallel", new Test1ParallelPlugin(),
+                "test2Parallel", new Test2ParallelPlugin()
+        );
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+
+        SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
+        builder.fileManifestFactory(MockManifest::new);
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("applies-serial-plugins.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
+
+        SmithyBuildResult results = builder.build();
+        ProjectionResult source = results.getProjectionResult("source").get();
+        ProjectionResult a = results.getProjectionResult("a").get();
+        ProjectionResult b = results.getProjectionResult("b").get();
+
+        assertPluginPresent("test1Serial", "hello1Serial", source, a);
+        assertPluginPresent("test2Serial", "hello2Serial", a);
+        assertPluginPresent("test1Parallel", "hello1Parallel", source, b);
+        assertPluginPresent("test2Parallel", "hello2Parallel", source);
+
+        // Both the "a" and "source" projections have serial plugins, so they are run in serial, in alphabetical order.
+        assertTrue(getPluginFileContents(a, "test1Serial") < getPluginFileContents(source, "test1Serial"));
+        // The "b" projection has only parallel plugins, so it's a parallel projection. Parallel projections are run
+        // after all the serial projections.
+        assertTrue(getPluginFileContents(source, "test1Serial") < getPluginFileContents(b, "test1Parallel"));
+    }
+
+    private long getPluginFileContents(ProjectionResult projection, String pluginName) {
+        MockManifest manifest = (MockManifest) projection.getPluginManifest(pluginName).get();
+        return Long.parseLong(manifest.getFileString(manifest.getFiles().iterator().next()).get());
+    }
+
+    private void assertPluginPresent(String pluginName, String outputFileName, ProjectionResult...results) {
+        for (ProjectionResult result : results) {
+            assertTrue(result.getPluginManifest(pluginName).isPresent());
+            assertTrue(result.getPluginManifest(pluginName).get().hasFile(outputFileName));
+        }
+    }
+
+    @Test
     public void buildCanOverrideConfigOutputDirectory() throws Exception {
         Path outputDirectory = Paths.get("/custom/foo");
         SmithyBuildConfig config = SmithyBuildConfig.builder()
