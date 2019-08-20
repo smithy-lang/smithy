@@ -153,6 +153,11 @@ final class SmithyBuildImpl {
     SmithyBuildResult applyAllProjections() {
         Model resolvedModel = createBaseModel();
         SmithyBuildResult.Builder builder = SmithyBuildResult.builder();
+
+        // The projections are being split up here because we need to be able to break out non-parallelizeable plugins.
+        // Right now the only parallelization that occurs is at the projection level though, which is why the split is
+        // here instead of somewhere else.
+        // TODO: Run all parallelizeable plugins across all projections in parallel, followed by all serial plugins
         Map<String, ProjectionConfig> serialProjections = new TreeMap<>();
         Map<String, ProjectionConfig> parallelProjections = new TreeMap<>();
         config.getProjections().entrySet().stream()
