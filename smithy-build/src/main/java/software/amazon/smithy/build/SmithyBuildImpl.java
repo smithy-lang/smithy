@@ -153,14 +153,42 @@ final class SmithyBuildImpl {
     SmithyBuildResult applyAllProjections() {
         Model resolvedModel = createBaseModel();
         SmithyBuildResult.Builder builder = SmithyBuildResult.builder();
+
+        // The projections are being split up here because we need to be able to break out non-parallelizeable plugins.
+        // Right now the only parallelization that occurs is at the projection level though, which is why the split is
+        // here instead of somewhere else.
+        // TODO: Run all parallelizeable plugins across all projections in parallel, followed by all serial plugins
+        Map<String, ProjectionConfig> serialProjections = new TreeMap<>();
+        Map<String, ProjectionConfig> parallelProjections = new TreeMap<>();
         config.getProjections().entrySet().stream()
                 .filter(e -> !e.getValue().isAbstract())
                 .filter(e -> projectionFilter.test(e.getKey()))
                 .sorted(Comparator.comparing(Map.Entry::getKey))
+                .forEach(e -> {
+                    // Check to see if any of the plugins in the projection require the projection be run serially
+                    boolean isSerial = e.getValue().getPlugins().keySet().stream().anyMatch(pluginName -> {
+                        Optional<SmithyBuildPlugin> plugin = pluginFactory.apply(pluginName);
+                        return plugin.isPresent() && plugin.get().isSerial();
+                    });
+                    // Only run a projection in parallel if all its plugins are parallelizeable.
+                    if (isSerial) {
+                        serialProjections.put(e.getKey(), e.getValue());
+                    } else {
+                        parallelProjections.put(e.getKey(), e.getValue());
+                    }
+                });
+
+        serialProjections.entrySet().stream()
+                .map(e -> applyProjection(e.getKey(), e.getValue(), resolvedModel))
+                .collect(Collectors.toList())
+                .forEach(builder::addProjectionResult);
+
+        parallelProjections.entrySet().stream()
                 .parallel()
                 .map(e -> applyProjection(e.getKey(), e.getValue(), resolvedModel))
                 .collect(Collectors.toList())
                 .forEach(builder::addProjectionResult);
+
         return builder.build();
     }
 

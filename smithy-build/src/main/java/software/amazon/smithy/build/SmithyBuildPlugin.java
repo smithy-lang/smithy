@@ -62,6 +62,19 @@ public interface SmithyBuildPlugin {
     }
 
     /**
+     * Plugins can choose whether or not projections they are in can be run in
+     * parallel with other projections.
+     *
+     * <p>By default plugins allow parallel execution.</p>
+     *
+     * @return Returns true if the plugin should be run serially, false if it
+     *  can be run in parallel with other plugins.
+     */
+    default boolean isSerial() {
+        return false;
+    }
+
+    /**
      * Executes the plugin, creating any number of artifacts.
      *
      * @param context Plugin context for build execution.
