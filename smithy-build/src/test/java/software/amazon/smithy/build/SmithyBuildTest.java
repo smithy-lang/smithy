@@ -297,6 +297,38 @@ public class SmithyBuildTest {
         assertTrue(getPluginFileContents(source, "test1Serial") < getPluginFileContents(b, "test1Parallel"));
     }
 
+    @Test
+    public void appliesGlobalSerialPlugins() throws Exception {
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
+                "test1Serial", new Test1SerialPlugin(),
+                "test1Parallel", new Test1ParallelPlugin(),
+                "test2Parallel", new Test2ParallelPlugin()
+        );
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+
+        SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
+        builder.fileManifestFactory(MockManifest::new);
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("applies-global-serial-plugins.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
+
+        SmithyBuildResult results = builder.build();
+        ProjectionResult a = results.getProjectionResult("a").get();
+        ProjectionResult b = results.getProjectionResult("b").get();
+
+        assertPluginPresent("test1Serial", "hello1Serial", a, b);
+        assertPluginPresent("test1Parallel", "hello1Parallel", a);
+        assertPluginPresent("test2Parallel", "hello2Parallel", b);
+
+        // The order of execution should be: test1Parallel (a), test1Serial (a), test1Serial (b), test2Parallel (b)
+        assertTrue(getPluginFileContents(a, "test1Parallel") < getPluginFileContents(a, "test1Serial"));
+        assertTrue(getPluginFileContents(a, "test1Serial") < getPluginFileContents(b, "test1Serial"));
+        assertTrue(getPluginFileContents(b, "test1Serial") < getPluginFileContents(b, "test2Parallel"));
+    }
+
     private long getPluginFileContents(ProjectionResult projection, String pluginName) {
         MockManifest manifest = (MockManifest) projection.getPluginManifest(pluginName).get();
         return Long.parseLong(manifest.getFileString(manifest.getFiles().iterator().next()).get());

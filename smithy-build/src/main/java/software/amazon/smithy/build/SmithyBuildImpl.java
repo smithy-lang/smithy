@@ -166,7 +166,7 @@ final class SmithyBuildImpl {
                 .sorted(Comparator.comparing(Map.Entry::getKey))
                 .forEach(e -> {
                     // Check to see if any of the plugins in the projection require the projection be run serially
-                    boolean isSerial = e.getValue().getPlugins().keySet().stream().anyMatch(pluginName -> {
+                    boolean isSerial = resolvePlugins(e.getValue()).keySet().stream().anyMatch(pluginName -> {
                         Optional<SmithyBuildPlugin> plugin = pluginFactory.apply(pluginName);
                         return plugin.isPresent() && plugin.get().isSerial();
                     });
