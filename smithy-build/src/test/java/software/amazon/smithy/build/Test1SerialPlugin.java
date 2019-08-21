@@ -17,9 +17,10 @@ public class Test1SerialPlugin implements SmithyBuildPlugin {
     public void execute(PluginContext context) {
         try {
             TimeUnit.SECONDS.sleep(1);
+            context.getFileManifest().writeFile("hello1Serial", String.format("%s", System.currentTimeMillis()));
+            TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        context.getFileManifest().writeFile("hello1Serial", String.format("%s", System.currentTimeMillis()));
     }
 }
