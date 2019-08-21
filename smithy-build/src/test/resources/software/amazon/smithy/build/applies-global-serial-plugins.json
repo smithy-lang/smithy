@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "projections": {
+    "a": {
+      "plugins": {
+        "test1Parallel": {"hello": "there"}
+      }
+    },
+    "b": {
+      "plugins": {
+        "test2Parallel": {"hello": "there"}
+      }
+    }
+  },
+  "plugins": {
+    "test1Serial": {"hello": "foo"}
+  }
+}
