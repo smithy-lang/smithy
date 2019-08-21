@@ -11,4 +11,4 @@ dist: trusty
 
 install: /bin/true
 
-script: ./gradlew -q clean build
+script: ./gradlew clean build
