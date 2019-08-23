@@ -107,20 +107,21 @@ An *authorizer* definition is an object that supports the following properties:
     * - Property
       - Type
       - Description
-    * - type
-      - ``string``
-      - **Required**. The type of the authorizer. This is a required property
-        and the value must be "token", for an authorizer with the caller
-        identity embedded in an authorization token, or "request", for an
-        authorizer with the caller identity contained in request parameters.
     * - scheme
       - ``string``
       - **Required**. A Smithy authentication scheme name that identifies how
         a client authenticates. This value MUST reference one of the ``auth``
         schemes of the :ref:`protocols-trait` attached to the service.
+    * - type
+      - ``string``
+      - The type of the authorizer. If specifying information beyond the
+        scheme, this value is required. The he value must be "token", for an
+        authorizer with the caller identity embedded in an authorization token,
+        or "request", for an authorizer with the caller identity contained in
+        request parameters.
     * - uri
       - ``string``
-      - **Required.** Specifies the authorizer's Uniform Resource Identifier
+      - Specifies the authorizer's Uniform Resource Identifier
         (URI). For ``token`` or ``request`` authorizers, this must be a
         well-formed Lambda function URI, for example,
         ``arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:{account_id}:function:{lambda_function_name}/invocations``.

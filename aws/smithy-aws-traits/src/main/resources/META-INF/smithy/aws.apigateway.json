@@ -28,7 +28,7 @@
           },
           "type": {
             "target": "smithy.api#String",
-            "documentation": "The type of the authorizer. This is a required property and the value must be \"token\", for an authorizer with the caller identity embedded in an authorization token, or \"request\", for an authorizer with the caller identity contained in request parameters."
+            "documentation": "The type of the authorizer. If specifying information beyond the scheme, this value is required. The value must be \"token\", for an authorizer with the caller identity embedded in an authorization token, or \"request\", for an authorizer with the caller identity contained in request parameters."
           },
           "uri": {
             "target": "smithy.api#String",
