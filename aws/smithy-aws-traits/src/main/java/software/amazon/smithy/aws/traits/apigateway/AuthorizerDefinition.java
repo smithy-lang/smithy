@@ -53,9 +53,9 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     private final Integer resultTtlInSeconds;
 
     private AuthorizerDefinition(Builder builder) {
-        type = SmithyBuilder.requiredState(TYPE_KEY, builder.type);
         scheme = SmithyBuilder.requiredState(SCHEME_KEY, builder.scheme);
-        uri = SmithyBuilder.requiredState(URI_KEY, builder.uri);
+        type = builder.type;
+        uri = builder.uri;
         credentials = builder.credentials;
         identitySource = builder.identitySource;
         identityValidationExpression = builder.identityValidationExpression;
@@ -74,7 +74,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     /**
      * Gets the Smithy scheme used as the client authentication type.
      *
-     * @return Returns the optionally defined client authentication type.
+     * @return Returns the defined client authentication type.
      */
     public String getScheme() {
         return scheme;
@@ -83,25 +83,26 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     /**
      * Gets the type of the authorizer.
      *
-     * <p>This is a required property and the value must be "token",
-     * for an authorizer with the caller identity embedded in an
-     * authorization token, or "request", for an authorizer with the
-     * caller identity contained in request parameters.
+     * <p>If specifying information beyond the scheme, this value is
+     * required. The value must be "token", for an authorizer with the
+     * caller identity embedded in an authorization token, or "request",
+     * for an authorizer with the caller identity contained in request
+     * parameters.
      *
-     * @return Returns the authorizer type.
+     * @return Returns the optional authorizer type.
      */
-    public String getType() {
-        return type;
+    public Optional<String> getType() {
+        return Optional.ofNullable(type);
     }
 
     /**
      * Gets the Uniform Resource Identifier (URI) of the authorizer
      * Lambda function.
      *
-     * @return Returns the Lambda URI.
+     * @return Returns the optional Lambda URI.
      */
-    public String getUri() {
-        return uri;
+    public Optional<String> getUri() {
+        return Optional.ofNullable(uri);
     }
 
     /**
@@ -164,9 +165,9 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withMember(TYPE_KEY, Node.from(getType()))
                 .withMember(SCHEME_KEY, Node.from(getScheme()))
-                .withMember(URI_KEY, Node.from(getUri()))
+                .withOptionalMember(TYPE_KEY, getType().map(Node::from))
+                .withOptionalMember(URI_KEY, getUri().map(Node::from))
                 .withOptionalMember(CREDENTIALS_KEY, getCredentials().map(Node::from))
                 .withOptionalMember(IDENTITY_SOURCE_KEY, getIdentitySource().map(Node::from))
                 .withOptionalMember(IDENTITY_VALIDATION_EXPRESSION_KEY,
@@ -184,9 +185,9 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         }
 
         AuthorizerDefinition that = (AuthorizerDefinition) o;
-        return Objects.equals(scheme, that.scheme)
-               && type.equals(that.type)
-               && uri.equals(that.uri)
+        return scheme.equals(that.scheme)
+               && Objects.equals(type, that.type)
+               && Objects.equals(uri, that.uri)
                && Objects.equals(credentials, that.credentials)
                && Objects.equals(identitySource, that.identitySource)
                && Objects.equals(identityValidationExpression, that.identityValidationExpression)
@@ -201,11 +202,13 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     static AuthorizerDefinition fromNode(ObjectNode node) {
         node.warnIfAdditionalProperties(PROPERTIES);
         Builder builder = builder();
-        node.getStringMember(SCHEME_KEY)
+        builder.scheme(node.expectMember(SCHEME_KEY).expectStringNode().getValue());
+        node.getStringMember(TYPE_KEY)
                 .map(StringNode::getValue)
-                .ifPresent(builder::scheme);
-        builder.type(node.expectMember(TYPE_KEY).expectStringNode().getValue());
-        builder.uri(node.expectMember(URI_KEY).expectStringNode().getValue());
+                .ifPresent(builder::type);
+        node.getStringMember(URI_KEY)
+                .map(StringNode::getValue)
+                .ifPresent(builder::uri);
         node.getStringMember(CREDENTIALS_KEY)
                 .map(StringNode::getValue)
                 .ifPresent(builder::credentials);
@@ -253,10 +256,11 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         /**
          * Sets the type of the authorizer.
          *
-         * <p>This is a required property and the value must be "token",
-         * for an authorizer with the caller identity embedded in an
-         * authorization token, or "request", for an authorizer with the
-         * caller identity contained in request parameters.
+         * <p>If specifying information beyond the scheme, this value is
+         * required. The value must be "token", for an authorizer with the
+         * caller identity embedded in an authorization token, or "request",
+         * for an authorizer with the caller identity contained in request
+         * parameters.
          *
          * @param type authorizer type.
          * @return Returns the builder.

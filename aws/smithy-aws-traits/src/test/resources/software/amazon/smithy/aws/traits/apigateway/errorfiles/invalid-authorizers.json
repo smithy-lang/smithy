@@ -8,9 +8,7 @@
         "protocols": [{"name": "aws.rest-json", "auth": ["aws.v4"]}],
         "aws.apigateway#authorizers": {
           "invalid": {
-            "scheme": "invalid",
-            "type": "request",
-            "uri": "arn:foo:baz"
+            "scheme": "invalid"
           },
           "another": {
             "scheme": "another",
