@@ -37,4 +37,18 @@ public class AddIntegrationsTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
+    @Test
+    public void addsIntegrationsWithoutCredentials() {
+        Model model = Model.assembler(getClass().getClassLoader())
+                              .discoverModels(getClass().getClassLoader())
+                              .addImport(getClass().getResource("integrations-without-credentials.json"))
+                              .assemble()
+                              .unwrap();
+        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("integrations-without-credentials.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }
