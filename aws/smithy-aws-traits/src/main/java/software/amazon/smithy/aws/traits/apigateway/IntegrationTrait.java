@@ -357,8 +357,10 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         ObjectNode result = toNode().expectObjectNode();
         result = result.withMember(URI_KEY, formatComponent(
                 service, operation, result.expectMember(URI_KEY).expectStringNode().getValue()));
-        result = result.withMember(CREDENTIALS_KEY, formatComponent(
-                service, operation, result.expectMember(CREDENTIALS_KEY).expectStringNode().getValue()));
+        if (result.containsMember(CREDENTIALS_KEY)) {
+            result = result.withMember(CREDENTIALS_KEY, formatComponent(
+                    service, operation, result.expectMember(CREDENTIALS_KEY).expectStringNode().getValue()));
+        }
         return result;
     }
 
