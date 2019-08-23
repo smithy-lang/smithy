@@ -5457,7 +5457,7 @@ maintain and evolve. Smithy tools MUST take the following steps to merge two
 models together to form a composite model:
 
 #. Assert that both models use a :ref:`version <smithy-version>` that is
-   compatible with the tool. The version is specificed
+   compatible with the tool versions specified.
 #. If both models define the same :ref:`namespace <namespaces>`, merge the
    namespaces.
 

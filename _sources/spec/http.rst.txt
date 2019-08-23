@@ -496,7 +496,7 @@ Serialization rules:
 
 * The header field name MUST be compatible with :rfc:`7230#section-3.2`.
 * When a :ref:`list` shape is targeted, each member of the shape is serialized
-  as a separate HTTP header either by concatening the values with a comma on a
+  as a separate HTTP header either by concatenating the values with a comma on a
   single line or by serializing each header value on its own line.
 * boolean values are serialized as ``true`` or ``false``.
 * blob values are base-64 encoded.

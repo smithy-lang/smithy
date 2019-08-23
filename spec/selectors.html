@@ -202,7 +202,7 @@ comparison of an attribute value to an expected value.</p>
 </tr>
 </tbody>
 </table>
-<p>Attribute comparisions can be made case-insensitive by preceding the closing
+<p>Attribute comparisons can be made case-insensitive by preceding the closing
 bracket with &quot; i&quot; (e.g., <code class="docutils literal notranslate"><span class="pre">string[trait|time=DATE</span> <span class="pre">i]</span></code>).</p>
 <div class="section" id="matching-traits">
 <h3>Matching traits<a class="headerlink" href="#matching-traits" title="Permalink to this headline">¶</a></h3>
@@ -247,7 +247,7 @@ on a shape ID easier. The following example finds all shapes that are in the
 </pre></div>
 </div>
 <p>Though not as clear, matching shapes in a specific namespace can also be
-acheived using the <code class="docutils literal notranslate"><span class="pre">^=</span></code> comparator against <code class="docutils literal notranslate"><span class="pre">id</span></code>:</p>
+achieved using the <code class="docutils literal notranslate"><span class="pre">^=</span></code> comparator against <code class="docutils literal notranslate"><span class="pre">id</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resource</span><span class="p">[</span><span class="nb">id</span><span class="o">^=</span><span class="n">smithy</span><span class="o">.</span><span class="n">example</span><span class="c1">#]</span>
 </pre></div>
 </div>
@@ -257,7 +257,7 @@ acheived using the <code class="docutils literal notranslate"><span class="pre">
 </pre></div>
 </div>
 <p>Though not as clear, matching members with a member name of &quot;key&quot; can also be
-acheived using the <code class="docutils literal notranslate"><span class="pre">$=</span></code> comparator against <code class="docutils literal notranslate"><span class="pre">id</span></code>:</p>
+achieved using the <code class="docutils literal notranslate"><span class="pre">$=</span></code> comparator against <code class="docutils literal notranslate"><span class="pre">id</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>resource[id$=&quot;$key&quot;]
 </pre></div>
 </div>
@@ -353,6 +353,123 @@ an identifier:</p>
 <div class="section" id="relationships">
 <span id="selector-relationships"></span><h3>Relationships<a class="headerlink" href="#relationships" title="Permalink to this headline">¶</a></h3>
 <p>The table below lists the labeled directed relationships from each shape.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="15%" />
+<col width="15%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Shape</th>
+<th class="head">Relationship</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>service</td>
+<td>operation</td>
+<td>Each operation that is bound to a service.</td>
+</tr>
+<tr class="row-odd"><td>service</td>
+<td>resource</td>
+<td>Each resource that is bound to a service.</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>identifier</td>
+<td>The identifier referenced by the resource (if specified).</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
+<td>operation</td>
+<td>Each operation that is bound to a resource through the
+&quot;operations&quot;, &quot;create&quot;, &quot;put&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;, and &quot;list&quot;
+properties.</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>instanceOperation</td>
+<td>Each operation that is bound to a resource through the
+&quot;operations&quot;, &quot;put&quot;, &quot;read&quot;, &quot;update&quot;, and &quot;delete&quot; properties.</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
+<td>collectionOperation</td>
+<td>Each operation that is bound to a resource through the
+&quot;collectionOperations&quot;, &quot;create&quot;, and &quot;list&quot; properties.</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>resource</td>
+<td>Each resource that is bound to a resource.</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
+<td>create</td>
+<td>The operation referenced by the <a class="reference internal" href="core.html#create-lifecycle"><span class="std std-ref">Create lifecycle</span></a> property of
+a resource (if present).</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>read</td>
+<td>The operation referenced by the <a class="reference internal" href="core.html#read-lifecycle"><span class="std std-ref">Read lifecycle</span></a> property of
+a resource (if present).</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
+<td>update</td>
+<td>The operation referenced by the <a class="reference internal" href="core.html#update-lifecycle"><span class="std std-ref">Update lifecycle</span></a> property of
+a resource (if present).</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>delete</td>
+<td>The operation referenced by the <a class="reference internal" href="core.html#delete-lifecycle"><span class="std std-ref">Delete lifecycle</span></a> property of
+a resource (if present).</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
+<td>list</td>
+<td>The operation referenced by the <a class="reference internal" href="core.html#list-lifecycle"><span class="std std-ref">List lifecycle</span></a> property of
+a resource (if present).</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td>bound</td>
+<td>The service or resource to which the resource is bound.</td>
+</tr>
+<tr class="row-odd"><td>operation</td>
+<td>bound</td>
+<td>The service or resource to which the operation is bound.</td>
+</tr>
+<tr class="row-even"><td>operation</td>
+<td>input</td>
+<td>The input structure of the operation (if present).</td>
+</tr>
+<tr class="row-odd"><td>operation</td>
+<td>output</td>
+<td>The output structure of the operation (if present).</td>
+</tr>
+<tr class="row-even"><td>operation</td>
+<td>error</td>
+<td>Each error structure referenced by the operation (if present).</td>
+</tr>
+<tr class="row-odd"><td>list</td>
+<td>member</td>
+<td>The <a class="reference internal" href="core.html#member"><span class="std std-ref">member</span></a> of the list. Note that this is not the shape targeted
+by the member.</td>
+</tr>
+<tr class="row-even"><td>map</td>
+<td>member</td>
+<td>The key and value members of the map. Note that these are not the
+shapes targeted by the member.</td>
+</tr>
+<tr class="row-odd"><td>structure</td>
+<td>member</td>
+<td>Each structure member. Note that these are not the shapes targeted by
+the members.</td>
+</tr>
+<tr class="row-even"><td>union</td>
+<td>member</td>
+<td>Each union member. Note that these are not the shapes targeted by
+the members.</td>
+</tr>
+<tr class="row-odd"><td>member</td>
+<td>&#160;</td>
+<td>The shape targeted by the member. Note that member targets have no
+relationship name.</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="section" id="functions">

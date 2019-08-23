@@ -85,7 +85,7 @@ Attribute selectors support the following comparators:
     * - ``*=``
       - Matches if the attribute value contains with the expected value.
 
-Attribute comparisions can be made case-insensitive by preceding the closing
+Attribute comparisons can be made case-insensitive by preceding the closing
 bracket with " i" (e.g., ``string[trait|time=DATE i]``).
 
 
@@ -148,7 +148,7 @@ on a shape ID easier. The following example finds all shapes that are in the
     resource[id|namespace=smithy.example]
 
 Though not as clear, matching shapes in a specific namespace can also be
-acheived using the ``^=`` comparator against ``id``:
+achieved using the ``^=`` comparator against ``id``:
 
 ::
 
@@ -162,7 +162,7 @@ The following example matches all member shapes that have a member name of
     resource[id|member=key]
 
 Though not as clear, matching members with a member name of "key" can also be
-acheived using the ``$=`` comparator against ``id``:
+achieved using the ``$=`` comparator against ``id``:
 
 ::
 
@@ -290,11 +290,11 @@ The table below lists the labeled directed relationships from each shape.
     * - resource
       - instanceOperation
       - Each operation that is bound to a resource through the
-      - "operations", "put", "read", "update", and "delete" properties.
+        "operations", "put", "read", "update", and "delete" properties.
     * - resource
       - collectionOperation
       - Each operation that is bound to a resource through the
-      - "collectionOperations", "create", and "list" properties.
+        "collectionOperations", "create", and "list" properties.
     * - resource
       - resource
       - Each resource that is bound to a resource.
