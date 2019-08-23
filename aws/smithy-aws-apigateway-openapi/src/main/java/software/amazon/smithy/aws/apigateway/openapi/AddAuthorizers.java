@@ -101,8 +101,8 @@ final class AddAuthorizers implements OpenApiMapper {
                             CLIENT_EXTENSION_NAME, determineApiGatewayClientName(authorizer.getScheme()));
 
                     ObjectNode authorizerNode = Node.objectNodeBuilder()
-                            .withMember("type", authorizer.getType())
-                            .withMember("authorizerUri", authorizer.getUri())
+                            .withOptionalMember("type", authorizer.getType().map(Node::from))
+                            .withOptionalMember("authorizerUri", authorizer.getUri().map(Node::from))
                             .withOptionalMember("authorizerCredentials", authorizer.getCredentials().map(Node::from))
                             .withOptionalMember("identityValidationExpression",
                                                 authorizer.getIdentityValidationExpression().map(Node::from))
@@ -110,7 +110,9 @@ final class AddAuthorizers implements OpenApiMapper {
                             .withOptionalMember("authorizerResultTtlInSeconds",
                                                 authorizer.getResultTtlInSeconds().map(Node::from))
                             .build();
-                    schemeBuilder.putExtension(EXTENSION_NAME, authorizerNode);
+                    if (authorizerNode.size() != 0) {
+                        schemeBuilder.putExtension(EXTENSION_NAME, authorizerNode);
+                    }
 
                     LOGGER.fine(() -> String.format("Adding the `%s` OpenAPI security scheme", entry.getKey()));
                     components.putSecurityScheme(entry.getKey(), schemeBuilder.build());

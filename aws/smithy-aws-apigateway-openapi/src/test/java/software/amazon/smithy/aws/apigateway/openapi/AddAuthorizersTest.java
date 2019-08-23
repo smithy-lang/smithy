@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -53,5 +54,25 @@ public class AddAuthorizersTest {
         assertThat(authorizer.getStringMember("identitySource").get().getValue(), equalTo("mapping.expression"));
         assertThat(authorizer.getStringMember("identityValidationExpression").get().getValue(), equalTo("[A-Z]+"));
         assertThat(authorizer.getNumberMember("authorizerResultTtlInSeconds").get().getValue(), equalTo(100));
+    }
+
+    @Test
+    public void addsOnlyAuthType() {
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("basic-authorizers.json"))
+                .assemble()
+                .unwrap();
+        OpenApi result = OpenApiConverter.create()
+                .classLoader(getClass().getClassLoader())
+                .convert(model, ShapeId.from("ns.foo#SomeService"));
+        SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
+
+        assertThat(result.getComponents().getSecuritySchemes().get("aws.v4"), nullValue());
+        assertThat(sigV4.getType(), equalTo("apiKey"));
+        assertThat(sigV4.getName().get(), equalTo("Authorization"));
+        assertThat(sigV4.getIn().get(), equalTo("header"));
+        assertThat(sigV4.getExtension("x-amazon-apigateway-authtype").get(), equalTo(Node.from("awsSigv4")));
+        assertFalse(sigV4.getExtension("x-amazon-apigateway-authorizer").isPresent());
     }
 }
