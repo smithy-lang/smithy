@@ -54,9 +54,7 @@ public final class CognitoUserPoolsSettingsTrait
         public Trait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode().warnIfAdditionalProperties(ListUtils.of(PROVIDER_ARNS));
             return builder()
-                    .providerArns(objectNode.expectMember(PROVIDER_ARNS)
-                            .expectArrayNode()
-                            .getElementsAs(StringNode::getValue))
+                    .providerArns(objectNode.expectArrayMember(PROVIDER_ARNS).getElementsAs(StringNode::getValue))
                     .build();
         }
     }

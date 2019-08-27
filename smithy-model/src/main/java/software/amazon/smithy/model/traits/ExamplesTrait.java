@@ -214,7 +214,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
 
         private static Example exampleFromNode(ObjectNode node) {
             return Example.builder()
-                    .title(node.expectMember("title").expectStringNode().getValue())
+                    .title(node.expectStringMember("title").getValue())
                     .documentation(node.getStringMember("documentation").map(StringNode::getValue).orElse(null))
                     .input(node.getMember("input").map(Node::expectObjectNode).orElseGet(Node::objectNode))
                     .output(node.getMember("output").map(Node::expectObjectNode).orElseGet(Node::objectNode))

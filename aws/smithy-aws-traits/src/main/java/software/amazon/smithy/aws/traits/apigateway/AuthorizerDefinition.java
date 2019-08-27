@@ -202,7 +202,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     static AuthorizerDefinition fromNode(ObjectNode node) {
         node.warnIfAdditionalProperties(PROPERTIES);
         Builder builder = builder();
-        builder.scheme(node.expectMember(SCHEME_KEY).expectStringNode().getValue());
+        builder.scheme(node.expectStringMember(SCHEME_KEY).getValue());
         node.getStringMember(TYPE_KEY)
                 .map(StringNode::getValue)
                 .ifPresent(builder::type);

@@ -77,7 +77,7 @@ final class ConfigLoader {
         SmithyBuildConfig.Builder builder = SmithyBuildConfig.builder();
         node.warnIfAdditionalProperties(ROOT_KEYS);
 
-        node.expectMember(VERSION_KEY).expectStringNode().expectOneOf(VERSION);
+        node.expectStringMember(VERSION_KEY).expectOneOf(VERSION);
         builder.imports(node.getArrayMember(IMPORTS_KEY)
                 .map(imports -> Node.loadArrayOfString(IMPORTS_KEY, imports))
                 .orElse(Collections.emptyList()));
@@ -118,7 +118,7 @@ final class ConfigLoader {
                 .map(element -> {
                     ObjectNode objectNode = element.expectObjectNode();
                     objectNode.warnIfAdditionalProperties(TRANSFORM_KEYS);
-                    String name = objectNode.expectMember(NAME_KEY).expectStringNode().getValue();
+                    String name = objectNode.expectStringMember(NAME_KEY).getValue();
                     List<String> args = objectNode.getArrayMember(ARGS_KEY)
                             .map(argsNode -> argsNode.getElementsAs(StringNode::getValue))
                             .orElseGet(Collections::emptyList);

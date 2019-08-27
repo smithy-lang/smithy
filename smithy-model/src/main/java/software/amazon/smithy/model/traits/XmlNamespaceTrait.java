@@ -92,7 +92,7 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
             Builder builder = builder().sourceLocation(value);
             ObjectNode node = value.expectObjectNode();
             node.warnIfAdditionalProperties(XML_NAMESPACE_PROPERTIES);
-            builder.uri(node.expectMember("uri").expectStringNode().getValue());
+            builder.uri(node.expectStringMember("uri").getValue());
             return builder.build();
         }
     }

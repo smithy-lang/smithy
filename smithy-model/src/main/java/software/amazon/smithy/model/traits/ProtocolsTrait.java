@@ -58,7 +58,7 @@ public final class ProtocolsTrait extends AbstractTrait implements ToSmithyBuild
             for (ObjectNode protocol : value.expectArrayNode().getElementsAs(ObjectNode.class)) {
                 protocol.warnIfAdditionalProperties(PROPERTIES);
                 Protocol.Builder protocolBuilder = Protocol.builder();
-                protocolBuilder.name(protocol.expectMember("name").expectStringNode().getValue());
+                protocolBuilder.name(protocol.expectStringMember("name").getValue());
                 protocol.getMember("tags").map(Node::expectArrayNode).ifPresent(tagsNode -> {
                     tagsNode.getElements().stream()
                             .map(Node::expectStringNode)

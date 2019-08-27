@@ -75,7 +75,7 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
             Builder builder = builder();
             ObjectNode objectNode = value.expectObjectNode();
             objectNode.warnIfAdditionalProperties(PROPERTIES);
-            builder.template(objectNode.expectMember(TEMPLATE).expectStringNode().getValue());
+            builder.template(objectNode.expectStringMember(TEMPLATE).getValue());
             builder.absolute(objectNode.getBooleanMemberOrDefault(ABSOLUTE));
             builder.noRegion(objectNode.getBooleanMemberOrDefault(NO_REGION));
             builder.noAccount(objectNode.getBooleanMemberOrDefault(NO_ACCOUNT));

@@ -271,8 +271,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
         private static Reference referenceFromNode(String namespace, ObjectNode referenceProperties) {
             return Reference.builder()
                     .resource(referenceProperties
-                                      .expectMember("resource")
-                                      .expectStringNode()
+                                      .expectStringMember("resource")
                                       .expectShapeId(namespace))
                     .ids(referenceProperties.getObjectMember("ids")
                                  .map(obj -> obj.getMembers().entrySet().stream()

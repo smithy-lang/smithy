@@ -44,7 +44,7 @@ public final class EmitNoneSelectorValidator extends AbstractValidator {
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
             super(EmitNoneSelectorValidator.class, configuration -> {
-                Selector selector = parse(configuration.expectMember("selector").expectStringNode());
+                Selector selector = parse(configuration.expectStringMember("selector"));
                 return new EmitNoneSelectorValidator(selector);
             });
         }

@@ -111,8 +111,7 @@ final class ValidationLoader {
 
     private static ValidatorDefinition loadSingleValidator(ObjectNode node) {
         node.warnIfAdditionalProperties(VALIDATOR_PROPERTIES);
-        String name = node.expectMember("name", "Validator is missing a required `name` property.")
-                .expectStringNode().getValue();
+        String name = node.expectStringMember("name").getValue();
         ValidatorDefinition def = new ValidatorDefinition(
                 name, node.getStringMember("id").map(StringNode::getValue).orElse(name));
         def.message = node.getStringMember("message").map(StringNode::getValue).orElse(null);
