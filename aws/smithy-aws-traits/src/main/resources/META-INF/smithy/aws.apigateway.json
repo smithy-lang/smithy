@@ -20,6 +20,7 @@
       "AuthorizerDefinition": {
         "type": "structure",
         "documentation": "An object that associates an authorizer and associated metadata with an authentication mechanism.",
+        "private": true,
         "members": {
           "scheme": {
             "required": true,
