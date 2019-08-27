@@ -38,6 +38,15 @@ import software.amazon.smithy.model.SourceLocation;
 
 public class ObjectNodeTest {
 
+    private static final ObjectNode EXPECTATION_NODE = Node.objectNodeBuilder()
+            .withMember("array", Node.arrayNode())
+            .withMember("boolean", Node.from(true))
+            .withMember("number", Node.from(10))
+            .withMember("null", Node.nullNode())
+            .withMember("string", Node.from("hi"))
+            .withMember("object", Node.objectNode())
+            .build();
+
     @Test
     public void emptyNodeIsEmpty() {
         ObjectNode node = Node.objectNode();
@@ -301,5 +310,53 @@ public class ObjectNodeTest {
         assertThat(result.getMember("a"), equalTo(Optional.of(Node.from("a"))));
         assertThat(result.getMember("b"), equalTo(Optional.of(Node.from("b"))));
         assertThat(result.getMember("c"), equalTo(Optional.of(Node.from("c"))));
+    }
+
+    @Test
+    public void expectsArrayMember() {
+        EXPECTATION_NODE.expectArrayMember("array");
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            EXPECTATION_NODE.expectArrayMember("object");
+        });
+    }
+
+    @Test
+    public void expectsBooleanMember() {
+        EXPECTATION_NODE.expectBooleanMember("boolean");
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            EXPECTATION_NODE.expectBooleanMember("object");
+        });
+    }
+
+    @Test
+    public void expectsNumberMember() {
+        EXPECTATION_NODE.expectNumberMember("number");
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            EXPECTATION_NODE.expectNumberMember("object");
+        });
+    }
+
+    @Test
+    public void expectsNullMember() {
+        EXPECTATION_NODE.expectNullMember("null");
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            EXPECTATION_NODE.expectNullMember("object");
+        });
+    }
+
+    @Test
+    public void expectsObjectMember() {
+        EXPECTATION_NODE.expectObjectMember("object");
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            EXPECTATION_NODE.expectObjectMember("string");
+        });
+    }
+
+    @Test
+    public void expectsStringMember() {
+        EXPECTATION_NODE.expectStringMember("string");
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            EXPECTATION_NODE.expectStringMember("object");
+        });
     }
 }

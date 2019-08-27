@@ -72,8 +72,8 @@ public final class ReservedWordsValidator extends AbstractValidator {
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
             super(ReservedWordsValidator.class, node -> new ReservedWordsValidator(
-                    node.expectMember("reserved")
-                        .expectArrayNode().getElements().stream()
+                    node.expectArrayMember("reserved")
+                        .getElements().stream()
                         .map(Node::expectObjectNode)
                         .map(ReservedWordsValidator::createConfiguration)
                         .collect(Collectors.toList())));

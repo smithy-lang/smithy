@@ -375,6 +375,78 @@ public final class ObjectNode extends Node implements ToSmithyBuilder<ObjectNode
     }
 
     /**
+     * Gets a member and requires it to be an array.
+     *
+     * @param name Name of the member to get.
+     * @return Returns the node with the given member name.
+     * @throws ExpectationNotMetException when not present or not an array.
+     */
+    public ArrayNode expectArrayMember(String name) {
+        return expectMember(name)
+                .expectArrayNode(format("Expected `%s` member to be an array, but found {type}.", name));
+    }
+
+    /**
+     * Gets a member and requires it to be a boolean.
+     *
+     * @param name Name of the member to get.
+     * @return Returns the node with the given member name.
+     * @throws ExpectationNotMetException when not present or not a boolean.
+     */
+    public BooleanNode expectBooleanMember(String name) {
+        return expectMember(name)
+                .expectBooleanNode(format("Expected `%s` member to be a boolean, but found {type}.", name));
+    }
+
+    /**
+     * Gets a member and requires it to be a null.
+     *
+     * @param name Name of the member to get.
+     * @return Returns the node with the given member name.
+     * @throws ExpectationNotMetException when not present or not a null.
+     */
+    public NullNode expectNullMember(String name) {
+        return expectMember(name)
+                .expectNullNode(format("Expected `%s` member to be null, but found {type}.", name));
+    }
+
+    /**
+     * Gets a member and requires it to be a number.
+     *
+     * @param name Name of the member to get.
+     * @return Returns the node with the given member name.
+     * @throws ExpectationNotMetException when not present or not a number.
+     */
+    public NumberNode expectNumberMember(String name) {
+        return expectMember(name)
+                .expectNumberNode(format("Expected `%s` member to be a number, but found {type}.", name));
+    }
+
+    /**
+     * Gets a member and requires it to be an object.
+     *
+     * @param name Name of the member to get.
+     * @return Returns the node with the given member name.
+     * @throws ExpectationNotMetException when not present or not an object.
+     */
+    public ObjectNode expectObjectMember(String name) {
+        return expectMember(name)
+                .expectObjectNode(format("Expected `%s` member to be an object, but found {type}.", name));
+    }
+
+    /**
+     * Gets a member and requires it to be a string.
+     *
+     * @param name Name of the member to get.
+     * @return Returns the node with the given member name.
+     * @throws ExpectationNotMetException when not present or not a string.
+     */
+    public StringNode expectStringMember(String name) {
+        return expectMember(name)
+                .expectStringNode(format("Expected `%s` member to be a string, but found {type}.", name));
+    }
+
+    /**
      * Ensures that there are no additional properties other than the
      * provided member names.
      *

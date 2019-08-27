@@ -55,7 +55,7 @@ final class LoaderUtils {
     private LoaderUtils() {}
 
     static void loadServiceObject(ServiceShape.Builder builder, ShapeId shapeId, ObjectNode shapeNode) {
-        builder.version(shapeNode.expectMember(VERSION_KEY).expectStringNode().getValue());
+        builder.version(shapeNode.expectStringMember(VERSION_KEY).getValue());
         LoaderUtils.optionalIdList(shapeNode, shapeId.getNamespace(), OPERATIONS_KEY).forEach(builder::addOperation);
         LoaderUtils.optionalIdList(shapeNode, shapeId.getNamespace(), RESOURCES_KEY).forEach(builder::addResource);
     }

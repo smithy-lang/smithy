@@ -50,8 +50,8 @@ public final class HttpTrait extends AbstractTrait implements ToSmithyBuilder<Ht
         public Trait createTrait(ShapeId target, Node value) {
             HttpTrait.Builder builder = builder().sourceLocation(value);
             ObjectNode members = value.expectObjectNode();
-            builder.uri(UriPattern.parse(members.expectMember("uri").expectStringNode().getValue()));
-            builder.method(members.expectMember("method").expectStringNode().getValue());
+            builder.uri(UriPattern.parse(members.expectStringMember("uri").getValue()));
+            builder.method(members.expectStringMember("method").getValue());
             builder.code(members.getNumberMember("code")
                                  .map(NumberNode::getValue)
                                  .map(Number::intValue)

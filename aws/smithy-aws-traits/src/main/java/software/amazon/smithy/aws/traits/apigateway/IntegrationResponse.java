@@ -66,7 +66,7 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
         Objects.requireNonNull(value);
         ObjectNode obj = value.expectObjectNode();
         Builder builder = builder().sourceLocation(value);
-        builder.statusCode(obj.expectMember(STATUS_CODE_KEY).expectStringNode().getValue());
+        builder.statusCode(obj.expectStringMember(STATUS_CODE_KEY).getValue());
         obj.getStringMember(CONTENT_HANDLING_KEY).map(StringNode::getValue).ifPresent(builder::contentHandling);
         obj.getObjectMember(RESPONSE_TEMPLATES_KEY)
                 .map(ObjectNode::getMembers)

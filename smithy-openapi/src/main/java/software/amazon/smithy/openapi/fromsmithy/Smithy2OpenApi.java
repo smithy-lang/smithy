@@ -44,9 +44,7 @@ public final class Smithy2OpenApi implements SmithyBuildPlugin {
         context.getPluginClassLoader().ifPresent(converter::classLoader);
 
         ShapeId shapeId = ShapeId.from(context.getSettings()
-                .expectMember(OpenApiConstants.SERVICE,
-                              getName() + " required a `service` shape ID is provided in the settings.")
-                .expectStringNode("`" + OpenApiConstants.SERVICE + "` must be a string value")
+                .expectStringMember(OpenApiConstants.SERVICE)
                 .getValue());
 
         ObjectNode openApiNode = converter.convertToNode(context.getModel(), shapeId);

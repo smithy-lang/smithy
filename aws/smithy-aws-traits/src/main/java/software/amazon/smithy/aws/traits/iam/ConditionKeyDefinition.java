@@ -50,7 +50,7 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
         ObjectNode objectNode = value.expectObjectNode();
         objectNode.warnIfAdditionalProperties(SUPPORTED_PROPERTIES);
         Builder builder = builder()
-                .type(objectNode.expectMember(TYPE).expectStringNode().getValue());
+                .type(objectNode.expectStringMember(TYPE).getValue());
         objectNode.getStringMember(DOCUMENTATION).map(StringNode::getValue)
                 .ifPresent(builder::documentation);
         objectNode.getStringMember(EXTERNAL_DOCUMENTATION).map(StringNode::getValue)

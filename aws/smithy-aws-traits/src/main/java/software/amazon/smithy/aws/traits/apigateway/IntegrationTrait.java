@@ -108,9 +108,9 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
             builder.sourceLocation(value);
             ObjectNode node = value.expectObjectNode();
             node.warnIfAdditionalProperties(KEYS);
-            builder.type(node.expectMember(TYPE_KEY).expectStringNode().getValue());
-            builder.uri(node.expectMember(URI_KEY).expectStringNode().getValue());
-            builder.httpMethod(node.expectMember(HTTP_METHOD_KEY).expectStringNode().getValue());
+            builder.type(node.expectStringMember(TYPE_KEY).getValue());
+            builder.uri(node.expectStringMember(URI_KEY).getValue());
+            builder.httpMethod(node.expectStringMember(HTTP_METHOD_KEY).getValue());
             node.getArrayMember(CACHE_KEY_PARAMETERS_KEY)
                     .ifPresent(arrayNode -> arrayNode.getElements().stream()
                             .map(Node::expectStringNode)
@@ -356,10 +356,10 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     public ObjectNode toExpandedNode(ToShapeId service, ToShapeId operation) {
         ObjectNode result = toNode().expectObjectNode();
         result = result.withMember(URI_KEY, formatComponent(
-                service, operation, result.expectMember(URI_KEY).expectStringNode().getValue()));
+                service, operation, result.expectStringMember(URI_KEY).getValue()));
         if (result.containsMember(CREDENTIALS_KEY)) {
             result = result.withMember(CREDENTIALS_KEY, formatComponent(
-                    service, operation, result.expectMember(CREDENTIALS_KEY).expectStringNode().getValue()));
+                    service, operation, result.expectStringMember(CREDENTIALS_KEY).getValue()));
         }
         return result;
     }

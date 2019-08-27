@@ -194,7 +194,7 @@ final class NodeModelLoader implements ModelLoader {
 
     void load(LoaderVisitor visitor, Node node) {
         ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
-        StringNode version = model.expectMember(SMITHY).expectStringNode();
+        StringNode version = model.expectStringMember(SMITHY);
         visitor.onVersion(version.getSourceLocation(), version.expectStringNode().getValue());
 
         model.getMember(METADATA).ifPresent(value -> {
