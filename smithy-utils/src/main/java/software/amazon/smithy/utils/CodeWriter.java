@@ -415,7 +415,7 @@ public class CodeWriter {
      * @param formatter Formatter function that formats the given object as a String.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter putFormatter(char identifier, BiFunction<Object, String, String> formatter) {
+    public final CodeWriter putFormatter(char identifier, BiFunction<Object, String, String> formatter) {
         this.formatter.putFormatter(identifier, formatter);
         return this;
     }
@@ -430,7 +430,7 @@ public class CodeWriter {
      * @return Returns the generated code.
      */
     @Override
-    public final String toString() {
+    public String toString() {
         String result = currentState.toString();
 
         // Trim excessive blank lines.
@@ -828,7 +828,7 @@ public class CodeWriter {
      * @param content Content to write if present.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter writeOptional(Object content) {
+    public final CodeWriter writeOptional(Object content) {
         if (content == null) {
             return this;
         } else if (content instanceof Optional) {
@@ -846,7 +846,7 @@ public class CodeWriter {
      * @param task Method to invoke.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter call(Runnable task) {
+    public final CodeWriter call(Runnable task) {
         task.run();
         return this;
     }
@@ -875,7 +875,7 @@ public class CodeWriter {
      * @param mappings Key value pairs to add.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter putContext(Map<String, Object> mappings) {
+    public final CodeWriter putContext(Map<String, Object> mappings) {
         mappings.forEach(currentState::putContext);
         return this;
     }
