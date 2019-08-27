@@ -417,7 +417,7 @@ cities, so there's no way we could provide a City identifier.
         // return truncated results. Applying this trait to the service
         // sets default pagination configuration settings on each operation.
         @paginated(items: "items")
-        @readonly @collection
+        @readonly
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
         structure ListCitiesInput {
@@ -683,7 +683,7 @@ Complete example
 
         // The paginated trait indicates that the operation may
         // return truncated results.
-        @readonly @collection
+        @readonly
         @paginated(items: "items")
         operation ListCities(ListCitiesInput) -> ListCitiesOutput
 
@@ -881,8 +881,7 @@ Complete example
                         "input":"ListCitiesInput",
                         "output":"ListCitiesOutput",
                         "paginated": {"items":"items"},
-                        "readonly":true,
-                        "collection":true
+                        "readonly":true
                     },
                     "ListCitiesInput": {
                         "type":"structure",
