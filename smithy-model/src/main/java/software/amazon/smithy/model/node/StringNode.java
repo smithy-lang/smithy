@@ -147,6 +147,19 @@ public final class StringNode extends Node {
         }
     }
 
+    /**
+     * Expects that the value of the string is a fully-qualified Shape ID.
+     *
+     * @return Returns the parsed Shape ID.
+     */
+    public ShapeId expectShapeId() {
+        try {
+            return ShapeId.from(getValue());
+        } catch (ShapeIdSyntaxException e) {
+            throw new SourceException(e.getMessage(), this);
+        }
+    }
+
     @Override
     public boolean equals(Object other) {
         return other instanceof StringNode && value.equals(((StringNode) other).getValue());
