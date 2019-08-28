@@ -27,6 +27,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 public class StringNodeTest {
 
@@ -137,5 +138,13 @@ public class StringNodeTest {
     @Test
     public void convertsToStringNode() {
         assertTrue(Node.from("foo").asStringNode().isPresent());
+    }
+
+    @Test
+    public void parsesShapeIds() {
+        ShapeId expected = ShapeId.from("foo.baz#Bar");
+
+        assertEquals(expected, Node.from("foo.baz#Bar").expectStringNode().expectShapeId());
+        assertEquals(expected, Node.from("foo.baz#Bar").expectStringNode().expectShapeId("notfoo"));
     }
 }
