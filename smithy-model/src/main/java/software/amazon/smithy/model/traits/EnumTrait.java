@@ -54,6 +54,18 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
         return constants;
     }
 
+    /**
+     * Checks if all of the constants of an enum define a name.
+     *
+     * <p>Note that either all constants must have a name or no constants can
+     * have a name.
+     *
+     * @return Returns true if all constants define a name.
+     */
+    public boolean hasNames() {
+        return constants.values().stream().allMatch(body -> body.getName().isPresent());
+    }
+
     @Override
     protected Node createNode() {
         return constants.entrySet().stream()
