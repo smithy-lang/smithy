@@ -18,6 +18,7 @@ package software.amazon.smithy.model.traits;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,5 +45,13 @@ public class EnumTraitTest {
             TraitFactory provider = TraitFactory.createServiceFactory();
             provider.createTrait(ShapeId.from("smithy.api#enum"), ShapeId.from("ns.qux#foo"), Node.objectNode());
         });
+    }
+
+    @Test
+    public void checksIfAllDefineNames() {
+        Node node = Node.parse("{\"foo\": {\"name\": \"FOO\"}, \"bam\": {\"name\": \"BAM\"}}");
+        EnumTrait trait = new EnumTrait.Provider().createTrait(ShapeId.from("ns.foo#baz"), node);
+
+        assertThat(trait.hasNames(), is(true));
     }
 }
