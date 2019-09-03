@@ -44,6 +44,25 @@
                 "input": "ValidInput3",
                 "output": "ValidOutput3"
             },
+            "ValidNestedOutputOperation": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "result.nextToken",
+                    "items": "result.items"
+                },
+                "input": "ValidInput",
+                "output": "ValidWrappedOutput"
+            },
+            "ValidWrappedOutput": {
+                "type": "structure",
+                "members": {
+                    "result": {
+                        "target": "ValidOutput"
+                    }
+                }
+            },
             "ValidInput3": {
                 "type": "structure",
                 "members": {
