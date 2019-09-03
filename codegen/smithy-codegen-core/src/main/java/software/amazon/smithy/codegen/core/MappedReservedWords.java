@@ -77,7 +77,8 @@ public final class MappedReservedWords implements ReservedWords {
     @Override
     public String escape(String word) {
         String result = mappings.get(word);
-        if (result == null) {
+
+        if (result == null && !caseInsensitiveMappings.isEmpty()) {
             result = caseInsensitiveMappings.get(word.toLowerCase(Locale.US));
         }
 
@@ -86,7 +87,11 @@ public final class MappedReservedWords implements ReservedWords {
 
     @Override
     public boolean isReserved(String word) {
-        return mappings.containsKey(word) || caseInsensitiveMappings.containsKey(word.toLowerCase(Locale.US));
+        if (mappings.containsKey(word)) {
+            return true;
+        }
+
+        return !caseInsensitiveMappings.isEmpty() && caseInsensitiveMappings.containsKey(word.toLowerCase(Locale.US));
     }
 
     /**
@@ -111,7 +116,13 @@ public final class MappedReservedWords implements ReservedWords {
         }
 
         /**
-         * Add a new case-insensitive reserved words.
+         * Add a new case-insensitive reserved word that converts the given
+         * reserved word to the given conversion string.
+         *
+         * <p>Note that the conversion string is used literally. The casing
+         * of the original word has no effect on the conversion. Use
+         * {@link ReservedWordsBuilder} for a case-insensitive reserved words
+         * implementation that can take casing into account.
          *
          * @param reservedWord Case-insensitive reserved word to convert.
          * @param conversion Word to convert to.

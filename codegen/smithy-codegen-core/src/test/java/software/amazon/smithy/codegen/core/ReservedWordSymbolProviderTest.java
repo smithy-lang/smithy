@@ -29,7 +29,7 @@ public class ReservedWordSymbolProviderTest {
         Shape s1 = StringShape.builder().id("foo.bar#Baz").build();
         Shape s2 = StringShape.builder().id("foo.bar#Bam").build();
 
-        ReservedWords reservedWords = MappedReservedWords.builder().put("/foo/bar/bam", "/rewritten").build();
+        ReservedWords reservedWords = new ReservedWordsBuilder().put("/foo/bar/bam", "/rewritten").build();
         MockProvider delegate = new MockProvider();
         SymbolProvider provider = ReservedWordSymbolProvider.builder()
                 .symbolProvider(delegate)
@@ -50,7 +50,7 @@ public class ReservedWordSymbolProviderTest {
         Shape s1 = StringShape.builder().id("foo.bar#Baz").build();
         Shape s2 = StringShape.builder().id("foo.baz#Bam").build();
 
-        ReservedWords reservedWords = MappedReservedWords.builder().put("foo.baz", "foo._baz").build();
+        ReservedWords reservedWords = new ReservedWordsBuilder().put("foo.baz", "foo._baz").build();
         MockProvider delegate = new MockProvider();
         SymbolProvider provider = ReservedWordSymbolProvider.builder()
                 .symbolProvider(delegate)
@@ -69,7 +69,7 @@ public class ReservedWordSymbolProviderTest {
         Shape s1 = StringShape.builder().id("foo.bar#Baz").build();
         Shape s2 = StringShape.builder().id("foo.baz#Bam").build();
 
-        ReservedWords reservedWords = MappedReservedWords.builder().put("Bam", "_Bam").build();
+        ReservedWords reservedWords = new ReservedWordsBuilder().put("Bam", "_Bam").build();
         MockProvider delegate = new MockProvider();
         SymbolProvider provider = ReservedWordSymbolProvider.builder()
                 .symbolProvider(delegate)
@@ -88,7 +88,7 @@ public class ReservedWordSymbolProviderTest {
         Shape s1 = MemberShape.builder().id("foo.bar#Baz$foo").target("foo.baz#T").build();
         Shape s2 = MemberShape.builder().id("foo.baz#Baz$baz").target("foo.baz#T").build();
 
-        ReservedWords reservedWords = MappedReservedWords.builder().put("baz", "_baz").build();
+        ReservedWords reservedWords = new ReservedWordsBuilder().put("baz", "_baz").build();
         SymbolProvider delegate = new MockProvider();
         SymbolProvider provider = ReservedWordSymbolProvider.builder()
                 .symbolProvider(delegate)
@@ -97,6 +97,22 @@ public class ReservedWordSymbolProviderTest {
 
         assertThat(provider.toMemberName(s1), equalTo("foo"));
         assertThat(provider.toMemberName(s2), equalTo("_baz"));
+    }
+
+    @Test
+    public void escapesOnlyWhenPredicateReturnsTrue() {
+        Shape stringShape = StringShape.builder().id("foo.baz#Bam").build();
+
+        ReservedWords reservedWords = new ReservedWordsBuilder().put("Bam", "_Bam").build();
+        MockProvider delegate = new MockProvider();
+        SymbolProvider provider = ReservedWordSymbolProvider.builder()
+                .symbolProvider(delegate)
+                .nameReservedWords(reservedWords)
+                .escapePredicate((shape, symbol) -> false)
+                .build();
+
+        delegate.mock = Symbol.builder().namespace("foo.baz", ".").name("Bam").build();
+        assertThat(provider.toSymbol(stringShape).getName(), equalTo("Bam"));
     }
 
     private static final class MockProvider implements SymbolProvider {

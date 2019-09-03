@@ -1,0 +1,8 @@
+# This comment is ignored. The following blank line is ignored too.
+
+undefined
+null
+
+# Another comment
+string
+boolean

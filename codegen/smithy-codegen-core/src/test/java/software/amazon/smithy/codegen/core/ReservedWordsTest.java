@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 public class ReservedWordsTest {
     @Test
     public void composesImplementations() {
-        ReservedWords a = MappedReservedWords.builder().put("void", "_void").build();
-        ReservedWords b = MappedReservedWords.builder().put("foo", "_foo").build();
+        ReservedWords a = new ReservedWordsBuilder().put("void", "_void").build();
+        ReservedWords b = new ReservedWordsBuilder().put("foo", "_foo").build();
         ReservedWords composed = ReservedWords.compose(a, b);
 
         assertThat(composed.isReserved("void"), is(true));

@@ -348,7 +348,7 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
          * Add a symbol reference to indicate that this symbol points to
          * or contains references to other symbols.
          *
-         * @param reference Symbol that is referenced with no specific reference name.
+         * @param reference Symbol that is referenced.
          * @return Returns the builder.
          */
         public Builder addReference(Symbol reference) {
