@@ -15,11 +15,12 @@
 
 package software.amazon.smithy.codegen.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -59,21 +60,22 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * }
  * </pre>
  */
-public final class Symbol implements ToSmithyBuilder<Symbol> {
+public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<Symbol> {
     private final String namespace;
     private final String namespaceDelimiter;
     private final String name;
     private final String definitionFile;
     private final String declarationFile;
-    private final Map<String, Object> properties;
+    private final List<SymbolReference> references;
 
     private Symbol(Builder builder) {
+        super(builder.properties);
         this.namespace = builder.namespace;
         this.namespaceDelimiter = builder.namespaceDelimiter;
         this.name = builder.name;
         this.declarationFile = builder.declarationFile;
         this.definitionFile = !builder.definitionFile.isEmpty() ? builder.definitionFile : declarationFile;
-        this.properties = MapUtils.copyOf(builder.properties);
+        this.references = ListUtils.copyOf(builder.references);
     }
 
     /**
@@ -151,75 +153,6 @@ public final class Symbol implements ToSmithyBuilder<Symbol> {
     }
 
     /**
-     * Gets the additional properties of the symbol.
-     *
-     * @return Returns a map of additional property strings.
-     */
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    /**
-     * Gets a specific property if present.
-     *
-     * @param name Property to retrieve.
-     * @return Returns the optionally found property.
-     */
-    public Optional<Object> getProperty(String name) {
-        return Optional.ofNullable(properties.get(name));
-    }
-
-    /**
-     * Gets an additional property of a specific type.
-     *
-     * @param name Name of the property to get.
-     * @param type Type of value to expect.
-     * @param <T> Type of value to expect.
-     * @return Returns a map of additional property strings.
-     * @throws IllegalArgumentException if the value is not of the given type.
-     */
-    @SuppressWarnings("unchecked")
-    public <T> Optional<T> getProperty(String name, Class<T> type) {
-        return getProperty(name)
-                .map(value -> {
-                    if (!type.isInstance(value)) {
-                        throw new IllegalArgumentException(String.format(
-                                "Symbol property `%s` of `%s` is not an instance of `%s`",
-                                name, this, type.getName()));
-                    }
-                    return (T) value;
-                });
-    }
-
-    /**
-     * Gets a specific additional property or throws if missing.
-     *
-     * @param name Property to retrieve.
-     * @return Returns the found property.
-     * @throws IllegalArgumentException if the property is not present.
-     */
-    public Object expectProperty(String name) {
-        return getProperty(name).orElseThrow(() -> new IllegalArgumentException(String.format(
-                "Property `%s` is not part of Symbol, `%s`", name, this)));
-    }
-
-    /**
-     * Gets a specific additional property or throws if missing or if the
-     * property is not an instance of the given type.
-     *
-     * @param name Property to retrieve.
-     * @param type Type of value to expect.
-     * @param <T> Type of value to expect.
-     * @return Returns the found property.
-     * @throws IllegalArgumentException if the property is not present.
-     * @throws IllegalArgumentException if the value is not of the given type.
-     */
-    public <T> T expectProperty(String name, Class<T> type) {
-        return getProperty(name, type).orElseThrow(() -> new IllegalArgumentException(String.format(
-                "Property `%s` is not part of Symbol, `%s`", name, this)));
-    }
-
-    /**
      * Gets the full name of the symbol.
      *
      * <p>The full name is the concatenation of the namespace,
@@ -245,14 +178,24 @@ public final class Symbol implements ToSmithyBuilder<Symbol> {
         return this.namespace.equals(namespace) ? name : toString();
     }
 
+    /**
+     * Gets the list of symbols that are referenced by this symbol.
+     *
+     * @return Returns the Symbol references.
+     */
+    public List<SymbolReference> getReferences() {
+        return references;
+    }
+
     @Override
     public Builder toBuilder() {
         Builder builder = new Builder();
         return builder.namespace(namespace, namespaceDelimiter)
                 .name(name)
-                .properties(properties)
+                .properties(getProperties())
                 .definitionFile(definitionFile)
-                .declarationFile(declarationFile);
+                .declarationFile(declarationFile)
+                .references(references);
     }
 
     @Override
@@ -272,9 +215,10 @@ public final class Symbol implements ToSmithyBuilder<Symbol> {
         return Objects.equals(namespace, symbol.namespace)
                && Objects.equals(namespaceDelimiter, symbol.namespaceDelimiter)
                && Objects.equals(name, symbol.name)
-               && Objects.equals(properties, symbol.properties)
+               && getProperties().equals(symbol.getProperties())
                && Objects.equals(declarationFile, symbol.declarationFile)
-               && Objects.equals(definitionFile, symbol.definitionFile);
+               && Objects.equals(definitionFile, symbol.definitionFile)
+               && references.equals(symbol.references);
     }
 
     @Override
@@ -292,6 +236,7 @@ public final class Symbol implements ToSmithyBuilder<Symbol> {
         private String definitionFile = "";
         private String declarationFile = "";
         private Map<String, Object> properties = new HashMap<>();
+        private List<SymbolReference> references = new ArrayList<>();
 
         @Override
         public Symbol build() {
@@ -384,6 +329,41 @@ public final class Symbol implements ToSmithyBuilder<Symbol> {
          */
         public Builder declarationFile(String declarationFile) {
             this.declarationFile = declarationFile;
+            return this;
+        }
+
+        /**
+         * Adds and replaces the symbol references to the symbol.
+         *
+         * @param references References to add.
+         * @return Returns the builder.
+         */
+        public Builder references(List<SymbolReference> references) {
+            this.references.clear();
+            references.forEach(this::addReference);
+            return this;
+        }
+
+        /**
+         * Add a symbol reference to indicate that this symbol points to
+         * or contains references to other symbols.
+         *
+         * @param reference Symbol that is referenced with no specific reference name.
+         * @return Returns the builder.
+         */
+        public Builder addReference(Symbol reference) {
+            return addReference(new SymbolReference(reference));
+        }
+
+        /**
+         * Add a symbol reference to indicate that this symbol points to
+         * or contains references to other symbols.
+         *
+         * @param reference Symbol reference to add.
+         * @return Returns the builder.
+         */
+        public Builder addReference(SymbolReference reference) {
+            references.add(Objects.requireNonNull(reference));
             return this;
         }
     }
