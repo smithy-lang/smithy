@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.codegen.core;
 
+import java.util.function.BiPredicate;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -44,6 +45,7 @@ public final class ReservedWordSymbolProvider implements SymbolProvider {
     private final ReservedWords namespaceReservedWords;
     private final ReservedWords nameReservedWords;
     private final ReservedWords memberReservedWords;
+    private final BiPredicate<Shape, Symbol> escapePredicate;
 
     private ReservedWordSymbolProvider(Builder builder) {
         this.delegate = SmithyBuilder.requiredState("symbolProvider", builder.delegate);
@@ -51,6 +53,7 @@ public final class ReservedWordSymbolProvider implements SymbolProvider {
         this.namespaceReservedWords = resolveReserved(builder.namespaceReservedWords);
         this.nameReservedWords = resolveReserved(builder.nameReservedWords);
         this.memberReservedWords = resolveReserved(builder.memberReservedWords);
+        this.escapePredicate = builder.escapePredicate;
     }
 
     private static ReservedWords resolveReserved(ReservedWords specific) {
@@ -69,11 +72,30 @@ public final class ReservedWordSymbolProvider implements SymbolProvider {
     @Override
     public Symbol toSymbol(Shape shape) {
         Symbol upstream = delegate.toSymbol(shape);
+
+        // Only escape symbols when the predicate returns true.
+        if (!escapePredicate.test(shape, upstream)) {
+            return upstream;
+        }
+
+        String newName = convertWord("name", upstream.getName(), nameReservedWords);
+        String newNamespace = convertWord("namespace", upstream.getNamespace(), namespaceReservedWords);
+        String newDeclarationFile = convertWord("filename", upstream.getDeclarationFile(), filenameReservedWords);
+        String newDefinitionFile = convertWord("filename", upstream.getDefinitionFile(), filenameReservedWords);
+
+        // Only create a new symbol when needed.
+        if (newName.equals(upstream.getName())
+                && newNamespace.equals(upstream.getNamespace())
+                && newDeclarationFile.equals(upstream.getDeclarationFile())
+                && newDefinitionFile.equals(upstream.getDeclarationFile())) {
+            return upstream;
+        }
+
         return upstream.toBuilder()
-                .name(nameReservedWords.escape(upstream.getName()))
-                .namespace(namespaceReservedWords.escape(upstream.getNamespace()), upstream.getNamespaceDelimiter())
-                .declarationFile(filenameReservedWords.escape(upstream.getDeclarationFile()))
-                .definitionFile(filenameReservedWords.escape(upstream.getDefinitionFile()))
+                .name(newName)
+                .namespace(newNamespace, upstream.getNamespaceDelimiter())
+                .declarationFile(newDeclarationFile)
+                .definitionFile(newDefinitionFile)
                 .build();
     }
 
@@ -103,6 +125,7 @@ public final class ReservedWordSymbolProvider implements SymbolProvider {
         private ReservedWords namespaceReservedWords;
         private ReservedWords nameReservedWords;
         private ReservedWords memberReservedWords;
+        private BiPredicate<Shape, Symbol> escapePredicate = (shape, symbol) -> true;
 
         /**
          * Builds the provider.
@@ -178,6 +201,29 @@ public final class ReservedWordSymbolProvider implements SymbolProvider {
          */
         public Builder memberReservedWords(ReservedWords memberReservedWords) {
             this.memberReservedWords = memberReservedWords;
+            return this;
+        }
+
+        /**
+         * Sets a predicate that is used to control when a shape + symbol
+         * combination should be checked if it's a reserved word.
+         *
+         * <p>The predicate is invoked when {@code toSymbol} is called. It
+         * is used to disable/enable escaping reserved words based on the
+         * shape and symbol. The given predicate accepts the {@code Shape}
+         * and the {@code Symbol} that was created for the shape and returns
+         * true if reserved word checks should be made or false if reserved
+         * word checks should not be made. For example, some code generators
+         * only escape words that have namespaces to differentiate between
+         * language built-ins and user-defined types.
+         *
+         * <p>By default, all symbols are checked for reserved words.
+         *
+         * @param escapePredicate Predicate that returns true if escaping should be checked.
+         * @return Returns the builder.
+         */
+        public Builder escapePredicate(BiPredicate<Shape, Symbol> escapePredicate) {
+            this.escapePredicate = escapePredicate;
             return this;
         }
     }

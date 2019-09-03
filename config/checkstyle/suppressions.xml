@@ -19,4 +19,5 @@
         "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 <suppressions>
     <suppress checks="EqualsHashCode" files="shapes/*"/>
+    <suppress checks="InnerAssignment" files="StringUtils"/>
 </suppressions>
