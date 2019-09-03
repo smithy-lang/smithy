@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -410,7 +411,7 @@ these types where the key is string.</td>
 </tr>
 </tbody>
 </table>
-<p>The <a class="reference internal" href="language-specification.html#grammar-token-simple_shape"><code class="xref std std-token docutils literal notranslate"><span class="pre">simple_shape</span></code></a> statement is used to define a simple shape. Simple
+<p>The <a class="reference internal" href="language-specification.html#grammar-token-simple-shape"><code class="xref std std-token docutils literal notranslate"><span class="pre">simple_shape</span></code></a> statement is used to define a simple shape. Simple
 shapes are defined by a type, followed by a shape name, followed by a
 new line.</p>
 <p>The following example defines a shape for each simple type in the
@@ -579,7 +580,7 @@ different, but fixed, types</td>
 <div class="section" id="list">
 <span id="id6"></span><h4>list<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h4>
 <p>The <em class="dfn">list</em> type represents a homogeneous collection of values. A list is
-defined using a <a class="reference internal" href="language-specification.html#grammar-token-list_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">list_statement</span></code></a>. A list statement consists of the
+defined using a <a class="reference internal" href="language-specification.html#grammar-token-list-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">list_statement</span></code></a>. A list statement consists of the
 shape named followed by an object with a single key-value pair of &quot;member&quot;
 that defines the <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> of the list.</p>
 <p>The following example defines a list with a string member from the
@@ -706,7 +707,7 @@ JSON</div>
 <div class="section" id="set">
 <span id="id7"></span><h4>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h4>
 <p>The <em class="dfn">set</em> type represents an unordered collection of unique homogeneous
-values. A set is defined using a <a class="reference internal" href="language-specification.html#grammar-token-set_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">set_statement</span></code></a> that consists of the
+values. A set is defined using a <a class="reference internal" href="language-specification.html#grammar-token-set-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">set_statement</span></code></a> that consists of the
 shape named followed by an object with a single key-value pair of &quot;member&quot;
 that defines the <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> of the set.</p>
 <p>The following example defines a set of strings:</p>
@@ -805,7 +806,7 @@ to ensure uniqueness.</p>
 <span id="id8"></span><h4>map<a class="headerlink" href="#map" title="Permalink to this headline">¶</a></h4>
 <p>The <em class="dfn">map</em> type represents a map data structure that maps string keys to
 homogeneous values. A map cannot contain duplicate keys. A map is defined using
-a <a class="reference internal" href="language-specification.html#grammar-token-map_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">map_statement</span></code></a>. The <code class="docutils literal notranslate"><span class="pre">key</span></code> member of a map MUST target a <code class="docutils literal notranslate"><span class="pre">string</span></code>
+a <a class="reference internal" href="language-specification.html#grammar-token-map-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">map_statement</span></code></a>. The <code class="docutils literal notranslate"><span class="pre">key</span></code> member of a map MUST target a <code class="docutils literal notranslate"><span class="pre">string</span></code>
 shape.</p>
 <p>The following example defines a map of strings to integers:</p>
 <div class="sphinx-tabs docutils container">
@@ -917,7 +918,7 @@ JSON</div>
 <span id="id9"></span><h4>structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h4>
 <p>The <em class="dfn">structure</em> type represents a fixed set of named heterogeneous members.
 A member name maps to exactly one structure <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> definition.</p>
-<p>A structure is defined using a <a class="reference internal" href="language-specification.html#grammar-token-structure_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">structure_statement</span></code></a>. A structure
+<p>A structure is defined using a <a class="reference internal" href="language-specification.html#grammar-token-structure-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">structure_statement</span></code></a>. A structure
 statement is a map of structure <a class="reference internal" href="#member"><span class="std std-ref">member</span></a> names to the shape targeted by
 the member. Any number of inline traits can precede each member.</p>
 <p>The following example defines a structure with two members:</p>
@@ -1025,7 +1026,7 @@ JSON</div>
 <p>The union type represents a <a class="reference external" href="https://en.wikipedia.org/wiki/Tagged_union">tagged union data structure</a> that can take
 on several different, but fixed, types. Only one type can be used at any
 one time.</p>
-<p>A union is defined using a <a class="reference internal" href="language-specification.html#grammar-token-union_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">union_statement</span></code></a>. Union shapes take the
+<p>A union is defined using a <a class="reference internal" href="language-specification.html#grammar-token-union-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">union_statement</span></code></a>. Union shapes take the
 same form as structure shapes.</p>
 <p>The following example defines a union shape with several members:</p>
 <div class="sphinx-tabs docutils container">
@@ -1257,7 +1258,7 @@ aggregate shapes are always considered boxed and have no default values.</p>
 operations together. The <a class="reference internal" href="#resource"><span class="std std-ref">resources</span></a> and
 <a class="reference internal" href="#operation"><span class="std std-ref">operations</span></a> of an API are bound within the closure of a
 service.</p>
-<p>A service shape is defined using a <a class="reference internal" href="language-specification.html#grammar-token-service_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">service_statement</span></code></a> and supports
+<p>A service shape is defined using a <a class="reference internal" href="language-specification.html#grammar-token-service-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">service_statement</span></code></a> and supports
 the following properties:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -1406,7 +1407,7 @@ namespaces.</li>
 <p>The <em class="dfn">operation</em> type represents the input, output, and possible errors of
 an API operation. Operation shapes are bound to <a class="reference internal" href="#resource"><span class="std std-ref">resource</span></a>
 shapes and <a class="reference internal" href="#service"><span class="std std-ref">service</span></a> shapes. Operation shapes are defined using
-the <a class="reference internal" href="language-specification.html#grammar-token-operation_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">operation_statement</span></code></a>.</p>
+the <a class="reference internal" href="language-specification.html#grammar-token-operation-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">operation_statement</span></code></a>.</p>
 <p>The following example defines an operation shape that accepts an input
 structure named <code class="docutils literal notranslate"><span class="pre">Input</span></code>, returns an output structure named <code class="docutils literal notranslate"><span class="pre">Output</span></code>, and
 can potentially return the <code class="docutils literal notranslate"><span class="pre">NotFound</span></code> or <code class="docutils literal notranslate"><span class="pre">BadRequest</span></code>
@@ -1604,7 +1605,7 @@ JSON</div>
 <span id="id21"></span><h4>Resource<a class="headerlink" href="#resource" title="Permalink to this headline">¶</a></h4>
 <p>Smithy defines a <em class="dfn">resource</em> as an entity with an identity that has a
 set of operations.</p>
-<p>A resource shape is defined using a <a class="reference internal" href="language-specification.html#grammar-token-resource_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">resource_statement</span></code></a> and supports
+<p>A resource shape is defined using a <a class="reference internal" href="language-specification.html#grammar-token-resource-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">resource_statement</span></code></a> and supports
 the following properties:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -2351,7 +2352,7 @@ process defined in <a class="reference internal" href="#relative-shape-id"><span
 <span id="relative-shape-id"></span><h3>Relative shape ID resolution<a class="headerlink" href="#relative-shape-id-resolution" title="Permalink to this headline">¶</a></h3>
 <p>In the Smithy IDL, relative shape IDs are resolved using the following process:</p>
 <ol class="arabic simple">
-<li>If a <a class="reference internal" href="language-specification.html#grammar-token-use_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a> has imported a shape with the same name,
+<li>If a <a class="reference internal" href="language-specification.html#grammar-token-use-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a> has imported a shape with the same name,
 the shape ID resolves to the imported shape ID.</li>
 <li>If a shape is defined in the same namespace as the shape with the same name,
 the namespace of the shape resolves to the <em>current namespace</em>.</li>
@@ -2751,7 +2752,7 @@ JSON</div>
 </div>
 </div>
 </div>
-<p>The shape ID of a trait is <em>resolved</em> against <a class="reference internal" href="language-specification.html#grammar-token-use_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a>s and the
+<p>The shape ID of a trait is <em>resolved</em> against <a class="reference internal" href="language-specification.html#grammar-token-use-statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a>s and the
 current namespace in exactly the same same way as
 <a class="reference internal" href="#relative-shape-id"><span class="std std-ref">other shape IDs</span></a>.</p>
 <p>Traits can be applied to shapes outside of a shape's definition using the

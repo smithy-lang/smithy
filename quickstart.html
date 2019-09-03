@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
     <link rel="stylesheet" href="_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,6 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -596,7 +597,7 @@ JSON</div>
 <span class="c">// return truncated results. Applying this trait to the service</span>
 <span class="c">// sets default pagination configuration settings on each operation.</span>
 <span class="nd">@paginated</span>(<span class="nl">items:</span> <span class="s2">&quot;items&quot;</span>)
-<span class="nd">@readonly</span> <span class="nd">@collection</span>
+<span class="nd">@readonly</span>
 <span class="kd">operation</span><span class="nc"> ListCities</span>(<span class="vc">ListCitiesInput</span>) <span class="nd">-&gt;</span> <span class="vc">ListCitiesOutput</span>
 
 <span class="kd">structure</span><span class="nc"> ListCitiesInput</span> {
@@ -878,7 +879,7 @@ JSON</div>
 
 <span class="c">// The paginated trait indicates that the operation may</span>
 <span class="c">// return truncated results.</span>
-<span class="nd">@readonly</span> <span class="nd">@collection</span>
+<span class="nd">@readonly</span>
 <span class="nd">@paginated</span>(<span class="nl">items:</span> <span class="s2">&quot;items&quot;</span>)
 <span class="kd">operation</span><span class="nc"> ListCities</span>(<span class="vc">ListCitiesInput</span>) <span class="nd">-&gt;</span> <span class="vc">ListCitiesOutput</span>
 
@@ -1077,8 +1078,7 @@ JSON</div>
                 <span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="s2">&quot;ListCitiesInput&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="s2">&quot;ListCitiesOutput&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;paginated&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="s2">&quot;items&quot;</span><span class="p">},</span>
-                <span class="nt">&quot;readonly&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
-                <span class="nt">&quot;collection&quot;</span><span class="p">:</span><span class="kc">true</span>
+                <span class="nt">&quot;readonly&quot;</span><span class="p">:</span><span class="kc">true</span>
             <span class="p">},</span>
             <span class="nt">&quot;ListCitiesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>

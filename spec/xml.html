@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -341,7 +342,7 @@ case) or <code class="docutils literal notranslate"><span class="pre">_</span></
 <code class="docutils literal notranslate"><span class="pre">-</span></code>. Values for an <code class="docutils literal notranslate"><span class="pre">xmlName</span></code> adhere to the following ABNF.</p>
 </div>
 <pre>
-<strong id="grammar-token-xml_name">xml_name</strong> =
+<strong id="grammar-token-xml-name">xml_name</strong> =
     (ALPHA / &quot;_&quot;)
   *(ALPHA / DIGIT / &quot;-&quot; / &quot;_&quot;)
 </pre>
