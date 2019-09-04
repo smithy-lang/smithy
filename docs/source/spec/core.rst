@@ -4045,7 +4045,7 @@ settings from a service.
             }
         }
 
-The values for ``outputToken`` and ``items`` are paths. *Paths* are a series of
+The values for ``outputToken`` and ``items`` are paths. :dfn:`Paths` are a series of
 identifiers separated by dots (``.``) where each identifier represents a
 member name in a structure. The first member name MUST correspond to a member
 of the output structure and each subsequent member name MUST correspond to a

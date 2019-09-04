@@ -164,7 +164,8 @@ public final class PaginatedTraitValidator extends AbstractValidator {
 
         if (validator.pathsAllowed() && PATH_PATTERN.split(memberPath).length > 2) {
             events.add(warning(operation, trait, String.format(
-                    "%spaginated trait `%s` should not include a path with more than two parts",
+                    "%spaginated trait `%s` contains a path with more than two parts, which can make your API "
+                        + "cumbersome to use",
                     prefix, validator.propertyName()
             )));
         }

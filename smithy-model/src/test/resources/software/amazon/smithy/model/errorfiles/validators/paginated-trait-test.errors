@@ -18,7 +18,7 @@
 [ERROR] ns.foo#UnresolvedOutput$nextToken: member shape targets an unresolved shape `ns.foo#Missing` | Target
 [ERROR] ns.foo#Invalid9: When bound within the `ns.foo#Service` service, paginated trait `inputToken` is not configured | PaginatedTrait
 [ERROR] ns.foo#Invalid9: When bound within the `ns.foo#Service` service, paginated trait `outputToken` is not configured | PaginatedTrait
-[WARNING] ns.foo#DeeplyNestedOutputOperation: paginated trait `items` should not include a path with more than two parts | PaginatedTrait
-[WARNING] ns.foo#DeeplyNestedOutputOperation: paginated trait `outputToken` should not include a path with more than two parts | PaginatedTrait
+[WARNING] ns.foo#DeeplyNestedOutputOperation: paginated trait `items` contains a path with more than two parts, which can make your API cumbersome to use | PaginatedTrait
+[WARNING] ns.foo#DeeplyNestedOutputOperation: paginated trait `outputToken` contains a path with more than two parts, which can make your API cumbersome to use | PaginatedTrait
 [ERROR] ns.foo#InvalidNestedInput: paginated trait `inputToken` does not allow path values | PaginatedTrait
 [ERROR] ns.foo#InvalidNestedInput: paginated trait `pageSize` does not allow path values | PaginatedTrait
