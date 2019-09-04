@@ -26,6 +26,8 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.traits.ReadonlyTrait;
 
 public class ModelTransformerTest {
 
@@ -44,6 +46,18 @@ public class ModelTransformerTest {
                           Matchers.is(Optional.empty()));
         assertThat(index.getShape(operation).get().asOperationShape().map(OperationShape::getErrors),
                           Matchers.equalTo(Optional.of(Collections.emptyList())));
+    }
+
+    @Test
+    public void removesTraitShapesButNotTraitUsage() {
+        ModelTransformer transformer = ModelTransformer.create();
+        Model model = createTestModel();
+        ShapeIndex index = transformer.getNonTraitShapes(model);
+        ShapeId operation = ShapeId.from("ns.foo#MyOperation");
+
+        assertThat(index.getShape(operation), Matchers.not(Optional.empty()));
+        assertThat(index.getShape(operation).get().getTrait(ReadonlyTrait.class), Matchers.not(Optional.empty()));
+        assertThat(index.getShape(EnumTrait.ID), Matchers.equalTo(Optional.empty()));
     }
 
     private Model createTestModel() {

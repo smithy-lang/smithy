@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.ListUtils;
 
 public class PluginContextTest {
@@ -41,5 +43,22 @@ public class PluginContextTest {
                 .build();
 
         assertThat(context.getSources(), contains(Paths.get("/foo/baz")));
+    }
+
+    @Test
+    public void createsNonTraitShapeIndex() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("simple-model.json"))
+                .assemble()
+                .unwrap();
+        ShapeIndex scrubbed = ModelTransformer.create().getNonTraitShapes(model);
+        PluginContext context = PluginContext.builder()
+                .fileManifest(new MockManifest())
+                .model(model)
+                .sources(ListUtils.of(Paths.get("/foo/baz")))
+                .build();
+
+        assertThat(context.getNonTraitShapes(), equalTo(scrubbed));
+        assertThat(context.getNonTraitShapes(), equalTo(scrubbed)); // trigger loading from cache
     }
 }
