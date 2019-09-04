@@ -131,6 +131,12 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                    : Collections.emptyList();
         }
 
+        if (!validator.pathsAllowed() && memberPath.split("\\.").length != 1) {
+            return Collections.singletonList(error(operation, trait, String.format(
+                    "%spaginated trait `%s` does not allow path values", prefix, validator.propertyName()
+            )));
+        }
+
         MemberShape member = validator.getMember(index, opIndex, operation, trait).orElse(null);
         if (member == null) {
             return Collections.singletonList(error(operation, trait, String.format(
@@ -154,6 +160,13 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                     ValidationUtils.tickedList(validator.validTargets()))));
         }
 
+        if (validator.pathsAllowed() && memberPath.split("\\.").length > 2) {
+            events.add(warning(operation, trait, String.format(
+                    "%spaginated trait `%s` should not include a path with more than two parts",
+                    prefix, validator.propertyName()
+            )));
+        }
+
         return events;
     }
 
@@ -171,9 +184,18 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         abstract Optional<MemberShape> getMember(
                 ShapeIndex index, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
         );
+
+        boolean pathsAllowed() {
+            return false;
+        }
     }
 
     private abstract static class OutputPropertyValidator extends PropertyValidator {
+
+        @Override
+        boolean pathsAllowed() {
+            return true;
+        }
 
         Optional<MemberShape> getMember(
                 ShapeIndex index, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait

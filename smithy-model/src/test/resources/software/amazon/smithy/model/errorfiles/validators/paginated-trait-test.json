@@ -55,6 +55,25 @@
                 "input": "ValidInput",
                 "output": "ValidWrappedOutput"
             },
+            "DeeplyNestedOutputOperation": {
+                "type": "operation",
+                "readonly": true,
+                "paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "output.result.nextToken",
+                    "items": "output.result.items"
+                },
+                "input": "ValidInput",
+                "output": "DeeplyNestedOutput"
+            },
+            "DeeplyNestedOutput": {
+                "type": "structure",
+                "members": {
+                    "output": {
+                        "target": "ValidWrappedOutput"
+                    }
+                }
+            },
             "ValidWrappedOutput": {
                 "type": "structure",
                 "members": {
@@ -304,6 +323,25 @@
                 "paginated": true,
                 "input": "ValidInput",
                 "output": "ValidOutput"
+            },
+            "InvalidNestedInput": {
+                "type": "operation",
+                "paginated": {
+                    "inputToken": "input.nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "input.pageSize"
+                },
+                "input": "NestedInput",
+                "output": "ValidOutput"
+            },
+            "NestedInput": {
+                "type": "structure",
+                "members": {
+                    "input": {
+                        "target": "ValidInput"
+                    }
+                }
             },
             "ValidInput": {
                 "type": "structure",
