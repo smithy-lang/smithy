@@ -104,9 +104,9 @@ public class PaginatedTraitTest {
         Node node = Node.objectNode()
                 .withMember("inputToken", Node.from("inputToken"))
                 .withMember("outputToken", Node.from("result.outputToken"));
-
         Optional<Trait> trait = provider.createTrait(
                 ShapeId.from("smithy.api#paginated"), ShapeId.from("ns.qux#foo"), node);
+
         assertThat(trait.isPresent(), is(true));
         assertThat(trait.get(), instanceOf(PaginatedTrait.class));
         PaginatedTrait paginatedTrait = (PaginatedTrait) trait.get();
@@ -120,9 +120,9 @@ public class PaginatedTraitTest {
                 .withMember("items", Node.from("result.items"))
                 .withMember("inputToken", Node.from("inputToken"))
                 .withMember("outputToken", Node.from("outputToken"));
-
         Optional<Trait> trait = provider.createTrait(
                 ShapeId.from("smithy.api#paginated"), ShapeId.from("ns.qux#foo"), node);
+
         assertThat(trait.isPresent(), is(true));
         assertThat(trait.get(), instanceOf(PaginatedTrait.class));
         PaginatedTrait paginatedTrait = (PaginatedTrait) trait.get();

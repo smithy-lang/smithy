@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
@@ -61,6 +62,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     private static final Set<ShapeType> ITEM_SHAPES = SetUtils.of(ShapeType.LIST, ShapeType.MAP);
     private static final Set<ShapeType> PAGE_SHAPES = SetUtils.of(ShapeType.INTEGER);
     private static final Set<ShapeType> STRING_SET = SetUtils.of(ShapeType.STRING);
+    private static final java.util.regex.Pattern PATH_PATTERN = Pattern.compile("\\.");
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -131,7 +133,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                    : Collections.emptyList();
         }
 
-        if (!validator.pathsAllowed() && memberPath.split("\\.").length != 1) {
+        if (!validator.pathsAllowed() && memberPath.contains(".")) {
             return Collections.singletonList(error(operation, trait, String.format(
                     "%spaginated trait `%s` does not allow path values", prefix, validator.propertyName()
             )));
@@ -160,7 +162,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                     ValidationUtils.tickedList(validator.validTargets()))));
         }
 
-        if (validator.pathsAllowed() && memberPath.split("\\.").length > 2) {
+        if (validator.pathsAllowed() && PATH_PATTERN.split(memberPath).length > 2) {
             events.add(warning(operation, trait, String.format(
                     "%spaginated trait `%s` should not include a path with more than two parts",
                     prefix, validator.propertyName()

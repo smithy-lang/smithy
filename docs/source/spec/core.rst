@@ -4045,7 +4045,7 @@ settings from a service.
             }
         }
 
-The values for ``outputToken`` and ``items`` are paths. Paths are a series of
+The values for ``outputToken`` and ``items`` are paths. *Paths* are a series of
 identifiers separated by dots (``.``) where each identifier represents a
 member name in a structure. The first member name MUST correspond to a member
 of the output structure and each subsequent member name MUST correspond to a
@@ -4056,7 +4056,7 @@ following ABNF.
     path    :`identifier` *("." `identifier`)
 
 The following example defines a paginated operation which uses a result
-wrapper where the output token and items are indicated with paths.
+wrapper where the output token and items are referenced by paths.
 
 .. tabs::
 
@@ -4064,7 +4064,7 @@ wrapper where the output token and items are indicated with paths.
 
         namespace smithy.example
 
-        @collection @readonly
+        @readonly
         @paginated(inputToken: "nextToken", outputToken: "result.nextToken",
                    pageSize: "maxResults", items: "result.foos")
         operation GetFoos(GetFoosInput) -> GetFoosOutput
@@ -4101,7 +4101,6 @@ wrapper where the output token and items are indicated with paths.
                         "input" :"GetFoosInput",
                         "output": "GetFoosOutput",
                         "readonly": true,
-                        "collection": true,
                         "paginated": {
                             "inputToken": "nextToken",
                             "outputToken": "result.nextToken",
