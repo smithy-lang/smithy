@@ -28,7 +28,9 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -46,6 +48,7 @@ public final class PluginContext {
     private final FileManifest fileManifest;
     private final ClassLoader pluginClassLoader;
     private final Set<Path> sources;
+    private ShapeIndex nonTraitsIndex;
 
     private PluginContext(Builder builder) {
         model = SmithyBuilder.requiredState("model", builder.model);
@@ -142,6 +145,30 @@ public final class PluginContext {
      */
     public Optional<ClassLoader> getPluginClassLoader() {
         return Optional.ofNullable(pluginClassLoader);
+    }
+
+    /**
+     * Gets all shapes from a model as a {@code ShapeIndex} where shapes that
+     * define traits or shapes that are only used as part of a trait
+     * definition have been removed.
+     *
+     * <p>This is typically functionality used by code generators when
+     * generating data structures from a model. It's useful because it only
+     * provides shapes that are used to describe data structures rather than
+     * shapes used to describe metadata about the data structures.
+     *
+     * <p>Note: this method just calls {@link ModelTransformer#getNonTraitShapes}.
+     * It's added to {@code PluginContext} to make it more easily available
+     * to code generators.
+     *
+     * @return Returns a ShapeIndex containing matching shapes.
+     */
+    public synchronized ShapeIndex getNonTraitShapes() {
+        if (nonTraitsIndex == null) {
+            nonTraitsIndex = ModelTransformer.create().getNonTraitShapes(model);
+        }
+
+        return nonTraitsIndex;
     }
 
     /**

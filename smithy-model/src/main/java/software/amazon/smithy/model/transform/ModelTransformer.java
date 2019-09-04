@@ -18,6 +18,7 @@ package software.amazon.smithy.model.transform;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -28,6 +29,7 @@ import software.amazon.smithy.model.neighbor.UnreferencedShapes;
 import software.amazon.smithy.model.neighbor.UnreferencedTraitDefinitions;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.FunctionalUtils;
@@ -334,5 +336,32 @@ public final class ModelTransformer {
      */
     public Model scrubTraitDefinitions(Model model) {
         return new ScrubTraitDefinitions().transform(this, model);
+    }
+
+    /**
+     * Gets all shapes from a model as a {@code ShapeIndex} where shapes that
+     * define traits or shapes that are only used as part of a trait
+     * definition have been removed.
+     *
+     * @param model Model that contains shapes.
+     * @return Returns a ShapeIndex containing matching shapes.
+     */
+    public ShapeIndex getNonTraitShapes(Model model) {
+        ShapeIndex currentIndex = model.getShapeIndex();
+        ShapeIndex.Builder indexBuilder = ShapeIndex.builder();
+
+        // ScrubTraitDefinitions is used to removed traits and trait shapes.
+        // However, the returned model can't be returned directly because
+        // as traits are removed, uses of that trait are removed. Instead,
+        // a ShapeIndex is created by getting all shape IDs from the modified
+        // model, grabbing shapes from the original model, and building a new
+        // ShapeIndex.
+        scrubTraitDefinitions(model).getShapeIndex().shapes()
+                .map(Shape::getId)
+                .map(currentIndex::getShape)
+                .map(Optional::get)
+                .forEach(indexBuilder::addShape);
+
+        return indexBuilder.build();
     }
 }
