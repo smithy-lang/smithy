@@ -62,7 +62,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     private static final Set<ShapeType> ITEM_SHAPES = SetUtils.of(ShapeType.LIST, ShapeType.MAP);
     private static final Set<ShapeType> PAGE_SHAPES = SetUtils.of(ShapeType.INTEGER);
     private static final Set<ShapeType> STRING_SET = SetUtils.of(ShapeType.STRING);
-    private static final java.util.regex.Pattern PATH_PATTERN = Pattern.compile("\\.");
+    private static final Pattern PATH_PATTERN = Pattern.compile("\\.");
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -204,9 +204,10 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                 ShapeIndex index, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
         ) {
             // Split up the path expression into a list of member names
-            Optional<List<String>> memberNames = getMemberPath(opIndex, operation, trait)
-                    .map(value -> Arrays.asList(value.split("\\.")));
-            if (!memberNames.isPresent() || memberNames.get().isEmpty()) {
+            List<String> memberNames = getMemberPath(opIndex, operation, trait)
+                    .map(value -> Arrays.asList(PATH_PATTERN.split(value)))
+                    .orElse(Collections.emptyList());
+            if (memberNames.isEmpty()) {
                 return Optional.empty();
             }
             Optional<StructureShape> outputShape = opIndex.getOutput(operation);
@@ -215,10 +216,10 @@ public final class PaginatedTraitValidator extends AbstractValidator {
             }
 
             // Grab the first member from the output shape.
-            Optional<MemberShape> memberShape = outputShape.get().getMember(memberNames.get().get(0));
+            Optional<MemberShape> memberShape = outputShape.get().getMember(memberNames.get(0));
 
             // For each member name in the path except the first, try to find that member in the previous structure
-            for (String memberName: memberNames.get().subList(1, memberNames.get().size())) {
+            for (String memberName: memberNames.subList(1, memberNames.size())) {
                 if (!memberShape.isPresent()) {
                     return Optional.empty();
                 }
