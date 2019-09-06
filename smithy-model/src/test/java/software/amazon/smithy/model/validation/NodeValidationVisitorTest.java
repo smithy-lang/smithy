@@ -172,9 +172,15 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#Timestamp", "\"2000-01-12T22:11:12\"", new String[] {"Invalid string value, `2000-01-12T22:11:12`, provided for timestamp, `ns.foo#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
                 {"ns.foo#Timestamp", "\"2000-01-12T22:11:12+\"", new String[] {"Invalid string value, `2000-01-12T22:11:12+`, provided for timestamp, `ns.foo#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
                 {"ns.foo#Timestamp", "\"200-01-12T22:11:12Z\"", new String[] {"Invalid string value, `200-01-12T22:11:12Z`, provided for timestamp, `ns.foo#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
-                {"ns.foo#Timestamp", "\"2000-01-12T22:11:12+01:02\"", new String[] {"Invalid string value, `2000-01-12T22:11:12+01:02`, provided for timestamp, `ns.foo#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
-                {"ns.foo#Timestamp", "\"2000-01-12T22:11:12-11:00\"", new String[] {"Invalid string value, `2000-01-12T22:11:12-11:00`, provided for timestamp, `ns.foo#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
 
+                // Improperly formatted because the offset is not in formatted correctly
+                {"ns.foo#Timestamp", "\"2000-01-12T22:11:12+01:020\"", new String[] {"Invalid string value, `2000-01-12T22:11:12+01:020`, provided for timestamp, `ns.foo#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
+                {"ns.foo#Timestamp", "\"2000-01-12T22:11:12-11:0X\"", new String[] {"Invalid string value, `2000-01-12T22:11:12-11:0X`, provided for timestamp, `ns.foo#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
+                {"ns.foo#Timestamp", "\"2000-01-12T22:11:12+05:99\"", new String[] {"Invalid string value, `2000-01-12T22:11:12+05:99`, provided for timestamp, `ns.foo#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
+
+                // Time offsets with non-zero minutes are allowed by RFC 3339 because some timezones require it, e.g. India is UTC+5:30
+                {"ns.foo#Timestamp", "\"2000-01-12T22:11:12-01:02\"", null},
+                {"ns.foo#Timestamp", "\"2000-01-12T22:11:12+05:30\"", null},
 
                 // string
                 {"ns.foo#String1", "\"true\"", null},
@@ -244,7 +250,8 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#DateTime", "1234", new String[] {"Expected a string value for a date-time timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
                 {"ns.foo#DateTime", "\"1985-04-12\"", new String[] {"Invalid string value, `1985-04-12`, provided for timestamp, `ns.foo#DateTime`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
                 {"ns.foo#DateTime", "\"Tuesday, 29 April 2014 18:30:38 GMT\"", new String[] {"Invalid string value, `Tuesday, 29 April 2014 18:30:38 GMT`, provided for timestamp, `ns.foo#DateTime`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
-                {"ns.foo#DateTime", "\"1985-04-12T23:20:50.52-07:00\"", new String[] {"Invalid string value, `1985-04-12T23:20:50.52-07:00`, provided for timestamp, `ns.foo#DateTime`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
+                {"ns.foo#DateTime", "\"1985-04-12T23:20:50.52-07:00_\"", new String[] {"Invalid string value, `1985-04-12T23:20:50.52-07:00_`, provided for timestamp, `ns.foo#DateTime`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
+                {"ns.foo#DateTime", "\"1985-04-12T23:20:50.52-07:00\"", null},
 
                 // epoch seconds
                 {"ns.foo#EpochSeconds", "123", null},
@@ -252,9 +259,9 @@ public class NodeValidationVisitorTest {
 
                 // timestamp member with format.
                 {"ns.foo#TimestampList", "[\"1985-04-12T23:20:50.52Z\"]", null},
-                {"ns.foo#TimestampList", "[\"1985-04-12T23:20:50.52-07:00\"]", new String[] {
-                        "0: Invalid string value, `1985-04-12T23:20:50.52-07:00`, provided for timestamp, `smithy.api#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")",
-                        "0: Invalid string value, `1985-04-12T23:20:50.52-07:00`, provided for timestamp, `ns.foo#TimestampList$member`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"
+                {"ns.foo#TimestampList", "[\"1985-04-12T23:20:50.52-07:00_\"]", new String[] {
+                        "0: Invalid string value, `1985-04-12T23:20:50.52-07:00_`, provided for timestamp, `smithy.api#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")",
+                        "0: Invalid string value, `1985-04-12T23:20:50.52-07:00_`, provided for timestamp, `ns.foo#TimestampList$member`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"
                 }},
                 {"ns.foo#TimestampList", "[123]", new String[] {"0: Expected a string value for a date-time timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
 
