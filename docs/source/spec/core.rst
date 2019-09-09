@@ -3883,7 +3883,7 @@ The ``paginated`` trait is an object that contains the following properties:
         the service that contains the operation.
     * - outputToken
       - ``string``
-      - The name of the operation output member that contains an optional
+      - The path to the operation output member that contains an optional
         continuation token. When this value is present in operation output,
         it indicates that there are more results to retrieve. To get the next
         page of results, the client passes the received output continuation
@@ -3896,7 +3896,7 @@ The ``paginated`` trait is an object that contains the following properties:
         the service that contains the operation.
     * - items
       - ``string``
-      - The name of a top-level output member of the operation that contains
+      - The path to an output member of the operation that contains
         the data that is being paginated across many responses. The named
         output member, if specified, MUST target a list or map.
     * - pageSize
@@ -4040,6 +4040,111 @@ settings from a service.
                         "readonly": true,
                         "collection": true,
                         "paginated": {"items": "foos"}
+                    }
+                }
+            }
+        }
+
+The values for ``outputToken`` and ``items`` are paths. :dfn:`Paths` are a series of
+identifiers separated by dots (``.``) where each identifier represents a
+member name in a structure. The first member name MUST correspond to a member
+of the output structure and each subsequent member name MUST correspond to a
+member in the previously referenced structure. Paths MUST adhere to the
+following ABNF.
+
+.. productionlist:: smithy
+    path    :`identifier` *("." `identifier`)
+
+The following example defines a paginated operation which uses a result
+wrapper where the output token and items are referenced by paths.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @readonly
+        @paginated(inputToken: "nextToken", outputToken: "result.nextToken",
+                   pageSize: "maxResults", items: "result.foos")
+        operation GetFoos(GetFoosInput) -> GetFoosOutput
+
+        structure GetFoosInput {
+            maxResults: Integer,
+            nextToken: String
+        }
+
+        structure GetFoosOutput {
+            @required
+            result: ResultWrapper
+        }
+
+        structure ResultWrapper {
+            nextToken: String,
+
+            @required
+            foos: StringList,
+        }
+
+        list StringList {
+            member: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.4.0",
+            "smithy.example": {
+                "shapes": {
+                    "GetFoos": {
+                        "type": "operation",
+                        "input" :"GetFoosInput",
+                        "output": "GetFoosOutput",
+                        "readonly": true,
+                        "paginated": {
+                            "inputToken": "nextToken",
+                            "outputToken": "result.nextToken",
+                            "pageSize": "maxResults",
+                            "items": "result.foos"
+                        }
+                    },
+                    "GetFoosInput": {
+                        "type": "structure",
+                        "members": {
+                            "maxResults": {
+                                "target": "Integer"
+                            }
+                            "nextToken": {
+                                "target": "String"
+                            }
+                        }
+                    },
+                    "GetFoosOutput": {
+                        "type": "structure",
+                        "members": {
+                            "result": {
+                                "target": "ResultWrapper",
+                                "required": true
+                            }
+                        }
+                    },
+                    "ResultWrapper": {
+                        "type": "structure",
+                        "members": {
+                            "nextToken": {
+                                "target": "String"
+                            },
+                            "foos": {
+                                "target": "StringList",
+                                "required": true
+                            }
+                        }
+                    },
+                    "StringList": {
+                        "type": "list",
+                        "member": {
+                            "target": "String"
+                        }
                     }
                 }
             }

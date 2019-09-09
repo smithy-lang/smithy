@@ -97,4 +97,35 @@ public class PaginatedTraitTest {
         assertThat(trait3.getPageSize(), equalTo(Optional.of("bar")));
         assertThat(trait3.getItems(), equalTo(Optional.of("baz")));
     }
+
+    @Test
+    public void allowsNestedOutputToken() {
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        Node node = Node.objectNode()
+                .withMember("inputToken", Node.from("inputToken"))
+                .withMember("outputToken", Node.from("result.outputToken"));
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#paginated"), ShapeId.from("ns.qux#foo"), node);
+
+        assertThat(trait.isPresent(), is(true));
+        assertThat(trait.get(), instanceOf(PaginatedTrait.class));
+        PaginatedTrait paginatedTrait = (PaginatedTrait) trait.get();
+        assertThat(paginatedTrait.getOutputToken(), equalTo(Optional.of("result.outputToken")));
+    }
+
+    @Test
+    public void allowsNestedOutputItems() {
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        Node node = Node.objectNode()
+                .withMember("items", Node.from("result.items"))
+                .withMember("inputToken", Node.from("inputToken"))
+                .withMember("outputToken", Node.from("outputToken"));
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#paginated"), ShapeId.from("ns.qux#foo"), node);
+
+        assertThat(trait.isPresent(), is(true));
+        assertThat(trait.get(), instanceOf(PaginatedTrait.class));
+        PaginatedTrait paginatedTrait = (PaginatedTrait) trait.get();
+        assertThat(paginatedTrait.getItems(), equalTo(Optional.of("result.items")));
+    }
 }
