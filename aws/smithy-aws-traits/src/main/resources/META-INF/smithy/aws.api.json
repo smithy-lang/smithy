@@ -148,6 +148,53 @@
         "member": {
           "target": "smithy.api#String"
         }
+      },
+      "discoveredEndpoint": {
+        "trait": {
+          "selector": "operation"
+        },
+        "type": "structure",
+        "members": {
+          "required": {
+            "required": true,
+            "target": "smithy.api#Boolean"
+          }
+        },
+        "documentation": "Indicates that the target operation should use the SDK's endpoint discovery logic."
+      },
+      "endpointDiscoveryId": {
+        "trait": {
+          "selector": "operation[trait|aws.api#discoveredEndpoint] -[input]-> structure > :test(member[trait|required] > string)"
+        },
+        "type": "boolean",
+        "documentation": "Indicates members of the operation input which should be use to discover endpoints."
+      },
+      "endpointDiscovery": {
+        "trait": {
+          "selector": "service"
+        },
+        "type": "structure",
+        "members": {
+          "operation": {
+            "idRef": {
+              "failWhenMissing": true,
+              "selector": "operation"
+            },
+            "required": true,
+            "target": "smithy.api#String",
+            "documentation": "Indicates the operation that clients should use to discover endpoints for the service."
+          },
+          "error": {
+            "idRef": {
+              "failWhenMissing": true,
+              "selector": "structure[trait|error]"
+            },
+            "required": true,
+            "target": "smithy.api#String",
+            "documentation": "Indicates the error that tells clients that the endpoint they are using is no longer valid. This error MUST be bound to any operation bound to the service which is marked with the aws.api#discoveredEndpoint trait."
+          }
+        },
+        "documentation": "Configures endpoint discovery for the service."
       }
     }
   }
