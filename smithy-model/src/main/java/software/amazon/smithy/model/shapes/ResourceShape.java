@@ -188,6 +188,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
         ResourceShape otherShape = (ResourceShape) other;
         return identifiers.equals(otherShape.identifiers)
                && Objects.equals(create, otherShape.create)
+               && Objects.equals(put, otherShape.put)
                && Objects.equals(read, otherShape.read)
                && Objects.equals(update, otherShape.update)
                && Objects.equals(delete, otherShape.delete)
@@ -305,6 +306,9 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
             removeCollectionOperation(id);
             if (Objects.equals(create, id)) {
                 create = null;
+            }
+            if (Objects.equals(put, id)) {
+                put = null;
             }
             if (Objects.equals(read, id)) {
                 read = null;
