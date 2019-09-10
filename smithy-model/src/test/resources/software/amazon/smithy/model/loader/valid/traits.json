@@ -23,7 +23,8 @@
       },
       "E": {
         "type": "string",
-        "smithy.api#documentation": "Hello!"
+        "smithy.api#documentation": "Hello!",
+        "smithy.api#deprecated": {}
       },
       "F": {
         "type": "string",
