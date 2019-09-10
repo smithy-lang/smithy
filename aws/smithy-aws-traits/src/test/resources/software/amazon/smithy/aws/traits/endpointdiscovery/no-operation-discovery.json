@@ -1,0 +1,89 @@
+{
+    "smithy": "0.4.0",
+    "ns.foo": {
+        "shapes": {
+            "FooService": {
+                "type": "service",
+                "version": "2019-09-10",
+                "aws.api#endpointOperation": "ns.foo#DescribeEndpoints",
+                "operations": [
+                    "DescribeEndpoints",
+                    "GetObject"
+                ]
+            },
+            "DescribeEndpoints": {
+                "type": "operation",
+                "input": "DescribeEndpointsInput",
+                "output": "DescribeEndpointsOutput"
+            },
+            "DescribeEndpointsInput": {
+                "type": "structure",
+                "members": {
+                    "Operation": {
+                        "target": "smithy.api#String"
+                    },
+                    "Identifiers": {
+                        "target": "Identifiers"
+                    }
+                }
+            },
+            "Identifiers": {
+                "type": "map",
+                "key": {
+                    "target": "smithy.api#String"
+                },
+                "value": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "DescribeEndpointsOutput": {
+                "type": "structure",
+                "members": {
+                    "Endpoints": {
+                        "target": "Endpoints"
+                    }
+                }
+            },
+            "Endpoints": {
+                "type": "list",
+                "member": {
+                    "target": "Endpoint"
+                }
+            },
+            "Endpoint": {
+                "type": "structure",
+                "members": {
+                    "Address": {
+                        "target": "smithy.api#String"
+                    },
+                    "CachePeriod": {
+                        "target": "smithy.api#Long"
+                    }
+                }
+            },
+            "GetObject": {
+                "type": "operation",
+                "input": "GetObjectInput",
+                "output": "GetObjectOutput"
+            },
+            "GetObjectInput": {
+                "type": "structure",
+                "members": {
+                    "Id": {
+                        "target": "smithy.api#String",
+                        "aws.api#endpointDiscoveryId": true,
+                        "required": true
+                    }
+                }
+            },
+            "GetObjectOutput": {
+                "type": "structure",
+                "members": {
+                    "Object": {
+                        "target": "smithy.api#Blob"
+                    }
+                }
+            }
+        }
+    }
+}
