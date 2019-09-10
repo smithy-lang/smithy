@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.build;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
@@ -70,6 +71,34 @@ public interface FileManifest {
     Path addFile(Path path);
 
     /**
+     * Adds the files from another FileManifest into this FileManifest.
+     *
+     * @param manifest Other object to merge with.
+     */
+    default void addAllFiles(FileManifest manifest) {
+        manifest.getFiles().forEach(this::addFile);
+    }
+
+    /**
+     * Resolves a path against the base path of the manifest.
+     *
+     * @param path Path to resolve against the base URL.
+     * @return Returns the resolved, absolute path.
+     * @throws SmithyBuildException if the resolved path cannot
+     *   falls outside of the base URL of the manifest.
+     */
+    default Path resolvePath(Path path) {
+        Path result = getBaseDir().resolve(path);
+
+        if (!result.startsWith(getBaseDir())) {
+            throw new SmithyBuildException(String.format(
+                    "Paths must be relative to the base directory, %s, but found %s", getBaseDir(), result));
+        }
+
+        return result;
+    }
+
+    /**
      * Adds a file to the result using the contents of a {@link Reader}.
      *
      * <p>This method will write the contents of a Reader to a file.
@@ -94,31 +123,37 @@ public interface FileManifest {
     Path writeFile(Path path, InputStream fileContentsInputStream);
 
     /**
-     * Resolves a path against the base path of the manifest.
+     * Adds a file to the result using the contents of a resource loaded by
+     * calling {@link Class#getResourceAsStream(String)}.
      *
-     * @param path Path to resolve against the base URL.
-     * @return Returns the resolved, absolute path.
-     * @throws SmithyBuildException if the resolved path cannot
-     *   falls outside of the base URL of the manifest.
+     * <p>This method should be preferred when writing class resources to the manifest
+     * since it handles closing the created {@code InputStream} and avoids
+     * tripping up tools like SpotBugs.
+     *
+     * @param path Relative path to the file to create.
+     * @param klass Class to load the resource from.
+     * @param resource Path to the resource to load.
+     * @return Returns the resolved path.
      */
-    default Path resolvePath(Path path) {
-        Path result = getBaseDir().resolve(path);
-
-        if (!result.startsWith(getBaseDir())) {
-            throw new SmithyBuildException(String.format(
-                    "Paths must be relative to the base directory, %s, but found %s", getBaseDir(), result));
+    default Path writeFile(Path path, Class klass, String resource) {
+        try (InputStream inputStream = klass.getResourceAsStream(resource)) {
+            return writeFile(path, inputStream);
+        } catch (IOException e) {
+            throw new SmithyBuildException("Error loading class resource from " + resource + ": " + e.getMessage(), e);
         }
-
-        return result;
     }
 
     /**
-     * Adds the files from another FileManifest into this FileManifest.
+     * Adds a file to the result using the contents of a resource loaded by
+     * calling {@link Class#getResourceAsStream(String)}.
      *
-     * @param manifest Other object to merge with.
+     * @param path Relative path to the file to create.
+     * @param klass Class to load the resource from.
+     * @param resource Path to the resource to load.
+     * @return Returns the resolved path.
      */
-    default void addAllFiles(FileManifest manifest) {
-        manifest.getFiles().forEach(this::addFile);
+    default Path writeFile(String path, Class klass, String resource) {
+        return writeFile(Paths.get(path), klass, resource);
     }
 
     /**

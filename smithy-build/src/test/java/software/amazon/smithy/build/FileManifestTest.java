@@ -110,4 +110,12 @@ public class FileManifestTest {
         assertThat(Files.isRegularFile(outputDirectory.resolve("foo/file.txt")), is(true));
         assertThat(new String(Files.readAllBytes(outputDirectory.resolve("foo/file.txt"))), equalTo("The contents"));
     }
+
+    @Test
+    public void writesClassResources() {
+        FileManifest a = FileManifest.create(outputDirectory);
+        a.writeFile("test.txt", getClass(), "simple-config.json");
+
+        assertThat(Files.isRegularFile(outputDirectory.resolve("test.txt")), is(true));
+    }
 }
