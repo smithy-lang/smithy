@@ -129,3 +129,5 @@ string T
     many
     lines.""")
 string U
+
+apply E @deprecated

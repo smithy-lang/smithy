@@ -301,7 +301,7 @@ final class SmithyModelLoader implements ModelLoader {
             if (token.type == UNQUOTED) {
                 parseStatement(token, state);
             } else if (token.type == ANNOTATION) {
-                state.pendingTraits.add(parseTraitValue(token, state, false));
+                state.pendingTraits.add(parseTraitValue(token, state, TraitValueType.SHAPE));
             } else if (token.type == CONTROL) {
                 parseControlStatement(state, token);
             } else if (token.type == DOC) {
@@ -386,7 +386,9 @@ final class SmithyModelLoader implements ModelLoader {
         }
     }
 
-    private static Pair<String, Node> parseTraitValue(Token token, State state, boolean memberScope) {
+    private enum TraitValueType { SHAPE, MEMBER, APPLY }
+
+    private static Pair<String, Node> parseTraitValue(Token token, State state, TraitValueType type) {
         try {
             requireNamespaceOrThrow(state);
 
@@ -394,14 +396,22 @@ final class SmithyModelLoader implements ModelLoader {
             ShapeId.fromOptionalNamespace(state.visitor.getNamespace(), token.lexeme);
             Pair<String, Node> result = Pair.of(token.lexeme, parseTraitValueBody(state));
 
+            // `apply` doesn't require any specific token to follow.
+            if (type == TraitValueType.APPLY) {
+                return result;
+            }
+
+            // Other kinds of trait values require an annotation or definition to follow.
             if (!state.peek().isPresent()) {
                 throw state.syntax("Found a trait doesn't apply to anything");
             }
 
             Token next = state.peek().get();
-            if (next.type != ANNOTATION
-                && (next.type != UNQUOTED || (!memberScope && !SUPPORTS_TRAITS.contains(next.lexeme)))) {
-                throw state.syntax("Traits cannot be applied to `" + next.lexeme + "`");
+            if (next.type != ANNOTATION) {
+                if (next.type != UNQUOTED
+                    || (type != TraitValueType.MEMBER && !SUPPORTS_TRAITS.contains(next.lexeme))) {
+                    throw state.syntax("Traits cannot be applied to `" + next.lexeme + "`");
+                }
             }
 
             return result;
@@ -572,7 +582,7 @@ final class SmithyModelLoader implements ModelLoader {
         Token token = state.expect(ANNOTATION, QUOTED, UNQUOTED, RBRACE, DOC);
         while (token.type != RBRACE) {
             if (token.type == ANNOTATION) {
-                memberTraits.add(parseTraitValue(token, state, true));
+                memberTraits.add(parseTraitValue(token, state, TraitValueType.MEMBER));
                 // Traits can't come before a closing brace, so continue
                 // to make sure they come before another trait or a key.
             } else if (token.type == DOC) {
@@ -659,7 +669,7 @@ final class SmithyModelLoader implements ModelLoader {
         String name = state.expect(UNQUOTED).lexeme;
         ShapeId id = ShapeId.fromOptionalNamespace(state.visitor.getNamespace(), name);
         Token token = state.expect(ANNOTATION);
-        Pair<String, Node> trait = parseTraitValue(token, state, false);
+        Pair<String, Node> trait = parseTraitValue(token, state, TraitValueType.APPLY);
         state.visitor.onTrait(id, trait.getLeft(), trait.getRight());
         state.expectNewline();
     }
