@@ -213,8 +213,8 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         AuthorizerDefinition that = (AuthorizerDefinition) o;
         return scheme.equals(that.scheme)
                && Objects.equals(type, that.type)
-               && authType.equals(that.authType)
                && Objects.equals(uri, that.uri)
+               && Objects.equals(authType, that.authType)
                && Objects.equals(credentials, that.credentials)
                && Objects.equals(identitySource, that.identitySource)
                && Objects.equals(identityValidationExpression, that.identityValidationExpression)
