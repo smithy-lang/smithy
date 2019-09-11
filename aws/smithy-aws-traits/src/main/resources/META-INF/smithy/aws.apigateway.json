@@ -31,6 +31,10 @@
             "target": "smithy.api#String",
             "documentation": "The type of the authorizer. If specifying information beyond the scheme, this value is required. The value must be \"token\", for an authorizer with the caller identity embedded in an authorization token, or \"request\", for an authorizer with the caller identity contained in request parameters."
           },
+          "customAuthType": {
+            "target": "smithy.api#String",
+            "documentation": "This value is not used directly by APIGateway but will be used for OpenAPI exports. This will default to \"awsSigV4\" if your scheme is \"aws.v4\", or \"custom\" otherwise."
+          },
           "uri": {
             "target": "smithy.api#String",
             "documentation": "The Uniform Resource Identifier (URI) of the authorizer Lambda function"

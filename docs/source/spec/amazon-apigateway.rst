@@ -119,6 +119,11 @@ An *authorizer* definition is an object that supports the following properties:
         authorizer with the caller identity embedded in an authorization token,
         or "request", for an authorizer with the caller identity contained in
         request parameters.
+    * - customAuthType
+      - ``string``
+      - The ``authType`` of the authorizer. This value is used in APIGateway
+        exports as ``x-amazon-apigateway-authtype``. This value is set to
+        ``custom`` by default, or ``awsSigv4`` if your scheme is ``aws.v4``.
     * - uri
       - ``string``
       - Specifies the authorizer's Uniform Resource Identifier

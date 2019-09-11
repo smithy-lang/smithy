@@ -97,8 +97,7 @@ final class AddAuthorizers implements OpenApiMapper {
                 if (converter.getAuthSchemeName().equals(scheme)) {
                     SecurityScheme createdScheme = converter.createSecurityScheme(context);
                     SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();
-                    schemeBuilder.putExtension(
-                            CLIENT_EXTENSION_NAME, determineApiGatewayClientName(authorizer.getScheme()));
+                    schemeBuilder.putExtension(CLIENT_EXTENSION_NAME, authorizer.getAuthType());
 
                     ObjectNode authorizerNode = Node.objectNodeBuilder()
                             .withOptionalMember("type", authorizer.getType().map(Node::from))
@@ -123,14 +122,5 @@ final class AddAuthorizers implements OpenApiMapper {
 
         builder.components(components.build());
         return builder.build();
-    }
-
-    // TODO: should this also allow overrides via configuration properties?
-    private static String determineApiGatewayClientName(String value) {
-        if (value.equals("aws.v4")) {
-            return "awsSigv4";
-        } else {
-            return "custom";
-        }
     }
 }
