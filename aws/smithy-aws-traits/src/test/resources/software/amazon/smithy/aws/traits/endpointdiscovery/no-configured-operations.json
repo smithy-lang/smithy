@@ -10,8 +10,7 @@
                     "error": "ns.foo#InvalidEndpointError"
                 },
                 "operations": [
-                    "DescribeEndpoints",
-                    "GetObject"
+                    "DescribeEndpoints"
                 ]
             },
             "DescribeEndpoints": {
@@ -61,30 +60,6 @@
                     },
                     "CachePeriod": {
                         "target": "smithy.api#Long"
-                    }
-                }
-            },
-            "GetObject": {
-                "type": "operation",
-                "input": "GetObjectInput",
-                "output": "GetObjectOutput",
-                "errors": ["InvalidEndpointError"]
-            },
-            "GetObjectInput": {
-                "type": "structure",
-                "members": {
-                    "Id": {
-                        "target": "smithy.api#String",
-                        "aws.api#endpointDiscoveryId": true,
-                        "required": true
-                    }
-                }
-            },
-            "GetObjectOutput": {
-                "type": "structure",
-                "members": {
-                    "Object": {
-                        "target": "smithy.api#Blob"
                     }
                 }
             },

@@ -10,8 +10,8 @@
                     "error": "ns.foo#InvalidEndpointError"
                 },
                 "operations": [
-                    "DescribeEndpoints",
-                    "GetObject"
+                    "GetObject",
+                    "PutObject"
                 ]
             },
             "DescribeEndpoints": {
@@ -68,6 +68,9 @@
                 "type": "operation",
                 "input": "GetObjectInput",
                 "output": "GetObjectOutput",
+                "aws.api#discoveredEndpoint": {
+                    "required": true
+                },
                 "errors": ["InvalidEndpointError"]
             },
             "GetObjectInput": {
@@ -81,6 +84,22 @@
                 }
             },
             "GetObjectOutput": {
+                "type": "structure",
+                "members": {
+                    "Object": {
+                        "target": "smithy.api#Blob"
+                    }
+                }
+            },
+            "PutObject": {
+                "type": "operation",
+                "input": "PutObjectInput",
+                "aws.api#discoveredEndpoint": {
+                    "required": true
+                },
+                "errors": ["InvalidEndpointError"]
+            },
+            "PutObjectInput": {
                 "type": "structure",
                 "members": {
                     "Object": {
