@@ -11,7 +11,15 @@
                 },
                 "operations": [
                     "DescribeEndpoints",
-                    "GetObject"
+                    "GetObject",
+                    "PutObject"
+                ]
+            },
+            "BarService": {
+                "type": "service",
+                "version": "2019-09-10",
+                "operations": [
+                    "DescribeEndpoints"
                 ]
             },
             "DescribeEndpoints": {
