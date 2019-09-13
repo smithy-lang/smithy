@@ -75,4 +75,24 @@ public class AddAuthorizersTest {
         assertThat(sigV4.getExtension("x-amazon-apigateway-authtype").get(), equalTo(Node.from("awsSigv4")));
         assertFalse(sigV4.getExtension("x-amazon-apigateway-authorizer").isPresent());
     }
+
+    @Test
+    public void addsCustomAuthType() {
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("custom-auth-type-authorizer.json"))
+                .assemble()
+                .unwrap();
+        OpenApi result = OpenApiConverter.create()
+                .classLoader(getClass().getClassLoader())
+                .convert(model, ShapeId.from("ns.foo#SomeService"));
+        SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
+
+        assertThat(result.getComponents().getSecuritySchemes().get("aws.v4"), nullValue());
+        assertThat(sigV4.getType(), equalTo("apiKey"));
+        assertThat(sigV4.getName().get(), equalTo("Authorization"));
+        assertThat(sigV4.getIn().get(), equalTo("header"));
+        assertThat(sigV4.getExtension("x-amazon-apigateway-authtype").get(), equalTo(Node.from("myCustomType")));
+        assertFalse(sigV4.getExtension("x-amazon-apigateway-authorizer").isPresent());
+    }
 }
