@@ -415,7 +415,8 @@ list
 The :dfn:`list` type represents a homogeneous collection of values. A list is
 defined using a :token:`list_statement`. A list statement consists of the
 shape named followed by an object with a single key-value pair of "member"
-that defines the :ref:`member <member>` of the list.
+that defines the :ref:`member <member>` of the list. The member of a list
+cannot target the containing list shape.
 
 The following example defines a list with a string member from the
 :ref:`prelude <prelude>`:
@@ -513,7 +514,8 @@ set
 The :dfn:`set` type represents an unordered collection of unique homogeneous
 values. A set is defined using a :token:`set_statement` that consists of the
 shape named followed by an object with a single key-value pair of "member"
-that defines the :ref:`member <member>` of the set.
+that defines the :ref:`member <member>` of the set. The member of a set
+cannot target the containing set shape.
 
 The following example defines a set of strings:
 

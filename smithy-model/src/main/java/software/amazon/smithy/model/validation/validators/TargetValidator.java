@@ -45,9 +45,9 @@ import software.amazon.smithy.utils.SetUtils;
  */
 public class TargetValidator extends AbstractValidator {
 
-    /** Valid member shape targets. */
     private static final Set<ShapeType> INVALID_MEMBER_TARGETS = SetUtils.of(
             ShapeType.SERVICE, ShapeType.RESOURCE, ShapeType.OPERATION, ShapeType.MEMBER);
+    private static final Set<ShapeType> INVALID_RECURSIVE_MEMBER_TARGETS = SetUtils.of(ShapeType.LIST, ShapeType.SET);
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -85,6 +85,10 @@ public class TargetValidator extends AbstractValidator {
                 if (INVALID_MEMBER_TARGETS.contains(target.getType())) {
                     return Optional.of(error(shape, format(
                             "Members cannot target %s shapes, but found %s", target.getType(), target)));
+                } else if (target.getId().equals(shape.getId().withoutMember())
+                           && INVALID_RECURSIVE_MEMBER_TARGETS.contains(target.getType())) {
+                    return Optional.of(error(shape, format(
+                            "%s shape members cannot target their container", target.getType())));
                 }
             case MAP_KEY:
                 return target.asMemberShape().flatMap(m -> validateMapKey(shape, m.getTarget(), index));
