@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -246,7 +247,7 @@ public final class ModelAssembler {
 
         if (Files.isDirectory(importPath)) {
             try {
-                Files.walk(importPath)
+                Files.walk(importPath, FileVisitOption.FOLLOW_LINKS)
                         .filter(p -> !p.equals(importPath))
                         .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))
                         .forEach(this::addImport);
@@ -254,7 +255,7 @@ public final class ModelAssembler {
                 throw new ModelImportException("Error loading the contents of " + importPath, e);
             }
         } else if (Files.isRegularFile(importPath)) {
-            stringModels.put(importPath.toString(), () -> IoUtils.readUtf8File(importPath.toString()));
+            stringModels.put(importPath.toString(), () -> IoUtils.readUtf8File(importPath));
         } else {
             throw new ModelImportException("Cannot find import file: " + importPath);
         }
