@@ -1,0 +1,3 @@
+[ERROR] ns.foo#Endpoint$Address: The `Address` member of the `Endpoint` shape must be a string type. | EndpointDiscovery
+[ERROR] ns.foo#Endpoint$CachePeriod: The `CachePeriod` member of the `Endpoint` shape must be a long type. | EndpointDiscovery
+[ERROR] ns.foo#Endpoint: The `Endpoint` shape must only have the members `Address` and `CachePeriod`, but found: Address, IpAddress, CachePeriod | EndpointDiscovery
