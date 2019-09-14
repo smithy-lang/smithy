@@ -83,7 +83,7 @@ public final class IoUtils {
      */
     public static String readUtf8File(Path path) {
         try {
-            return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+            return new String(Files.readAllBytes(path.toRealPath()), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

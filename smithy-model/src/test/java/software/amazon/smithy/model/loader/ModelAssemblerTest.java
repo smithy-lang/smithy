@@ -30,6 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
@@ -147,6 +150,99 @@ public class ModelAssemblerTest {
     @Test
     public void detectsUnresolvedImports() {
         Assertions.assertThrows(RuntimeException.class, () -> new ModelAssembler().addImport("/bad/path"));
+    }
+
+    @Test
+    public void importsSymlinksDirectoryWithAllShapes() throws Exception {
+        ValidatedResult<Model> result = new ModelAssembler()
+            .addImport(getClass().getResource("main.json"))
+            .addImport(createSymbolicLink(Paths.get(getClass().getResource("nested").toURI()), "symlink-nested"))
+            .assemble();
+        assertThat(result.getValidationEvents(), empty());
+        Model model = result.unwrap();
+        assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).isPresent());
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).get().getType(),
+            is(ShapeType.STRING));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String2")).get().getType(),
+            is(ShapeType.STRING));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String3")).get().getType(),
+            is(ShapeType.STRING));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).get().getType(),
+            is(ShapeType.STRING));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Integer")).get().getType(),
+            is(ShapeType.INTEGER));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Long")).get().getType(),
+            is(ShapeType.LONG));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Float")).get().getType(),
+            is(ShapeType.FLOAT));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#BigDecimal")).get().getType(),
+            is(ShapeType.BIG_DECIMAL));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#BigInteger")).get().getType(),
+            is(ShapeType.BIG_INTEGER));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Blob")).get().getType(),
+            is(ShapeType.BLOB));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Boolean")).get().getType(),
+            is(ShapeType.BOOLEAN));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Timestamp")).get().getType(),
+            is(ShapeType.TIMESTAMP));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#List")).get().getType(),
+            is(ShapeType.LIST));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Map")).get().getType(),
+            is(ShapeType.MAP));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Structure")).get().getType(),
+            is(ShapeType.STRUCTURE));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#TaggedUnion")).get().getType(),
+            is(ShapeType.UNION));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Resource")).get().getType(),
+            is(ShapeType.RESOURCE));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Operation")).get().getType(),
+            is(ShapeType.OPERATION));
+        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Service")).get().getType(),
+            is(ShapeType.SERVICE));
+
+        ShapeId stringId = ShapeId.from("example.namespace#String");
+        Optional<SensitiveTrait> sensitiveTrait = model.getShapeIndex()
+            .getShape(stringId).get()
+            .getTrait(SensitiveTrait.class);
+        assertTrue(sensitiveTrait.isPresent());
+
+        assertThat(model.getMetadata(), hasKey("foo"));
+        assertThat(model.getMetadata().get("foo"), equalTo(Node.from("baz")));
+        assertThat(model.getMetadata(), hasKey("bar"));
+        assertThat(model.getMetadata().get("bar"), equalTo(Node.from("qux")));
+        assertThat(model.getMetadata(), hasKey("lorem"));
+        assertThat(model.getMetadata().get("lorem"), equalTo(Node.from("ipsum")));
+        assertThat(model.getMetadata(), hasKey("list"));
+        assertThat(model.getMetadata().get("list").expectArrayNode().getElementsAs(StringNode::getValue),
+            containsInAnyOrder("a", "b", "c"));
+
+        // The String shape should have a documentation trait applied.
+        assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String"))
+            .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
+            .isPresent());
+    }
+
+    @Test
+    public void importsSymlinkFileWithAllShapes() throws Exception {
+        ValidatedResult<Model> result = new ModelAssembler()
+            .addImport(getClass().getResource("main.json"))
+            .addImport(createSymbolicLink(
+                Paths.get(getClass().getResource("nested/merges-2.json").toURI()), "symlink-merges-2.json"))
+            .assemble();
+        assertThat(result.getValidationEvents(), empty());
+        Model model = result.unwrap();
+        // The String shape should have a documentation trait applied.
+        assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String"))
+            .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
+            .isPresent());
+    }
+
+    public Path createSymbolicLink(Path target, String linkName) throws IOException {
+        Path link = Paths.get("./src/test/resources", linkName);
+        if (Files.exists(link)) {
+            Files.delete(link);
+        }
+        return Files.createSymbolicLink(link, target);
     }
 
     @Test
