@@ -33,9 +33,7 @@ public final class EndpointDiscoveryTrait extends AbstractTrait implements ToSmi
 
     private static final String OPERATION = "operation";
     private static final String ERROR = "error";
-    private static final List<String> PROPERTIES = Collections.unmodifiableList(Arrays.asList(
-            OPERATION, ERROR
-    ));
+    private static final List<String> PROPERTIES = Collections.unmodifiableList(Arrays.asList(OPERATION, ERROR));
 
     private final ShapeId operation;
     private final ShapeId error;

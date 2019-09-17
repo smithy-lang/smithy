@@ -160,7 +160,7 @@
             "target": "smithy.api#Boolean"
           }
         },
-        "documentation": "Indicates that the target operation should use the SDK's endpoint discovery logic."
+        "documentation": "Indicates that the target operation should use the client's endpoint discovery logic."
       },
       "endpointDiscoveryId": {
         "trait": {
