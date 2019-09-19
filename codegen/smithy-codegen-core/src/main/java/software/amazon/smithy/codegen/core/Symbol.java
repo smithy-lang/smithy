@@ -65,6 +65,7 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
     private final String definitionFile;
     private final String declarationFile;
     private final List<SymbolReference> references;
+    private final List<SymbolDependency> dependencies;
 
     private Symbol(Builder builder) {
         super(builder.properties);
@@ -74,6 +75,7 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
         this.declarationFile = builder.declarationFile;
         this.definitionFile = !builder.definitionFile.isEmpty() ? builder.definitionFile : declarationFile;
         this.references = ListUtils.copyOf(builder.references);
+        this.dependencies = ListUtils.copyOf(builder.dependencies);
     }
 
     /**
@@ -185,6 +187,20 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
         return references;
     }
 
+    /**
+     * Gets the list of dependencies that this symbol introduces.
+     *
+     * <p>A dependency is a dependency on another package that the symbol
+     * requires. It is quite different from a reference since a reference
+     * only refers to a symbol; a reference provides no context as to whether
+     * or not a dependency is required or the dependency's coordinates.
+     *
+     * @return Returns the Symbol's dependencies.
+     */
+    public List<SymbolDependency> getDependencies() {
+        return dependencies;
+    }
+
     @Override
     public Builder toBuilder() {
         Builder builder = new Builder();
@@ -193,7 +209,8 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
                 .properties(getProperties())
                 .definitionFile(definitionFile)
                 .declarationFile(declarationFile)
-                .references(references);
+                .references(references)
+                .dependencies(dependencies);
     }
 
     @Override
@@ -216,7 +233,8 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
                && getProperties().equals(symbol.getProperties())
                && Objects.equals(declarationFile, symbol.declarationFile)
                && Objects.equals(definitionFile, symbol.definitionFile)
-               && references.equals(symbol.references);
+               && references.equals(symbol.references)
+               && dependencies.equals(symbol.dependencies);
     }
 
     @Override
@@ -236,7 +254,8 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
         private String namespaceDelimiter = "";
         private String definitionFile = "";
         private String declarationFile = "";
-        private List<SymbolReference> references = new ArrayList<>();
+        private final List<SymbolReference> references = new ArrayList<>();
+        private final List<SymbolDependency> dependencies = new ArrayList<>();
 
         @Override
         public Symbol build() {
@@ -298,9 +317,9 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
         }
 
         /**
-         * Adds and replaces the symbol references to the symbol.
+         * Replaces the symbol references to the symbol.
          *
-         * @param references References to add.
+         * @param references References to set.
          * @return Returns the builder.
          */
         public Builder references(List<SymbolReference> references) {
@@ -330,6 +349,40 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
         public Builder addReference(SymbolReference reference) {
             references.add(Objects.requireNonNull(reference));
             return this;
+        }
+
+        /**
+         * Replaces the symbol dependencies of the symbol.
+         *
+         * @param dependencies Dependencies to set.
+         * @return Returns the builder.
+         */
+        public Builder dependencies(List<SymbolDependency> dependencies) {
+            this.dependencies.clear();
+            dependencies.forEach(this::addDependency);
+            return this;
+        }
+
+        /**
+         * Add a symbol dependency.
+         *
+         * @param dependency Symbol dependency to add.
+         * @return Returns the builder.
+         */
+        public Builder addDependency(SymbolDependency dependency) {
+            dependencies.add(dependency);
+            return this;
+        }
+
+        /**
+         * Add a symbol dependency.
+         *
+         * @param packageName Name of the package to depend on.
+         * @param version Version to depend on.
+         * @return Returns the builder.
+         */
+        public Builder addDependency(String packageName, String version) {
+            return addDependency(SymbolDependency.builder().packageName(packageName).version(version).build());
         }
     }
 }
