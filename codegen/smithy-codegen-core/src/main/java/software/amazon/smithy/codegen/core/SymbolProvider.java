@@ -73,4 +73,25 @@ public interface SymbolProvider {
     default String toMemberName(Shape shape) {
         return shape.getId().getMember().orElseGet(() -> StringUtils.uncapitalize(shape.getId().getName()));
     }
+
+    /**
+     * Decorates a {@code SymbolProvider} with a cache and returns the
+     * decorated {@code SymbolProvider}.
+     *
+     * <p>The results of calling {@code toSymbol} and {@code toMemberName}
+     * on {@code delegate} are cached using a thread-safe cache.
+     *
+     * <pre>
+     * {@code
+     * SymbolProvider delegate = createComplexProvider(myModel);
+     * SymbolProvider cachingProvider = SymbolProvider.cache(delegate);
+     * }
+     * </pre>
+     *
+     * @param delegate Symbol provider to wrap and cache its results.
+     * @return Returns the wrapped SymbolProvider.
+     */
+    static SymbolProvider cache(SymbolProvider delegate) {
+        return new CachingSymbolProvider(delegate);
+    }
 }
