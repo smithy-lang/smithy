@@ -16,9 +16,11 @@
 package software.amazon.smithy.aws.traits.endpointdiscovery;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -27,7 +29,7 @@ import software.amazon.smithy.model.transform.ModelTransformer;
 public class CleanDiscoveryTraitTransformerTest {
 
     @Test
-    public void removesTraitWhenOperationRemoved() {
+    public void removesTraitsWhenOperationRemoved() {
         Model model = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
                 .addImport(getClass().getResource("test-model.json"))
@@ -43,11 +45,24 @@ public class CleanDiscoveryTraitTransformerTest {
                 .flatMap(Shape::asServiceShape)
                 .get();
 
+        OperationShape getOperation = result.getShapeIndex()
+                .getShape(ShapeId.from("ns.foo#GetObject"))
+                .flatMap(Shape::asOperationShape)
+                .get();
+
+        OperationShape putOperation = result.getShapeIndex()
+                .getShape(ShapeId.from("ns.foo#PutObject"))
+                .flatMap(Shape::asOperationShape)
+                .get();
+
         assertFalse(service.hasTrait(EndpointDiscoveryTrait.class));
+        // discovery is required for this operation, so it keeps the trait
+        assertTrue(getOperation.hasTrait(DiscoveredEndpointTrait.class));
+        assertFalse(putOperation.hasTrait(DiscoveredEndpointTrait.class));
     }
 
     @Test
-    public void removesTraitWhenErrorRemoved() {
+    public void removesTraitsWhenErrorRemoved() {
         Model model = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
                 .addImport(getClass().getResource("test-model.json"))
@@ -63,6 +78,45 @@ public class CleanDiscoveryTraitTransformerTest {
                 .flatMap(Shape::asServiceShape)
                 .get();
 
+        OperationShape getOperation = result.getShapeIndex()
+                .getShape(ShapeId.from("ns.foo#GetObject"))
+                .flatMap(Shape::asOperationShape)
+                .get();
+
+        OperationShape putOperation = result.getShapeIndex()
+                .getShape(ShapeId.from("ns.foo#PutObject"))
+                .flatMap(Shape::asOperationShape)
+                .get();
+
         assertFalse(service.hasTrait(EndpointDiscoveryTrait.class));
+        // discovery is required for this operation, so it keeps the trait
+        assertTrue(getOperation.hasTrait(DiscoveredEndpointTrait.class));
+        assertFalse(putOperation.hasTrait(DiscoveredEndpointTrait.class));
+    }
+
+    @Test
+    public void doesntRemoveOptionalOperationTraitIfStillBoundToDiscoveryService() {
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("multiple-configured-services.json"))
+                .assemble()
+                .unwrap();
+
+        Model result = ModelTransformer.create().filterShapes(model, shape -> {
+            return !shape.getId().toString().equals("ns.foo#DescribeEndpointsFoo");
+        });
+
+        OperationShape getOperation = result.getShapeIndex()
+                .getShape(ShapeId.from("ns.foo#GetObject"))
+                .flatMap(Shape::asOperationShape)
+                .get();
+
+        OperationShape putOperation = result.getShapeIndex()
+                .getShape(ShapeId.from("ns.foo#PutObject"))
+                .flatMap(Shape::asOperationShape)
+                .get();
+
+        assertTrue(getOperation.hasTrait(DiscoveredEndpointTrait.class));
+        assertTrue(putOperation.hasTrait(DiscoveredEndpointTrait.class));
     }
 }

@@ -6,11 +6,11 @@
                 "type": "service",
                 "version": "2019-09-10",
                 "aws.api#endpointDiscovery": {
-                    "operation": "ns.foo#DescribeEndpoints",
+                    "operation": "ns.foo#DescribeEndpointsFoo",
                     "error": "ns.foo#InvalidEndpointError"
                 },
                 "operations": [
-                    "DescribeEndpoints",
+                    "DescribeEndpointsFoo",
                     "GetObject",
                     "PutObject"
                 ]
@@ -18,11 +18,22 @@
             "BarService": {
                 "type": "service",
                 "version": "2019-09-10",
+                "aws.api#endpointDiscovery": {
+                    "operation": "ns.foo#DescribeEndpointsBar",
+                    "error": "ns.foo#InvalidEndpointError"
+                },
                 "operations": [
-                    "DescribeEndpoints"
+                    "DescribeEndpointsBar",
+                    "GetObject",
+                    "PutObject"
                 ]
             },
-            "DescribeEndpoints": {
+            "DescribeEndpointsFoo": {
+                "type": "operation",
+                "input": "DescribeEndpointsInput",
+                "output": "DescribeEndpointsOutput"
+            },
+            "DescribeEndpointsBar": {
                 "type": "operation",
                 "input": "DescribeEndpointsInput",
                 "output": "DescribeEndpointsOutput"

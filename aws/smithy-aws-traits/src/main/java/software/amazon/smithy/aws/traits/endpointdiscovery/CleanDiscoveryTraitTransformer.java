@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -43,6 +44,8 @@ public class CleanDiscoveryTraitTransformer implements ModelTransformerPlugin {
                 .collect(Collectors.toSet());
 
         Set<Shape> toReplace = getServicesToUpdate(model, removedOperations, removedErrors);
+        toReplace.addAll(getOperationsToUpdate(
+                model, toReplace.stream().map(Shape::getId).collect(Collectors.toSet())));
         return transformer.replaceShapes(model, toReplace);
     }
 
@@ -56,6 +59,30 @@ public class CleanDiscoveryTraitTransformer implements ModelTransformerPlugin {
                     builder.removeTrait(EndpointDiscoveryTrait.ID);
                     return builder.build();
                 })
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Shape> getOperationsToUpdate(Model model, Set<ShapeId> updatedServices) {
+        EndpointDiscoveryIndex discoveryIndex = model.getKnowledge(EndpointDiscoveryIndex.class);
+        Set<ShapeId> stillBoundOperations = model.getShapeIndex().shapes(ServiceShape.class)
+                // Get all endpoint discovery services
+                .filter(service -> service.hasTrait(EndpointDiscoveryTrait.class))
+                .map(Shape::getId)
+                // Get those services who aren't having their discovery traits removed
+                .filter(service -> !updatedServices.contains(service))
+                // Get all the discovery operations bound to those services
+                .flatMap(service -> discoveryIndex.getEndpointDiscoveryOperations(service).stream())
+                .collect(Collectors.toSet());
+
+        return model.getShapeIndex().shapes(OperationShape.class)
+                // Get all endpoint discovery operations
+                .flatMap(operation -> Trait.flatMapStream(operation, DiscoveredEndpointTrait.class))
+                // Only get the ones where discovery is optional, as it is safe to remove in that case
+                .filter(pair -> !pair.getRight().isRequired())
+                // Only get the ones that aren't still bound to a service that requires endpoint discovery
+                .filter(pair -> !stillBoundOperations.contains(pair.getLeft().getId()))
+                // Remove the trait
+                .map(pair -> pair.getLeft().toBuilder().removeTrait(DiscoveredEndpointTrait.ID).build())
                 .collect(Collectors.toSet());
     }
 }
