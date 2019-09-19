@@ -16,9 +16,7 @@
 package software.amazon.smithy.codegen.core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -229,13 +227,15 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
     /**
      * Builds a Symbol.
      */
-    public static final class Builder implements SmithyBuilder<Symbol> {
+    public static final class Builder
+            extends TypedPropertiesBag.Builder<Builder>
+            implements SmithyBuilder<Symbol> {
+
         private String name;
         private String namespace = "";
         private String namespaceDelimiter = "";
         private String definitionFile = "";
         private String declarationFile = "";
-        private Map<String, Object> properties = new HashMap<>();
         private List<SymbolReference> references = new ArrayList<>();
 
         @Override
@@ -264,41 +264,6 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
         public Builder namespace(String namespace, String namespaceDelimiter) {
             this.namespace = namespace == null ? "" : namespace;
             this.namespaceDelimiter = namespaceDelimiter == null ? "" : namespaceDelimiter;
-            return this;
-        }
-
-        /**
-         * Sets a specific custom property.
-         *
-         * @param key Key to set.
-         * @param value Value to set.
-         * @return Returns the builder.
-         */
-        public Builder putProperty(String key, Object value) {
-            properties.put(key, value);
-            return this;
-        }
-
-        /**
-         * Removes a specific custom property.
-         *
-         * @param key Key to remove.
-         * @return Returns the builder.
-         */
-        public Builder removeProperty(String key) {
-            properties.remove(key);
-            return this;
-        }
-
-        /**
-         * Replaces all of the custom properties.
-         *
-         * @param properties Custom properties to replace with.
-         * @return Returns the builder.
-         */
-        public Builder properties(Map<String, Object> properties) {
-            this.properties.clear();
-            this.properties.putAll(properties);
             return this;
         }
 
