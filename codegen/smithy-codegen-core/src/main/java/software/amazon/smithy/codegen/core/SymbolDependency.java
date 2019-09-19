@@ -15,7 +15,13 @@
 
 package software.amazon.smithy.codegen.core;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -78,6 +84,68 @@ public final class SymbolDependency extends TypedPropertiesBag
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * Gets a mapping of all dependencies used by the provided symbols.
+     *
+     * <p>Given a stream of symbols, the dependencies of the symbol are gathered into
+     * a map of the dependencyType to a map of a package name to package version.
+     *
+     * <p>By default, when two versions conflict, an exception is thrown. In the
+     * case the a conflict is possible or it is necessary to detect incompatibilities,
+     * use {@link #gatherDependencies(Stream, BinaryOperator)} and provide a
+     * custom version merge function.
+     *
+     * @param symbolStream Stream of symbols to compute from.
+     * @return Returns a map of dependency types to a map of package to version.
+     * @throws CodegenException when two package versions conflict.
+     */
+    public static Map<String, Map<String, SymbolDependency>> gatherDependencies(
+            Stream<SymbolDependency> symbolStream) {
+        return gatherDependencies(symbolStream, (a, b) -> {
+            throw new CodegenException(String.format(
+                    "Found a conflicting `%s` dependency for `%s`: `%s` conflicts with `%s`",
+                    a.getDependencyType(), a.getPackageName(), a.getVersion(), b.getVersion()));
+        });
+    }
+
+    /**
+     * Gets a mapping of all dependencies used by the provided symbols.
+     *
+     * <p>Given a stream of symbols, the dependencies of the symbol are gathered into
+     * a map of the dependencyType to a map of a package name to package version.
+     * Dependencies are sorted while they are collected, meaning that newer versions
+     * of a conflicting dependency typically take precedence over older versions.
+     * However, this is not always true with a natural sort order
+     * (e.g., 0.9 and 0.10).
+     *
+     * <p>{@code versionMergeFunction} is invoked each time a package import version
+     * of a package conflicts with another version of the same package for the
+     * same dependency type. The function accepts the dependency type, the package
+     * name, the previous version that was registered, the new conflicting version,
+     * and is expected to return the version that should be used or can throw in
+     * the case of an incompatible conflict. It is a target-specific concern to
+     * determine if two version are compatible or to find an acceptable compromise
+     * between the two versions.
+     *
+     * @param symbolStream Stream of symbols to compute from.
+     * @param versionMergeFunction Function that determines which two conflicting versions wins.
+     * @return Returns a map of dependency types to a map of package to version.
+     */
+    public static Map<String, Map<String, SymbolDependency>> gatherDependencies(
+            Stream<SymbolDependency> symbolStream,
+            BinaryOperator<SymbolDependency> versionMergeFunction
+    ) {
+        return symbolStream
+                .sorted()
+                .collect(Collectors.groupingBy(
+                        SymbolDependency::getDependencyType,
+                        Collectors.toMap(
+                                SymbolDependency::getPackageName,
+                                Function.identity(),
+                                versionMergeFunction,
+                                TreeMap::new)));
     }
 
     /**
