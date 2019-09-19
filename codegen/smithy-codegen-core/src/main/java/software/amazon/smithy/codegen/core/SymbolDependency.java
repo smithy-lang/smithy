@@ -59,7 +59,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * of the suggested package, and {@code version} to the description of the
  * suggestion.
  */
-public final class SymbolDependency extends TypedPropertiesBag implements ToSmithyBuilder<SymbolDependency> {
+public final class SymbolDependency extends TypedPropertiesBag
+        implements ToSmithyBuilder<SymbolDependency>, Comparable<SymbolDependency> {
 
     private final String dependencyType;
     private final String packageName;
@@ -67,7 +68,7 @@ public final class SymbolDependency extends TypedPropertiesBag implements ToSmit
 
     private SymbolDependency(Builder builder) {
         super(builder.properties);
-        this.dependencyType = SmithyBuilder.requiredState("dependencyType", builder.dependencyType);
+        this.dependencyType = builder.dependencyType == null ? "" : builder.dependencyType;
         this.packageName = SmithyBuilder.requiredState("packageName", builder.packageName);
         this.version = SmithyBuilder.requiredState("version", builder.version);
     }
@@ -143,6 +144,27 @@ public final class SymbolDependency extends TypedPropertiesBag implements ToSmit
     @Override
     public int hashCode() {
         return Objects.hash(dependencyType, packageName, version);
+    }
+
+    /**
+     * Dependencies can be sorted based on the natural sort order of
+     * the dependencyType, packageName, and finally the version.
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(SymbolDependency other) {
+        int typeResult = dependencyType.compareTo(other.dependencyType);
+        if (typeResult != 0) {
+            return typeResult;
+        }
+
+        int packageResult = packageName.compareTo(other.packageName);
+        if (packageResult != 0) {
+            return packageResult;
+        }
+
+        return version.compareTo(other.version);
     }
 
     /**
