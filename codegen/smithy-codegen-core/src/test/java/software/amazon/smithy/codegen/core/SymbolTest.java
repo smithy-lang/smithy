@@ -16,6 +16,7 @@
 package software.amazon.smithy.codegen.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Assertions;
@@ -97,5 +98,20 @@ public class SymbolTest {
 
         assertThat(symbol.getDefinitionFile(), equalTo("/foo/bar.baz"));
         assertThat(symbol.getDeclarationFile(), equalTo("/foo/bar.h"));
+    }
+
+    @Test
+    public void canAddDependencies() {
+        SymbolDependency a = SymbolDependency.builder().packageName("a1").version("a2").build();
+        SymbolDependency b = SymbolDependency.builder().packageName("b1").version("b2").build();
+
+        Symbol symbol = Symbol.builder()
+                .name("foo")
+                .addDependency("a1", "a2")
+                .addDependency(SymbolDependency.builder().packageName("b1").version("b2").build())
+                .build();
+
+        assertThat(symbol.getDependencies(), containsInAnyOrder(a, b));
+        assertThat(symbol.toBuilder().build(), equalTo(symbol));
     }
 }
