@@ -382,7 +382,23 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
          * @return Returns the builder.
          */
         public Builder addDependency(String packageName, String version) {
-            return addDependency(SymbolDependency.builder().packageName(packageName).version(version).build());
+            return addDependency(null, packageName, version);
+        }
+
+        /**
+         * Add a symbol dependency.
+         *
+         * @param dependencyType Type of dependency.
+         * @param packageName Name of the package to depend on.
+         * @param version Version to depend on.
+         * @return Returns the builder.
+         */
+        public Builder addDependency(String dependencyType, String packageName, String version) {
+            return addDependency(SymbolDependency.builder()
+                    .dependencyType(dependencyType)
+                    .packageName(packageName)
+                    .version(version)
+                    .build());
         }
     }
 }
