@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.codegen.core;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.utils.MapUtils;
@@ -94,5 +95,50 @@ class TypedPropertiesBag {
     public <T> T expectProperty(String name, Class<T> type) {
         return getProperty(name, type).orElseThrow(() -> new IllegalArgumentException(String.format(
                 "Property `%s` is not part of %s, `%s`", name, getClass().getSimpleName(), this)));
+    }
+
+    /**
+     * Builds a SymbolReference.
+     */
+    abstract static class Builder<T extends Builder> {
+        Map<String, Object> properties = new HashMap<>();
+
+        /**
+         * Sets a specific custom property.
+         *
+         * @param key Key to set.
+         * @param value Value to set.
+         * @return Returns the builder.
+         */
+        @SuppressWarnings("unchecked")
+        public T putProperty(String key, Object value) {
+            properties.put(key, value);
+            return (T) this;
+        }
+
+        /**
+         * Removes a specific custom property.
+         *
+         * @param key Key to remove.
+         * @return Returns the builder.
+         */
+        @SuppressWarnings("unchecked")
+        public T removeProperty(String key) {
+            properties.remove(key);
+            return (T) this;
+        }
+
+        /**
+         * Replaces all of the custom properties.
+         *
+         * @param properties Custom properties to replace with.
+         * @return Returns the builder.
+         */
+        @SuppressWarnings("unchecked")
+        public T properties(Map<String, Object> properties) {
+            this.properties.clear();
+            this.properties.putAll(properties);
+            return (T) this;
+        }
     }
 }

@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Represents a reference from a Symbol to another Symbol.
@@ -40,7 +42,7 @@ import java.util.Set;
  * {@link ContextOption#USE} options, meaning that the reference is
  * necessary both when defining and when using a symbol.
  */
-public final class SymbolReference extends TypedPropertiesBag {
+public final class SymbolReference extends TypedPropertiesBag implements ToSmithyBuilder<SymbolReference> {
 
     /**
      * Top-level interface for all {@code SymbolReference} options.
@@ -65,6 +67,7 @@ public final class SymbolReference extends TypedPropertiesBag {
 
     private final Symbol symbol;
     private final Set<Option> options;
+    private final String alias;
 
     /**
      * @param symbol Symbol that is referenced.
@@ -80,18 +83,30 @@ public final class SymbolReference extends TypedPropertiesBag {
      * @param options Options to store with the reference.
      */
     public SymbolReference(Symbol symbol, Map<String, Object> properties, Option... options) {
-        super(properties);
-        this.symbol = symbol;
+        this(new Builder().symbol(symbol).properties(properties).options(options));
+    }
 
-        Set<Option> opts = new HashSet<>(options.length + 2);
-        if (options.length == 0) {
+    private SymbolReference(Builder builder) {
+        super(builder.properties);
+        this.symbol = SmithyBuilder.requiredState("symbol", builder.symbol);
+        this.alias = builder.alias == null ? builder.symbol.getName() : builder.alias;
+
+        Set<Option> opts = new HashSet<>(builder.options.size() + 2);
+        if (builder.options.size() == 0) {
             opts.add(ContextOption.USE);
             opts.add(ContextOption.DECLARE);
         } else {
-            Collections.addAll(opts, options);
+            opts.addAll(builder.options);
         }
 
         this.options = Collections.unmodifiableSet(opts);
+    }
+
+    /**
+     * @return Returns a new builder.
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -101,6 +116,22 @@ public final class SymbolReference extends TypedPropertiesBag {
      */
     public Symbol getSymbol() {
         return symbol;
+    }
+
+    /**
+     * Gets the alias to use when referring to the Symbol.
+     *
+     * <p>The value of {@code getSymbol().getName()} is returned if no
+     * alias was explicitly configured on the reference.
+     *
+     * <p>An alias is used in some programming languages to change the
+     * way a symbol is referenced in a source file. Aliases are often used
+     * for de-conflicting symbols.
+     *
+     * @return Returns the alias.
+     */
+    public String getAlias() {
+        return alias;
     }
 
     /**
@@ -123,6 +154,15 @@ public final class SymbolReference extends TypedPropertiesBag {
     }
 
     @Override
+    public Builder toBuilder() {
+        return new Builder()
+                .symbol(symbol)
+                .options(options)
+                .properties(getProperties())
+                .alias(alias);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -133,16 +173,85 @@ public final class SymbolReference extends TypedPropertiesBag {
         SymbolReference that = (SymbolReference) o;
         return symbol.equals(that.symbol)
                && getProperties().equals(that.getProperties())
-               && options.equals(that.options);
+               && options.equals(that.options)
+               && alias.equals(that.alias);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(symbol, getProperties());
+        return Objects.hash(symbol, alias, getProperties());
     }
 
     @Override
     public String toString() {
-        return "SymbolReference{symbol=" + symbol + ", options=" + options + '}';
+        return "SymbolReference{symbol=" + symbol + ", alias='" + alias + "', options=" + options + "}";
+    }
+
+    /**
+     * Builds a SymbolReference.
+     */
+    public static final class Builder
+            extends TypedPropertiesBag.Builder<Builder>
+            implements SmithyBuilder<SymbolReference> {
+
+        private Symbol symbol;
+        private Set<Option> options = new HashSet<>();
+        private String alias;
+
+        private Builder() {}
+
+        @Override
+        public SymbolReference build() {
+            return new SymbolReference(this);
+        }
+
+        /**
+         * Sets the Symbol referenced by the SymbolReference.
+         *
+         * @param symbol Symbol to reference.
+         * @return Returns the builder.
+         */
+        public Builder symbol(Symbol symbol) {
+            this.symbol = symbol;
+            return this;
+        }
+
+        /**
+         * Adds a Set of Options to the SymbolReference.
+         *
+         * @param options Options to add.
+         * @return Returns the builder.
+         */
+        public Builder options(Set<Option> options) {
+            this.options = options;
+            return this;
+        }
+
+        /**
+         * Adds an array of Options to the SymbolReference.
+         *
+         * @param options Options to add.
+         * @return Returns the builder.
+         */
+        public Builder options(Option... options) {
+            this.options = new HashSet<>();
+            Collections.addAll(this.options, options);
+            return this;
+        }
+
+        /**
+         * Adds an alias to the SymbolReference.
+         *
+         * <p>An alias is used in some programming languages to change the
+         * way a symbol is referenced in a source file. Aliases are often used
+         * for de-conflicting symbols.
+         *
+         * @param alias Alias to assign the symbol.
+         * @return Returns the builder.
+         */
+        public Builder alias(String alias) {
+            this.alias = alias;
+            return this;
+        }
     }
 }
