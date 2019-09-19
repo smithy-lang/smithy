@@ -1,1 +1,0 @@
-[ERROR] ns.foo#DescribeEndpointsOutput$Endpoints: The output member `Endpoints` on an endpoint discovery operation must be a list. | EndpointDiscovery

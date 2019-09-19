@@ -1,4 +1,0 @@
-[ERROR] ns.foo#DescribeEndpointsInput$Identifiers: The Identifiers member of an endpoint discovery operation must be a map whose keys and values are strings. | EndpointDiscovery
-[ERROR] ns.foo#DescribeEndpointsInput: Input for endpoint discovery operation `ns.foo#DescribeEndpoints` may only have the members Operation and Identifiers but found: Operation, Identifiers, TTL | EndpointDiscovery
-[ERROR] smithy.api#Blob: The Operation member of an endpoint discovery operation must be a string | EndpointDiscovery
-[ERROR] ns.foo#DescribeEndpointsInput2$Identifiers: The Identifiers member of an endpoint discovery operation must be a map whose keys and values are strings. | EndpointDiscovery

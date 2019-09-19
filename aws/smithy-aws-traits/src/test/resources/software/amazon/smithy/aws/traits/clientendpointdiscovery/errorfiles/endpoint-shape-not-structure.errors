@@ -1,0 +1,1 @@
+[ERROR] ns.foo#Endpoints: The member of the Endpoints list in an endpoint discovery operation must be a structure shape. | ClientEndpointDiscovery

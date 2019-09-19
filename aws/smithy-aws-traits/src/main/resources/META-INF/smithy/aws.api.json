@@ -149,7 +149,7 @@
           "target": "smithy.api#String"
         }
       },
-      "discoveredEndpoint": {
+      "clientDiscoveredEndpoint": {
         "trait": {
           "selector": "operation"
         },
@@ -162,14 +162,14 @@
         },
         "documentation": "Indicates that the target operation should use the client's endpoint discovery logic."
       },
-      "endpointDiscoveryId": {
+      "clientEndpointDiscoveryId": {
         "trait": {
-          "selector": "operation[trait|aws.api#discoveredEndpoint] -[input]-> structure > :test(member[trait|required] > string)"
+          "selector": "operation[trait|aws.api#clientDiscoveredEndpoint] -[input]-> structure > :test(member[trait|required] > string)"
         },
         "type": "boolean",
         "documentation": "Indicates members of the operation input which should be use to discover endpoints."
       },
-      "endpointDiscovery": {
+      "clientEndpointDiscovery": {
         "trait": {
           "selector": "service"
         },
