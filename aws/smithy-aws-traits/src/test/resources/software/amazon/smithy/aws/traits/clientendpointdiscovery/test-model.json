@@ -110,6 +110,11 @@
             "PutObjectInput": {
                 "type": "structure",
                 "members": {
+                    "Id": {
+                        "target": "smithy.api#String",
+                        "aws.api#clientEndpointDiscoveryId": true,
+                        "required": true
+                    },
                     "Object": {
                         "target": "smithy.api#Blob"
                     }

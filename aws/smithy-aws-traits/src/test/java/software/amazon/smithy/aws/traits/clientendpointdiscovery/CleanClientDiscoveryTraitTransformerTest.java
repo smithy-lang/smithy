@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -55,10 +56,16 @@ public class CleanClientDiscoveryTraitTransformerTest {
                 .flatMap(Shape::asOperationShape)
                 .get();
 
+        MemberShape putId = result.getShapeIndex()
+                .getShape(ShapeId.from("ns.foo#PutObjectInput$Id"))
+                .flatMap(Shape::asMemberShape)
+                .get();
+
         assertFalse(service.hasTrait(ClientEndpointDiscoveryTrait.class));
         // discovery is required for this operation, so it keeps the trait
         assertTrue(getOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
         assertFalse(putOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
+        assertFalse(putId.hasTrait(ClientEndpointDiscoveryIdTrait.class));
     }
 
     @Test
@@ -88,10 +95,16 @@ public class CleanClientDiscoveryTraitTransformerTest {
                 .flatMap(Shape::asOperationShape)
                 .get();
 
+        MemberShape putId = result.getShapeIndex()
+                .getShape(ShapeId.from("ns.foo#PutObjectInput$Id"))
+                .flatMap(Shape::asMemberShape)
+                .get();
+
         assertFalse(service.hasTrait(ClientEndpointDiscoveryTrait.class));
         // discovery is required for this operation, so it keeps the trait
         assertTrue(getOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
         assertFalse(putOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
+        assertFalse(putId.hasTrait(ClientEndpointDiscoveryIdTrait.class));
     }
 
     @Test
@@ -107,7 +120,7 @@ public class CleanClientDiscoveryTraitTransformerTest {
         });
 
         OperationShape getOperation = result.getShapeIndex()
-                .getShape(ShapeId.from("ns.foo#GetObject"))
+                .getShape(ShapeId.from("ns.foo#GetObjectFoo"))
                 .flatMap(Shape::asOperationShape)
                 .get();
 
@@ -118,5 +131,26 @@ public class CleanClientDiscoveryTraitTransformerTest {
 
         assertTrue(getOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
         assertTrue(putOperation.hasTrait(ClientDiscoveredEndpointTrait.class));
+    }
+
+    @Test
+    public void keepsDiscoveryIdTraitIfStillBound() {
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("multiple-configured-services.json"))
+                .assemble()
+                .unwrap();
+
+        Model result = ModelTransformer.create().filterShapes(model, shape -> {
+            return !shape.getId().toString().equals("ns.foo#DescribeEndpointsFoo");
+        });
+
+        MemberShape id = result.getShapeIndex()
+                .getShape(ShapeId.from("ns.foo#GetObjectInput$Id"))
+                .flatMap(Shape::asMemberShape)
+                .get();
+
+        assertTrue(id.hasTrait(ClientEndpointDiscoveryIdTrait.class));
+
     }
 }

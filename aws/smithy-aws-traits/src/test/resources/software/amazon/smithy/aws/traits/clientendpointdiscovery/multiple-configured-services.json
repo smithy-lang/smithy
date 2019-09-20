@@ -11,7 +11,7 @@
                 },
                 "operations": [
                     "DescribeEndpointsFoo",
-                    "GetObject",
+                    "GetObjectFoo",
                     "PutObject"
                 ]
             },
@@ -24,7 +24,7 @@
                 },
                 "operations": [
                     "DescribeEndpointsBar",
-                    "GetObject",
+                    "GetObjectBar",
                     "PutObject"
                 ]
             },
@@ -83,12 +83,21 @@
                     }
                 }
             },
-            "GetObject": {
+            "GetObjectFoo": {
                 "type": "operation",
                 "input": "GetObjectInput",
                 "output": "GetObjectOutput",
                 "aws.api#clientDiscoveredEndpoint": {
                     "required": true
+                },
+                "errors": ["InvalidEndpointError"]
+            },
+            "GetObjectBar": {
+                "type": "operation",
+                "input": "GetObjectInput",
+                "output": "GetObjectOutput",
+                "aws.api#clientDiscoveredEndpoint": {
+                    "required": false
                 },
                 "errors": ["InvalidEndpointError"]
             },
