@@ -68,6 +68,7 @@ public class SymbolDependencyTest {
     @Test
     public void gathersDependencies() {
         SymbolDependency a = SymbolDependency.builder().dependencyType("a").packageName("a").version("1").build();
+        SymbolDependency aDuplicate = a.toBuilder().build();
         SymbolDependency a2 = SymbolDependency.builder().dependencyType("a").packageName("a2").version("1").build();
         SymbolDependency a3 = SymbolDependency.builder().dependencyType("a2").packageName("a").version("1").build();
         SymbolDependency b = SymbolDependency.builder().dependencyType("b").packageName("b").version("1").build();
@@ -75,12 +76,12 @@ public class SymbolDependencyTest {
         SymbolDependency c = SymbolDependency.builder().dependencyType("b").packageName("c").version("1").build();
 
         Assertions.assertThrows(CodegenException.class, () -> {
-            SymbolDependency.gatherDependencies(Stream.of(a, a2, a3, b, b2, c));
+            SymbolDependency.gatherDependencies(Stream.of(a, aDuplicate, a2, a3, b, b2, c));
         });
 
         List<Pair<SymbolDependency, SymbolDependency>> conflicts = new ArrayList<>();
         Map<String, Map<String, SymbolDependency>> result = SymbolDependency.gatherDependencies(
-                Stream.of(a, a2, a3, b, b2, c),
+                Stream.of(a, aDuplicate, a2, a3, b, b2, c),
                 (sa, sb) -> {
                     conflicts.add(Pair.of(sa, sb));
                     return sb;
