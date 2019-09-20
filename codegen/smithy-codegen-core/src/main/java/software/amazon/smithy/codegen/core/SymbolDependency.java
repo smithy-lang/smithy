@@ -144,8 +144,18 @@ public final class SymbolDependency extends TypedPropertiesBag
                         Collectors.toMap(
                                 SymbolDependency::getPackageName,
                                 Function.identity(),
-                                versionMergeFunction,
+                                guardedMerge(versionMergeFunction),
                                 TreeMap::new)));
+    }
+
+    private static BinaryOperator<SymbolDependency> guardedMerge(BinaryOperator<SymbolDependency> original) {
+        return (a, b) -> {
+            if (a.getVersion().equals(b.getVersion())) {
+                return b;
+            } else {
+                return original.apply(a, b);
+            }
+        };
     }
 
     /**
