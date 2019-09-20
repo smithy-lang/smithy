@@ -904,9 +904,9 @@ literal string ``UNSIGNED-PAYLOAD`` is used when constructing a
 
 .. _endpoint-discovery:
 
-------------------
-Endpoint Discovery
-------------------
+-------------------------
+Client Endpoint Discovery
+-------------------------
 
 Services running on cellular infrastructure may wish to enable automatic
 endpoint discovery in clients. The AWS SDKs provide functionality to
@@ -914,21 +914,21 @@ automatically discover, cache, and connect to service endpoints. The
 following traits provide the information needed to perform this.
 
 
-.. _endpoint-discovery-trait:
+.. _client-endpoint-discovery-trait:
 
-``aws.api#endpointDiscovery`` trait
-===================================
+``aws.api#clientEndpointDiscovery`` trait
+=========================================
 
 Trait summary
-    The ``endpointDiscovery`` trait indicates the operation that the client
-    should use to discover endpoints for the service and the error returned
-    when the endpoint being accessed has expired.
+    The ``clientEndpointDiscovery`` trait indicates the operation that the
+    client should use to discover endpoints for the service and the error
+    returned when the endpoint being accessed has expired.
 Trait selector
     ``service``
 Trait value
     ``object``
 
-The ``aws.api#endpointDiscovery`` trait is an object that supports the
+The ``aws.api#clientEndpointDiscovery`` trait is an object that supports the
 following properties:
 
 .. list-table::
@@ -946,7 +946,7 @@ following properties:
       - ``shapeId``
       - **REQUIRED** An error shape which indicates to a client that an endpoint they are
         using is no longer valid. This error MUST be bound to any operation marked with
-        the ``discoveredEndpoint`` trait that is bound to the service.
+        the ``clientDiscoveredEndpoint`` trait that is bound to the service.
 
 The input of the operation targeted by ``operation`` MAY contain none, either,
 or both of the following members:
@@ -962,20 +962,20 @@ The operation output MUST contain a member ``Endpoints`` that is a list of
 - a ``long`` member named ``CachePeriod``
 
 
-.. _discovered-endpoint-trait:
+.. _client-discovered-endpoint-trait:
 
-``aws.api#discoveredEndpoint`` trait
-===================================
+``aws.api#clientDiscoveredEndpoint`` trait
+==========================================
 
 Trait summary
-    The ``discoveredEndpoint`` trait indicates that the target operation should
-    use the client's endpoint discovery logic.
+    The ``clientDiscoveredEndpoint`` trait indicates that the target operation
+    should use the client's endpoint discovery logic.
 Trait selector
     ``operation``
 Trait value
     ``object``
 
-The ``aws.api#discoveredEndpoint`` trait is an object that supports the
+The ``aws.api#clientDiscoveredEndpoint`` trait is an object that supports the
 following properties:
 
 .. list-table::
@@ -994,16 +994,16 @@ following properties:
         discover a more specific endpoint.
 
 
-.. _endpoint-discovery-id-trait:
+.. _client-endpoint-discovery-id-trait:
 
-``aws.endpointDiscoveryId`` trait
-=================================
+``aws.clientEndpointDiscoveryId`` trait
+=======================================
 
 Summary
-    The ``endpointDiscoveryId`` trait indicates which member(s) of the
+    The ``clientEndpointDiscoveryId`` trait indicates which member(s) of the
     operation input should be used to discover an endpoint for the service.
 Trait selector
-    ``operation[trait|aws.api#discoveredEndpoint] -[input]-> structure > :test(member[trait|required] > string)``
+    ``operation[trait|aws.api#clientDiscoveredEndpoint] -[input]-> structure > :test(member[trait|required] > string)``
 Trait value
     Annotation trait
 
@@ -1013,13 +1013,13 @@ Example Model
 
 The following model illustrates an API that uses a ``DescribeEndpoints``
 operation to perform endpoint discovery for a ``GetObject`` operation
-using an ``endpointDiscoveryId``.
+using an ``clientEndpointDiscoveryId``.
 
 .. tabs::
 
     .. code-tab:: smithy
 
-        @aws.api#endpointDiscovery(
+        @aws.api#clientEndpointDiscovery(
             operation: DescribeEndpoints,
             error: InvalidEndpointError,
         )
@@ -1059,11 +1059,11 @@ using an ``endpointDiscoveryId``.
           CachePeriod: Long,
         }
 
-        @aws.api#discoveredEndpoint(required: true)
+        @aws.api#clientDiscoveredEndpoint(required: true)
         operation GetObject(GetObjectInput) -> GetObjectOutput
 
         structure GetObjectInput {
-          @endpointDiscoveryId
+          @clientEndpointDiscoveryId
           @required
           Id: String,
         }
@@ -1081,7 +1081,7 @@ using an ``endpointDiscoveryId``.
                     "FooService": {
                         "type": "service",
                         "version": "2019-09-10",
-                        "aws.api#endpointDiscovery": {
+                        "aws.api#clientEndpointDiscovery": {
                             "operation": "ns.foo#DescribeEndpoints",
                             "error": "InvalidEndpointError"
                         },
@@ -1144,7 +1144,7 @@ using an ``endpointDiscoveryId``.
                         "type": "operation",
                         "input": "GetObjectInput",
                         "output": "GetObjectOutput",
-                        "aws.api#discoveredEndpoint": {
+                        "aws.api#clientDiscoveredEndpoint": {
                             "required": true
                         },
                         "errors": ["InvalidEndpointError"]
@@ -1154,7 +1154,7 @@ using an ``endpointDiscoveryId``.
                         "members": {
                             "Id": {
                                 "target": "String",
-                                "aws.api#endpointDiscoveryId": true,
+                                "aws.api#clientEndpointDiscoveryId": true,
                                 "required": true
                             }
                         }
@@ -1179,18 +1179,18 @@ using an ``endpointDiscoveryId``.
 Client Behavior
 ===============
 
-When a client calls an operation which has the ``discoveredEndpoint`` trait
-where ``required`` is set to ``true`` or where the client has explicitly
+When a client calls an operation which has the ``clientDiscoveredEndpoint``
+trait where ``required`` is set to ``true`` or where the client has explicitly
 enabled endpoint discovery, the client MUST attempt to perform endpoint
 discovery synchronously.
 
-When a client calls an operation which has the ``discoveredEndpoint`` trait
-where ``required`` is set to ``false``, the client SHOULD attempt to perform
-endpoint discovery asynchronously.
+When a client calls an operation which has the ``clientDiscoveredEndpoint``
+trait where ``required`` is set to ``false``, the client SHOULD attempt to
+perform endpoint discovery asynchronously.
 
 To perform endpoint discovery, the client MUST first make a request
 to the operation targeted by the value of ``operation`` on the service's
-``endpointDiscovery`` trait or attempt to retrieve a previously cached
+``clientEndpointDiscovery`` trait or attempt to retrieve a previously cached
 response.
 
 When calling the endpoint operation, the client MUST provide the following
@@ -1199,7 +1199,7 @@ parameters if they are in the endpoint operation's input shape:
 * ``Operation`` - the name of the client operation to be called.
 * ``Identifiers`` - a map of member name to member value of all
   members in the client operation's input shape that have the
-  ``endpointDiscoveryId`` trait.
+  ``clientEndpointDiscoveryId`` trait.
 
 The client MUST then use an endpoint from the ``Endpoints`` list in the
 response. The client SHOULD prioritize endpoints by the order in which they
@@ -1218,7 +1218,7 @@ the cache after cache period of the highest priority endpoint.
 If a call to refresh the cache fails, the client SHOULD continue to use the
 previous endpoint until the cache can be successfully refreshed, or until the
 service returns the error targeted by the ``error`` property of the service's
-``endpointDiscovery`` trait.
+``clientEndpointDiscovery`` trait.
 
 Cache keys MUST include the AWS Access Key ID used to make the request.
 Additionally, they MUST include the values of the ``Operation`` and
