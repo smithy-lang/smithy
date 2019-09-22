@@ -55,7 +55,6 @@ public class IncludeTraitsTest {
         assertThat(result.getShapeIndex().getShape(ShapeId.from("ns.foo#baz")).get().getTrait(SensitiveTrait.class),
                    is(Optional.empty()));
 
-        result.getShapeIndex().shapes().forEach(System.out::println);
         assertTrue(result.getTraitDefinition("smithy.api#documentation").isPresent());
         assertFalse(result.getTraitDefinition("smithy.api#sensitive").isPresent());
     }
