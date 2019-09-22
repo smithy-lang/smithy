@@ -8,6 +8,7 @@ software.amazon.smithy.model.traits.EnumTrait$Provider
 software.amazon.smithy.model.traits.ErrorTrait$Provider
 software.amazon.smithy.model.traits.EventHeaderTrait$Provider
 software.amazon.smithy.model.traits.EventPayloadTrait$Provider
+software.amazon.smithy.model.traits.EventStreamTrait$Provider
 software.amazon.smithy.model.traits.ExamplesTrait$Provider
 software.amazon.smithy.model.traits.ExternalDocumentationTrait$Provider
 software.amazon.smithy.model.traits.HostLabelTrait$Provider
@@ -21,11 +22,9 @@ software.amazon.smithy.model.traits.HttpTrait$Provider
 software.amazon.smithy.model.traits.IdempotencyTokenTrait$Provider
 software.amazon.smithy.model.traits.IdempotentTrait$Provider
 software.amazon.smithy.model.traits.IdRefTrait$Provider
-software.amazon.smithy.model.traits.InputEventStreamTrait$Provider
 software.amazon.smithy.model.traits.JsonNameTrait$Provider
 software.amazon.smithy.model.traits.LengthTrait$Provider
 software.amazon.smithy.model.traits.MediaTypeTrait$Provider
-software.amazon.smithy.model.traits.OutputEventStreamTrait$Provider
 software.amazon.smithy.model.traits.PaginatedTrait$Provider
 software.amazon.smithy.model.traits.PatternTrait$Provider
 software.amazon.smithy.model.traits.PrivateTrait$Provider

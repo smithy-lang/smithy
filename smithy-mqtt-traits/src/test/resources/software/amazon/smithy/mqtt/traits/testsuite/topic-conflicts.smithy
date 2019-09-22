@@ -12,10 +12,10 @@ structure BInput {}
 
 // Conflicts with A, B
 @smithy.mqtt#subscribe("a")
-@outputEventStream("messages")
 operation C() -> COutput
 
 structure COutput {
+  @eventStream
   messages: EmptyEvent,
 }
 
@@ -31,10 +31,10 @@ structure DInput {}
 operation E(DInput)
 
 @smithy.mqtt#subscribe("b")
-@outputEventStream("messages")
 operation F() -> FOutput
 
 structure FOutput {
+  @eventStream
   messages: DInputEvent,
 }
 

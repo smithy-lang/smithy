@@ -21,9 +21,7 @@
       "EventStreamOperation": {
         "type": "operation",
         "input": "EventStreamOperationInput",
-        "inputEventStream": "c",
-        "output": "EventStreamOperationOutput",
-        "outputEventStream": "c"
+        "output": "EventStreamOperationOutput"
       },
 
       "EventStreamOperationInput": {
@@ -31,7 +29,7 @@
         "members": {
           "a": {"target": "smithy.api#String"},
           "b": {"target": "smithy.api#Integer"},
-          "c": {"target": "InputEventStream"}
+          "c": {"target": "InputEventStream", "eventStream": true}
         }
       },
 
@@ -40,7 +38,7 @@
         "members": {
           "a": {"target": "smithy.api#String"},
           "b": {"target": "smithy.api#Integer"},
-          "c": {"target": "OutputEventStream"}
+          "c": {"target": "OutputEventStream", "eventStream": true}
         }
       },
 
@@ -64,6 +62,18 @@
         "type": "structure",
         "members": {
           "foo": {"target": "smithy.api#String"}
+        }
+      },
+
+      "SingleEventOperation": {
+        "type": "operation",
+        "input": "SingleEventOperationInput"
+      },
+
+      "SingleEventOperationInput": {
+        "type": "structure",
+        "members": {
+          "messages": {"target": "EventStructure", "eventStream": true}
         }
       }
     }

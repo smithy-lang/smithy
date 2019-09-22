@@ -22,15 +22,21 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 public class EventStreamIndexTest {
-    private static Model model = Model.assembler()
-            .addImport(HttpBindingIndex.class.getResource("event-stream-index.json"))
-            .assemble()
-            .unwrap();
+    private static Model model;
+
+    @BeforeAll
+    public static void beforeAll() {
+        model = Model.assembler()
+                .addImport(EventStreamIndexTest.class.getResource("event-stream-index.json"))
+                .assemble()
+                .unwrap();
+    }
 
     @Test
     public void providesEmptyOptionalWhenNotShape() {
@@ -112,5 +118,13 @@ public class EventStreamIndexTest {
         assertThat(output.getInitialMessageTargets().get("b").getId(), equalTo(ShapeId.from("smithy.api#Integer")));
 
         assertThat(input, not(equalTo(output)));
+    }
+
+    @Test
+    public void loadsSingleEventEventStreams() {
+        EventStreamIndex index = model.getKnowledge(EventStreamIndex.class);
+        EventStreamInfo info = index.getInputInfo(ShapeId.from("example.smithy#SingleEventOperation")).get();
+
+        assertThat(info.getEvents(), hasKey("messages"));
     }
 }

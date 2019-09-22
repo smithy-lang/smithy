@@ -53,6 +53,7 @@ import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.EventHeaderTrait;
 import software.amazon.smithy.model.traits.EventPayloadTrait;
+import software.amazon.smithy.model.traits.EventStreamTrait;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.HostLabelTrait;
@@ -66,11 +67,9 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
 import software.amazon.smithy.model.traits.IdempotentTrait;
-import software.amazon.smithy.model.traits.InputEventStreamTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
-import software.amazon.smithy.model.traits.OutputEventStreamTrait;
 import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.model.traits.PatternTrait;
 import software.amazon.smithy.model.traits.PrivateTrait;
@@ -156,6 +155,7 @@ public final class Prelude {
             ErrorTrait.ID,
             EventHeaderTrait.ID,
             EventPayloadTrait.ID,
+            EventStreamTrait.ID,
             ExamplesTrait.ID,
             ExternalDocumentationTrait.ID,
             HostLabelTrait.ID,
@@ -169,11 +169,9 @@ public final class Prelude {
             IdRefTrait.ID,
             IdempotencyTokenTrait.ID,
             IdempotentTrait.ID,
-            InputEventStreamTrait.ID,
             JsonNameTrait.ID,
             LengthTrait.ID,
             MediaTypeTrait.ID,
-            OutputEventStreamTrait.ID,
             PaginatedTrait.ID,
             PatternTrait.ID,
             PrivateTrait.ID,

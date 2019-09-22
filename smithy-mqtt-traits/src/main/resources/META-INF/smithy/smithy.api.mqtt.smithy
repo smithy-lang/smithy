@@ -3,13 +3,13 @@ $version: "0.4.0"
 namespace smithy.mqtt
 
 @trait(selector: "operation:not(-[output]->)",
-       conflicts: ["smithy.mqtt#subscribe", "inputEventStream"])
+       conflicts: ["smithy.mqtt#subscribe"])
 @tags(["diff.error.const"])
 // Matches one or more characters that are not "#" or "+".
 @pattern("^[^#+]+$")
 string publish
 
-@trait(selector: "operation[trait|outputEventStream]",
+@trait(selector: "operation:test(-[output]-> structure > member[trait|eventStream])",
        conflicts: ["smithy.mqtt#publish"])
 @tags(["diff.error.const"])
 // Matches one or more characters that are not "#" or "+".

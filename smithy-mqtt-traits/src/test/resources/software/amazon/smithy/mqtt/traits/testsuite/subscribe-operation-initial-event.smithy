@@ -3,11 +3,11 @@
 namespace smithy.example
 
 @smithy.mqtt#subscribe("events")
-@outputEventStream("messages")
 operation Foo() -> FooOutput
 
 structure FooOutput {
   badMember: smithy.api#String, // <-- Erroneous initial event member
+  @eventStream
   messages: Event1,
 }
 
