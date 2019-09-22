@@ -30,16 +30,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
@@ -61,6 +65,18 @@ import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.utils.ListUtils;
 
 public class ModelAssemblerTest {
+
+    private Path outputDirectory;
+
+    @BeforeEach
+    public void before() throws IOException {
+        outputDirectory = Files.createTempDirectory(getClass().getName());
+    }
+
+    @AfterEach
+    public void after() throws IOException {
+        Files.walk(outputDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+    }
 
     @Test
     public void addsExplicitSuppressions() {
@@ -238,7 +254,7 @@ public class ModelAssemblerTest {
     }
 
     public Path createSymbolicLink(Path target, String linkName) throws IOException {
-        Path link = Paths.get("./src/test/resources", linkName);
+        Path link = outputDirectory.resolve(linkName);
         if (Files.exists(link)) {
             Files.delete(link);
         }
