@@ -1,1 +1,1 @@
-[ERROR] smithy.example#Publish: Found conflicting traits on operation shape: `smithy.mqtt#publish` conflicts with `inputEventStream` | TraitConflict
+[ERROR] smithy.example#PublishInput$messages: The input of `smithy.mqtt#publish` operations cannot contain event streams, and this member is used as part of the input of the `smithy.example#Publish` operation. | MqttPublishInput

@@ -465,15 +465,15 @@ structure eventPayload {}
 @tags(["diff.error.const"])
 structure eventHeader {}
 
-/// Defines the operation input member name that contains an event stream.
-@trait(selector: "operation:test(-[input]->)")
+/// Binds an input or output member as an event stream.
+/// The targeted member must be targeted by the input or output of
+/// an operation, and must target a union or structure. The
+/// targeted member must not be marked as required.
+@trait(selector: "operation -[input, output]-> structure > :test(member > :each(structure, union))",
+       structurallyExclusive: true,
+       conflicts: [required])
 @tags(["diff.error.const"])
-string inputEventStream
-
-/// Defines the operation output member name that contains an event stream.
-@trait(selector: "operation:test(-[output]->)")
-@tags(["diff.error.const"])
-string outputEventStream
+structure eventStream {}
 
 /// Indicates that a string value MUST contain a valid shape ID.
 ///

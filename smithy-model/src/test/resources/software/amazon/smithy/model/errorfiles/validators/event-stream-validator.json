@@ -5,35 +5,31 @@
 
       "ValidSingleEventInputOperation": {
         "type": "operation",
-        "input": "ValidSingleEventInput",
-        "inputEventStream": "events"
+        "input": "ValidSingleEventInput"
       },
 
       "ValidSingleEventOutputOperation": {
         "type": "operation",
-        "output": "ValidSingleEventOutput",
-        "outputEventStream": "events"
+        "output": "ValidSingleEventOutput"
       },
 
       "ValidSingleEventBidirectionalOperation": {
         "type": "operation",
         "input": "ValidSingleEventInput",
-        "inputEventStream": "events",
-        "output": "ValidSingleEventOutput",
-        "outputEventStream": "events"
+        "output": "ValidSingleEventOutput"
       },
 
       "ValidSingleEventInput": {
         "type": "structure",
         "members": {
-          "events": {"target": "Event"}
+          "events": {"target": "Event", "eventStream": true}
         }
       },
 
       "ValidSingleEventOutput": {
         "type": "structure",
         "members": {
-          "events": {"target": "Event"}
+          "events": {"target": "Event", "eventStream": true}
         }
       },
 
@@ -43,35 +39,31 @@
 
       "ValidMultiEventInputOperation": {
         "type": "operation",
-        "input": "ValidMultiEventInput",
-        "inputEventStream": "events"
+        "input": "ValidMultiEventInput"
       },
 
       "ValidMultiEventOutputOperation": {
         "type": "operation",
-        "output": "ValidMultiEventOutput",
-        "outputEventStream": "events"
+        "output": "ValidMultiEventOutput"
       },
 
       "ValidMultiEventBidirectionalOperation": {
         "type": "operation",
         "input": "ValidMultiEventInput",
-        "inputEventStream": "events",
-        "output": "ValidMultiEventOutput",
-        "outputEventStream": "events"
+        "output": "ValidMultiEventOutput"
       },
 
       "ValidMultiEventInput": {
         "type": "structure",
         "members": {
-          "events": {"target": "Event"}
+          "events": {"target": "ValidUnion", "eventStream": true}
         }
       },
 
       "ValidMultiEventOutput": {
         "type": "structure",
         "members": {
-          "events": {"target": "Event"}
+          "events": {"target": "ValidUnion", "eventStream": true}
         }
       },
 
@@ -83,67 +75,41 @@
         }
       },
 
-      "EventStreamNonInput": {
-        "type": "operation",
-        "inputEventStream": "events"
-      },
-
-      "EventStreamInputMissing": {
-        "type": "operation",
-        "input": "EventStreamInputMissingInput",
-        "inputEventStream": "events"
-      },
-
-      "EventStreamInputMemberMissing": {
-        "type": "operation",
-        "input": "EventStreamInputMemberMissingInput",
-        "inputEventStream": "events"
-      },
-
-      "EventStreamInputMemberMissingInput": {
-        "type": "structure",
-        "members": {
-          "foo": {"target": "smithy.api#String"}
-        }
-      },
-
       "EventStreamInputMemberMustNotBeRequired": {
         "type": "operation",
-        "input": "EventStreamInputMemberMustNotBeRequiredInput",
-        "inputEventStream": "events"
+        "input": "EventStreamInputMemberMustNotBeRequiredInput"
       },
 
       "EventStreamInputMemberMustNotBeRequiredInput": {
         "type": "structure",
         "members": {
-          "events": {"target": "Event", "required": true}
+          "events": {"target": "Event", "required": true, "eventStream": true}
         }
       },
 
       "EventStreamReferencesInvalidShape": {
         "type": "operation",
-        "input": "EventStreamReferencesInvalidShapeInput",
-        "inputEventStream": "events"
+        "input": "EventStreamReferencesInvalidShapeInput"
       },
 
       "EventStreamReferencesInvalidShapeInput": {
         "type": "structure",
         "members": {
-          "events": {"target": "smithy.api#String"}
+          "events": {"target": "smithy.api#String", "eventStream": true}
         }
       },
 
       "EventStreamReferencesInvalidMultiEventShape": {
         "type": "operation",
-        "input": "EventStreamReferencesInvalidMultiEventShapeInput",
-        "inputEventStream": "events"
+        "input": "EventStreamReferencesInvalidMultiEventShapeInput"
       },
 
       "EventStreamReferencesInvalidMultiEventShapeInput": {
         "type": "structure",
         "members": {
           "events": {
-            "target": "InvalidUnion"
+            "target": "InvalidUnion",
+            "eventStream": true
           }
         }
       },
@@ -154,6 +120,13 @@
           "a": {"target": "Event"},
           "b": {"target": "smithy.api#String"},
           "c": {"target": "smithy.api#String"}
+        }
+      },
+
+      "InvalidEventStreamTargeting": {
+        "type": "list",
+        "member": {
+          "target": "EventStreamReferencesInvalidMultiEventShapeInput"
         }
       }
     }

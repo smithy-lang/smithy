@@ -22,7 +22,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.StringTrait;
+import software.amazon.smithy.model.traits.EventStreamTrait;
 
 /**
  * Contains extracted event stream information.
@@ -35,11 +35,11 @@ public final class EventStreamInfo {
     private final Map<String, MemberShape> initialMembers;
     private final Map<String, Shape> initialTargets;
     private final Map<String, StructureShape> events;
-    private final StringTrait eventStreamTrait;
+    private final EventStreamTrait eventStreamTrait;
 
     EventStreamInfo(
             OperationShape operation,
-            StringTrait eventStreamTrait,
+            EventStreamTrait eventStreamTrait,
             StructureShape structure,
             MemberShape eventStreamMember,
             Shape eventStreamTarget,
@@ -71,7 +71,7 @@ public final class EventStreamInfo {
      *
      * @return Returns the event stream trait.
      */
-    public StringTrait getEventStreamTrait() {
+    public EventStreamTrait getEventStreamTrait() {
         return eventStreamTrait;
     }
 

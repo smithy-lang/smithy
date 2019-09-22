@@ -30,6 +30,7 @@ service IotJobs {
 // ------ Service-wide error -------
 
 structure RejectedResponse {
+  @eventStream
   messages: RejectedError
 }
 
@@ -64,13 +65,11 @@ string RejectedErrorCode
 operation PublishGetPendingJobExecutions(GetPendingJobExecutionsRequest)
 
 @smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/get/accepted")
-@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-getpendingjobexecutions")
 operation SubscribeToGetPendingJobExecutionsAccepted(GetPendingJobExecutionsSubscriptionRequest)
   -> GetPendingJobExecutionsSubscriptionResponse
 
 @smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/get/rejected")
-@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-getpendingjobexecutions")
 operation SubscribeToGetPendingJobExecutionsRejected(GetPendingJobExecutionsSubscriptionRequest)
   -> RejectedResponse
@@ -90,6 +89,7 @@ structure GetPendingJobExecutionsSubscriptionRequest {
 }
 
 structure GetPendingJobExecutionsSubscriptionResponse {
+  @eventStream
   messages: GetPendingJobExecutionsResponse,
 }
 
@@ -122,13 +122,11 @@ structure JobExecutionSummary {
 operation PublishStartNextPendingJobExecution(StartNextPendingJobExecutionRequest)
 
 @smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/start-next/accepted")
-@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-startnextpendingjobexecution")
 operation SubscribeToStartNextPendingJobExecutionAccepted(StartNextPendingJobExecutionSubscriptionRequest)
   -> StartNextPendingJobExecutionSubscriptionResponse
 
 @smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/start-next/rejected")
-@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-startnextpendingjobexecution")
 operation SubscribeToStartNextPendingJobExecutionRejected(StartNextPendingJobExecutionSubscriptionRequest)
   -> RejectedResponse
@@ -156,6 +154,7 @@ structure StartNextPendingJobExecutionSubscriptionRequest {
 }
 
 structure StartNextPendingJobExecutionSubscriptionResponse {
+  @eventStream
   messages: StartNextJobExecutionResponse
 }
 
@@ -199,13 +198,11 @@ string JobStatus
 operation PublishDescribeJobExecution(DescribeJobExecutionRequest)
 
 @smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/{jobId}/get/accepted")
-@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-describejobexecution")
 operation SubscribeToDescribeJobExecutionAccepted(DescribeJobExecutionSubscriptionRequest)
   -> DescribeJobExecutionSubscriptionResponse
 
 @smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/{jobId}/get/rejected")
-@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-describejobexecution")
 operation SubscribeToDescribeJobExecutionRejected(DescribeJobExecutionSubscriptionRequest)
   -> RejectedResponse
@@ -236,6 +233,7 @@ structure DescribeJobExecutionSubscriptionRequest {
 }
 
 structure DescribeJobExecutionSubscriptionResponse {
+  @eventStream
   messages: DescribeJobExecutionResponse
 }
 
@@ -257,13 +255,11 @@ structure DescribeJobExecutionResponse {
 operation PublishUpdateJobExecution(UpdateJobExecutionRequest)
 
 @smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/{jobId}/update/accepted")
-@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-updatejobexecution")
 operation SubscribeToUpdateJobExecutionAccepted(UpdateJobExecutionSubscriptionRequest)
   -> UpdateJobExecutionSubscriptionResponse
 
 @smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/{jobId}/update/rejected")
-@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-updatejobexecution")
 operation SubscribeToUpdateJobExecutionRejected(UpdateJobExecutionSubscriptionRequest)
   -> RejectedResponse
@@ -300,6 +296,7 @@ structure UpdateJobExecutionSubscriptionRequest {
 }
 
 structure UpdateJobExecutionSubscriptionResponse {
+  @eventStream
   messages: UpdateJobExecutionResponse
 }
 
@@ -328,7 +325,6 @@ document JobDocument
 // ------- JobExecutionsChanged ----------
 
 @smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/notify")
-@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-jobexecutionschanged")
 operation SubscribeToJobExecutionsChangedEvents(JobExecutionsChangedSubscriptionRequest)
   -> JobExecutionsChangedSubscriptionResponse
@@ -340,6 +336,7 @@ structure JobExecutionsChangedSubscriptionRequest {
 }
 
 structure JobExecutionsChangedSubscriptionResponse {
+  @eventStream
   messages: JobExecutionsChangedEvent,
 }
 
@@ -360,7 +357,6 @@ map JobExecutionsChangedJobs {
 // ------- NextJobExecutionChanged ----------
 
 @smithy.mqtt#subscribe("$aws/things/{thingName}/jobs/notify-next")
-@outputEventStream("messages")
 @externalDocumentation("https://docs.aws.amazon.com/iot/latest/developerguide/jobs-api.html#mqtt-nextjobexecutionchanged")
 operation SubscribeToNextJobExecutionChangedEvents(NextJobExecutionChangedSubscriptionRequest)
   -> NextJobExecutionChangedSubscriptionResponse
@@ -372,6 +368,7 @@ structure NextJobExecutionChangedSubscriptionRequest {
 }
 
 structure NextJobExecutionChangedSubscriptionResponse {
+  @eventStream
   messages: NextJobExecutionChangedEvent,
 }
 

@@ -18,23 +18,20 @@ package software.amazon.smithy.model.traits;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-/**
- * Trait implementation of inputEventStream.
- */
-public final class InputEventStreamTrait extends StringTrait {
-    public static final ShapeId ID = ShapeId.from("smithy.api#inputEventStream");
+public final class EventStreamTrait extends BooleanTrait {
+    public static final ShapeId ID = ShapeId.from("smithy.api#eventStream");
 
-    public InputEventStreamTrait(String value, SourceLocation sourceLocation) {
-        super(ID, value, sourceLocation);
+    public EventStreamTrait(SourceLocation sourceLocation) {
+        super(ID, sourceLocation);
     }
 
-    public InputEventStreamTrait(String value) {
-        this(value, SourceLocation.NONE);
+    public EventStreamTrait() {
+        this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends StringTrait.Provider<InputEventStreamTrait> {
+    public static final class Provider extends BooleanTrait.Provider<EventStreamTrait> {
         public Provider() {
-            super(ID, InputEventStreamTrait::new);
+            super(ID, EventStreamTrait::new);
         }
     }
 }

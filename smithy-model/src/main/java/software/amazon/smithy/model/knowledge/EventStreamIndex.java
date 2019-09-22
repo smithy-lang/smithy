@@ -27,9 +27,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.model.traits.InputEventStreamTrait;
-import software.amazon.smithy.model.traits.OutputEventStreamTrait;
-import software.amazon.smithy.model.traits.StringTrait;
+import software.amazon.smithy.model.traits.EventStreamTrait;
 
 /**
  * Index of operation shapes to event stream information.
@@ -50,17 +48,28 @@ public final class EventStreamIndex implements KnowledgeIndex {
         OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
 
         model.getShapeIndex().shapes(OperationShape.class).forEach(operation -> {
-            operation.getTrait(InputEventStreamTrait.class).ifPresent(trait -> {
-                operationIndex.getInput(operation)
-                        .flatMap(input -> createEventStreamInfo(index, operation, input, trait))
-                        .ifPresent(info -> inputInfo.put(operation.getId(), info));
+            operationIndex.getInput(operation).ifPresent(input -> {
+                computeEvents(index, operation, input, inputInfo);
             });
-            operation.getTrait(OutputEventStreamTrait.class).ifPresent(trait -> {
-                operationIndex.getOutput(operation)
-                        .flatMap(output -> createEventStreamInfo(index, operation, output, trait))
-                        .ifPresent(info -> outputInfo.put(operation.getId(), info));
+            operationIndex.getOutput(operation).ifPresent(output -> {
+                computeEvents(index, operation, output, outputInfo);
             });
         });
+    }
+
+    private void computeEvents(
+            ShapeIndex index,
+            OperationShape operation,
+            StructureShape shape,
+            Map<ShapeId, EventStreamInfo> infoMap
+    ) {
+        for (MemberShape member : shape.getAllMembers().values()) {
+            if (member.hasTrait(EventStreamTrait.class)) {
+                createEventStreamInfo(index, operation, shape, member).ifPresent(info -> {
+                    infoMap.put(operation.getId(), info);
+                });
+            }
+        }
     }
 
     /**
@@ -97,59 +106,51 @@ public final class EventStreamIndex implements KnowledgeIndex {
             ShapeIndex index,
             OperationShape operation,
             StructureShape structure,
-            StringTrait trait
+            MemberShape member
     ) {
-        String eventStreamMemberName = trait.getValue();
+        EventStreamTrait trait = member.getTrait(EventStreamTrait.class).get();
 
-        MemberShape eventStreamMember = structure.getMember(eventStreamMemberName).orElse(null);
-        if (eventStreamMember == null) {
-            LOGGER.severe(() -> String.format(
-                    "Skipping event stream info for %s because the member %s does not exist",
-                    operation.getId(), eventStreamMemberName));
-            return Optional.empty();
-        }
-
-        Shape eventStreamTarget = index.getShape(eventStreamMember.getTarget()).orElse(null);
+        Shape eventStreamTarget = index.getShape(member.getTarget()).orElse(null);
         if (eventStreamTarget == null) {
             LOGGER.severe(String.format(
                     "Skipping event stream info for %s because the %s member target %s does not exist",
-                    operation.getId(), eventStreamMemberName, eventStreamMember.getTarget()));
+                    operation.getId(), member.getMemberName(), member.getTarget()));
             return Optional.empty();
         }
 
         // Compute the events of the event stream.
         Map<String, StructureShape> events = new HashMap<>();
         if (eventStreamTarget.asUnionShape().isPresent()) {
-            for (MemberShape member : eventStreamTarget.asUnionShape().get().getAllMembers().values()) {
-                index.getShape(member.getTarget()).flatMap(Shape::asStructureShape).ifPresent(struct -> {
-                    events.put(member.getMemberName(), struct);
+            for (MemberShape unionMember : eventStreamTarget.asUnionShape().get().getAllMembers().values()) {
+                index.getShape(unionMember.getTarget()).flatMap(Shape::asStructureShape).ifPresent(struct -> {
+                    events.put(unionMember.getMemberName(), struct);
                 });
             }
         } else if (eventStreamTarget.asStructureShape().isPresent()) {
-            events.put(trait.getValue(), eventStreamTarget.asStructureShape().get());
+            events.put(member.getMemberName(), eventStreamTarget.asStructureShape().get());
         } else {
             // If the event target is an invalid type, then we can't create the indexed result.
             LOGGER.severe(() -> String.format(
                     "Skipping event stream info for %s because the %s member target %s is not a structure or union",
-                    operation.getId(), eventStreamMemberName, eventStreamMember.getTarget()));
+                    operation.getId(), member.getMemberName(), member.getTarget()));
             return Optional.empty();
         }
 
         Map<String, MemberShape> initialMembers = new HashMap<>();
         Map<String, Shape> initialTargets = new HashMap<>();
 
-        for (MemberShape member : structure.getAllMembers().values()) {
-            if (!member.getMemberName().equals(eventStreamMemberName)) {
-                index.getShape(member.getTarget()).ifPresent(shapeTarget -> {
-                    initialMembers.put(member.getMemberName(), member);
-                    initialTargets.put(member.getMemberName(), shapeTarget);
+        for (MemberShape structureMember : structure.getAllMembers().values()) {
+            if (!structureMember.getMemberName().equals(member.getMemberName())) {
+                index.getShape(structureMember.getTarget()).ifPresent(shapeTarget -> {
+                    initialMembers.put(structureMember.getMemberName(), structureMember);
+                    initialTargets.put(structureMember.getMemberName(), shapeTarget);
                 });
             }
         }
 
         return Optional.of(new EventStreamInfo(
                 operation, trait, structure,
-                eventStreamMember, eventStreamTarget,
+                member, eventStreamTarget,
                 initialMembers, initialTargets,
                 events));
     }

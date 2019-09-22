@@ -8,7 +8,6 @@ use smithy.mqtt#topicLabel
 use smithy.mqtt#subscribe
 
 @subscribe("events/{foo}")
-@outputEventStream("messages")
 operation Foo(FooInput) -> FooOutput
 
 structure FooInput {
@@ -20,6 +19,7 @@ structure FooInput {
 }
 
 structure FooOutput {
+  @eventStream
   messages: Event1,
 }
 
