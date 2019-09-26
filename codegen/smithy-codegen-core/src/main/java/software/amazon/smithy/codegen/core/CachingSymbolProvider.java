@@ -17,6 +17,7 @@ package software.amazon.smithy.codegen.core;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -39,7 +40,7 @@ final class CachingSymbolProvider implements SymbolProvider {
     }
 
     @Override
-    public String toMemberName(Shape shape) {
+    public String toMemberName(MemberShape shape) {
         return memberCache.computeIfAbsent(shape.toShapeId(), id -> delegate.toMemberName(shape));
     }
 }

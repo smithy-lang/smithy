@@ -15,8 +15,8 @@
 
 package software.amazon.smithy.codegen.core;
 
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Provides {@link Symbol} objects for shapes.
@@ -58,20 +58,17 @@ public interface SymbolProvider {
     Symbol toSymbol(Shape shape);
 
     /**
-     * Converts a shape to a member/property name of a containing
+     * Converts a member shape to a member/property name of a containing
      * data structure.
      *
      * <p>The default implementation will return the member name of
-     * the provided shape ID if the shape ID contains a member. If no
-     * member is present, the name of the shape with the first letter
-     * converted to lowercase is returned. The default implementation may
-     * not work for all use cases and should be overridden as needed.
+     * the provided shape ID and should be overridden if necessary.
      *
      * @param shape Shape to convert.
      * @return Returns the converted member name.
      */
-    default String toMemberName(Shape shape) {
-        return shape.getId().getMember().orElseGet(() -> StringUtils.uncapitalize(shape.getId().getName()));
+    default String toMemberName(MemberShape shape) {
+        return shape.getMemberName();
     }
 
     /**
