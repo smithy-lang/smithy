@@ -85,8 +85,8 @@ public class ReservedWordSymbolProviderTest {
 
     @Test
     public void escapesReservedMemberNames() {
-        Shape s1 = MemberShape.builder().id("foo.bar#Baz$foo").target("foo.baz#T").build();
-        Shape s2 = MemberShape.builder().id("foo.baz#Baz$baz").target("foo.baz#T").build();
+        MemberShape s1 = MemberShape.builder().id("foo.bar#Baz$foo").target("foo.baz#T").build();
+        MemberShape s2 = MemberShape.builder().id("foo.baz#Baz$baz").target("foo.baz#T").build();
 
         ReservedWords reservedWords = new ReservedWordsBuilder().put("baz", "_baz").build();
         SymbolProvider delegate = new MockProvider();
@@ -113,6 +113,19 @@ public class ReservedWordSymbolProviderTest {
 
         delegate.mock = Symbol.builder().namespace("foo.baz", ".").name("Bam").build();
         assertThat(provider.toSymbol(stringShape).getName(), equalTo("Bam"));
+    }
+
+    @Test
+    public void canCreateEscaper() {
+        MemberShape s1 = MemberShape.builder().id("foo.bar#Baz$baz").target("foo.baz#T").build();
+
+        ReservedWords reservedWords = new ReservedWordsBuilder().put("baz", "_baz").build();
+        SymbolProvider delegate = new MockProvider();
+        ReservedWordSymbolProvider.Escaper escaper = ReservedWordSymbolProvider.builder()
+                .memberReservedWords(reservedWords)
+                .buildEscaper();
+
+        assertThat(escaper.escapeMemberName(delegate.toMemberName(s1)), equalTo("_baz"));
     }
 
     private static final class MockProvider implements SymbolProvider {

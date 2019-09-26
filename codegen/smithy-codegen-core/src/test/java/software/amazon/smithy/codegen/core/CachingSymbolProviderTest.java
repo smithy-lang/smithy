@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 
@@ -24,9 +23,9 @@ public class CachingSymbolProviderTest {
 
         SymbolProvider cache = SymbolProvider.cache(delegate);
 
-        Shape a = StringShape.builder().id("foo.baz#A").build();
-        Shape b = StringShape.builder().id("foo.baz#B").build();
-        Shape c = MemberShape.builder().id("foo.baz#C$c").target(a).build();
+        StringShape a = StringShape.builder().id("foo.baz#A").build();
+        StringShape b = StringShape.builder().id("foo.baz#B").build();
+        MemberShape c = MemberShape.builder().id("foo.baz#C$c").target(a).build();
 
         assertThat(cache.toSymbol(a).getName(), equalTo("A"));
         assertThat(cache.toSymbol(b).getName(), equalTo("B"));

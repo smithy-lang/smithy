@@ -17,6 +17,7 @@ package software.amazon.smithy.codegen.core;
 
 import java.util.function.BiPredicate;
 import java.util.logging.Logger;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -35,29 +36,25 @@ import software.amazon.smithy.utils.SmithyBuilder;
  *
  * <p>A warning is logged each time a symbol is renamed by a reserved words
  * implementation.
+ *
+ * <p>SymbolProvider implementations that need to recursively call themselves
+ * in a way that requires recursive symbols to be escaped will need to
+ * manually make calls into {@link ReservedWordSymbolProvider.Escaper} and
+ * cannot be decorated by an instance of {@code ReservedWordSymbolProvider}.
+ * For example, this is the case if a list of strings needs to be turned
+ * into something like "Array[%s]" where "%s" is the symbol name of the
+ * targeted member.
  */
 public final class ReservedWordSymbolProvider implements SymbolProvider {
     private static final Logger LOGGER = Logger.getLogger(ReservedWordSymbolProvider.class.getName());
     private static final ReservedWords IDENTITY = ReservedWords.identity();
 
     private final SymbolProvider delegate;
-    private final ReservedWords filenameReservedWords;
-    private final ReservedWords namespaceReservedWords;
-    private final ReservedWords nameReservedWords;
-    private final ReservedWords memberReservedWords;
-    private final BiPredicate<Shape, Symbol> escapePredicate;
+    private final Escaper escaper;
 
-    private ReservedWordSymbolProvider(Builder builder) {
-        this.delegate = SmithyBuilder.requiredState("symbolProvider", builder.delegate);
-        this.filenameReservedWords = resolveReserved(builder.filenameReservedWords);
-        this.namespaceReservedWords = resolveReserved(builder.namespaceReservedWords);
-        this.nameReservedWords = resolveReserved(builder.nameReservedWords);
-        this.memberReservedWords = resolveReserved(builder.memberReservedWords);
-        this.escapePredicate = builder.escapePredicate;
-    }
-
-    private static ReservedWords resolveReserved(ReservedWords specific) {
-        return specific != null ? specific : IDENTITY;
+    private ReservedWordSymbolProvider(SymbolProvider delegate, Escaper escaper) {
+        this.delegate = delegate;
+        this.escaper = escaper;
     }
 
     /**
@@ -69,51 +66,18 @@ public final class ReservedWordSymbolProvider implements SymbolProvider {
         return new Builder();
     }
 
+    private static ReservedWords resolveReserved(ReservedWords specific) {
+        return specific != null ? specific : IDENTITY;
+    }
+
     @Override
     public Symbol toSymbol(Shape shape) {
-        Symbol upstream = delegate.toSymbol(shape);
-
-        // Only escape symbols when the predicate returns true.
-        if (!escapePredicate.test(shape, upstream)) {
-            return upstream;
-        }
-
-        String newName = convertWord("name", upstream.getName(), nameReservedWords);
-        String newNamespace = convertWord("namespace", upstream.getNamespace(), namespaceReservedWords);
-        String newDeclarationFile = convertWord("filename", upstream.getDeclarationFile(), filenameReservedWords);
-        String newDefinitionFile = convertWord("filename", upstream.getDefinitionFile(), filenameReservedWords);
-
-        // Only create a new symbol when needed.
-        if (newName.equals(upstream.getName())
-                && newNamespace.equals(upstream.getNamespace())
-                && newDeclarationFile.equals(upstream.getDeclarationFile())
-                && newDefinitionFile.equals(upstream.getDeclarationFile())) {
-            return upstream;
-        }
-
-        return upstream.toBuilder()
-                .name(newName)
-                .namespace(newNamespace, upstream.getNamespaceDelimiter())
-                .declarationFile(newDeclarationFile)
-                .definitionFile(newDefinitionFile)
-                .build();
+        return escaper.escapeSymbol(shape, delegate.toSymbol(shape));
     }
 
     @Override
-    public String toMemberName(Shape shape) {
-        return convertWord("member", delegate.toMemberName(shape), memberReservedWords);
-    }
-
-    private static String convertWord(String name, String result, ReservedWords reservedWords) {
-        if (!reservedWords.isReserved(result)) {
-            return result;
-        }
-
-        String newResult = reservedWords.escape(result);
-        LOGGER.warning(() -> String.format(
-                "Reserved word: %s is a reserved word for a %s. Converting to %s",
-                result, name, newResult));
-        return newResult;
+    public String toMemberName(MemberShape shape) {
+        return escaper.escapeMemberName(delegate.toMemberName(shape));
     }
 
     /**
@@ -128,16 +92,40 @@ public final class ReservedWordSymbolProvider implements SymbolProvider {
         private BiPredicate<Shape, Symbol> escapePredicate = (shape, symbol) -> true;
 
         /**
-         * Builds the provider.
+         * Builds a {@code SymbolProvider} implementation that wraps another
+         * symbol provider and escapes its results.
          *
-         * @return Returns the built provider.
+         * <p>This might not always be the right solution. For example,
+         * symbol providers often need to recursively resolve symbols to
+         * create shapes like arrays and maps. In these cases, delegating
+         * would be awkward or impossible since the symbol provider being
+         * wrapped would also need access to the wrapper. In cases like this,
+         * use {@link #buildEscaper()} and pass that into the SymbolProvider
+         * directly.
+         *
+         * @return Returns the built SymbolProvider that delegates to another.
          */
         public SymbolProvider build() {
-            return new ReservedWordSymbolProvider(this);
+            return new ReservedWordSymbolProvider(
+                    SmithyBuilder.requiredState("delegate", delegate),
+                    buildEscaper());
         }
 
         /**
-         * Sets the <strong>required</strong> delegate symbol provider.
+         * Builds a {@code SymbolProvider.Escaper} that is used to manually
+         * escape {@code Symbol}s and member names.
+         *
+         * @return Returns the built escaper.
+         */
+        public Escaper buildEscaper() {
+            return new Escaper(this);
+        }
+
+        /**
+         * Sets the delegate symbol provider.
+         *
+         * <p>This is only required when calling {@link #build} to build
+         * a {@code SymbolProvider} that delegates to another provider.
          *
          * @param delegate Symbol provider to delegate to.
          * @return Returns the builder
@@ -225,6 +213,82 @@ public final class ReservedWordSymbolProvider implements SymbolProvider {
         public Builder escapePredicate(BiPredicate<Shape, Symbol> escapePredicate) {
             this.escapePredicate = escapePredicate;
             return this;
+        }
+    }
+
+    /**
+     * Uses to manually escape {@code Symbol}s and member names.
+     */
+    public static final class Escaper {
+        private final ReservedWords filenameReservedWords;
+        private final ReservedWords namespaceReservedWords;
+        private final ReservedWords nameReservedWords;
+        private final ReservedWords memberReservedWords;
+        private final BiPredicate<Shape, Symbol> escapePredicate;
+
+        private Escaper(Builder builder) {
+            this.filenameReservedWords = resolveReserved(builder.filenameReservedWords);
+            this.namespaceReservedWords = resolveReserved(builder.namespaceReservedWords);
+            this.nameReservedWords = resolveReserved(builder.nameReservedWords);
+            this.memberReservedWords = resolveReserved(builder.memberReservedWords);
+            this.escapePredicate = builder.escapePredicate;
+        }
+
+        /**
+         * Escapes the given symbol using the reserved words implementations
+         * registered for each component.
+         *
+         * @param shape Shape being turned into a {@code Symbol}.
+         * @param symbol {@code Symbol} to escape.
+         * @return Returns the escaped {@code Symbol}.
+         */
+        public Symbol escapeSymbol(Shape shape, Symbol symbol) {
+            // Only escape symbols when the predicate returns true.
+            if (!escapePredicate.test(shape, symbol)) {
+                return symbol;
+            }
+
+            String newName = convertWord("name", symbol.getName(), nameReservedWords);
+            String newNamespace = convertWord("namespace", symbol.getNamespace(), namespaceReservedWords);
+            String newDeclarationFile = convertWord("filename", symbol.getDeclarationFile(), filenameReservedWords);
+            String newDefinitionFile = convertWord("filename", symbol.getDefinitionFile(), filenameReservedWords);
+
+            // Only create a new symbol when needed.
+            if (newName.equals(symbol.getName())
+                && newNamespace.equals(symbol.getNamespace())
+                && newDeclarationFile.equals(symbol.getDeclarationFile())
+                && newDefinitionFile.equals(symbol.getDeclarationFile())) {
+                return symbol;
+            }
+
+            return symbol.toBuilder()
+                    .name(newName)
+                    .namespace(newNamespace, symbol.getNamespaceDelimiter())
+                    .declarationFile(newDeclarationFile)
+                    .definitionFile(newDefinitionFile)
+                    .build();
+        }
+
+        /**
+         * Escapes the given member name if needed.
+         *
+         * @param memberName Member name to escape.
+         * @return Returns the possibly escaped member name.
+         */
+        public String escapeMemberName(String memberName) {
+            return convertWord("member", memberName, memberReservedWords);
+        }
+
+        private static String convertWord(String name, String result, ReservedWords reservedWords) {
+            if (!reservedWords.isReserved(result)) {
+                return result;
+            }
+
+            String newResult = reservedWords.escape(result);
+            LOGGER.warning(() -> String.format(
+                    "Reserved word: %s is a reserved word for a %s. Converting to %s",
+                    result, name, newResult));
+            return newResult;
         }
     }
 }
