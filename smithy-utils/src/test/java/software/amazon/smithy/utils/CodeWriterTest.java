@@ -429,4 +429,72 @@ public class CodeWriterTest {
                 + " *     # Yes\n"
                 + " */\n"));
     }
+
+    @Test
+    public void hasOpenBlockRunnable0() {
+        CodeWriter writer = CodeWriter.createDefault();
+        String result = writer.openBlock("public {", "}", () -> {
+            writer.write("hi();");
+        })
+        .toString();
+
+        assertThat(result, equalTo("public {\n    hi();\n}\n"));
+    }
+
+    @Test
+    public void hasOpenBlockRunnable1() {
+        CodeWriter writer = CodeWriter.createDefault();
+        String result = writer.openBlock("public final class $L {", "}", "Foo", () -> {
+            writer.openBlock("public void main(String[] args) {", "}", () -> {
+                writer.write("System.out.println(args[0]);");
+            });
+        })
+        .toString();
+
+        assertThat(result, equalTo("public final class Foo {\n    public void main(String[] args) {\n        System.out.println(args[0]);\n    }\n}\n"));
+    }
+
+    @Test
+    public void hasOpenBlockRunnable2() {
+        CodeWriter writer = CodeWriter.createDefault();
+        String result = writer.openBlock("public $L $L {", "}", "1", "2", () -> {
+            writer.write("hi();");
+        })
+        .toString();
+
+        assertThat(result, equalTo("public 1 2 {\n    hi();\n}\n"));
+    }
+
+    @Test
+    public void hasOpenBlockRunnable3() {
+        CodeWriter writer = CodeWriter.createDefault();
+        String result = writer.openBlock("public $L $L $L {", "}", "1", "2", "3", () -> {
+            writer.write("hi();");
+        })
+        .toString();
+
+        assertThat(result, equalTo("public 1 2 3 {\n    hi();\n}\n"));
+    }
+
+    @Test
+    public void hasOpenBlockRunnable4() {
+        CodeWriter writer = CodeWriter.createDefault();
+        String result = writer.openBlock("public $L $L $L $L {", "}", "1", "2", "3", "4", () -> {
+            writer.write("hi();");
+        })
+        .toString();
+
+        assertThat(result, equalTo("public 1 2 3 4 {\n    hi();\n}\n"));
+    }
+
+    @Test
+    public void hasOpenBlockRunnable5() {
+        CodeWriter writer = CodeWriter.createDefault();
+        String result = writer.openBlock("public $L $L $L $L $L {", "}", "1", "2", "3", "4", "5", () -> {
+            writer.write("hi();");
+        })
+        .toString();
+
+        assertThat(result, equalTo("public 1 2 3 4 5 {\n    hi();\n}\n"));
+    }
 }
