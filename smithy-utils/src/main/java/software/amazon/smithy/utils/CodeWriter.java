@@ -781,6 +781,136 @@ public class CodeWriter {
     }
 
     /**
+     * Opens a block of syntax by writing {@code textBeforeNewline}, a newline, then
+     * indenting, then executes the given {@code Runnable}, then closes the block of
+     * syntax by writing a newline, dedenting, then writing {@code textAfterNewline}.
+     *
+     * <pre>{@code
+     * CodeWriter writer = CodeWriter.createDefault();
+     * writer.openBlock("public final class $L {", "}", "Foo", () -> {
+     *     writer.openBlock("public void main(String[] args) {", "}", () -> {
+     *         writer.write("System.out.println(args[0]);");
+     *     })
+     * });
+     * }</pre>
+     *
+     * @param textBeforeNewline Text to write before writing a newline and indenting.
+     * @param textAfterNewline Text to write after writing a newline and indenting.
+     * @param f Runnable function to execute inside of the block.
+     * @return Returns the {@code CodeWriter}.
+     */
+    public final CodeWriter openBlock(String textBeforeNewline, String textAfterNewline, Runnable f) {
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{}, f);
+    }
+
+    /**
+     * Opens a block of syntax by writing {@code textBeforeNewline}, a newline, then
+     * indenting, then executes the given {@code Runnable}, then closes the block of
+     * syntax by writing a newline, dedenting, then writing {@code textAfterNewline}.
+     *
+     * @param textBeforeNewline Text to write before writing a newline and indenting.
+     * @param textAfterNewline Text to write after writing a newline and indenting.
+     * @param arg1 First positional argument to substitute into {@code textBeforeNewline}.
+     * @param f Runnable function to execute inside of the block.
+     * @return Returns the {@code CodeWriter}.
+     */
+    public final CodeWriter openBlock(String textBeforeNewline, String textAfterNewline, Object arg1, Runnable f) {
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1}, f);
+    }
+
+    /**
+     * Opens a block of syntax by writing {@code textBeforeNewline}, a newline, then
+     * indenting, then executes the given {@code Runnable}, then closes the block of
+     * syntax by writing a newline, dedenting, then writing {@code textAfterNewline}.
+     *
+     * @param textBeforeNewline Text to write before writing a newline and indenting.
+     * @param textAfterNewline Text to write after writing a newline and indenting.
+     * @param arg1 First positional argument to substitute into {@code textBeforeNewline}.
+     * @param arg2 Second positional argument to substitute into {@code textBeforeNewline}.
+     * @param f Runnable function to execute inside of the block.
+     * @return Returns the {@code CodeWriter}.
+     */
+    public final CodeWriter openBlock(String textBeforeNewline, String textAfterNewline,
+            Object arg1, Object arg2, Runnable f) {
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2}, f);
+    }
+
+    /**
+     * Opens a block of syntax by writing {@code textBeforeNewline}, a newline, then
+     * indenting, then executes the given {@code Runnable}, then closes the block of
+     * syntax by writing a newline, dedenting, then writing {@code textAfterNewline}.
+     *
+     * @param textBeforeNewline Text to write before writing a newline and indenting.
+     * @param textAfterNewline Text to write after writing a newline and indenting.
+     * @param arg1 First positional argument to substitute into {@code textBeforeNewline}.
+     * @param arg2 Second positional argument to substitute into {@code textBeforeNewline}.
+     * @param arg3 Third positional argument to substitute into {@code textBeforeNewline}.
+     * @param f Runnable function to execute inside of the block.
+     * @return Returns the {@code CodeWriter}.
+     */
+    public final CodeWriter openBlock(String textBeforeNewline, String textAfterNewline,
+            Object arg1, Object arg2, Object arg3, Runnable f) {
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2, arg3}, f);
+    }
+
+    /**
+     * Opens a block of syntax by writing {@code textBeforeNewline}, a newline, then
+     * indenting, then executes the given {@code Runnable}, then closes the block of
+     * syntax by writing a newline, dedenting, then writing {@code textAfterNewline}.
+     *
+     * @param textBeforeNewline Text to write before writing a newline and indenting.
+     * @param textAfterNewline Text to write after writing a newline and indenting.
+     * @param arg1 First positional argument to substitute into {@code textBeforeNewline}.
+     * @param arg2 Second positional argument to substitute into {@code textBeforeNewline}.
+     * @param arg3 Third positional argument to substitute into {@code textBeforeNewline}.
+     * @param arg4 Fourth positional argument to substitute into {@code textBeforeNewline}.
+     * @param f Runnable function to execute inside of the block.
+     * @return Returns the {@code CodeWriter}.
+     */
+    public final CodeWriter openBlock(String textBeforeNewline, String textAfterNewline,
+            Object arg1, Object arg2, Object arg3, Object arg4, Runnable f) {
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2, arg3, arg4}, f);
+    }
+
+    /**
+     * Opens a block of syntax by writing {@code textBeforeNewline}, a newline, then
+     * indenting, then executes the given {@code Runnable}, then closes the block of
+     * syntax by writing a newline, dedenting, then writing {@code textAfterNewline}.
+     *
+     * @param textBeforeNewline Text to write before writing a newline and indenting.
+     * @param textAfterNewline Text to write after writing a newline and indenting.
+     * @param arg1 First positional argument to substitute into {@code textBeforeNewline}.
+     * @param arg2 Second positional argument to substitute into {@code textBeforeNewline}.
+     * @param arg3 Third positional argument to substitute into {@code textBeforeNewline}.
+     * @param arg4 Fourth positional argument to substitute into {@code textBeforeNewline}.
+     * @param arg5 Fifth positional argument to substitute into {@code textBeforeNewline}.
+     * @param f Runnable function to execute inside of the block.
+     * @return Returns the {@code CodeWriter}.
+     */
+    public final CodeWriter openBlock(String textBeforeNewline, String textAfterNewline,
+            Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Runnable f) {
+        return openBlock(textBeforeNewline, textAfterNewline, new Object[]{arg1, arg2, arg3, arg4, arg5}, f);
+    }
+
+    /**
+     * Opens a block of syntax by writing {@code textBeforeNewline}, a newline, then
+     * indenting, then executes the given {@code Runnable}, then closes the block of
+     * syntax by writing a newline, dedenting, then writing {@code textAfterNewline}.
+     *
+     * @param textBeforeNewline Text to write before writing a newline and indenting.
+     * @param textAfterNewline Text to write after writing a newline and indenting.
+     * @param args Arguments to substitute into {@code textBeforeNewline}.
+     * @param f Runnable function to execute inside of the block.
+     * @return Returns the {@code CodeWriter}.
+     */
+    public final CodeWriter openBlock(String textBeforeNewline, String textAfterNewline, Object[] args, Runnable f) {
+        write(textBeforeNewline, args).indent();
+        f.run();
+        closeBlock(textAfterNewline);
+        return this;
+    }
+
+    /**
      * Closes a block of syntax by writing a newline, dedenting, then writing text.
      *
      * @param textAfterNewline Text to write after writing a newline and dedenting.
