@@ -31,12 +31,12 @@ public class ShapeIdShaderTest {
                 .build();
 
         assertThat(shader.shade(ShapeId.from("com.amazon.ec2#Thing"),
-                                ShapeIdShader.ShadeOption.SQUASH_INTO_NAME),
+                                ShapeIdShader.ShadeOption.MERGE_NAME),
                    equalTo(ShapeId.from("EC2#Thing")));
         assertThat(shader.shade(ShapeId.from("com.amazon.ec2.nested#Thing"),
-                                ShapeIdShader.ShadeOption.SQUASH_INTO_NAME),
+                                ShapeIdShader.ShadeOption.MERGE_NAME),
                    equalTo(ShapeId.from("EC2#NestedThing")));
-        assertThat(shader.shade(ShapeId.from("not.same#Thing"), ShapeIdShader.ShadeOption.SQUASH_INTO_NAME),
+        assertThat(shader.shade(ShapeId.from("not.same#Thing"), ShapeIdShader.ShadeOption.MERGE_NAME),
                    equalTo(ShapeId.from("EC2#NotSameThing")));
     }
 
@@ -48,12 +48,12 @@ public class ShapeIdShaderTest {
                 .build();
 
         assertThat(shader.shade(ShapeId.from("com.amazon.ec2#Thing"),
-                                ShapeIdShader.ShadeOption.SQUASH_INTO_NAMESPACE),
+                                ShapeIdShader.ShadeOption.MERGE_NAMESPACE),
                    equalTo(ShapeId.from("EC2#Thing")));
         assertThat(shader.shade(ShapeId.from("com.amazon.ec2.nested#Thing"),
-                                ShapeIdShader.ShadeOption.SQUASH_INTO_NAMESPACE),
+                                ShapeIdShader.ShadeOption.MERGE_NAMESPACE),
                    equalTo(ShapeId.from("EC2.Nested#Thing")));
-        assertThat(shader.shade(ShapeId.from("not.same#Thing"), ShapeIdShader.ShadeOption.SQUASH_INTO_NAMESPACE),
+        assertThat(shader.shade(ShapeId.from("not.same#Thing"), ShapeIdShader.ShadeOption.MERGE_NAMESPACE),
                    equalTo(ShapeId.from("EC2.NotSame#Thing")));
     }
 
@@ -65,10 +65,10 @@ public class ShapeIdShaderTest {
                 .build();
 
         assertThat(shader.shade(ShapeId.from("EC2#Thing"),
-                                ShapeIdShader.ShadeOption.SQUASH_INTO_NAME),
+                                ShapeIdShader.ShadeOption.MERGE_NAME),
                    equalTo(ShapeId.from("EC2#Thing")));
         assertThat(shader.shade(ShapeId.from("EC2#Thing"),
-                                ShapeIdShader.ShadeOption.SQUASH_INTO_NAMESPACE),
+                                ShapeIdShader.ShadeOption.MERGE_NAMESPACE),
                    equalTo(ShapeId.from("EC2#Thing")));
         assertThat(shader.shade(ShapeId.from("EC2#Thing")), equalTo(ShapeId.from("EC2#Thing")));
     }

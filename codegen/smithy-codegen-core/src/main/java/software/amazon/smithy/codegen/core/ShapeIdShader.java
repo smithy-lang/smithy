@@ -47,13 +47,13 @@ import software.amazon.smithy.utils.StringUtils;
  * "EC2.nested.ns#Hello". The merge behavior can be customized by passing
  * a {@link ShadeOption} to the {@link #shade(ShapeId, ShadeOption)} method.
  *
- * <p>A shade option of {@link ShadeOption#SQUASH_INTO_NAME} combines
+ * <p>A shade option of {@link ShadeOption#MERGE_NAME} combines
  * all trailing namespaces into the shaded shape ID's name. For example,
  * given "com.amazon.nested.ns#Hello", the shaded shape ID will become
  * "EC2#NestedNsHello". The first character of each namespace segment is
  * capitalized and prefixed on the original shape ID name.
  *
- * <p>A shade option of {@link ShadeOption#SQUASH_INTO_NAMESPACE} combines
+ * <p>A shade option of {@link ShadeOption#MERGE_NAMESPACE} combines
  * all trailing namespaces into the shaded shape ID's namespace. For example,
  * given "com.amazon.nested.ns#Hello", the shaded shape ID will become
  * "EC2.NestedNs#Hello". The first character of each namespace segment is
@@ -62,9 +62,9 @@ import software.amazon.smithy.utils.StringUtils;
  * <p>Namespaces that are not inside of the given {@code rootNamespace}
  * are concatenated with the {@code targetNamespace} and then merged like
  * a sub-namespace. For example, given a "example.foo#Hi", the resulting
- * shape ID is "EC2.example.foo#Hi". When using {@code SQUASH_INTO_NAME},
+ * shape ID is "EC2.example.foo#Hi". When using {@code MERGE_NAME},
  * the resulting namespace is "EC2#ExampleFooHi". When using
- * {@code SQUASH_INTO_NAMESPACE}, the resulting namespace is
+ * {@code MERGE_NAMESPACE}, the resulting namespace is
  * "EC2.ExampleFoo#Hi".
  */
 public final class ShapeIdShader {
@@ -132,11 +132,11 @@ public final class ShapeIdShader {
                 case APPEND:
                     namespace = targetNamespace + "." + namespace;
                     break;
-                case SQUASH_INTO_NAME:
+                case MERGE_NAME:
                     name = squashName(namespace + "." + name);
                     namespace = targetNamespace;
                     break;
-                case SQUASH_INTO_NAMESPACE:
+                case MERGE_NAMESPACE:
                     namespace = targetNamespace + "." + squashName(namespace);
                     break;
                 default:
@@ -184,7 +184,7 @@ public final class ShapeIdShader {
          * to the end of the target namespace.
          *
          * <p>For example, given a target of "Foo", a root of "foo.bar", and an ID of
-         * of "com.example#Baz", the resulting namespace if "Foo.com.example#Baz".
+         * of "com.example#Baz", the resulting namespace of "Foo.com.example#Baz".
          */
         APPEND,
 
@@ -193,18 +193,18 @@ public final class ShapeIdShader {
          * the name of the shape.
          *
          * <p>For example, given a target of "Foo", a root of "foo.bar", and an ID of
-         * of "com.example#Baz", the resulting namespace if "Foo#ComExampleBaz".
+         * of "com.example#Baz", the resulting namespace of "Foo#ComExampleBaz".
          */
-        SQUASH_INTO_NAME,
+        MERGE_NAME,
 
         /**
          * Merges additional namespace segments outside of the root namespace into
          * a single second-level namespace.
          *
          * <p>For example, given a target of "Foo", a root of "foo.bar", and a namespace
-         * of "com.example", the resulting namespace if "Foo.ComExample".
+         * of "com.example", the resulting namespace of "Foo.ComExample".
          */
-        SQUASH_INTO_NAMESPACE
+        MERGE_NAMESPACE
     }
 
     /**
