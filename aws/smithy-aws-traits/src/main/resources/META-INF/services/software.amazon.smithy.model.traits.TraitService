@@ -17,3 +17,6 @@ software.amazon.smithy.aws.traits.apigateway.RequestValidatorTrait$Provider
 software.amazon.smithy.aws.traits.apigateway.ApiKeySourceTrait$Provider
 software.amazon.smithy.aws.traits.apigateway.IntegrationTrait$Provider
 software.amazon.smithy.aws.traits.apigateway.MockIntegrationTrait$Provider
+software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryTrait$Provider
+software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryIdTrait$Provider
+software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientDiscoveredEndpointTrait$Provider
