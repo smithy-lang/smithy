@@ -1615,9 +1615,8 @@ not marked with the ``collection`` trait and ``GetForecastInput`` provides
 that targets the same shape as the "forecastId" identifier of the resource.
 
 Implicit identifier bindings for collection operations are created in a
-similar way to an instance operation, but a collection operation is marked
-with the ``collection`` trait and MUST NOT contain identifier bindings for
-*all* child identifiers of the resource.
+similar way to an instance operation, but MUST NOT contain identifier bindings
+for *all* child identifiers of the resource.
 
 Given the following model,
 
@@ -1632,8 +1631,8 @@ Given the following model,
             operations: [BatchPutForecasts],
         }
 
-        @collection
-        operation BatchPutForecasts(BatchPutForecastsInput) -> BatchPutForecastsOutput
+        operation BatchPutForecasts(BatchPutForecastsInput)
+            -> BatchPutForecastsOutput
 
         structure BatchPutForecastsInput {
             @required
@@ -1655,7 +1654,6 @@ Given the following model,
                     },
                     "BatchPutForecasts": {
                         "type": "operation",
-                        "collection": true,
                         "input": "BatchPutForecastsInput",
                         "output": "BatchPutForecastsOutput"
                     },
@@ -1673,9 +1671,8 @@ Given the following model,
         }
 
 ``BatchPutForecasts`` forms a valid collection operation with implicit
-identifier bindings because the operation is marked with the ``collection``
-trait and ``BatchPutForecastsInput`` does not require an input member named
-"forecastId" that targets ``ForecastId``.
+identifier bindings because ``BatchPutForecastsInput`` does not require an
+input member named "forecastId" that targets ``ForecastId``.
 
 
 Explicit identifier bindings
@@ -1970,7 +1967,10 @@ defined if needed. For example:
 .. code-block:: smithy
 
     @references([{resource: HistoricalForecast,
-            ids: { forecastId: "customForecastId", historicalId: "customHistoricalId"}])
+                  ids: {
+                      forecastId: "customForecastId",
+                      historicalId: "customHistoricalId"
+                  }])
     structure AnotherHistoricalReference {
         customForecastId: String,
         customHistoricalId: String,
