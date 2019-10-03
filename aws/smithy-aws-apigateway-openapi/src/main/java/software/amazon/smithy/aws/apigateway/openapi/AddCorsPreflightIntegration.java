@@ -17,6 +17,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -137,6 +138,7 @@ final class AddCorsPreflightIntegration implements OpenApiMapper {
             String path, PathItem pathItem, Map<CorsHeader, String> headers) {
         return OperationObject.builder()
                 .tags(ListUtils.of("CORS"))
+                .security(Collections.emptyList())
                 .description("Handles CORS-preflight requests")
                 .operationId(createOperationId(path))
                 .putResponse("200", createPreflightResponse(headers))

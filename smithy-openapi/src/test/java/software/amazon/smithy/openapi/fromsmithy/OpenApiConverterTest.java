@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
@@ -206,7 +207,7 @@ public class OpenApiConverterTest {
                 .convert(model, ShapeId.from("smithy.example#Service"));
 
         assertThat(result.getSecurity(), empty());
-        assertThat(result.getPaths().get("/2").getGet().get().getSecurity(), empty());
+        assertThat(result.getPaths().get("/2").getGet().get().getSecurity().orElse(Collections.emptyList()), empty());
     }
 
     private static final class ConstantSecurity implements OpenApiMapper {
@@ -231,6 +232,6 @@ public class OpenApiConverterTest {
                 .convert(model, ShapeId.from("smithy.example#Service"));
 
         assertThat(result.getSecurity().get(0).keySet(), contains("foo_baz"));
-        assertThat(result.getPaths().get("/2").getGet().get().getSecurity().get(0).keySet(), contains("foo_baz"));
+        assertThat(result.getPaths().get("/2").getGet().get().getSecurity().get().get(0).keySet(), contains("foo_baz"));
     }
 }

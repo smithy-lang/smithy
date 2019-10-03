@@ -234,6 +234,7 @@
             }
           }
         },
+        "security": [],
         "x-amazon-apigateway-integration": {
           "passThroughBehavior": "when_no_match",
           "requestTemplates": {
@@ -336,6 +337,7 @@
             }
           }
         },
+        "security": [],
         "x-amazon-apigateway-integration": {
           "passThroughBehavior": "when_no_match",
           "requestTemplates": {
