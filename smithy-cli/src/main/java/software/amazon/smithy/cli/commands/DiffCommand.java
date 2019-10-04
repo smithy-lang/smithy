@@ -58,7 +58,7 @@ public final class DiffCommand implements Command {
         List<String> newModels = arguments.repeatedParameter("--new");
         LOGGER.info(String.format("Setting 'new' Smithy models: %s", String.join(" ", newModels)));
 
-        ModelAssembler assembler = Model.assembler(classLoader);
+        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
         Model oldModel = loadModel("old", assembler, oldModels);
         assembler.reset();
         Model newModel = loadModel("new", assembler, newModels);

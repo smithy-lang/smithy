@@ -124,7 +124,7 @@ public final class BuildCommand implements Command {
     }
 
     private ValidatedResult<Model> buildModel(ClassLoader classLoader, List<String> models, Arguments arguments) {
-        ModelAssembler assembler = Model.assembler(classLoader);
+        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
         CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
         CommandUtils.handleUnknownTraitsOption(arguments, assembler);
         models.forEach(assembler::addImport);
