@@ -18,6 +18,7 @@ package software.amazon.smithy.model.loader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import software.amazon.smithy.utils.IoUtils;
@@ -45,9 +46,17 @@ final class JarModelLoader implements ModelLoader {
         LOGGER.fine(() -> "Loading Smithy model imports from JAR: " + manifestUrl);
 
         for (URL model : ModelDiscovery.findModels(manifestUrl)) {
-            try (InputStream is = model.openStream()) {
-                String contents = IoUtils.toUtf8String(is);
-                delegate.load(model.toExternalForm(), () -> contents, visitor);
+            try {
+                URLConnection connection = model.openConnection();
+
+                if (visitor.hasProperty(ModelAssembler.DISABLE_JAR_CACHE)) {
+                    connection.setUseCaches(false);
+                }
+
+                try (InputStream is = connection.getInputStream()) {
+                    String contents = IoUtils.toUtf8String(is);
+                    delegate.load(model.toExternalForm(), () -> contents, visitor);
+                }
             } catch (IOException e) {
                 throw new ModelImportException(
                         String.format("Error loading Smithy model from URL `%s`: %s", model, e.getMessage()), e);

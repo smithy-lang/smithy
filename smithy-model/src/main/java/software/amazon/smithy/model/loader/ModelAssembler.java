@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,7 +62,22 @@ import software.amazon.smithy.utils.ListUtils;
  * @see Model#assembler()
  */
 public final class ModelAssembler {
+    /**
+     * Allow unknown traits rather than fail.
+     */
     public static final String ALLOW_UNKNOWN_TRAITS = "assembler.allowUnknownTraits";
+
+    /**
+     * Sets {@link URLConnection#setUseCaches} to false.
+     *
+     * <p>When running in a build environment, using caches can cause exceptions
+     * like `java.util.zip.ZipException: ZipFile invalid LOC header (bad signature)`
+     * because a previously loaded JAR might change between builds. The
+     * "assembler.disableJarCache" setting should be set to true when embedding
+     * Smithy into an environment where this can occur.
+     */
+    public static final String DISABLE_JAR_CACHE = "assembler.disableJarCache";
+
     private static final Logger LOGGER = Logger.getLogger(ModelAssembler.class.getName());
     private static final ModelLoader DEFAULT_LOADER = ModelLoader.createDefaultLoader();
 
@@ -126,7 +142,6 @@ public final class ModelAssembler {
      *     <li>Models registered via {@link #addModel}</li>
      *     <li>Shape registered via {@link #addModel}</li>
      *     <li>Metadata registered via {@link #putMetadata}</li>
-     *     <li>Custom properties set via {@link #putProperty}</li>
      * </ul>
      *
      * <p>The state of {@link #disablePrelude} is reset such that the prelude
@@ -142,7 +157,6 @@ public final class ModelAssembler {
         validators.clear();
         suppressions.clear();
         documentNodes.clear();
-        properties.clear();
         disablePrelude = false;
         return this;
     }

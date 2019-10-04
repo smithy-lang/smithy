@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.SmithyCli;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 
 final class CommandUtils {
@@ -37,6 +38,10 @@ final class CommandUtils {
             LOGGER.fine("Ignoring unknown traits");
             assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
         }
+    }
+
+    static ModelAssembler createModelAssembler(ClassLoader classLoader) {
+        return Model.assembler(classLoader).putProperty(ModelAssembler.DISABLE_JAR_CACHE, true);
     }
 
     static void handleModelDiscovery(Arguments arguments, ModelAssembler assembler, ClassLoader baseLoader) {

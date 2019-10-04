@@ -54,7 +54,7 @@ public final class ValidateCommand implements Command {
         List<String> models = arguments.positionalArguments();
         LOGGER.info(String.format("Validating Smithy model sources: %s", models));
 
-        ModelAssembler assembler = Model.assembler(classLoader);
+        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
         CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
         CommandUtils.handleUnknownTraitsOption(arguments, assembler);
 
