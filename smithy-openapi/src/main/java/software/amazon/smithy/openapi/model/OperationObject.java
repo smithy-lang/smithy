@@ -56,7 +56,11 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         responses = Collections.unmodifiableMap(new TreeMap<>(builder.responses));
         deprecated = builder.deprecated;
         callbacks = Collections.unmodifiableMap(new TreeMap<>(builder.callbacks));
-        security = ListUtils.copyOf(builder.security);
+        if (builder.security != null) {
+            security = ListUtils.copyOf(builder.security);
+        } else {
+            security = null;
+        }
         servers = ListUtils.copyOf(builder.servers);
     }
 
@@ -104,8 +108,8 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         return deprecated;
     }
 
-    public List<Map<String, List<String>>> getSecurity() {
-        return security;
+    public Optional<List<Map<String, List<String>>>> getSecurity() {
+        return Optional.ofNullable(security);
     }
 
     public List<ServerObject> getServers() {
@@ -139,8 +143,8 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
                     .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)));
         }
 
-        if (!security.isEmpty()) {
-            builder.withMember("security", getSecurity().stream()
+        if (getSecurity().isPresent()) {
+            builder.withMember("security", getSecurity().get().stream()
                     .map(map -> map.entrySet().stream()
                             .sorted(Comparator.comparing(Map.Entry::getKey))
                             .map(entry -> Pair.of(entry.getKey(), entry.getValue().stream().map(Node::from)
@@ -163,9 +167,8 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
 
     @Override
     public Builder toBuilder() {
-        return builder()
+        Builder builder = builder()
                 .extensions(getExtensions())
-                .security(security)
                 .callbacks(callbacks)
                 .responses(responses)
                 .parameters(parameters)
@@ -177,6 +180,8 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
                 .externalDocs(externalDocs)
                 .operationId(operationId)
                 .requestBody(requestBody);
+        getSecurity().ifPresent(builder::security);
+        return builder;
     }
 
     public static final class Builder extends Component.Builder<Builder, OperationObject> {
@@ -184,7 +189,7 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         private final List<ParameterObject> parameters = new ArrayList<>();
         private final Map<String, ResponseObject> responses = new TreeMap<>();
         private final Map<String, CallbackObject> callbacks = new TreeMap<>();
-        private final List<Map<String, List<String>>> security = new ArrayList<>();
+        private List<Map<String, List<String>>> security;
         private final List<ServerObject> servers = new ArrayList<>();
         private String summary;
         private String description;
@@ -275,12 +280,15 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         }
 
         public Builder security(Collection<Map<String, List<String>>> security) {
-            this.security.clear();
+            this.security = new ArrayList<>();
             this.security.addAll(security);
             return this;
         }
 
         public Builder addSecurity(Map<String, List<String>> security) {
+            if (this.security == null) {
+                this.security = new ArrayList<>();
+            }
             this.security.add(security);
             return this;
         }

@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -143,7 +144,7 @@ public class RemoveUnusedComponents implements OpenApiMapper {
 
         for (PathItem path : openapi.getPaths().values()) {
             for (OperationObject operation : path.getOperations().values()) {
-                for (Map<String, List<String>> entry : operation.getSecurity()) {
+                for (Map<String, List<String>> entry : operation.getSecurity().orElse(Collections.emptyList())) {
                     used.addAll(entry.keySet());
                 }
             }
