@@ -34,11 +34,12 @@ import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Context object used in plugin execution.
  */
-public final class PluginContext {
+public final class PluginContext implements ToSmithyBuilder<PluginContext> {
     private final ProjectionConfig projection;
     private final String projectionName;
     private final Model model;
@@ -237,6 +238,19 @@ public final class PluginContext {
         // This accounts for "jar:file:" and "file:".
         int position = location.indexOf("file:");
         return position == -1 ? 0 : position + "file:".length();
+    }
+
+    @Override
+    public Builder toBuilder() {
+        return builder()
+                .projection(projectionName, projection)
+                .model(model)
+                .originalModel(originalModel)
+                .events(events)
+                .settings(settings)
+                .fileManifest(fileManifest)
+                .pluginClassLoader(pluginClassLoader)
+                .sources(sources);
     }
 
     /**
