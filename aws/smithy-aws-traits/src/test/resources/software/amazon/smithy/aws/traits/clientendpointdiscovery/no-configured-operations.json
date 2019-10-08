@@ -58,7 +58,7 @@
                     "Address": {
                         "target": "smithy.api#String"
                     },
-                    "CachePeriod": {
+                    "CachePeriodInMinutes": {
                         "target": "smithy.api#Long"
                     }
                 }

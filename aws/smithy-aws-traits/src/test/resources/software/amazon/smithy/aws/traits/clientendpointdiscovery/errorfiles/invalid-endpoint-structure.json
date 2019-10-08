@@ -59,7 +59,7 @@
                     "Address": {
                         "target": "smithy.api#Integer"
                     },
-                    "CachePeriod": {
+                    "CachePeriodInMinutes": {
                         "target": "smithy.api#Integer"
                     },
                     "IpAddress": {
