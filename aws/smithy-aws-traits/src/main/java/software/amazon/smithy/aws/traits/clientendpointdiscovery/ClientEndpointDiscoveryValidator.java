@@ -206,19 +206,19 @@ public class ClientEndpointDiscoveryValidator extends AbstractValidator {
                                 + "be a string type."));
                     }
 
-                    Optional<MemberShape> cachePeriodMember = listMember.get().getMember("CachePeriod");
+                    Optional<MemberShape> cachePeriodMember = listMember.get().getMember("CachePeriodInMinutes");
                     Optional<Shape> cachePeriod = cachePeriodMember
                             .flatMap(member -> shapeIndex.getShape(member.getTarget()));
                     if (cachePeriod.isPresent() && !cachePeriod.get().isLongShape()) {
-                        events.add(error(cachePeriodMember.get(), "The `CachePeriod` member of the `Endpoint` "
-                                + "shape must be a long type."));
+                        events.add(error(cachePeriodMember.get(), "The `CachePeriodInMinutes` member of the "
+                                + "`Endpoint` shape must be a long type."));
                     }
 
                     Set<String> memberNames = SetUtils.copyOf(listMember.get().getMemberNames());
-                    if (!memberNames.equals(SetUtils.of("Address", "CachePeriod"))) {
+                    if (!memberNames.equals(SetUtils.of("Address", "CachePeriodInMinutes"))) {
                         events.add(error(listMember.get(), String.format(
-                                "The `Endpoint` shape must only have the members `Address` and `CachePeriod`, but "
-                                        + "found: %s",
+                                "The `Endpoint` shape must only have the members `Address` and `CachePeriodInMinutes`, "
+                                        + "but found: %s",
                                 String.join(", ", memberNames)
                         )));
                     }

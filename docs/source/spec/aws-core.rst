@@ -959,7 +959,7 @@ The operation output MUST contain a member ``Endpoints`` that is a list of
 ``Endpoint`` structures, which are made up of two members:
 
 - a ``string`` member named ``Address``
-- a ``long`` member named ``CachePeriod``
+- a ``long`` member named ``CachePeriodInMinutes``
 
 
 .. _client-discovered-endpoint-trait:
@@ -1056,7 +1056,7 @@ using an ``clientEndpointDiscoveryId``.
 
         structure Endpoint {
           Address: String,
-          CachePeriod: Long,
+          CachePeriodInMinutes: Long,
         }
 
         @aws.api#clientDiscoveredEndpoint(required: true)
@@ -1135,7 +1135,7 @@ using an ``clientEndpointDiscoveryId``.
                             "Address": {
                                 "target": "String"
                             },
-                            "CachePeriod": {
+                            "CachePeriodInMinutes": {
                                 "target": "Long"
                             }
                         }
