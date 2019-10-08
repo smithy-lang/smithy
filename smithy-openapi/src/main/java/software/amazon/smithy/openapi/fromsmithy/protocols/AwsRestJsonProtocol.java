@@ -26,6 +26,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.utils.SetUtils;
@@ -42,7 +43,9 @@ public final class AwsRestJsonProtocol extends AbstractRestProtocol {
 
     @Override
     public ObjectNode getDefaultSettings() {
-        return Node.objectNode().withMember(JsonSchemaConstants.SMITHY_USE_JSON_NAME, true);
+        return Node.objectNode()
+                .withMember(JsonSchemaConstants.SMITHY_USE_JSON_NAME, true)
+                .withMember(JsonSchemaConstants.SMITHY_DEFAULT_TIMESTAMP_FORMAT, TimestampFormatTrait.EPOCH_SECONDS);
     }
 
     @Override

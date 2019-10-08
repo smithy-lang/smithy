@@ -245,8 +245,7 @@
         "type": "string"
       },
       "ExampleRestCreateDocumentOutputTimeMember": {
-        "type": "string",
-        "format": "date-time"
+        "type": "number"
       },
       "ExampleRestPutPayloadInputQueryMember": {
         "type": "number",

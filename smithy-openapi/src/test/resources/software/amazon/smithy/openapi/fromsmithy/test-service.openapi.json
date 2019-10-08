@@ -72,8 +72,7 @@
                       "type": "string"
                     },
                     "time": {
-                      "type": "string",
-                      "format": "date-time"
+                      "type": "number"
                     },
                     "list": {
                       "type": "array",
