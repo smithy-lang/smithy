@@ -108,40 +108,38 @@
                     
   <div class="section" id="event-stream-specification">
 <span id="event-streams"></span><h1>Event stream specification<a class="headerlink" href="#event-stream-specification" title="Permalink to this headline">¶</a></h1>
-<p>An event stream is an abstraction that allows messages to be sent
-asynchronously over a persistent connection between a client and server.
-Event streams support both duplex and simplex streaming. The serialization
-format and framing of messages sent over event streams is defined by the
-<a class="reference internal" href="core.html#protocols-trait"><span class="std std-ref">protocol</span></a> of a service.</p>
-<p>Event streams are defined on operations using the
-<a class="reference internal" href="#inputeventstream-trait"><span class="std std-ref">inputEventStream trait</span></a> and <a class="reference internal" href="#outputeventstream-trait"><span class="std std-ref">outputEventStream trait</span></a>. These traits
-reference a member of the input or output of an operation that targets the
-shape sent over the event stream. A member that targets a structure is a
-<em>single-event event stream</em>, and a member that targets a union is a
+<p>An event stream is an abstraction that allows multiple messages to be sent
+asynchronously between a client and server. Event streams support both duplex
+and simplex streaming. The serialization format and framing of messages sent
+over event streams is defined by the <a class="reference internal" href="core.html#protocols-trait"><span class="std std-ref">protocol</span></a> of a
+service.</p>
+<p>An operation can send an event stream as part of its input or output. An
+event stream is formed when an input or output member of an operation is
+marked with the <a class="reference internal" href="#eventstream-trait"><span class="std std-ref">eventStream trait</span></a>. A member that targets a structure
+is a <em>single-event event stream</em>, and a member that targets a union is a
 <em>multi-event event stream</em>.</p>
 <div class="contents local topic" id="table-of-contents">
 <p class="topic-title first">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#single-event-event-streams" id="id9">Single-event event streams</a><ul>
-<li><a class="reference internal" href="#single-event-client-behavior" id="id10">Single-event client behavior</a></li>
+<li><a class="reference internal" href="#single-event-event-streams" id="id8">Single-event event streams</a><ul>
+<li><a class="reference internal" href="#single-event-client-behavior" id="id9">Single-event client behavior</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#multi-event-event-streams" id="id11">Multi-event event streams</a><ul>
-<li><a class="reference internal" href="#multi-event-client-behavior" id="id12">Multi-event client behavior</a></li>
+<li><a class="reference internal" href="#multi-event-event-streams" id="id10">Multi-event event streams</a><ul>
+<li><a class="reference internal" href="#multi-event-client-behavior" id="id11">Multi-event client behavior</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#initial-messages" id="id13">Initial messages</a><ul>
-<li><a class="reference internal" href="#initial-request" id="id14">Initial-request</a></li>
-<li><a class="reference internal" href="#initial-response" id="id15">Initial-response</a></li>
-<li><a class="reference internal" href="#initial-message-client-and-server-behavior" id="id16">Initial message client and server behavior</a></li>
+<li><a class="reference internal" href="#initial-messages" id="id12">Initial messages</a><ul>
+<li><a class="reference internal" href="#initial-request" id="id13">Initial-request</a></li>
+<li><a class="reference internal" href="#initial-response" id="id14">Initial-response</a></li>
+<li><a class="reference internal" href="#initial-message-client-and-server-behavior" id="id15">Initial message client and server behavior</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#event-message-serialization" id="id17">Event message serialization</a></li>
-<li><a class="reference internal" href="#event-stream-traits" id="id18">Event stream traits</a><ul>
-<li><a class="reference internal" href="#inputeventstream-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">inputEventStream</span></code> trait</a></li>
-<li><a class="reference internal" href="#outputeventstream-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">outputEventStream</span></code> trait</a></li>
-<li><a class="reference internal" href="#eventheader-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
-<li><a class="reference internal" href="#eventpayload-trait" id="id22"><code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
+<li><a class="reference internal" href="#event-message-serialization" id="id16">Event message serialization</a></li>
+<li><a class="reference internal" href="#event-stream-traits" id="id17">Event stream traits</a><ul>
+<li><a class="reference internal" href="#eventstream-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">eventStream</span></code> trait</a></li>
+<li><a class="reference internal" href="#eventheader-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
+<li><a class="reference internal" href="#eventpayload-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
 </ul>
 </li>
 </ul>
@@ -149,11 +147,9 @@ shape sent over the event stream. A member that targets a structure is a
 <div class="section" id="single-event-event-streams">
 <span id="single-event-event-stream"></span><h2>Single-event event streams<a class="headerlink" href="#single-event-event-streams" title="Permalink to this headline">¶</a></h2>
 <p>A <em>single-event event stream</em> is an event stream that streams zero or more
-instances of a specific structure shape. It is formed when the
-<code class="docutils literal notranslate"><span class="pre">inputEventStream</span></code> or <code class="docutils literal notranslate"><span class="pre">outputEventStream</span></code> trait references an input or
-output member that targets a structure.</p>
+instances of a specific structure shape.</p>
 <p id="single-event-input-eventstream">The following example defines an operation that uses a single-event event
-stream in its input by referencing a member that targets a structure:</p>
+stream in its input:</p>
 <div class="sphinx-tabs docutils container">
 <div class="ui top attached tabular menu sphinx-menu docutils container">
 <div class="active item sphinx-data-tab-U21pdGh5 docutils container">
@@ -168,11 +164,12 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@inputEventStream</span>(<span class="s2">&quot;messages&quot;</span>)
 <span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
     <span class="nl">room:</span> <span class="vc">String</span>,
+
+    <span class="nd">@eventStream</span>
     <span class="nl">messages:</span> <span class="vc">Message</span>,
 }
 
@@ -189,8 +186,7 @@ JSON</div>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;inputEventStream&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span>
+                <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span>
             <span class="p">},</span>
             <span class="nt">&quot;PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
@@ -199,7 +195,8 @@ JSON</div>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span>
+                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
@@ -234,10 +231,10 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@outputEventStream</span>(<span class="s2">&quot;movements&quot;</span>)
 <span class="kd">operation</span><span class="nc"> SubscribeToMovements</span>() <span class="nd">-&gt;</span> <span class="vc">SubscribeToMovementsOutput</span>
 
 <span class="kd">structure</span><span class="nc"> SubscribeToMovementsOutput</span> {
+    <span class="nd">@eventStream</span>
     <span class="nl">movements:</span> <span class="vc">Movement</span>,
 }
 
@@ -255,14 +252,14 @@ JSON</div>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;SubscribeToMovements&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;SubscribeToMovementsOutput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;outputEventStream&quot;</span><span class="p">:</span> <span class="s2">&quot;movements&quot;</span>
+                <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;SubscribeToMovementsOutput&quot;</span>
             <span class="p">},</span>
             <span class="nt">&quot;SubscribeToMovementsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;movements&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Movement&quot;</span>
+                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Movement&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
@@ -284,6 +281,8 @@ JSON</div>
 </div>
 </div>
 </div>
+<p>The name of the event sent over a single-event event stream is the name
+of the member that is targeted by the <code class="docutils literal notranslate"><span class="pre">eventStream</span></code> trait.</p>
 <div class="section" id="single-event-client-behavior">
 <h3>Single-event client behavior<a class="headerlink" href="#single-event-client-behavior" title="Permalink to this headline">¶</a></h3>
 <p>Clients that send or receive single-event event streams are expected to
@@ -298,12 +297,11 @@ unnecessary. Clients MUST provide access to the
 <div class="section" id="multi-event-event-streams">
 <span id="multi-event-event-stream"></span><h2>Multi-event event streams<a class="headerlink" href="#multi-event-event-streams" title="Permalink to this headline">¶</a></h2>
 <p>A <em>multi-event event stream</em> is an event stream that streams any number of
-named event structure shapes defined by a union. It is formed when an
-<code class="docutils literal notranslate"><span class="pre">inputEventStream</span></code> or <code class="docutils literal notranslate"><span class="pre">outputEventStream</span></code> trait references an input or
-output member that targets a union. Each member of the targeted union MUST
-target a structure shape. The member names of the
-union define the name that is used to identify each event that is sent over
-the event stream.</p>
+named event structure shapes defined by a union. It is formed when the
+<code class="docutils literal notranslate"><span class="pre">eventStream</span></code> trait is applied to a member that targets a union. Each
+member of the targeted union MUST target a structure shape. The member
+names of the union define the name that is used to identify each event
+that is sent over the event stream.</p>
 <p id="multi-event-input-eventstream">The following example defines an operation that uses a multi-event event
 stream in its input by referencing a member that targets a union:</p>
 <div class="sphinx-tabs docutils container">
@@ -320,11 +318,12 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@inputEventStream</span>(<span class="s2">&quot;messages&quot;</span>)
 <span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
     <span class="nl">room:</span> <span class="vc">String</span>,
+
+    <span class="nd">@eventStream</span>
     <span class="nl">messages:</span> <span class="vc">PublishEvents</span>,
 }
 
@@ -348,8 +347,7 @@ JSON</div>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;inputEventStream&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span>
+                <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span>
             <span class="p">},</span>
             <span class="nt">&quot;PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
@@ -358,7 +356,8 @@ JSON</div>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
                     <span class="p">},</span>
                     <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishEvents&quot;</span>
+                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishEvents&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
@@ -400,10 +399,10 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@outputEventStream</span>(<span class="s2">&quot;movements&quot;</span>)
 <span class="kd">operation</span><span class="nc"> SubscribeToMovements</span>() <span class="nd">-&gt;</span> <span class="vc">SubscribeToMovementsOutput</span>
 
 <span class="kd">structure</span><span class="nc"> SubscribeToMovementsOutput</span> {
+    <span class="nd">@eventStream</span>
     <span class="nl">movements:</span> <span class="vc">MovementEvents</span>,
 }
 
@@ -427,14 +426,14 @@ JSON</div>
         <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;SubscribeToMovements&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;SubscribeToMovementsOutput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;outputEventStream&quot;</span><span class="p">:</span> <span class="s2">&quot;movements&quot;</span>
+                <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;SubscribeToMovementsOutput&quot;</span>
             <span class="p">},</span>
             <span class="nt">&quot;SubscribeToMovementsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;movements&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span>
+                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
@@ -483,10 +482,10 @@ event stream when necessary.</p>
 on the name of an event. For example, given the following event stream,</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@outputEventStream</span>(<span class="s2">&quot;movements&quot;</span>)
 <span class="kd">operation</span><span class="nc"> SubscribeToEvents</span>() <span class="nd">-&gt;</span> <span class="vc">SubscribeToEventsOutput</span>
 
 <span class="kd">structure</span><span class="nc"> SubscribeToEventsOutput</span> {
+    <span class="nd">@eventStream</span>
     <span class="nl">events:</span> <span class="vc">Events</span>,
 }
 
@@ -510,10 +509,9 @@ provided).</p>
 <div class="section" id="initial-messages">
 <span id="id1"></span><h2>Initial messages<a class="headerlink" href="#initial-messages" title="Permalink to this headline">¶</a></h2>
 <p>An <em>initial message</em> is comprised of the top-level input or output members
-of an operation that are not referenced by the <code class="docutils literal notranslate"><span class="pre">inputEventStream</span></code> or
-<code class="docutils literal notranslate"><span class="pre">outputEventStream</span></code> traits. Initial messages provide an opportunity for a
-client or server to provide metadata about an event stream before transmitting
-events.</p>
+of an operation that are not targeted by the <code class="docutils literal notranslate"><span class="pre">eventStream</span></code> trait. Initial
+messages provide an opportunity for a client or server to provide metadata
+about an event stream before transmitting events.</p>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
 <p class="last">Not all protocols support initial messages. Check trait binding and
@@ -522,11 +520,10 @@ protocol documentation before adding initial messages to an operation.</p>
 <div class="section" id="initial-request">
 <span id="id2"></span><h3>Initial-request<a class="headerlink" href="#initial-request" title="Permalink to this headline">¶</a></h3>
 <p>An <em>initial-request</em> is an initial message that can be sent from a client to
-a server for an operation marked with the <code class="docutils literal notranslate"><span class="pre">inputEventStream</span></code> trait. The
-structure of an initial-request is the input of an operation with no value
-provided for the event stream member referenced by the <code class="docutils literal notranslate"><span class="pre">inputEventStream</span></code>
-trait. An initial-request, if sent, is sent from a client to a server before
-sending any event stream events.</p>
+a server for an operation with an input event stream. The structure of an
+initial-request is the input of an operation with no value provided for the
+event stream member. An initial-request, if sent, is sent from a client to a
+server before sending any event stream events.</p>
 <p>When using <a class="reference internal" href="http.html#http-traits"><span class="std std-ref">HTTP bindings</span></a>, initial-request fields are
 mapped to specific locations in the HTTP request such as headers or the
 URI. In other bindings or protocols, the initial-request can be
@@ -548,7 +545,6 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@inputEventStream</span>(<span class="s2">&quot;messages&quot;</span>)
 <span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages/{room}&quot;</span>)
 <span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
 
@@ -557,6 +553,7 @@ JSON</div>
     <span class="nl">room:</span> <span class="vc">String</span>,
 
     <span class="nd">@httpPayload</span>
+    <span class="nd">@eventStream</span>
     <span class="nl">messages:</span> <span class="vc">Message</span>,
 }
 
@@ -574,7 +571,6 @@ JSON</div>
             <span class="nt">&quot;PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;inputEventStream&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;http&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/messages/{room}&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span>
@@ -589,7 +585,8 @@ JSON</div>
                     <span class="p">},</span>
                     <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;httpPayload&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                        <span class="nt">&quot;httpPayload&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
@@ -612,10 +609,9 @@ JSON</div>
 <div class="section" id="initial-response">
 <span id="id3"></span><h3>Initial-response<a class="headerlink" href="#initial-response" title="Permalink to this headline">¶</a></h3>
 <p>An <em>initial-response</em> is an initial message that can be sent from a server
-to a client for an operation marked with the <code class="docutils literal notranslate"><span class="pre">outputEventStream</span></code> trait.
-The structure of an initial-response is the output of an operation with no
-value provided for the event stream member referenced by the
-<code class="docutils literal notranslate"><span class="pre">outputEventStream</span></code> trait. An initial-response, if sent, is sent from the
+to a client for an operation with an output event stream. The structure of
+an initial-response is the output of an operation with no value provided for
+the event stream member. An initial-response, if sent, is sent from the
 server to the client before sending any event stream events.</p>
 <p>When using <a class="reference internal" href="http.html#http-traits"><span class="std std-ref">HTTP bindings</span></a>, initial-response fields are
 mapped to HTTP headers. In other protocols, the initial-response can be sent
@@ -638,7 +634,6 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="nd">@outputEventStream</span>(<span class="s2">&quot;messages&quot;</span>)
 <span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages/{room}&quot;</span>)
 <span class="kd">operation</span><span class="nc"> SubscribeToMessages</span>(<span class="vc">SubscribeToMessagesInput</span>) <span class="nd">-&gt;</span> <span class="vc">SubscribeToMessagesOutput</span>
 
@@ -652,6 +647,7 @@ JSON</div>
     <span class="nl">connectionLifetime:</span> <span class="vc">Integer</span>,
 
     <span class="nd">@httpPayload</span>
+    <span class="nd">@eventStream</span>
     <span class="nl">messages:</span> <span class="vc">Message</span>,
 }
 </pre></div>
@@ -665,7 +661,6 @@ JSON</div>
             <span class="nt">&quot;PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;inputEventStream&quot;</span><span class="p">:</span> <span class="s2">&quot;messages&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;http&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/messages/{room}&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span>
@@ -689,7 +684,8 @@ JSON</div>
                     <span class="p">},</span>
                     <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;httpPayload&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                        <span class="nt">&quot;httpPayload&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -825,20 +821,19 @@ JSON</div>
 </div>
 <div class="section" id="event-stream-traits">
 <h2>Event stream traits<a class="headerlink" href="#event-stream-traits" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="inputeventstream-trait">
-<span id="id5"></span><h3><code class="docutils literal notranslate"><span class="pre">inputEventStream</span></code> trait<a class="headerlink" href="#inputeventstream-trait" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="eventstream-trait">
+<span id="id5"></span><h3><code class="docutils literal notranslate"><span class="pre">eventStream</span></code> trait<a class="headerlink" href="#eventstream-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
-<dd>Configures an operation to use an event stream for its input.</dd>
+<dd>Configures a member of an operation input or output as an event stream.</dd>
 <dt>Trait selector</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">operation:test(-[input]-&gt;)</span></code></p>
-<p class="last">An operation that defines an input shape.</p>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">operation</span> <span class="pre">-[input,</span> <span class="pre">output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">:test(member</span> <span class="pre">&gt;</span> <span class="pre">:each(structure,</span> <span class="pre">union))</span></code></p>
+<p class="last">An operation input or output member that targets a structure or union.</p>
 </dd>
 <dt>Value type</dt>
-<dd>String value that is the name of a member of the operation input
-structure. The referenced member MUST exist on the input structure
-of the operation, MUST NOT be marked as required, and MUST target a
-structure or a union that targets only structure shapes.</dd>
+<dd>Annotation trait.</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="core.html#required-trait"><span class="std std-ref">required trait</span></a></dd>
 <dt>Examples</dt>
 <dd><ul class="first last simple">
 <li><a class="reference internal" href="#single-event-input-eventstream"><span class="std std-ref">Single-event event stream example</span></a></li>
@@ -846,31 +841,16 @@ structure or a union that targets only structure shapes.</dd>
 </ul>
 </dd>
 </dl>
-</div>
-<div class="section" id="outputeventstream-trait">
-<span id="id6"></span><h3><code class="docutils literal notranslate"><span class="pre">outputEventStream</span></code> trait<a class="headerlink" href="#outputeventstream-trait" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Summary</dt>
-<dd>Configures an operation to use an event stream for its output.</dd>
-<dt>Trait selector</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">operation:test(-[output]-&gt;)</span></code></p>
-<p class="last">An operation that defines an output shape.</p>
-</dd>
-<dt>Value type</dt>
-<dd>String value that is the name of a member of the operation output
-structure. The referenced member MUST exist on the output structure
-of the operation, MUST NOT be marked as required, and MUST target
-a structure or a union that targets only structure shapes.</dd>
-<dt>Examples</dt>
-<dd><ul class="first last simple">
-<li><a class="reference internal" href="#single-event-output-eventstream"><span class="std std-ref">Single-event event stream example</span></a></li>
-<li><a class="reference internal" href="#multi-event-output-eventstream"><span class="std std-ref">Multi-event event stream example</span></a></li>
-</ul>
-</dd>
-</dl>
+<p>A structure that contains a member marked with the <code class="docutils literal notranslate"><span class="pre">eventStream</span></code> trait
+can only be referenced by operation input or output shapes. Structures
+that contain an event stream cannot be referenced by members or used as
+part of an <a class="reference internal" href="core.html#error-trait"><span class="std std-ref">error</span></a>.</p>
+<p>The member targeted by the <code class="docutils literal notranslate"><span class="pre">eventStream</span></code> trait MUST NOT be marked as
+required because the input or output structure also functions as an
+initial-message.</p>
 </div>
 <div class="section" id="eventheader-trait">
-<span id="id7"></span><h3><code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait<a class="headerlink" href="#eventheader-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id6"></span><h3><code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait<a class="headerlink" href="#eventheader-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a member of a structure to be serialized as an event header when
@@ -942,7 +922,7 @@ JSON</div>
 </div>
 </div>
 <div class="section" id="eventpayload-trait">
-<span id="id8"></span><h3><code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait<a class="headerlink" href="#eventpayload-trait" title="Permalink to this headline">¶</a></h3>
+<span id="id7"></span><h3><code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait<a class="headerlink" href="#eventpayload-trait" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt>Summary</dt>
 <dd>Binds a member of a structure to be serialized as the payload of an
@@ -1067,8 +1047,7 @@ JSON</div>
 </li>
 <li><a class="reference internal" href="#event-message-serialization">Event message serialization</a></li>
 <li><a class="reference internal" href="#event-stream-traits">Event stream traits</a><ul>
-<li><a class="reference internal" href="#inputeventstream-trait"><code class="docutils literal notranslate"><span class="pre">inputEventStream</span></code> trait</a></li>
-<li><a class="reference internal" href="#outputeventstream-trait"><code class="docutils literal notranslate"><span class="pre">outputEventStream</span></code> trait</a></li>
+<li><a class="reference internal" href="#eventstream-trait"><code class="docutils literal notranslate"><span class="pre">eventStream</span></code> trait</a></li>
 <li><a class="reference internal" href="#eventheader-trait"><code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
 <li><a class="reference internal" href="#eventpayload-trait"><code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
 </ul>

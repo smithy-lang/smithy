@@ -295,7 +295,7 @@ template MAY contain <a class="reference internal" href="#mqtt-topic-label"><spa
 reference top-level input members of the operation by case-sensitive
 member name.</dd>
 <dt>Conflicts with</dt>
-<dd><a class="reference internal" href="#smithy-mqtt-subscribe-trait"><span class="std std-ref">smithy.mqtt#subscribe trait</span></a>, <a class="reference internal" href="event-streams.html#inputeventstream-trait"><span class="std std-ref">inputEventStream trait</span></a></dd>
+<dd><a class="reference internal" href="#smithy-mqtt-subscribe-trait"><span class="std std-ref">smithy.mqtt#subscribe trait</span></a></dd>
 </dl>
 <p>Input members that are not marked with the <a class="reference internal" href="#smithy-mqtt-topiclabel-trait"><span class="std std-ref">smithy.mqtt#topicLabel trait</span></a>
 come together to form the protocol-specific payload of the PUBLISH message.</p>
@@ -388,8 +388,8 @@ the resolved MQTT topics of subscribe operations.</li>
 <dd>Binds an operation to send one or more SUBSCRIBE control packets
 via the MQTT protocol.</dd>
 <dt>Trait selector</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">operation[trait|outputEventStream]</span></code></p>
-<p class="last"><em>An operation with an outputEventStream trait</em></p>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">operation:test(-[output]-&gt;</span> <span class="pre">structure</span> <span class="pre">-&gt;</span> <span class="pre">member[trait|eventStream])</span></code></p>
+<p class="last"><em>An operation with an output event stream</em></p>
 </dd>
 <dt>Trait value</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that is a valid <a class="reference internal" href="#mqtt-topic-templates"><span class="std std-ref">MQTT topic template</span></a>.
@@ -401,12 +401,13 @@ top-level input members of the operation by case-sensitive member name.</dd>
 <p>No message is published when using an operation marked with the
 <code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait. All members of the input of the operation
 MUST be marked with valid <code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> traits.</p>
-<p>The operation MUST have an <a class="reference internal" href="event-streams.html#outputeventstream-trait"><span class="std std-ref">outputEventStream trait</span></a>. The top-level
-output member referenced by this trait represents the message that is sent
-over the MQTT topic. An abstraction for automatically subscribing to and
-asynchronously receiving events SHOULD be provided by Smithy clients. When
-that abstraction is destroyed, the client SHOULD provide the ability to
-automatically UNSUBSCRIBE from topics.</p>
+<p>The operation MUST define an output shape that has an
+<a class="reference internal" href="event-streams.html#eventstream-trait"><span class="std std-ref">eventStream</span></a>. The top-level output member referenced
+by this trait represents the message(s) sent over the MQTT topic. An
+abstraction for automatically subscribing to and asynchronously receiving
+events SHOULD be provided by Smithy clients. When that abstraction is
+destroyed, the client SHOULD provide the ability to automatically UNSUBSCRIBE
+from topics.</p>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
 <p class="last">Events MAY contain a member marked with
@@ -431,7 +432,6 @@ JSON</div>
 <span class="kd">use</span><span class="nc"> smithy.mqtt#topicLabel</span>
 
 <span class="nd">@subscribe</span>(<span class="s2">&quot;events/{id}&quot;</span>)
-<span class="nd">@outputEventStream</span>(<span class="s2">&quot;events&quot;</span>)
 <span class="kd">operation</span><span class="nc"> SubscribeForEvents</span>(<span class="vc">SubscribeForEventsInput</span>) <span class="nd">-&gt;</span> <span class="vc">SubscribeForEventsOutput</span>
 
 <span class="kd">structure</span><span class="nc"> SubscribeForEventsInput</span> {
@@ -441,6 +441,7 @@ JSON</div>
 }
 
 <span class="kd">structure</span><span class="nc"> SubscribeForEventsOutput</span> {
+    <span class="nd">@eventStream</span>
     <span class="nl">events:</span> <span class="vc">Event</span>,
 }
 
@@ -458,8 +459,7 @@ JSON</div>
             <span class="nt">&quot;SubscribeForEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;SubscribeForEventsInput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;smithy.mqtt#subscribe&quot;</span><span class="p">:</span> <span class="s2">&quot;events/{id}&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;outputEventStream&quot;</span><span class="p">:</span> <span class="s2">&quot;events&quot;</span>
+                <span class="nt">&quot;smithy.mqtt#subscribe&quot;</span><span class="p">:</span> <span class="s2">&quot;events/{id}&quot;</span>
             <span class="p">},</span>
             <span class="nt">&quot;SubscribeForEventsInput&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
@@ -475,7 +475,8 @@ JSON</div>
                 <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
                 <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;events&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Event&quot;</span>
+                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Event&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span>
@@ -619,13 +620,13 @@ MQTT protocol bindings.</p>
 <span class="kd">namespace</span><span class="nc"> smithy.mqtt</span>
 
 <span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;operation:not(-[output]-&gt;)&quot;</span>,
-       <span class="nl">conflicts:</span> [<span class="s2">&quot;smithy.mqtt#subscribe&quot;</span>, <span class="s2">&quot;inputEventStream&quot;</span>])
+       <span class="nl">conflicts:</span> [<span class="s2">&quot;smithy.mqtt#subscribe&quot;</span>])
 <span class="nd">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])
 <span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span>
 <span class="nd">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)
 <span class="kd">string</span><span class="nc"> publish</span>
 
-<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;operation[trait|outputEventStream]&quot;</span>,
+<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;operation:test(-[output]-&gt; structure &gt; member[trait|eventStream])&quot;</span>,
        <span class="nl">conflicts:</span> [<span class="s2">&quot;smithy.mqtt#publish&quot;</span>])
 <span class="nd">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])
 <span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span>

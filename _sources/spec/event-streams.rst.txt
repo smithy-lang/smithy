@@ -4,17 +4,16 @@
 Event stream specification
 ==========================
 
-An event stream is an abstraction that allows messages to be sent
-asynchronously over a persistent connection between a client and server.
-Event streams support both duplex and simplex streaming. The serialization
-format and framing of messages sent over event streams is defined by the
-:ref:`protocol <protocols-trait>` of a service.
+An event stream is an abstraction that allows multiple messages to be sent
+asynchronously between a client and server. Event streams support both duplex
+and simplex streaming. The serialization format and framing of messages sent
+over event streams is defined by the :ref:`protocol <protocols-trait>` of a
+service.
 
-Event streams are defined on operations using the
-:ref:`inputEventStream-trait` and :ref:`outputEventStream-trait`. These traits
-reference a member of the input or output of an operation that targets the
-shape sent over the event stream. A member that targets a structure is a
-*single-event event stream*, and a member that targets a union is a
+An operation can send an event stream as part of its input or output. An
+event stream is formed when an input or output member of an operation is
+marked with the :ref:`eventStream-trait`. A member that targets a structure
+is a *single-event event stream*, and a member that targets a union is a
 *multi-event event stream*.
 
 .. contents:: Table of contents
@@ -30,14 +29,12 @@ Single-event event streams
 --------------------------
 
 A *single-event event stream* is an event stream that streams zero or more
-instances of a specific structure shape. It is formed when the
-``inputEventStream`` or ``outputEventStream`` trait references an input or
-output member that targets a structure.
+instances of a specific structure shape.
 
 .. _single-event-input-eventstream:
 
 The following example defines an operation that uses a single-event event
-stream in its input by referencing a member that targets a structure:
+stream in its input:
 
 .. tabs::
 
@@ -45,11 +42,12 @@ stream in its input by referencing a member that targets a structure:
 
         namespace smithy.example
 
-        @inputEventStream("messages")
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
             room: String,
+
+            @eventStream
             messages: Message,
         }
 
@@ -65,8 +63,7 @@ stream in its input by referencing a member that targets a structure:
                 "shapes": {
                     "PublishMessages": {
                         "type": "operation",
-                        "input": "PublishMessagesInput",
-                        "inputEventStream": "messages"
+                        "input": "PublishMessagesInput"
                     },
                     "PublishMessagesInput": {
                         "type": "structure",
@@ -75,7 +72,8 @@ stream in its input by referencing a member that targets a structure:
                                 "target": "String"
                             },
                             "messages": {
-                                "target": "Message"
+                                "target": "Message",
+                                "eventStream": true
                             }
                         }
                     },
@@ -102,10 +100,10 @@ stream in its output:
 
         namespace smithy.example
 
-        @outputEventStream("movements")
         operation SubscribeToMovements() -> SubscribeToMovementsOutput
 
         structure SubscribeToMovementsOutput {
+            @eventStream
             movements: Movement,
         }
 
@@ -122,14 +120,14 @@ stream in its output:
                 "shapes": {
                     "SubscribeToMovements": {
                         "type": "operation",
-                        "output": "SubscribeToMovementsOutput",
-                        "outputEventStream": "movements"
+                        "output": "SubscribeToMovementsOutput"
                     },
                     "SubscribeToMovementsOutput": {
                         "type": "structure",
                         "members": {
                             "movements": {
-                                "target": "Movement"
+                                "target": "Movement",
+                                "eventStream": true
                             }
                         }
                     },
@@ -147,6 +145,9 @@ stream in its output:
                 }
             }
         }
+
+The name of the event sent over a single-event event stream is the name
+of the member that is targeted by the ``eventStream`` trait.
 
 
 Single-event client behavior
@@ -168,12 +169,11 @@ Multi-event event streams
 -------------------------
 
 A *multi-event event stream* is an event stream that streams any number of
-named event structure shapes defined by a union. It is formed when an
-``inputEventStream`` or ``outputEventStream`` trait references an input or
-output member that targets a union. Each member of the targeted union MUST
-target a structure shape. The member names of the
-union define the name that is used to identify each event that is sent over
-the event stream.
+named event structure shapes defined by a union. It is formed when the
+``eventStream`` trait is applied to a member that targets a union. Each
+member of the targeted union MUST target a structure shape. The member
+names of the union define the name that is used to identify each event
+that is sent over the event stream.
 
 .. _multi-event-input-eventstream:
 
@@ -186,11 +186,12 @@ stream in its input by referencing a member that targets a union:
 
         namespace smithy.example
 
-        @inputEventStream("messages")
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
             room: String,
+
+            @eventStream
             messages: PublishEvents,
         }
 
@@ -213,8 +214,7 @@ stream in its input by referencing a member that targets a union:
                 "shapes": {
                     "PublishMessages": {
                         "type": "operation",
-                        "input": "PublishMessagesInput",
-                        "inputEventStream": "messages"
+                        "input": "PublishMessagesInput"
                     },
                     "PublishMessagesInput": {
                         "type": "structure",
@@ -223,7 +223,8 @@ stream in its input by referencing a member that targets a union:
                                 "target": "String"
                             },
                             "messages": {
-                                "target": "PublishEvents"
+                                "target": "PublishEvents",
+                                "eventStream": true
                             }
                         }
                     },
@@ -257,10 +258,10 @@ stream in its output:
 
         namespace smithy.example
 
-        @outputEventStream("movements")
         operation SubscribeToMovements() -> SubscribeToMovementsOutput
 
         structure SubscribeToMovementsOutput {
+            @eventStream
             movements: MovementEvents,
         }
 
@@ -283,14 +284,14 @@ stream in its output:
                 "shapes": {
                     "SubscribeToMovements": {
                         "type": "operation",
-                        "output": "SubscribeToMovementsOutput",
-                        "outputEventStream": "movements"
+                        "output": "SubscribeToMovementsOutput"
                     },
                     "SubscribeToMovementsOutput": {
                         "type": "structure",
                         "members": {
                             "movements": {
-                                "target": "Message"
+                                "target": "Message",
+                                "eventStream": true
                             }
                         }
                     },
@@ -342,10 +343,10 @@ on the name of an event. For example, given the following event stream,
 
     namespace smithy.example
 
-    @outputEventStream("movements")
     operation SubscribeToEvents() -> SubscribeToEventsOutput
 
     structure SubscribeToEventsOutput {
+        @eventStream
         events: Events,
     }
 
@@ -372,10 +373,9 @@ Initial messages
 ----------------
 
 An *initial message* is comprised of the top-level input or output members
-of an operation that are not referenced by the ``inputEventStream`` or
-``outputEventStream`` traits. Initial messages provide an opportunity for a
-client or server to provide metadata about an event stream before transmitting
-events.
+of an operation that are not targeted by the ``eventStream`` trait. Initial
+messages provide an opportunity for a client or server to provide metadata
+about an event stream before transmitting events.
 
 .. important::
 
@@ -389,11 +389,10 @@ Initial-request
 ===============
 
 An *initial-request* is an initial message that can be sent from a client to
-a server for an operation marked with the ``inputEventStream`` trait. The
-structure of an initial-request is the input of an operation with no value
-provided for the event stream member referenced by the ``inputEventStream``
-trait. An initial-request, if sent, is sent from a client to a server before
-sending any event stream events.
+a server for an operation with an input event stream. The structure of an
+initial-request is the input of an operation with no value provided for the
+event stream member. An initial-request, if sent, is sent from a client to a
+server before sending any event stream events.
 
 When using :ref:`HTTP bindings <http-traits>`, initial-request fields are
 mapped to specific locations in the HTTP request such as headers or the
@@ -410,7 +409,6 @@ service, followed by the events sent in the payload of the HTTP message.
 
         namespace smithy.example
 
-        @inputEventStream("messages")
         @http(method: "POST", uri: "/messages/{room}")
         operation PublishMessages(PublishMessagesInput)
 
@@ -419,6 +417,7 @@ service, followed by the events sent in the payload of the HTTP message.
             room: String,
 
             @httpPayload
+            @eventStream
             messages: Message,
         }
 
@@ -435,7 +434,6 @@ service, followed by the events sent in the payload of the HTTP message.
                     "PublishMessages": {
                         "type": "operation",
                         "input": "PublishMessagesInput",
-                        "inputEventStream": "messages",
                         "http": {
                             "uri": "/messages/{room}",
                             "method": "POST"
@@ -450,7 +448,8 @@ service, followed by the events sent in the payload of the HTTP message.
                             },
                             "messages": {
                                 "target": "Message",
-                                "httpPayload": true
+                                "httpPayload": true,
+                                "eventStream": true
                             }
                         }
                     },
@@ -473,10 +472,9 @@ Initial-response
 ================
 
 An *initial-response* is an initial message that can be sent from a server
-to a client for an operation marked with the ``outputEventStream`` trait.
-The structure of an initial-response is the output of an operation with no
-value provided for the event stream member referenced by the
-``outputEventStream`` trait. An initial-response, if sent, is sent from the
+to a client for an operation with an output event stream. The structure of
+an initial-response is the output of an operation with no value provided for
+the event stream member. An initial-response, if sent, is sent from the
 server to the client before sending any event stream events.
 
 When using :ref:`HTTP bindings <http-traits>`, initial-response fields are
@@ -494,7 +492,6 @@ message.
 
         namespace smithy.example
 
-        @outputEventStream("messages")
         @http(method: "GET", uri: "/messages/{room}")
         operation SubscribeToMessages(SubscribeToMessagesInput) -> SubscribeToMessagesOutput
 
@@ -508,6 +505,7 @@ message.
             connectionLifetime: Integer,
 
             @httpPayload
+            @eventStream
             messages: Message,
         }
 
@@ -520,7 +518,6 @@ message.
                     "PublishMessages": {
                         "type": "operation",
                         "input": "PublishMessagesInput",
-                        "inputEventStream": "messages",
                         "http": {
                             "uri": "/messages/{room}",
                             "method": "POST"
@@ -544,7 +541,8 @@ message.
                             },
                             "messages": {
                                 "target": "Message",
-                                "httpPayload": true
+                                "httpPayload": true,
+                                "eventStream": true
                             }
                         }
                     }
@@ -665,46 +663,33 @@ based protocol, the event payload is serialized as a JSON object:
 Event stream traits
 -------------------
 
-.. _inputEventstream-trait:
+.. _eventStream-trait:
 
-``inputEventStream`` trait
+``eventStream`` trait
 ==========================
 
 Summary
-    Configures an operation to use an event stream for its input.
+    Configures a member of an operation input or output as an event stream.
 Trait selector
-    ``operation:test(-[input]->)``
+    ``operation -[input, output]-> structure > :test(member > :each(structure, union))``
 
-    An operation that defines an input shape.
+    An operation input or output member that targets a structure or union.
 Value type
-    String value that is the name of a member of the operation input
-    structure. The referenced member MUST exist on the input structure
-    of the operation, MUST NOT be marked as required, and MUST target a
-    structure or a union that targets only structure shapes.
+    Annotation trait.
+Conflicts with
+    :ref:`required-trait`
 Examples
     * :ref:`Single-event event stream example <single-event-input-eventstream>`
     * :ref:`Multi-event event stream example <multi-event-input-eventstream>`
 
+A structure that contains a member marked with the ``eventStream`` trait
+can only be referenced by operation input or output shapes. Structures
+that contain an event stream cannot be referenced by members or used as
+part of an :ref:`error <error-trait>`.
 
-.. _outputEventStream-trait:
-
-``outputEventStream`` trait
-===========================
-
-Summary
-    Configures an operation to use an event stream for its output.
-Trait selector
-    ``operation:test(-[output]->)``
-
-    An operation that defines an output shape.
-Value type
-    String value that is the name of a member of the operation output
-    structure. The referenced member MUST exist on the output structure
-    of the operation, MUST NOT be marked as required, and MUST target
-    a structure or a union that targets only structure shapes.
-Examples
-    * :ref:`Single-event event stream example <single-event-output-eventstream>`
-    * :ref:`Multi-event event stream example <multi-event-output-eventstream>`
+The member targeted by the ``eventStream`` trait MUST NOT be marked as
+required because the input or output structure also functions as an
+initial-message.
 
 
 .. _eventheader-trait:

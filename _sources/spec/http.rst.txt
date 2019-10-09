@@ -921,11 +921,10 @@ Event streams
 
 When using :ref:`event streams <event-streams>` and HTTP bindings, the
 :ref:`httpPayload <httppayload-trait>` trait MUST be applied to any input or
-output member referenced by the :ref:`inputeventstream-trait` and
-:ref:`outputeventstream-trait` of an operation.
+output member targeted by the :ref:`eventStream-trait`.
 
-The following example defines an operation that uses an ``inputEventStream`` and
-HTTP bindings:
+The following example defines an operation that uses an input event stream
+and HTTP bindings:
 
 .. tabs::
 
@@ -933,12 +932,12 @@ HTTP bindings:
 
         namespace smithy.example
 
-        @inputEventStream("messages")
         @http(method: "POST", uri: "/messages")
         operation PublishMessages(PublishMessagesInput)
 
         structure PublishMessagesInput {
             @httpPayload
+            @eventStream
             messages: Message,
         }
 
@@ -955,13 +954,16 @@ HTTP bindings:
                     "PublishMessages": {
                         "type": "operation",
                         "input": "PublishMessagesInput",
-                        "inputEventStream": "messages",
                         "http": { "uri": "/messages", "method": "POST" }
                     },
                     "PublishMessagesInput": {
                         "type": "structure",
                         "members": {
-                            "messages": { "target": "Message", "httpPayload": true }
+                            "messages": {
+                                "target": "Message",
+                                "httpPayload": true,
+                                "eventStream": true
+                            }
                         }
                     },
                     "Message": {
@@ -974,19 +976,19 @@ HTTP bindings:
             }
         }
 
-The following is **invalid** because the operation has the ``http`` trait,
-it has the ``inputEventStream`` trait, and the ``inputEventStream`` trait
-references a member that is not marked with the ``httpPayload`` trait:
+The following is **invalid** because the operation has the ``http`` trait
+and an input member is marked with the ``eventStream`` trait but not
+marked with the ``httpPayload`` trait:
 
 .. code-block:: smithy
 
     namespace smithy.example
 
-    @inputEventStream("invalid")
     @http(method: "POST", uri: "/messages")
     operation InvalidOperation(InvalidOperationInput)
 
     structure InvalidOperationInput {
+        @eventStream
         invalid: Message, // <-- Missing the @httpPayload trait
     }
 

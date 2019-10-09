@@ -902,6 +902,335 @@ literal string ``UNSIGNED-PAYLOAD`` is used when constructing a
 `x-amz-content-sha256`_ header when sending an HTTP request.
 
 
+.. _endpoint-discovery:
+
+-------------------------
+Client Endpoint Discovery
+-------------------------
+
+Services running on cellular infrastructure may wish to enable automatic
+endpoint discovery in clients. The AWS SDKs provide functionality to
+automatically discover, cache, and connect to service endpoints. The
+following traits provide the information needed to perform this.
+
+
+.. _client-endpoint-discovery-trait:
+
+``aws.api#clientEndpointDiscovery`` trait
+=========================================
+
+Trait summary
+    The ``clientEndpointDiscovery`` trait indicates the operation that the
+    client should use to discover endpoints for the service and the error
+    returned when the endpoint being accessed has expired.
+Trait selector
+    ``service``
+Trait value
+    ``object``
+
+The ``aws.api#clientEndpointDiscovery`` trait is an object that supports the
+following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - operation
+      - ``shapeId``
+      - **REQUIRED** The operation used to discover endpoints for the service. The
+        operation MUST be bound to the service.
+    * - error
+      - ``shapeId``
+      - **REQUIRED** An error shape which indicates to a client that an endpoint they are
+        using is no longer valid. This error MUST be bound to any operation marked with
+        the ``clientDiscoveredEndpoint`` trait that is bound to the service.
+
+The input of the operation targeted by ``operation`` MAY contain none, either,
+or both of the following members:
+
+- a ``string`` member named ``Operation``
+- a ``map`` member named ``Identifiers`` whose key and value types are
+  ``string`` types.
+
+The operation output MUST contain a member ``Endpoints`` that is a list of
+``Endpoint`` structures, which are made up of two members:
+
+- a ``string`` member named ``Address``
+- a ``long`` member named ``CachePeriodInMinutes``
+
+
+.. _client-discovered-endpoint-trait:
+
+``aws.api#clientDiscoveredEndpoint`` trait
+==========================================
+
+Trait summary
+    The ``clientDiscoveredEndpoint`` trait indicates that the target operation
+    should use the client's endpoint discovery logic.
+Trait selector
+    ``operation``
+Trait value
+    ``object``
+
+The ``aws.api#clientDiscoveredEndpoint`` trait is an object that supports the
+following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - required
+      - ``boolean``
+      - This field denotes whether or not this operation requires the use of a
+        specific endpoint. If this field is false, the standard regional
+        endpoint for a service can handle this request. The client will start
+        sending requests to the standard regional endpoint while working to
+        discover a more specific endpoint.
+
+
+.. _client-endpoint-discovery-id-trait:
+
+``aws.clientEndpointDiscoveryId`` trait
+=======================================
+
+Summary
+    The ``clientEndpointDiscoveryId`` trait indicates which member(s) of the
+    operation input should be used to discover an endpoint for the service.
+Trait selector
+    ``operation[trait|aws.api#clientDiscoveredEndpoint] -[input]-> structure > :test(member[trait|required] > string)``
+Trait value
+    Annotation trait
+
+
+Example Model
+=============
+
+The following model illustrates an API that uses a ``DescribeEndpoints``
+operation to perform endpoint discovery for a ``GetObject`` operation
+using an ``clientEndpointDiscoveryId``.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @aws.api#clientEndpointDiscovery(
+            operation: DescribeEndpoints,
+            error: InvalidEndpointError,
+        )
+        service FooService {
+          version: "2019-09-10",
+          operations: [DescribeEndpoints, GetObject]
+        }
+
+        operation DescribeEndpoints(DescribeEndpointsInput)
+            -> DescribeEndpointsOutput
+            errors [InvalidEndpointError]
+
+        @error("client")
+        @httpError(421)
+        structure InvalidEndpointError {}
+
+        structure DescribeEndpointsInput {
+          Operation: String,
+          Identifiers: Identifiers,
+        }
+
+        map Identifiers {
+          key: String,
+          value: String
+        }
+
+        structure DescribeEndpointsOutput {
+          Endpoints: Endpoints,
+        }
+
+        list Endpoints {
+          member: Endpoint
+        }
+
+        structure Endpoint {
+          Address: String,
+          CachePeriodInMinutes: Long,
+        }
+
+        @aws.api#clientDiscoveredEndpoint(required: true)
+        operation GetObject(GetObjectInput) -> GetObjectOutput
+
+        structure GetObjectInput {
+          @clientEndpointDiscoveryId
+          @required
+          Id: String,
+        }
+
+        structure GetObjectOutput {
+          Object: Blob,
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.4.0",
+            "ns.foo": {
+                "shapes": {
+                    "FooService": {
+                        "type": "service",
+                        "version": "2019-09-10",
+                        "aws.api#clientEndpointDiscovery": {
+                            "operation": "ns.foo#DescribeEndpoints",
+                            "error": "InvalidEndpointError"
+                        },
+                        "operations": [
+                            "DescribeEndpoints",
+                            "GetObject"
+                        ]
+                    },
+                    "DescribeEndpoints": {
+                        "type": "operation",
+                        "input": "DescribeEndpointsInput",
+                        "output": "DescribeEndpointsOutput"
+                    },
+                    "DescribeEndpointsInput": {
+                        "type": "structure",
+                        "members": {
+                            "Operation": {
+                                "target": "String"
+                            },
+                            "Identifiers": {
+                                "target": "Identifiers"
+                            }
+                        }
+                    },
+                    "Identifiers": {
+                        "type": "map",
+                        "key": {
+                            "target": "String"
+                        },
+                        "value": {
+                            "target": "String"
+                        }
+                    },
+                    "DescribeEndpointsOutput": {
+                        "type": "structure",
+                        "members": {
+                            "Endpoints": {
+                                "target": "Endpoints"
+                            }
+                        }
+                    },
+                    "Endpoints": {
+                        "type": "list",
+                        "member": {
+                            "target": "Endpoint"
+                        }
+                    },
+                    "Endpoint": {
+                        "type": "structure",
+                        "members": {
+                            "Address": {
+                                "target": "String"
+                            },
+                            "CachePeriodInMinutes": {
+                                "target": "Long"
+                            }
+                        }
+                    },
+                    "GetObject": {
+                        "type": "operation",
+                        "input": "GetObjectInput",
+                        "output": "GetObjectOutput",
+                        "aws.api#clientDiscoveredEndpoint": {
+                            "required": true
+                        },
+                        "errors": ["InvalidEndpointError"]
+                    },
+                    "GetObjectInput": {
+                        "type": "structure",
+                        "members": {
+                            "Id": {
+                                "target": "String",
+                                "aws.api#clientEndpointDiscoveryId": true,
+                                "required": true
+                            }
+                        }
+                    },
+                    "GetObjectOutput": {
+                        "type": "structure",
+                        "members": {
+                            "Object": {
+                                "target": "Blob"
+                            }
+                        }
+                    },
+                    "InvalidEndpointError": {
+                        "type": "structure",
+                        "error": "client",
+                        "httpError": 421
+                    }
+                }
+            }
+        }
+
+Client Behavior
+===============
+
+When a client calls an operation which has the ``clientDiscoveredEndpoint``
+trait where ``required`` is set to ``true`` or where the client has explicitly
+enabled endpoint discovery, the client MUST attempt to perform endpoint
+discovery synchronously.
+
+When a client calls an operation which has the ``clientDiscoveredEndpoint``
+trait where ``required`` is set to ``false``, the client SHOULD attempt to
+perform endpoint discovery asynchronously.
+
+To perform endpoint discovery, the client MUST first make a request
+to the operation targeted by the value of ``operation`` on the service's
+``clientEndpointDiscovery`` trait or attempt to retrieve a previously cached
+response.
+
+When calling the endpoint operation, the client MUST provide the following
+parameters if they are in the endpoint operation's input shape:
+
+* ``Operation`` - the name of the client operation to be called.
+* ``Identifiers`` - a map of member name to member value of all
+  members in the client operation's input shape that have the
+  ``clientEndpointDiscoveryId`` trait.
+
+The client MUST then use an endpoint from the ``Endpoints`` list in the
+response. The client SHOULD prioritize endpoints by the order in which they
+appear in the list.
+
+Caching
+~~~~~~~
+
+In order to reduce the necessary number of calls needed, clients SHOULD cache
+the endpoints returned in the response. Clients SHOULD evict an endpoint from
+the cache after a number of minutes defined in the ``CachePeriodInMinutes``
+member of the ``Endpoint`` shape. Clients SHOULD attempt to refresh the cache
+before the final endpoint in the cache expires. Clients MAY choose to refresh
+the cache after cache period of the highest priority endpoint.
+
+If a call to refresh the cache fails, the client SHOULD continue to use the
+previous endpoint until the cache can be successfully refreshed, or until the
+service returns the error targeted by the ``error`` property of the service's
+``clientEndpointDiscovery`` trait.
+
+Cache keys MUST include the AWS Access Key ID used to make the request.
+Additionally, they MUST include the values of the ``Operation`` and
+``Identifiers`` members passed in with the call to the endpoint discovery
+operation if those members are present. Cache keys MAY include additional
+context.
+
+Clients SHOULD use an LRU cache implementation with an initial cache limit of
+1000 entries. The cache limit SHOULD be configurable by the client.
+
+Clients SHOULD scope the cache globally or to a specific client instance.
+
 .. _aws-authentication:
 
 --------------

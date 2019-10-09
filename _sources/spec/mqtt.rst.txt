@@ -181,7 +181,7 @@ Trait value
     reference top-level input members of the operation by case-sensitive
     member name.
 Conflicts with
-    :ref:`smithy.mqtt#subscribe-trait`, :ref:`inputEventStream-trait`
+    :ref:`smithy.mqtt#subscribe-trait`
 
 Input members that are not marked with the :ref:`smithy.mqtt#topicLabel-trait`
 come together to form the protocol-specific payload of the PUBLISH message.
@@ -268,9 +268,9 @@ Trait summary
     Binds an operation to send one or more SUBSCRIBE control packets
     via the MQTT protocol.
 Trait selector
-    ``operation[trait|outputEventStream]``
+    ``operation:test(-[output]-> structure -> member[trait|eventStream])``
 
-    *An operation with an outputEventStream trait*
+    *An operation with an output event stream*
 Trait value
     ``string`` value that is a valid :ref:`MQTT topic template <mqtt-topic-templates>`.
     The MQTT topic template MAY contain label placeholders that reference
@@ -282,12 +282,13 @@ No message is published when using an operation marked with the
 ``smithy.mqtt#subscribe`` trait. All members of the input of the operation
 MUST be marked with valid ``smithy.mqtt#topicLabel`` traits.
 
-The operation MUST have an :ref:`outputEventStream-trait`. The top-level
-output member referenced by this trait represents the message that is sent
-over the MQTT topic. An abstraction for automatically subscribing to and
-asynchronously receiving events SHOULD be provided by Smithy clients. When
-that abstraction is destroyed, the client SHOULD provide the ability to
-automatically UNSUBSCRIBE from topics.
+The operation MUST define an output shape that has an
+:ref:`eventStream <eventStream-trait>`. The top-level output member referenced
+by this trait represents the message(s) sent over the MQTT topic. An
+abstraction for automatically subscribing to and asynchronously receiving
+events SHOULD be provided by Smithy clients. When that abstraction is
+destroyed, the client SHOULD provide the ability to automatically UNSUBSCRIBE
+from topics.
 
 .. important::
 
@@ -306,7 +307,6 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
         use smithy.mqtt#topicLabel
 
         @subscribe("events/{id}")
-        @outputEventStream("events")
         operation SubscribeForEvents(SubscribeForEventsInput) -> SubscribeForEventsOutput
 
         structure SubscribeForEventsInput {
@@ -316,6 +316,7 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
         }
 
         structure SubscribeForEventsOutput {
+            @eventStream
             events: Event,
         }
 
@@ -332,8 +333,7 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
                     "SubscribeForEvents": {
                         "type": "operation",
                         "input": "SubscribeForEventsInput",
-                        "smithy.mqtt#subscribe": "events/{id}",
-                        "outputEventStream": "events"
+                        "smithy.mqtt#subscribe": "events/{id}"
                     },
                     "SubscribeForEventsInput": {
                         "type": "structure",
@@ -349,7 +349,8 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
                         "type": "structure",
                         "members": {
                             "events": {
-                                "target": "Event"
+                                "target": "Event",
+                                "eventStream": true
                             }
                         }
                     },
@@ -489,13 +490,13 @@ MQTT protocol bindings.
     namespace smithy.mqtt
 
     @trait(selector: "operation:not(-[output]->)",
-           conflicts: ["smithy.mqtt#subscribe", "inputEventStream"])
+           conflicts: ["smithy.mqtt#subscribe"])
     @tags(["diff.error.const"])
     // Matches one or more characters that are not "#" or "+".
     @pattern("^[^#+]+$")
     string publish
 
-    @trait(selector: "operation[trait|outputEventStream]",
+    @trait(selector: "operation:test(-[output]-> structure > member[trait|eventStream])",
            conflicts: ["smithy.mqtt#publish"])
     @tags(["diff.error.const"])
     // Matches one or more characters that are not "#" or "+".
@@ -504,7 +505,6 @@ MQTT protocol bindings.
 
     @trait(selector: "member[trait|required]:test(> :test(string, byte, short, integer, long, boolean, timestamp))")
     structure topicLabel {}
-
 
 
 .. _MQTT PUBLISH: http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718037

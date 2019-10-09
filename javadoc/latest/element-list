@@ -1,6 +1,7 @@
 software.amazon.smithy.aws.apigateway.openapi
 software.amazon.smithy.aws.traits
 software.amazon.smithy.aws.traits.apigateway
+software.amazon.smithy.aws.traits.clientendpointdiscovery
 software.amazon.smithy.aws.traits.iam
 software.amazon.smithy.build
 software.amazon.smithy.build.model
