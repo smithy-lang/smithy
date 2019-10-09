@@ -1,5 +1,28 @@
 # Smithy Changelog
 
+## 0.9.4 (2019-10-09)
+
+### Features
+
+* Add support for AWS Client Endpoint Discovery ([#165](https://github.com/awslabs/smithy/pull/165))
+* Refactor event streams to target members ([#171](https://github.com/awslabs/smithy/pull/171))
+* Add support for aliasing referenced `Symbol`s ([#168](https://github.com/awslabs/smithy/pull/168))
+* Add support for `Symbol`s to introduce dependencies ([#169](https://github.com/awslabs/smithy/pull/169))
+* Add ability to manually escape reserved words in `ReservedWordSymbolProvider` ([#174](https://github.com/awslabs/smithy/pull/174))
+* Add method to gather dependencies for `Symbol`s ([#170](https://github.com/awslabs/smithy/pull/170))
+* Add a caching `SymbolProvider` ([#167](https://github.com/awslabs/smithy/pull/167))
+* Improve the usability of `CodeWroter#openBlock` ([#175](https://github.com/awslabs/smithy/pull/175))
+* Improve the usability of `PluginContext` ([#181](https://github.com/awslabs/smithy/pull/181))
+
+### Optimizations
+
+* Disable URLConnection cache in CLI ([#180](https://github.com/awslabs/smithy/pull/180))
+
+### Bug Fixes
+
+* Fix issue with generated authentication for CORS checks ([#179](https://github.com/awslabs/smithy/pull/179))
+* Set the `defaultTimestampFormat` to `epoch-seconds` for `aws.rest-json` protocols in OpenAPI ([#184](https://github.com/awslabs/smithy/pull/184))
+
 ## 0.9.3 (2019-09-16)
 
 ### Features
