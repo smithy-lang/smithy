@@ -302,7 +302,7 @@ import java.util.regex.Pattern;
  *
  * <pre>{@code
  * CodeWriter writer = CodeWriter.createDefault();
- * writer.onSection("example", text -> writer.write("Intercepted: " + text"));
+ * writer.onSection("example", text -> writer.write("Intercepted: " + text));
  * writer.pushState("example");
  * writer.write("Original contents");
  * writer.popState();
@@ -326,7 +326,7 @@ import java.util.regex.Pattern;
  *
  * <pre>{@code
  * CodeWriter writer = CodeWriter.createDefault();
- * writer.onSection("example", text -> writer.write("Intercepted: " + text"));
+ * writer.onSection("example", text -> writer.write("Intercepted: " + text));
  * writer.write("Leading text...${L@example}...Trailing text...", "foo");
  * System.out.println(writer.toString());
  * // Outputs: "Leading text...Intercepted: foo...Trailing text...\n"
@@ -535,8 +535,8 @@ public class CodeWriter {
             String result = getTrimmedPoppedStateContents(popped);
 
             if (popped.interceptors.containsKey(popped.sectionName)) {
-                List<Consumer<String>> interceptors = popped.interceptors.get(popped.sectionName);
-                for (Consumer<String> interceptor : interceptors) {
+                List<Consumer<Object>> interceptors = popped.interceptors.get(popped.sectionName);
+                for (Consumer<Object> interceptor : interceptors) {
                     result = expandSection("__" + popped.sectionName, result, interceptor);
                 }
             }
@@ -602,7 +602,7 @@ public class CodeWriter {
      * @param interceptor The function to intercept with.
      * @return Returns the CodeWriter.
      */
-    public CodeWriter onSection(String sectionName, Consumer<String> interceptor) {
+    public CodeWriter onSection(String sectionName, Consumer<Object> interceptor) {
         currentState.putInterceptor(sectionName, interceptor);
         return this;
     }
@@ -1032,7 +1032,7 @@ public class CodeWriter {
     }
 
     // Used only by CodeFormatter to expand inline argument sections.
-    String expandSection(String sectionName, String defaultContent, Consumer<String> writerConsumer) {
+    String expandSection(String sectionName, String defaultContent, Consumer<Object> writerConsumer) {
         StringBuilder buffer = new StringBuilder();
         pushState(sectionName);
         currentState.isInline = true;
@@ -1065,7 +1065,7 @@ public class CodeWriter {
         private boolean copiedContext = false;
 
         /** The interceptors map implements a simple copy on write pattern. */
-        private Map<String, List<Consumer<String>>> interceptors = MapUtils.of();
+        private Map<String, List<Consumer<Object>>> interceptors = MapUtils.of();
         private boolean copiedInterceptors = false;
 
         State() {}
@@ -1105,7 +1105,7 @@ public class CodeWriter {
             }
         }
 
-        void putInterceptor(String section, Consumer<String> interceptor) {
+        void putInterceptor(String section, Consumer<Object> interceptor) {
             if (!copiedInterceptors) {
                 interceptors = new HashMap<>(interceptors);
                 copiedInterceptors = true;
