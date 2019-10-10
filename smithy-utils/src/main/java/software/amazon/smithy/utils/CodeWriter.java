@@ -494,7 +494,7 @@ public class CodeWriter {
      * @param sectionName Name of the section to set on the state.
      * @return Returns the code writer.
      */
-    public final CodeWriter pushState(String sectionName) {
+    public CodeWriter pushState(String sectionName) {
         currentState = new State(currentState);
         states.push(currentState);
 
@@ -523,7 +523,7 @@ public class CodeWriter {
      * @return Returns the CodeWriter.
      * @throws IllegalStateException if there a no states to pop.
      */
-    public final CodeWriter popState() {
+    public CodeWriter popState() {
         if (states.size() == 1) {
             throw new IllegalStateException("Cannot pop CodeWriter state because at the root state");
         }
