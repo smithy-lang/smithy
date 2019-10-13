@@ -497,4 +497,12 @@ public class CodeWriterTest {
 
         assertThat(result, equalTo("public 1 2 3 4 5 {\n    hi();\n}\n"));
     }
+
+    @Test
+    public void poppedSectionsEscapeDollars() {
+        CodeWriter writer = CodeWriter.createDefault();
+        String result = writer.pushState("foo").write("$$Hello").popState().toString();
+
+        assertThat(result, equalTo("$Hello\n"));
+    }
 }
