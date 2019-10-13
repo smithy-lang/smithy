@@ -551,7 +551,8 @@ public class CodeWriter {
             } else {
                 // Sections can be added that are just placeholders. In those cases,
                 // do not write anything unless the section emitted a non-empty string.
-                writeOptional(result);
+                // Note that this has already been formatted, so escape "$".
+                writeOptional(result.replace("$", "$$"));
             }
         }
 
