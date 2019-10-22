@@ -100,7 +100,7 @@ Summary
 Trait selector
     ``:test(collection, member:of(structure) > collection)``
 
-    *Any list or set*
+    *Any list or set or any structure member that targets a list or set*
 Value type
     Annotation trait
 
