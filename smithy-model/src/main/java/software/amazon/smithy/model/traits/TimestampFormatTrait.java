@@ -35,9 +35,57 @@ public final class TimestampFormatTrait extends StringTrait {
         this(value, SourceLocation.NONE);
     }
 
+    /**
+     * Gets the {@code timestampFormat} value as a {@code Format} enum.
+     *
+     * @return Returns the {@code Format} enum.
+     */
+    public Format getFormat() {
+        return Format.fromString(getValue());
+    }
+
     public static final class Provider extends StringTrait.Provider<TimestampFormatTrait> {
         public Provider() {
             super(ID, TimestampFormatTrait::new);
+        }
+    }
+
+    /**
+     * The known {@code timestampFormat} values.
+     */
+    public enum Format {
+        EPOCH_SECONDS(TimestampFormatTrait.EPOCH_SECONDS),
+        DATE_TIME(TimestampFormatTrait.DATE_TIME),
+        HTTP_DATE(TimestampFormatTrait.HTTP_DATE),
+        UNKNOWN("unknown");
+
+        private String value;
+
+        Format(String value) {
+            this.value = value;
+        }
+
+        /**
+         * Create a {@code Format} from a string that would appear in a model.
+         *
+         * <p>Any unknown value is returned as {@code Unknown}.
+         *
+         * @param value Value from a trait or model.
+         * @return Returns the Format enum value.
+         */
+        public static Format fromString(String value) {
+            for (Format format : values()) {
+                if (format.value.equals(value)) {
+                    return format;
+                }
+            }
+
+            return UNKNOWN;
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
     }
 }

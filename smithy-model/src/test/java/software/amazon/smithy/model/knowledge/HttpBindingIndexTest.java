@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.pattern.UriPattern;
+import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -42,6 +43,7 @@ import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 
 public class HttpBindingIndexTest {
 
@@ -209,7 +211,7 @@ public class HttpBindingIndexTest {
     @Test
     public void checksForHttpRequestAndResponseBindings() {
         Shape shape = MemberShape.builder()
-                .target("smithy.api#String")
+                .target("smithy.api#Timestamp")
                 .id("smithy.example#Baz$bar")
                 .addTrait(new HttpLabelTrait(SourceLocation.NONE))
                 .build();
@@ -221,7 +223,7 @@ public class HttpBindingIndexTest {
     @Test
     public void checksForHttpResponseBindings() {
         Shape shape = MemberShape.builder()
-                .target("smithy.api#String")
+                .target("smithy.api#Timestamp")
                 .id("smithy.example#Baz$bar")
                 .addTrait(new HttpHeaderTrait("hello", SourceLocation.NONE))
                 .build();
@@ -269,5 +271,81 @@ public class HttpBindingIndexTest {
     private static MemberShape expectMember(Model model, String id) {
         ShapeId shapeId = ShapeId.from(id);
         return model.getShapeIndex().getShape(shapeId).get().asMemberShape().get();
+    }
+
+    @Test
+    public void usesTimestampFormatMemberTraitToDetermineFormat() {
+        MemberShape member = MemberShape.builder()
+                .id("foo.bar#Baz$member")
+                .target("smithy.api#Timestamp")
+                .addTrait(new TimestampFormatTrait(TimestampFormatTrait.EPOCH_SECONDS))
+                .build();
+        Model model = Model.assembler()
+                .addShape(member)
+                .addShape(ListShape.builder().member(member).id("foo.bar#Baz").build())
+                .assemble()
+                .unwrap();
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        TimestampFormatTrait.Format format = index.determineTimestampFormat(
+                member, HttpBinding.Location.HEADER, TimestampFormatTrait.Format.DATE_TIME);
+
+        assertThat(format, equalTo(TimestampFormatTrait.Format.EPOCH_SECONDS));
+    }
+
+    @Test
+    public void headerLocationUsesHttpDateTimestampFormat() {
+        MemberShape member = MemberShape.builder()
+                .id("foo.bar#Baz$member")
+                .target("smithy.api#Timestamp")
+                .build();
+        Model model = Model.assembler()
+                .addShape(member)
+                .addShape(ListShape.builder().member(member).id("foo.bar#Baz").build())
+                .assemble()
+                .unwrap();
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+
+        assertThat(index.determineTimestampFormat(
+                member, HttpBinding.Location.HEADER, TimestampFormatTrait.Format.EPOCH_SECONDS),
+                   equalTo(TimestampFormatTrait.Format.HTTP_DATE));
+    }
+
+    @Test
+    public void queryAndLabelLocationUsesDateTimeTimestampFormat() {
+        MemberShape member = MemberShape.builder()
+                .id("foo.bar#Baz$member")
+                .target("smithy.api#Timestamp")
+                .build();
+        Model model = Model.assembler()
+                .addShape(member)
+                .addShape(ListShape.builder().member(member).id("foo.bar#Baz").build())
+                .assemble()
+                .unwrap();
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+
+        assertThat(index.determineTimestampFormat(
+                member, HttpBinding.Location.QUERY, TimestampFormatTrait.Format.EPOCH_SECONDS),
+                   equalTo(TimestampFormatTrait.Format.DATE_TIME));
+        assertThat(index.determineTimestampFormat(
+                member, HttpBinding.Location.LABEL, TimestampFormatTrait.Format.EPOCH_SECONDS),
+                   equalTo(TimestampFormatTrait.Format.DATE_TIME));
+    }
+
+    @Test
+    public void otherLocationsUseDefaultTimestampFormat() {
+        MemberShape member = MemberShape.builder()
+                .id("foo.bar#Baz$member")
+                .target("smithy.api#Timestamp")
+                .build();
+        Model model = Model.assembler()
+                .addShape(member)
+                .addShape(ListShape.builder().member(member).id("foo.bar#Baz").build())
+                .assemble()
+                .unwrap();
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+
+        assertThat(index.determineTimestampFormat(
+                member, HttpBinding.Location.DOCUMENT, TimestampFormatTrait.Format.EPOCH_SECONDS),
+                   equalTo(TimestampFormatTrait.Format.EPOCH_SECONDS));
     }
 }
