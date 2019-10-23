@@ -41,6 +41,7 @@ import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -218,6 +219,39 @@ public final class HttpBindingIndex implements KnowledgeIndex {
         return responseBindings.get(id).stream()
                 .filter(binding -> binding.getLocation() == bindingLocation)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Determines the appropriate timestamp format for a member shape bound to
+     * a specific location.
+     *
+     * @param member Member to derive the timestamp format.
+     * @param location Location the member is bound to.
+     * @param defaultFormat The format to use for the body or a default.
+     * @return Returns the determined timestamp format.
+     */
+    public TimestampFormatTrait.Format determineTimestampFormat(
+            ToShapeId member,
+            HttpBinding.Location location,
+            TimestampFormatTrait.Format defaultFormat
+    ) {
+        return index.getShape(member.toShapeId())
+                .flatMap(Shape::asMemberShape)
+                // Use the timestampFormat trait on the member or target if present.
+                .flatMap(shape -> shape.getMemberTrait(index, TimestampFormatTrait.class))
+                .map(TimestampFormatTrait::getFormat)
+                .orElseGet(() -> {
+                    // Determine the format based on the location.
+                    switch (location) {
+                        case HEADER:
+                            return TimestampFormatTrait.Format.HTTP_DATE;
+                        case QUERY:
+                        case LABEL:
+                            return TimestampFormatTrait.Format.DATE_TIME;
+                        default:
+                            return defaultFormat;
+                    }
+                });
     }
 
     /**
