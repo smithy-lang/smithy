@@ -98,9 +98,9 @@ Summary
     Moves serialized collection members from their collection element to that
     of the collection's container.
 Trait selector
-    ``collection``
+    ``:test(collection, member:of(structure) > collection)``
 
-    *Any list or set*
+    *Any list or set or any structure member that targets a list or set*
 Value type
     Annotation trait
 

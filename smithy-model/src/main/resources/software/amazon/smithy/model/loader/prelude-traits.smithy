@@ -148,7 +148,7 @@ structure xmlAttribute {}
 
 /// Moves serialized collection members from their collection element to that of
 /// the collection's container.
-@trait(selector: "collection")
+@trait(selector: ":test(collection, member:of(structure) > collection)")
 @tags(["diff.error.const"])
 structure xmlFlattened {}
 
