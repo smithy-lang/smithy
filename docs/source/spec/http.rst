@@ -519,7 +519,7 @@ Serialization rules:
 Restricted HTTP headers
 -----------------------
 
-Various HTTP headers are not allowed for the ``httpHeader`` and
+Various HTTP headers are highly discouraged for the ``httpHeader`` and
 ``httpPrefixHeaders`` traits.
 
 .. list-table::

@@ -21,25 +21,55 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Validates that httpHeader traits are case-insensitively unique.
  */
 public final class HttpHeaderTraitValidator extends AbstractValidator {
 
+    private static final Set<String> BLACKLIST = SetUtils.of(
+            "authorization",
+            "connection",
+            "content-length",
+            "expect",
+            "host",
+            "max-forwards",
+            "proxy-authenticate",
+            "server",
+            "te",
+            "trailer",
+            "transfer-encoding",
+            "upgrade",
+            "user-agent",
+            "www-authenticate",
+            "x-forwarded-for");
+
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(StructureShape.class)
+        List<ValidationEvent> events = model.getShapeIndex().shapes(StructureShape.class)
                 .flatMap(shape -> validateStructure(shape).stream())
                 .collect(Collectors.toList());
+
+        events.addAll(model.getShapeIndex().shapes(MemberShape.class)
+                .flatMap(member -> Trait.flatMapStream(member, HttpHeaderTrait.class))
+                .filter(pair -> BLACKLIST.contains(pair.getRight().getValue().toLowerCase(Locale.US)))
+                .map(pair -> danger(pair.getLeft(), String.format(
+                        "httpHeader cannot be set to `%s`", pair.getRight().getValue()
+                )))
+                .collect(Collectors.toList()));
+
+        return events;
     }
 
     private List<ValidationEvent> validateStructure(StructureShape structure) {
