@@ -13,6 +13,18 @@
           "uri": "http://foo.com"
         }
       },
+      "ValidNamespace2": {
+        "type": "structure",
+        "members": {
+          "a": {
+            "target": "String"
+          }
+        },
+        "smithy.api#xmlNamespace": {
+          "uri": "http://www.w3.org/2001/XMLSchema-instance",
+          "prefix": "xsi"
+        }
+      },
       "InvalidNamespace": {
         "type": "structure",
         "members": {

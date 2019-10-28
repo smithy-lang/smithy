@@ -252,6 +252,9 @@ The ``xmlNamespace`` trait is an object that contains the following properties:
     * - uri
       - ``string`` value containing a valid URI
       - **Required**. The namespace URI for scoping this XML element.
+    * - prefix
+      - ``string`` value
+      - The prefix for elements from this namespace.
 
 Given the following structure definition,
 
@@ -304,6 +307,62 @@ following document:
     <MyStructure xmlns="http//foo.com">
         <foo>abc</foo>
         <bar>def</bar>
+    </MyStructure>
+
+Given the following definition with a prefix:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @xmlNamespace(uri: "http://foo.com", prefix: "bar")
+        structure MyStructure {
+            foo: String,
+            @xmlName("baz:bar")
+            bar: String,
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.4.0",
+            "smithy.example": {
+                "shapes": {
+                    "MyStructure": {
+                        "type": "structure",
+                        "members": {
+                            "foo": {
+                                "target": "String"
+                            },
+                            "bar": {
+                                "target": "String",
+                                "xmlName": "baz:bar"
+                            }
+                        },
+                        "xmlNamespace": {
+                            "uri": "http://foo.com",
+                            "prefix": "baz"
+                        }
+                    }
+                }
+            }
+        }
+
+and the following values provided for ``MyStructure``,
+
+::
+
+    "foo" = "abc"
+    "bar" = "def"
+
+the XML representation of the value would be serialized with the
+following document:
+
+.. code-block:: xml
+
+    <MyStructure xmlns:baz="http//foo.com">
+        <foo>abc</foo>
+        <baz:bar>def</baz:bar>
     </MyStructure>
 
 

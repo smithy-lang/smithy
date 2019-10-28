@@ -166,6 +166,9 @@ structure xmlNamespace {
     /// The namespace URI for scoping this XML element.
     @required
     uri: NonEmptyString,
+    /// The prefix for the given namespace.
+    @pattern("^[a-zA-Z_][a-zA-Z_0-9-]*$")
+    prefix: NonEmptyString,
 }
 
 @private
