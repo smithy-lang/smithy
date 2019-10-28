@@ -142,7 +142,7 @@ final class CodeFormatter {
         expectConsistentRelativePositionals(state, state.relativeIndex <= 0);
         state.relativeIndex = -1;
         int startPosition = state.position;
-        while (state.next() && Character.isDigit(state.c())) {}
+        while (state.next() && Character.isDigit(state.c()));
         int index = Integer.parseInt(state.expression.substring(startPosition, state.position)) - 1;
 
         if (index < 0 || index >= state.args.length) {
