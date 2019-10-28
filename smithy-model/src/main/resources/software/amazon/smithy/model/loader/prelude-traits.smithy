@@ -156,7 +156,7 @@ structure xmlFlattened {}
 /// used in the model.
 @trait
 @tags(["diff.error.const"])
-@pattern("^[a-zA-Z_][a-zA-Z_0-9-]*$")
+@pattern("^[a-zA-Z_][a-zA-Z_0-9-]*(:[a-zA-Z_][a-zA-Z_0-9-]*)?$")
 string xmlName
 
 /// Adds an xmlns namespace definition URI to an XML element.

@@ -38,4 +38,17 @@ public class XmlNameTraitTest {
         assertThat(xmlNameTrait.getValue(), equalTo("Text"));
         assertThat(xmlNameTrait.toNode(), equalTo(node));
     }
+
+    @Test
+    public void loadsWithColonInValue() {
+        Node node = Node.from("xsi:type");
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        Optional<Trait> trait = provider.createTrait(ShapeId.from("smithy.api#xmlName"), ShapeId.from("ns.qux#foo"), node);
+
+        assertTrue(trait.isPresent());
+        assertThat(trait.get(), instanceOf(XmlNameTrait.class));
+        XmlNameTrait xmlNameTrait = (XmlNameTrait) trait.get();
+        assertThat(xmlNameTrait.getValue(), equalTo("xsi:type"));
+        assertThat(xmlNameTrait.toNode(), equalTo(node));
+    }
 }
