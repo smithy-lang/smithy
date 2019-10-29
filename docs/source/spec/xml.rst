@@ -221,9 +221,9 @@ following document:
     ``-``. Values for an ``xmlName`` adhere to the following ABNF.
 
 .. productionlist:: smithy
-    name           :(ALPHA / "_")
+    xml_identifier :(ALPHA / "_")
                    :*(ALPHA / DIGIT / "-" / "_")
-    xml_name       :name / (name ":" name)
+    xml_name       :xml_identifier / (xml_identifier ":" xml_identifier)
 
 
 .. _xmlNamespace-trait:
@@ -373,8 +373,8 @@ following document:
     ``-``. Values for ``prefix`` adhere to the following ABNF.
 
 .. productionlist:: smithy
-    prefix         :(ALPHA / "_")
-                   :*(ALPHA / DIGIT / "-" / "_")
+    xml_prefix      :(ALPHA / "_")
+                    :*(ALPHA / DIGIT / "-" / "_")
 
 .. _xml-examples:
 
