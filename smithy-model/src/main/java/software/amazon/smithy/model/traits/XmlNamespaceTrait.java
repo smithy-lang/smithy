@@ -70,11 +70,10 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
 
     @Override
     public Builder toBuilder() {
-        Builder traitBuilder = builder()
+        return builder()
                 .sourceLocation(getSourceLocation())
-                .uri(getUri());
-        getPrefix().ifPresent(traitBuilder::prefix);
-        return traitBuilder;
+                .uri(uri)
+                .prefix(prefix);
     }
 
     /**
@@ -92,7 +91,7 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
         }
 
         public Builder prefix(String prefix) {
-            this.prefix = Objects.requireNonNull(prefix);
+            this.prefix = prefix;
             return this;
         }
 
