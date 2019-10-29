@@ -221,8 +221,9 @@ following document:
     ``-``. Values for an ``xmlName`` adhere to the following ABNF.
 
 .. productionlist:: smithy
-    xml_name       :(ALPHA / "_")
+    name           :(ALPHA / "_")
                    :*(ALPHA / DIGIT / "-" / "_")
+    xml_name       :name / (name ":" name)
 
 
 .. _xmlNamespace-trait:
@@ -365,6 +366,15 @@ following document:
         <baz:bar>def</baz:bar>
     </MyStructure>
 
+.. note::
+
+    Values for the ``prefix`` option must start with a letter (lower/upper
+    case) or ``_``, followed by letters (lower/upper case), digits, ``_``, or
+    ``-``. Values for ``prefix`` adhere to the following ABNF.
+
+.. productionlist:: smithy
+    prefix         :(ALPHA / "_")
+                   :*(ALPHA / DIGIT / "-" / "_")
 
 .. _xml-examples:
 
