@@ -55,4 +55,21 @@ public class XmlNamespaceTraitTest {
 
         assertFalse(serialized.getMember("prefix").isPresent());
     }
+
+    @Test
+    public void loadsTraitWithPrefix() {
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        ObjectNode node = Node.objectNode()
+                .withMember("uri", Node.from("https://www.amazon.com"))
+                .withMember("prefix", Node.from("xsi"));
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#xmlNamespace"), ShapeId.from("ns.qux#foo"), node);
+        assertTrue(trait.isPresent());
+        assertThat(trait.get(), instanceOf(XmlNamespaceTrait.class));
+        XmlNamespaceTrait xmlNamespace = (XmlNamespaceTrait) trait.get();
+
+        assertThat(xmlNamespace.getUri(), equalTo("https://www.amazon.com"));
+        assertTrue(xmlNamespace.getPrefix().isPresent());
+        assertThat(xmlNamespace.getPrefix().get(), equalTo("xsi"));
+    }
 }

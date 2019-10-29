@@ -156,7 +156,7 @@ structure xmlFlattened {}
 /// used in the model.
 @trait
 @tags(["diff.error.const"])
-@pattern("^[a-zA-Z_][a-zA-Z_0-9-]*$")
+@pattern("^[a-zA-Z_][a-zA-Z_0-9-]*(:[a-zA-Z_][a-zA-Z_0-9-]*)?$")
 string xmlName
 
 /// Adds an xmlns namespace definition URI to an XML element.
@@ -166,6 +166,9 @@ structure xmlNamespace {
     /// The namespace URI for scoping this XML element.
     @required
     uri: NonEmptyString,
+    /// The prefix for the given namespace.
+    @pattern("^[a-zA-Z_][a-zA-Z_0-9-]*$")
+    prefix: NonEmptyString,
 }
 
 @private
