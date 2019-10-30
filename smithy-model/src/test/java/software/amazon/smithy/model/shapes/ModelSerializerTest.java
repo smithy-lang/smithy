@@ -149,4 +149,52 @@ public class ModelSerializerTest {
 
         assertFalse(serialized.getMember("smithy.api").isPresent());
     }
+
+    @Test
+    public void serializesAbsoluteShapeIdsOnlyWhenNeeded() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("test-model.json"))
+                .assemble()
+                .unwrap();
+        ModelSerializer serializer = ModelSerializer.builder().build();
+        ObjectNode serialized = serializer.serialize(model);
+
+        ObjectNode resourceWithRelativeIds = serialized.expectObjectMember("ns.foo")
+                .expectObjectMember("shapes")
+                .expectObjectMember("MyResource");
+        ObjectNode resourceWithAbsoluteIds = serialized.expectObjectMember("ns.foo")
+                .expectObjectMember("shapes")
+                .expectObjectMember("ResourceNeedingAbsoluteShapeIds");
+        ObjectNode structureWithAbsoluteIds = serialized.expectObjectMember("ns.resource.needing.ids")
+                .expectObjectMember("shapes")
+                .expectObjectMember("GetResourceNeedingAbsoluteShapeIdsInput");
+        ObjectNode structureWithMixedIds = serialized.expectObjectMember("ns.foo")
+                .expectObjectMember("shapes")
+                .expectObjectMember("Structure");
+
+        assertThat(resourceWithAbsoluteIds.expectObjectMember("identifiers").expectStringMember("id").getValue(),
+                   equalTo("ns.baz#String"));
+        assertThat(resourceWithAbsoluteIds.expectStringMember("read").getValue(),
+                   equalTo("ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIds"));
+
+        assertThat(resourceWithRelativeIds.expectObjectMember("identifiers").expectStringMember("id").getValue(),
+                   equalTo("MyResourceId"));
+        assertThat(resourceWithRelativeIds.expectStringMember("put").getValue(), equalTo("PutMyResource"));
+        assertThat(resourceWithRelativeIds.expectStringMember("read").getValue(), equalTo("GetMyResource"));
+        assertThat(resourceWithRelativeIds.expectStringMember("delete").getValue(), equalTo("DeleteMyResource"));
+        assertThat(resourceWithRelativeIds.expectArrayMember("collectionOperations")
+                           .get(0).get().expectStringNode().getValue(),
+                   equalTo("BatchDeleteMyResource"));
+
+        assertThat(structureWithAbsoluteIds.expectObjectMember("members").expectObjectMember("id")
+                           .expectStringMember("target").getValue(),
+                   equalTo("ns.baz#String"));
+
+        assertThat(structureWithMixedIds.expectObjectMember("members").expectObjectMember("a")
+                           .expectStringMember("target").getValue(),
+                   equalTo("MyString"));
+        assertThat(structureWithMixedIds.expectObjectMember("members").expectObjectMember("c")
+                           .expectStringMember("target").getValue(),
+                   equalTo("ns.shapes#String"));
+    }
 }

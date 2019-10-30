@@ -159,6 +159,9 @@
                     "a": {
                         "target": "MyString",
                         "required": true
+                    },
+                    "c": {
+                        "target": "ns.shapes#String"
                     }
                 },
                 "documentation": "abc"
@@ -173,6 +176,41 @@
             "a": {
                 "type": "structure",
                 "trait": true
+            },
+            "OperationNeedingAbsoluteShapeIds": {
+                "type": "operation",
+                "idempotent": true,
+                "input": "ns.shapes#Structure",
+                "output": "ns.shapes#Structure",
+                "errors": ["ns.shapes#ErrorStructure"]
+            },
+            "ResourceNeedingAbsoluteShapeIds": {
+                "type": "resource",
+                "identifiers": {"id": "ns.baz#String"},
+                "read": "ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIds"
+            }
+        }
+    },
+    "ns.resource.needing.ids": {
+        "shapes": {
+            "GetResourceNeedingAbsoluteShapeIds": {
+                "type": "operation",
+                "readonly": true,
+                "input": "GetResourceNeedingAbsoluteShapeIdsInput",
+                "output": "GetResourceNeedingAbsoluteShapeIdsOutput"
+            },
+            "GetResourceNeedingAbsoluteShapeIdsInput": {
+                "type": "structure",
+                "members": {
+                    "id": {
+                        "target": "ns.baz#String",
+                        "required": true
+                    }
+                }
+            },
+            "GetResourceNeedingAbsoluteShapeIdsOutput": {
+                "type": "structure",
+                "members": {}
             }
         }
     },
@@ -250,6 +288,10 @@
                         "target": "String"
                     }
                 }
+            },
+            "ErrorStructure": {
+                "type": "structure",
+                "error": "client"
             },
             "TaggedUnion": {
                 "type": "union",
