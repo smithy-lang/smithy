@@ -207,50 +207,58 @@ public final class ModelSerializer {
 
         @Override
         public Node operationShape(OperationShape shape) {
+            ShapeId id = shape.getId();
             return withTraits(shape, createTypedNode(shape)
-                    .withOptionalMember("input", shape.getInput().map(id -> Node.from(id.toString())))
-                    .withOptionalMember("output", shape.getOutput().map(id -> Node.from(id.toString())))
-                    .withOptionalMember("errors", createOptionalIdList(shape.getErrors())));
+                    .withOptionalMember("input", shape.getInput().map(target -> serializeShapeId(id, target)))
+                    .withOptionalMember("output", shape.getOutput().map(target -> serializeShapeId(id, target)))
+                    .withOptionalMember("errors", createOptionalIdList(id, shape.getErrors())));
         }
 
         @Override
         public Node resourceShape(ResourceShape shape) {
+            ShapeId id = shape.getId();
+
             Optional<Node> identifiers = Optional.empty();
             if (shape.hasIdentifiers()) {
                 Stream<Map.Entry<String, ShapeId>> ids = shape.getIdentifiers().entrySet().stream();
                 identifiers = Optional.of(ids.collect(ObjectNode.collectStringKeys(
                         Map.Entry::getKey,
-                        entry -> Node.from(entry.getValue().toString()))));
+                        entry -> serializeShapeId(id, entry.getValue()))));
             }
 
             return withTraits(shape, createTypedNode(shape)
                     .withOptionalMember("identifiers", identifiers)
-                    .withOptionalMember("put", shape.getPut().map(ShapeId::toString).map(Node::from))
-                    .withOptionalMember("create", shape.getCreate().map(ShapeId::toString).map(Node::from))
-                    .withOptionalMember("read", shape.getRead().map(ShapeId::toString).map(Node::from))
-                    .withOptionalMember("update", shape.getUpdate().map(ShapeId::toString).map(Node::from))
-                    .withOptionalMember("delete", shape.getDelete().map(ShapeId::toString).map(Node::from))
-                    .withOptionalMember("list", shape.getList().map(ShapeId::toString).map(Node::from))
-                    .withOptionalMember("operations", createOptionalIdList(shape.getOperations()))
-                    .withOptionalMember("collectionOperations", createOptionalIdList(shape.getCollectionOperations()))
-                    .withOptionalMember("resources", createOptionalIdList(shape.getResources())));
+                    .withOptionalMember("put", shape.getPut().map(target -> serializeShapeId(id, target)))
+                    .withOptionalMember("create", shape.getCreate().map(target -> serializeShapeId(id, target)))
+                    .withOptionalMember("read", shape.getRead().map(target -> serializeShapeId(id, target)))
+                    .withOptionalMember("update", shape.getUpdate().map(target -> serializeShapeId(id, target)))
+                    .withOptionalMember("delete", shape.getDelete().map(target -> serializeShapeId(id, target)))
+                    .withOptionalMember("list", shape.getList().map(target -> serializeShapeId(id, target)))
+                    .withOptionalMember("operations", createOptionalIdList(id, shape.getOperations()))
+                    .withOptionalMember("collectionOperations",
+                                        createOptionalIdList(id, shape.getCollectionOperations()))
+                    .withOptionalMember("resources", createOptionalIdList(id, shape.getResources())));
         }
 
         @Override
         public Node serviceShape(ServiceShape shape) {
+            ShapeId id = shape.getId();
             return withTraits(shape, createTypedNode(shape)
                     .withMember("version", Node.from(shape.getVersion()))
-                    .withOptionalMember("operations", createOptionalIdList(shape.getOperations()))
-                    .withOptionalMember("resources", createOptionalIdList(shape.getResources())));
+                    .withOptionalMember("operations", createOptionalIdList(id, shape.getOperations()))
+                    .withOptionalMember("resources", createOptionalIdList(id, shape.getResources())));
         }
 
-        private Optional<Node> createOptionalIdList(Collection<ShapeId> list) {
+        private Optional<Node> createOptionalIdList(ShapeId currentNamespace, Collection<ShapeId> list) {
             if (list.isEmpty()) {
                 return Optional.empty();
             }
 
-            return Optional.of(
-                    list.stream().map(ShapeId::toString).sorted().map(Node::from).collect(ArrayNode.collect()));
+            Node result = list.stream()
+                    .map(id -> serializeShapeId(currentNamespace, id))
+                    .sorted(Comparator.comparing(StringNode::getValue))
+                    .collect(ArrayNode.collect());
+            return Optional.of(result);
         }
 
         @Override
@@ -275,11 +283,15 @@ public final class ModelSerializer {
 
         @Override
         public Node memberShape(MemberShape shape) {
-            String target = shape.getContainer().getNamespace().equals(shape.getTarget().getNamespace())
-                    ? shape.getTarget().asRelativeReference()
-                    : shape.getTarget().toString();
+            Node target = serializeShapeId(shape.getContainer(), shape.getTarget());
+            return withTraits(shape, Node.objectNode().withMember("target", target));
+        }
 
-            return withTraits(shape, Node.objectNode().withMember("target", Node.from(target)));
+        private StringNode serializeShapeId(ShapeId currentNamespace, ShapeId id) {
+            String target = currentNamespace.getNamespace().equals(id.getNamespace())
+                    ? id.asRelativeReference()
+                    : id.toString();
+            return Node.from(target);
         }
     }
 }
