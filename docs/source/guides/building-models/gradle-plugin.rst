@@ -235,7 +235,7 @@ projection. For example:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "version": "1.0",
             "projections": {
                 "external": {
                     "transforms": [
@@ -305,7 +305,7 @@ The following example generates an OpenAPI model from a Smithy model:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "foo.baz#MyService"
