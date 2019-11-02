@@ -21,24 +21,9 @@ import java.util.Map;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
- * Creates a template engine that always injects default values
- * into the data model.
- *
- * <p>Default values can be overridden per/template by passing in a
- * different value in the data model when rendering templates.
- *
- * <pre>
- * {@code
- * TemplateEngine myEngine = createMyTemplateEngine();
- * TemplateEngine wrappedEngine = DefaultDataTemplateEngine.builder()
- *         .delegate(myEngine)
- *         .put("foo", "baz")
- *         .put("hello", true)
- *         .build();
- * assert(wrappedEngine.renderString("{{ foo }}") == "baz");
- * }
- * </pre>
+ * This is deprecated and will be removed in 0.10.0.
  */
+@Deprecated
 public final class DefaultDataTemplateEngine implements TemplateEngine {
     private final TemplateEngine delegate;
     private final Map<String, Object> defaultContext;
@@ -72,6 +57,7 @@ public final class DefaultDataTemplateEngine implements TemplateEngine {
     /**
      * Builds a new DefaultDataTemplateEngine.
      */
+    @Deprecated
     public static final class Builder {
         private TemplateEngine delegate;
         private final Map<String, Object> defaultContext = new HashMap<>();
