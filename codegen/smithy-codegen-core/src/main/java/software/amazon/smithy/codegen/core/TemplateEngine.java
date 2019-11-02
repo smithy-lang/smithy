@@ -21,38 +21,19 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Abstraction to renderFile templates using a data model.
+ * This is deprecated and will be removed in 0.10.0.
  */
 @FunctionalInterface
+@Deprecated
 public interface TemplateEngine {
-    /**
-     * Writes a template to the given writer.
-     *
-     * @param templatePath Loaded template to render.
-     * @param out Writer to write to.
-     * @param dataModel Data model to apply to the template.
-     */
     void write(String templatePath, Writer out, Map<String, Object> dataModel);
 
-    /**
-     * Renders a template loaded from the given path and returns the result.
-     *
-     * @param templatePath Path to a template to load.
-     * @param dataModel Data model to apply to the template.
-     * @return Returns the rendered text of the template.
-     */
     default String render(String templatePath, Map<String, Object> dataModel) {
         StringWriter writer = new StringWriter();
         write(templatePath, writer, dataModel);
         return writer.toString();
     }
 
-    /**
-     * Renders a template loaded from the given path and returns the result.
-     *
-     * @param templatePath Path to a template to load.
-     * @return Returns the rendered text of the template.
-     */
     default String render(String templatePath) {
         return render(templatePath, Collections.emptyMap());
     }

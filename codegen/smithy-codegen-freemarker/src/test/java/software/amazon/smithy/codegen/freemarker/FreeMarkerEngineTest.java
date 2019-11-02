@@ -8,14 +8,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.codegen.core.TemplateEngine;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.utils.MapUtils;
 
 public class FreeMarkerEngineTest {
     @Test
     public void rendersTemplatesWithObjectWrapper() {
-        TemplateEngine engine = FreeMarkerEngine.builder()
+        FreeMarkerEngine engine = FreeMarkerEngine.builder()
                 .classLoader(getClass())
                 .build();
         Map<String, Object> properties = new HashMap<>();
@@ -34,7 +33,7 @@ public class FreeMarkerEngineTest {
 
     @Test
     public void rendersTemplatesWithUtils() {
-        TemplateEngine engine = FreeMarkerEngine.builder()
+        FreeMarkerEngine engine = FreeMarkerEngine.builder()
                 .classLoader(getClass().getClassLoader())
                 .putDefaultProperty("snake", "snake_man")
                 .build();
