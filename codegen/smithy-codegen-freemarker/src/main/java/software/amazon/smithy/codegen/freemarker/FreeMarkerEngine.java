@@ -23,7 +23,9 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateModel;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,8 +33,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import software.amazon.smithy.codegen.core.CodegenException;
-import software.amazon.smithy.codegen.core.DefaultDataTemplateEngine;
-import software.amazon.smithy.codegen.core.TemplateEngine;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
@@ -48,14 +48,24 @@ import software.amazon.smithy.utils.StringUtils;
  *
  * @see <a href="https://freemarker.apache.org/">FreeMarker</a>
  */
-public final class FreeMarkerEngine implements TemplateEngine {
+public final class FreeMarkerEngine {
+
     private final Configuration freeMarkerConfig;
+    private final Map<String, Object> defaultContext;
 
     /**
      * @param freeMarkerConfig FreeMarker configuration.
      */
     public FreeMarkerEngine(Configuration freeMarkerConfig) {
+        this(freeMarkerConfig, Collections.emptyMap());
+    }
+
+    /**
+     * @param freeMarkerConfig FreeMarker configuration.
+     */
+    public FreeMarkerEngine(Configuration freeMarkerConfig, Map<String, Object> defaultContext) {
         this.freeMarkerConfig = freeMarkerConfig;
+        this.defaultContext = defaultContext;
     }
 
     /**
@@ -71,11 +81,19 @@ public final class FreeMarkerEngine implements TemplateEngine {
         return new Builder();
     }
 
-    @Override
+    /**
+     * Writes a template to the given writer.
+     *
+     * @param templatePath Loaded template to render.
+     * @param out Writer to write to.
+     * @param dataModel Data model to apply to the template.
+     */
     public void write(String templatePath, Writer out, Map<String, Object> dataModel) {
         try {
+            Map<String, Object> merged = new HashMap<>(defaultContext);
+            merged.putAll(dataModel);
             Template template = freeMarkerConfig.getTemplate(templatePath);
-            template.process(dataModel, out);
+            template.process(merged, out);
         } catch (IOException | TemplateException e) {
             throw new CodegenException(String.format(
                     "Error evaluating FreeMarker template [%s]: %s", templatePath, e.getMessage()), e);
@@ -83,9 +101,33 @@ public final class FreeMarkerEngine implements TemplateEngine {
     }
 
     /**
+     * Renders a template loaded from the given path and returns the result.
+     *
+     * @param templatePath Path to a template to load.
+     * @param dataModel Data model to apply to the template.
+     * @return Returns the rendered text of the template.
+     */
+    public String render(String templatePath, Map<String, Object> dataModel) {
+        StringWriter writer = new StringWriter();
+        write(templatePath, writer, dataModel);
+        return writer.toString();
+    }
+
+    /**
+     * Renders a template loaded from the given path and returns the result.
+     *
+     * @param templatePath Path to a template to load.
+     * @return Returns the rendered text of the template.
+     */
+    public String render(String templatePath) {
+        return render(templatePath, Collections.emptyMap());
+    }
+
+    /**
      * Builds a new FreeMarker template engine.
      */
-    public static final class Builder implements SmithyBuilder<TemplateEngine> {
+    public static final class Builder implements SmithyBuilder<FreeMarkerEngine> {
+
         private Configuration config;
         private boolean disableObjectWrapper;
         private boolean disableHelpers;
@@ -95,7 +137,7 @@ public final class FreeMarkerEngine implements TemplateEngine {
         private final Map<String, Object> defaultProperties = new HashMap<>();
 
         @Override
-        public TemplateEngine build() {
+        public FreeMarkerEngine build() {
             if (config == null) {
                 config = new Configuration(Configuration.VERSION_2_3_28);
             }
@@ -123,10 +165,7 @@ public final class FreeMarkerEngine implements TemplateEngine {
                 putDefaultProperty("CaseUtils", loadUtilsIntoTemplateModel(CaseUtils.class));
             }
 
-            return DefaultDataTemplateEngine.builder()
-                    .putAll(defaultProperties)
-                    .delegate(new FreeMarkerEngine(config))
-                    .build();
+            return new FreeMarkerEngine(config, defaultProperties);
         }
 
         /**
