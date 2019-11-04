@@ -145,11 +145,19 @@ public class ShapeTest {
                 .addTrait(otherTrait)
                 .addTrait(documentationTrait)
                 .build();
+        ShapeIndex index = ShapeIndex.builder()
+                .addShapes(shape)
+                .build();
 
         assertTrue(shape.getTrait(MyTrait.class).isPresent());
+        assertTrue(shape.getMemberTrait(index, MyTrait.class).isPresent());
+
         assertTrue(shape.findTrait("foo.baz#foo").isPresent());
+        assertTrue(shape.findMemberTrait(index, "foo.baz#foo").isPresent());
+
         assertTrue(shape.hasTrait("foo.baz#foo"));
         assertTrue(shape.getTrait(OtherTrait.class).isPresent());
+
         assertFalse(shape.getTrait(AnotherTrait.class).isPresent());
         assertFalse(shape.findTrait("notThere").isPresent());
         assertFalse(shape.hasTrait("notThere"));

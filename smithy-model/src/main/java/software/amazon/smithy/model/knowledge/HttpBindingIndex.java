@@ -236,7 +236,6 @@ public final class HttpBindingIndex implements KnowledgeIndex {
             TimestampFormatTrait.Format defaultFormat
     ) {
         return index.getShape(member.toShapeId())
-                .flatMap(Shape::asMemberShape)
                 // Use the timestampFormat trait on the member or target if present.
                 .flatMap(shape -> shape.getMemberTrait(index, TimestampFormatTrait.class))
                 .map(TimestampFormatTrait::getFormat)
