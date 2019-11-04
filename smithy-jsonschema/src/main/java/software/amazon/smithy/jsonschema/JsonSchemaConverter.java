@@ -27,6 +27,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.traits.EffectiveTraitQuery;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.Pair;
@@ -267,15 +268,14 @@ public final class JsonSchemaConverter {
         // We can explicitly enable the generation of private shapes if desired.
         if (getConfig().getBooleanMemberOrDefault(JsonSchemaConstants.SMITHY_INCLUDE_PRIVATE_SHAPES)) {
             return false;
-        } else if (shape.hasTrait(PrivateTrait.class)) {
-            return true;
         }
 
-        // Now check members.
-        return shape.asMemberShape()
-                .flatMap(member -> shapeIndex.getShape(member.getContainer()))
-                .filter(parent -> parent.hasTrait(PrivateTrait.class))
-                .isPresent();
+        return EffectiveTraitQuery.builder()
+                .shapeIndex(shapeIndex)
+                .traitClass(PrivateTrait.class)
+                .inheritFromContainer(true)
+                .build()
+                .isTraitApplied(shape);
     }
 
     private void addExtensions(SchemaDocument.Builder builder) {

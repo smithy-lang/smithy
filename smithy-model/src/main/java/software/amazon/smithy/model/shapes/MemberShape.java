@@ -100,28 +100,13 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
         return super.equals(other) && getTarget().equals(((MemberShape) other).getTarget());
     }
 
-    /**
-     * Gets a trait from the member shape or from the shape targeted by the
-     * member.
-     *
-     * @param index Shape index used to find member targets.
-     * @param trait Trait type to get.
-     * @param <T> Trait type to get.
-     * @return Returns the optionally found trait on the shape or member.
-     */
+    @Override
     public <T extends Trait> Optional<T> getMemberTrait(ShapeIndex index, Class<T> trait) {
         return OptionalUtils.or(getTrait(trait),
                 () -> index.getShape(getTarget()).flatMap(targetedShape -> targetedShape.getTrait(trait)));
     }
 
-    /**
-     * Gets a trait from the member shape or from the shape targeted by the
-     * member.
-     *
-     * @param index Shape index used to find member targets.
-     * @param traitName Trait name to get.
-     * @return Returns the optionally found trait on the shape or member.
-     */
+    @Override
     public Optional<Trait> findMemberTrait(ShapeIndex index, String traitName) {
         return OptionalUtils.or(findTrait(traitName),
                 () -> index.getShape(getTarget()).flatMap(targetedShape -> targetedShape.findTrait(traitName)));

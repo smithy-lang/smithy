@@ -199,6 +199,18 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    public void excludesMembersThatTargetPrivateShapes() {
+        StringShape string = StringShape.builder().id("smithy.example#String").addTrait(new PrivateTrait()).build();
+        MemberShape member = MemberShape.builder().id("smithy.example#Foo$bar").target(string).build();
+        StructureShape struct = StructureShape.builder().id("smithy.example#Foo").addMember(member).build();
+        ShapeIndex index = ShapeIndex.builder().addShapes(struct, member, string).build();
+        SchemaDocument doc = JsonSchemaConverter.create().convert(index);
+
+        // The member and the target are filtered out.
+        assertThat(doc.getDefinitions().keySet(), contains("#/definitions/SmithyExampleFoo"));
+    }
+
+    @Test
     public void canIncludePrivateShapesWithFlag() {
         StringShape string = StringShape.builder().id("smithy.example#String").build();
         MemberShape member = MemberShape.builder().id("smithy.example#Foo$bar").target(string).build();

@@ -215,6 +215,39 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     }
 
     /**
+     * Gets a trait from the member shape or from the shape targeted by the
+     * member.
+     *
+     * <p>If the shape is not a member, then the method functions the same as
+     * {@link #getTrait(Class)}.
+     *
+     * @param index Shape index used to find member targets.
+     * @param trait Trait type to get.
+     * @param <T> Trait type to get.
+     * @return Returns the optionally found trait on the shape or member.
+     * @see MemberShape#getTrait(Class)
+     */
+    public <T extends Trait> Optional<T> getMemberTrait(ShapeIndex index, Class<T> trait) {
+        return getTrait(trait);
+    }
+
+    /**
+     * Gets a trait from the member shape or from the shape targeted by the
+     * member.
+     *
+     * <p>If the shape is not a member, then the method functions the same as
+     * {@link #findTrait(String)}.
+     *
+     * @param index Shape index used to find member targets.
+     * @param traitName Trait name to get.
+     * @return Returns the optionally found trait on the shape or member.
+     * @see MemberShape#findTrait(String)
+     */
+    public Optional<Trait> findMemberTrait(ShapeIndex index, String traitName) {
+        return findTrait(traitName);
+    }
+
+    /**
      * @return Optionally returns the shape as a {@link BigDecimalShape}.
      */
     public Optional<BigDecimalShape> asBigDecimalShape() {
