@@ -21,7 +21,12 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeIndex;
+import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
 
 public class RefStrategyTest {
     @Test
@@ -71,5 +76,47 @@ public class RefStrategyTest {
         String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo$bar"), Node.objectNode());
 
         assertThat(pointer, equalTo("#/definitions/SmithyExampleFooBarMember"));
+    }
+
+    @Test
+    public void canDeconflictNames() {
+        ObjectNode config = Node.objectNode();
+
+        StringShape stringShape = StringShape.builder().id("com.foo#String").build();
+        MemberShape pageScriptsListMember = MemberShape.builder()
+                .id("com.foo#PageScripts$member")
+                .target(stringShape)
+                .build();
+        ListShape pageScripts = ListShape.builder()
+                .id("com.foo#PageScripts")
+                .member(pageScriptsListMember)
+                .build();
+        MemberShape pageScriptsMember = MemberShape.builder()
+                .id("com.foo#Page$scripts")
+                .target(stringShape)
+                .build();
+        StructureShape page = StructureShape.builder()
+                .id("com.foo#Page")
+                .addMember(pageScriptsMember)
+                .build();
+
+        ShapeIndex index = ShapeIndex.builder()
+                .addShapes(page, pageScriptsMember, pageScripts, pageScriptsListMember, stringShape)
+                .build();
+
+        RefStrategy strategy = RefStrategy.createDefaultDeconflictingStrategy(index, config);
+        assertThat(strategy.toPointer(pageScriptsMember.getId(), config),
+                   equalTo("#/definitions/ComFooPageScriptsMember"));
+        assertThat(strategy.toPointer(pageScriptsListMember.getId(), config),
+                   equalTo("#/definitions/ComFooPageScriptsMember2"));
+    }
+
+    @Test
+    public void deconflictingStrategyPassesThroughToDelegate() {
+        ObjectNode config = Node.objectNode();
+        ShapeIndex index = ShapeIndex.builder().build();
+        RefStrategy strategy = RefStrategy.createDefaultDeconflictingStrategy(index, config);
+
+        assertThat(strategy.toPointer(ShapeId.from("com.foo#Nope"), config), equalTo("#/definitions/ComFooNope"));
     }
 }

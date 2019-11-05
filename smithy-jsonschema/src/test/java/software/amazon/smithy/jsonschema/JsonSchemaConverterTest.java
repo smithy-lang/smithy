@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -534,5 +535,44 @@ public class JsonSchemaConverterTest {
                                     .build())
                     .convert(index, union);
         });
+    }
+
+    @Test
+    public void dealsWithConflictsWithoutPollutingState() {
+        ShapeIndex index1 = Model.assembler()
+                .addImport(getClass().getResource("recursive.json"))
+                .assemble()
+                .unwrap()
+                .getShapeIndex();
+
+        StringShape stringShape = StringShape.builder().id("com.foo#String").build();
+        MemberShape pageScriptsListMember = MemberShape.builder()
+                .id("com.foo#PageScripts$member")
+                .target(stringShape)
+                .build();
+        ListShape pageScripts = ListShape.builder()
+                .id("com.foo#PageScripts")
+                .member(pageScriptsListMember)
+                .build();
+        MemberShape pageScriptsMember = MemberShape.builder()
+                .id("com.foo#Page$scripts")
+                .target(stringShape)
+                .build();
+        StructureShape page = StructureShape.builder()
+                .id("com.foo#Page")
+                .addMember(pageScriptsMember)
+                .build();
+        ShapeIndex index2 = ShapeIndex.builder()
+                .addShapes(page, pageScriptsMember, pageScripts, pageScriptsListMember, stringShape)
+                .build();
+
+        JsonSchemaConverter converter = JsonSchemaConverter.create();
+        SchemaDocument document1 = converter.convert(index1);
+        assertThat(document1.getDefinitions().keySet(), not(empty()));
+
+        SchemaDocument document2 = converter.convert(index2);
+        assertThat(document2.getDefinitions().keySet(), not(empty()));
+        assertThat(document2.getDefinitions().keySet(), hasItem("#/definitions/ComFooPageScriptsMember"));
+        assertThat(document2.getDefinitions().keySet(), hasItem("#/definitions/ComFooPageScriptsMember2"));
     }
 }

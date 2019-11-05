@@ -37,6 +37,8 @@ import software.amazon.smithy.utils.Pair;
  */
 public final class JsonSchemaConverter {
 
+    private static final RefStrategy DEFAULT_REF_STRATEGY = RefStrategy.createDefaultStrategy();
+
     /** All converters use the built-in mappers. */
     private final List<JsonSchemaMapper> mappers = new ArrayList<>();
 
@@ -44,6 +46,7 @@ public final class JsonSchemaConverter {
     private ObjectNode config = Node.objectNode();
     private RefStrategy refStrategy;
     private Predicate<Shape> shapePredicate = shape -> true;
+    private boolean softRefStrategy = false;
 
     private JsonSchemaConverter() {
         mappers.add(new DisableMapper());
@@ -142,6 +145,7 @@ public final class JsonSchemaConverter {
      * @return Returns the converter.
      */
     public JsonSchemaConverter refStrategy(RefStrategy refStrategy) {
+        softRefStrategy = false;
         this.refStrategy = refStrategy;
         return this;
     }
@@ -152,10 +156,7 @@ public final class JsonSchemaConverter {
      * @return Reference naming strategy to use.
      */
     public RefStrategy getRefStrategy() {
-        if (refStrategy == null) {
-            refStrategy = RefStrategy.createDefaultStrategy();
-        }
-        return refStrategy;
+        return refStrategy != null ? refStrategy : DEFAULT_REF_STRATEGY;
     }
 
     /**
@@ -194,6 +195,45 @@ public final class JsonSchemaConverter {
     }
 
     private SchemaDocument doConversion(ShapeIndex shapeIndex, Shape rootShape) {
+        // TODO: break this API to make this work more reliably.
+        //
+        // Temporarily set a de-conflicting ref strategy. This is the
+        // minimal change needed to fix a reported bug, but it is a hack
+        // and we should break this API before GA.
+        //
+        // We want to do the right thing by default. However, the default
+        // that was previously chosen didn't account for the possibility
+        // of shape name conflicts when converting members to JSON schema
+        // pointers. For example, consider the following shapes:
+        //
+        // - A member of a list, foo.baz#PageScripts$member
+        // - A member of a structure, foo.baz#Page$scripts
+        //
+        // If we only rely on the RefStrategy#createDefaultStrategy, then
+        // we would actually generate the same JSON schema shape name for
+        // both of the above member shapes: FooBazPageScriptsMember. To
+        // avoid this, we need to know the shape index being converted and
+        // automatically handle conflicts. However, because this class is
+        // mutable, we have to do some funky stuff with state to "do the
+        // right thing" by lazily creating a RefStrategy#createDefaultDeconflictingStrategy
+        // in this method once a ShapeIndex is available
+        // (given as an argument).
+        //
+        // A better API would use a builder that builds a JsonSchemaConverter
+        // that has a fixed shape index, ref strategy, etc. This would allow
+        // ref strategies to do more up-front computations, and allow them to
+        // even become implementation details of JsonSchemaConverter by exposing
+        // a similar API that delegates from a converter into the strategy.
+        //
+        // There's also quite a bit of awkward code in the OpenAPI conversion code
+        // base that tries to deal with merging configuration values and deriving
+        // a default JsonSchemaConverter if one isn't set. A better API there would
+        // be to not even allow the injection of a custom JsonSchemaConverter at all.
+        if (softRefStrategy || refStrategy == null) {
+            softRefStrategy = true;
+            refStrategy = RefStrategy.createDefaultDeconflictingStrategy(shapeIndex, getConfig());
+        }
+
         // Combine custom mappers with the discovered mappers and sort them.
         mappers.sort(Comparator.comparing(JsonSchemaMapper::getOrder));
 
