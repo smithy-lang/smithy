@@ -214,7 +214,8 @@ public final class SymbolDependency extends TypedPropertiesBag
         }
 
         SymbolDependency that = (SymbolDependency) o;
-        return dependencyType.equals(that.dependencyType)
+        return super.equals(o)
+               && dependencyType.equals(that.dependencyType)
                && packageName.equals(that.packageName)
                && version.equals(that.version);
     }

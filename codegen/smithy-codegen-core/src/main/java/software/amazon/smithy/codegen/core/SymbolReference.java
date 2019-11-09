@@ -171,7 +171,8 @@ public final class SymbolReference extends TypedPropertiesBag implements ToSmith
         }
 
         SymbolReference that = (SymbolReference) o;
-        return symbol.equals(that.symbol)
+        return super.equals(o)
+               && symbol.equals(that.symbol)
                && getProperties().equals(that.getProperties())
                && options.equals(that.options)
                && alias.equals(that.alias);
