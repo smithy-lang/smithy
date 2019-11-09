@@ -222,12 +222,12 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        }
-        if (!(o instanceof Symbol)) {
+        } else if (!(o instanceof Symbol)) {
             return false;
         }
         Symbol symbol = (Symbol) o;
-        return Objects.equals(namespace, symbol.namespace)
+        return super.equals(o)
+               && Objects.equals(namespace, symbol.namespace)
                && Objects.equals(namespaceDelimiter, symbol.namespaceDelimiter)
                && Objects.equals(name, symbol.name)
                && getProperties().equals(symbol.getProperties())

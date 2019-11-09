@@ -17,6 +17,7 @@ package software.amazon.smithy.codegen.core;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.utils.MapUtils;
 
@@ -95,6 +96,22 @@ class TypedPropertiesBag {
     public <T> T expectProperty(String name, Class<T> type) {
         return getProperty(name, type).orElseThrow(() -> new IllegalArgumentException(String.format(
                 "Property `%s` is not part of %s, `%s`", name, getClass().getSimpleName(), this)));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof TypedPropertiesBag)) {
+            return false;
+        } else {
+            return properties.equals(((TypedPropertiesBag) o).properties);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(properties);
     }
 
     /**
