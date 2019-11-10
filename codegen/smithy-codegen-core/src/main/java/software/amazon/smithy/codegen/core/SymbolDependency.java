@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.codegen.core;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -66,7 +68,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * suggestion.
  */
 public final class SymbolDependency extends TypedPropertiesBag
-        implements ToSmithyBuilder<SymbolDependency>, Comparable<SymbolDependency> {
+        implements SymbolDependencyContainer, ToSmithyBuilder<SymbolDependency>, Comparable<SymbolDependency> {
 
     private final String dependencyType;
     private final String packageName;
@@ -185,6 +187,11 @@ public final class SymbolDependency extends TypedPropertiesBag
      */
     public String getVersion() {
         return version;
+    }
+
+    @Override
+    public List<SymbolDependency> getDependencies() {
+        return Collections.singletonList(this);
     }
 
     @Override

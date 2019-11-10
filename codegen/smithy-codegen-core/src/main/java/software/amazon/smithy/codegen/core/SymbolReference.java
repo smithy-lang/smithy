@@ -17,6 +17,7 @@ package software.amazon.smithy.codegen.core;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -42,7 +43,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * {@link ContextOption#USE} options, meaning that the reference is
  * necessary both when defining and when using a symbol.
  */
-public final class SymbolReference extends TypedPropertiesBag implements ToSmithyBuilder<SymbolReference> {
+public final class SymbolReference
+        extends TypedPropertiesBag
+        implements SymbolContainer, SymbolDependencyContainer, ToSmithyBuilder<SymbolReference> {
 
     /**
      * Top-level interface for all {@code SymbolReference} options.
@@ -151,6 +154,16 @@ public final class SymbolReference extends TypedPropertiesBag implements ToSmith
      */
     public boolean hasOption(Option option) {
         return options.contains(option);
+    }
+
+    @Override
+    public List<Symbol> getSymbols() {
+        return Collections.singletonList(getSymbol());
+    }
+
+    @Override
+    public List<SymbolDependency> getDependencies() {
+        return symbol.getDependencies();
     }
 
     @Override

@@ -16,6 +16,7 @@
 package software.amazon.smithy.codegen.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import software.amazon.smithy.utils.ListUtils;
@@ -58,7 +59,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * }
  * </pre>
  */
-public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<Symbol> {
+public final class Symbol extends TypedPropertiesBag
+        implements SymbolContainer, SymbolDependencyContainer, ToSmithyBuilder<Symbol> {
     private final String namespace;
     private final String namespaceDelimiter;
     private final String name;
@@ -187,18 +189,14 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
         return references;
     }
 
-    /**
-     * Gets the list of dependencies that this symbol introduces.
-     *
-     * <p>A dependency is a dependency on another package that the symbol
-     * requires. It is quite different from a reference since a reference
-     * only refers to a symbol; a reference provides no context as to whether
-     * or not a dependency is required or the dependency's coordinates.
-     *
-     * @return Returns the Symbol's dependencies.
-     */
+    @Override
     public List<SymbolDependency> getDependencies() {
         return dependencies;
+    }
+
+    @Override
+    public List<Symbol> getSymbols() {
+        return Collections.singletonList(this);
     }
 
     @Override
@@ -364,13 +362,24 @@ public final class Symbol extends TypedPropertiesBag implements ToSmithyBuilder<
         }
 
         /**
+         * Replaces the symbol dependencies of the symbol.
+         *
+         * @param container Dependencies to set.
+         * @return Returns the builder.
+         */
+        public Builder dependencies(SymbolDependencyContainer container) {
+            this.dependencies.clear();
+            return addDependency(container);
+        }
+
+        /**
          * Add a symbol dependency.
          *
          * @param dependency Symbol dependency to add.
          * @return Returns the builder.
          */
-        public Builder addDependency(SymbolDependency dependency) {
-            dependencies.add(dependency);
+        public Builder addDependency(SymbolDependencyContainer dependency) {
+            dependencies.addAll(dependency.getDependencies());
             return this;
         }
 
