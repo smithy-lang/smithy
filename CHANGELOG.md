@@ -1,5 +1,24 @@
 # Smithy Changelog
 
+## 0.9.5 (2019-11-11)
+
+### Features
+
+* Allow overriding state management in CodeWriter ([#186](https://github.com/awslabs/smithy/pull/186))
+* Allow the `xmlFlattened` trait to be applied to members ([#191](https://github.com/awslabs/smithy/pull/191))
+* Add helper to determine HTTP-based timestamp formats ([#193](https://github.com/awslabs/smithy/pull/193))
+* Allow specifying XML namespace prefixes ([#195](https://github.com/awslabs/smithy/pull/195))
+* Add `SymbolContainer`, an abstraction over `Symbol`s that enables easily
+  creating and aggregating `Symbols` ([#202](https://github.com/awslabs/smithy/pull/202))
+
+### Bug Fixes
+
+* Escape popped state content ([#187](https://github.com/awslabs/smithy/pull/187))
+* Make shape ID serialization consistent ([#196](https://github.com/awslabs/smithy/pull/196))
+* Exclude private members targeted in JSON schema converters ([#199](https://github.com/awslabs/smithy/pull/199))
+* Fix naming collisions in JSON schema output ([#200](https://github.com/awslabs/smithy/pull/200))
+* Update `equals` to included typed bag parents ([#201](https://github.com/awslabs/smithy/pull/201))
+
 ## 0.9.4 (2019-10-09)
 
 ### Features
