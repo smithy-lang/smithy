@@ -98,9 +98,9 @@ Summary
     Moves serialized collection members from their collection element to that
     of the collection's container.
 Trait selector
-    ``collection``
+    ``:test(collection, member:of(structure) > collection)``
 
-    *Any list or set*
+    *Any list or set or any structure member that targets a list or set*
 Value type
     Annotation trait
 
@@ -221,8 +221,9 @@ following document:
     ``-``. Values for an ``xmlName`` adhere to the following ABNF.
 
 .. productionlist:: smithy
-    xml_name       :(ALPHA / "_")
+    xml_identifier :(ALPHA / "_")
                    :*(ALPHA / DIGIT / "-" / "_")
+    xml_name       :xml_identifier / (xml_identifier ":" xml_identifier)
 
 
 .. _xmlNamespace-trait:
@@ -252,6 +253,9 @@ The ``xmlNamespace`` trait is an object that contains the following properties:
     * - uri
       - ``string`` value containing a valid URI
       - **Required**. The namespace URI for scoping this XML element.
+    * - prefix
+      - ``string`` value
+      - The prefix for elements from this namespace.
 
 Given the following structure definition,
 
@@ -306,6 +310,71 @@ following document:
         <bar>def</bar>
     </MyStructure>
 
+Given the following definition with a prefix:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @xmlNamespace(uri: "http://foo.com", prefix: "bar")
+        structure MyStructure {
+            foo: String,
+            @xmlName("baz:bar")
+            bar: String,
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.4.0",
+            "smithy.example": {
+                "shapes": {
+                    "MyStructure": {
+                        "type": "structure",
+                        "members": {
+                            "foo": {
+                                "target": "String"
+                            },
+                            "bar": {
+                                "target": "String",
+                                "xmlName": "baz:bar"
+                            }
+                        },
+                        "xmlNamespace": {
+                            "uri": "http://foo.com",
+                            "prefix": "baz"
+                        }
+                    }
+                }
+            }
+        }
+
+and the following values provided for ``MyStructure``,
+
+::
+
+    "foo" = "abc"
+    "bar" = "def"
+
+the XML representation of the value would be serialized with the
+following document:
+
+.. code-block:: xml
+
+    <MyStructure xmlns:baz="http//foo.com">
+        <foo>abc</foo>
+        <baz:bar>def</baz:bar>
+    </MyStructure>
+
+.. note::
+
+    Values for the ``prefix`` option must start with a letter (lower/upper
+    case) or ``_``, followed by letters (lower/upper case), digits, ``_``, or
+    ``-``. Values for ``prefix`` adhere to the following ABNF.
+
+.. productionlist:: smithy
+    xml_prefix      :(ALPHA / "_")
+                    :*(ALPHA / DIGIT / "-" / "_")
 
 .. _xml-examples:
 

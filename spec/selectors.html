@@ -17,7 +17,6 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -599,12 +598,12 @@ changing the semantics of a selector.</p>
 </div>
 <pre>
 <strong id="grammar-token-selector">selector</strong> =
-    <a class="reference internal" href="#grammar-token-selector-expression"><code class="xref docutils literal notranslate"><span class="pre">selector_expression</span></code></a> *(<a class="reference internal" href="#grammar-token-selector-expression"><code class="xref docutils literal notranslate"><span class="pre">selector_expression</span></code></a>)
+    <a class="reference internal" href="#grammar-token-selector_expression"><code class="xref docutils literal notranslate"><span class="pre">selector_expression</span></code></a> *(<a class="reference internal" href="#grammar-token-selector_expression"><code class="xref docutils literal notranslate"><span class="pre">selector_expression</span></code></a>)
 
-<strong id="grammar-token-selector-expression">selector_expression</strong> =
-    <a class="reference internal" href="#grammar-token-shape-types"><code class="xref docutils literal notranslate"><span class="pre">shape_types</span></code></a> / <a class="reference internal" href="#grammar-token-attr"><code class="xref docutils literal notranslate"><span class="pre">attr</span></code></a> / <a class="reference internal" href="#grammar-token-function-expression"><code class="xref docutils literal notranslate"><span class="pre">function_expression</span></code></a> / <a class="reference internal" href="#grammar-token-neighbors"><code class="xref docutils literal notranslate"><span class="pre">neighbors</span></code></a>
+<strong id="grammar-token-selector_expression">selector_expression</strong> =
+    <a class="reference internal" href="#grammar-token-shape_types"><code class="xref docutils literal notranslate"><span class="pre">shape_types</span></code></a> / <a class="reference internal" href="#grammar-token-attr"><code class="xref docutils literal notranslate"><span class="pre">attr</span></code></a> / <a class="reference internal" href="#grammar-token-function_expression"><code class="xref docutils literal notranslate"><span class="pre">function_expression</span></code></a> / <a class="reference internal" href="#grammar-token-neighbors"><code class="xref docutils literal notranslate"><span class="pre">neighbors</span></code></a>
 
-<strong id="grammar-token-shape-types">shape_types</strong> =
+<strong id="grammar-token-shape_types">shape_types</strong> =
     &quot;*&quot;
   / &quot;blob&quot;
   / &quot;boolean&quot;
@@ -633,12 +632,12 @@ changing the semantics of a selector.</p>
   / &quot;collection&quot;
 
 <strong id="grammar-token-neighbors">neighbors</strong> =
-    &quot;&gt;&quot; / <a class="reference internal" href="#grammar-token-directed-neighbor"><code class="xref docutils literal notranslate"><span class="pre">directed_neighbor</span></code></a>
+    &quot;&gt;&quot; / <a class="reference internal" href="#grammar-token-directed_neighbor"><code class="xref docutils literal notranslate"><span class="pre">directed_neighbor</span></code></a>
 
-<strong id="grammar-token-directed-neighbor">directed_neighbor</strong> =
-    &quot;-[&quot; <a class="reference internal" href="#grammar-token-relationship-type"><code class="xref docutils literal notranslate"><span class="pre">relationship_type</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-relationship-type"><code class="xref docutils literal notranslate"><span class="pre">relationship_type</span></code></a>) &quot;]-&gt;&quot;
+<strong id="grammar-token-directed_neighbor">directed_neighbor</strong> =
+    &quot;-[&quot; <a class="reference internal" href="#grammar-token-relationship_type"><code class="xref docutils literal notranslate"><span class="pre">relationship_type</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-relationship_type"><code class="xref docutils literal notranslate"><span class="pre">relationship_type</span></code></a>) &quot;]-&gt;&quot;
 
-<strong id="grammar-token-relationship-type">relationship_type</strong> =
+<strong id="grammar-token-relationship_type">relationship_type</strong> =
     &quot;identifier&quot;
   / &quot;create&quot;
   / &quot;read&quot;
@@ -656,48 +655,48 @@ changing the semantics of a selector.</p>
   / &quot;bound&quot;
 
 <strong id="grammar-token-attr">attr</strong> =
-    &quot;[&quot; <a class="reference internal" href="#grammar-token-attr-key"><code class="xref docutils literal notranslate"><span class="pre">attr_key</span></code></a> *(<a class="reference internal" href="#grammar-token-comparator"><code class="xref docutils literal notranslate"><span class="pre">comparator</span></code></a> <a class="reference internal" href="#grammar-token-attr-value"><code class="xref docutils literal notranslate"><span class="pre">attr_value</span></code></a> [&quot;i&quot;]) &quot;]&quot;
+    &quot;[&quot; <a class="reference internal" href="#grammar-token-attr_key"><code class="xref docutils literal notranslate"><span class="pre">attr_key</span></code></a> *(<a class="reference internal" href="#grammar-token-comparator"><code class="xref docutils literal notranslate"><span class="pre">comparator</span></code></a> <a class="reference internal" href="#grammar-token-attr_value"><code class="xref docutils literal notranslate"><span class="pre">attr_value</span></code></a> [&quot;i&quot;]) &quot;]&quot;
 
-<strong id="grammar-token-attr-key">attr_key</strong> =
-    <a class="reference internal" href="#grammar-token-id-attribute"><code class="xref docutils literal notranslate"><span class="pre">id_attribute</span></code></a> / <a class="reference internal" href="#grammar-token-trait-attribute"><code class="xref docutils literal notranslate"><span class="pre">trait_attribute</span></code></a> / <a class="reference internal" href="#grammar-token-service-attribute"><code class="xref docutils literal notranslate"><span class="pre">service_attribute</span></code></a>
+<strong id="grammar-token-attr_key">attr_key</strong> =
+    <a class="reference internal" href="#grammar-token-id_attribute"><code class="xref docutils literal notranslate"><span class="pre">id_attribute</span></code></a> / <a class="reference internal" href="#grammar-token-trait_attribute"><code class="xref docutils literal notranslate"><span class="pre">trait_attribute</span></code></a> / <a class="reference internal" href="#grammar-token-service_attribute"><code class="xref docutils literal notranslate"><span class="pre">service_attribute</span></code></a>
 
-<strong id="grammar-token-id-attribute">id_attribute</strong> =
+<strong id="grammar-token-id_attribute">id_attribute</strong> =
     &quot;id&quot; [&quot;|&quot; (&quot;namespace&quot; / &quot;name&quot; / &quot;member&quot;)]
 
-<strong id="grammar-token-trait-attribute">trait_attribute</strong> =
-    &quot;trait&quot; &quot;|&quot; <a class="reference internal" href="#grammar-token-attr-value"><code class="xref docutils literal notranslate"><span class="pre">attr_value</span></code></a> *(&quot;|&quot; <a class="reference internal" href="#grammar-token-attr-value"><code class="xref docutils literal notranslate"><span class="pre">attr_value</span></code></a>)
+<strong id="grammar-token-trait_attribute">trait_attribute</strong> =
+    &quot;trait&quot; &quot;|&quot; <a class="reference internal" href="#grammar-token-attr_value"><code class="xref docutils literal notranslate"><span class="pre">attr_value</span></code></a> *(&quot;|&quot; <a class="reference internal" href="#grammar-token-attr_value"><code class="xref docutils literal notranslate"><span class="pre">attr_value</span></code></a>)
 
-<strong id="grammar-token-attr-value">attr_value</strong> =
-    <a class="reference internal" href="#grammar-token-attr-identifier"><code class="xref docutils literal notranslate"><span class="pre">attr_identifier</span></code></a> / <a class="reference internal" href="#grammar-token-selector-text"><code class="xref docutils literal notranslate"><span class="pre">selector_text</span></code></a>
+<strong id="grammar-token-attr_value">attr_value</strong> =
+    <a class="reference internal" href="#grammar-token-attr_identifier"><code class="xref docutils literal notranslate"><span class="pre">attr_identifier</span></code></a> / <a class="reference internal" href="#grammar-token-selector_text"><code class="xref docutils literal notranslate"><span class="pre">selector_text</span></code></a>
 
-<strong id="grammar-token-attr-identifier">attr_identifier</strong> =
+<strong id="grammar-token-attr_identifier">attr_identifier</strong> =
     1*(ALPHA / DIGIT / &quot;_&quot;) *(ALPHA / DIGIT / &quot;_&quot; / &quot;-&quot; / &quot;.&quot; / &quot;#&quot;)
 
-<strong id="grammar-token-service-attribute">service_attribute</strong> =
+<strong id="grammar-token-service_attribute">service_attribute</strong> =
     &quot;service|version&quot;
 
 <strong id="grammar-token-comparator">comparator</strong> =
     &quot;^=&quot; / &quot;$=&quot; / &quot;*=&quot; / &quot;=&quot;
 
-<strong id="grammar-token-function-expression">function_expression</strong> =
+<strong id="grammar-token-function_expression">function_expression</strong> =
     &quot;:&quot; <a class="reference internal" href="#grammar-token-function"><code class="xref docutils literal notranslate"><span class="pre">function</span></code></a> &quot;(&quot; <a class="reference internal" href="#grammar-token-selector"><code class="xref docutils literal notranslate"><span class="pre">selector</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-selector"><code class="xref docutils literal notranslate"><span class="pre">selector</span></code></a>) &quot;)&quot;
 
 <strong id="grammar-token-function">function</strong> =
     &quot;each&quot; / &quot;test&quot; / &quot;of&quot; / &quot;not&quot;
 
-<strong id="grammar-token-selector-text">selector_text</strong> =
-    <a class="reference internal" href="#grammar-token-selector-single-quoted-text"><code class="xref docutils literal notranslate"><span class="pre">selector_single_quoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-selector-double-quoted-text"><code class="xref docutils literal notranslate"><span class="pre">selector_double_quoted_text</span></code></a>
+<strong id="grammar-token-selector_text">selector_text</strong> =
+    <a class="reference internal" href="#grammar-token-selector_single_quoted_text"><code class="xref docutils literal notranslate"><span class="pre">selector_single_quoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-selector_double_quoted_text"><code class="xref docutils literal notranslate"><span class="pre">selector_double_quoted_text</span></code></a>
 
-<strong id="grammar-token-selector-single-quoted-text">selector_single_quoted_text</strong> =
-    &quot;'&quot; 1*<a class="reference internal" href="#grammar-token-selector-single-quoted-char"><code class="xref docutils literal notranslate"><span class="pre">selector_single_quoted_char</span></code></a> &quot;'&quot;
+<strong id="grammar-token-selector_single_quoted_text">selector_single_quoted_text</strong> =
+    &quot;'&quot; 1*<a class="reference internal" href="#grammar-token-selector_single_quoted_char"><code class="xref docutils literal notranslate"><span class="pre">selector_single_quoted_char</span></code></a> &quot;'&quot;
 
-<strong id="grammar-token-selector-double-quoted-text">selector_double_quoted_text</strong> =
-    DQUOTE 1*<a class="reference internal" href="#grammar-token-selector-double-quoted-char"><code class="xref docutils literal notranslate"><span class="pre">selector_double_quoted_char</span></code></a> DQUOTE
+<strong id="grammar-token-selector_double_quoted_text">selector_double_quoted_text</strong> =
+    DQUOTE 1*<a class="reference internal" href="#grammar-token-selector_double_quoted_char"><code class="xref docutils literal notranslate"><span class="pre">selector_double_quoted_char</span></code></a> DQUOTE
 
-<strong id="grammar-token-selector-single-quoted-char">selector_single_quoted_char</strong> =
+<strong id="grammar-token-selector_single_quoted_char">selector_single_quoted_char</strong> =
     %x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
 
-<strong id="grammar-token-selector-double-quoted-char">selector_double_quoted_char</strong> =
+<strong id="grammar-token-selector_double_quoted_char">selector_double_quoted_char</strong> =
     %x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (&quot;)
 </pre>
 </div>
