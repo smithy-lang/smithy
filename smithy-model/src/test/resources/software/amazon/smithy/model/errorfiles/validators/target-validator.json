@@ -32,12 +32,6 @@
                     "target": "MyService"
                 }
             },
-            "InvalidRecursiveList": {
-                "type": "list",
-                "member": {
-                    "target": "InvalidRecursiveList"
-                }
-            },
             "MyService": {
                 "type": "service",
                 "version": "2017-01-17",
