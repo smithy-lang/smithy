@@ -415,8 +415,7 @@ list
 The :dfn:`list` type represents a homogeneous collection of values. A list is
 defined using a :token:`list_statement`. A list statement consists of the
 shape named followed by an object with a single key-value pair of "member"
-that defines the :ref:`member <member>` of the list. The member of a list
-cannot target the containing list shape.
+that defines the :ref:`member <member>` of the list.
 
 The following example defines a list with a string member from the
 :ref:`prelude <prelude>`:
@@ -514,8 +513,7 @@ set
 The :dfn:`set` type represents an unordered collection of unique homogeneous
 values. A set is defined using a :token:`set_statement` that consists of the
 shape named followed by an object with a single key-value pair of "member"
-that defines the :ref:`member <member>` of the set. The member of a set
-cannot target the containing set shape.
+that defines the :ref:`member <member>` of the set.
 
 The following example defines a set of strings:
 
@@ -945,6 +943,82 @@ Members are considered boxed if and only if the member is marked with the
 :ref:`box-trait` or the shape targeted by the member is marked
 with the box trait. Members that target strings, timestamps, and
 aggregate shapes are always considered boxed and have no default values.
+
+
+Recursive shape definitions
+```````````````````````````
+
+Smithy allows for recursive shape definitions with the following constraint:
+the member of a list, set, or map cannot directly or transitively target its
+containing shape unless one or more members in the path from the container
+back to itself targets a structure or union shape. This ensures that shapes
+that are typically impossible to define in various programming languages are
+not defined in Smithy models (for example, you can't define a recursive list
+in Java ``List<List<List....``).
+
+The following shape definition is invalid:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        list RecursiveList {
+            member: RecursiveList
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.4.0",
+            "smithy.example": {
+                "shapes": {
+                    "RecursiveList": {
+                        "type": "list",
+                        "member": {
+                            "target": "RecursiveList"
+                        }
+                    }
+                }
+            }
+        }
+
+The following shape definition is valid:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        list ValidList {
+            member: IntermediateStructure
+        }
+
+        structure IntermediateStructure {
+            foo: ValidList
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.4.0",
+            "smithy.example": {
+                "shapes": {
+                    "ValidList": {
+                        "type": "list",
+                        "member": {
+                            "target": "IntermediateStructure"
+                        }
+                    },
+                    "IntermediateStructure": {
+                        "type": "structure",
+                        "members": {
+                            "foo": {
+                                "target": "ValidList"
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 
 .. _service-types:

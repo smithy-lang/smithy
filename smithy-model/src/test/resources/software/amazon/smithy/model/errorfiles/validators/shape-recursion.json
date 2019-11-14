@@ -1,0 +1,112 @@
+{
+  "smithy": "0.4.0",
+  "ns.foo": {
+    "shapes": {
+      "InvalidDirectlyRecursiveList": {
+        "type": "list",
+        "member": {
+          "target": "InvalidDirectlyRecursiveList"
+        }
+      },
+      "InvalidDirectlyRecursiveSet": {
+        "type": "set",
+        "member": {
+          "target": "InvalidDirectlyRecursiveSet"
+        }
+      },
+      "InvalidDirectlyRecursiveMap": {
+        "type": "map",
+        "key": {
+          "target": "String"
+        },
+        "value": {
+          "target": "InvalidDirectlyRecursiveMap"
+        }
+      },
+
+      "IndirectRecursiveList": {
+        "type": "list",
+        "member": {
+          "target": "IndirectRecursiveListIntermediate1"
+        }
+      },
+      "IndirectRecursiveListIntermediate1": {
+        "type": "list",
+        "member": {
+          "target": "IndirectRecursiveListIntermediate2"
+        }
+      },
+      "IndirectRecursiveListIntermediate2": {
+        "type": "list",
+        "member": {
+          "target": "IndirectRecursiveList"
+        }
+      },
+
+      "IndirectRecursiveSet": {
+        "type": "set",
+        "member": {
+          "target": "IndirectRecursiveSetIntermediate1"
+        }
+      },
+      "IndirectRecursiveSetIntermediate1": {
+        "type": "set",
+        "member": {
+          "target": "IndirectRecursiveSetIntermediate2"
+        }
+      },
+      "IndirectRecursiveSetIntermediate2": {
+        "type": "set",
+        "member": {
+          "target": "IndirectRecursiveSet"
+        }
+      },
+
+      "IndirectRecursiveMap": {
+        "type": "map",
+        "key": {
+          "target": "String"
+        },
+        "value": {
+          "target": "IndirectRecursiveMapIntermediate1"
+        }
+      },
+      "IndirectRecursiveMapIntermediate1": {
+        "type": "map",
+        "key": {
+          "target": "String"
+        },
+        "value": {
+          "target": "IndirectRecursiveMapIntermediate2"
+        }
+      },
+      "IndirectRecursiveMapIntermediate2": {
+        "type": "map",
+        "key": {
+          "target": "String"
+        },
+        "value": {
+          "target": "IndirectRecursiveMap"
+        }
+      },
+
+      "ValidRecursiveShape": {
+        "type": "map",
+        "key": {
+          "target": "String"
+        },
+        "value": {
+          "target": "ValidRecursiveShapeStruct"
+        }
+      },
+      "ValidRecursiveShapeStruct": {
+        "type": "structure",
+        "members": {
+          "foo": {
+            "target": "ValidRecursiveShape"
+          }
+        }
+      }
+    }
+  }
+}
