@@ -88,4 +88,42 @@ public final class IoUtils {
             throw new UncheckedIOException(e);
         }
     }
+
+    /**
+     * Reads a class loader resource into a UTF-8 string.
+     *
+     * <p>This is equivalent to reading the contents of an {@link InputStream}
+     * from {@link ClassLoader#getResourceAsStream}.
+     *
+     * @param classLoader Class loader to load from.
+     * @param resourcePath Path to the resource to load.
+     * @return Returns the loaded resource.
+     * @throws UncheckedIOException if the resource cannot be loaded.
+     */
+    public static String readUtf8Resource(ClassLoader classLoader, String resourcePath) {
+        try (InputStream is = classLoader.getResourceAsStream(resourcePath)) {
+            return toUtf8String(is);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Reads a class resource into a UTF-8 string.
+     *
+     * <p>This is equivalent to reading the contents of an {@link InputStream}
+     * from {@link Class#getResourceAsStream(String)}.
+     *
+     * @param clazz Class to load from.
+     * @param resourcePath Path to the resource to load.
+     * @return Returns the loaded resource.
+     * @throws UncheckedIOException if the resource cannot be loaded.
+     */
+    public static String readUtf8Resource(Class clazz, String resourcePath) {
+        try (InputStream is = clazz.getResourceAsStream(resourcePath)) {
+            return toUtf8String(is);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 }

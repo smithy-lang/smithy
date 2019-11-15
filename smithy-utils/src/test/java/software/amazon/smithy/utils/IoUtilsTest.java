@@ -68,4 +68,15 @@ public class IoUtilsTest {
     public void readsFromPath() throws URISyntaxException {
         assertEquals("This is a test.\n", IoUtils.readUtf8File(Paths.get(getClass().getResource("test.txt").toURI())));
     }
+
+    @Test
+    public void readsFromClass() {
+        assertEquals("This is a test.\n", IoUtils.readUtf8Resource(getClass(), "test.txt"));
+    }
+
+    @Test
+    public void readsFromClassLoader() {
+        assertEquals("This is a test.\n", IoUtils.readUtf8Resource(
+                getClass().getClassLoader(), "software/amazon/smithy/utils/test.txt"));
+    }
 }
