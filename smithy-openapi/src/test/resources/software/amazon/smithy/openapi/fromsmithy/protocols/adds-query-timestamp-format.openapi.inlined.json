@@ -18,6 +18,13 @@
             }
           },
           {
+            "name": "query2",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
             "name": "query3",
             "in": "query",
             "style": "form",
@@ -29,13 +36,6 @@
               }
             },
             "explode": true
-          },
-          {
-            "name": "query2",
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
           }
         ],
         "responses": {

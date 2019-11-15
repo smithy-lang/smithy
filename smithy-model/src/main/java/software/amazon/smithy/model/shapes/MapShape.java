@@ -15,8 +15,11 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -86,6 +89,11 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
     }
 
     @Override
+    public Collection<MemberShape> members() {
+        return ListUtils.of(key, value);
+    }
+
+    @Override
     public boolean equals(Object other) {
         if (!super.equals(other)) {
             return false;
@@ -134,6 +142,72 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
             } else {
                 throw new IllegalStateException("Invalid member given to MapShape builder: " + member.getId());
             }
+        }
+
+        /**
+         * Sets the key member of the map.
+         *
+         * @param target Target of the member.
+         * @return Returns the builder.
+         */
+        public Builder key(ShapeId target) {
+            return key(target, null);
+        }
+
+        /**
+         * Sets the key member of the map.
+         *
+         * @param target Target of the member.
+         * @param memberUpdater Consumer that can update the created member shape.
+         * @return Returns the builder.
+         */
+        public Builder key(ShapeId target, Consumer<MemberShape.Builder> memberUpdater) {
+            if (getId() == null) {
+                throw new IllegalStateException("An id must be set before setting a member with a target");
+            }
+
+            MemberShape.Builder builder = MemberShape.builder()
+                    .target(target)
+                    .id(getId().withMember("key"));
+
+            if (memberUpdater != null) {
+                memberUpdater.accept(builder);
+            }
+
+            return key(builder.build());
+        }
+
+        /**
+         * Sets the value member of the map.
+         *
+         * @param target Target of the member.
+         * @return Returns the builder.
+         */
+        public Builder value(ShapeId target) {
+            return value(target, null);
+        }
+
+        /**
+         * Sets the value member of the map.
+         *
+         * @param target Target of the member.
+         * @param memberUpdater Consumer that can updated the created member shape.
+         * @return Returns the builder.
+         */
+        public Builder value(ShapeId target, Consumer<MemberShape.Builder> memberUpdater) {
+            if (getId() == null) {
+                throw new IllegalStateException("An id must be set before setting a member with a target");
+            }
+
+            MemberShape.Builder builder = MemberShape.builder()
+                    .target(target)
+                    .id(getId().withMember("value"));
+
+            if (memberUpdater != null) {
+                memberUpdater.accept(builder);
+            }
+
+            return value(builder.build());
         }
     }
 }

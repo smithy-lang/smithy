@@ -15,11 +15,14 @@
 
 package software.amazon.smithy.model.shapes;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.traits.SensitiveTrait;
 
 public class ListShapeTest {
     @Test
@@ -105,5 +108,38 @@ public class ListShapeTest {
         ListShape shape2 = ListShape.builder().id("ns.foo#bar").member(member2).build();
 
         assertNotEquals(shape1, shape2);
+    }
+
+    @Test
+    public void addMemberWithTarget() {
+        ListShape shape = ListShape.builder()
+                .id("ns.foo#bar")
+                .member(ShapeId.from("ns.foo#bam"))
+                .build();
+
+        assertEquals(shape.getMember(),
+                     MemberShape.builder().id(shape.getId().withMember("member")).target("ns.foo#bam").build());
+    }
+
+    @Test
+    public void addMemberWithConsumer() {
+        ListShape shape = ListShape.builder()
+                .id("ns.foo#bar")
+                .member(ShapeId.from("ns.foo#bam"), builder -> builder.addTrait(new SensitiveTrait()))
+                .build();
+
+        assertEquals(shape.getMember(),
+                     MemberShape.builder()
+                             .id(shape.getId().withMember("member"))
+                             .target("ns.foo#bam")
+                             .addTrait(new SensitiveTrait())
+                             .build());
+    }
+
+    @Test
+    public void returnsMembers() {
+        ListShape shape = ListShape.builder().id("ns.foo#bar").member(ShapeId.from("ns.foo#bam")).build();
+
+        assertThat(shape.members(), hasSize(1));
     }
 }

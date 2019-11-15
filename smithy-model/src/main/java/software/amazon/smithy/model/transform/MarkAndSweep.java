@@ -86,14 +86,12 @@ final class MarkAndSweep {
         private final NeighborProvider reverseProvider;
         private final Model model;
         private final Set<Shape> markedForRemoval = new HashSet<>();
-        private final RemoveShapes.ShapeRemovalVisitor removalVisitor;
         private final Predicate<Shape> sweepFilter;
 
         MarkerContext(NeighborProvider reverseProvider, Model model, Predicate<Shape> sweepFilter) {
             this.reverseProvider = reverseProvider;
             this.model = model;
             this.sweepFilter = sweepFilter;
-            removalVisitor = new RemoveShapes.ShapeRemovalVisitor();
         }
 
         /**
@@ -118,7 +116,7 @@ final class MarkAndSweep {
         void markShape(Shape shape) {
             if (sweepFilter.test(shape)) {
                 markedForRemoval.add(shape);
-                markedForRemoval.addAll(shape.accept(removalVisitor));
+                markedForRemoval.addAll(shape.members());
             }
         }
 

@@ -54,7 +54,7 @@ public class PathFinderTest {
                 .build();
 
         List<String> result1 = formatPaths(PathFinder.create(index).search(struct, "string"));
-        assertThat(result1, contains(
+        assertThat(result1, containsInAnyOrder(
                 "[id|a.b#Struct] -[member]-> [id|a.b#Struct$baz] > [id|a.b#String]",
                 "[id|a.b#Struct] -[member]-> [id|a.b#Struct$foo] > [id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#String]"
         ));
