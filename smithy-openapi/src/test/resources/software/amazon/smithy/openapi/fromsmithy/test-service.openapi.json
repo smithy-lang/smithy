@@ -116,19 +116,19 @@
             "required": true
           },
           {
-            "name": "timeQuery",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
             "name": "query",
             "in": "query",
             "schema": {
               "type": "number",
               "format": "int32"
+            }
+          },
+          {
+            "name": "timeQuery",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
             }
           },
           {

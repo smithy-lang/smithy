@@ -19,12 +19,9 @@ import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -48,57 +45,15 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * thoroughly validated before it is utilized.
  */
 public final class ShapeIndex implements ToSmithyBuilder<ShapeIndex> {
-    /**
-     * The default number of shapes that must be present to use a cache
-     * when extracting streams of shapes of a specific type. With smaller
-     * shape maps, it's more efficient to just recompute the result for
-     * each invocation.
-     */
-    private static final int GROUP_CACHE_THRESHOLD = 50;
 
     /** A map of shape ID to shapes that backs the shape map. */
     private final Map<ShapeId, Shape> shapeMap;
-
-    /** Responsible for providing streams of shapes of a specific type. */
-    private final ShapeGrouper shapeGrouper;
 
     /** Lazily computed hash code of the shape index. */
     private int hash;
 
     private ShapeIndex(Builder builder) {
         shapeMap = MapUtils.copyOf(builder.shapeMap);
-
-        // Only cache the results of querying shapes by type if the number
-        // of shapes in the index exceeds the threshold.
-        shapeGrouper = shapeMap.size() >= GROUP_CACHE_THRESHOLD
-                ? new CachedShapeGrouper()
-                : ShapeIndex::passThroughGrouper;
-    }
-
-    /**
-     * Handles the caching of shapes of a specific type.
-     */
-    @FunctionalInterface
-    private interface ShapeGrouper {
-        <T extends Shape> Stream<T> shapes(Stream<Shape> shapes, Class<T> shapeType);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T extends Shape> Stream<T> passThroughGrouper(Stream<Shape> shapes, Class<T> shapeType) {
-        return (Stream<T>) shapes.filter(value -> value.getClass() == shapeType);
-    }
-
-    private static final class CachedShapeGrouper implements ShapeGrouper {
-        private final Map<Class<? extends Shape>, List<Shape>> grouped = new ConcurrentHashMap<>();
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public <T extends Shape> Stream<T> shapes(Stream<Shape> shapes, Class<T> shapeType) {
-            return (Stream<T>) grouped
-                    .computeIfAbsent(shapeType, t -> passThroughGrouper(shapes, shapeType)
-                            .collect(Collectors.toList()))
-                    .stream();
-        }
     }
 
     public static Builder builder() {
@@ -141,8 +96,9 @@ public final class ShapeIndex implements ToSmithyBuilder<ShapeIndex> {
      * @param <T> Shape type to stream from the index.
      * @return A stream of shapes of {@code T} matching {@code shapeType}.
      */
+    @SuppressWarnings("unchecked")
     public <T extends Shape> Stream<T> shapes(Class<T> shapeType) {
-        return shapeGrouper.shapes(shapes(), shapeType);
+        return (Stream<T>) shapeMap.values().stream().filter(value -> value.getClass() == shapeType);
     }
 
     /**
@@ -201,11 +157,25 @@ public final class ShapeIndex implements ToSmithyBuilder<ShapeIndex> {
         /**
          * Add a shape to the builder.
          *
+         * <p>{@link MemberShape} shapes are not added to the ShapeIndex directly.
+         * They must be added by adding their containing shapes (e.g., to add a
+         * list member, you must add the list shape that contains it). Any member
+         * shape provided to any of the methods used to add shapes to the
+         * shape index are ignored.
+         *
          * @param shape Shape to add.
          * @return Returns the builder.
          */
         public Builder addShape(Shape shape) {
-            shapeMap.put(shape.getId(), shape);
+            // Members must be added by their containing shapes.
+            if (!shape.isMemberShape()) {
+                shapeMap.put(shape.getId(), shape);
+                // Automatically add members of the shape.
+                for (MemberShape memberShape : shape.members()) {
+                    shapeMap.put(memberShape.getId(), memberShape);
+                }
+            }
+
             return this;
         }
 
@@ -216,7 +186,7 @@ public final class ShapeIndex implements ToSmithyBuilder<ShapeIndex> {
          * @return Returns the builder.
          */
         public Builder addShapes(ShapeIndex shapeIndex) {
-            shapeIndex.shapes().forEach(this::addShape);
+            shapeMap.putAll(shapeIndex.shapeMap);
             return this;
         }
 
@@ -224,10 +194,13 @@ public final class ShapeIndex implements ToSmithyBuilder<ShapeIndex> {
          * Adds a collection of shapes to the builder.
          *
          * @param shapes Collection of Shapes to add.
+         * @param <S> Type of shape being added.
          * @return Returns the builder.
          */
-        public Builder addShapes(Collection<Shape> shapes) {
-            shapes.forEach(this::addShape);
+        public <S extends Shape> Builder addShapes(Collection<S> shapes) {
+            for (Shape shape : shapes) {
+                addShape(shape);
+            }
             return this;
         }
 
@@ -247,11 +220,23 @@ public final class ShapeIndex implements ToSmithyBuilder<ShapeIndex> {
         /**
          * Removes a shape from the builder by ID.
          *
+         * <p>Members of shapes are automatically removed when their
+         * containing shape is removed.
+         *
          * @param shapeId Shape to remove.
          * @return Returns the builder.
          */
         public Builder removeShape(ShapeId shapeId) {
-            shapeMap.remove(shapeId);
+            if (shapeMap.containsKey(shapeId)) {
+                Shape previous = shapeMap.get(shapeId);
+                shapeMap.remove(shapeId);
+
+                // Automatically remove any members contained in the shape.
+                for (MemberShape memberShape : previous.members()) {
+                    shapeMap.remove(memberShape.getId());
+                }
+            }
+
             return this;
         }
     }

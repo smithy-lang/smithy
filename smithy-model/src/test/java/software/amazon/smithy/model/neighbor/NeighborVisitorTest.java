@@ -88,10 +88,7 @@ public class NeighborVisitorTest {
         Shape string = StringShape.builder().id("ns.foo#String").build();
         ListShape list = ListShape.builder()
                 .id("ns.foo#name")
-                .member(MemberShape.builder()
-                        .id("ns.foo#name$member")
-                        .target(string.getId())
-                        .build())
+                .member(string.getId())
                 .build();
         ShapeIndex shapeIndex = ShapeIndex.builder().addShape(list).addShape(string).build();
         NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);

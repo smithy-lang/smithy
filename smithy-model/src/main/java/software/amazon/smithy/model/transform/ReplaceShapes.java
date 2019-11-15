@@ -37,7 +37,6 @@ import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
@@ -142,10 +141,9 @@ final class ReplaceShapes {
         // by the visitor, which will ensure that newly added members show up
         // in the index.
         ShapeIndex.Builder builder = model.getShapeIndex().toBuilder();
-        GetMemberShapesVisitor getMemberShapesVisitor = new GetMemberShapesVisitor();
         shouldReplace.forEach(shape -> {
             builder.addShape(shape);
-            shape.accept(getMemberShapesVisitor).forEach(builder::addShape);
+            builder.addShapes(shape.members());
         });
         return builder;
     }
@@ -239,44 +237,6 @@ final class ReplaceShapes {
             Set<String> removedMembers = new HashSet<>(previousMembers.keySet());
             removedMembers.removeAll(members.keySet());
             return removedMembers.stream().map(previousMembers::get).collect(Collectors.toSet());
-        }
-    }
-
-    /**
-     * Gets the member shapes of a container shape so that they can be added
-     * into a new ShapeIndex, ensuring that changes to the members referenced
-     * by a container shape are reflected in the index.
-     */
-    private static final class GetMemberShapesVisitor extends ShapeVisitor.Default<Collection<? extends Shape>> {
-
-        @Override
-        public Collection<? extends Shape> getDefault(Shape shape) {
-            return SetUtils.of();
-        }
-
-        @Override
-        public Collection<? extends Shape> listShape(ListShape shape) {
-            return ListUtils.of(shape.getMember());
-        }
-
-        @Override
-        public Collection<? extends Shape> setShape(SetShape shape) {
-            return ListUtils.of(shape.getMember());
-        }
-
-        @Override
-        public Collection<? extends Shape> mapShape(MapShape shape) {
-            return ListUtils.of(shape.getKey(), shape.getValue());
-        }
-
-        @Override
-        public Collection<? extends Shape> structureShape(StructureShape shape) {
-            return shape.getAllMembers().values();
-        }
-
-        @Override
-        public Collection<? extends Shape> unionShape(UnionShape shape) {
-            return shape.getAllMembers().values();
         }
     }
 

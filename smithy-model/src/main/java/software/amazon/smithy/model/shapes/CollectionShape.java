@@ -15,7 +15,10 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.function.Consumer;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -46,6 +49,11 @@ public abstract class CollectionShape extends Shape {
     }
 
     @Override
+    public Collection<MemberShape> members() {
+        return Collections.singletonList(member);
+    }
+
+    @Override
     public boolean equals(Object other) {
         return super.equals(other) && getMember().equals(((CollectionShape) other).getMember());
     }
@@ -69,6 +77,38 @@ public abstract class CollectionShape extends Shape {
         public B member(MemberShape member) {
             this.member = Objects.requireNonNull(member);
             return (B) this;
+        }
+
+        /**
+         * Sets the member of the collection.
+         * @param target Target of the member.
+         * @return Returns the builder.
+         */
+        public B member(ShapeId target) {
+            return member(target, null);
+        }
+
+        /**
+         * Sets the member of the collection.
+         *
+         * @param target Target of the member.
+         * @param memberUpdater Consumer that can update the created member shape.
+         * @return Returns the builder.
+         */
+        public B member(ShapeId target, Consumer<MemberShape.Builder> memberUpdater) {
+            if (getId() == null) {
+                throw new IllegalStateException("An id must be set before setting a member with a target");
+            }
+
+            MemberShape.Builder builder = MemberShape.builder()
+                    .target(target)
+                    .id(getId().withMember("member"));
+
+            if (memberUpdater != null) {
+                memberUpdater.accept(builder);
+            }
+
+            return member(builder.build());
         }
 
         @Override

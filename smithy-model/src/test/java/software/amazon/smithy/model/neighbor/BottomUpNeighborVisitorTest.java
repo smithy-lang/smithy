@@ -42,24 +42,37 @@ public class BottomUpNeighborVisitorTest {
     @Test
     public void dataShape() {
         Shape shape = BlobShape.builder().id("ns.foo#name").build();
-        Shape listMemberShape = MemberShape.builder().target(shape.getId())
+        MemberShape listMemberShape = MemberShape.builder()
+                .target(shape.getId())
                 .id("ns.foo#list$member")
                 .build();
-        Shape mapKeyShape = MemberShape.builder().target(shape.getId())
+        ListShape listShape = ListShape.builder().id("ns.foo#list").member(listMemberShape).build();
+
+        MemberShape mapKeyShape = MemberShape.builder()
+                .target(shape.getId())
                 .id("ns.foo#map$key")
                 .build();
-        Shape mapValueShape = MemberShape.builder().target(shape.getId())
+        MemberShape mapValueShape = MemberShape.builder()
+                .target(shape.getId())
                 .id("ns.foo#map$value")
                 .build();
-        Shape structureMemberShape = MemberShape.builder().target(shape.getId())
+        MapShape mapShape = MapShape.builder()
+                .id(mapKeyShape.getId().withoutMember())
+                .key(mapKeyShape)
+                .value(mapValueShape)
+                .build();
+
+        MemberShape structureMemberShape = MemberShape.builder()
+                .target(shape.getId())
                 .id("ns.foo#structure$aMember")
                 .build();
+        StructureShape structureShape = StructureShape.builder()
+                .id(structureMemberShape.getId().withoutMember())
+                .addMember(structureMemberShape)
+                .build();
+
         ShapeIndex shapeIndex = ShapeIndex.builder()
-                .addShape(shape)
-                .addShape(listMemberShape)
-                .addShape(mapKeyShape)
-                .addShape(mapValueShape)
-                .addShape(structureMemberShape)
+                .addShapes(shape, listShape, mapShape, structureShape)
                 .build();
         NeighborProvider neighborVisitor = NeighborProvider.bottomUp(shapeIndex);
 

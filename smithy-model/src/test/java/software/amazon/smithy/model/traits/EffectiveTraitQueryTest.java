@@ -32,19 +32,16 @@ public class EffectiveTraitQueryTest {
         Shape stringShape = StringShape.builder().id("foo.bar#Baz")
                 .addTrait(new SensitiveTrait())
                 .build();
-        MemberShape member = MemberShape.builder()
-                .id("foo.baz#Container$member")
-                .target(stringShape)
-                .build();
+        ListShape list = ListShape.builder().id("foo.bar#List").member(stringShape.getId()).build();
         ShapeIndex index = ShapeIndex.builder()
-                .addShapes(stringShape, member)
+                .addShapes(stringShape, list)
                 .build();
         EffectiveTraitQuery query = EffectiveTraitQuery.builder()
                 .shapeIndex(index)
                 .traitClass(SensitiveTrait.class)
                 .build();
 
-        assertTrue(query.isTraitApplied(member));
+        assertTrue(query.isTraitApplied(list.getMember()));
     }
 
     @Test

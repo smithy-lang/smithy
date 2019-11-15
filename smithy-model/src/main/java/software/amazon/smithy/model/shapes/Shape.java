@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -553,6 +554,15 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      */
     public final boolean isTimestampShape() {
         return getType() == ShapeType.TIMESTAMP;
+    }
+
+    /**
+     * Gets all of the members contained in the shape.
+     *
+     * @return Returns the members contained in the shape (if any).
+     */
+    public Collection<MemberShape> members() {
+        return Collections.emptyList();
     }
 
     @Override

@@ -103,18 +103,18 @@
             "required": true
           },
           {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ExampleRestPutPayloadInputQueryMember"
+            }
+          },
+          {
             "name": "timeQuery",
             "in": "query",
             "schema": {
               "type": "string",
               "format": "date-time"
-            }
-          },
-          {
-            "name": "query",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/ExampleRestPutPayloadInputQueryMember"
             }
           },
           {

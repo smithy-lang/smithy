@@ -36,32 +36,6 @@ import software.amazon.smithy.model.traits.Trait;
 
 public class ShapeTest {
 
-    private static final class SubShape extends Shape {
-        private SubShape(final Builder builder) {
-            super(builder, false);
-        }
-
-        public static Builder builder() {
-            return new Builder();
-        }
-
-        public <R> R accept(final ShapeVisitor<R> cases) {
-            throw new UnsupportedOperationException();
-        }
-
-        public static final class Builder extends AbstractShapeBuilder<Builder, SubShape> {
-            @Override
-            public SubShape build() {
-                return new SubShape(this);
-            }
-
-            @Override
-            public ShapeType getShapeType() {
-                return ShapeType.STRUCTURE;
-            }
-        }
-    }
-
     private static class MyTrait implements Trait {
         private ShapeId id;
         private SourceLocation sourceLocation;
@@ -99,7 +73,7 @@ public class ShapeTest {
 
     @Test
     public void requiresShapeId() {
-        Assertions.assertThrows(IllegalStateException.class, () -> SubShape.builder().build());
+        Assertions.assertThrows(IllegalStateException.class, () -> StringShape.builder().build());
     }
 
     @Test
@@ -114,14 +88,14 @@ public class ShapeTest {
 
     @Test
     public void castsToString() {
-        Shape shape = SubShape.builder().id("ns.foo#baz").build();
+        Shape shape = StringShape.builder().id("ns.foo#baz").build();
 
-        assertEquals("(structure: `ns.foo#baz`)", shape.toString());
+        assertEquals("(string: `ns.foo#baz`)", shape.toString());
     }
 
     @Test
     public void hasSource() {
-        Shape shape = SubShape.builder().id("ns.foo#baz").source("foo", 1, 2).build();
+        Shape shape = StringShape.builder().id("ns.foo#baz").source("foo", 1, 2).build();
 
         assertEquals("foo", shape.getSourceLocation().getFilename());
         assertEquals(1, shape.getSourceLocation().getLine());
@@ -130,7 +104,7 @@ public class ShapeTest {
 
     @Test
     public void sourceCannotBeNull() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> SubShape.builder().source(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> StringShape.builder().source(null));
     }
 
     @Test
@@ -139,7 +113,7 @@ public class ShapeTest {
         MyTrait otherTrait = new OtherTrait(ShapeId.from("foo.baz#other"), null);
         ShapeId id = ShapeId.from("ns.foo#baz");
         DocumentationTrait documentationTrait = new DocumentationTrait("docs", SourceLocation.NONE);
-        Shape shape = SubShape.builder()
+        Shape shape = StringShape.builder()
                 .id(id)
                 .addTrait(trait)
                 .addTrait(otherTrait)
@@ -178,7 +152,7 @@ public class ShapeTest {
     @Test
     public void traitsMustNotBeNull() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            SubShape.builder().id("ns.foo#baz").addTrait(null);
+            StringShape.builder().id("ns.foo#baz").addTrait(null);
         });
     }
 
@@ -186,7 +160,7 @@ public class ShapeTest {
     public void removesTraits() {
         MyTrait trait = new MyTrait(ShapeId.from("foo.baz#foo"), null);
         MyTrait otherTrait = new OtherTrait(ShapeId.from("foo.baz#other"), null);
-        Shape shape = SubShape.builder()
+        Shape shape = StringShape.builder()
                 .id("ns.foo#baz")
                 .addTrait(trait)
                 .addTrait(otherTrait)
@@ -216,8 +190,8 @@ public class ShapeTest {
     public void differentTraitNamesNotEqual() {
         MyTrait traitA = new MyTrait(ShapeId.from("foo.baz#foo"), null);
         MyTrait traitB = new MyTrait(ShapeId.from("foo.baz#other"), null);
-        Shape shapeA = SubShape.builder().id("ns.foo#baz").addTrait(traitA).build();
-        Shape shapeB = SubShape.builder().id("ns.foo#baz").addTrait(traitB).build();
+        Shape shapeA = StringShape.builder().id("ns.foo#baz").addTrait(traitA).build();
+        Shape shapeB = StringShape.builder().id("ns.foo#baz").addTrait(traitB).build();
 
         assertNotEquals(shapeA, shapeB);
     }
@@ -226,31 +200,31 @@ public class ShapeTest {
     public void differentTraitsNotEqual() {
         MyTrait traitA = new MyTrait(ShapeId.from("foo.ba#foo"), null);
         MyTrait traitB = new OtherTrait(ShapeId.from("foo.baz#other"), null);
-        Shape shapeA = SubShape.builder().id("ns.foo#baz").addTrait(traitA).build();
-        Shape shapeB = SubShape.builder().id("ns.foo#baz").addTrait(traitB).build();
+        Shape shapeA = StringShape.builder().id("ns.foo#baz").addTrait(traitA).build();
+        Shape shapeB = StringShape.builder().id("ns.foo#baz").addTrait(traitB).build();
 
         assertNotEquals(shapeA, shapeB);
     }
 
     @Test
     public void differentIdsAreNotEqual() {
-        Shape shapeA = SubShape.builder().id("ns.foo#baz").build();
-        Shape shapeB = SubShape.builder().id("ns.foo#bar").build();
+        Shape shapeA = StringShape.builder().id("ns.foo#baz").build();
+        Shape shapeB = StringShape.builder().id("ns.foo#bar").build();
 
         assertNotEquals(shapeA, shapeB);
     }
 
     @Test
     public void sameInstanceIsEqual() {
-        Shape shapeA = SubShape.builder().id("ns.foo#baz").build();
+        Shape shapeA = StringShape.builder().id("ns.foo#baz").build();
 
         assertEquals(shapeA, shapeA);
     }
 
     @Test
     public void sameValueIsEqual() {
-        Shape shapeA = SubShape.builder().id("ns.foo#baz").build();
-        Shape shapeB = SubShape.builder().id("ns.foo#baz").build();
+        Shape shapeA = StringShape.builder().id("ns.foo#baz").build();
+        Shape shapeB = StringShape.builder().id("ns.foo#baz").build();
 
         assertEquals(shapeA, shapeB);
     }
@@ -258,8 +232,8 @@ public class ShapeTest {
     @Test
     public void samesTraitsIsEqual() {
         MyTrait traitA = new MyTrait(ShapeId.from("foo.baz#foo"), null);
-        Shape shapeA = SubShape.builder().id("ns.foo#baz").addTrait(traitA).build();
-        Shape shapeB = SubShape.builder().id("ns.foo#baz").addTrait(traitA).build();
+        Shape shapeA = StringShape.builder().id("ns.foo#baz").addTrait(traitA).build();
+        Shape shapeB = StringShape.builder().id("ns.foo#baz").addTrait(traitA).build();
 
         assertEquals(shapeA, shapeB);
     }

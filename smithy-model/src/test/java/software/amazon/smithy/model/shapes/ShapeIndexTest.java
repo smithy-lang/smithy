@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
@@ -138,5 +140,36 @@ public class ShapeIndexTest {
         ShapeIndex index = ShapeIndex.builder().addShapes(a, b).build();
 
         assertThat(index.toSet(), containsInAnyOrder(a, b));
+    }
+
+    @Test
+    public void addsMembersAutomatically() {
+        StringShape string = StringShape.builder().id("ns.foo#a").build();
+        ListShape list = ListShape.builder()
+                .id("ns.foo#list")
+                .member(ShapeId.from("ns.foo#a"))
+                .build();
+        ShapeIndex index = ShapeIndex.builder().addShapes(string, list).build();
+        Set<Shape> shapes = index.toSet();
+
+        assertThat(shapes, hasSize(3));
+        assertThat(shapes, containsInAnyOrder(string, list, list.getMember()));
+    }
+
+    @Test
+    public void removesMembersAutomatically() {
+        StringShape string = StringShape.builder().id("ns.foo#a").build();
+        ListShape list = ListShape.builder()
+                .id("ns.foo#list")
+                .member(ShapeId.from("ns.foo#a"))
+                .build();
+        ShapeIndex index = ShapeIndex.builder()
+                .addShapes(string, list)
+                .removeShape(list.getId())
+                .build();
+        Set<Shape> shapes = index.toSet();
+
+        assertThat(shapes, hasSize(1));
+        assertThat(shapes, contains(string));
     }
 }
