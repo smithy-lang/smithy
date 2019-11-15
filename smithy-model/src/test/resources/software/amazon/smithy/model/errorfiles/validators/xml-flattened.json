@@ -15,6 +15,25 @@
                     "target": "smithy.api#String"
                 }
             },
+            "FlatMap": {
+                "type": "map",
+                "key": {
+                    "target": "String"
+                },
+                "value": {
+                    "target": "String"
+                },
+                "smithy.api#xmlFlattened": true
+            },
+            "NotFlatMap": {
+                "type": "map",
+                "key": {
+                    "target": "String"
+                },
+                "value": {
+                    "target": "String"
+                }
+            },
             "ValidStructure1": {
                 "type": "structure",
                 "members": {
@@ -28,6 +47,15 @@
                 "members": {
                     "flatList": {
                         "target": "NotFlatCollection",
+                        "smithy.api#xmlFlattened": true
+                    }
+                }
+            },
+            "ValidStructure3": {
+                "type": "structure",
+                "members": {
+                    "flatmap": {
+                        "target": "NotFlatMap",
                         "smithy.api#xmlFlattened": true
                     }
                 }

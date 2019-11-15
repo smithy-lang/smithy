@@ -98,13 +98,13 @@ Summary
     Moves serialized collection members from their collection element to that
     of the collection's container.
 Trait selector
-    ``:test(collection, member:of(structure) > collection)``
+    ``:test(map, collection, member:of(structure) > :test(map, collection))``
 
-    *Any list or set or any structure member that targets a list or set*
+    *Any map, list, or set or any structure member that targets a map, list, or set*
 Value type
     Annotation trait
 
-Given the following structure definition,
+Given the following list definition:
 
 .. tabs::
 
@@ -146,6 +146,62 @@ following document:
     <member>foo</member>
     <member>bar</member>
     <member>baz</member>
+
+Given the following definition:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @xmlFlattened
+        map MyMap {
+            key: String
+            value: String
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.4.0",
+            "smithy.example": {
+                "shapes": {
+                    "MyMap": {
+                        "type": "map",
+                        "key": {
+                            "target": "String"
+                        },
+                        "value": {
+                            "target": "String"
+                        },
+                        "xmlFlattened": true,
+                        "xmlName": "MyMapEntry"
+                    }
+                }
+            }
+        }
+
+and the following values provided for ``MyMap``:
+
+.. code-block:: json
+
+    {
+        "foo": "bar",
+        "bar": "baz"
+    }
+
+the XML representation of the value would be serialized with the following
+document:
+
+.. code-block:: xml
+
+    <MyMapEntry>
+        <key>foo</key>
+        <value>bar</value>
+    </MyMapEntry>
+    <MyMapEntry>
+        <key>bar</key>
+        <value>baz</value>
+    </MyMapEntry>
 
 
 .. _xmlName-trait:
