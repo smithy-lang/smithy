@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.empty;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
@@ -33,7 +34,6 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
@@ -46,8 +46,8 @@ public class NeighborVisitorTest {
     @Test
     public void blobShape() {
         Shape shape = BlobShape.builder().id("ns.foo#name").build();
-        ShapeIndex shapeIndex = ShapeIndex.builder().addShape(shape).build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        Model model = Model.builder().addShape(shape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
         assertThat(relationships, empty());
@@ -56,8 +56,8 @@ public class NeighborVisitorTest {
     @Test
     public void booleanShape() {
         Shape shape = BooleanShape.builder().id("ns.foo#name").build();
-        ShapeIndex shapeIndex = ShapeIndex.builder().addShape(shape).build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        Model model = Model.builder().addShape(shape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
         assertThat(relationships, empty());
@@ -66,8 +66,8 @@ public class NeighborVisitorTest {
     @Test
     public void stringShape() {
         Shape shape = StringShape.builder().id("ns.foo#name").build();
-        ShapeIndex shapeIndex = ShapeIndex.builder().addShape(shape).build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        Model model = Model.builder().addShape(shape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
         assertThat(relationships, empty());
@@ -76,8 +76,8 @@ public class NeighborVisitorTest {
     @Test
     public void timestampShape() {
         Shape shape = TimestampShape.builder().id("ns.foo#name").build();
-        ShapeIndex shapeIndex = ShapeIndex.builder().addShape(shape).build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        Model model = Model.builder().addShape(shape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
         assertThat(relationships, empty());
@@ -90,8 +90,8 @@ public class NeighborVisitorTest {
                 .id("ns.foo#name")
                 .member(string.getId())
                 .build();
-        ShapeIndex shapeIndex = ShapeIndex.builder().addShape(list).addShape(string).build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        Model model = Model.builder().addShape(list).addShape(string).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         MemberShape memberTarget = list.getMember();
         List<Relationship> relationships = list.accept(neighborVisitor);
 
@@ -115,8 +115,8 @@ public class NeighborVisitorTest {
                 .build();
         MemberShape keyTarget = map.getKey();
         MemberShape valueTarget = map.getValue();
-        ShapeIndex shapeIndex = ShapeIndex.builder().addShape(map).addShape(key).addShape(value).build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        Model model = Model.builder().addShape(map).addShape(key).addShape(value).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = map.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
@@ -141,14 +141,14 @@ public class NeighborVisitorTest {
                 .build();
         MemberShape member1Target = struct.getMember("m1").get();
         MemberShape member2Target = struct.getMember("m2").get();
-        ShapeIndex shapeIndex = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShape(struct)
                 .addShape(memberShape1)
                 .addShape(memberShape2)
                 .addShape(member1Target)
                 .addShape(member2Target)
                 .build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = struct.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
@@ -173,14 +173,14 @@ public class NeighborVisitorTest {
                 .build();
         MemberShape v1Target = union.getMember("tag1").get();
         MemberShape v2Target = union.getMember("tag2").get();
-        ShapeIndex shapeIndex = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShape(union)
                 .addShape(variant1Shape)
                 .addShape(variant2Shape)
                 .addShape(v1Target)
                 .addShape(v2Target)
                 .build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = union.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
@@ -198,10 +198,10 @@ public class NeighborVisitorTest {
                 .build();
         OperationShape operationShape = OperationShape.builder().id("ns.foo#Operation").build();
         ResourceShape resourceShape = ResourceShape.builder().id("ns.foo#Resource").build();
-        ShapeIndex shapeIndex = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(service, resourceShape, operationShape)
                 .build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = service.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
@@ -257,12 +257,12 @@ public class NeighborVisitorTest {
                 .build();
         ResourceShape child1 = ResourceShape.builder().id("ns.foo#Child1").addResource("ns.foo#Child2").build();
         ResourceShape child2 = ResourceShape.builder().id("ns.foo#Child2").build();
-        ShapeIndex shapeIndex = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(parent, resource, identifier, child1, child2)
                 .addShapes(createOperation, getOperation, updateOperation, deleteOperation, listOperation)
                 .addShapes(namedOperation, collectionOperation, putOperation)
                 .build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = resource.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
@@ -318,8 +318,8 @@ public class NeighborVisitorTest {
                 .output(output.getId())
                 .addError(error.getId())
                 .build();
-        ShapeIndex shapeIndex = ShapeIndex.builder().addShapes(method, input, output, error).build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        Model model = Model.builder().addShapes(method, input, output, error).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = method.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
@@ -341,12 +341,12 @@ public class NeighborVisitorTest {
                 .id("ns.foo#List")
                 .member(target)
                 .build();
-        ShapeIndex shapeIndex = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShape(target)
                 .addShape(string)
                 .addShape(list)
                 .build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = target.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
@@ -360,10 +360,10 @@ public class NeighborVisitorTest {
                 .id("ns.foo#List$member")
                 .target("ns.foo#String")
                 .build();
-        ShapeIndex shapeIndex = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShape(target)
                 .build();
-        NeighborVisitor neighborVisitor = new NeighborVisitor(shapeIndex);
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
         List<Relationship> relationships = target.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(

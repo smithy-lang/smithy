@@ -20,10 +20,10 @@ import static org.hamcrest.Matchers.contains;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 
 public class ShapeTypeCategorySelectorTest {
@@ -32,8 +32,8 @@ public class ShapeTypeCategorySelectorTest {
         Selector selector = new ShapeTypeCategorySelector(NumberShape.class);
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();
         Shape b = StringShape.builder().id("foo.baz#Bam").build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(a, b).build();
-        Set<Shape> result = selector.select(index);
+        Model model = Model.builder().addShapes(a, b).build();
+        Set<Shape> result = selector.select(model);
 
         assertThat(result, contains(a));
     }

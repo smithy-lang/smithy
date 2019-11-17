@@ -16,7 +16,6 @@
 package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -32,8 +31,8 @@ public class ClientEndpointDiscoveryTraitTest {
                 .addImport(getClass().getResource("test-model.json"))
                 .assemble()
                 .unwrap();
-        ServiceShape service = result.getShapeIndex()
-                .getShape(ShapeId.from("ns.foo#FooService")).get()
+        ServiceShape service = result
+                .expectShape(ShapeId.from("ns.foo#FooService"))
                 .asServiceShape().get();
         ClientEndpointDiscoveryTrait trait = service.getTrait(ClientEndpointDiscoveryTrait.class).get();
 

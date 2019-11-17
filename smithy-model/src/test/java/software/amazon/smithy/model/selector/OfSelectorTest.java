@@ -24,12 +24,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -38,32 +38,32 @@ import software.amazon.smithy.model.traits.SensitiveTrait;
 public class OfSelectorTest {
     @Test
     public void matchesMembersThatAreContainedWithinSelector() {
-        ShapeIndex index = createIndex();
+        Model model = createModel();
         // Containing shape must have the sensitive trait.
         Selector selector = new OfSelector(Collections.singletonList(
                 new AttributeSelector(new TraitAttributeKey("sensitive"))));
 
-        Set<Shape> result = selector.select(index);
+        Set<Shape> result = selector.select(model);
         assertThat(result, hasSize(1));
         assertThat(result.iterator().next().getId().toString(), equalTo("foo.baz#B$member"));
     }
 
     @Test
     public void matchesMembersThatAreContainedWithinSelectorUsingOr() {
-        ShapeIndex index = createIndex();
+        Model model = createModel();
         // Match either a structure shape container or a list container.
         Selector selector = new OfSelector(Arrays.asList(
                 new ShapeTypeSelector(ShapeType.STRUCTURE),
                 new ShapeTypeSelector(ShapeType.LIST)));
 
-        Set<Shape> result = selector.select(index);
+        Set<Shape> result = selector.select(model);
         assertThat(result, containsInAnyOrder(
-                index.getShape(ShapeId.from("foo.baz#B$member")).get(),
-                index.getShape(ShapeId.from("foo.baz#C$member")).get(),
-                index.getShape(ShapeId.from("foo.baz#D$member")).get()));
+                model.expectShape(ShapeId.from("foo.baz#B$member")),
+                model.expectShape(ShapeId.from("foo.baz#C$member")),
+                model.expectShape(ShapeId.from("foo.baz#D$member"))));
     }
 
-    private ShapeIndex createIndex() {
+    private Model createModel() {
         Shape a = StringShape.builder().id("foo.baz#A").build();
         MemberShape bMember = MemberShape.builder()
                 .id("foo.baz#B$member")
@@ -89,6 +89,6 @@ public class OfSelectorTest {
                 .member(dMember)
                 .build();
 
-        return ShapeIndex.builder().addShapes(a, b, bMember, c, cMember, d, dMember).build();
+        return Model.builder().addShapes(a, b, bMember, c, cMember, d, dMember).build();
     }
 }

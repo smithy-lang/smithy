@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 
 public class EffectiveTraitQueryTest {
@@ -16,11 +16,11 @@ public class EffectiveTraitQueryTest {
         Shape stringShape = StringShape.builder().id("foo.bar#Baz")
                 .addTrait(new SensitiveTrait())
                 .build();
-        ShapeIndex index = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(stringShape)
                 .build();
         EffectiveTraitQuery query = EffectiveTraitQuery.builder()
-                .shapeIndex(index)
+                .model(model)
                 .traitClass(SensitiveTrait.class)
                 .build();
 
@@ -33,11 +33,11 @@ public class EffectiveTraitQueryTest {
                 .addTrait(new SensitiveTrait())
                 .build();
         ListShape list = ListShape.builder().id("foo.bar#List").member(stringShape.getId()).build();
-        ShapeIndex index = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(stringShape, list)
                 .build();
         EffectiveTraitQuery query = EffectiveTraitQuery.builder()
-                .shapeIndex(index)
+                .model(model)
                 .traitClass(SensitiveTrait.class)
                 .build();
 
@@ -56,11 +56,11 @@ public class EffectiveTraitQueryTest {
                 .member(member)
                 .addTrait(new SensitiveTrait())
                 .build();
-        ShapeIndex index = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(stringShape, member, list)
                 .build();
         EffectiveTraitQuery query = EffectiveTraitQuery.builder()
-                .shapeIndex(index)
+                .model(model)
                 .traitClass(SensitiveTrait.class)
                 .build();
 
@@ -79,11 +79,11 @@ public class EffectiveTraitQueryTest {
                 .member(member)
                 .addTrait(new SensitiveTrait())
                 .build();
-        ShapeIndex index = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(stringShape, member, list)
                 .build();
         EffectiveTraitQuery query = EffectiveTraitQuery.builder()
-                .shapeIndex(index)
+                .model(model)
                 .traitClass(SensitiveTrait.class)
                 .inheritFromContainer(true)
                 .build();

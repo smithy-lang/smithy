@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
@@ -36,14 +35,14 @@ public final class ResourceIdentifierValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(ResourceShape.class)
-                .flatMap(resource -> validateAgainstChildren(resource, model.getShapeIndex()))
+        return model.shapes(ResourceShape.class)
+                .flatMap(resource -> validateAgainstChildren(resource, model))
                 .collect(Collectors.toList());
     }
 
-    private Stream<ValidationEvent> validateAgainstChildren(ResourceShape resource, ShapeIndex index) {
+    private Stream<ValidationEvent> validateAgainstChildren(ResourceShape resource, Model model) {
         return resource.getResources().stream()
-                .flatMap(shape -> OptionalUtils.stream(index.getShape(shape).flatMap(Shape::asResourceShape)))
+                .flatMap(shape -> OptionalUtils.stream(model.getShape(shape).flatMap(Shape::asResourceShape)))
                 .flatMap(child -> Stream.concat(
                         OptionalUtils.stream(checkForMissing(child, resource)),
                         OptionalUtils.stream(checkForMismatches(child, resource))));

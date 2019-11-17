@@ -47,14 +47,14 @@ public final class ArnIndex implements KnowledgeIndex {
 
     public ArnIndex(Model model) {
         // Pre-compute the ARN services.
-        arnServices = unmodifiableMap(model.getShapeIndex().shapes(ServiceShape.class)
+        arnServices = unmodifiableMap(model.shapes(ServiceShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, ServiceTrait.class))
                 .map(pair -> Pair.of(pair.getLeft().getId(), resolveServiceArn(pair)))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
 
         // Pre-compute all of the ArnTemplates in a service shape.
         TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
-        List<ServiceShape> services = model.getShapeIndex().shapes(ServiceShape.class)
+        List<ServiceShape> services = model.shapes(ServiceShape.class)
                 .filter(shape -> shape.hasTrait(ServiceTrait.class))
                 .collect(Collectors.toList());
 

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 
 /**
  * Removes shapes from a model while ensuring that relationships to/from
@@ -45,8 +44,7 @@ final class RemoveShapes {
     }
 
     Model transform(ModelTransformer transformer, Model model) {
-        ShapeIndex index = model.getShapeIndex();
-        ShapeIndex.Builder builder = index.toBuilder();
+        Model.Builder builder = model.toBuilder();
 
         // Iteratively add each shape that needs to be removed from the index using multiple rounds.
         Set<Shape> removed = new HashSet<>(toRemove);
@@ -57,7 +55,7 @@ final class RemoveShapes {
             removed.addAll(removedShape.members());
         }
 
-        Model result = model.toBuilder().shapeIndex(builder.build()).build();
+        Model result = builder.build();
 
         for (ModelTransformerPlugin plugin : plugins) {
             result = plugin.onRemove(transformer, removed, result);

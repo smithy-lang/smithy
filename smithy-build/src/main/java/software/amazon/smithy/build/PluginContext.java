@@ -49,7 +49,7 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
     private final FileManifest fileManifest;
     private final ClassLoader pluginClassLoader;
     private final Set<Path> sources;
-    private ShapeIndex nonTraitsIndex;
+    private Model nonTraitsModel;
 
     private PluginContext(Builder builder) {
         model = SmithyBuilder.requiredState("model", builder.model);
@@ -148,28 +148,32 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
         return Optional.ofNullable(pluginClassLoader);
     }
 
+    @Deprecated
+    public synchronized ShapeIndex getNonTraitShapes() {
+        return getModelWithoutTraitShapes().getShapeIndex();
+    }
+
     /**
-     * Gets all shapes from a model as a {@code ShapeIndex} where shapes that
-     * define traits or shapes that are only used as part of a trait
-     * definition have been removed.
+     * Creates a new Model where shapes that define traits or shapes
+     * that are only used as part of a trait definition have been removed.
      *
      * <p>This is typically functionality used by code generators when
      * generating data structures from a model. It's useful because it only
      * provides shapes that are used to describe data structures rather than
      * shapes used to describe metadata about the data structures.
      *
-     * <p>Note: this method just calls {@link ModelTransformer#getNonTraitShapes}.
+     * <p>Note: this method just calls {@link ModelTransformer#getModelWithoutTraitShapes}.
      * It's added to {@code PluginContext} to make it more easily available
      * to code generators.
      *
-     * @return Returns a ShapeIndex containing matching shapes.
+     * @return Returns a Model containing matching shapes.
      */
-    public synchronized ShapeIndex getNonTraitShapes() {
-        if (nonTraitsIndex == null) {
-            nonTraitsIndex = ModelTransformer.create().getNonTraitShapes(model);
+    public synchronized Model getModelWithoutTraitShapes() {
+        if (nonTraitsModel == null) {
+            nonTraitsModel = ModelTransformer.create().getModelWithoutTraitShapes(model);
         }
 
-        return nonTraitsIndex;
+        return nonTraitsModel;
     }
 
     /**
@@ -197,8 +201,7 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
      * @return Returns true if this shape is considered a source shape.
      */
     public boolean isSourceShape(ToShapeId shape) {
-        return originalModel == null
-               || isSource(originalModel.getShapeIndex().getShape(shape.toShapeId()).orElse(null));
+        return originalModel == null || isSource(originalModel.getShape(shape.toShapeId()).orElse(null));
     }
 
     /**

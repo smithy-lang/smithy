@@ -31,8 +31,8 @@ public class ClientDiscoveredEndpointTraitTest {
                 .addImport(getClass().getResource("test-model.json"))
                 .assemble()
                 .unwrap();
-        OperationShape operation = result.getShapeIndex()
-                .getShape(ShapeId.from("ns.foo#GetObject")).get()
+        OperationShape operation = result
+                .expectShape(ShapeId.from("ns.foo#GetObject"))
                 .asOperationShape().get();
         ClientDiscoveredEndpointTrait trait = operation.getTrait(ClientDiscoveredEndpointTrait.class).get();
 

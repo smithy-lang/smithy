@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.Set;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
@@ -37,26 +38,36 @@ public interface Selector {
      */
     Set<Shape> select(NeighborProvider neighborProvider, Set<Shape> shapes);
 
-    /**
-     * Matches a selector against a shape index using a custom
-     * neighbor visitor.
-     *
-     * @param neighborProvider Provides neighbors for shapes
-     * @param index Index to query.
-     * @return Returns the matching shapes.
-     */
+    @Deprecated
     default Set<Shape> select(NeighborProvider neighborProvider, ShapeIndex index) {
         return select(neighborProvider, index.toSet());
     }
 
     /**
-     * Matches a selector against a shape index.
+     * Matches a selector against a shape index using a custom
+     * neighbor visitor.
      *
-     * @param index Index to query.
+     * @param neighborProvider Provides neighbors for shapes
+     * @param model Model to query.
      * @return Returns the matching shapes.
      */
+    default Set<Shape> select(NeighborProvider neighborProvider, Model model) {
+        return select(neighborProvider, model.toSet());
+    }
+
+    @Deprecated
     default Set<Shape> select(ShapeIndex index) {
         return select(NeighborProvider.of(index), index);
+    }
+
+    /**
+     * Matches a selector against a model.
+     *
+     * @param model Model to query.
+     * @return Returns the matching shapes.
+     */
+    default Set<Shape> select(Model model) {
+        return select(NeighborProvider.of(model), model);
     }
 
     /**

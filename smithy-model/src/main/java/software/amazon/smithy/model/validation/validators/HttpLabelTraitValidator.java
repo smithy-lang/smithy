@@ -26,7 +26,6 @@ import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
@@ -56,13 +55,13 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         // Validate all operation shapes with the `http` trait.
-        return model.getShapeIndex().shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, HttpTrait.class))
-                .flatMap(pair -> validateStructure(model.getShapeIndex(), pair.getLeft(), pair.getRight()).stream())
+                .flatMap(pair -> validateStructure(model, pair.getLeft(), pair.getRight()).stream())
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationEvent> validateStructure(ShapeIndex index, OperationShape operation, HttpTrait http) {
+    private List<ValidationEvent> validateStructure(Model model, OperationShape operation, HttpTrait http) {
         // If the operation has labels then it must also have input.
         if (!operation.getInput().isPresent() && !http.getUri().getLabels().isEmpty()) {
             return ListUtils.of(error(operation, http, String.format(
@@ -73,13 +72,13 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
 
         // Only continue validating if the input is a structure. Typing
         // validation of the input is handled elsewhere.
-        return operation.getInput().flatMap(index::getShape).flatMap(Shape::asStructureShape)
-                .map(input -> validateBindings(index, operation, http, input))
+        return operation.getInput().flatMap(model::getShape).flatMap(Shape::asStructureShape)
+                .map(input -> validateBindings(model, operation, http, input))
                 .orElse(ListUtils.of());
     }
 
     private List<ValidationEvent> validateBindings(
-            ShapeIndex index,
+            Model model,
             OperationShape operation,
             HttpTrait http,
             StructureShape input
@@ -111,7 +110,7 @@ public final class HttpLabelTraitValidator extends AbstractValidator {
                                 + "corresponding `http` URI label could be found when used as the input of "
                                 + "the `%s` operation.", member.getMemberName(), operation.getId())));
                     } else if (http.getUri().getLabel(member.getMemberName()).get().isGreedyLabel()) {
-                        index.getShape(member.getTarget()).ifPresent(target -> {
+                        model.getShape(member.getTarget()).ifPresent(target -> {
                             // Greedy labels must be strings.
                             if (!target.isStringShape()) {
                                 events.add(error(member, trait, format(

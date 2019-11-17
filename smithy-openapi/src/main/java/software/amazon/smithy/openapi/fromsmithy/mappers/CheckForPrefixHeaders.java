@@ -48,7 +48,7 @@ public class CheckForPrefixHeaders implements OpenApiMapper {
     @Override
     public void before(Context context, OpenApi.Builder builder) {
         HttpBindingIndex httpBindings = context.getModel().getKnowledge(HttpBindingIndex.class);
-        context.getModel().getShapeIndex().shapes(OperationShape.class).forEach(operation -> {
+        context.getModel().shapes(OperationShape.class).forEach(operation -> {
             check(context, httpBindings.getRequestBindings(operation, HttpBinding.Location.PREFIX_HEADERS));
             checkForResponseHeaders(context, httpBindings, operation);
             operation.getErrors().forEach(error -> checkForResponseHeaders(context, httpBindings, error));

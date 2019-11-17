@@ -36,7 +36,7 @@ public class ServiceValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
-        return model.getShapeIndex().shapes(ServiceShape.class)
+        return model.shapes(ServiceShape.class)
                 .flatMap(shape -> validateService(topDownIndex, shape).stream())
                 .collect(Collectors.toList());
     }

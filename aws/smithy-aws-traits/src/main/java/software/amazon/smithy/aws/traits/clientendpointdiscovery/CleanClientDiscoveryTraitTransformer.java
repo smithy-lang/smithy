@@ -26,7 +26,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -61,7 +60,7 @@ public class CleanClientDiscoveryTraitTransformer implements ModelTransformerPlu
     }
 
     private Set<Shape> getServicesToUpdate(Model model, Set<ShapeId> removedOperations, Set<ShapeId> removedErrors) {
-        return model.getShapeIndex().shapes(ServiceShape.class)
+        return model.shapes(ServiceShape.class)
                 .flatMap(service -> Trait.flatMapStream(service, ClientEndpointDiscoveryTrait.class))
                 .filter(pair -> removedOperations.contains(pair.getRight().getOperation())
                         || removedErrors.contains(pair.getRight().getError()))
@@ -78,7 +77,7 @@ public class CleanClientDiscoveryTraitTransformer implements ModelTransformerPlu
             Set<ShapeId> updatedServices
     ) {
         ClientEndpointDiscoveryIndex discoveryIndex = model.getKnowledge(ClientEndpointDiscoveryIndex.class);
-        Set<ShapeId> stillBoundOperations = model.getShapeIndex().shapes(ServiceShape.class)
+        Set<ShapeId> stillBoundOperations = model.shapes(ServiceShape.class)
                 // Get all endpoint discovery services
                 .filter(service -> service.hasTrait(ClientEndpointDiscoveryTrait.class))
                 .map(Shape::getId)
@@ -88,7 +87,7 @@ public class CleanClientDiscoveryTraitTransformer implements ModelTransformerPlu
                 .flatMap(service -> discoveryIndex.getEndpointDiscoveryOperations(service).stream())
                 .collect(Collectors.toSet());
 
-        return model.getShapeIndex().shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 // Get all endpoint discovery operations
                 .flatMap(operation -> Trait.flatMapStream(operation, ClientDiscoveredEndpointTrait.class))
                 // Only get the ones where discovery is optional, as it is safe to remove in that case
@@ -101,22 +100,21 @@ public class CleanClientDiscoveryTraitTransformer implements ModelTransformerPlu
     }
 
     private Set<Shape> getMembersToUpdate(Model model, Set<ShapeId> updatedOperations) {
-        ShapeIndex shapeIndex = model.getShapeIndex();
-        Set<ShapeId> stillBoundMembers = shapeIndex.shapes(OperationShape.class)
+        Set<ShapeId> stillBoundMembers = model.shapes(OperationShape.class)
                 // Get all endpoint discovery operations
                 .filter(operation -> operation.hasTrait(ClientDiscoveredEndpointTrait.class))
                 // Filter out the ones which are having their endpoint discovery traits removed
                 .filter(operation -> !updatedOperations.contains(operation.getId()))
                 // Get the input shapes of those operations
                 .filter(operation -> operation.getInput().isPresent())
-                .map(operation -> shapeIndex.getShape(operation.getInput().get()).flatMap(Shape::asStructureShape))
+                .map(operation -> model.getShape(operation.getInput().get()).flatMap(Shape::asStructureShape))
                 .filter(Optional::isPresent)
                 // Get the input members
                 .flatMap(input -> input.get().getAllMembers().values().stream())
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
 
-        return shapeIndex.shapes(MemberShape.class)
+        return model.shapes(MemberShape.class)
                 // Get all members which have the endpoint discovery id trait
                 .filter(member -> member.hasTrait(ClientEndpointDiscoveryIdTrait.class))
                 // Get those which are on structures that aren't still bound to endpoint discovery operations

@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
@@ -37,43 +38,64 @@ public interface NeighborProvider {
      */
     List<Relationship> getNeighbors(Shape shape);
 
-    /**
-     * Creates a default NeighborProvider for the given shape index.
-     *
-     * @param index Index to create a neighbor provider for.
-     * @return Returns the created neighbor provider.
-     */
+    @Deprecated
     static NeighborProvider of(ShapeIndex index) {
         return new NeighborVisitor(index);
     }
 
     /**
-     * Creates a NeighborProvider that precomputes the neighbors of an index.
+     * Creates a default NeighborProvider for the given model.
      *
-     * @param index Index to create a neighbor provider for.
+     * @param model Model to create a neighbor provider for.
      * @return Returns the created neighbor provider.
      */
+    static NeighborProvider of(Model model) {
+        return new NeighborVisitor(model);
+    }
+
+    @Deprecated
     static NeighborProvider precomputed(ShapeIndex index) {
         return precomputed(index, of(index));
     }
 
     /**
-     * Creates a NeighborProvider that precomputes the neighbors of an index.
+     * Creates a NeighborProvider that precomputes the neighbors of a model.
      *
-     * @param index Index to create a neighbor provider for.
-     * @param provider Provider to use when precomputing.
+     * @param model Model to create a neighbor provider for.
      * @return Returns the created neighbor provider.
      */
+    static NeighborProvider precomputed(Model model) {
+        return precomputed(model.getShapeIndex());
+    }
+
+    @Deprecated
     static NeighborProvider precomputed(ShapeIndex index, NeighborProvider provider) {
         Map<ShapeId, List<Relationship>> relationships = new HashMap<>();
         index.shapes().forEach(shape -> relationships.put(shape.getId(), provider.getNeighbors(shape)));
         return shape -> relationships.getOrDefault(shape.getId(), ListUtils.of());
     }
 
+    /**
+     * Creates a NeighborProvider that precomputes the neighbors of a model.
+     *
+     * @param model Model to create a neighbor provider for.
+     * @param provider Provider to use when precomputing.
+     * @return Returns the created neighbor provider.
+     */
+    static NeighborProvider precomputed(Model model, NeighborProvider provider) {
+        return precomputed(model.getShapeIndex(), provider);
+    }
+
+    @Deprecated
     static NeighborProvider bottomUp(ShapeIndex index) {
         return reverse(index, of(index));
     }
 
+    static NeighborProvider bottomUp(Model model) {
+        return reverse(model.getShapeIndex(), of(model.getShapeIndex()));
+    }
+
+    @Deprecated
     static NeighborProvider reverse(ShapeIndex index, NeighborProvider topDown) {
         Map<ShapeId, List<Relationship>> targetedFrom = index.shapes()
                 .map(topDown::getNeighbors)
@@ -82,5 +104,9 @@ public interface NeighborProvider {
                 .collect(Collectors.groupingBy(Relationship::getNeighborShapeId, ListUtils.toUnmodifiableList()));
 
         return shape -> targetedFrom.getOrDefault(shape.getId(), ListUtils.of());
+    }
+
+    static NeighborProvider reverse(Model model, NeighborProvider topDown) {
+        return reverse(model.getShapeIndex(), topDown);
     }
 }

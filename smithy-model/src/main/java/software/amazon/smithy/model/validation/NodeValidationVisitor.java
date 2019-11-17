@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeType;
 import software.amazon.smithy.model.node.StringNode;
@@ -394,16 +395,21 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
         Builder() {}
 
-        /**
-         * Sets the <strong>required</strong> shape index to use when traversing
-         * walking shapes during validation.
-         *
-         * @param index Shape index that contains shapes to validate.
-         * @return Returns the builder.
-         */
+        @Deprecated
         public Builder index(ShapeIndex index) {
             this.index = Objects.requireNonNull(index);
             return this;
+        }
+
+        /**
+         * Sets the <strong>required</strong> model to use when traversing
+         * walking shapes during validation.
+         *
+         * @param model Model that contains shapes to validate.
+         * @return Returns the builder.
+         */
+        public Builder model(Model model) {
+            return index(model.getShapeIndex());
         }
 
         /**

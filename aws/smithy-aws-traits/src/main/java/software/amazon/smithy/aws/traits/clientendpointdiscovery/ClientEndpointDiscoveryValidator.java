@@ -30,7 +30,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -41,26 +40,25 @@ import software.amazon.smithy.utils.SetUtils;
 public class ClientEndpointDiscoveryValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex shapeIndex = model.getShapeIndex();
         ClientEndpointDiscoveryIndex discoveryIndex = model.getKnowledge(ClientEndpointDiscoveryIndex.class);
         OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
 
-        Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices = shapeIndex
+        Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices = model
                 .shapes(ServiceShape.class)
                 .flatMap(service -> Trait.flatMapStream(service, ClientEndpointDiscoveryTrait.class))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
         List<ValidationEvent> validationEvents = endpointDiscoveryServices.values().stream()
                 .map(ClientEndpointDiscoveryTrait::getOperation)
-                .map(operation -> shapeIndex.getShape(operation).flatMap(Shape::asOperationShape))
+                .map(operation -> model.getShape(operation).flatMap(Shape::asOperationShape))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .flatMap(endpointOperation -> validateEndpointOperation(
-                        shapeIndex, opIndex, endpointOperation).stream())
+                        model, opIndex, endpointOperation).stream())
                 .collect(Collectors.toList());
 
         validationEvents.addAll(validateServices(discoveryIndex, endpointDiscoveryServices));
-        validationEvents.addAll(validateOperations(shapeIndex, discoveryIndex, endpointDiscoveryServices));
+        validationEvents.addAll(validateOperations(model, discoveryIndex, endpointDiscoveryServices));
         return validationEvents;
     }
 
@@ -89,11 +87,11 @@ public class ClientEndpointDiscoveryValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateOperations(
-            ShapeIndex shapeIndex,
+            Model model,
             ClientEndpointDiscoveryIndex discoveryIndex,
             Map<ServiceShape, ClientEndpointDiscoveryTrait> endpointDiscoveryServices
     ) {
-        return shapeIndex.shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .filter(operation -> operation.hasTrait(ClientDiscoveredEndpointTrait.class))
                 .map(operation -> {
                     List<ClientEndpointDiscoveryInfo> infos = endpointDiscoveryServices.keySet().stream()
@@ -132,7 +130,7 @@ public class ClientEndpointDiscoveryValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateEndpointOperation(
-            ShapeIndex shapeIndex, OperationIndex opIndex, OperationShape operation
+            Model model, OperationIndex opIndex, OperationShape operation
     ) {
         List<ValidationEvent> events = new ArrayList<>();
         opIndex.getInput(operation).ifPresent(input -> {
@@ -147,17 +145,17 @@ public class ClientEndpointDiscoveryValidator extends AbstractValidator {
             }
 
             input.getMember("Operation")
-                    .flatMap(member -> shapeIndex.getShape(member.getTarget()))
+                    .flatMap(member -> model.getShape(member.getTarget()))
                     .filter(shape -> !shape.isStringShape())
                     .ifPresent(shape -> events.add(error(
                             shape, "The Operation member of an endpoint discovery operation must be a string")));
 
             input.getMember("Identifiers")
-                    .map(member -> Pair.of(member, shapeIndex.getShape(member.getTarget())))
+                    .map(member -> Pair.of(member, model.getShape(member.getTarget())))
                     .ifPresent(pair -> {
                         Optional<MapShape> map = pair.getRight().flatMap(Shape::asMapShape);
                         if (map.isPresent()) {
-                            Optional<Shape> value = shapeIndex.getShape(map.get().getValue().getTarget());
+                            Optional<Shape> value = model.getShape(map.get().getValue().getTarget());
                             if (value.isPresent() && value.get().isStringShape()) {
                                 return;
                             }
@@ -182,7 +180,7 @@ public class ClientEndpointDiscoveryValidator extends AbstractValidator {
         }
 
         Optional.ofNullable(outputMembers.get("Endpoints"))
-                .map(member -> Pair.of(member, shapeIndex.getShape(member.getTarget())))
+                .map(member -> Pair.of(member, model.getShape(member.getTarget())))
                 .ifPresent(pair -> {
                     Optional<ListShape> listShape = pair.getRight().flatMap(Shape::asListShape);
                     if (!listShape.isPresent()) {
@@ -191,7 +189,7 @@ public class ClientEndpointDiscoveryValidator extends AbstractValidator {
                         return;
                     }
 
-                    Optional<StructureShape> listMember = shapeIndex.getShape(listShape.get().getMember().getTarget())
+                    Optional<StructureShape> listMember = model.getShape(listShape.get().getMember().getTarget())
                             .flatMap(Shape::asStructureShape);
                     if (!listMember.isPresent()) {
                         events.add(error(listShape.get(), "The member of the Endpoints list in an "
@@ -200,7 +198,7 @@ public class ClientEndpointDiscoveryValidator extends AbstractValidator {
                     }
 
                     Optional<MemberShape> addressMember = listMember.get().getMember("Address");
-                    Optional<Shape> address = addressMember.flatMap(member -> shapeIndex.getShape(member.getTarget()));
+                    Optional<Shape> address = addressMember.flatMap(member -> model.getShape(member.getTarget()));
                     if (address.isPresent() && !address.get().isStringShape()) {
                         events.add(error(addressMember.get(), "The `Address` member of the `Endpoint` shape must "
                                 + "be a string type."));
@@ -208,7 +206,7 @@ public class ClientEndpointDiscoveryValidator extends AbstractValidator {
 
                     Optional<MemberShape> cachePeriodMember = listMember.get().getMember("CachePeriodInMinutes");
                     Optional<Shape> cachePeriod = cachePeriodMember
-                            .flatMap(member -> shapeIndex.getShape(member.getTarget()));
+                            .flatMap(member -> model.getShape(member.getTarget()));
                     if (cachePeriod.isPresent() && !cachePeriod.get().isLongShape()) {
                         events.add(error(cachePeriodMember.get(), "The `CachePeriodInMinutes` member of the "
                                 + "`Endpoint` shape must be a long type."));

@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -40,17 +39,14 @@ public class ExcludeShapesByTagTest {
                 .id("ns.foo#bar")
                 .addTrait(TagsTrait.builder().addValue("qux").build())
                 .build();
-        ShapeIndex index = ShapeIndex.builder()
-                .addShapes(stringA, stringB)
-                .build();
         Model model = Model.builder()
-                .shapeIndex(index)
+                .addShapes(stringA, stringB)
                 .build();
         Model result = new ExcludeShapesByTag()
                 .createTransformer(Collections.singletonList("foo"))
                 .apply(ModelTransformer.create(), model);
 
-        assertThat(result.getShapeIndex().getShape(stringA.getId()), is(Optional.empty()));
-        assertThat(result.getShapeIndex().getShape(stringB.getId()), not(Optional.empty()));
+        assertThat(result.getShape(stringA.getId()), is(Optional.empty()));
+        assertThat(result.getShape(stringB.getId()), not(Optional.empty()));
     }
 }

@@ -31,7 +31,6 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.SetUtils;
 
@@ -44,7 +43,6 @@ public final class TopDownIndex implements KnowledgeIndex {
     private final Map<ShapeId, Set<OperationShape>> operations = new HashMap<>();
 
     public TopDownIndex(Model model) {
-        ShapeIndex index = model.getShapeIndex();
         NeighborProvider provider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
         Walker walker = new Walker(provider);
 
@@ -64,9 +62,9 @@ public final class TopDownIndex implements KnowledgeIndex {
             }
         };
 
-        index.shapes(ResourceShape.class).forEach(resource -> findContained(
+        model.shapes(ResourceShape.class).forEach(resource -> findContained(
                 resource.getId(), walker.walkShapes(resource, filter)));
-        index.shapes(ServiceShape.class).forEach(resource -> findContained(
+        model.shapes(ServiceShape.class).forEach(resource -> findContained(
                 resource.getId(), walker.walkShapes(resource, filter)));
     }
 

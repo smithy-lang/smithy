@@ -24,7 +24,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
@@ -35,14 +34,13 @@ public class IncludeServicesTest {
         ServiceShape serviceA = ServiceShape.builder().id("ns.foo#baz").version("1").build();
         ServiceShape serviceB = ServiceShape.builder().id("ns.foo#bar").version("1").build();
         StringShape string = StringShape.builder().id("ns.foo#yuck").build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(serviceA, serviceB, string).build();
-        Model model = Model.builder().shapeIndex(index).build();
+        Model model = Model.builder().addShapes(serviceA, serviceB, string).build();
         Model result = new IncludeServices()
                 .createTransformer(Collections.singletonList("ns.foo#baz"))
                 .apply(ModelTransformer.create(), model);
 
-        assertThat(result.getShapeIndex().getShape(serviceA.getId()), not(Optional.empty()));
-        assertThat(result.getShapeIndex().getShape(string.getId()), not(Optional.empty()));
-        assertThat(result.getShapeIndex().getShape(serviceB.getId()), is(Optional.empty()));
+        assertThat(result.getShape(serviceA.getId()), not(Optional.empty()));
+        assertThat(result.getShape(string.getId()), not(Optional.empty()));
+        assertThat(result.getShape(serviceB.getId()), is(Optional.empty()));
     }
 }

@@ -57,18 +57,18 @@ public final class UnreferencedShapes {
         Walker shapeWalker = new Walker(model.getKnowledge(NeighborProviderIndex.class).getProvider());
 
         // Find all shapes connected to any service shape.
-        Set<Shape> connected = model.getShapeIndex().shapes(ServiceShape.class)
+        Set<Shape> connected = model.shapes(ServiceShape.class)
                 .flatMap(service -> shapeWalker.walkShapes(service).stream())
                 .collect(Collectors.toSet());
 
         // Don't remove shapes that are traits or connected to traits.
-        model.getShapeIndex().shapes()
+        model.shapes()
                 .filter(shape -> shape.hasTrait(TraitDefinition.class))
                 .flatMap(shape -> shapeWalker.walkShapes(shape).stream())
                 .forEach(connected::add);
 
         // Any shape that wasn't identified as connected to a service is considered unreferenced.
-        return model.getShapeIndex().shapes()
+        return model.shapes()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(FunctionalUtils.not(connected::contains))
                 // Retain prelude shapes

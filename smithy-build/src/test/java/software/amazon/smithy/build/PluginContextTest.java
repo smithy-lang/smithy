@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -48,20 +47,20 @@ public class PluginContextTest {
     }
 
     @Test
-    public void createsNonTraitShapeIndex() {
+    public void createsNonTraitModel() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("simple-model.json"))
                 .assemble()
                 .unwrap();
-        ShapeIndex scrubbed = ModelTransformer.create().getNonTraitShapes(model);
+        Model scrubbed = ModelTransformer.create().getModelWithoutTraitShapes(model);
         PluginContext context = PluginContext.builder()
                 .fileManifest(new MockManifest())
                 .model(model)
                 .sources(ListUtils.of(Paths.get("/foo/baz")))
                 .build();
 
-        assertThat(context.getNonTraitShapes(), equalTo(scrubbed));
-        assertThat(context.getNonTraitShapes(), equalTo(scrubbed)); // trigger loading from cache
+        assertThat(context.getModelWithoutTraitShapes(), equalTo(scrubbed));
+        assertThat(context.getModelWithoutTraitShapes(), equalTo(scrubbed)); // trigger loading from cache
     }
 
     @Test

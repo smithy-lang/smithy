@@ -50,7 +50,7 @@ public final class PlaneIndex implements KnowledgeIndex {
     public PlaneIndex(Model model) {
         pathFinder = PathFinder.create(model);
 
-        model.getShapeIndex().shapes(ServiceShape.class).forEach(service -> {
+        model.shapes(ServiceShape.class).forEach(service -> {
             Plane plane = extractPlane(service);
             if (plane != null) {
                 servicePlanes.put(service.getId(), plane);

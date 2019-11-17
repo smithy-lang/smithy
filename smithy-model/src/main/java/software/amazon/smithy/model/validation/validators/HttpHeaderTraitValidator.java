@@ -57,11 +57,11 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        List<ValidationEvent> events = model.getShapeIndex().shapes(StructureShape.class)
+        List<ValidationEvent> events = model.shapes(StructureShape.class)
                 .flatMap(shape -> validateStructure(shape).stream())
                 .collect(Collectors.toList());
 
-        events.addAll(model.getShapeIndex().shapes(MemberShape.class)
+        events.addAll(model.shapes(MemberShape.class)
                 .flatMap(member -> Trait.flatMapStream(member, HttpHeaderTrait.class))
                 .filter(pair -> BLACKLIST.contains(pair.getRight().getValue().toLowerCase(Locale.US)))
                 .map(pair -> danger(pair.getLeft(), String.format(

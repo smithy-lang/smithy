@@ -50,8 +50,7 @@ public class IntegrationTraitTest {
                 .assemble()
                 .unwrap();
 
-        MockIntegrationTrait trait = model.getShapeIndex().getShape(ShapeId.from("ns.foo#Operation"))
-                .get()
+        MockIntegrationTrait trait = model.expectShape(ShapeId.from("ns.foo#Operation"))
                 .getTrait(MockIntegrationTrait.class)
                 .get();
 

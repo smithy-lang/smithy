@@ -26,7 +26,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.RequiredTrait;
@@ -53,9 +52,8 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
     }
 
     public IdentifierBindingIndex(Model model) {
-        ShapeIndex index = model.getShapeIndex();
         OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
-        index.shapes(ResourceShape.class).forEach(resource -> processResource(resource, operationIndex, index));
+        model.shapes(ResourceShape.class).forEach(resource -> processResource(resource, operationIndex, model));
     }
 
     /**
@@ -91,12 +89,12 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
                 .orElseGet(Collections::emptyMap);
     }
 
-    private void processResource(ResourceShape resource, OperationIndex operationIndex, ShapeIndex index) {
+    private void processResource(ResourceShape resource, OperationIndex operationIndex, Model model) {
         bindings.put(resource.getId(), new HashMap<>());
         bindingTypes.put(resource.getId(), new HashMap<>());
         resource.getAllOperations().forEach(operationId -> {
             // Ignore broken models in this index.
-            Map<String, String> computedBindings = index.getShape(operationId).flatMap(Shape::asOperationShape)
+            Map<String, String> computedBindings = model.getShape(operationId).flatMap(Shape::asOperationShape)
                     .flatMap(operationIndex::getInput)
                     .map(inputShape -> computeBindings(resource, inputShape))
                     .orElseGet(HashMap::new);

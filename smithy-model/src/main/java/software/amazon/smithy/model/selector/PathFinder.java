@@ -83,13 +83,7 @@ public final class PathFinder {
         return new PathFinder(model.getShapeIndex(), model.getKnowledge(NeighborProviderIndex.class).getProvider());
     }
 
-    /**
-     * Creates a {@code PathFinder} that uses the given {@code ShapeIndex}
-     * and computes the neighbors.
-     *
-     * @param index Shape index to search using a {@code PathFinder}.
-     * @return Returns the crated {@code PathFinder}.
-     */
+    @Deprecated
     public static PathFinder create(ShapeIndex index) {
         return new PathFinder(index, NeighborProvider.of(index));
     }

@@ -40,7 +40,7 @@ public final class BottomUpIndex implements KnowledgeIndex {
 
     public BottomUpIndex(Model model) {
         PathFinder pathFinder = PathFinder.create(model);
-        model.getShapeIndex().shapes(ServiceShape.class).forEach(service -> {
+        model.shapes(ServiceShape.class).forEach(service -> {
             Map<ShapeId, List<EntityShape>> serviceBindings = new HashMap<>();
             parentBindings.put(service.getId(), serviceBindings);
             for (PathFinder.Path path : pathFinder.search(service, SELECTOR)) {

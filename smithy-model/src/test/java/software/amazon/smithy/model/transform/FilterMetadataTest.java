@@ -21,7 +21,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 
 public class FilterMetadataTest {
     @Test
@@ -30,7 +29,6 @@ public class FilterMetadataTest {
                 .putMetadataProperty("foo", Node.from("string"))
                 .putMetadataProperty("baz", Node.from(1))
                 .putMetadataProperty("lorem", Node.from(true))
-                .shapeIndex(ShapeIndex.builder().build())
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
         // Remove boolean and number metadata key-value pairs.

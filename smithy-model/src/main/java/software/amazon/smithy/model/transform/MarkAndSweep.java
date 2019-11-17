@@ -27,7 +27,6 @@ import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 
 /**
  * Performs a garbage collection style cleanup of a model by removing
@@ -53,8 +52,7 @@ final class MarkAndSweep {
     }
 
     Set<Shape> markAndSweep(Model model) {
-        ShapeIndex index = model.getShapeIndex();
-        NeighborProvider reverseNeighbors = NeighborProvider.bottomUp(model.getShapeIndex());
+        NeighborProvider reverseNeighbors = NeighborProvider.bottomUp(model);
         MarkerContext context = new MarkerContext(reverseNeighbors, model, sweepFilter);
 
         int currentSize;
@@ -62,7 +60,7 @@ final class MarkAndSweep {
             currentSize = context.getMarkedForRemoval().size();
             marker.accept(context);
             // Find shapes that are only referenced by a shape that has been marked for removal.
-            index.shapes().filter(shape -> !shape.isMemberShape()).forEach(shape -> {
+            model.shapes().filter(shape -> !shape.isMemberShape()).forEach(shape -> {
                 if (!context.getMarkedForRemoval().contains(shape)) {
                     Set<Shape> targetedFrom = context.getTargetedFrom(shape);
                     if (!targetedFrom.isEmpty()) {

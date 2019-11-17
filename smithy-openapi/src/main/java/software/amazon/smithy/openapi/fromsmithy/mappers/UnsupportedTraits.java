@@ -44,7 +44,7 @@ public final class UnsupportedTraits implements OpenApiMapper {
 
     @Override
     public void before(Context context, OpenApi.Builder builder) {
-        List<Pair<ShapeId, List<String>>> violations = context.getModel().getShapeIndex().shapes()
+        List<Pair<ShapeId, List<String>>> violations = context.getModel().shapes()
                 .map(shape -> Pair.of(shape.getId(), TRAITS.stream()
                         .filter(trait -> shape.findTrait(trait).isPresent())
                         .collect(Collectors.toList())))

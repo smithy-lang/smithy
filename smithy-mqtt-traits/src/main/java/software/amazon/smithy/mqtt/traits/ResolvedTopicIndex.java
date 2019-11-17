@@ -28,7 +28,6 @@ import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
@@ -60,11 +59,10 @@ public final class ResolvedTopicIndex implements KnowledgeIndex {
 
     public ResolvedTopicIndex(Model model) {
         // Find all the MQTT topic bindings in the model.
-        ShapeIndex index = model.getShapeIndex();
         EventStreamIndex eventStreamIndex = model.getKnowledge(EventStreamIndex.class);
         OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
 
-        index.shapes(OperationShape.class).forEach(operation -> {
+        model.shapes(OperationShape.class).forEach(operation -> {
             if (operation.hasTrait(PublishTrait.class)) {
                 PublishTrait trait = operation.getTrait(PublishTrait.class).get();
                 createPublishBindings(operationIndex, operation, trait);

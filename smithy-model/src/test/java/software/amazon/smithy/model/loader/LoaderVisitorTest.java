@@ -194,7 +194,7 @@ public class LoaderVisitorTest {
         visitor.onTrait(id, "foo.baz#Bar", Node.from(true));
         Model model = visitor.onEnd().unwrap();
 
-        assertThat(model.getShapeIndex().getShape(id).get().findTrait("foo.baz#Bar").get(),
+        assertThat(model.expectShape(id).findTrait("foo.baz#Bar").get(),
                    instanceOf(DynamicTrait.class));
     }
 
@@ -219,7 +219,7 @@ public class LoaderVisitorTest {
                 .assemble()
                 .unwrap();
 
-        Shape shape = model.getShapeIndex().getShape(ShapeId.from("ns.foo#Foo")).get();
+        Shape shape = model.expectShape(ShapeId.from("ns.foo#Foo"));
         assertTrue(shape.getTrait(DeprecatedTrait.class).isPresent());
         assertTrue(shape.getTrait(TagsTrait.class).isPresent());
         assertTrue(shape.getTrait(ReferencesTrait.class).isPresent());
@@ -235,7 +235,7 @@ public class LoaderVisitorTest {
                                                  + "structure foo {}\n")
                 .assemble()
                 .unwrap();
-        Shape shape = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyString")).get();
+        Shape shape = model.expectShape(ShapeId.from("smithy.example#MyString"));
 
         assertTrue(shape.hasTrait("smithy.example#foo"));
     }
@@ -254,7 +254,7 @@ public class LoaderVisitorTest {
     @Test
     public void coercesListTraitValues() {
         Model model = createCoercionModel("list foo { member: String }");
-        Shape shape = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyString")).get();
+        Shape shape = model.expectShape(ShapeId.from("smithy.example#MyString"));
 
         assertTrue(shape.hasTrait("smithy.example#foo"));
     }
@@ -262,7 +262,7 @@ public class LoaderVisitorTest {
     @Test
     public void coercesBooleanTraitValuesToStructures() {
         Model model = createCoercionModel("structure foo {}");
-        Shape shape = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyString")).get();
+        Shape shape = model.expectShape(ShapeId.from("smithy.example#MyString"));
 
         assertTrue(shape.hasTrait("smithy.example#foo"));
     }

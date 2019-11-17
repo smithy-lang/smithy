@@ -22,10 +22,10 @@ import static org.hamcrest.Matchers.empty;
 import java.util.Arrays;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -38,8 +38,8 @@ public class AndSelectorTest {
                 new AttributeSelector(new TraitAttributeKey("sensitive"))));
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();
         Shape b = StringShape.builder().id("foo.baz#Bam").addTrait(new SensitiveTrait(SourceLocation.NONE)).build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(a, b).build();
-        Set<Shape> result = selector.select(index);
+        Model model = Model.builder().addShapes(a, b).build();
+        Set<Shape> result = selector.select(model);
 
         assertThat(result, contains(b));
     }
@@ -51,8 +51,8 @@ public class AndSelectorTest {
                 new AttributeSelector(new TraitAttributeKey("sensitive"))));
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();
         Shape b = StringShape.builder().id("foo.baz#Bam").addTrait(new SensitiveTrait(SourceLocation.NONE)).build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(a, b).build();
-        Set<Shape> result = selector.select(index);
+        Model model = Model.builder().addShapes(a, b).build();
+        Set<Shape> result = selector.select(model);
 
         assertThat(result, empty());
     }

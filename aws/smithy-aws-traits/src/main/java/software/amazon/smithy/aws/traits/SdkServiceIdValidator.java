@@ -70,7 +70,7 @@ public final class SdkServiceIdValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(ServiceShape.class)
+        return model.shapes(ServiceShape.class)
                 .flatMap(service -> Trait.flatMapStream(service, ServiceTrait.class))
                 .flatMap(pair -> OptionalUtils.stream(validateService(pair.getLeft(), pair.getRight())))
                 .collect(toList());

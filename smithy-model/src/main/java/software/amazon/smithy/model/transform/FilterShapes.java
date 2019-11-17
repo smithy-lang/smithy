@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
@@ -44,14 +43,14 @@ final class FilterShapes {
     }
 
     Model transform(ModelTransformer transformer, Model model) {
-        return transformer.removeShapes(model, model.getShapeIndex().shapes()
-                .filter(shape -> canFilterShape(model.getShapeIndex(), shape))
+        return transformer.removeShapes(model, model.shapes()
+                .filter(shape -> canFilterShape(model, shape))
                 .filter(FunctionalUtils.not(predicate))
                 .collect(Collectors.toSet()));
     }
 
-    private static boolean canFilterShape(ShapeIndex index, Shape shape) {
-        return !shape.isMemberShape() || index.getShape(shape.asMemberShape().get().getContainer())
+    private static boolean canFilterShape(Model model, Shape shape) {
+        return !shape.isMemberShape() || model.getShape(shape.asMemberShape().get().getContainer())
                 .filter(container -> container.isStructureShape() || container.isUnionShape())
                 .isPresent();
     }

@@ -35,7 +35,7 @@ public final class HttpQueryTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(StructureShape.class)
+        return model.shapes(StructureShape.class)
                 .flatMap(shape -> validateStructure(shape).stream())
                 .collect(Collectors.toList());
     }

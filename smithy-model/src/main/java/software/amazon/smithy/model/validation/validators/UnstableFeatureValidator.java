@@ -35,7 +35,7 @@ import software.amazon.smithy.utils.FunctionalUtils;
 public final class UnstableFeatureValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(DocumentShape.class)
+        return model.shapes(DocumentShape.class)
                 .filter(FunctionalUtils.not(Prelude::isPreludeShape))
                 .map(shape -> warning(shape, "The document shape type is currently unstable and subject to "
                                              + "change. It is not generally supported across tooling and should "

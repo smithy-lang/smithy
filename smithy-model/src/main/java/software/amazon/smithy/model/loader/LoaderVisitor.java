@@ -37,7 +37,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -590,7 +589,6 @@ final class LoaderVisitor {
         validateState(SourceLocation.NONE);
         calledOnEnd = true;
         Model.Builder modelBuilder = Model.builder().smithyVersion(smithyVersion).metadata(metadata);
-        ShapeIndex.Builder shapeIndexBuilder = ShapeIndex.builder();
 
         finalizeShapeTargets();
         finalizePendingTraits();
@@ -611,7 +609,7 @@ final class LoaderVisitor {
         // Build members and add them to their containing shape builders.
         for (AbstractShapeBuilder shape : pendingShapes.values()) {
             if (shape.getClass() == MemberShape.Builder.class) {
-                MemberShape member = (MemberShape) buildShape(shapeIndexBuilder, shape);
+                MemberShape member = (MemberShape) buildShape(modelBuilder, shape);
                 if (member != null) {
                     AbstractShapeBuilder container = pendingShapes.get(shape.getId().withoutMember());
                     if (container == null) {
@@ -631,13 +629,12 @@ final class LoaderVisitor {
         // Now that members were built, build all non-members.
         for (AbstractShapeBuilder shape : pendingShapes.values()) {
             if (shape.getClass() != MemberShape.Builder.class) {
-                buildShape(shapeIndexBuilder, shape);
+                buildShape(modelBuilder, shape);
             }
         }
 
         // Add any remaining built shapes.
-        shapeIndexBuilder.addShapes(builtShapes.values());
-        modelBuilder.shapeIndex(shapeIndexBuilder.build());
+        modelBuilder.addShapes(builtShapes.values());
         return new ValidatedResult<>(modelBuilder.build(), events);
     }
 
@@ -715,10 +712,10 @@ final class LoaderVisitor {
         }
     }
 
-    private Shape buildShape(ShapeIndex.Builder shapeIndexBuilder, AbstractShapeBuilder shapeBuilder) {
+    private Shape buildShape(Model.Builder modelBuilder, AbstractShapeBuilder shapeBuilder) {
         try {
             Shape result = (Shape) shapeBuilder.build();
-            shapeIndexBuilder.addShape(result);
+            modelBuilder.addShape(result);
             return result;
         } catch (SourceException e) {
             onError(ValidationEvent.fromSourceException(e).toBuilder().shapeId(shapeBuilder.getId()).build());

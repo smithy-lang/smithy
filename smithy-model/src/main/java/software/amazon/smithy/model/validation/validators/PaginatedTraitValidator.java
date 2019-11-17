@@ -30,7 +30,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.PaginatedTrait;
@@ -66,18 +65,17 @@ public final class PaginatedTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex shapeIndex = model.getShapeIndex();
         OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
         TopDownIndex topDown = model.getKnowledge(TopDownIndex.class);
 
-        return shapeIndex.shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, PaginatedTrait.class))
-                .flatMap(pair -> validateOperation(shapeIndex, topDown, opIndex, pair.left, pair.right).stream())
+                .flatMap(pair -> validateOperation(model, topDown, opIndex, pair.left, pair.right).stream())
                 .collect(Collectors.toList());
     }
 
     private List<ValidationEvent> validateOperation(
-            ShapeIndex index,
+            Model model,
             TopDownIndex topDownIndex,
             OperationIndex opIndex,
             OperationShape operation,
@@ -88,26 +86,26 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         if (!opIndex.getInput(operation).isPresent()) {
             events.add(error(operation, trait, "paginated operations require an input"));
         } else {
-            events.addAll(validateMember(opIndex, index, null, operation, trait, new InputTokenValidator()));
-            events.addAll(validateMember(opIndex, index, null, operation, trait, new PageSizeValidator()));
+            events.addAll(validateMember(opIndex, model, null, operation, trait, new InputTokenValidator()));
+            events.addAll(validateMember(opIndex, model, null, operation, trait, new PageSizeValidator()));
         }
 
         if (!opIndex.getOutput(operation).isPresent()) {
             events.add(error(operation, trait, "paginated operations require an output"));
         } else {
-            events.addAll(validateMember(opIndex, index, null, operation, trait, new OutputTokenValidator()));
-            events.addAll(validateMember(opIndex, index, null, operation, trait, new ItemValidator()));
+            events.addAll(validateMember(opIndex, model, null, operation, trait, new OutputTokenValidator()));
+            events.addAll(validateMember(opIndex, model, null, operation, trait, new ItemValidator()));
         }
 
         if (events.isEmpty()) {
-            index.shapes(ServiceShape.class).forEach(svc -> {
+            model.shapes(ServiceShape.class).forEach(svc -> {
                 if (topDownIndex.getContainedOperations(svc).contains(operation)) {
                     // Create a merged trait if one is present on the service.
                     PaginatedTrait merged = svc.getTrait(PaginatedTrait.class).map(trait::merge).orElse(trait);
-                    events.addAll(validateMember(opIndex, index, svc, operation, merged, new InputTokenValidator()));
-                    events.addAll(validateMember(opIndex, index, svc, operation, merged, new PageSizeValidator()));
-                    events.addAll(validateMember(opIndex, index, svc, operation, merged, new OutputTokenValidator()));
-                    events.addAll(validateMember(opIndex, index, svc, operation, merged, new ItemValidator()));
+                    events.addAll(validateMember(opIndex, model, svc, operation, merged, new InputTokenValidator()));
+                    events.addAll(validateMember(opIndex, model, svc, operation, merged, new PageSizeValidator()));
+                    events.addAll(validateMember(opIndex, model, svc, operation, merged, new OutputTokenValidator()));
+                    events.addAll(validateMember(opIndex, model, svc, operation, merged, new ItemValidator()));
                 }
             });
         }
@@ -117,7 +115,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateMember(
             OperationIndex opIndex,
-            ShapeIndex index,
+            Model model,
             ServiceShape service,
             OperationShape operation,
             PaginatedTrait trait,
@@ -139,7 +137,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
             )));
         }
 
-        MemberShape member = validator.getMember(index, opIndex, operation, trait).orElse(null);
+        MemberShape member = validator.getMember(model, opIndex, operation, trait).orElse(null);
         if (member == null) {
             return Collections.singletonList(error(operation, trait, String.format(
                     "%spaginated trait `%s` targets a member `%s` that does not exist",
@@ -153,7 +151,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                     prefix, validator.propertyName(), member.getMemberName())));
         }
 
-        Shape target = index.getShape(member.getTarget()).orElse(null);
+        Shape target = model.getShape(member.getTarget()).orElse(null);
         if (target != null && !validator.validTargets().contains(target.getType())) {
             events.add(error(operation, trait, String.format(
                     "%spaginated trait `%s` member `%s` targets a %s shape, but must target one of "
@@ -185,7 +183,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         abstract Optional<String> getMemberPath(OperationIndex opIndex, OperationShape operation, PaginatedTrait trait);
 
         abstract Optional<MemberShape> getMember(
-                ShapeIndex index, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
+                Model model, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
         );
 
         boolean pathsAllowed() {
@@ -201,7 +199,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         }
 
         Optional<MemberShape> getMember(
-                ShapeIndex index, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
+                Model model, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
         ) {
             // Split up the path expression into a list of member names
             List<String> memberNames = getMemberPath(opIndex, operation, trait)
@@ -223,7 +221,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                 if (!memberShape.isPresent()) {
                     return Optional.empty();
                 }
-                memberShape = index.getShape(memberShape.get().getTarget())
+                memberShape = model.getShape(memberShape.get().getTarget())
                         .flatMap(Shape::asStructureShape)
                         .flatMap(target -> target.getMember(memberName));
             }
@@ -254,7 +252,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         }
 
         Optional<MemberShape> getMember(
-                ShapeIndex index, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
+                Model model, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
         ) {
             return getMemberPath(opIndex, operation, trait)
                     .flatMap(memberName -> opIndex.getInput(operation).flatMap(input -> input.getMember(memberName)));
@@ -305,7 +303,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         }
 
         Optional<MemberShape> getMember(
-                ShapeIndex index, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
+                Model model, OperationIndex opIndex, OperationShape operation, PaginatedTrait trait
         ) {
             return getMemberPath(opIndex, operation, trait)
                     .flatMap(memberName -> opIndex.getInput(operation).flatMap(input -> input.getMember(memberName)));

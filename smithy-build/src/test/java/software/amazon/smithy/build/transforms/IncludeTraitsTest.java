@@ -50,9 +50,9 @@ public class IncludeTraitsTest {
                 .createTransformer(ListUtils.of("documentation"))
                 .apply(ModelTransformer.create(), model);
 
-        assertThat(result.getShapeIndex().getShape(ShapeId.from("ns.foo#baz")).get().getTrait(DocumentationTrait.class),
+        assertThat(result.expectShape(ShapeId.from("ns.foo#baz")).getTrait(DocumentationTrait.class),
                    not(Optional.empty()));
-        assertThat(result.getShapeIndex().getShape(ShapeId.from("ns.foo#baz")).get().getTrait(SensitiveTrait.class),
+        assertThat(result.expectShape(ShapeId.from("ns.foo#baz")).getTrait(SensitiveTrait.class),
                    is(Optional.empty()));
 
         assertTrue(result.getTraitDefinition("smithy.api#documentation").isPresent());
@@ -74,9 +74,9 @@ public class IncludeTraitsTest {
                 .createTransformer(Collections.singletonList("smithy.api"))
                 .apply(ModelTransformer.create(), model);
 
-        assertThat(result.getShapeIndex().getShape(ShapeId.from("ns.foo#baz")).get().getTrait(DocumentationTrait.class),
+        assertThat(result.expectShape(ShapeId.from("ns.foo#baz")).getTrait(DocumentationTrait.class),
                    not(Optional.empty()));
-        assertThat(result.getShapeIndex().getShape(ShapeId.from("ns.foo#baz")).get().getTrait(SensitiveTrait.class),
+        assertThat(result.expectShape(ShapeId.from("ns.foo#baz")).getTrait(SensitiveTrait.class),
                    not(Optional.empty()));
         assertTrue(result.getTraitDefinition("smithy.api#documentation").isPresent());
         assertTrue(result.getTraitDefinition("smithy.api#sensitive").isPresent());

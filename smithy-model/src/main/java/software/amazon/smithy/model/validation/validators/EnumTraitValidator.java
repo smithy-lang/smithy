@@ -39,7 +39,7 @@ public class EnumTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(StringShape.class)
+        return model.shapes(StringShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, EnumTrait.class))
                 .flatMap(pair -> validateEnumTrait(pair.getLeft(), pair.getRight()).stream())
                 .collect(Collectors.toList());

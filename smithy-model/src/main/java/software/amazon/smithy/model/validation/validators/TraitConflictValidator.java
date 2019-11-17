@@ -35,7 +35,7 @@ public final class TraitConflictValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes()
+        return model.shapes()
                 .flatMap(shape -> {
                     // Map of trait shape IDs to trait value.
                     Map<ShapeId, Trait> traits = shape.getAllTraits();

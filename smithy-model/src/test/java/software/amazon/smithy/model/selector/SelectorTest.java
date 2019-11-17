@@ -23,15 +23,12 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -40,12 +37,11 @@ public class SelectorTest {
 
     @Test
     public void selectsCollections() {
-        ShapeIndex index = Model.assembler().addImport(getClass().getResource("model.json"))
+        Model model = Model.assembler().addImport(getClass().getResource("model.json"))
                 .disablePrelude()
                 .assemble()
-                .unwrap()
-                .getShapeIndex();
-        Set<Shape> result = Selector.parse("collection").select(index);
+                .unwrap();
+        Set<Shape> result = Selector.parse("collection").select(model);
 
         assertThat(result, containsInAnyOrder(
                 SetShape.builder()
@@ -60,12 +56,11 @@ public class SelectorTest {
 
     @Test
     public void selectsCustomTraits() {
-        ShapeIndex index = Model.assembler()
+        Model model = Model.assembler()
                 .addImport(getClass().getResource("model-custom-trait.json"))
                 .assemble()
-                .unwrap()
-                .getShapeIndex();
-        Set<Shape> result = Selector.parse("*[trait|'com.example#beta']").select(index);
+                .unwrap();
+        Set<Shape> result = Selector.parse("*[trait|'com.example#beta']").select(model);
 
         Trait betaTrait = new DynamicTrait(ShapeId.from("com.example#beta"), Node.objectNode());
         Trait requiredTrait = new RequiredTrait();

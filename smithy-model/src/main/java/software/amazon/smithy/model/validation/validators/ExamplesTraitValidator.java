@@ -22,7 +22,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -36,22 +35,21 @@ public final class ExamplesTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
-        return index.shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, ExamplesTrait.class))
-                .flatMap(pair -> validateExamples(index, pair.getLeft(), pair.getRight()).stream())
+                .flatMap(pair -> validateExamples(model, pair.getLeft(), pair.getRight()).stream())
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationEvent> validateExamples(ShapeIndex index, OperationShape shape, ExamplesTrait trait) {
+    private List<ValidationEvent> validateExamples(Model model, OperationShape shape, ExamplesTrait trait) {
         List<ValidationEvent> events = new ArrayList<>();
         List<ExamplesTrait.Example> examples = trait.getExamples();
 
         for (ExamplesTrait.Example example : examples) {
             if (shape.getInput().isPresent()) {
-                index.getShape(shape.getInput().get()).ifPresent(input -> {
+                model.getShape(shape.getInput().get()).ifPresent(input -> {
                     NodeValidationVisitor validator = createVisitor(
-                            "input", example.getInput(), index, shape, example);
+                            "input", example.getInput(), model, shape, example);
                     events.addAll(input.accept(validator));
                 });
             } else if (!example.getInput().isEmpty()) {
@@ -59,9 +57,9 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                                                              + "input structure members: `%s`", example.getTitle())));
             }
             if (shape.getOutput().isPresent()) {
-                index.getShape(shape.getOutput().get()).ifPresent(output -> {
+                model.getShape(shape.getOutput().get()).ifPresent(output -> {
                     NodeValidationVisitor validator = createVisitor(
-                            "output", example.getOutput(), index, shape, example);
+                            "output", example.getOutput(), model, shape, example);
                     events.addAll(output.accept(validator));
                 });
             } else if (!example.getOutput().isEmpty()) {
@@ -77,12 +75,12 @@ public final class ExamplesTraitValidator extends AbstractValidator {
     private NodeValidationVisitor createVisitor(
             String name,
             ObjectNode value,
-            ShapeIndex index,
+            Model model,
             Shape shape,
             ExamplesTrait.Example example
     ) {
         return NodeValidationVisitor.builder()
-                .index(index)
+                .model(model)
                 .eventShapeId(shape.getId())
                 .value(value)
                 .startingContext("Example " + name + " of `" + example.getTitle() + "`")

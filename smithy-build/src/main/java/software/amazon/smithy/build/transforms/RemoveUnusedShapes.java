@@ -58,10 +58,10 @@ public final class RemoveUnusedShapes implements ProjectionTransformer {
             int currentShapeCount;
 
             do {
-                currentShapeCount = model.getShapeIndex().toSet().size();
+                currentShapeCount = model.toSet().size();
                 model = transformer.removeUnreferencedShapes(model, keepShapesByTag);
                 model = transformer.removeUnreferencedTraitDefinitions(model, keepTraitDefsByTag);
-            } while (currentShapeCount != model.getShapeIndex().toSet().size());
+            } while (currentShapeCount != model.toSet().size());
 
             return model;
         };

@@ -21,7 +21,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -38,27 +37,26 @@ public final class TraitValueValidator implements Validator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex()
-                .shapes()
+        return model.shapes()
                 // Get pairs of <Shape, Trait>
                 .flatMap(shape -> shape.getAllTraits().values().stream().map(t -> Pair.of(shape, t)))
-                .flatMap(pair -> validateTrait(model.getShapeIndex(), pair.left, pair.right).stream())
+                .flatMap(pair -> validateTrait(model, pair.left, pair.right).stream())
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationEvent> validateTrait(ShapeIndex index, Shape targetShape, Trait trait) {
+    private List<ValidationEvent> validateTrait(Model model, Shape targetShape, Trait trait) {
         ShapeId shape = trait.toShapeId();
 
-        if (!index.getShape(shape).isPresent()) {
+        if (!model.getShape(shape).isPresent()) {
             // Punt; invalid ID targets are validated in TraitDefinitionShapeValidator.
             return ListUtils.of();
         }
 
-        Shape schema = index.getShape(shape).get();
+        Shape schema = model.getShape(shape).get();
         Node coerced = Trait.coerceTraitValue(trait.toNode(), schema.getType());
 
         NodeValidationVisitor cases = NodeValidationVisitor.builder()
-                .index(index)
+                .model(model)
                 .value(coerced)
                 .eventShapeId(targetShape.getId())
                 .eventId(NAME)

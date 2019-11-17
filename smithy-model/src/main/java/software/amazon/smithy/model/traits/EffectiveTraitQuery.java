@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.traits;
 
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeIndex;
@@ -95,15 +96,20 @@ public final class EffectiveTraitQuery implements ToSmithyBuilder<EffectiveTrait
             return new EffectiveTraitQuery(this);
         }
 
-        /**
-         * Sets the required shape index to query.
-         *
-         * @param shapeIndex Shape index to query.
-         * @return Returns the query object builder.
-         */
+        @Deprecated
         public Builder shapeIndex(ShapeIndex shapeIndex) {
             this.shapeIndex = shapeIndex;
             return this;
+        }
+
+        /**
+         * Sets the required model to query.
+         *
+         * @param model Model to query.
+         * @return Returns the query object builder.
+         */
+        public Builder model(Model model) {
+            return shapeIndex(model.getShapeIndex());
         }
 
         /**

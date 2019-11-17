@@ -48,7 +48,7 @@ public class AuthorizerIndex implements KnowledgeIndex {
     public AuthorizerIndex(Model model) {
         PathFinder finder = PathFinder.create(model);
 
-        model.getShapeIndex().shapes(ServiceShape.class).forEach(service -> {
+        model.shapes(ServiceShape.class).forEach(service -> {
             service.getTrait(AuthorizersTrait.class).ifPresent(trait -> authorizerTraits.put(service.getId(), trait));
             Map<ShapeId, String> serviceMap = new HashMap<>();
             authorizers.put(service.getId(), serviceMap);

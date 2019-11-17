@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
@@ -51,20 +50,17 @@ public class IncludeAuthTest {
                 .version("1")
                 .addTrait(ProtocolsTrait.builder().addProtocol(Protocol.builder().name("foo").build()).build())
                 .build();
-        ShapeIndex index = ShapeIndex.builder()
-                .addShapes(service1, service2, service3)
-                .build();
         Model model = Model.builder()
-                .shapeIndex(index)
+                .addShapes(service1, service2, service3)
                 .build();
         Model result = new IncludeAuth()
                 .createTransformer(Collections.singletonList("foo"))
                 .apply(ModelTransformer.create(), model);
 
-        Shape updateService1 = result.getShapeIndex().getShape(service1.getId()).get();
+        Shape updateService1 = result.getShape(service1.getId()).get();
         assertThat(updateService1.getTrait(AuthTrait.class).get().getValues(), contains("foo"));
         assertThat(updateService1.getTrait(ProtocolsTrait.class).get().getAllAuthSchemes(), contains("foo"));
-        assertThat(result.getShapeIndex().getShape(service2.getId()).get(), equalTo(service2));
-        assertThat(result.getShapeIndex().getShape(service3.getId()).get(), equalTo(service3));
+        assertThat(result.getShape(service2.getId()).get(), equalTo(service2));
+        assertThat(result.getShape(service3.getId()).get(), equalTo(service3));
     }
 }

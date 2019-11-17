@@ -22,9 +22,7 @@ import static org.hamcrest.Matchers.not;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -36,7 +34,7 @@ public class SmithyModelLoaderTest {
                 .assemble()
                 .unwrap();
 
-        model.getShapeIndex().shapes().forEach(shape -> {
+        model.shapes().forEach(shape -> {
             if (!Prelude.isPreludeShape(shape.getId())) {
                 assertThat(shape.getSourceLocation(), not(equalTo(SourceLocation.NONE)));
             }
@@ -57,13 +55,11 @@ public class SmithyModelLoaderTest {
                 .assemble()
                 .unwrap();
 
-        MemberShape baz = model.getShapeIndex()
-                .getShape(ShapeId.from("smithy.example#Foo$baz")).get()
+        MemberShape baz = model.expectShape(ShapeId.from("smithy.example#Foo$baz"))
                 .asMemberShape().get();
-        MemberShape bar = model.getShapeIndex()
-                .getShape(ShapeId.from("smithy.example#Foo$bar")).get()
+        MemberShape bar = model.expectShape(ShapeId.from("smithy.example#Foo$bar"))
                 .asMemberShape().get();
-        ResourceShape resource = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyResource")).get()
+        ResourceShape resource = model.expectShape(ShapeId.from("smithy.example#MyResource"))
                 .asResourceShape().get();
 
         assertThat(baz.getTarget().toString(), equalTo("smithy.api#String"));

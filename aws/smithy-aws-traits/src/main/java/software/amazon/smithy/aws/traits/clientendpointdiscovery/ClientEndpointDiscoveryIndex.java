@@ -32,7 +32,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
@@ -42,20 +41,19 @@ public final class ClientEndpointDiscoveryIndex implements KnowledgeIndex {
     private final Map<ShapeId, Map<ShapeId, ClientEndpointDiscoveryInfo>> endpointDiscoveryInfo = new HashMap<>();
 
     public ClientEndpointDiscoveryIndex(Model model) {
-        ShapeIndex index = model.getShapeIndex();
         TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
         OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
 
-        index.shapes(ServiceShape.class)
+        model.shapes(ServiceShape.class)
                 .flatMap(service -> Trait.flatMapStream(service, ClientEndpointDiscoveryTrait.class))
                 .forEach(servicePair -> {
                     ServiceShape service = servicePair.getLeft();
                     ShapeId endpointOperationId = servicePair.getRight().getOperation();
                     ShapeId endpointErrorId = servicePair.getRight().getError();
 
-                    Optional<OperationShape> endpointOperation = index.getShape(endpointOperationId)
+                    Optional<OperationShape> endpointOperation = model.getShape(endpointOperationId)
                             .flatMap(Shape::asOperationShape);
-                    Optional<StructureShape> endpointError = index.getShape(endpointErrorId)
+                    Optional<StructureShape> endpointError = model.getShape(endpointErrorId)
                             .flatMap(Shape::asStructureShape);
 
                     if (endpointOperation.isPresent() && endpointError.isPresent()) {

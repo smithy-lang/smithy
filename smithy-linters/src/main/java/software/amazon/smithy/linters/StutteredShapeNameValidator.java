@@ -22,7 +22,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -44,25 +43,24 @@ public final class StutteredShapeNameValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
         ShapeVisitor<List<ValidationEvent>> visitor = Shape.<List<ValidationEvent>>visitor()
-                .when(UnionShape.class, shape -> validateNames(index, shape, shape.getMemberNames()))
-                .when(StructureShape.class, shape -> validateNames(index, shape, shape.getMemberNames()))
+                .when(UnionShape.class, shape -> validateNames(model, shape, shape.getMemberNames()))
+                .when(StructureShape.class, shape -> validateNames(model, shape, shape.getMemberNames()))
                 .orElseGet(Collections::emptyList);
-        return index.shapes().flatMap(shape -> shape.accept(visitor).stream()).collect(Collectors.toList());
+        return model.shapes().flatMap(shape -> shape.accept(visitor).stream()).collect(Collectors.toList());
     }
 
-    private List<ValidationEvent> validateNames(ShapeIndex index, Shape shape, Collection<String> memberNames) {
+    private List<ValidationEvent> validateNames(Model model, Shape shape, Collection<String> memberNames) {
         String shapeName = shape.getId().getName();
         String lowerCaseShapeName = shapeName.toLowerCase(Locale.US);
         return memberNames.stream()
                 .filter(memberName -> memberName.toLowerCase(Locale.US).startsWith(lowerCaseShapeName))
-                .map(memberName -> stutteredMemberName(index, shape, shapeName, memberName))
+                .map(memberName -> stutteredMemberName(model, shape, shapeName, memberName))
                 .collect(Collectors.toList());
     }
 
-    private ValidationEvent stutteredMemberName(ShapeIndex index, Shape shape, String shapeName, String memberName) {
-        Shape member = index.getShape(shape.getId().withMember(memberName)).orElseThrow(
+    private ValidationEvent stutteredMemberName(Model model, Shape shape, String shapeName, String memberName) {
+        Shape member = model.getShape(shape.getId().withMember(memberName)).orElseThrow(
                 () -> new RuntimeException("Invalid member name for shape: " + shape + ", " + memberName));
         return warning(member, String.format(
                 "The `%s` %s shape stutters its name in the member `%s`; %2$s member names should not be "

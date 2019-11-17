@@ -25,7 +25,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.IdempotentTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -38,39 +37,38 @@ public final class ResourceLifecycleValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
-        return model.getShapeIndex().shapes(ResourceShape.class)
-                .flatMap(shape -> validateResource(index, shape).stream())
+        return model.shapes(ResourceShape.class)
+                .flatMap(shape -> validateResource(model, shape).stream())
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationEvent> validateResource(ShapeIndex index, ResourceShape resource) {
+    private List<ValidationEvent> validateResource(Model model, ResourceShape resource) {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Note: Whether or not these use a valid bindings is validated in ResourceIdentifierBindingValidator.
-        resource.getPut().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
+        resource.getPut().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
             validateReadonly(resource, operation, "put", false).ifPresent(events::add);
             validateIdempotent(resource, operation, "put", "").ifPresent(events::add);
         });
 
-        resource.getCreate().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
+        resource.getCreate().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
             validateReadonly(resource, operation, "create", false).ifPresent(events::add);
         });
 
-        resource.getRead().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
+        resource.getRead().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
             validateReadonly(resource, operation, "read", true).ifPresent(events::add);
         });
 
-        resource.getUpdate().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
+        resource.getUpdate().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
             validateReadonly(resource, operation, "update", false).ifPresent(events::add);
         });
 
-        resource.getDelete().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
+        resource.getDelete().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
             validateReadonly(resource, operation, "delete", false).ifPresent(events::add);
             validateIdempotent(resource, operation, "delete", "").ifPresent(events::add);
         });
 
-        resource.getList().flatMap(index::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
+        resource.getList().flatMap(model::getShape).flatMap(Shape::asOperationShape).ifPresent(operation -> {
             validateReadonly(resource, operation, "list", true).ifPresent(events::add);
         });
 

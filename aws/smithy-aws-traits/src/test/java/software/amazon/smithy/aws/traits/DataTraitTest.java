@@ -34,12 +34,12 @@ public class DataTraitTest {
     @Test
     public void loadsWithString() {
         Model model = getModel();
-        assertTrue(model.getShapeIndex().getShape(ShapeId.from("ns.foo#A"))
+        assertTrue(model.getShape(ShapeId.from("ns.foo#A"))
                 .flatMap(shape -> shape.getTrait(DataTrait.class))
                 .filter(trait -> trait.getValue().equals("account"))
                 .isPresent());
 
-        assertTrue(model.getShapeIndex().getShape(ShapeId.from("ns.foo#B"))
+        assertTrue(model.getShape(ShapeId.from("ns.foo#B"))
                 .flatMap(shape -> shape.getTrait(DataTrait.class))
                 .filter(trait -> trait.getValue().equals("tagging"))
                 .isPresent());

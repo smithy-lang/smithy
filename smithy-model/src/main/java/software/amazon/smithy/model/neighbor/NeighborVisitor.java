@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -47,8 +48,13 @@ import software.amazon.smithy.utils.ListUtils;
 final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> implements NeighborProvider {
     private final ShapeIndex shapeIndex;
 
+    @Deprecated
     NeighborVisitor(ShapeIndex shapeIndex) {
         this.shapeIndex = shapeIndex;
+    }
+
+    NeighborVisitor(Model model) {
+        this(model.getShapeIndex());
     }
 
     @Override

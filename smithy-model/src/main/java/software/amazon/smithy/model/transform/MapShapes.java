@@ -39,7 +39,7 @@ final class MapShapes {
     }
 
     Model transform(ModelTransformer transformer, Model model) {
-        return transformer.replaceShapes(model, model.getShapeIndex().shapes()
+        return transformer.replaceShapes(model, model.shapes()
                 .flatMap(shape -> {
                     Shape mapped = Objects.requireNonNull(mapper.apply(shape), "Shape mapper must not return null");
                     if (mapped.equals(shape)) {

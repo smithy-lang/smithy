@@ -43,7 +43,7 @@ public class ConditionKeysValidator extends AbstractValidator {
         ConditionKeysIndex conditionIndex = model.getKnowledge(ConditionKeysIndex.class);
         TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
 
-        return model.getShapeIndex().shapes(ServiceShape.class)
+        return model.shapes(ServiceShape.class)
                 .filter(service -> service.hasTrait(ServiceTrait.class))
                 .flatMap(service -> {
                     List<ValidationEvent> results = new ArrayList<>();

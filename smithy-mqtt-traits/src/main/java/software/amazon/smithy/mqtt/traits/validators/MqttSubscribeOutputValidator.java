@@ -25,7 +25,6 @@ import software.amazon.smithy.model.knowledge.EventStreamIndex;
 import software.amazon.smithy.model.knowledge.EventStreamInfo;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -48,16 +47,15 @@ import software.amazon.smithy.utils.OptionalUtils;
 public final class MqttSubscribeOutputValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
         EventStreamIndex eventStreamIndex = model.getKnowledge(EventStreamIndex.class);
-        return index.shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, SubscribeTrait.class))
-                .flatMap(pair -> validateOperation(index, pair.getLeft(), eventStreamIndex).stream())
+                .flatMap(pair -> validateOperation(model, pair.getLeft(), eventStreamIndex).stream())
                 .collect(Collectors.toList());
     }
 
     private List<ValidationEvent> validateOperation(
-            ShapeIndex index,
+            Model model,
             OperationShape shape,
             EventStreamIndex eventStreamIndex
     ) {
@@ -78,7 +76,7 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
 
         // Find events in the output's event stream that have members marked
         // with the eventHeader trait.
-        getOutputEvents(info, index)
+        getOutputEvents(info, model)
                 .flatMap(target -> target.getAllMembers().values().stream()
                         .filter(member -> member.hasTrait(EventHeaderTrait.class)))
                 .map(member -> danger(shape, "This member is used as part of an MQTT event stream event, and MQTT "
@@ -88,7 +86,7 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
         return events;
     }
 
-    private Stream<StructureShape> getOutputEvents(EventStreamInfo info, ShapeIndex index) {
+    private Stream<StructureShape> getOutputEvents(EventStreamInfo info, Model model) {
         return info.getEventStreamTarget().accept(new ShapeVisitor.Default<Stream<StructureShape>>() {
             @Override
             public Stream<StructureShape> getDefault(Shape shape) {
@@ -98,7 +96,7 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
             @Override
             public Stream<StructureShape> unionShape(UnionShape shape) {
                 return shape.getAllMembers().entrySet().stream()
-                        .flatMap(member -> OptionalUtils.stream(index.getShape(member.getValue().getTarget())
+                        .flatMap(member -> OptionalUtils.stream(model.getShape(member.getValue().getTarget())
                                 .flatMap(Shape::asStructureShape)));
             }
 

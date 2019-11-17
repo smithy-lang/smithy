@@ -32,7 +32,6 @@ import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.selector.SelectorSyntaxException;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -82,8 +81,7 @@ public final class ReservedWordsValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex shapeIndex = model.getShapeIndex();
-        return reservations.stream().flatMap(reservation -> reservation.validate(shapeIndex))
+        return reservations.stream().flatMap(reservation -> reservation.validate(model))
                 .collect(Collectors.toList());
     }
 
@@ -135,8 +133,8 @@ public final class ReservedWordsValidator extends AbstractValidator {
             }
         }
 
-        private Stream<ValidationEvent> validate(ShapeIndex shapeIndex) {
-            return selector.select(shapeIndex).stream().flatMap(shape -> OptionalUtils.stream(validateShape(shape)));
+        private Stream<ValidationEvent> validate(Model model) {
+            return selector.select(model).stream().flatMap(shape -> OptionalUtils.stream(validateShape(shape)));
         }
 
         private Optional<ValidationEvent> validateShape(Shape shape) {

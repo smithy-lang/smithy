@@ -38,7 +38,7 @@ public class ExclusiveStructureMemberTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(StructureShape.class)
+        return model.shapes(StructureShape.class)
                 .flatMap(shape -> validateExclusiveTraits(model, shape).stream())
                 .collect(toList());
     }

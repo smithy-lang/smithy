@@ -18,7 +18,6 @@ package software.amazon.smithy.model.knowledge;
 import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.Protocol;
@@ -31,13 +30,13 @@ import software.amazon.smithy.utils.OptionalUtils;
  * for specific protocols.
  */
 public final class AuthIndex implements KnowledgeIndex {
-    private final ShapeIndex index;
+    private final Model model;
 
     /**
      * @param model Model to compute the index from.
      */
     public AuthIndex(Model model) {
-        this.index = model.getShapeIndex();
+        this.model = model;
     }
 
     /**
@@ -49,7 +48,7 @@ public final class AuthIndex implements KnowledgeIndex {
      * @return Returns the list of auth schemes or an empty list if not found.
      */
     public List<String> getDefaultServiceSchemes(ToShapeId service) {
-        return index.getShape(service.toShapeId())
+        return model.getShape(service.toShapeId())
                 .flatMap(serviceShape -> OptionalUtils.or(serviceShape.getTrait(AuthTrait.class)
                         .map(AuthTrait::getValues),
                         () -> serviceShape.getTrait(ProtocolsTrait.class)
@@ -75,7 +74,7 @@ public final class AuthIndex implements KnowledgeIndex {
      * @return Returns the computed authentication schemes.
      */
     public List<String> getOperationSchemes(ToShapeId service, ToShapeId operation) {
-        return index.getShape(operation.toShapeId())
+        return model.getShape(operation.toShapeId())
                 // Get the auth trait from the operation or the service.
                 .map(shape -> shape.getTrait(AuthTrait.class)
                         .map(AuthTrait::getValues)
@@ -98,7 +97,7 @@ public final class AuthIndex implements KnowledgeIndex {
      */
     public List<String> getOperationSchemes(ToShapeId service, ToShapeId operation, String protocolName) {
         // Get the authentication schemes of the protocol.
-        List<String> protocolSchemes = index.getShape(service.toShapeId())
+        List<String> protocolSchemes = model.getShape(service.toShapeId())
                 .flatMap(serviceShape -> serviceShape.getTrait(ProtocolsTrait.class))
                 .flatMap(protocolsTrait -> protocolsTrait.getProtocol(protocolName))
                 .map(Protocol::getAuth)

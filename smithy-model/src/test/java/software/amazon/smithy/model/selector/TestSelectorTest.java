@@ -21,10 +21,10 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import java.util.Arrays;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 
@@ -37,8 +37,8 @@ public class TestSelectorTest {
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();
         Shape b = StringShape.builder().id("foo.baz#Bam").build();
         Shape c = FloatShape.builder().id("foo.baz#Qux").build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(a, b, c).build();
-        Set<Shape> result = selector.select(index);
+        Model model = Model.builder().addShapes(a, b, c).build();
+        Set<Shape> result = selector.select(model);
 
         assertThat(result, containsInAnyOrder(a, b));
     }

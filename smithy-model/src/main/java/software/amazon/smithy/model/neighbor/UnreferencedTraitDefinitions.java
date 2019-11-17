@@ -23,7 +23,6 @@ import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 
@@ -49,7 +48,6 @@ public final class UnreferencedTraitDefinitions {
 
     public Set<Shape> compute(Model model) {
         Walker walker = new Walker(model.getKnowledge(NeighborProviderIndex.class).getProvider());
-        ShapeIndex index = model.getShapeIndex();
 
         // Begin with a mutable set of all trait definitions contained in the model
         Set<Shape> unused = model.getTraitShapes().stream()
@@ -59,13 +57,13 @@ public final class UnreferencedTraitDefinitions {
 
         // Find all traits used directly or indirectly by a service shape and remove
         // their definitions from the unused set.
-        index.shapes(ServiceShape.class)
+        model.shapes(ServiceShape.class)
                 .flatMap(service -> walker.walkShapes(service).stream())
                 .distinct()
                 .map(Shape::getAllTraits)
                 .flatMap(traits -> traits.keySet().stream())
                 .distinct()
-                .flatMap(traitId -> OptionalUtils.stream(index.getShape(traitId)))
+                .flatMap(traitId -> OptionalUtils.stream(model.getShape(traitId)))
                 .filter(keepFilter)
                 .forEach(unused::remove);
 

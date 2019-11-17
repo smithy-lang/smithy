@@ -33,7 +33,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ReferencesTrait;
@@ -50,14 +49,13 @@ public final class ReferencesTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes()
+        return model.shapes()
                 .flatMap(shape -> Trait.flatMapStream(shape, ReferencesTrait.class))
-                .flatMap(pair -> validateShape(
-                        model.getShapeIndex(), pair.getLeft(), pair.getRight()).stream())
+                .flatMap(pair -> validateShape(model, pair.getLeft(), pair.getRight()).stream())
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationEvent> validateShape(ShapeIndex index, Shape shape, ReferencesTrait trait) {
+    private List<ValidationEvent> validateShape(Model model, Shape shape, ReferencesTrait trait) {
         List<ValidationEvent> events = new ArrayList<>();
         for (ReferencesTrait.Reference reference : trait.getReferences()) {
             if (shape.isStringShape() && !reference.getIds().isEmpty()) {
@@ -66,7 +64,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             }
 
             ShapeId shapeId = reference.getResource();
-            Optional<Shape> targetedShape = index.getShape(shapeId);
+            Optional<Shape> targetedShape = model.getShape(shapeId);
             if (targetedShape.isPresent()) {
                 if (!targetedShape.get().isResourceShape()) {
                     events.add(error(shape, trait, format(
@@ -74,7 +72,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
                             targetedShape.get().getType(), reference)));
                 } else {
                     ResourceShape resource = targetedShape.get().asResourceShape().get();
-                    events.addAll(validateSingleReference(index, reference, shape, trait, resource));
+                    events.addAll(validateSingleReference(model, reference, shape, trait, resource));
                 }
             }
         }
@@ -83,14 +81,14 @@ public final class ReferencesTraitValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> validateSingleReference(
-            ShapeIndex index,
+            Model model,
             ReferencesTrait.Reference reference,
             Shape shape,
             ReferencesTrait trait,
             ResourceShape target
     ) {
         return shape.accept(Shape.<List<ValidationEvent>>visitor()
-                .when(StructureShape.class, s -> validateStructureRef(index, reference, s, trait, target))
+                .when(StructureShape.class, s -> validateStructureRef(model, reference, s, trait, target))
                 .when(StringShape.class, s -> validateStringShapeRef(reference, s, trait, target))
                 .orElse(ListUtils.of()));
     }
@@ -116,7 +114,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
     private enum ErrorReason { BAD_TARGET, NOT_FOUND, NOT_REQUIRED }
 
     private List<ValidationEvent> validateStructureRef(
-            ShapeIndex index,
+            Model model,
             ReferencesTrait.Reference reference,
             StructureShape shape,
             ReferencesTrait trait,
@@ -138,7 +136,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
                 errors.put(memberName, ErrorReason.NOT_FOUND);
             } else {
                 MemberShape structMember = shape.getMember(memberName).get();
-                if (!index.getShape(structMember.getTarget()).filter(Shape::isStringShape).isPresent()) {
+                if (!model.getShape(structMember.getTarget()).filter(Shape::isStringShape).isPresent()) {
                     errors.put(memberName, ErrorReason.BAD_TARGET);
                 } else if (!structMember.isRequired()) {
                     errors.put(memberName, ErrorReason.NOT_REQUIRED);

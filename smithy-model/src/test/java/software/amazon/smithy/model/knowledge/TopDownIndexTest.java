@@ -26,7 +26,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 
 public class TopDownIndexTest {
     @Test
@@ -37,8 +36,7 @@ public class TopDownIndexTest {
                 .addResource("ns.foo#Resource")
                 .build();
         ResourceShape resource = ResourceShape.builder().id("ns.foo#Resource").build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(service, resource).build();
-        Model model = Model.builder().shapeIndex(index).build();
+        Model model = Model.builder().addShapes(service, resource).build();
         TopDownIndex childIndex = model.getKnowledge(TopDownIndex.class);
 
         assertThat(childIndex.getContainedOperations(service), empty());
@@ -63,8 +61,7 @@ public class TopDownIndexTest {
         ResourceShape resourceB = ResourceShape.builder().id("ns.foo#B").addOperation("ns.foo#Operation").build();
         OperationShape operation = OperationShape.builder().id("ns.foo#Operation").build();
         OperationShape list = OperationShape.builder().id("ns.foo#List").build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(service, resourceA, resourceB, operation, list).build();
-        Model model = Model.builder().shapeIndex(index).build();
+        Model model = Model.builder().addShapes(service, resourceA, resourceB, operation, list).build();
         TopDownIndex childIndex = model.getKnowledge(TopDownIndex.class);
 
         assertThat(childIndex.getContainedResources(service.getId()), containsInAnyOrder(resourceA, resourceB));

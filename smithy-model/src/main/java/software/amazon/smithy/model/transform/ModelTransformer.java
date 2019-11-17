@@ -338,15 +338,9 @@ public final class ModelTransformer {
         return new ScrubTraitDefinitions().transform(this, model);
     }
 
-    /**
-     * Gets all shapes from a model as a {@code ShapeIndex} where shapes that
-     * define traits or shapes that are only used as part of a trait
-     * definition have been removed.
-     *
-     * @param model Model that contains shapes.
-     * @return Returns a ShapeIndex containing matching shapes.
-     */
+    @Deprecated
     public ShapeIndex getNonTraitShapes(Model model) {
+        // TODO: remove once ShapeIndex is removed.
         ShapeIndex currentIndex = model.getShapeIndex();
         ShapeIndex.Builder indexBuilder = ShapeIndex.builder();
 
@@ -356,12 +350,24 @@ public final class ModelTransformer {
         // a ShapeIndex is created by getting all shape IDs from the modified
         // model, grabbing shapes from the original model, and building a new
         // ShapeIndex.
-        scrubTraitDefinitions(model).getShapeIndex().shapes()
+        scrubTraitDefinitions(model).shapes()
                 .map(Shape::getId)
                 .map(currentIndex::getShape)
                 .map(Optional::get)
                 .forEach(indexBuilder::addShape);
 
         return indexBuilder.build();
+    }
+
+    /**
+     * Gets all shapes from a model where shapes that define traits or shapes
+     * that are only used as part of a trait definition have been removed.
+     *
+     * @param model Model that contains shapes.
+     * @return Returns a model that contains matching shapes.
+     */
+    public Model getModelWithoutTraitShapes(Model model) {
+        ShapeIndex updatedIndex = getNonTraitShapes(model);
+        return model.toBuilder().shapeIndex(updatedIndex).build();
     }
 }
