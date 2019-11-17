@@ -60,7 +60,7 @@ public final class AbbreviationNameValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes()
+        return model.shapes()
                 .flatMap(this::validateShapeName)
                 .collect(Collectors.toList());
     }

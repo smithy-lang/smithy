@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -37,7 +38,7 @@ import software.amazon.smithy.utils.Tagged;
  *
  * <p>Shape does implement {@link Comparable}, but comparisons are based
  * solely on the ShapeId of the shape. This assumes that shapes are being
- * compared in the context of a ShapeIndex that forbids shape ID conflcits.
+ * compared in the context of a Model that forbids shape ID conflicts.
  */
 public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Comparable<Shape> {
     private final ShapeId id;
@@ -215,19 +216,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         return traits;
     }
 
-    /**
-     * Gets a trait from the member shape or from the shape targeted by the
-     * member.
-     *
-     * <p>If the shape is not a member, then the method functions the same as
-     * {@link #getTrait(Class)}.
-     *
-     * @param index Shape index used to find member targets.
-     * @param trait Trait type to get.
-     * @param <T> Trait type to get.
-     * @return Returns the optionally found trait on the shape or member.
-     * @see MemberShape#getTrait(Class)
-     */
+    @Deprecated
     public <T extends Trait> Optional<T> getMemberTrait(ShapeIndex index, Class<T> trait) {
         return getTrait(trait);
     }
@@ -237,14 +226,36 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      * member.
      *
      * <p>If the shape is not a member, then the method functions the same as
+     * {@link #getTrait(Class)}.
+     *
+     * @param model Model used to find member targets.
+     * @param trait Trait type to get.
+     * @param <T> Trait type to get.
+     * @return Returns the optionally found trait on the shape or member.
+     * @see MemberShape#getTrait(Class)
+     */
+    public <T extends Trait> Optional<T> getMemberTrait(Model model, Class<T> trait) {
+        return getTrait(trait);
+    }
+
+    @Deprecated
+    public Optional<Trait> findMemberTrait(ShapeIndex index, String traitName) {
+        return findTrait(traitName);
+    }
+
+    /**
+     * Gets a trait from the member shape or from the shape targeted by the
+     * member.
+     *
+     * <p>If the shape is not a member, then the method functions the same as
      * {@link #findTrait(String)}.
      *
-     * @param index Shape index used to find member targets.
+     * @param model Model used to find member targets.
      * @param traitName Trait name to get.
      * @return Returns the optionally found trait on the shape or member.
      * @see MemberShape#findTrait(String)
      */
-    public Optional<Trait> findMemberTrait(ShapeIndex index, String traitName) {
+    public Optional<Trait> findMemberTrait(Model model, String traitName) {
         return findTrait(traitName);
     }
 

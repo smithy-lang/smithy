@@ -45,7 +45,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.Protocol;
@@ -237,7 +236,7 @@ public final class OpenApiConverter {
                 .withMember(JsonSchemaConstants.DEFINITION_POINTER, OpenApiConstants.SCHEMA_COMPONENTS_POINTER);
 
         // Find the service shape.
-        ServiceShape service = model.getShapeIndex().getShape(serviceShapeId)
+        ServiceShape service = model.getShape(serviceShapeId)
                 .orElseThrow(() -> new IllegalArgumentException(String.format(
                         "Shape `%s` not found in shape index", serviceShapeId)))
                 .asServiceShape()
@@ -275,7 +274,7 @@ public final class OpenApiConverter {
         // Set a protocol name if one wasn't set but instead derived.
         protocolName = protocolName != null ? protocolName : resolvedProtocol.getName();
         ComponentsObject.Builder components = ComponentsObject.builder();
-        SchemaDocument schemas = addSchemas(components, model.getShapeIndex(), service);
+        SchemaDocument schemas = addSchemas(components, model, service);
 
         // Load security scheme converters.
         List<SecuritySchemeConverter> securitySchemeConverters = loadSecuritySchemes(service, extensions);
@@ -444,10 +443,10 @@ public final class OpenApiConverter {
     // Copies the JSON schema schemas over into the OpenAPI object.
     private SchemaDocument addSchemas(
             ComponentsObject.Builder components,
-            ShapeIndex index,
+            Model model,
             ServiceShape service
     ) {
-        SchemaDocument document = getJsonSchemaConverter().convert(index, service);
+        SchemaDocument document = getJsonSchemaConverter().convert(model, service);
         for (Map.Entry<String, Schema> entry : document.getDefinitions().entrySet()) {
             String key = entry.getKey().replace(OpenApiConstants.SCHEMA_COMPONENTS_POINTER + "/", "");
             components.putSchema(key, entry.getValue());

@@ -55,7 +55,7 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return selector.select(model.getShapeIndex()).stream()
+        return selector.select(model).stream()
                 .map(shape -> danger(shape, "Selector capture matched selector: " + selector))
                 .collect(Collectors.toList());
     }

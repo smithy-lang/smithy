@@ -127,7 +127,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                     ParameterObject.Builder paramBuilder = ModelUtils.createParameterMember(
                             context, member).in("path");
                     // Timestamps sent in the URI are serialized as a date-time string by default.
-                    boolean needsInlineSchema = context.getModel().getShapeIndex().getShape(member.getTarget())
+                    boolean needsInlineSchema = context.getModel().getShape(member.getTarget())
                             .filter(Shape::isTimestampShape)
                             .isPresent()
                             && !ModelUtils.getMemberTrait(context, member, TimestampFormatTrait.class).isPresent();
@@ -149,8 +149,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                     ParameterObject.Builder param = ModelUtils.createParameterMember(context, binding.getMember())
                             .in("query")
                             .name(binding.getLocationName());
-                    Shape target = context.getModel().getShapeIndex()
-                            .getShape(binding.getMember().getTarget()).get();
+                    Shape target = context.getModel().expectShape(binding.getMember().getTarget());
 
                     // List and set shapes in the query string are repeated, so we need to "explode" them.
                     if (target instanceof CollectionShape) {
@@ -184,7 +183,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                         // Response headers don't use "in" or "name".
                         param.in(null).name(null);
                     }
-                    Shape target = context.getModel().getShapeIndex().getShape(binding.getMember().getTarget()).get();
+                    Shape target = context.getModel().expectShape(binding.getMember().getTarget());
                     Schema refSchema = context.createRef(binding.getMember());
                     param.schema(target.accept(new HeaderSchemaVisitor(context, refSchema, binding.getMember())));
                     return Pair.of(binding.getLocationName(), param.build());
@@ -352,7 +351,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         }
 
         private Schema collection(CollectionShape collection) {
-            Shape memberTarget = context.getModel().getShapeIndex().getShape(collection.getMember().getTarget()).get();
+            Shape memberTarget = context.getModel().getShape(collection.getMember().getTarget()).get();
             String memberPointer = context.getPointer(collection.getMember());
             Schema currentMemberSchema = context.getSchema(memberPointer);
             Schema newMemberSchema = memberTarget.accept(
@@ -411,7 +410,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         }
 
         private Schema collection(CollectionShape collection) {
-            Shape memberTarget = context.getModel().getShapeIndex().getShape(collection.getMember().getTarget()).get();
+            Shape memberTarget = context.getModel().expectShape(collection.getMember().getTarget());
             String memberPointer = context.getPointer(collection.getMember());
             Schema currentMemberSchema = context.getSchema(memberPointer);
             Schema newMemberSchema = memberTarget.accept(

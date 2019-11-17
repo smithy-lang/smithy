@@ -26,7 +26,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.PaginatedTrait;
@@ -49,11 +48,10 @@ public final class PaginatedIndex implements KnowledgeIndex {
     private final Map<ShapeId, Map<ShapeId, PaginationInfo>> paginationInfo = new HashMap<>();
 
     public PaginatedIndex(Model model) {
-        ShapeIndex index = model.getShapeIndex();
         TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
         OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
 
-        index.shapes(ServiceShape.class).forEach(service -> {
+        model.shapes(ServiceShape.class).forEach(service -> {
             PaginatedTrait serviceTrait = service.getTrait(PaginatedTrait.class).orElse(null);
             Map<ShapeId, PaginationInfo> mappings = topDownIndex.getContainedOperations(service).stream()
                     .flatMap(operation -> Trait.flatMapStream(operation, PaginatedTrait.class))

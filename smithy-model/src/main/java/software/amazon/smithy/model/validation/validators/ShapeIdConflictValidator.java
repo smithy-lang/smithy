@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -34,8 +33,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public class ShapeIdConflictValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
-        Map<String, List<Shape>> conflicts = index.shapes()
+        Map<String, List<Shape>> conflicts = model.shapes()
                 .collect(Collectors.groupingBy(shape -> shape.getId().toString().toLowerCase(Locale.US)))
                 .entrySet().stream()
                 .filter(entry -> entry.getValue().size() > 1)

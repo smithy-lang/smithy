@@ -31,7 +31,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -49,17 +48,17 @@ public class PathFinderTest {
                 .addMember(structMemberFoo)
                 .addMember(structMemberBaz)
                 .build();
-        ShapeIndex index = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(struct, structMemberFoo, structMemberBaz, list, listMember, string, structMemberBaz)
                 .build();
 
-        List<String> result1 = formatPaths(PathFinder.create(index).search(struct, "string"));
+        List<String> result1 = formatPaths(PathFinder.create(model).search(struct, "string"));
         assertThat(result1, containsInAnyOrder(
                 "[id|a.b#Struct] -[member]-> [id|a.b#Struct$baz] > [id|a.b#String]",
                 "[id|a.b#Struct] -[member]-> [id|a.b#Struct$foo] > [id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#String]"
         ));
 
-        List<String> result2 = formatPaths(PathFinder.create(index).search(structMemberFoo, "string"));
+        List<String> result2 = formatPaths(PathFinder.create(model).search(structMemberFoo, "string"));
         assertThat(result2, contains(
                 "[id|a.b#Struct$foo] > [id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#String]"));
     }
@@ -81,10 +80,10 @@ public class PathFinderTest {
                 .addMember(structMemberFoo)
                 .addMember(structMemberBaz)
                 .build();
-        ShapeIndex index = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(struct, structMemberFoo, structMemberBaz, list, listMember, string, structMemberBaz)
                 .build();
-        List<String> result = formatPaths(PathFinder.create(index).search(struct, "[trait|sensitive]"));
+        List<String> result = formatPaths(PathFinder.create(model).search(struct, "[trait|sensitive]"));
 
         assertThat(result, containsInAnyOrder(
                 "[id|a.b#Struct] -[member]-> [id|a.b#Struct$foo] > [id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#Struct]",
@@ -95,16 +94,16 @@ public class PathFinderTest {
     @Test
     public void emptyResultsWhenNothingMatchesSelector() {
         StringShape string = StringShape.builder().id("a.b#String").build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(string).build();
-        List<String> result = formatPaths(PathFinder.create(index).search(string, "[trait|required]"));
+        Model model = Model.builder().addShapes(string).build();
+        List<String> result = formatPaths(PathFinder.create(model).search(string, "[trait|required]"));
 
         assertThat(result, empty());
     }
 
     @Test
     public void doesNotFailOnMissingShape() {
-        ShapeIndex index = ShapeIndex.builder().build();
-        List<String> result = formatPaths(PathFinder.create(index).search(ShapeId.from("foo.baz#Bar"), "string"));
+        Model model = Model.builder().build();
+        List<String> result = formatPaths(PathFinder.create(model).search(ShapeId.from("foo.baz#Bar"), "string"));
 
         assertThat(result, empty());
     }
@@ -113,8 +112,8 @@ public class PathFinderTest {
     public void doesNotAddItselfToResultAsFirstMatch() {
         MemberShape listMember = MemberShape.builder().id("a.b#List$member").target("a.b#List").build();
         ListShape list = ListShape.builder().id("a.b#List").member(listMember).build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(list, listMember).build();
-        List<String> result = formatPaths(PathFinder.create(index).search(list, "list"));
+        Model model = Model.builder().addShapes(list, listMember).build();
+        List<String> result = formatPaths(PathFinder.create(model).search(list, "list"));
 
         assertThat(result, contains(
                 "[id|a.b#List] -[member]-> [id|a.b#List$member] > [id|a.b#List]"));
@@ -124,8 +123,8 @@ public class PathFinderTest {
     public void providesStartAndEndShapes() {
         MemberShape listMember = MemberShape.builder().id("a.b#List$member").target("a.b#List").build();
         ListShape list = ListShape.builder().id("a.b#List").member(listMember).build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(list, listMember).build();
-        List<PathFinder.Path> result = PathFinder.create(index).search(list, "list");
+        Model model = Model.builder().addShapes(list, listMember).build();
+        List<PathFinder.Path> result = PathFinder.create(model).search(list, "list");
 
         assertThat(result, hasSize(1));
         assertThat(result.get(0).getStartShape(), equalTo(list));

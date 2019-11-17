@@ -23,7 +23,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 
@@ -62,7 +61,7 @@ public class DifferencesTest {
     public void detectsAddedShapes() {
         Shape shape = StringShape.builder().id("foo.bar#Baz").build();
         Model previous = Model.builder().build();
-        Model current = Model.builder().shapeIndex(ShapeIndex.builder().addShapes(shape).build()).build();
+        Model current = Model.builder().addShapes(shape).build();
         Differences differences = Differences.detect(previous, current);
 
         assertThat(differences.addedShapes().count(), equalTo(1L));
@@ -72,7 +71,7 @@ public class DifferencesTest {
     @Test
     public void detectsRemovedShapes() {
         Shape shape = StringShape.builder().id("foo.bar#Baz").build();
-        Model previous = Model.builder().shapeIndex(ShapeIndex.builder().addShapes(shape).build()).build();
+        Model previous = Model.builder().addShapes(shape).build();
         Model current = Model.builder().build();
         Differences differences = Differences.detect(previous, current);
 

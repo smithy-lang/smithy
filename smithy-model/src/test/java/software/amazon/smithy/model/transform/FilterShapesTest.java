@@ -29,7 +29,6 @@ import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DynamicTrait;
@@ -47,13 +46,12 @@ public class FilterShapesTest {
                 .build();
         ShapeId bId = ShapeId.from("ns.foo#B");
         StringShape b = StringShape.builder().id(bId).build();
-        Model model = Model.builder().shapeIndex(ShapeIndex.builder().addShapes(a, b).build()).build();
+        Model model = Model.builder().addShapes(a, b).build();
         Model result = ModelTransformer.create()
                 .filterShapes(model, shape -> !shape.getTrait(SensitiveTrait.class).isPresent());
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.shapes().count(), Matchers.is(1L));
-        assertThat(index.getShape(bId), Matchers.not(Optional.empty()));
+        assertThat(result.shapes().count(), Matchers.is(1L));
+        assertThat(result.getShape(bId), Matchers.not(Optional.empty()));
     }
 
     @Test
@@ -68,15 +66,13 @@ public class FilterShapesTest {
         MemberShape mapValue = MemberShape.builder().id("ns.foo#Map$value").target(stringShapeId).build();
         MapShape map = MapShape.builder().id("ns.foo#Map").key(mapKey).value(mapValue).build();
 
-        ShapeIndex inIndex = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(string, list, listMember, map, mapKey, mapValue)
                 .build();
-        Model model = Model.builder().shapeIndex(inIndex).build();
         Model result = ModelTransformer.create().filterShapes(model, shape -> !shape.isMemberShape());
-        ShapeIndex outIndex = result.getShapeIndex();
 
         // No members should be removed because they are not eligible.
-        assertThat(outIndex.shapes().count(), Matchers.is(6L));
+        assertThat(result.shapes().count(), Matchers.is(6L));
     }
 
     @Test
@@ -93,29 +89,27 @@ public class FilterShapesTest {
                 .addMember(member2)
                 .addMember(member3)
                 .build();
-        ShapeIndex inIndex = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(string, structure, member1, member2, member3)
                 .build();
-        Model model = Model.builder().shapeIndex(inIndex).build();
 
         // Remove "member2" from the structure.
         Model result = ModelTransformer.create().filterShapes(model, shape -> {
             return !shape.getId().toString().equals("ns.foo#Structure$member2");
         });
-        ShapeIndex outIndex = result.getShapeIndex();
 
         // Ensure that the member shapes were removed from the index.
-        assertThat(outIndex.getShape(member1.getId()), Matchers.equalTo(Optional.of(member1)));
-        assertThat(outIndex.getShape(member3.getId()), Matchers.equalTo(Optional.of(member3)));
-        assertThat(outIndex.getShape(member2.getId()), Matchers.is(Optional.empty()));
-        assertThat(outIndex.getShape(structure.getId()), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(member1.getId()), Matchers.equalTo(Optional.of(member1)));
+        assertThat(result.getShape(member3.getId()), Matchers.equalTo(Optional.of(member3)));
+        assertThat(result.getShape(member2.getId()), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(structure.getId()), Matchers.not(Optional.empty()));
 
         // Make sure the structure was updated so that it no longer has the removed member shape.
-        assertThat(outIndex.getShape(structure.getId()).get().asStructureShape().get().getMember("member1"),
+        assertThat(result.getShape(structure.getId()).get().asStructureShape().get().getMember("member1"),
                    Matchers.not(Optional.empty()));
-        assertThat(outIndex.getShape(structure.getId()).get().asStructureShape().get().getMember("member3"),
+        assertThat(result.getShape(structure.getId()).get().asStructureShape().get().getMember("member3"),
                    Matchers.not(Optional.empty()));
-        assertThat(outIndex.getShape(structure.getId()).get().asStructureShape().get().getMember("member2"),
+        assertThat(result.getShape(structure.getId()).get().asStructureShape().get().getMember("member2"),
                    Matchers.is(Optional.empty()));
     }
 
@@ -144,22 +138,21 @@ public class FilterShapesTest {
                 .addTrait(new SensitiveTrait(SourceLocation.NONE))
                 .build();
         Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder().addShapes(shape1, shape2, bazTrait, barTrait).build())
+                .addShapes(shape1, shape2, bazTrait, barTrait)
                 .build();
 
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.filterShapes(model, shape -> !shape.getId().toString().equals("ns.foo#baz"));
         Map<Shape, TraitDefinition> definitions = result.getTraitDefinitions();
-        ShapeIndex index = result.getShapeIndex();
 
         assertThat(definitions.size(), Matchers.is(1));
         assertThat(definitions, Matchers.hasKey(barTrait));
         assertThat(definitions, Matchers.hasValue(barTrait.getTrait(TraitDefinition.class).get()));
 
-        assertThat(index.getShape(shapeId1).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(shapeId1).get().findTrait("ns.foo#baz"), Matchers.is(Optional.empty()));
-        assertThat(index.getShape(shapeId2).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(shapeId2).get().findTrait("ns.foo#baz"), Matchers.is(Optional.empty()));
-        assertThat(index.getShape(shapeId2).get().findTrait("ns.foo#bar"), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(shapeId1).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(shapeId1).get().findTrait("ns.foo#baz"), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(shapeId2).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(shapeId2).get().findTrait("ns.foo#baz"), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(shapeId2).get().findTrait("ns.foo#bar"), Matchers.not(Optional.empty()));
     }
 }

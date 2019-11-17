@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
@@ -170,14 +171,19 @@ public final class JsonSchemaConverter {
         return this;
     }
 
+    @Deprecated
+    public SchemaDocument convert(ShapeIndex shapeIndex) {
+        return doConversion(shapeIndex, null);
+    }
+
     /**
      * Perform the conversion of the entire shape Index.
      *
-     * @param shapeIndex Shape index to convert.
+     * @param model Model to convert.
      * @return Returns the created SchemaDocument.
      */
-    public SchemaDocument convert(ShapeIndex shapeIndex) {
-        return doConversion(shapeIndex, null);
+    public SchemaDocument convert(Model model) {
+        return convert(model.getShapeIndex());
     }
 
     /**
@@ -192,6 +198,20 @@ public final class JsonSchemaConverter {
      */
     public SchemaDocument convert(ShapeIndex shapeIndex, Shape shape) {
         return doConversion(shapeIndex, shape);
+    }
+
+    /**
+     * Perform the conversion of a single shape.
+     *
+     * <p>The root shape of the created document is set to the given shape,
+     * and only shapes connected to the given shape are added as a definition.
+     *
+     * @param model Model to convert.
+     * @param shape Shape to convert.
+     * @return Returns the created SchemaDocument.
+     */
+    public SchemaDocument convert(Model model, Shape shape) {
+        return convert(model.getShapeIndex(), shape);
     }
 
     private SchemaDocument doConversion(ShapeIndex shapeIndex, Shape rootShape) {

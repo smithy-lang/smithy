@@ -49,11 +49,11 @@ public final class HttpPayloadValidator extends AbstractValidator {
         OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
         HttpBindingIndex bindings = model.getKnowledge(HttpBindingIndex.class);
         List<ValidationEvent> events = new ArrayList<>();
-        events.addAll(model.getShapeIndex().shapes(OperationShape.class)
+        events.addAll(model.shapes(OperationShape.class)
                 .filter(shape -> shape.getTrait(HttpTrait.class).isPresent())
                 .flatMap(shape -> validateOperation(bindings, opIndex, shape).stream())
                 .collect(toList()));
-        events.addAll(model.getShapeIndex().shapes(StructureShape.class)
+        events.addAll(model.shapes(StructureShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, ErrorTrait.class))
                 .flatMap(pair -> validateError(pair.getLeft(), bindings).stream())
                 .collect(toList()));

@@ -86,8 +86,8 @@ public class ServiceTraitTest {
                 .addImport(getClass().getResource("test-model.json"))
                 .assemble()
                 .unwrap();
-        ServiceShape service = result.getShapeIndex()
-                .getShape(ShapeId.from("ns.foo#SomeService")).get()
+        ServiceShape service = result
+                .expectShape(ShapeId.from("ns.foo#SomeService"))
                 .asServiceShape().get();
         ServiceTrait trait = service.getTrait(ServiceTrait.class).get();
 

@@ -61,7 +61,7 @@ public final class EmitNoneSelectorValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         // Filter out prelude types.
-        Set<Shape> shapes = selector.select(model.getShapeIndex()).stream()
+        Set<Shape> shapes = selector.select(model).stream()
                 .filter(shape -> !Prelude.isPreludeShape(shape.getId()))
                 .collect(Collectors.toSet());
 

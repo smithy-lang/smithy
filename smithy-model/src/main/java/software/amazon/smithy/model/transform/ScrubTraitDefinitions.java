@@ -44,9 +44,8 @@ final class ScrubTraitDefinitions {
     Model transform(ModelTransformer transformer, Model model) {
         // Find all trait definition shapes and private shapes in the prelude.
         Set<Shape> toMark = Stream.concat(
-                model.getShapeIndex().shapes().filter(shape -> shape.hasTrait(TraitDefinition.class)),
-                model.getShapeIndex().shapes().filter(shape -> Prelude.isPreludeShape(shape)
-                                                               && shape.hasTrait(PrivateTrait.class))
+                model.shapes().filter(shape -> shape.hasTrait(TraitDefinition.class)),
+                model.shapes().filter(shape -> Prelude.isPreludeShape(shape) && shape.hasTrait(PrivateTrait.class))
         ).collect(Collectors.toSet());
 
         MarkAndSweep markAndSweep = new MarkAndSweep(

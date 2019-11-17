@@ -66,7 +66,7 @@ final class AddRequestValidators implements OpenApiMapper {
     @Override
     public OpenApi after(Context context, OpenApi openapi) {
         // Find each known request validator on operation shapes.
-        Set<String> validators = context.getModel().getShapeIndex().shapes(OperationShape.class)
+        Set<String> validators = context.getModel().shapes(OperationShape.class)
                 .flatMap(shape -> OptionalUtils.stream(shape.getTrait(RequestValidatorTrait.class)))
                 .map(RequestValidatorTrait::getValue)
                 .filter(KNOWN_VALIDATORS::containsKey)

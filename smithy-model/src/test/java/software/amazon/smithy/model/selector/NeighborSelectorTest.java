@@ -27,28 +27,26 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 
 public class NeighborSelectorTest {
-    private static ShapeIndex index;
+    private static Model model;
 
     @BeforeAll
     public static void before() {
-        index = Model.assembler()
+        model = Model.assembler()
                 .addImport(NeighborSelectorTest.class.getResource("neighbor-test.smithy"))
                 .assemble()
-                .unwrap()
-                .getShapeIndex();
+                .unwrap();
     }
 
     @AfterAll
     public static void after() {
-        index = null;
+        model = null;
     }
 
     private Set<String> selectIds(String expression) {
         return Selector.parse(expression)
-                .select(index)
+                .select(model)
                 .stream()
                 .map(Shape::getId)
                 .map(ShapeId::toString)

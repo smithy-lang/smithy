@@ -88,7 +88,7 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
     }
 
     private static Node findTraitNames(Model model) {
-        return model.getShapeIndex().shapes()
+        return model.shapes()
                 .flatMap(shape -> shape.getAllTraits().keySet().stream())
                 .map(ShapeId::toString)
                 .distinct()
@@ -98,7 +98,7 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
     }
 
     private static <T extends Shape> Node findShapeIds(Model model, Class<T> clazz) {
-        return model.getShapeIndex().shapes(clazz)
+        return model.shapes(clazz)
                 .map(Shape::getId)
                 .map(Object::toString)
                 .sorted()

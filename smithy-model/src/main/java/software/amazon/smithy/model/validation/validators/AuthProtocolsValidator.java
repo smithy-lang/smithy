@@ -41,7 +41,7 @@ public final class AuthProtocolsValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
-        return model.getShapeIndex().shapes(ServiceShape.class)
+        return model.shapes(ServiceShape.class)
                 .flatMap(service -> validateOperationAgainstProtocols(topDownIndex, service))
                 .collect(Collectors.toList());
     }

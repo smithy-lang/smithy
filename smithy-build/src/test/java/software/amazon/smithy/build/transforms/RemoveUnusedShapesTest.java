@@ -43,7 +43,7 @@ public class RemoveUnusedShapesTest {
         Model result = new RemoveUnusedShapes()
                 .createTransformer(Collections.singletonList("export"))
                 .apply(ModelTransformer.create(), model);
-        List<String> ids = result.getShapeIndex().shapes()
+        List<String> ids = result.shapes()
                 .filter(FunctionalUtils.not(Prelude::isPreludeShape))
                 .map(Shape::getId)
                 .map(Object::toString)
@@ -63,8 +63,8 @@ public class RemoveUnusedShapesTest {
                 .apply(ModelTransformer.create(), model);
 
         assertTrue(result.getTraitDefinition("ns.foo#bar").isPresent());
-        assertTrue(result.getShapeIndex().getShape(ShapeId.from("ns.foo#bar")).isPresent());
-        assertTrue(result.getShapeIndex().getShape(ShapeId.from("ns.foo#BarTraitShapeMember")).isPresent());
+        assertTrue(result.getShape(ShapeId.from("ns.foo#bar")).isPresent());
+        assertTrue(result.getShape(ShapeId.from("ns.foo#BarTraitShapeMember")).isPresent());
         assertFalse(result.getTraitDefinition("ns.foo#QuuxTraitShapeMember").isPresent());
     }
 
@@ -79,6 +79,6 @@ public class RemoveUnusedShapesTest {
                 .apply(ModelTransformer.create(), model);
 
         assertFalse(result.getTraitDefinition("ns.foo#quux").isPresent());
-        assertFalse(result.getShapeIndex().getShape(ShapeId.from("ns.foo#QuuxTraitShape")).isPresent());
+        assertFalse(result.getShape(ShapeId.from("ns.foo#QuuxTraitShape")).isPresent());
     }
 }

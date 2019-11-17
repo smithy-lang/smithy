@@ -28,7 +28,6 @@ import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
@@ -103,52 +102,51 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
         ShapeVisitor<List<ValidationEvent>> visitor = Shape.<List<ValidationEvent>>visitor()
                 .when(StringShape.class, s -> validateSimpleShape(s, patterns))
                 .when(ShortShape.class, s -> validateSimpleShape(s, patterns))
                 .when(IntegerShape.class, s -> validateSimpleShape(s, patterns))
                 .when(LongShape.class, s -> validateSimpleShape(s, patterns))
                 .when(FloatShape.class, s -> validateSimpleShape(s, patterns))
-                .when(StructureShape.class, shape -> validateStructure(shape, index, patterns))
-                .when(UnionShape.class, shape -> validateUnion(shape, index, patterns))
+                .when(StructureShape.class, shape -> validateStructure(shape, model, patterns))
+                .when(UnionShape.class, shape -> validateUnion(shape, model, patterns))
                 .orElse(ListUtils.of());
-        return index.shapes().flatMap(shape -> shape.accept(visitor).stream()).collect(Collectors.toList());
+        return model.shapes().flatMap(shape -> shape.accept(visitor).stream()).collect(Collectors.toList());
     }
 
     private List<ValidationEvent> validateStructure(
             StructureShape structure,
-            ShapeIndex shapeIndex,
+            Model model,
             List<Pattern> patterns
     ) {
         return structure
                 .getAllMembers()
                 .entrySet()
                 .stream()
-                .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), shapeIndex, patterns))
+                .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), model, patterns))
                 .collect(Collectors.toList());
     }
 
     private List<ValidationEvent> validateUnion(
             UnionShape union,
-            ShapeIndex shapeIndex,
+            Model model,
             List<Pattern> patterns
     ) {
         return union
                 .getAllMembers()
                 .entrySet()
                 .stream()
-                .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), shapeIndex, patterns))
+                .flatMap(entry -> validateTargetShape(entry.getKey(), entry.getValue(), model, patterns))
                 .collect(Collectors.toList());
     }
 
     private Stream<ValidationEvent> validateTargetShape(
             String name,
             MemberShape target,
-            ShapeIndex shapeIndex,
+            Model model,
             List<Pattern> patterns
     ) {
-        return OptionalUtils.stream(shapeIndex.getShape(target.getTarget())
+        return OptionalUtils.stream(model.getShape(target.getTarget())
                 .flatMap(shape -> validateName(name, shape.getType(), target, patterns)));
     }
 

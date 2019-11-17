@@ -96,13 +96,13 @@ public class SmithyBuildTest {
         Model resultA = results.getProjectionResult("a").get().getModel();
         Model resultB = results.getProjectionResult("b").get().getModel();
 
-        assertThat(resultA.getShapeIndex().getShape(ShapeId.from("ns.foo#String1")), not(Optional.empty()));
-        assertThat(resultA.getShapeIndex().getShape(ShapeId.from("ns.foo#String2")), is(Optional.empty()));
-        assertThat(resultA.getShapeIndex().getShape(ShapeId.from("ns.foo#String3")), not(Optional.empty()));
+        assertThat(resultA.getShape(ShapeId.from("ns.foo#String1")), not(Optional.empty()));
+        assertThat(resultA.getShape(ShapeId.from("ns.foo#String2")), is(Optional.empty()));
+        assertThat(resultA.getShape(ShapeId.from("ns.foo#String3")), not(Optional.empty()));
 
-        assertThat(resultB.getShapeIndex().getShape(ShapeId.from("ns.foo#String1")), not(Optional.empty()));
-        assertThat(resultB.getShapeIndex().getShape(ShapeId.from("ns.foo#String2")), not(Optional.empty()));
-        assertThat(resultB.getShapeIndex().getShape(ShapeId.from("ns.foo#String3")), not(Optional.empty()));
+        assertThat(resultB.getShape(ShapeId.from("ns.foo#String1")), not(Optional.empty()));
+        assertThat(resultB.getShape(ShapeId.from("ns.foo#String2")), not(Optional.empty()));
+        assertThat(resultB.getShape(ShapeId.from("ns.foo#String3")), not(Optional.empty()));
     }
 
     @Test
@@ -205,23 +205,23 @@ public class SmithyBuildTest {
         Model resultB = results.getProjectionResult("b").get().getModel();
         Model resultC = results.getProjectionResult("c").get().getModel();
 
-        assertTrue(resultA.getShapeIndex().getShape(ShapeId.from("com.foo#String")).get()
+        assertTrue(resultA.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(SensitiveTrait.class).isPresent());
-        assertFalse(resultA.getShapeIndex().getShape(ShapeId.from("com.foo#String")).get()
+        assertFalse(resultA.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(DocumentationTrait.class).isPresent());
 
-        assertTrue(resultB.getShapeIndex().getShape(ShapeId.from("com.foo#String")).get()
+        assertTrue(resultB.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(SensitiveTrait.class).isPresent());
-        assertTrue(resultB.getShapeIndex().getShape(ShapeId.from("com.foo#String")).get()
+        assertTrue(resultB.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(DocumentationTrait.class).isPresent());
-        assertThat(resultB.getShapeIndex().getShape(ShapeId.from("com.foo#String")).get()
+        assertThat(resultB.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(DocumentationTrait.class).get().getValue(), equalTo("b.json"));
 
-        assertTrue(resultC.getShapeIndex().getShape(ShapeId.from("com.foo#String")).get()
+        assertTrue(resultC.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(SensitiveTrait.class).isPresent());
-        assertTrue(resultC.getShapeIndex().getShape(ShapeId.from("com.foo#String")).get()
+        assertTrue(resultC.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(DocumentationTrait.class).isPresent());
-        assertThat(resultC.getShapeIndex().getShape(ShapeId.from("com.foo#String")).get()
+        assertThat(resultC.getShape(ShapeId.from("com.foo#String")).get()
                            .getTrait(DocumentationTrait.class).get().getValue(), equalTo("c.json"));
     }
 

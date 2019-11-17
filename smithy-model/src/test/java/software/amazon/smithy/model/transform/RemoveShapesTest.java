@@ -32,7 +32,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -43,18 +42,17 @@ public class RemoveShapesTest {
     private static final ShapeId STRING_TARGET = ShapeId.from("ns.foo#String");
 
     private void assertContainerMembersAreRemoved(Shape container, List<Shape> members) {
-        ShapeIndex.Builder builder = ShapeIndex.builder()
+        Model.Builder builder = Model.builder()
                 .addShape(container)
                 .addShape(StringShape.builder().id(STRING_TARGET).build());
         members.forEach(builder::addShape);
-        Model model = Model.builder().shapeIndex(builder.build()).build();
+        Model model = builder.build();
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.removeShapes(model, Collections.singleton(container));
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.shapes().count(), Matchers.equalTo(1L));
-        assertThat(index.getShape(STRING_TARGET), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(container.getId()), Matchers.is(Optional.empty()));
+        assertThat(result.shapes().count(), Matchers.equalTo(1L));
+        assertThat(result.getShape(STRING_TARGET), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(container.getId()), Matchers.is(Optional.empty()));
     }
 
     @Test
@@ -132,16 +130,14 @@ public class RemoveShapesTest {
         OperationShape b = OperationShape.builder().id("ns.foo#B").build();
         OperationShape c = OperationShape.builder().id("ns.foo#C").build();
 
-        ShapeIndex index = ShapeIndex.builder().addShapes(container, a, b, c).build();
-        Model model = Model.builder().shapeIndex(index).build();
+        Model model = Model.builder().addShapes(container, a, b, c).build();
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.removeShapes(model, Arrays.asList(a, b));
-        ShapeIndex resultShapeIndex = result.getShapeIndex();
 
-        assertThat(resultShapeIndex.shapes().count(), Matchers.equalTo(2L));
-        assertThat(resultShapeIndex.getShape(container.getId()), Matchers.not(Optional.empty()));
-        assertThat(resultShapeIndex.getShape(c.getId()), Matchers.not(Optional.empty()));
-        assertThat(resultShapeIndex.getShape(container.getId()).get().asResourceShape().get().getOperations(),
-                          Matchers.contains(c.getId()));
+        assertThat(result.shapes().count(), Matchers.equalTo(2L));
+        assertThat(result.getShape(container.getId()), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(c.getId()), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(container.getId()).asResourceShape().get().getOperations(),
+                   Matchers.contains(c.getId()));
     }
 }

@@ -64,7 +64,7 @@ public class AddedOperationInputOutput implements DiffEvaluator {
     private Optional<ValidationEvent> validateChange(String rel, Model model, Shape operation, ShapeId target) {
         String eventId = "AddedOperation" + rel;
 
-        return model.getShapeIndex().getShape(target).flatMap(Shape::asStructureShape).map(struct -> {
+        return model.getShape(target).flatMap(Shape::asStructureShape).map(struct -> {
             if (struct.getAllMembers().values().stream().noneMatch(MemberShape::isRequired)) {
                 // This is a backward compatible change.
                 return ValidationEvent.builder()

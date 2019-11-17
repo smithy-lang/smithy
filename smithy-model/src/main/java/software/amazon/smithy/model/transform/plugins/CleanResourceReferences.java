@@ -43,7 +43,7 @@ public final class CleanResourceReferences implements ModelTransformerPlugin {
     }
 
     private Set<Shape> getAffectedStructures(Model model, Shape resource) {
-        return model.getShapeIndex().shapes(StructureShape.class)
+        return model.shapes(StructureShape.class)
                 .flatMap(s -> Trait.flatMapStream(s, ReferencesTrait.class))
                 .flatMap(pair -> {
                     // Subject is the structure shape that might be modified.

@@ -25,7 +25,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
 
@@ -36,15 +35,14 @@ public class ModelTransformerTest {
         ModelTransformer transformer = ModelTransformer.create();
         Model model = createTestModel();
         Model result = transformer.removeShapesIf(model, Shape::isStructureShape);
-        ShapeIndex index = result.getShapeIndex();
         ShapeId operation = ShapeId.from("ns.foo#MyOperation");
 
-        assertThat(index.getShape(operation), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(operation).get().asOperationShape().flatMap(OperationShape::getInput),
+        assertThat(result.expectShape(operation), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(operation).asOperationShape().flatMap(OperationShape::getInput),
                           Matchers.is(Optional.empty()));
-        assertThat(index.getShape(operation).get().asOperationShape().flatMap(OperationShape::getOutput),
+        assertThat(result.expectShape(operation).asOperationShape().flatMap(OperationShape::getOutput),
                           Matchers.is(Optional.empty()));
-        assertThat(index.getShape(operation).get().asOperationShape().map(OperationShape::getErrors),
+        assertThat(result.expectShape(operation).asOperationShape().map(OperationShape::getErrors),
                           Matchers.equalTo(Optional.of(Collections.emptyList())));
     }
 
@@ -52,12 +50,12 @@ public class ModelTransformerTest {
     public void removesTraitShapesButNotTraitUsage() {
         ModelTransformer transformer = ModelTransformer.create();
         Model model = createTestModel();
-        ShapeIndex index = transformer.getNonTraitShapes(model);
+        Model nonTraitShapes = transformer.getModelWithoutTraitShapes(model);
         ShapeId operation = ShapeId.from("ns.foo#MyOperation");
 
-        assertThat(index.getShape(operation), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(operation).get().getTrait(ReadonlyTrait.class), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(EnumTrait.ID), Matchers.equalTo(Optional.empty()));
+        assertThat(nonTraitShapes.getShape(operation), Matchers.not(Optional.empty()));
+        assertThat(nonTraitShapes.getShape(operation).get().getTrait(ReadonlyTrait.class), Matchers.not(Optional.empty()));
+        assertThat(nonTraitShapes.getShape(EnumTrait.ID), Matchers.equalTo(Optional.empty()));
     }
 
     private Model createTestModel() {

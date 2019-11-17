@@ -31,7 +31,6 @@ import software.amazon.smithy.model.neighbor.RelationshipDirection;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -50,25 +49,24 @@ public class TargetValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
         NeighborProvider neighborProvider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
-        return index.shapes()
-                .flatMap(shape -> validateShape(index, shape, neighborProvider.getNeighbors(shape)))
+        return model.shapes()
+                .flatMap(shape -> validateShape(model, shape, neighborProvider.getNeighbors(shape)))
                 .collect(Collectors.toList());
     }
 
-    private Stream<ValidationEvent> validateShape(ShapeIndex index, Shape shape, List<Relationship> relationships) {
+    private Stream<ValidationEvent> validateShape(Model model, Shape shape, List<Relationship> relationships) {
         return relationships.stream().flatMap(relationship -> {
             if (relationship.getNeighborShape().isPresent()) {
                 return OptionalUtils.stream(
-                        validateTarget(index, shape, relationship.getNeighborShape().get(), relationship));
+                        validateTarget(model, shape, relationship.getNeighborShape().get(), relationship));
             } else {
                 return Stream.of(unresolvedTarget(shape, relationship));
             }
         });
     }
 
-    private Optional<ValidationEvent> validateTarget(ShapeIndex index, Shape shape, Shape target, Relationship rel) {
+    private Optional<ValidationEvent> validateTarget(Model model, Shape shape, Shape target, Relationship rel) {
         RelationshipType relType = rel.getRelationshipType();
 
         if (relType.getDirection() == RelationshipDirection.DIRECTED && target.hasTrait(TraitDefinition.class)) {
@@ -86,7 +84,7 @@ public class TargetValidator extends AbstractValidator {
                             "Members cannot target %s shapes, but found %s", target.getType(), target)));
                 }
             case MAP_KEY:
-                return target.asMemberShape().flatMap(m -> validateMapKey(shape, m.getTarget(), index));
+                return target.asMemberShape().flatMap(m -> validateMapKey(shape, m.getTarget(), model));
             case RESOURCE:
                 if (target.getType() != ShapeType.RESOURCE) {
                     return Optional.of(badType(shape, target, relType, ShapeType.RESOURCE));
@@ -135,8 +133,8 @@ public class TargetValidator extends AbstractValidator {
         }
     }
 
-    private Optional<ValidationEvent> validateMapKey(Shape shape, ShapeId target, ShapeIndex index) {
-        return index.getShape(target)
+    private Optional<ValidationEvent> validateMapKey(Shape shape, ShapeId target, Model model) {
+        return model.getShape(target)
                 .filter(FunctionalUtils.not(Shape::isStringShape))
                 .map(resolved -> error(shape, format(
                         "Map key member targets %s, but is expected to target a string", resolved)));

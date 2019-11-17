@@ -39,13 +39,13 @@ public final class PrivateAccessValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        Set<ShapeId> privateShapes = model.getShapeIndex().shapes()
+        Set<ShapeId> privateShapes = model.shapes()
                 .filter(shape -> shape.getTrait(PrivateTrait.class).isPresent())
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
 
         NeighborProvider provider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
-        return model.getShapeIndex().shapes()
+        return model.shapes()
                 .filter(shape -> !(shape instanceof SimpleShape))
                 .flatMap(shape -> validateNeighbors(shape, provider.getNeighbors(shape), privateShapes))
                 .collect(Collectors.toList());

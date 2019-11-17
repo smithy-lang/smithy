@@ -33,7 +33,7 @@ public class ValidatorDefinitionTest {
                     public Optional<Validator> createValidator(String name, ObjectNode configuration) {
                         return name.equals("hello")
                                ? Optional.of(
-                                       model -> model.getShapeIndex().shapes()
+                                       model -> model.shapes()
                                                .map(shape -> ValidationEvent.builder()
                                                        .eventId(name)
                                                        .shape(shape)

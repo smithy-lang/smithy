@@ -29,7 +29,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -48,27 +47,26 @@ public class ShapeRecursionValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
-        return index.shapes()
-                .map(shape -> validateShape(index, shape))
+        return model.shapes()
+                .map(shape -> validateShape(model, shape))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
-    private ValidationEvent validateShape(ShapeIndex index, Shape shape) {
-        return new RecursiveNeighborVisitor(index, shape).visit(shape);
+    private ValidationEvent validateShape(Model model, Shape shape) {
+        return new RecursiveNeighborVisitor(model, shape).visit(shape);
     }
 
     private final class RecursiveNeighborVisitor extends ShapeVisitor.Default<ValidationEvent> {
 
-        private final ShapeIndex index;
+        private final Model model;
         private final Shape root;
         private final Set<ShapeId> visited = new HashSet<>();
         private final Deque<String> context = new ArrayDeque<>();
 
-        RecursiveNeighborVisitor(ShapeIndex index, Shape root) {
+        RecursiveNeighborVisitor(Model model, Shape root) {
             this.root = root;
-            this.index = index;
+            this.model = model;
         }
 
         ValidationEvent visit(Shape shape) {
@@ -109,7 +107,7 @@ public class ShapeRecursionValidator extends AbstractValidator {
 
         private ValidationEvent validateMember(Shape container, MemberShape member) {
             ValidationEvent event = null;
-            Shape target = index.getShape(member.getTarget()).orElse(null);
+            Shape target = model.getShape(member.getTarget()).orElse(null);
 
             if (target != null) {
                 // Add to the visited set and the context deque before visiting,

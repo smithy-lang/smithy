@@ -230,23 +230,28 @@ public final class Prelude {
         return PUBLIC_PRELUDE_SHAPE_IDS.contains(toId) || PRELUDE_TRAITS.contains(toId);
     }
 
-    /**
-     * Returns the resolved shape of a shape target by first checking if a
-     * shape in the namespace relative to the target matches the given name,
-     * and then by checking if a public prelude shape matches the given name.
-     *
-     * @param index Shape index to resolve against.
-     * @param fromNamespace Namespace the target was defined in.
-     * @param target The shape target (e.g., "foo", "smithy.api#String", etc.).
-     * @return Returns the optionally resolved shape.
-     * @throws ShapeIdSyntaxException if the target or namespace is invalid.
-     */
+    @Deprecated
     public static Optional<Shape> resolveShapeId(ShapeIndex index, String fromNamespace, String target) {
         // First check shapes in the same namespace.
         return OptionalUtils.or(index.getShape(ShapeId.fromOptionalNamespace(fromNamespace, target)),
                 // Then check shapes in the prelude that are public.
                 () -> index.getShape(ShapeId.fromParts(NAMESPACE, target))
                         .filter(Prelude::isPublicPreludeShape));
+    }
+
+    /**
+     * Returns the resolved shape of a shape target by first checking if a
+     * shape in the namespace relative to the target matches the given name,
+     * and then by checking if a public prelude shape matches the given name.
+     *
+     * @param model Model to resolve against.
+     * @param fromNamespace Namespace the target was defined in.
+     * @param target The shape target (e.g., "foo", "smithy.api#String", etc.).
+     * @return Returns the optionally resolved shape.
+     * @throws ShapeIdSyntaxException if the target or namespace is invalid.
+     */
+    public static Optional<Shape> resolveShapeId(Model model, String fromNamespace, String target) {
+        return resolveShapeId(model.getShapeIndex(), fromNamespace, target);
     }
 
     // Used by the ModelAssembler to load the prelude into another visitor.

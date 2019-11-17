@@ -70,13 +70,14 @@ public class NodeModelLoaderTest {
                 .assemble()
                 .unwrap();
 
-        MemberShape baz = model.getShapeIndex()
-                .getShape(ShapeId.from("smithy.example#Foo$baz")).get()
+        MemberShape baz = model
+                .expectShape(ShapeId.from("smithy.example#Foo$baz"))
                 .asMemberShape().get();
-        MemberShape bar = model.getShapeIndex()
-                .getShape(ShapeId.from("smithy.example#Foo$bar")).get()
+        MemberShape bar = model
+                .expectShape(ShapeId.from("smithy.example#Foo$bar"))
                 .asMemberShape().get();
-        ResourceShape resource = model.getShapeIndex().getShape(ShapeId.from("smithy.example#MyResource")).get()
+        ResourceShape resource = model
+                .expectShape(ShapeId.from("smithy.example#MyResource"))
                 .asResourceShape().get();
 
         assertThat(baz.getTarget().toString(), equalTo("smithy.api#String"));
@@ -97,6 +98,6 @@ public class NodeModelLoaderTest {
         assertTrue(model.getTraitDefinition("example.namespace#documentation").isPresent());
         assertTrue(model.getTraitDefinition("example.namespace#numeric").isPresent());
         assertThat(model.getTraitShapes(),
-                   hasItem(model.getShapeIndex().getShape(ShapeId.from("example.namespace#numeric")).get()));
+                   hasItem(model.expectShape(ShapeId.from("example.namespace#numeric"))));
     }
 }

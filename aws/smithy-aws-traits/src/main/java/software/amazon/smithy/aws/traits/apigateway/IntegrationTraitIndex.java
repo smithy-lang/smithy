@@ -24,7 +24,6 @@ import software.amazon.smithy.model.shapes.EntityShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.MapUtils;
@@ -37,10 +36,10 @@ public class IntegrationTraitIndex implements KnowledgeIndex {
     private Map<ShapeId, Map<ShapeId, Trait>> traits = new HashMap<>();
 
     public IntegrationTraitIndex(Model model) {
-        model.getShapeIndex().shapes(ServiceShape.class).forEach(service -> {
+        model.shapes(ServiceShape.class).forEach(service -> {
             Map<ShapeId, Trait> serviceMap = new HashMap<>();
             traits.put(service.getId(), serviceMap);
-            walk(model.getShapeIndex(), service.getId(), service, null);
+            walk(model, service.getId(), service, null);
         });
     }
 
@@ -78,19 +77,19 @@ public class IntegrationTraitIndex implements KnowledgeIndex {
         return getIntegrationTrait(service, shape).filter(type::isInstance).map(type::cast);
     }
 
-    private void walk(ShapeIndex index, ShapeId service, EntityShape current, Trait trait) {
+    private void walk(Model model, ShapeId service, EntityShape current, Trait trait) {
         Trait updatedTrait = extractTrait(current, trait);
         Map<ShapeId, Trait> serviceMapping = traits.get(service);
         serviceMapping.put(current.getId(), updatedTrait);
 
         for (ShapeId resource : current.getResources()) {
-            index.getShape(resource)
+            model.getShape(resource)
                     .flatMap(Shape::asResourceShape)
-                    .ifPresent(resourceShape -> walk(index, service, resourceShape, updatedTrait));
+                    .ifPresent(resourceShape -> walk(model, service, resourceShape, updatedTrait));
         }
 
         for (ShapeId operation : current.getAllOperations()) {
-            index.getShape(operation).ifPresent(op -> serviceMapping.put(operation, extractTrait(op, updatedTrait)));
+            model.getShape(operation).ifPresent(op -> serviceMapping.put(operation, extractTrait(op, updatedTrait)));
         }
     }
 

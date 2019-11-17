@@ -38,7 +38,7 @@ import software.amazon.smithy.utils.OptionalUtils;
 public final class MqttUnsupportedErrorsValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .filter(shape -> !shape.getErrors().isEmpty())
                 .flatMap(shape -> OptionalUtils.stream(validateOperation(shape)))
                 .collect(Collectors.toList());

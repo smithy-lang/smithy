@@ -29,7 +29,6 @@ import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -49,27 +48,26 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     @Override
     public List<ValidationEvent> validate(Model model) {
         IdentifierBindingIndex bindingIndex = model.getKnowledge(IdentifierBindingIndex.class);
-        ShapeIndex index = model.getShapeIndex();
 
         return Stream.of(
-                index.shapes(ResourceShape.class)
-                        .flatMap(resource -> validateResource(index, resource, bindingIndex)),
-                index.shapes(ResourceShape.class)
-                        .flatMap(resource -> validateCollectionBindings(index, resource, bindingIndex)),
-                index.shapes(ResourceShape.class)
-                        .flatMap(resource -> validateInstanceBindings(index, resource, bindingIndex))
+                model.shapes(ResourceShape.class)
+                        .flatMap(resource -> validateResource(model, resource, bindingIndex)),
+                model.shapes(ResourceShape.class)
+                        .flatMap(resource -> validateCollectionBindings(model, resource, bindingIndex)),
+                model.shapes(ResourceShape.class)
+                        .flatMap(resource -> validateInstanceBindings(model, resource, bindingIndex))
         ).flatMap(Function.identity()).collect(Collectors.toList());
     }
 
     private Stream<ValidationEvent> validateResource(
-            ShapeIndex index,
+            Model model,
             ResourceShape parent,
             IdentifierBindingIndex bindingIndex
     ) {
         return parent.getResources().stream()
-                .flatMap(childId -> OptionalUtils.stream(index.getShape(childId).flatMap(Shape::asResourceShape)))
+                .flatMap(childId -> OptionalUtils.stream(model.getShape(childId).flatMap(Shape::asResourceShape)))
                 .flatMap(child -> child.getAllOperations().stream()
-                        .flatMap(id -> OptionalUtils.stream(index.getShape(id).flatMap(Shape::asOperationShape)))
+                        .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
                         .map(operation -> Pair.of(child, operation)))
                 .flatMap(pair -> OptionalUtils.stream(
                         validateOperation(parent, pair.getLeft(), pair.getRight(), bindingIndex)));
@@ -98,7 +96,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     }
 
     private Stream<ValidationEvent> validateCollectionBindings(
-            ShapeIndex index,
+            Model model,
             ResourceShape resource,
             IdentifierBindingIndex identifierIndex
     ) {
@@ -107,7 +105,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
                 .filter(operation -> identifierIndex.getOperationBindingType(resource, operation)
                         == IdentifierBindingIndex.BindingType.COLLECTION)
                 // Get their operation shapes.
-                .flatMap(id -> OptionalUtils.stream(index.getShape(id).flatMap(Shape::asOperationShape)))
+                .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
                 // Find collection operations which improperly bind all the resource identifiers.
                 .filter(operation -> hasAllIdentifiersBound(resource, operation, identifierIndex))
                 .map(operation -> error(operation, format(
@@ -118,7 +116,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     }
 
     private Stream<ValidationEvent> validateInstanceBindings(
-            ShapeIndex index,
+            Model model,
             ResourceShape resource,
             IdentifierBindingIndex bindingIndex
     ) {
@@ -127,7 +125,7 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
                 .filter(operation -> bindingIndex.getOperationBindingType(resource, operation)
                         == IdentifierBindingIndex.BindingType.INSTANCE)
                 // Get their operation shapes.
-                .flatMap(id -> OptionalUtils.stream(index.getShape(id).flatMap(Shape::asOperationShape)))
+                .flatMap(id -> OptionalUtils.stream(model.getShape(id).flatMap(Shape::asOperationShape)))
                 // Find instance operations which do not bind all of the resource identifiers.
                 .filter(operation -> !hasAllIdentifiersBound(resource, operation, bindingIndex))
                 .map(operation -> {

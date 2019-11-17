@@ -67,8 +67,7 @@ public final class Differences {
      * @return Returns a stream of each added shape.
      */
     public Stream<Shape> addedShapes() {
-        return newModel.getShapeIndex().shapes()
-                .filter(shape -> !oldModel.getShapeIndex().getShape(shape.getId()).isPresent());
+        return newModel.shapes().filter(shape -> !oldModel.getShape(shape.getId()).isPresent());
     }
 
     /**
@@ -102,8 +101,7 @@ public final class Differences {
      * @return Returns a stream of each removed shape.
      */
     public Stream<Shape> removedShapes() {
-        return oldModel.getShapeIndex().shapes()
-                .filter(shape -> !newModel.getShapeIndex().getShape(shape.getId()).isPresent());
+        return oldModel.shapes().filter(shape -> !newModel.getShape(shape.getId()).isPresent());
     }
 
     /**
@@ -164,8 +162,8 @@ public final class Differences {
     }
 
     private static void detectShapeChanges(Model oldModel, Model newModel, Differences differences) {
-        for (Shape oldShape : oldModel.getShapeIndex().toSet()) {
-            newModel.getShapeIndex().getShape(oldShape.getId()).ifPresent(newShape -> {
+        for (Shape oldShape : oldModel.toSet()) {
+            newModel.getShape(oldShape.getId()).ifPresent(newShape -> {
                 if (!oldShape.equals(newShape)) {
                     differences.changedShapes.add(new ChangedShape<>(oldShape, newShape));
                 }

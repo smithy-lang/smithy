@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -119,15 +120,15 @@ public class ShapeTest {
                 .addTrait(otherTrait)
                 .addTrait(documentationTrait)
                 .build();
-        ShapeIndex index = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(shape)
                 .build();
 
         assertTrue(shape.getTrait(MyTrait.class).isPresent());
-        assertTrue(shape.getMemberTrait(index, MyTrait.class).isPresent());
+        assertTrue(shape.getMemberTrait(model, MyTrait.class).isPresent());
 
         assertTrue(shape.findTrait("foo.baz#foo").isPresent());
-        assertTrue(shape.findMemberTrait(index, "foo.baz#foo").isPresent());
+        assertTrue(shape.findMemberTrait(model, "foo.baz#foo").isPresent());
 
         assertTrue(shape.hasTrait("foo.baz#foo"));
         assertTrue(shape.getTrait(OtherTrait.class).isPresent());

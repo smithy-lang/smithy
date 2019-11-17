@@ -39,7 +39,7 @@ public final class CleanOperationStructures implements ModelTransformerPlugin {
     }
 
     private Collection<Shape> getModifiedOperations(Model model, Collection<Shape> removed) {
-        return model.getShapeIndex().shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .flatMap(operation -> {
                     OperationShape result = transformErrors(removed, operation);
                     result = transformInput(removed, result);

@@ -52,7 +52,7 @@ public final class RemoveTraits implements ModelTransformerPlugin {
     }
 
     private List<Shape> determineShapesToUpdate(Model model, Set<ShapeId> removedTraits) {
-        List<Shape> shapes = model.getShapeIndex().shapes()
+        List<Shape> shapes = model.shapes()
                 .filter(shape -> !removedTraits.contains(shape.getId()))
                 .filter(shape -> isShapeInNeedOfUpdate(shape, removedTraits))
                 .map(shape -> removeTraitsFromShape(shape, removedTraits))

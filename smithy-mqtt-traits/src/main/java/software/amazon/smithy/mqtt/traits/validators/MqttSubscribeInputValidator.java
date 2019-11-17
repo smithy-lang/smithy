@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.SubscribeTrait;
@@ -38,15 +37,14 @@ import software.amazon.smithy.utils.OptionalUtils;
 public final class MqttSubscribeInputValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
-        return index.shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .filter(shape -> shape.hasTrait(SubscribeTrait.class))
-                .flatMap(shape -> validateOperation(index, shape))
+                .flatMap(shape -> validateOperation(model, shape))
                 .collect(Collectors.toList());
     }
 
-    private Stream<ValidationEvent> validateOperation(ShapeIndex index, OperationShape operation) {
-        return OptionalUtils.stream(operation.getInput().flatMap(index::getShape).flatMap(Shape::asStructureShape))
+    private Stream<ValidationEvent> validateOperation(Model model, OperationShape operation) {
+        return OptionalUtils.stream(operation.getInput().flatMap(model::getShape).flatMap(Shape::asStructureShape))
                 .flatMap(input -> input.getAllMembers().values().stream()
                         .filter(member -> !member.hasTrait(TopicLabelTrait.class))
                         .map(member -> error(member, String.format(

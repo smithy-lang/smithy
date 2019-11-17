@@ -29,7 +29,6 @@ import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.EventStreamTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -49,17 +48,16 @@ import software.amazon.smithy.utils.Pair;
 public class EventStreamValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
         OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
         List<ValidationEvent> events = new ArrayList<>();
         List<Shape> eventStreamStructures = new ArrayList<>();
 
-        model.getShapeIndex().shapes(OperationShape.class).forEach(operation -> {
+        model.shapes(OperationShape.class).forEach(operation -> {
             operationIndex.getInput(operation).ifPresent(input -> {
                 for (MemberShape member : input.getAllMembers().values()) {
                     if (member.hasTrait(EventStreamTrait.class)) {
                         eventStreamStructures.add(input);
-                        events.addAll(check(index, operation, member, "input"));
+                        events.addAll(check(model, operation, member, "input"));
                     }
                 }
             });
@@ -67,7 +65,7 @@ public class EventStreamValidator extends AbstractValidator {
                 for (MemberShape member : output.getAllMembers().values()) {
                     if (member.hasTrait(EventStreamTrait.class)) {
                         eventStreamStructures.add(output);
-                        events.addAll(check(index, operation, member, "output"));
+                        events.addAll(check(model, operation, member, "output"));
                     }
                 }
             });
@@ -79,12 +77,12 @@ public class EventStreamValidator extends AbstractValidator {
     }
 
     private List<ValidationEvent> check(
-            ShapeIndex index,
+            Model model,
             OperationShape operation,
             MemberShape member,
             String inputOrOutputName
     ) {
-        Shape target = index.getShape(member.getTarget()).orElse(null);
+        Shape target = model.getShape(member.getTarget()).orElse(null);
         if (target == null) {
             return Collections.emptyList();
         }
@@ -94,7 +92,7 @@ public class EventStreamValidator extends AbstractValidator {
             // Find members that don't reference a structure and combine
             // these member names into a comma separated list.
             String invalidMembers = target.asUnionShape().get().getAllMembers().values().stream()
-                    .map(em -> Pair.of(em.getMemberName(), index.getShape(em.getTarget()).orElse(null)))
+                    .map(em -> Pair.of(em.getMemberName(), model.getShape(em.getTarget()).orElse(null)))
                     .filter(pair -> pair.getRight() != null && !(pair.getRight() instanceof StructureShape))
                     .map(Pair::getLeft)
                     .sorted()

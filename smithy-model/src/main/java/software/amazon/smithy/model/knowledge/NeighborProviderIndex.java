@@ -26,8 +26,8 @@ public final class NeighborProviderIndex implements KnowledgeIndex {
     private volatile NeighborProvider reversed;
 
     public NeighborProviderIndex(Model model) {
-        provider = NeighborProvider.precomputed(model.getShapeIndex());
-        reversed = NeighborProvider.reverse(model.getShapeIndex(), provider);
+        provider = NeighborProvider.precomputed(model);
+        reversed = NeighborProvider.reverse(model, provider);
     }
 
     /**

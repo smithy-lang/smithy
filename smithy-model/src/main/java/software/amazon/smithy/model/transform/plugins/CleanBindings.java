@@ -50,7 +50,7 @@ public final class CleanBindings implements ModelTransformerPlugin {
     }
 
     private Set<Shape> getServicesToUpdate(Model model, Set<ShapeId> resources, Set<ShapeId> operations) {
-        return model.getShapeIndex().shapes(ServiceShape.class)
+        return model.shapes(ServiceShape.class)
                 .filter(service -> containsAny(service.getResources(), resources)
                                    || containsAny(service.getOperations(), operations))
                 .map(service -> {
@@ -63,7 +63,7 @@ public final class CleanBindings implements ModelTransformerPlugin {
     }
 
     private Set<Shape> getResourcesToUpdate(Model model, Set<ShapeId> resources, Set<ShapeId> operations) {
-        return model.getShapeIndex().shapes(ResourceShape.class)
+        return model.shapes(ResourceShape.class)
                 .filter(resource -> containsAny(resource.getAllOperations(), operations)
                                     || containsAny(resource.getResources(), resources))
                 .map(resource -> {

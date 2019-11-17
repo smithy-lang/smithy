@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.TraitDefinition;
 
@@ -32,16 +31,12 @@ public class ModelTest {
 
     @Test
     public void buildsModel() {
-        ShapeIndex index = ShapeIndex.builder()
+        Model model = Model.builder()
+                .putMetadataProperty("name.name", Node.objectNode())
                 .addShape(StringShape.builder()
                                   .id("smithy.example#String")
                                   .addTrait(TraitDefinition.builder().build())
                                   .build())
-                .build();
-
-        Model model = Model.builder()
-                .putMetadataProperty("name.name", Node.objectNode())
-                .shapeIndex(index)
                 .smithyVersion(Model.MODEL_VERSION)
                 .build();
 
@@ -54,12 +49,9 @@ public class ModelTest {
     public void modelEquality() {
         Model modelA = Model.builder()
                 .putMetadataProperty("foo", Node.from("baz"))
-                .shapeIndex(ShapeIndex.builder()
-                        .addShape(StringShape.builder().id("ns.foo#baz").build())
-                        .build())
+                .addShape(StringShape.builder().id("ns.foo#baz").build())
                 .build();
         Model modelB = Model.builder()
-                .shapeIndex(ShapeIndex.builder().build())
                 .putMetadataProperty("foo", Node.from("baz"))
                 .build();
 

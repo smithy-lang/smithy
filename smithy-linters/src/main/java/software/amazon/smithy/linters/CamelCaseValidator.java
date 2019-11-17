@@ -68,7 +68,7 @@ public final class CamelCaseValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         // Normal shapes are expected to be upper camel.
-        model.getShapeIndex().shapes()
+        model.shapes()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(shape -> !shape.hasTrait(TraitDefinition.class))
                 .filter(shape -> !getPattern(UPPER).matcher(shape.getId().getName()).find())
@@ -77,7 +77,7 @@ public final class CamelCaseValidator extends AbstractValidator {
                 .forEach(events::add);
 
         // Trait shapes are expected to be lower camel.
-        model.getShapeIndex().shapes()
+        model.shapes()
                 .filter(shape -> shape.hasTrait(TraitDefinition.class))
                 .filter(shape -> !getPattern(LOWER).matcher(shape.getId().getName()).find())
                 .map(shape -> danger(shape, format("%s trait definition, `%s`, is not lower camel case",
@@ -85,7 +85,7 @@ public final class CamelCaseValidator extends AbstractValidator {
                 .forEach(events::add);
 
         Pattern isValidMemberName = getPattern(memberNames);
-        model.getShapeIndex().shapes(MemberShape.class)
+        model.shapes(MemberShape.class)
                 .filter(shape -> !isValidMemberName.matcher(shape.getMemberName()).find())
                 .map(shape -> danger(shape, format("Member shape member name, `%s`, is not %s camel case",
                                                    shape.getMemberName(), memberNames)))

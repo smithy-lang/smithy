@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.RangeTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -39,21 +38,20 @@ public class RangeTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
-        return index.shapes()
+        return model.shapes()
                 .flatMap(shape -> Trait.flatMapStream(shape, RangeTrait.class))
-                .flatMap(pair -> validateRangeTrait(index, pair.getLeft(), pair.getRight()).stream())
+                .flatMap(pair -> validateRangeTrait(model, pair.getLeft(), pair.getRight()).stream())
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationEvent> validateRangeTrait(ShapeIndex index, Shape shape, RangeTrait trait) {
+    private List<ValidationEvent> validateRangeTrait(Model model, Shape shape, RangeTrait trait) {
         List<ValidationEvent> events = new ArrayList<>();
         trait.getMin()
-                .flatMap(min -> validateRangeProperty(index, shape, trait, min, "min"))
+                .flatMap(min -> validateRangeProperty(model, shape, trait, min, "min"))
                 .ifPresent(events::add);
 
         trait.getMax()
-                .flatMap(max -> validateRangeProperty(index, shape, trait, max, "max"))
+                .flatMap(max -> validateRangeProperty(model, shape, trait, max, "max"))
                 .ifPresent(events::add);
 
         // Makes sure that `min` is less than `max`
@@ -68,7 +66,7 @@ public class RangeTraitValidator extends AbstractValidator {
     }
 
     private Optional<ValidationEvent> validateRangeProperty(
-            ShapeIndex index,
+            Model model,
             Shape shape,
             RangeTrait trait,
             BigDecimal property,
@@ -77,7 +75,7 @@ public class RangeTraitValidator extends AbstractValidator {
         if (!property.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO)) {
             if (shape.isMemberShape()) {
                 MemberShape member = shape.asMemberShape().get();
-                Optional<Shape> target = index.getShape(member.getTarget());
+                Optional<Shape> target = model.getShape(member.getTarget());
                 if (target.isPresent() && !isDecimalShape(target.get())) {
                     return Optional.of(error(shape, trait, format(
                             "Member `%s` is marked with the `range` trait, but its `%s` property "

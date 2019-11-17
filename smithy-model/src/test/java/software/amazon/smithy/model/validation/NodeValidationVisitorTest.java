@@ -58,11 +58,9 @@ public class NodeValidationVisitorTest {
         Node nodeValue = FACTORY.createNode("N/A", value);
         NodeValidationVisitor cases = NodeValidationVisitor.builder()
                 .value(nodeValue)
-                .index(MODEL.getShapeIndex())
+                .model(MODEL)
                 .build();
-        List<ValidationEvent> events = MODEL.getShapeIndex().getShape(targetId)
-                .orElseThrow(() -> new IllegalArgumentException("No shape found for " + targetId))
-                .accept(cases);
+        List<ValidationEvent> events = MODEL.expectShape(targetId).accept(cases);
 
         if (errors != null) {
             List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());

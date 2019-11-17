@@ -32,7 +32,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -124,14 +123,14 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
-        return model.getShapeIndex().shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .filter(shape -> !shape.getTrait(PaginatedTrait.class).isPresent())
-                .flatMap(shape -> validateShape(model.getShapeIndex(), operationIndex, shape))
+                .flatMap(shape -> validateShape(model, operationIndex, shape))
                 .collect(Collectors.toList());
     }
 
     private Stream<ValidationEvent> validateShape(
-            ShapeIndex index,
+            Model model,
             OperationIndex operationIndex,
             OperationShape operation
     ) {
@@ -162,7 +161,7 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
                     .map(member -> Stream.of(danger(operation, format(
                             "This operation contains an output member, `%s`, that requires that the "
                             + "operation is marked with the `paginated` trait. %s", member, DISCLAIMER))))
-                    .orElseGet(() -> suggestPagination(verb, operation, output, index));
+                    .orElseGet(() -> suggestPagination(verb, operation, output, model));
         }
 
         return Stream.empty();
@@ -172,7 +171,7 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
             String verb,
             OperationShape operation,
             StructureShape output,
-            ShapeIndex index
+            Model model
     ) {
         if (!verbsSuggestPagination.contains(verb)) {
             return Stream.empty();
@@ -181,7 +180,7 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
         // We matched a verb, but only suggest pagination if there's a top-level output member that's a list.
         boolean hasListMember = output.getAllMembers().values().stream()
                 .map(MemberShape::getTarget)
-                .flatMap(id -> OptionalUtils.stream(index.getShape(id)))
+                .flatMap(id -> OptionalUtils.stream(model.getShape(id)))
                 .anyMatch(Shape::isListShape);
 
         if (!hasListMember) {

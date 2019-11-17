@@ -24,7 +24,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
@@ -36,22 +35,21 @@ public final class ResourceCycleValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex shapeIndex = model.getShapeIndex();
-        return shapeIndex.shapes(ResourceShape.class)
-                .flatMap(shape -> OptionalUtils.stream(detectCycles(shapeIndex, shape, new LinkedHashSet<>())))
+        return model.shapes(ResourceShape.class)
+                .flatMap(shape -> OptionalUtils.stream(detectCycles(model, shape, new LinkedHashSet<>())))
                 .collect(Collectors.toList());
     }
 
-    private Optional<ValidationEvent> detectCycles(ShapeIndex index, ResourceShape resource, Set<ShapeId> visited) {
+    private Optional<ValidationEvent> detectCycles(Model model, ResourceShape resource, Set<ShapeId> visited) {
         if (visited.contains(resource.getId())) {
             return Optional.of(cycle(resource, visited));
         }
 
         visited.add(resource.getId());
         for (ShapeId child : resource.getResources()) {
-            ResourceShape childResource = index.getShape(child).flatMap(Shape::asResourceShape).orElse(null);
+            ResourceShape childResource = model.getShape(child).flatMap(Shape::asResourceShape).orElse(null);
             if (childResource != null) {
-                Optional<ValidationEvent> error = detectCycles(index, childResource, visited);
+                Optional<ValidationEvent> error = detectCycles(model, childResource, visited);
                 if (error.isPresent()) {
                     return error;
                 }

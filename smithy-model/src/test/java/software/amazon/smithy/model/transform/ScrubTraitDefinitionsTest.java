@@ -22,7 +22,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 
 public class ScrubTraitDefinitionsTest {
 
@@ -35,32 +34,31 @@ public class ScrubTraitDefinitionsTest {
 
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.scrubTraitDefinitions(model);
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.getShape(ShapeId.from("ns.foo#FooStructure")), Matchers.is(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("ns.foo#BarString")), Matchers.is(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("ns.foo#BarStringList")), Matchers.is(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("ns.foo#ComplexRemoved")), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("ns.foo#FooStructure")), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("ns.foo#BarString")), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("ns.foo#BarStringList")), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("ns.foo#ComplexRemoved")), Matchers.is(Optional.empty()));
 
-        assertThat(index.getShape(ShapeId.from("ns.foo#IpsumString")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("ns.foo#IpsumList")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("ns.foo#KeepStructure")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("ns.foo#IpsumString")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("ns.foo#IpsumList")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("ns.foo#KeepStructure")), Matchers.not(Optional.empty()));
 
         // Make sure public prelude shapes weren't removed.
-        assertThat(index.getShape(ShapeId.from("smithy.api#String")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#Blob")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#Boolean")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#Byte")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#Short")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#Integer")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#Long")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#Float")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#Double")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#BigInteger")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#BigDecimal")), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(ShapeId.from("smithy.api#Timestamp")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#String")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#Blob")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#Boolean")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#Byte")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#Short")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#Integer")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#Long")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#Float")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#Double")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#BigInteger")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#BigDecimal")), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#Timestamp")), Matchers.not(Optional.empty()));
 
         // Make sure public prelude trait definition shapes were removed.
-        assertThat(index.getShape(ShapeId.from("smithy.api#length")), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(ShapeId.from("smithy.api#length")), Matchers.is(Optional.empty()));
     }
 }

@@ -24,7 +24,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.ListUtils;
@@ -42,18 +41,17 @@ public final class OperationIndex implements KnowledgeIndex {
     private final Map<ShapeId, List<StructureShape>> errors = new HashMap<>();
 
     public OperationIndex(Model model) {
-        ShapeIndex index = model.getShapeIndex();
-        index.shapes(OperationShape.class).forEach(operation -> {
+        model.shapes(OperationShape.class).forEach(operation -> {
             operation.getInput()
-                    .flatMap(id -> getStructure(index, id))
+                    .flatMap(id -> getStructure(model, id))
                     .ifPresent(shape -> inputs.put(operation.getId(), shape));
             operation.getOutput()
-                    .flatMap(id -> getStructure(index, id))
+                    .flatMap(id -> getStructure(model, id))
                     .ifPresent(shape -> outputs.put(operation.getId(), shape));
             errors.put(operation.getId(),
                        operation.getErrors()
                                .stream()
-                               .map(e -> getStructure(index, e))
+                               .map(e -> getStructure(model, e))
                                .filter(Optional::isPresent)
                                .map(Optional::get)
                                .collect(Collectors.toList()));
@@ -72,7 +70,7 @@ public final class OperationIndex implements KnowledgeIndex {
         return errors.getOrDefault(operation.toShapeId(), ListUtils.of());
     }
 
-    private Optional<StructureShape> getStructure(ShapeIndex index, ToShapeId id) {
-        return index.getShape(id.toShapeId()).flatMap(Shape::asStructureShape);
+    private Optional<StructureShape> getStructure(Model model, ToShapeId id) {
+        return model.getShape(id.toShapeId()).flatMap(Shape::asStructureShape);
     }
 }

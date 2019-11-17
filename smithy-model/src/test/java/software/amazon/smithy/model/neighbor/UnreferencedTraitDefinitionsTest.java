@@ -32,6 +32,6 @@ public class UnreferencedTraitDefinitionsTest {
         UnreferencedTraitDefinitions unreferencedTraitDefinitions = new UnreferencedTraitDefinitions();
 
         assertThat(unreferencedTraitDefinitions.compute(model),
-                contains(model.getShapeIndex().getShape(ShapeId.from("ns.foo#quux")).get()));
+                contains(model.expectShape(ShapeId.from("ns.foo#quux"))));
     }
 }

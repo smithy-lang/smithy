@@ -87,7 +87,7 @@ public final class StandardOperationVerbValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .flatMap(shape -> OptionalUtils.stream(validateShape(shape, verbs, prefixes, alts)))
                 .collect(Collectors.toList());
     }

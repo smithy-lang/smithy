@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
@@ -35,15 +34,14 @@ public class IncludeNamespacesTest {
         StringShape string2 = StringShape.builder().id("ns.foo#qux").build();
         StringShape string3 = StringShape.builder().id("ns.bar#yuck").build();
         StringShape string4 = StringShape.builder().id("ns.qux#yuck").build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(string1, string2, string3, string4).build();
-        Model model = Model.builder().shapeIndex(index).build();
+        Model model = Model.builder().addShapes(string1, string2, string3, string4).build();
         Model result = new IncludeNamespaces()
                 .createTransformer(Arrays.asList("ns.foo", "ns.bar"))
                 .apply(ModelTransformer.create(), model);
 
-        assertThat(result.getShapeIndex().getShape(string1.getId()), not(Optional.empty()));
-        assertThat(result.getShapeIndex().getShape(string2.getId()), not(Optional.empty()));
-        assertThat(result.getShapeIndex().getShape(string3.getId()), not(Optional.empty()));
-        assertThat(result.getShapeIndex().getShape(string4.getId()), is(Optional.empty()));
+        assertThat(result.getShape(string1.getId()), not(Optional.empty()));
+        assertThat(result.getShape(string2.getId()), not(Optional.empty()));
+        assertThat(result.getShape(string3.getId()), not(Optional.empty()));
+        assertThat(result.getShape(string4.getId()), is(Optional.empty()));
     }
 }

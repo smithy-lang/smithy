@@ -24,7 +24,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.EventStreamTrait;
@@ -44,28 +43,27 @@ public final class EventStreamIndex implements KnowledgeIndex {
     private final Map<ShapeId, EventStreamInfo> outputInfo = new HashMap<>();
 
     public EventStreamIndex(Model model) {
-        ShapeIndex index = model.getShapeIndex();
         OperationIndex operationIndex = model.getKnowledge(OperationIndex.class);
 
-        model.getShapeIndex().shapes(OperationShape.class).forEach(operation -> {
+        model.shapes(OperationShape.class).forEach(operation -> {
             operationIndex.getInput(operation).ifPresent(input -> {
-                computeEvents(index, operation, input, inputInfo);
+                computeEvents(model, operation, input, inputInfo);
             });
             operationIndex.getOutput(operation).ifPresent(output -> {
-                computeEvents(index, operation, output, outputInfo);
+                computeEvents(model, operation, output, outputInfo);
             });
         });
     }
 
     private void computeEvents(
-            ShapeIndex index,
+            Model model,
             OperationShape operation,
             StructureShape shape,
             Map<ShapeId, EventStreamInfo> infoMap
     ) {
         for (MemberShape member : shape.getAllMembers().values()) {
             if (member.hasTrait(EventStreamTrait.class)) {
-                createEventStreamInfo(index, operation, shape, member).ifPresent(info -> {
+                createEventStreamInfo(model, operation, shape, member).ifPresent(info -> {
                     infoMap.put(operation.getId(), info);
                 });
             }
@@ -103,14 +101,14 @@ public final class EventStreamIndex implements KnowledgeIndex {
     }
 
     private Optional<EventStreamInfo> createEventStreamInfo(
-            ShapeIndex index,
+            Model model,
             OperationShape operation,
             StructureShape structure,
             MemberShape member
     ) {
         EventStreamTrait trait = member.getTrait(EventStreamTrait.class).get();
 
-        Shape eventStreamTarget = index.getShape(member.getTarget()).orElse(null);
+        Shape eventStreamTarget = model.getShape(member.getTarget()).orElse(null);
         if (eventStreamTarget == null) {
             LOGGER.severe(String.format(
                     "Skipping event stream info for %s because the %s member target %s does not exist",
@@ -122,7 +120,7 @@ public final class EventStreamIndex implements KnowledgeIndex {
         Map<String, StructureShape> events = new HashMap<>();
         if (eventStreamTarget.asUnionShape().isPresent()) {
             for (MemberShape unionMember : eventStreamTarget.asUnionShape().get().getAllMembers().values()) {
-                index.getShape(unionMember.getTarget()).flatMap(Shape::asStructureShape).ifPresent(struct -> {
+                model.getShape(unionMember.getTarget()).flatMap(Shape::asStructureShape).ifPresent(struct -> {
                     events.put(unionMember.getMemberName(), struct);
                 });
             }
@@ -141,7 +139,7 @@ public final class EventStreamIndex implements KnowledgeIndex {
 
         for (MemberShape structureMember : structure.getAllMembers().values()) {
             if (!structureMember.getMemberName().equals(member.getMemberName())) {
-                index.getShape(structureMember.getTarget()).ifPresent(shapeTarget -> {
+                model.getShape(structureMember.getTarget()).ifPresent(shapeTarget -> {
                     initialMembers.put(structureMember.getMemberName(), structureMember);
                     initialTargets.put(structureMember.getMemberName(), shapeTarget);
                 });

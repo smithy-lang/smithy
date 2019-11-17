@@ -43,15 +43,15 @@ public class ArnIndexTest {
     public void loadsFromModel() {
         ArnIndex arnIndex = new ArnIndex(model);
         ShapeId id = ShapeId.from("ns.foo#SomeService");
-        Shape someResource = model.getShapeIndex().getShape(ShapeId.from("ns.foo#SomeResource")).get();
+        Shape someResource = model.getShape(ShapeId.from("ns.foo#SomeResource")).get();
         ArnTrait template1 = ArnTrait.builder()
                 .template("someresource/{someId}")
                 .build();
-        Shape childResource = model.getShapeIndex().getShape(ShapeId.from("ns.foo#ChildResource")).get();
+        Shape childResource = model.getShape(ShapeId.from("ns.foo#ChildResource")).get();
         ArnTrait template2 = ArnTrait.builder()
                 .template("someresource/{someId}/{childId}")
                 .build();
-        Shape rootArnResource = model.getShapeIndex().getShape(ShapeId.from("ns.foo#RootArnResource")).get();
+        Shape rootArnResource = model.getShape(ShapeId.from("ns.foo#RootArnResource")).get();
         ArnTrait template3 = ArnTrait.builder()
                 .template("rootArnResource")
                 .noAccount(true)

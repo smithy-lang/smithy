@@ -487,7 +487,7 @@ public final class ModelAssembler {
     private static void mergeModelIntoVisitor(Model model, LoaderVisitor visitor) {
         visitor.onVersion(SourceLocation.NONE, model.getSmithyVersion());
         model.getMetadata().forEach(visitor::onMetadata);
-        model.getShapeIndex().shapes().forEach(visitor::onShape);
+        model.shapes().forEach(visitor::onShape);
     }
 
     private ValidatedResult<Model> validate(Model model, List<ValidationEvent> modelResultEvents) {

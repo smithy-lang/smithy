@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -39,7 +38,7 @@ public class MapTraitsTest {
                 .id(shapeId)
                 .addTrait(new SensitiveTrait(SourceLocation.NONE))
                 .build();
-        Model model = Model.builder().shapeIndex(ShapeIndex.builder().addShape(shape).build()).build();
+        Model model = Model.builder().addShape(shape).build();
         ModelTransformer transformer = ModelTransformer.create();
         transformer.mapTraits(model, (s, t) -> t);
     }
@@ -52,7 +51,7 @@ public class MapTraitsTest {
                 .addTrait(DeprecatedTrait.builder().message("foo").build())
                 .addTrait(new DocumentationTrait("docs", SourceLocation.NONE))
                 .build();
-        Model model = Model.builder().shapeIndex(ShapeIndex.builder().addShape(shape).build()).build();
+        Model model = Model.builder().addShape(shape).build();
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.mapTraits(model, Arrays.asList(
                 (s, t) -> {
@@ -70,12 +69,11 @@ public class MapTraitsTest {
                     }
                 }
         ));
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.getShape(shapeId).get().getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(shapeId).get().getTrait(DeprecatedTrait.class).get().getMessage().get(),
+        assertThat(result.expectShape(shapeId).getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(shapeId).getTrait(DeprecatedTrait.class).get().getMessage().get(),
                           Matchers.equalTo("baz"));
-        assertThat(index.getShape(shapeId).get().getTrait(DocumentationTrait.class).get().getValue(),
+        assertThat(result.expectShape(shapeId).getTrait(DocumentationTrait.class).get().getValue(),
                           Matchers.equalTo("changed"));
     }
 }

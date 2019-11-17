@@ -23,7 +23,6 @@ import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -41,11 +40,10 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class TraitTargetValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex shapeIndex = model.getShapeIndex();
         NeighborProvider neighborProvider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
-        return shapeIndex.shapes()
+        return model.shapes()
                 .flatMap(shape -> getSelectors(shape, model))
-                .filter(check -> !matchesSelector(check, shapeIndex, neighborProvider))
+                .filter(check -> !matchesSelector(check, model, neighborProvider))
                 .map(check -> error(check.shape, String.format(
                         "Trait `%s` cannot be applied to `%s`. This trait may only be applied to shapes "
                         + "that match the following selector: %s",
@@ -77,9 +75,9 @@ public final class TraitTargetValidator extends AbstractValidator {
 
     private boolean matchesSelector(
             SelectorCheck check,
-            ShapeIndex index,
+            Model model,
             NeighborProvider neighborProvider
     ) {
-        return check.selector.select(neighborProvider, index).contains(check.shape);
+        return check.selector.select(neighborProvider, model).contains(check.shape);
     }
 }

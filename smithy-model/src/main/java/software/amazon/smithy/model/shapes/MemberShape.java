@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Optional;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -101,15 +102,27 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
     }
 
     @Override
+    @Deprecated
     public <T extends Trait> Optional<T> getMemberTrait(ShapeIndex index, Class<T> trait) {
         return OptionalUtils.or(getTrait(trait),
                 () -> index.getShape(getTarget()).flatMap(targetedShape -> targetedShape.getTrait(trait)));
     }
 
     @Override
+    @Deprecated
     public Optional<Trait> findMemberTrait(ShapeIndex index, String traitName) {
         return OptionalUtils.or(findTrait(traitName),
                 () -> index.getShape(getTarget()).flatMap(targetedShape -> targetedShape.findTrait(traitName)));
+    }
+
+    @Override
+    public <T extends Trait> Optional<T> getMemberTrait(Model model, Class<T> trait) {
+        return getMemberTrait(model.getShapeIndex(), trait);
+    }
+
+    @Override
+    public Optional<Trait> findMemberTrait(Model model, String traitName) {
+        return findMemberTrait(model.getShapeIndex(), traitName);
     }
 
     /**

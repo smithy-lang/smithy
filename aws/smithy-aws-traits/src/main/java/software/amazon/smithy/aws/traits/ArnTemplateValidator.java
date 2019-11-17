@@ -29,7 +29,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -46,16 +45,16 @@ public final class ArnTemplateValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         ArnIndex arnIndex = model.getKnowledge(ArnIndex.class);
-        return model.getShapeIndex().shapes(ServiceShape.class)
+        return model.shapes(ServiceShape.class)
                 .flatMap(service -> Trait.flatMapStream(service, ServiceTrait.class))
-                .flatMap(pair -> validateService(model.getShapeIndex(), arnIndex, pair.getLeft()))
+                .flatMap(pair -> validateService(model, arnIndex, pair.getLeft()))
                 .collect(toList());
     }
 
-    private Stream<ValidationEvent> validateService(ShapeIndex index, ArnIndex arnIndex, ServiceShape service) {
+    private Stream<ValidationEvent> validateService(Model model, ArnIndex arnIndex, ServiceShape service) {
         // Make sure each ARN template contains relevant identifiers.
         return arnIndex.getServiceResourceArns(service.getId()).entrySet().stream()
-                .flatMap(entry -> OptionalUtils.stream(index.getShape(entry.getKey())
+                .flatMap(entry -> OptionalUtils.stream(model.getShape(entry.getKey())
                         .flatMap(Shape::asResourceShape)
                         .map(resource -> Pair.of(resource, entry.getValue()))))
                 .flatMap(pair -> validateResourceArn(pair.getLeft(), pair.getRight()));

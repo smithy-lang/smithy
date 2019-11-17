@@ -41,22 +41,22 @@ public class CleanClientDiscoveryTraitTransformerTest {
             return !shape.getId().toString().equals("ns.foo#DescribeEndpoints");
         });
 
-        ServiceShape service = result.getShapeIndex()
+        ServiceShape service = result
                 .getShape(ShapeId.from("ns.foo#FooService"))
                 .flatMap(Shape::asServiceShape)
                 .get();
 
-        OperationShape getOperation = result.getShapeIndex()
+        OperationShape getOperation = result
                 .getShape(ShapeId.from("ns.foo#GetObject"))
                 .flatMap(Shape::asOperationShape)
                 .get();
 
-        OperationShape putOperation = result.getShapeIndex()
+        OperationShape putOperation = result
                 .getShape(ShapeId.from("ns.foo#PutObject"))
                 .flatMap(Shape::asOperationShape)
                 .get();
 
-        MemberShape putId = result.getShapeIndex()
+        MemberShape putId = result
                 .getShape(ShapeId.from("ns.foo#PutObjectInput$Id"))
                 .flatMap(Shape::asMemberShape)
                 .get();
@@ -80,22 +80,22 @@ public class CleanClientDiscoveryTraitTransformerTest {
             return !shape.getId().toString().equals("ns.foo#InvalidEndpointError");
         });
 
-        ServiceShape service = result.getShapeIndex()
+        ServiceShape service = result
                 .getShape(ShapeId.from("ns.foo#FooService"))
                 .flatMap(Shape::asServiceShape)
                 .get();
 
-        OperationShape getOperation = result.getShapeIndex()
+        OperationShape getOperation = result
                 .getShape(ShapeId.from("ns.foo#GetObject"))
                 .flatMap(Shape::asOperationShape)
                 .get();
 
-        OperationShape putOperation = result.getShapeIndex()
+        OperationShape putOperation = result
                 .getShape(ShapeId.from("ns.foo#PutObject"))
                 .flatMap(Shape::asOperationShape)
                 .get();
 
-        MemberShape putId = result.getShapeIndex()
+        MemberShape putId = result
                 .getShape(ShapeId.from("ns.foo#PutObjectInput$Id"))
                 .flatMap(Shape::asMemberShape)
                 .get();
@@ -119,12 +119,12 @@ public class CleanClientDiscoveryTraitTransformerTest {
             return !shape.getId().toString().equals("ns.foo#DescribeEndpointsFoo");
         });
 
-        OperationShape getOperation = result.getShapeIndex()
+        OperationShape getOperation = result
                 .getShape(ShapeId.from("ns.foo#GetObjectFoo"))
                 .flatMap(Shape::asOperationShape)
                 .get();
 
-        OperationShape putOperation = result.getShapeIndex()
+        OperationShape putOperation = result
                 .getShape(ShapeId.from("ns.foo#PutObject"))
                 .flatMap(Shape::asOperationShape)
                 .get();
@@ -145,7 +145,7 @@ public class CleanClientDiscoveryTraitTransformerTest {
             return !shape.getId().toString().equals("ns.foo#DescribeEndpointsFoo");
         });
 
-        MemberShape id = result.getShapeIndex()
+        MemberShape id = result
                 .getShape(ShapeId.from("ns.foo#GetObjectInput$Id"))
                 .flatMap(Shape::asMemberShape)
                 .get();

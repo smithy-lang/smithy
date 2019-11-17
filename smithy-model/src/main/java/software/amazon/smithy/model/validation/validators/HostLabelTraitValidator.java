@@ -27,7 +27,6 @@ import software.amazon.smithy.model.pattern.Pattern;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.EndpointTrait;
 import software.amazon.smithy.model.traits.HostLabelTrait;
@@ -62,14 +61,14 @@ public class HostLabelTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         // Validate all operation shapes with the `endpoint` trait.
-        return model.getShapeIndex().shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, EndpointTrait.class))
-                .flatMap(pair -> validateStructure(model.getShapeIndex(), pair.getLeft(), pair.getRight()).stream())
+                .flatMap(pair -> validateStructure(model, pair.getLeft(), pair.getRight()).stream())
                 .collect(Collectors.toList());
     }
 
     private List<ValidationEvent> validateStructure(
-            ShapeIndex index,
+            Model model,
             OperationShape operation,
             EndpointTrait endpoint
     ) {
@@ -88,7 +87,7 @@ public class HostLabelTraitValidator extends AbstractValidator {
             // Only validate the bindings if the input is a structure. Typing
             // validation of the input is handled elsewhere.
             operation.getInput()
-                    .flatMap(index::getShape)
+                    .flatMap(model::getShape)
                     .flatMap(Shape::asStructureShape)
                     .ifPresent(input -> events.addAll(validateBindings(operation, endpoint, input)));
         }

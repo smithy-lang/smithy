@@ -31,7 +31,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -59,21 +58,21 @@ public final class CleanStructureAndUnionMembers implements ModelTransformerPlug
     }
 
     private Model removeMembersFromContainers(ModelTransformer transformer, Collection<Shape> removed, Model model) {
-        List<Shape> replacements = new ArrayList<>(getStructureReplacements(model.getShapeIndex(), removed));
-        replacements.addAll(getUnionReplacements(model.getShapeIndex(), removed));
+        List<Shape> replacements = new ArrayList<>(getStructureReplacements(model, removed));
+        replacements.addAll(getUnionReplacements(model, removed));
         return transformer.replaceShapes(model, replacements);
     }
 
-    private Collection<Shape> getStructureReplacements(ShapeIndex index, Collection<Shape> removed) {
-        return createUpdatedShapes(index, removed, Shape::asStructureShape, entry -> {
+    private Collection<Shape> getStructureReplacements(Model model, Collection<Shape> removed) {
+        return createUpdatedShapes(model, removed, Shape::asStructureShape, entry -> {
             StructureShape.Builder builder = entry.getKey().toBuilder();
             entry.getValue().forEach(member -> builder.removeMember(member.getMemberName()));
             return builder.build();
         });
     }
 
-    private Collection<Shape> getUnionReplacements(ShapeIndex index, Collection<Shape> removed) {
-        return createUpdatedShapes(index, removed, Shape::asUnionShape, entry -> {
+    private Collection<Shape> getUnionReplacements(Model model, Collection<Shape> removed) {
+        return createUpdatedShapes(model, removed, Shape::asUnionShape, entry -> {
             UnionShape.Builder builder = entry.getKey().toBuilder();
             entry.getValue().forEach(member -> builder.removeMember(member.getMemberName()));
             return builder.build();
@@ -92,7 +91,7 @@ public final class CleanStructureAndUnionMembers implements ModelTransformerPlug
      * of members that were removed, allowing the grouped members to be
      * removed in a single pass.
      *
-     * @param index Shape index used to get the container.
+     * @param model Model used to get the container.
      * @param removed The collection of shapes that were removed.
      * @param containerShapeMapper A function that accepts a shape and tries
      *  to convert it to {@code S}.
@@ -102,14 +101,14 @@ public final class CleanStructureAndUnionMembers implements ModelTransformerPlug
      * @return Returns a list of shapes that need to be modified in the model.
      */
     private <S extends Shape> Collection<Shape> createUpdatedShapes(
-            ShapeIndex index,
+            Model model,
             Collection<Shape> removed,
             Function<Shape, Optional<S>> containerShapeMapper,
             Function<Map.Entry<S, List<MemberShape>>, S> entryMapperAndFactory
     ) {
         return removed.stream()
                 .flatMap(shape -> OptionalUtils.stream(shape.asMemberShape()))
-                .flatMap(member -> OptionalUtils.stream(index.getShape(member.getContainer())
+                .flatMap(member -> OptionalUtils.stream(model.getShape(member.getContainer())
                         .flatMap(containerShapeMapper)
                         .map(container -> Pair.of(container, member))))
                 .collect(groupingBy(Pair::getLeft, mapping(Pair::getRight, Collectors.toList())))
@@ -129,14 +128,13 @@ public final class CleanStructureAndUnionMembers implements ModelTransformerPlug
      *  their target was removed.
      */
     private Collection<Shape> findMembersThatNeedRemoval(Model model, Collection<Shape> removed) {
-        ShapeIndex index = model.getShapeIndex();
         Set<ShapeId> removedIds = removed.stream().map(Shape::getId).collect(Collectors.toSet());
         Collection<Shape> removeMembers = new HashSet<>();
-        index.shapes(StructureShape.class)
+        model.shapes(StructureShape.class)
                 .flatMap(shape -> shape.getAllMembers().values().stream())
                 .filter(value -> removedIds.contains(value.getTarget()))
                 .forEach(removeMembers::add);
-        index.shapes(UnionShape.class)
+        model.shapes(UnionShape.class)
                 .flatMap(shape -> shape.getAllMembers().values().stream())
                 .filter(value -> removedIds.contains(value.getTarget()))
                 .forEach(removeMembers::add);

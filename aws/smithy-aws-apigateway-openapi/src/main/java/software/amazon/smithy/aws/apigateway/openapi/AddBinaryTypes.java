@@ -21,12 +21,12 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -63,7 +63,7 @@ final class AddBinaryTypes implements OpenApiMapper {
     }
 
     private Stream<String> supportedMediaTypes(Context context) {
-        ShapeIndex shapeIndex = context.getModel().getShapeIndex();
+        Model model = context.getModel();
         HttpBindingIndex httpBindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
         TopDownIndex topDownIndex = context.getModel().getKnowledge(TopDownIndex.class);
 
@@ -71,16 +71,16 @@ final class AddBinaryTypes implements OpenApiMapper {
         return topDownIndex.getContainedOperations(context.getService()).stream()
                 .flatMap(operation -> Stream.concat(
                         OptionalUtils.stream(
-                                binaryMediaType(shapeIndex, httpBindingIndex.getRequestBindings(operation))),
+                                binaryMediaType(model, httpBindingIndex.getRequestBindings(operation))),
                         OptionalUtils.stream(
-                                binaryMediaType(shapeIndex, httpBindingIndex.getResponseBindings(operation)))));
+                                binaryMediaType(model, httpBindingIndex.getResponseBindings(operation)))));
     }
 
-    private Optional<String> binaryMediaType(ShapeIndex shapes, Map<String, HttpBinding> httpBindings) {
+    private Optional<String> binaryMediaType(Model model, Map<String, HttpBinding> httpBindings) {
         return httpBindings.values().stream()
                 .filter(binding -> binding.getLocation().equals(HttpBinding.Location.PAYLOAD))
                 .map(HttpBinding::getMember)
-                .flatMap(member -> OptionalUtils.stream(member.getMemberTrait(shapes, MediaTypeTrait.class)))
+                .flatMap(member -> OptionalUtils.stream(member.getMemberTrait(model, MediaTypeTrait.class)))
                 .map(MediaTypeTrait::getValue)
                 .findFirst();
     }

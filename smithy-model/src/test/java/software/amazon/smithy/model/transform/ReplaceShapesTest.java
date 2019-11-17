@@ -31,7 +31,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -46,7 +45,7 @@ public class ReplaceShapesTest {
         Assertions.assertThrows(RuntimeException.class, () -> {
             ShapeId shapeId = ShapeId.from("ns.foo#id1");
             StringShape shape = StringShape.builder().id(shapeId).build();
-            Model model = Model.builder().shapeIndex(ShapeIndex.builder().addShape(shape).build()).build();
+            Model model = Model.builder().addShape(shape).build();
             ModelTransformer transformer = ModelTransformer.create();
             transformer.mapShapes(model, s -> IntegerShape.builder().id(shapeId).build());
         });
@@ -61,7 +60,7 @@ public class ReplaceShapesTest {
         MemberShape member = MemberShape.builder().id(memberId).target(stringId).build();
         ListShape container = ListShape.builder().id(containerId).member(member).build();
         Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder().addShapes(target, member, container).build())
+                .addShapes(target, member, container)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
         MemberShape newMember = MemberShape.builder()
@@ -71,12 +70,11 @@ public class ReplaceShapesTest {
                 .build();
         ListShape newList = ListShape.builder().id(containerId).member(newMember).build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newList));
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.shapes().count(), Matchers.equalTo(3L));
-        assertThat(index.getShape(memberId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(containerId).get(), Matchers.is(newList));
-        assertThat(index.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
+        assertThat(result.shapes().count(), Matchers.equalTo(3L));
+        assertThat(result.getShape(memberId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(containerId).get(), Matchers.is(newList));
+        assertThat(result.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
     }
 
     @Test
@@ -91,7 +89,7 @@ public class ReplaceShapesTest {
         MemberShape valueMember = MemberShape.builder().id(valueId).target(stringId).build();
         MapShape container = MapShape.builder().id(containerId).key(keyMember).value(valueMember).build();
         Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder().addShapes(target, keyMember, valueMember, container).build())
+                .addShapes(target, keyMember, valueMember, container)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
 
@@ -107,14 +105,13 @@ public class ReplaceShapesTest {
                 .build();
         MapShape newMap = MapShape.builder().id(containerId).key(newKey).value(newValue).build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMap));
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.shapes().count(), Matchers.equalTo(4L));
-        assertThat(index.getShape(keyId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(valueId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(containerId).get(), Matchers.is(newMap));
-        assertThat(index.getShape(containerId).get().asMapShape().get().getKey(), Matchers.is(newKey));
-        assertThat(index.getShape(containerId).get().asMapShape().get().getValue(), Matchers.is(newValue));
+        assertThat(result.shapes().count(), Matchers.equalTo(4L));
+        assertThat(result.getShape(keyId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(valueId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(containerId).get(), Matchers.is(newMap));
+        assertThat(result.getShape(containerId).get().asMapShape().get().getKey(), Matchers.is(newKey));
+        assertThat(result.getShape(containerId).get().asMapShape().get().getValue(), Matchers.is(newValue));
     }
 
     @Test
@@ -127,8 +124,7 @@ public class ReplaceShapesTest {
         MemberShape member3 = MemberShape.builder().id("ns.foo#Shape$member3").target("ns.foo#String").build();
         UnionShape shape = UnionShape.builder()
                 .id("ns.foo#Shape").addMember(member1).addMember(member2).addMember(member3).build();
-        ShapeIndex inIndex = ShapeIndex.builder().addShapes(string, shape, member1, member2, member3).build();
-        Model model = Model.builder().shapeIndex(inIndex).build();
+        Model model = Model.builder().addShapes(string, shape, member1, member2, member3).build();
 
         // Add a trait to a replaced member3.
         MemberShape newMember3 = MemberShape.builder()
@@ -142,12 +138,11 @@ public class ReplaceShapesTest {
                 .id("ns.foo#Shape").addMember(member1).addMember(newMember3).build();
 
         Model result = ModelTransformer.create().replaceShapes(model, Collections.singleton(other));
-        ShapeIndex outIndex = result.getShapeIndex();
 
-        assertThat(outIndex.getShape(member1.getId()), Matchers.equalTo(Optional.of(member1)));
-        assertThat(outIndex.getShape(member2.getId()), Matchers.is(Optional.empty()));
-        assertThat(outIndex.getShape(member3.getId()), Matchers.equalTo(Optional.of(newMember3)));
-        assertThat(outIndex.getShape(shape.getId()), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(member1.getId()), Matchers.equalTo(Optional.of(member1)));
+        assertThat(result.getShape(member2.getId()), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(member3.getId()), Matchers.equalTo(Optional.of(newMember3)));
+        assertThat(result.getShape(shape.getId()), Matchers.not(Optional.empty()));
     }
 
     @Test
@@ -159,7 +154,7 @@ public class ReplaceShapesTest {
         MemberShape member = MemberShape.builder().id(memberId).target(stringId).build();
         ListShape container = ListShape.builder().id(containerId).member(member).build();
         Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder().addShapes(target, member, container).build())
+                .addShapes(target, member, container)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
         MemberShape newMember = MemberShape.builder()
@@ -168,10 +163,9 @@ public class ReplaceShapesTest {
                 .addTrait(new SensitiveTrait(SourceLocation.NONE))
                 .build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMember));
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.getShape(memberId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
+        assertThat(result.getShape(memberId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
     }
 
     @Test
@@ -185,7 +179,7 @@ public class ReplaceShapesTest {
         MemberShape valueMember = MemberShape.builder().id(valueMemberId).target(stringId).build();
         MapShape container = MapShape.builder().id(containerId).key(keyMember).value(valueMember).build();
         Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder().addShapes(target, keyMember, valueMember, container).build())
+                .addShapes(target, keyMember, valueMember, container)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
         MemberShape newKeyMember = MemberShape.builder()
@@ -201,15 +195,14 @@ public class ReplaceShapesTest {
                 .build();
         Model resultWithNewValue = transformer.replaceShapes(model, Arrays.asList(newValueMember));
 
-
-        assertThat(resultWithNewKey.getShapeIndex().getShape(keyMemberId).get().getTrait(SensitiveTrait.class),
+        assertThat(resultWithNewKey.getShape(keyMemberId).get().getTrait(SensitiveTrait.class),
                           Matchers.not(Optional.empty()));
-        assertThat(resultWithNewKey.getShapeIndex().getShape(containerId).get().asMapShape().get().getKey(),
+        assertThat(resultWithNewKey.getShape(containerId).get().asMapShape().get().getKey(),
                           Matchers.is(newKeyMember));
 
-        assertThat(resultWithNewValue.getShapeIndex().getShape(valueMemberId).get().getTrait(SensitiveTrait.class),
+        assertThat(resultWithNewValue.getShape(valueMemberId).get().getTrait(SensitiveTrait.class),
                           Matchers.not(Optional.empty()));
-        assertThat(resultWithNewValue.getShapeIndex().getShape(containerId).get().asMapShape().get().getValue(),
+        assertThat(resultWithNewValue.getShape(containerId).get().asMapShape().get().getValue(),
                           Matchers.is(newValueMember));
     }
 
@@ -232,7 +225,7 @@ public class ReplaceShapesTest {
                 .addMember(memberB)
                 .build();
         Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder().addShapes(target, memberA, memberB, container).build())
+                .addShapes(target, memberA, memberB, container)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
         MemberShape newMemberB = MemberShape.builder()
@@ -241,15 +234,14 @@ public class ReplaceShapesTest {
                 .addTrait(new SensitiveTrait(SourceLocation.NONE))
                 .build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMemberB));
-        ShapeIndex index = result.getShapeIndex();
 
         // Make sure the member has the trait that was applied.
-        assertThat(index.getShape(memberBId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(memberBId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
         // Make sure it's still optional.
-        assertTrue(index.getShape(containerId).get().asStructureShape().get().getMember("b").get().isOptional());
+        assertTrue(result.getShape(containerId).get().asStructureShape().get().getMember("b").get().isOptional());
         // Ensure that the structure that contains the shape was updated.
-        assertThat(index.getShape(containerId).get().asStructureShape().get().getMember("b").get(),
-                          Matchers.is(newMemberB));
+        assertThat(result.getShape(containerId).get().asStructureShape().get().getMember("b").get(),
+                   Matchers.is(newMemberB));
     }
 
     @Test
@@ -267,23 +259,22 @@ public class ReplaceShapesTest {
                 .addMember(memberB)
                 .build();
         Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder().addShapes(target, memberA, memberB, container).build())
+                .addShapes(target, memberA, memberB, container)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
         MemberShape newMemberA = memberA.toBuilder().addTrait(new RequiredTrait(SourceLocation.NONE)).build();
         MemberShape newMemberB = memberB.toBuilder().addTrait(new RequiredTrait(SourceLocation.NONE)).build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMemberA, newMemberB));
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.getShape(memberAId).get().getTrait(RequiredTrait.class), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(memberBId).get().getTrait(RequiredTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(memberAId).get().getTrait(RequiredTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(memberBId).get().getTrait(RequiredTrait.class), Matchers.not(Optional.empty()));
 
         // Make sure the members got updated inside of the container.
-        assertTrue(index.getShape(containerId).get()
+        assertTrue(result.getShape(containerId).get()
                 .asStructureShape().get()
                 .getMember("a").get()
                 .hasTrait(RequiredTrait.class));
-        assertTrue(index.getShape(containerId).get()
+        assertTrue(result.getShape(containerId).get()
                 .asStructureShape().get()
                 .getMember("b").get()
                 .hasTrait(RequiredTrait.class));
@@ -304,7 +295,7 @@ public class ReplaceShapesTest {
                 .addMember(memberB)
                 .build();
         Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder().addShapes(target, memberA, memberB, container).build())
+                .addShapes(target, memberA, memberB, container)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
         MemberShape newMemberB = MemberShape.builder()
@@ -313,13 +304,12 @@ public class ReplaceShapesTest {
                 .addTrait(new SensitiveTrait(SourceLocation.NONE))
                 .build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMemberB));
-        ShapeIndex index = result.getShapeIndex();
 
         // Make sure the member has the trait that was applied.
-        assertThat(index.getShape(memberBId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(memberBId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
         // Ensure that the union that contains the shape was updated.
-        assertThat(index.getShape(containerId).get().asUnionShape().get().getMember("b").get(),
-                          Matchers.is(newMemberB));
+        assertThat(result.getShape(containerId).get().asUnionShape().get().getMember("b").get(),
+                   Matchers.is(newMemberB));
     }
 
     @Test
@@ -331,7 +321,7 @@ public class ReplaceShapesTest {
         MemberShape member = MemberShape.builder().id(memberId).target(stringId).build();
         ListShape container = ListShape.builder().id(containerId).member(member).build();
         Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder().addShapes(target, member, container).build())
+                .addShapes(target, member, container)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
         ListShape newContainer = container.toBuilder()
@@ -347,14 +337,13 @@ public class ReplaceShapesTest {
                 .addTrait(new SensitiveTrait(SourceLocation.NONE))
                 .build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMember, newContainer));
-        ShapeIndex index = result.getShapeIndex();
 
         // Make sure the member has the trait that was applied.
-        assertThat(index.getShape(memberId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(memberId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
         // Ensure that the list shape changes were not overwritten.
-        assertThat(index.getShape(containerId).get().asListShape().get().getTrait(LengthTrait.class),
+        assertThat(result.getShape(containerId).get().asListShape().get().getTrait(LengthTrait.class),
                           Matchers.not(Optional.empty()));
         // Ensure that the list shape has the new member.
-        assertThat(index.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
+        assertThat(result.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
     }
 }

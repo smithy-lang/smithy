@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
@@ -44,12 +46,17 @@ public final class Walker {
 
     private final NeighborProvider provider;
 
-    public Walker(ShapeIndex shapeIndex) {
-        this(NeighborProvider.of(shapeIndex));
+    public Walker(Model model) {
+        this(model.getKnowledge(NeighborProviderIndex.class).getProvider());
     }
 
     public Walker(NeighborProvider provider) {
         this.provider = provider;
+    }
+
+    @Deprecated
+    public Walker(ShapeIndex shapeIndex) {
+        this(NeighborProvider.of(shapeIndex));
     }
 
     /**

@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 
@@ -93,19 +94,19 @@ public class MemberShapeTest {
                 .target(target)
                 .addTrait(new DocumentationTrait("override"))
                 .build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(member, target).build();
+        Model model = Model.builder().addShapes(member, target).build();
 
         assertThat(
-                member.getMemberTrait(index, DocumentationTrait.class).get().getValue(),
+                member.getMemberTrait(model, DocumentationTrait.class).get().getValue(),
                 equalTo("override"));
         assertThat(
-                member.getMemberTrait(index, ExternalDocumentationTrait.class).get().getValue(),
+                member.getMemberTrait(model, ExternalDocumentationTrait.class).get().getValue(),
                 equalTo("http://example.com"));
         assertThat(
-                member.findMemberTrait(index, "documentation"),
+                member.findMemberTrait(model, "documentation"),
                 equalTo(member.findTrait("documentation")));
         assertThat(
-                member.findMemberTrait(index, "externalDocumentation"),
+                member.findMemberTrait(model, "externalDocumentation"),
                 equalTo(target.findTrait("externalDocumentation")));
     }
 }

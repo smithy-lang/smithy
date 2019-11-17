@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -56,7 +55,7 @@ public class PreludeTest {
 
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.scrubTraitDefinitions(model);
-        Set<ShapeId> unreferencedPrivateShapes = result.getShapeIndex().shapes()
+        Set<ShapeId> unreferencedPrivateShapes = result.shapes()
                 .filter(shape -> shape.hasTrait(PrivateTrait.class))
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
@@ -67,19 +66,19 @@ public class PreludeTest {
     @Test
     public void resolvesToTargetInNamespace() {
         Shape stringShape = StringShape.builder().id("foo.baz#Bar").build();
-        ShapeIndex index = ShapeIndex.builder().addShape(stringShape).build();
+        Model model = Model.builder().addShape(stringShape).build();
 
-        assertThat(Prelude.resolveShapeId(index, "foo.baz", "Bar"), equalTo(Optional.of(stringShape)));
-        assertThat(Prelude.resolveShapeId(index, "foo.baz", "Bam"), equalTo(Optional.empty()));
+        assertThat(Prelude.resolveShapeId(model, "foo.baz", "Bar"), equalTo(Optional.of(stringShape)));
+        assertThat(Prelude.resolveShapeId(model, "foo.baz", "Bam"), equalTo(Optional.empty()));
     }
 
     @Test
     public void resolvesToTargetInPrelude() {
         Shape customStringShape = StringShape.builder().id("foo.baz#String").build();
         Shape preludeStringShape = StringShape.builder().id("smithy.api#String").build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(customStringShape, preludeStringShape).build();
+        Model model = Model.builder().addShapes(customStringShape, preludeStringShape).build();
 
-        assertThat(Prelude.resolveShapeId(index, "foo.baz", "String"), equalTo(Optional.of(customStringShape)));
-        assertThat(Prelude.resolveShapeId(index, "other.ns", "String"), equalTo(Optional.of(preludeStringShape)));
+        assertThat(Prelude.resolveShapeId(model, "foo.baz", "String"), equalTo(Optional.of(customStringShape)));
+        assertThat(Prelude.resolveShapeId(model, "other.ns", "String"), equalTo(Optional.of(preludeStringShape)));
     }
 }

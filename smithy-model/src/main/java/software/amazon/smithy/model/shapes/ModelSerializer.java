@@ -100,7 +100,7 @@ public final class ModelSerializer {
      * @return Returns the grouped namespaces.
      */
     private TreeMap<String, List<Shape>> createNamespaces(Model model) {
-        Map<String, List<Shape>> shapes = model.getShapeIndex().shapes()
+        Map<String, List<Shape>> shapes = model.shapes()
                 .filter(shapeFilter)
                 .collect(Collectors.groupingBy(s -> s.getId().getNamespace()));
 

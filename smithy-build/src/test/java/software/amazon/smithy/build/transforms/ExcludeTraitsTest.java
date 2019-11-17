@@ -48,9 +48,9 @@ public class ExcludeTraitsTest {
                 .createTransformer(Collections.singletonList("documentation"))
                 .apply(ModelTransformer.create(), model);
 
-        assertThat(result.getShapeIndex().getShape(ShapeId.from("ns.foo#baz")).get().getTrait(DocumentationTrait.class),
+        assertThat(result.expectShape(ShapeId.from("ns.foo#baz")).getTrait(DocumentationTrait.class),
                    is(Optional.empty()));
-        assertThat(result.getShapeIndex().getShape(ShapeId.from("ns.foo#baz")).get().getTrait(SensitiveTrait.class),
+        assertThat(result.expectShape(ShapeId.from("ns.foo#baz")).getTrait(SensitiveTrait.class),
                    not(Optional.empty()));
         assertFalse(result.getTraitDefinition("smithy.api#documentation").isPresent());
     }

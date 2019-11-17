@@ -57,7 +57,7 @@ public class ChangedMemberTarget extends AbstractDiffEvaluator {
     }
 
     private Shape getShapeTarget(Model model, ShapeId id) {
-        return model.getShapeIndex().getShape(id).orElse(null);
+        return model.getShape(id).orElse(null);
     }
 
     private boolean areShapesCompatible(Shape oldShape, Shape newShape) {

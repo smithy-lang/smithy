@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -45,17 +44,16 @@ public class FilterTraitsTest {
                 .addTrait(new SensitiveTrait(SourceLocation.NONE))
                 .addTrait(DeprecatedTrait.builder().build())
                 .build();
-        Model model = Model.builder().shapeIndex(ShapeIndex.builder().addShapes(a, b).build()).build();
+        Model model = Model.builder().addShapes(a, b).build();
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.filterTraits(
                 model, (shape, trait) -> !trait.toShapeId().equals(ShapeId.from("smithy.api#sensitive")));
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.shapes().count(), Matchers.is(2L));
-        assertThat(index.getShape(aId).get().getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
-        assertThat(index.getShape(aId).get().getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
-        assertThat(index.getShape(bId).get().getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
-        assertThat(index.getShape(bId).get().getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.shapes().count(), Matchers.is(2L));
+        assertThat(result.getShape(aId).get().getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(aId).get().getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.getShape(bId).get().getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(bId).get().getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
     }
 
     @Test
@@ -67,28 +65,26 @@ public class FilterTraitsTest {
                 .addTrait(new DocumentationTrait("docs", SourceLocation.NONE))
                 .addTrait(DeprecatedTrait.builder().build())
                 .build();
-        Model model = Model.builder().shapeIndex(ShapeIndex.builder().addShape(a).build()).build();
+        Model model = Model.builder().addShape(a).build();
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.filterTraits(
                 model, (shape, trait) -> !trait.toShapeId().equals(ShapeId.from("smithy.api#sensitive"))
                                          && !trait.toShapeId().equals(ShapeId.from("smithy.api#documentation")));
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.shapes().count(), Matchers.is(1L));
-        assertThat(index.getShape(aId).get().getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
-        assertThat(index.getShape(aId).get().getTrait(DocumentationTrait.class), Matchers.is(Optional.empty()));
-        assertThat(index.getShape(aId).get().getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.shapes().count(), Matchers.is(1L));
+        assertThat(result.getShape(aId).get().getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(aId).get().getTrait(DocumentationTrait.class), Matchers.is(Optional.empty()));
+        assertThat(result.getShape(aId).get().getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
     }
 
     @Test
     public void leavesShapesAlone() {
         ShapeId aId = ShapeId.from("ns.foo#A");
         StringShape a = StringShape.builder().id(aId).build();
-        Model model = Model.builder().shapeIndex(ShapeIndex.builder().addShape(a).build()).build();
+        Model model = Model.builder().addShape(a).build();
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.filterTraits(model, (shape, trait) -> true);
-        ShapeIndex index = result.getShapeIndex();
 
-        assertThat(index.shapes().count(), Matchers.is(1L));
+        assertThat(result.shapes().count(), Matchers.is(1L));
     }
 }

@@ -25,7 +25,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -49,11 +48,10 @@ import software.amazon.smithy.mqtt.traits.TopicLabelTrait;
 public class MqttTopicLabelValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeIndex index = model.getShapeIndex();
-        return model.getShapeIndex().shapes(OperationShape.class)
+        return model.shapes(OperationShape.class)
                 .map(MqttTopicLabelValidator::createTopics)
                 .filter(Objects::nonNull)
-                .flatMap(topics -> validateMqtt(index, topics).stream())
+                .flatMap(topics -> validateMqtt(model, topics).stream())
                 .collect(Collectors.toList());
     }
 
@@ -71,10 +69,10 @@ public class MqttTopicLabelValidator extends AbstractValidator {
         }
     }
 
-    private List<ValidationEvent> validateMqtt(ShapeIndex index, TopicCollection topics) {
+    private List<ValidationEvent> validateMqtt(Model model, TopicCollection topics) {
         Set<String> labels = topics.getLabels();
         StructureShape input = topics.operation.getInput()
-                .flatMap(index::getShape)
+                .flatMap(model::getShape)
                 .flatMap(Shape::asStructureShape)
                 .orElse(null);
 

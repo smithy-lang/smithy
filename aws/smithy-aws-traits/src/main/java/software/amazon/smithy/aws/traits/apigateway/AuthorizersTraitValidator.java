@@ -36,7 +36,7 @@ import software.amazon.smithy.utils.SetUtils;
 public class AuthorizersTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(ServiceShape.class)
+        return model.shapes(ServiceShape.class)
                 .flatMap(service -> OptionalUtils.stream(validateService(service)))
                 .collect(Collectors.toList());
     }

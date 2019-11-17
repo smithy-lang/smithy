@@ -20,11 +20,11 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 
 public class WalkerTest {
@@ -56,7 +56,7 @@ public class WalkerTest {
                 .id("ns.foo#List")
                 .member(listMember)
                 .build();
-        Walker walker = new Walker(ShapeIndex.builder()
+        Walker walker = new Walker(Model.builder()
                 .addShape(list)
                 .addShape(listMember)
                 .addShape(map)
@@ -96,7 +96,7 @@ public class WalkerTest {
                 .id("ns.foo#List")
                 .member(listMember)
                 .build();
-        Walker walker = new Walker(ShapeIndex.builder()
+        Walker walker = new Walker(Model.builder()
                 .addShape(list)
                 .addShape(listMember)
                 .addShape(map)

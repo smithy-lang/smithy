@@ -96,7 +96,7 @@ public class ModelAssemblerTest {
                 .assemble();
 
         assertThat(result.getValidationEvents(), empty());
-        assertThat(result.unwrap().getShapeIndex().getShape(ShapeId.from("ns.foo#Bar")), is(Optional.of(shape)));
+        assertThat(result.unwrap().getShape(ShapeId.from("ns.foo#Bar")), is(Optional.of(shape)));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class ModelAssemblerTest {
         ValidatedResult<Model> result = new ModelAssembler().addDocumentNode(node).assemble();
 
         assertThat(result.getValidationEvents(), empty());
-        assertTrue(result.unwrap().getShapeIndex().getShape(ShapeId.from("ns.foo#String")).isPresent());
+        assertTrue(result.unwrap().getShape(ShapeId.from("ns.foo#String")).isPresent());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class ModelAssemblerTest {
                 .assemble();
 
         assertThat(result.getValidationEvents(), empty());
-        assertTrue(result.unwrap().getShapeIndex().getShape(ShapeId.from("ns.foo#String")).isPresent());
+        assertTrue(result.unwrap().getShape(ShapeId.from("ns.foo#String")).isPresent());
     }
 
     @Test
@@ -159,7 +159,7 @@ public class ModelAssemblerTest {
         assertThat(result.getValidationEvents(), hasSize(1));
         assertThat(result.getValidationEvents().get(0).getMessage(), containsString("Invalid shape `type`: foobaz"));
         assertThat(result.getValidationEvents().get(0).getSeverity(), is(Severity.ERROR));
-        assertTrue(result.getResult().get().getShapeIndex()
+        assertTrue(result.getResult().get()
                            .getShape(ShapeId.from("example.namespace#String")).isPresent());
     }
 
@@ -176,48 +176,48 @@ public class ModelAssemblerTest {
             .assemble();
         assertThat(result.getValidationEvents(), empty());
         Model model = result.unwrap();
-        assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).isPresent());
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).get().getType(),
+        assertTrue(model.getShape(ShapeId.from("example.namespace#String")).isPresent());
+        assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
             is(ShapeType.STRING));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String2")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#String2")).get().getType(),
             is(ShapeType.STRING));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String3")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#String3")).get().getType(),
             is(ShapeType.STRING));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
             is(ShapeType.STRING));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Integer")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Integer")).get().getType(),
             is(ShapeType.INTEGER));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Long")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Long")).get().getType(),
             is(ShapeType.LONG));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Float")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Float")).get().getType(),
             is(ShapeType.FLOAT));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#BigDecimal")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#BigDecimal")).get().getType(),
             is(ShapeType.BIG_DECIMAL));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#BigInteger")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#BigInteger")).get().getType(),
             is(ShapeType.BIG_INTEGER));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Blob")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Blob")).get().getType(),
             is(ShapeType.BLOB));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Boolean")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Boolean")).get().getType(),
             is(ShapeType.BOOLEAN));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Timestamp")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Timestamp")).get().getType(),
             is(ShapeType.TIMESTAMP));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#List")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#List")).get().getType(),
             is(ShapeType.LIST));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Map")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Map")).get().getType(),
             is(ShapeType.MAP));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Structure")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Structure")).get().getType(),
             is(ShapeType.STRUCTURE));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#TaggedUnion")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#TaggedUnion")).get().getType(),
             is(ShapeType.UNION));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Resource")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Resource")).get().getType(),
             is(ShapeType.RESOURCE));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Operation")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Operation")).get().getType(),
             is(ShapeType.OPERATION));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Service")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Service")).get().getType(),
             is(ShapeType.SERVICE));
 
         ShapeId stringId = ShapeId.from("example.namespace#String");
-        Optional<SensitiveTrait> sensitiveTrait = model.getShapeIndex()
+        Optional<SensitiveTrait> sensitiveTrait = model
             .getShape(stringId).get()
             .getTrait(SensitiveTrait.class);
         assertTrue(sensitiveTrait.isPresent());
@@ -233,7 +233,7 @@ public class ModelAssemblerTest {
             containsInAnyOrder("a", "b", "c"));
 
         // The String shape should have a documentation trait applied.
-        assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String"))
+        assertTrue(model.getShape(ShapeId.from("example.namespace#String"))
             .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
             .isPresent());
     }
@@ -248,7 +248,7 @@ public class ModelAssemblerTest {
         assertThat(result.getValidationEvents(), empty());
         Model model = result.unwrap();
         // The String shape should have a documentation trait applied.
-        assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String"))
+        assertTrue(model.getShape(ShapeId.from("example.namespace#String"))
             .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
             .isPresent());
     }
@@ -270,48 +270,48 @@ public class ModelAssemblerTest {
 
         assertThat(result.getValidationEvents(), empty());
         Model model = result.unwrap();
-        assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).isPresent());
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).get().getType(),
+        assertTrue(model.getShape(ShapeId.from("example.namespace#String")).isPresent());
+        assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
                    is(ShapeType.STRING));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String2")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#String2")).get().getType(),
                    is(ShapeType.STRING));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String3")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#String3")).get().getType(),
                    is(ShapeType.STRING));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
                    is(ShapeType.STRING));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Integer")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Integer")).get().getType(),
                    is(ShapeType.INTEGER));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Long")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Long")).get().getType(),
                    is(ShapeType.LONG));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Float")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Float")).get().getType(),
                    is(ShapeType.FLOAT));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#BigDecimal")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#BigDecimal")).get().getType(),
                    is(ShapeType.BIG_DECIMAL));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#BigInteger")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#BigInteger")).get().getType(),
                    is(ShapeType.BIG_INTEGER));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Blob")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Blob")).get().getType(),
                    is(ShapeType.BLOB));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Boolean")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Boolean")).get().getType(),
                    is(ShapeType.BOOLEAN));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Timestamp")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Timestamp")).get().getType(),
                    is(ShapeType.TIMESTAMP));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#List")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#List")).get().getType(),
                     is(ShapeType.LIST));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Map")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Map")).get().getType(),
                    is(ShapeType.MAP));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Structure")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Structure")).get().getType(),
                    is(ShapeType.STRUCTURE));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#TaggedUnion")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#TaggedUnion")).get().getType(),
                    is(ShapeType.UNION));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Resource")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Resource")).get().getType(),
                    is(ShapeType.RESOURCE));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Operation")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Operation")).get().getType(),
                    is(ShapeType.OPERATION));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#Service")).get().getType(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#Service")).get().getType(),
                    is(ShapeType.SERVICE));
 
         ShapeId stringId = ShapeId.from("example.namespace#String");
-        Optional<SensitiveTrait> sensitiveTrait = model.getShapeIndex()
+        Optional<SensitiveTrait> sensitiveTrait = model
                 .getShape(stringId).get()
                 .getTrait(SensitiveTrait.class);
         assertTrue(sensitiveTrait.isPresent());
@@ -327,7 +327,7 @@ public class ModelAssemblerTest {
                    containsInAnyOrder("a", "b", "c"));
 
         // The String shape should have a documentation trait applied.
-        assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String"))
+        assertTrue(model.getShape(ShapeId.from("example.namespace#String"))
                            .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
                            .isPresent());
     }
@@ -340,9 +340,9 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).get().getSourceLocation(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getSourceLocation(),
                 is(new SourceLocation(getClass().getResource("main.json").toString(), 13, 23)));
-        assertThat(model.getShapeIndex().getShape(ShapeId.from("example.namespace#TaggedUnion$foo")).get().getSourceLocation(),
+        assertThat(model.getShape(ShapeId.from("example.namespace#TaggedUnion$foo")).get().getSourceLocation(),
                 is(new SourceLocation(getClass().getResource("main.json").toString(), 76, 28)));
     }
 
@@ -355,9 +355,9 @@ public class ModelAssemblerTest {
 
         assertThat(result.getValidationEvents(), empty());
         // Each namespace had a separate name.
-        assertThat(result.unwrap().getShapeIndex().shapes().count(), equalTo(4L));
+        assertThat(result.unwrap().shapes().count(), equalTo(4L));
         // Each shape had a documentation trait in each namespace.
-        assertThat(result.unwrap().getShapeIndex().shapes()
+        assertThat(result.unwrap().shapes()
                            .filter(shape -> shape.findTrait("ns.shared#customTrait").isPresent())
                            .count(), equalTo(3L));
     }
@@ -398,10 +398,10 @@ public class ModelAssemblerTest {
     }
 
     private void assertImportPathsWereLoaded(Model model) {
-        assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String"))
+        assertTrue(model.getShape(ShapeId.from("example.namespace#String"))
                            .flatMap(shape -> shape.getTrait(DocumentationTrait.class))
                            .isPresent());
-        assertTrue(model.getShapeIndex().getShape(ShapeId.from("example.namespace#String"))
+        assertTrue(model.getShape(ShapeId.from("example.namespace#String"))
                            .flatMap(shape -> shape.getTrait(MediaTypeTrait.class))
                            .isPresent());
     }
@@ -415,7 +415,7 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
-        assertEquals("hi", model2.getShapeIndex().getShape(ShapeId.from("example.namespace#String")).get()
+        assertEquals("hi", model2.expectShape(ShapeId.from("example.namespace#String"))
                 .getTrait(DocumentationTrait.class).get().getValue());
     }
 
@@ -473,8 +473,8 @@ public class ModelAssemblerTest {
 
         for (String id : ListUtils.of("foo.baz#A", "foo.baz#B", "foo.baz#C")) {
             ShapeId shapeId = ShapeId.from(id);
-            assertTrue(model.getShapeIndex().getShape(shapeId).isPresent());
-            assertThat(model.getShapeIndex().getShape(shapeId).get().getSourceLocation().getFilename(),
+            assertTrue(model.getShape(shapeId).isPresent());
+            assertThat(model.getShape(shapeId).get().getSourceLocation().getFilename(),
                        startsWith("jar:file:"));
         }
     }
@@ -486,6 +486,6 @@ public class ModelAssemblerTest {
 
         assertTrue(result.isBroken());
         assertTrue(result.getResult().isPresent());
-        assertTrue(result.getResult().get().getShapeIndex().getShape(ShapeId.from("foo.baz#MyString")).isPresent());
+        assertTrue(result.getResult().get().getShape(ShapeId.from("foo.baz#MyString")).isPresent());
     }
 }

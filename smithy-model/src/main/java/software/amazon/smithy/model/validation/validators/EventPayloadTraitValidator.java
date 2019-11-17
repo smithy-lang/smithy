@@ -39,7 +39,7 @@ import software.amazon.smithy.utils.FunctionalUtils;
 public class EventPayloadTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(StructureShape.class)
+        return model.shapes(StructureShape.class)
                 .flatMap(this::validateEvent)
                 .collect(Collectors.toList());
     }

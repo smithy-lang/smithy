@@ -61,7 +61,7 @@ final class Validator {
             System.out.println(String.join("", Collections.nCopies(line.length(), "-")));
             System.out.println(line);
             result.getResult().ifPresent(model -> System.out.println(String.format(
-                    "Validated %d shapes in model", model.getShapeIndex().shapes().count())));
+                    "Validated %d shapes in model", model.shapes().count())));
         }
 
         if (errors + dangers > 0) {

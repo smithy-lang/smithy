@@ -61,7 +61,6 @@ public class ModelSerializerTest {
         Model model = Model.builder()
                 .putMetadataProperty("foo", Node.from("baz"))
                 .putMetadataProperty("bar", Node.from("qux"))
-                .shapeIndex(ShapeIndex.builder().build())
                 .build();
         ObjectNode result = serializer.serialize(model);
 
@@ -77,10 +76,8 @@ public class ModelSerializerTest {
                 .shapeFilter(shape -> shape.getId().getName().equals("foo"))
                 .build();
         Model model = Model.builder()
-                .shapeIndex(ShapeIndex.builder()
-                        .addShape(StringShape.builder().id("ns.foo#foo").build())
-                        .addShape(StringShape.builder().id("ns.foo#baz").build())
-                        .build())
+                .addShape(StringShape.builder().id("ns.foo#foo").build())
+                .addShape(StringShape.builder().id("ns.foo#baz").build())
                 .build();
         ObjectNode result = serializer.serialize(model);
 

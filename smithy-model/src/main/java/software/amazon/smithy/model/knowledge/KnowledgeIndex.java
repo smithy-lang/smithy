@@ -18,7 +18,6 @@ package software.amazon.smithy.model.knowledge;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 
 /**
@@ -29,7 +28,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
  * A KnowledgeIndex is often a mapping of {@link ShapeId} to some kind of
  * interesting computed information. For example, in order to resolve the
  * input/output/error structures referenced by an {@link OperationShape},
- * you need a {@link ShapeIndex}, to ensure that the reference from the
+ * you need a {@link Model}, to ensure that the reference from the
  * operation to the structure is resolvable in the shape index, that the
  * shape it references is a structure, and then to cast the shape to a
  * {@link StructureShape}. Because this process is error prone, verbose,

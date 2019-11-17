@@ -21,11 +21,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
@@ -110,11 +115,7 @@ public final class Model implements ToSmithyBuilder<Model> {
                 .validatorFactory(ValidatorFactory.createServiceFactory(classLoader));
     }
 
-    /**
-     * Gets the {@link ShapeIndex} of the {@code Model}.
-     *
-     * @return Returns the index of shapes.
-     */
+    @Deprecated
     public ShapeIndex getShapeIndex() {
         return shapeIndex;
     }
@@ -184,6 +185,63 @@ public final class Model implements ToSmithyBuilder<Model> {
         return getTraitDefinitions().keySet();
     }
 
+    /**
+     * Attempts to retrieve a {@link Shape} by {@link ShapeId}.
+     *
+     * @param id Shape to retrieve by ID.
+     * @return Returns the optional shape.
+     */
+    public Optional<Shape> getShape(ShapeId id) {
+        return shapeIndex.getShape(id);
+    }
+
+    /**
+     * Attempts to retrieve a {@link Shape} by {@link ShapeId} and
+     * throws if not found.
+     *
+     * @param id Shape to retrieve by ID.
+     * @return Returns the shape.
+     * @throws ExpectationNotMetException if the shape is not found.
+     */
+    public Shape expectShape(ShapeId id) {
+        return getShape(id).orElseThrow(() -> new ExpectationNotMetException(
+                "Shape not found in model: " + id, SourceLocation.NONE));
+    }
+
+    /**
+     * Gets a stream of {@link Shape}s in the index.
+     *
+     * @return Returns a stream of shapes.
+     */
+    public Stream<Shape> shapes() {
+        return shapeIndex.shapes();
+    }
+
+    /**
+     * Gets a stream of shapes in the index of a specific type {@code T}.
+     *
+     * <p>The provided shapeType class must exactly match the class of a
+     * shape in the shape index in order to be returned from this method;
+     * that is, the provided class must be a concrete subclass of
+     * {@link Shape} and not an abstract class like {@link NumberShape}.
+     *
+     * @param shapeType Shape type {@code T} to retrieve.
+     * @param <T> Shape type to stream from the index.
+     * @return A stream of shapes of {@code T} matching {@code shapeType}.
+     */
+    public <T extends Shape> Stream<T> shapes(Class<T> shapeType) {
+        return shapeIndex.shapes(shapeType);
+    }
+
+    /**
+     * Converts the model to an immutable Set of shapes.
+     *
+     * @return Returns an unmodifiable set of Shapes in the index.
+     */
+    public Set<Shape> toSet() {
+        return shapeIndex.toSet();
+    }
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof Model)) {
@@ -202,7 +260,7 @@ public final class Model implements ToSmithyBuilder<Model> {
     public int hashCode() {
         int result = hash;
         if (result == 0) {
-            result = Objects.hash(getSmithyVersion(), getMetadata(), getShapeIndex());
+            result = Objects.hash(getSmithyVersion(), getMetadata(), shapeIndex);
             hash = result;
         }
         return result;
@@ -260,6 +318,7 @@ public final class Model implements ToSmithyBuilder<Model> {
         private Map<String, Node> metadata = new HashMap<>();
         private String smithyVersion = MODEL_VERSION;
         private ShapeIndex shapeIndex;
+        private ShapeIndex.Builder shapeIndexBuilder;
 
         private Builder() {}
 
@@ -284,13 +343,101 @@ public final class Model implements ToSmithyBuilder<Model> {
             return this;
         }
 
+        @Deprecated
         public Builder shapeIndex(ShapeIndex shapeIndex) {
             this.shapeIndex = Objects.requireNonNull(shapeIndex);
+            shapeIndexBuilder = null;
+            return this;
+        }
+
+        /**
+         * Add a shape to the builder.
+         *
+         * <p>{@link MemberShape} shapes are not added to the model directly.
+         * They must be added by adding their containing shapes (e.g., to add a
+         * list member, you must add the list shape that contains it). Any member
+         * shape provided to any of the methods used to add shapes to the
+         * shape index are ignored.
+         *
+         * @param shape Shape to add.
+         * @return Returns the builder.
+         */
+        public Builder addShape(Shape shape) {
+            getShapeIndexBuilder().addShape(shape);
+            return this;
+        }
+
+        private ShapeIndex.Builder getShapeIndexBuilder() {
+            if (shapeIndexBuilder == null) {
+                if (shapeIndex != null) {
+                    shapeIndexBuilder = shapeIndex.toBuilder();
+                    shapeIndex = null;
+                } else {
+                    shapeIndexBuilder = ShapeIndex.builder();
+                }
+            }
+
+            return shapeIndexBuilder;
+        }
+
+        /**
+         * Adds the shapes of another model to the builder.
+         *
+         * @param model Model to add shapes from.
+         * @return Returns the builder.
+         */
+        public Builder addShapes(Model model) {
+            getShapeIndexBuilder().addShapes(model.shapeIndex);
+            return this;
+        }
+
+        /**
+         * Adds a collection of shapes to the builder.
+         *
+         * @param shapes Collection of Shapes to add.
+         * @param <S> Type of shape being added.
+         * @return Returns the builder.
+         */
+        public <S extends Shape> Builder addShapes(Collection<S> shapes) {
+            for (Shape shape : shapes) {
+                addShape(shape);
+            }
+            return this;
+        }
+
+        /**
+         * Adds a variadic list of shapes.
+         *
+         * @param shapes Shapes to add.
+         * @return Returns the builder.
+         */
+        public Builder addShapes(Shape... shapes) {
+            for (Shape shape : shapes) {
+                addShape(shape);
+            }
+            return this;
+        }
+
+        /**
+         * Removes a shape from the builder by ID.
+         *
+         * <p>Members of shapes are automatically removed when their
+         * containing shape is removed.
+         *
+         * @param shapeId Shape to remove.
+         * @return Returns the builder.
+         */
+        public Builder removeShape(ShapeId shapeId) {
+            getShapeIndexBuilder().removeShape(shapeId);
             return this;
         }
 
         @Override
         public Model build() {
+            if (shapeIndexBuilder != null) {
+                shapeIndex = shapeIndexBuilder.build();
+            }
+
             return new Model(this);
         }
     }

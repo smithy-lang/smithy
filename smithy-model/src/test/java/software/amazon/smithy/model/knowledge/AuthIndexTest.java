@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.Protocol;
 import software.amazon.smithy.model.traits.ProtocolsTrait;
@@ -39,8 +38,7 @@ public class AuthIndexTest {
                                   .addProtocol(Protocol.builder().name("xml").addAuth("qux").addAuth("foo").build())
                                   .build())
                 .build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(service).build();
-        Model model = Model.builder().shapeIndex(index).build();
+        Model model = Model.builder().addShape(service).build();
         AuthIndex authIndex = model.getKnowledge(AuthIndex.class);
 
         assertThat(authIndex.getDefaultServiceSchemes(service), equalTo(ListUtils.of("foo", "baz", "qux")));
@@ -69,8 +67,7 @@ public class AuthIndexTest {
                         .addProtocol(Protocol.builder().name("xml").addAuth("qux").build())
                         .build())
                 .build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(service, operation1, operation2, operation3).build();
-        Model model = Model.builder().shapeIndex(index).build();
+        Model model = Model.builder().addShapes(service, operation1, operation2, operation3).build();
         AuthIndex authIndex = model.getKnowledge(AuthIndex.class);
 
         // Use the schemes defined on the shape itself or the schemes of the service.
@@ -98,8 +95,7 @@ public class AuthIndexTest {
                                   .addProtocol(Protocol.builder().name("json").addAuth("foo").build())
                                   .build())
                 .build();
-        ShapeIndex index = ShapeIndex.builder().addShapes(service, operation1).build();
-        Model model = Model.builder().shapeIndex(index).build();
+        Model model = Model.builder().addShapes(service, operation1).build();
         AuthIndex authIndex = model.getKnowledge(AuthIndex.class);
 
         assertThat(authIndex.getOperationSchemes(service, operation1), equalTo(ListUtils.of("none")));

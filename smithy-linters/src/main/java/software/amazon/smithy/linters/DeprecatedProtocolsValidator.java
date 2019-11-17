@@ -63,7 +63,7 @@ public final class DeprecatedProtocolsValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.getShapeIndex().shapes(ServiceShape.class)
+        return model.shapes(ServiceShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, ProtocolsTrait.class))
                 .flatMap(pair -> validateProtocols(pair.getLeft(), pair.getRight()))
                 .collect(Collectors.toList());

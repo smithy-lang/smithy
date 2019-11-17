@@ -44,6 +44,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * invalid state when it is accessed. As such, a {@code ShapeIndex} should be
  * thoroughly validated before it is utilized.
  */
+@Deprecated
 public final class ShapeIndex implements ToSmithyBuilder<ShapeIndex> {
 
     /** A map of shape ID to shapes that backs the shape map. */

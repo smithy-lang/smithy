@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpErrorTrait;
@@ -40,13 +39,13 @@ public final class HttpResponseCodeSemanticsValidator extends AbstractValidator 
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        events.addAll(validateOperations(model.getShapeIndex()));
-        events.addAll(validateErrors(model.getShapeIndex()));
+        events.addAll(validateOperations(model));
+        events.addAll(validateErrors(model));
         return events;
     }
 
-    private List<ValidationEvent> validateOperations(ShapeIndex index) {
-        return index.shapes(OperationShape.class)
+    private List<ValidationEvent> validateOperations(Model model) {
+        return model.shapes(OperationShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, HttpTrait.class))
                 .filter(pair -> pair.getRight().getCode() < 200 || pair.getRight().getCode() >= 300)
                 .map(pair -> invalidOperation(pair.getLeft(), pair.getRight()))
@@ -57,8 +56,8 @@ public final class HttpResponseCodeSemanticsValidator extends AbstractValidator 
         return danger(shape, trait, "Expected an `http` code in the 2xx range, but found " + trait.getCode());
     }
 
-    private List<ValidationEvent> validateErrors(ShapeIndex index) {
-        return index.shapes(StructureShape.class)
+    private List<ValidationEvent> validateErrors(Model model) {
+        return model.shapes(StructureShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, ErrorTrait.class))
                 .flatMap(pair -> OptionalUtils.stream(validateError(pair.getLeft(), pair.getRight())))
                 .collect(Collectors.toList());

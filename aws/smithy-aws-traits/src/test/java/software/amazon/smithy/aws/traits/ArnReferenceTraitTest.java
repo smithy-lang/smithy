@@ -79,8 +79,7 @@ public class ArnReferenceTraitTest {
                 .addImport(getClass().getResource("test-model.json"))
                 .assemble()
                 .unwrap();
-        Shape service = result.getShapeIndex()
-                .getShape(ShapeId.from("ns.foo#AbsoluteResourceArn")).get();
+        Shape service = result.expectShape(ShapeId.from("ns.foo#AbsoluteResourceArn"));
         ArnReferenceTrait trait = service.getTrait(ArnReferenceTrait.class).get();
 
         assertThat(trait.getType(), equalTo(Optional.of("AWS::SomeService::AbsoluteResource")));
