@@ -80,4 +80,10 @@
         <Package name="software.amazon.smithy.openapi"/>
         <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
     </Match>
+
+    <!-- Try with resources is tripping up spotbugs -->
+    <Match>
+        <Class name="software.amazon.smithy.utils.IoUtils"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+    </Match>
 </FindBugsFilter>
