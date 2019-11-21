@@ -16,12 +16,15 @@
 package software.amazon.smithy.build;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -31,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -481,5 +485,43 @@ public class SmithyBuildTest {
         ProjectionResult a = results.getProjectionResult("a").get();
         assertFalse(a.getPluginManifest("model").isPresent());
         assertTrue(a.getPluginManifest("build-info").isPresent());
+    }
+
+    @Test
+    public void throwsWhenErrorsOccur() throws Exception {
+        Path badConfig = Paths.get(getClass().getResource("trigger-plugin-error.json").toURI());
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("simple-model.json"))
+                .assemble()
+                .unwrap();
+
+        RuntimeException canned = new RuntimeException("Hi");
+        Map<String, SmithyBuildPlugin> plugins = new HashMap<>();
+        plugins.put("foo", new SmithyBuildPlugin() {
+            @Override
+            public String getName() {
+                return "foo";
+            }
+
+            @Override
+            public void execute(PluginContext context) {
+                throw canned;
+            }
+        });
+
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+
+        SmithyBuild builder = new SmithyBuild()
+                .model(model)
+                .fileManifestFactory(MockManifest::new)
+                .pluginFactory(composed)
+                .config(SmithyBuildConfig.load(badConfig));
+
+        SmithyBuildException e = Assertions.assertThrows(SmithyBuildException.class, builder::build);
+        assertThat(e.getMessage(), containsString("1 Smithy build projections failed"));
+        assertThat(e.getMessage(), containsString("(exampleProjection): java.lang.RuntimeException: Hi"));
+        assertThat(e.getSuppressed(), equalTo(new Throwable[]{canned}));
     }
 }

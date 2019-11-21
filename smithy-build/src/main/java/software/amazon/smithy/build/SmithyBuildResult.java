@@ -17,6 +17,7 @@ package software.amazon.smithy.build;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -123,7 +124,7 @@ public final class SmithyBuildResult {
      * Creates a SmithyBuildResult.
      */
     public static final class Builder implements SmithyBuilder<SmithyBuildResult> {
-        private final List<ProjectionResult> results = new ArrayList<>();
+        private final List<ProjectionResult> results = Collections.synchronizedList(new ArrayList<>());
 
         private Builder() {}
 
@@ -134,6 +135,9 @@ public final class SmithyBuildResult {
 
         /**
          * Adds a projection result to the builder.
+         *
+         * <p>This method is thread-safe as a synchronized list is updated each
+         * time this is called.
          *
          * @param result Result to add.
          * @return Returns the builder.

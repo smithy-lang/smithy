@@ -20,7 +20,9 @@ import static org.hamcrest.Matchers.containsString;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.SmithyCli;
 
 public class BuildCommandTest {
@@ -35,5 +37,67 @@ public class BuildCommandTest {
         String help = outputStream.toString("UTF-8");
 
         assertThat(help, containsString("Builds"));
+    }
+
+    @Test
+    public void dumpsOutValidationErrorsAndFails() throws Exception {
+        PrintStream out = System.out;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        System.setOut(printStream);
+
+        CliError e = Assertions.assertThrows(CliError.class, () -> {
+            String model = getClass().getResource("unknown-trait.smithy").getPath();
+            SmithyCli.create().configureLogging(true).run("build", model);
+        });
+
+        System.setOut(out);
+        String output = outputStream.toString("UTF-8");
+
+        assertThat(output, containsString("smithy.example#MyString"));
+        assertThat(output, containsString("1 ERROR"));
+        assertThat(e.getMessage(), containsString("The model is invalid"));
+    }
+
+    @Test
+    public void printsSuccessfulProjections() throws Exception {
+        String model = getClass().getResource("valid-model.smithy").getPath();
+
+        PrintStream out = System.out;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        System.setOut(printStream);
+        SmithyCli.create().configureLogging(true).run("build", model);
+        System.setOut(out);
+        String output = outputStream.toString("UTF-8");
+
+        assertThat(output, containsString("Completed projection source"));
+        assertThat(output, containsString("Smithy built "));
+    }
+
+    @Test
+    public void validationFailuresCausedByProjectionsAreDetected() throws Exception {
+        PrintStream out = System.out;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        System.setOut(printStream);
+
+        CliError e = Assertions.assertThrows(CliError.class, () -> {
+            String model = getClass().getResource("valid-model.smithy").getPath();
+            String config = getClass().getResource("projection-build-failure.json").getPath();
+            SmithyCli.create().configureLogging(true).run("build", "--debug", "--config", config, model);
+        });
+
+        System.setOut(out);
+        String output = outputStream.toString("UTF-8");
+
+        assertThat(output, containsString("ResourceLifecycle"));
+        assertThat(e.getMessage(),
+                   containsString("The following 1 Smithy build projection(s) failed: [exampleProjection]"));
+    }
+
+    @Test
+    public void exceptionsThrownByProjectionsAreDetected() {
+        // TODO: need to make a plugin throw an exception
     }
 }

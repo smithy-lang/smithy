@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "projections": {
+    "exampleProjection": {
+      "transforms": [
+        {"name": "excludeTraits", "args": ["readonly"]}
+      ]
+    }
+  }
+}
