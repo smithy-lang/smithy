@@ -17,20 +17,27 @@ package software.amazon.smithy.build;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
@@ -150,46 +157,99 @@ final class SmithyBuildImpl {
         }
     }
 
-    SmithyBuildResult applyAllProjections() {
+    void applyAllProjections(
+            Consumer<ProjectionResult> projectionResultConsumer,
+            BiConsumer<String, Throwable> projectionExceptionConsumer
+    ) {
         Model resolvedModel = createBaseModel();
-        SmithyBuildResult.Builder builder = SmithyBuildResult.builder();
 
-        // The projections are being split up here because we need to be able to break out non-parallelizeable plugins.
-        // Right now the only parallelization that occurs is at the projection level though, which is why the split is
-        // here instead of somewhere else.
-        // TODO: Run all parallelizeable plugins across all projections in parallel, followed by all serial plugins
-        Map<String, ProjectionConfig> serialProjections = new TreeMap<>();
-        Map<String, ProjectionConfig> parallelProjections = new TreeMap<>();
-        config.getProjections().entrySet().stream()
-                .filter(e -> !e.getValue().isAbstract())
-                .filter(e -> projectionFilter.test(e.getKey()))
-                .sorted(Comparator.comparing(Map.Entry::getKey))
-                .forEach(e -> {
-                    // Check to see if any of the plugins in the projection require the projection be run serially
-                    boolean isSerial = resolvePlugins(e.getValue()).keySet().stream().anyMatch(pluginName -> {
-                        Optional<SmithyBuildPlugin> plugin = pluginFactory.apply(pluginName);
-                        return plugin.isPresent() && plugin.get().isSerial();
-                    });
-                    // Only run a projection in parallel if all its plugins are parallelizeable.
-                    if (isSerial) {
-                        serialProjections.put(e.getKey(), e.getValue());
-                    } else {
-                        parallelProjections.put(e.getKey(), e.getValue());
-                    }
+        // The projections are being split up here because we need to be able
+        // to break out non-parallelizeable plugins. Right now the only
+        // parallelization that occurs is at the projection level.
+        List<Callable<Void>> parallelProjections = new ArrayList<>();
+        List<String> parallelProjectionNameOrder = new ArrayList<>();
+
+        for (Map.Entry<String, ProjectionConfig> entry : config.getProjections().entrySet()) {
+            String name = entry.getKey();
+            ProjectionConfig config = entry.getValue();
+
+            if (config.isAbstract() || !projectionFilter.test(name)) {
+                continue;
+            }
+
+            // Check to see if any of the plugins in the projection require the projection be run serially
+            boolean isSerial = resolvePlugins(config).keySet().stream().anyMatch(pluginName -> {
+                Optional<SmithyBuildPlugin> plugin = pluginFactory.apply(pluginName);
+                return plugin.isPresent() && plugin.get().isSerial();
+            });
+
+            if (isSerial) {
+                executeSerialProjection(resolvedModel, name, config,
+                                        projectionResultConsumer, projectionExceptionConsumer);
+            } else {
+                parallelProjectionNameOrder.add(name);
+                parallelProjections.add(() -> {
+                    ProjectionResult projectionResult = applyProjection(name, config, resolvedModel);
+                    projectionResultConsumer.accept(projectionResult);
+                    return null;
                 });
+            }
+        }
 
-        serialProjections.entrySet().stream()
-                .map(e -> applyProjection(e.getKey(), e.getValue(), resolvedModel))
-                .collect(Collectors.toList())
-                .forEach(builder::addProjectionResult);
+        if (!parallelProjections.isEmpty()) {
+            executeParallelProjections(parallelProjections, parallelProjectionNameOrder, projectionExceptionConsumer);
+        }
+    }
 
-        parallelProjections.entrySet().stream()
-                .parallel()
-                .map(e -> applyProjection(e.getKey(), e.getValue(), resolvedModel))
-                .collect(Collectors.toList())
-                .forEach(builder::addProjectionResult);
+    private void executeSerialProjection(
+            Model resolvedModel,
+            String name,
+            ProjectionConfig config,
+            Consumer<ProjectionResult> projectionResultConsumer,
+            BiConsumer<String, Throwable> projectionExceptionConsumer
+    ) {
+        // Errors that occur while invoking the result callback must not
+        // cause the exception callback to be invoked.
+        ProjectionResult result = null;
 
-        return builder.build();
+        try {
+            result = applyProjection(name, config, resolvedModel);
+        } catch (Throwable e) {
+            projectionExceptionConsumer.accept(name, e);
+        }
+
+        if (result != null) {
+            projectionResultConsumer.accept(result);
+        }
+    }
+
+    private void executeParallelProjections(
+            List<Callable<Void>> parallelProjections,
+            List<String> parallelProjectionNameOrder,
+            BiConsumer<String, Throwable> projectionExceptionConsumer
+    ) {
+        // Except for writing files to disk, projections are mostly CPU bound.
+        int numberOfCores = Runtime.getRuntime().availableProcessors();
+        ExecutorService executor = Executors.newFixedThreadPool(numberOfCores);
+
+        try {
+            List<Future<Void>> futures = executor.invokeAll(parallelProjections);
+            executor.shutdown();
+            // Futures are returned in the same order they were added, so
+            // use the list of ordered names to know which projections failed.
+            for (int i = 0; i < futures.size(); i++) {
+                try {
+                    futures.get(i).get();
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause() != null ? e.getCause() : e;
+                    String failedProjectionName = parallelProjectionNameOrder.get(i);
+                    projectionExceptionConsumer.accept(failedProjectionName, cause);
+                }
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+            throw new SmithyBuildException(e.getMessage(), e);
+        }
     }
 
     private Model createBaseModel() {

@@ -19,9 +19,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -89,16 +93,69 @@ public final class SmithyBuild {
     /**
      * Builds the model and applies all projections.
      *
+     * <p>This method loads all projections, projected models, and their
+     * results into memory so that a {@link SmithyBuildResult} can be
+     * returned. See {@link #build(Consumer, BiConsumer)} for a streaming
+     * approach that uses callbacks and does not load all projections into
+     * memory at once.
+     *
+     * <p>Errors are aggregated together into a single
+     * {@link SmithyBuildException} that contains an aggregated error
+     * message and each encountered exception is registered to the aggregate
+     * exception through {@link Throwable#addSuppressed(Throwable)}.
+     *
+     * @return Returns the result of building the model.
+     * @throws IllegalStateException if a {@link SmithyBuildConfig} is not set.
+     * @throws SmithyBuildException if the build fails.
+     * @see #build(Consumer, BiConsumer)
+     */
+    public SmithyBuildResult build() {
+        SmithyBuildResult.Builder resultBuilder = SmithyBuildResult.builder();
+        Map<String, Throwable> errors = Collections.synchronizedMap(new TreeMap<>());
+        build(resultBuilder::addProjectionResult, errors::put);
+
+        if (!errors.isEmpty()) {
+            StringBuilder message = new StringBuilder();
+            message.append(errors.size()).append(" Smithy build projections failed.");
+            message.append(System.lineSeparator()).append(System.lineSeparator());
+
+            for (Map.Entry<String, Throwable> e : errors.entrySet()) {
+                message.append("(").append(e.getKey()).append("): ")
+                        .append(e.getValue())
+                        .append(System.lineSeparator());
+            }
+
+            SmithyBuildException buildException = new SmithyBuildException(message.toString());
+            errors.values().forEach(buildException::addSuppressed);
+            throw buildException;
+        }
+
+        return resultBuilder.build();
+    }
+
+    /**
+     * Builds the model and applies all projections, passing each
+     * {@link ProjectionResult} to the provided callback as they are
+     * completed and each encountered exception to the provided
+     * {@code exceptionCallback} as they are encountered.
+     *
+     * <p>This method differs from {@link #build()} in that it does not
+     * require every projection and projection result to be loaded into
+     * memory.
+     *
      * <p>The result each projection is placed in the outputDirectory.
      * A {@code [projection]-build-info.json} file is created in the output
      * directory. A directory is created for each projection using the
      * projection name, and a file named model.json is place in each directory.
      *
-     * @return Returns the result of building the model.
+     * @param resultCallback A thread-safe callback that receives projection
+     *   results as they complete.
+     * @param exceptionCallback A thread-safe callback that receives the name
+     *   of each failed projection and the exception that occurred.
      * @throws IllegalStateException if a {@link SmithyBuildConfig} is not set.
      */
-    public SmithyBuildResult build() {
-        return new SmithyBuildImpl(this).applyAllProjections();
+    public void build(Consumer<ProjectionResult> resultCallback, BiConsumer<String, Throwable> exceptionCallback) {
+        new SmithyBuildImpl(this).applyAllProjections(resultCallback, exceptionCallback);
     }
 
     /**

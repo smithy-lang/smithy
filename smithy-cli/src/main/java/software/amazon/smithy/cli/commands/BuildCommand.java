@@ -19,11 +19,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
+import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.build.ProjectionResult;
 import software.amazon.smithy.build.SmithyBuild;
-import software.amazon.smithy.build.SmithyBuildResult;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
@@ -33,6 +39,7 @@ import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 
 public final class BuildCommand implements Command {
@@ -112,15 +119,27 @@ public final class BuildCommand implements Command {
         // Register sources with the builder.
         models.forEach(path -> smithyBuild.registerSources(Paths.get(path)));
 
-        SmithyBuildResult smithyBuildResult = smithyBuild.build();
+        ResultConsumer resultConsumer = new ResultConsumer();
+        smithyBuild.build(resultConsumer, resultConsumer);
 
-        // Fail if any projections failed to build, but build all projections.
-        if (smithyBuildResult.anyBroken()) {
-            throw new CliError("One or more projections contained ERROR or unsuppressed DANGER events");
+        // Always print out the status of the successful projections.
+        Colors color = resultConsumer.failedProjections.isEmpty()
+                ? Colors.BRIGHT_BOLD_GREEN
+                : Colors.BRIGHT_BOLD_YELLOW;
+        Colors.out(color, String.format(
+                "Smithy built %s projection(s), %s plugin(s), and %s artifacts",
+                resultConsumer.projectionCount,
+                resultConsumer.pluginCount,
+                resultConsumer.artifactCount));
+
+        // Throw an exception if any errors occurred.
+        if (!resultConsumer.failedProjections.isEmpty()) {
+            resultConsumer.failedProjections.sort(String::compareTo);
+            throw new CliError(String.format(
+                    "The following %d Smithy build projection(s) failed: %s",
+                    resultConsumer.failedProjections.size(),
+                    resultConsumer.failedProjections));
         }
-
-        Colors.out(Colors.BRIGHT_BOLD_GREEN, "Smithy build successfully generated the following artifacts");
-        smithyBuildResult.allArtifacts().map(Path::toString).sorted().forEach(System.out::println);
     }
 
     private ValidatedResult<Model> buildModel(ClassLoader classLoader, List<String> models, Arguments arguments) {
@@ -131,5 +150,58 @@ public final class BuildCommand implements Command {
         ValidatedResult<Model> result = assembler.assemble();
         Validator.validate(result, true);
         return result;
+    }
+
+    private static final class ResultConsumer implements Consumer<ProjectionResult>, BiConsumer<String, Throwable> {
+        List<String> failedProjections = Collections.synchronizedList(new ArrayList<>());
+        AtomicInteger artifactCount = new AtomicInteger();
+        AtomicInteger pluginCount = new AtomicInteger();
+        AtomicInteger projectionCount = new AtomicInteger();
+
+        @Override
+        public void accept(String name, Throwable exception) {
+            failedProjections.add(name);
+            StringBuilder message = new StringBuilder(
+                    String.format("%nProjection %s failed: %s%n", name, exception.toString()));
+
+            for (StackTraceElement element : exception.getStackTrace()) {
+                message.append(element).append(System.lineSeparator());
+            }
+
+            System.out.println(message);
+        }
+
+        @Override
+        public void accept(ProjectionResult result) {
+            if (result.isBroken()) {
+                // Write out validation errors as they occur.
+                failedProjections.add(result.getProjectionName());
+                StringBuilder message = new StringBuilder(System.lineSeparator());
+                message.append(result.getProjectionName())
+                        .append(" has a model that failed validation")
+                        .append(System.lineSeparator());
+                result.getEvents().forEach(event -> {
+                    if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
+                        message.append(event).append(System.lineSeparator());
+                    }
+                });
+                Colors.out(Colors.RED, message.toString());
+            } else {
+                // Only increment the projection count if it succeeded.
+                projectionCount.incrementAndGet();
+            }
+
+            pluginCount.addAndGet(result.getPluginManifests().size());
+
+            // Get the base directory of the projection.
+            Iterator<FileManifest> manifestIterator = result.getPluginManifests().values().iterator();
+            Path root = manifestIterator.hasNext() ? manifestIterator.next().getBaseDir().getParent() : null;
+            Colors.out(Colors.GREEN, String.format("Completed projection %s: %s", result.getProjectionName(), root));
+
+            // Increment the total number of artifacts written.
+            for (FileManifest manifest : result.getPluginManifests().values()) {
+                artifactCount.addAndGet(manifest.getFiles().size());
+            }
+        }
     }
 }
