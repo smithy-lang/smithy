@@ -18,7 +18,6 @@ package software.amazon.smithy.model.loader;
 import java.util.List;
 import java.util.function.Supplier;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.node.DefaultNodeFactory;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -67,7 +66,7 @@ interface ModelLoader {
      */
     static ModelLoader createDefaultLoader() {
         ModelLoader delegate = ModelLoader.composeLoaders(ListUtils.of(
-                new NodeModelLoader(new DefaultNodeFactory()),
+                JsonModelLoader.INSTANCE,
                 new SmithyModelLoader()));
         return recoveringModelLoader(new JarModelLoader(delegate));
     }

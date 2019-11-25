@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import software.amazon.smithy.utils.SetUtils;
@@ -85,6 +86,13 @@ public abstract class EntityShape extends Shape {
         private final Set<ShapeId> operations = new HashSet<>();
 
         @SuppressWarnings("unchecked")
+        public B operations(Collection<ShapeId> ids) {
+            clearOperations();
+            operations.addAll(ids);
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
         public B addOperation(ToShapeId id) {
             operations.add(id.toShapeId());
             return (B) this;
@@ -104,6 +112,13 @@ public abstract class EntityShape extends Shape {
         @SuppressWarnings("unchecked")
         public B clearOperations() {
             operations.clear();
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B resources(Collection<ShapeId> ids) {
+            clearResources();
+            resources.addAll(ids);
             return (B) this;
         }
 

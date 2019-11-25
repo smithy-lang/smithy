@@ -17,12 +17,9 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.TreeMap;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,13 +58,21 @@ public final class ModelSerializer {
     }
 
     public ObjectNode serialize(Model model) {
-        return Node.objectNode()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withMember("smithy", Node.from(Model.MODEL_VERSION))
-                .withOptionalMember("metadata", createMetadata(model).map(Node::withDeepSortedKeys))
-                .merge(createNamespaces(model).entrySet().stream()
-                        .collect(ObjectNode.collectStringKeys(
-                                Map.Entry::getKey,
-                                entry -> createNamespaceNode(entry.getValue()))));
+                .withOptionalMember("metadata", createMetadata(model).map(Node::withDeepSortedKeys));
+
+        ObjectNode.Builder shapesBuilder = Node.objectNodeBuilder();
+        model.shapes()
+                // Members are serialized inside of other shapes, so filter them out.
+                .filter(FunctionalUtils.not(Shape::isMemberShape))
+                .filter(shapeFilter)
+                .map(shape -> Pair.of(shape, shape.accept(shapeSerializer)))
+                .sorted(Comparator.comparing(pair -> pair.getLeft().getId().getName()))
+                .forEach(pair -> shapesBuilder.withMember(pair.getLeft().getId().toString(), pair.getRight()));
+
+        builder.withMember("shapes", shapesBuilder.build());
+        return builder.build();
     }
 
     private Optional<Node> createMetadata(Model model) {
@@ -76,39 +81,6 @@ public final class ModelSerializer {
                 .filter(entry -> metadataFilter.test(entry.getKey()))
                 .collect(Collectors.toMap(entry -> Node.from(entry.getKey()), Map.Entry::getValue));
         return metadata.isEmpty() ? Optional.empty() : Optional.of(new ObjectNode(metadata, SourceLocation.NONE));
-    }
-
-    private ObjectNode createNamespaceNode(List<Shape> shapes) {
-        ObjectNode.Builder builder = Node.objectNodeBuilder();
-
-        if (!shapes.isEmpty()) {
-            builder.withMember("shapes", shapes.stream()
-                    // Members are serialized inside of other shapes, so filter them out.
-                    .filter(FunctionalUtils.not(Shape::isMemberShape))
-                    .map(shape -> Pair.of(shape, shape.accept(shapeSerializer)))
-                    .sorted(Comparator.comparing(pair -> pair.getLeft().getId().getName()))
-                    .collect(ObjectNode.collectStringKeys(pair -> pair.getLeft().getId().getName(), Pair::getRight)));
-        }
-
-        return builder.build();
-    }
-
-    /**
-     * Groups shapes into namespaces.
-     *
-     * @param model Model to compute namespaces from.
-     * @return Returns the grouped namespaces.
-     */
-    private TreeMap<String, List<Shape>> createNamespaces(Model model) {
-        Map<String, List<Shape>> shapes = model.shapes()
-                .filter(shapeFilter)
-                .collect(Collectors.groupingBy(s -> s.getId().getNamespace()));
-
-        // Sort the namespaces, and group shapes+traits into Namespaces.
-        return shapes.keySet().stream()
-                .sorted()
-                // Note that it's impossible to encounter duplicate keys.
-                .collect(Collectors.toMap(Function.identity(), shapes::get, (a, b) -> a, TreeMap::new));
     }
 
     /**
@@ -170,15 +142,23 @@ public final class ModelSerializer {
     }
 
     private final class ShapeSerializer extends ShapeVisitor.Default<Node> {
+
         private ObjectNode createTypedNode(Shape shape) {
             return Node.objectNode().withMember("type", Node.from(shape.getType().toString()));
         }
 
         private ObjectNode withTraits(Shape shape, ObjectNode node) {
-            return node.merge(shape.getAllTraits().values().stream()
+            if (shape.getAllTraits().isEmpty()) {
+                return node;
+            }
+
+            ObjectNode.Builder builder = Node.objectNodeBuilder();
+            shape.getAllTraits().values().stream()
                     .filter(traitFilter)
                     .sorted(Comparator.comparing(Trait::toShapeId))
-                    .collect(ObjectNode.collectStringKeys(trait -> trait.toShapeId().toString(), Trait::toNode)));
+                    .forEach(trait -> builder.withMember(trait.toShapeId().toString(), trait.toNode()));
+
+            return node.withMember("traits", builder.build());
         }
 
         @Override
@@ -207,56 +187,51 @@ public final class ModelSerializer {
 
         @Override
         public Node operationShape(OperationShape shape) {
-            ShapeId id = shape.getId();
             return withTraits(shape, createTypedNode(shape)
-                    .withOptionalMember("input", shape.getInput().map(target -> serializeShapeId(id, target)))
-                    .withOptionalMember("output", shape.getOutput().map(target -> serializeShapeId(id, target)))
-                    .withOptionalMember("errors", createOptionalIdList(id, shape.getErrors())));
+                    .withOptionalMember("input", shape.getInput().map(this::serializeReference))
+                    .withOptionalMember("output", shape.getOutput().map(this::serializeReference))
+                    .withOptionalMember("errors", createOptionalIdList(shape.getErrors())));
         }
 
         @Override
         public Node resourceShape(ResourceShape shape) {
-            ShapeId id = shape.getId();
-
             Optional<Node> identifiers = Optional.empty();
             if (shape.hasIdentifiers()) {
                 Stream<Map.Entry<String, ShapeId>> ids = shape.getIdentifiers().entrySet().stream();
                 identifiers = Optional.of(ids.collect(ObjectNode.collectStringKeys(
                         Map.Entry::getKey,
-                        entry -> serializeShapeId(id, entry.getValue()))));
+                        entry -> serializeReference(entry.getValue()))));
             }
 
             return withTraits(shape, createTypedNode(shape)
                     .withOptionalMember("identifiers", identifiers)
-                    .withOptionalMember("put", shape.getPut().map(target -> serializeShapeId(id, target)))
-                    .withOptionalMember("create", shape.getCreate().map(target -> serializeShapeId(id, target)))
-                    .withOptionalMember("read", shape.getRead().map(target -> serializeShapeId(id, target)))
-                    .withOptionalMember("update", shape.getUpdate().map(target -> serializeShapeId(id, target)))
-                    .withOptionalMember("delete", shape.getDelete().map(target -> serializeShapeId(id, target)))
-                    .withOptionalMember("list", shape.getList().map(target -> serializeShapeId(id, target)))
-                    .withOptionalMember("operations", createOptionalIdList(id, shape.getOperations()))
-                    .withOptionalMember("collectionOperations",
-                                        createOptionalIdList(id, shape.getCollectionOperations()))
-                    .withOptionalMember("resources", createOptionalIdList(id, shape.getResources())));
+                    .withOptionalMember("put", shape.getPut().map(this::serializeReference))
+                    .withOptionalMember("create", shape.getCreate().map(this::serializeReference))
+                    .withOptionalMember("read", shape.getRead().map(this::serializeReference))
+                    .withOptionalMember("update", shape.getUpdate().map(this::serializeReference))
+                    .withOptionalMember("delete", shape.getDelete().map(this::serializeReference))
+                    .withOptionalMember("list", shape.getList().map(this::serializeReference))
+                    .withOptionalMember("operations", createOptionalIdList(shape.getOperations()))
+                    .withOptionalMember("collectionOperations", createOptionalIdList(shape.getCollectionOperations()))
+                    .withOptionalMember("resources", createOptionalIdList(shape.getResources())));
         }
 
         @Override
         public Node serviceShape(ServiceShape shape) {
-            ShapeId id = shape.getId();
             return withTraits(shape, createTypedNode(shape)
                     .withMember("version", Node.from(shape.getVersion()))
-                    .withOptionalMember("operations", createOptionalIdList(id, shape.getOperations()))
-                    .withOptionalMember("resources", createOptionalIdList(id, shape.getResources())));
+                    .withOptionalMember("operations", createOptionalIdList(shape.getOperations()))
+                    .withOptionalMember("resources", createOptionalIdList(shape.getResources())));
         }
 
-        private Optional<Node> createOptionalIdList(ShapeId currentNamespace, Collection<ShapeId> list) {
+        private Optional<Node> createOptionalIdList(Collection<ShapeId> list) {
             if (list.isEmpty()) {
                 return Optional.empty();
             }
 
             Node result = list.stream()
-                    .map(id -> serializeShapeId(currentNamespace, id))
-                    .sorted(Comparator.comparing(StringNode::getValue))
+                    .sorted()
+                    .map(this::serializeReference)
                     .collect(ArrayNode.collect());
             return Optional.of(result);
         }
@@ -283,15 +258,11 @@ public final class ModelSerializer {
 
         @Override
         public Node memberShape(MemberShape shape) {
-            Node target = serializeShapeId(shape.getContainer(), shape.getTarget());
-            return withTraits(shape, Node.objectNode().withMember("target", target));
+            return withTraits(shape, serializeReference(shape.getTarget()));
         }
 
-        private StringNode serializeShapeId(ShapeId currentNamespace, ShapeId id) {
-            String target = currentNamespace.getNamespace().equals(id.getNamespace())
-                    ? id.asRelativeReference()
-                    : id.toString();
-            return Node.from(target);
+        private ObjectNode serializeReference(ShapeId id) {
+            return Node.objectNode().withMember("$target", id.toString());
         }
     }
 }

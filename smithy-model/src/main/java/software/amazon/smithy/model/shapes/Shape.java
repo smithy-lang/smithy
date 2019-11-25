@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -56,31 +57,30 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      */
     @SuppressWarnings("unchecked")
     Shape(AbstractShapeBuilder builder, boolean expectMemberSegments) {
-        id = validateShapeId(getType(), SmithyBuilder.requiredState("id", builder.id), expectMemberSegments);
-        source = builder.source;
-        traits = MapUtils.copyOf(builder.traits);
         type = builder.getShapeType();
+        source = builder.source;
+        id = SmithyBuilder.requiredState("id", builder.id);
+        traits = MapUtils.copyOf(builder.traits);
+        validateShapeId(expectMemberSegments);
     }
 
     /**
      * Validates that a shape ID has or does not have a member.
      *
-     * @param type Shape type being validated.
-     * @param shapeId Shape ID to validate.
      * @param expectMember Whether or not a member is expected.
-     * @return returns the given shape ID.
      */
-    private static ShapeId validateShapeId(ShapeType type, ShapeId shapeId, boolean expectMember) {
+    private void validateShapeId(boolean expectMember) {
         if (expectMember) {
-            if (!shapeId.getMember().isPresent()) {
-                throw new IllegalArgumentException(String.format(
-                        "Shapes of type `%s` must contain a member in their shape ID. Found `%s`", type, shapeId));
+            if (!getId().getMember().isPresent()) {
+                throw new SourceException(String.format(
+                        "Shapes of type `%s` must contain a member in their shape ID. Found `%s`",
+                        getType(), getId()), getSourceLocation());
             }
-        } else if (shapeId.getMember().isPresent()) {
-            throw new IllegalArgumentException(String.format(
-                    "Shapes of type `%s` cannot contain a member in their shape ID. Found `%s`", type, shapeId));
+        } else if (getId().getMember().isPresent()) {
+            throw new SourceException(String.format(
+                    "Shapes of type `%s` cannot contain a member in their shape ID. Found `%s`",
+                    getType(), getId()), getSourceLocation());
         }
-        return shapeId;
     }
 
     /**

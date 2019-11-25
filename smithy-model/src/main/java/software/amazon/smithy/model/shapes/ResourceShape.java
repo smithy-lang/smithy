@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -276,6 +277,12 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
             return this;
         }
 
+        public Builder collectionOperations(Collection<ShapeId> ids) {
+            clearCollectionOperations();
+            collectionOperations.addAll(ids);
+            return this;
+        }
+
         public Builder addCollectionOperation(ToShapeId id) {
             collectionOperations.add(id.toShapeId());
             return this;
@@ -290,7 +297,7 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
             return this;
         }
 
-        public Builder clearCollectionOperations(ToShapeId id) {
+        public Builder clearCollectionOperations() {
             collectionOperations.clear();
             return this;
         }

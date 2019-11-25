@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -43,6 +44,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuilder<ReferencesTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#references");
+    private static final Logger LOGGER = Logger.getLogger(ReferencesTrait.class.getName());
 
     private final List<Reference> references;
 
@@ -270,9 +272,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
         private static Reference referenceFromNode(String namespace, ObjectNode referenceProperties) {
             return Reference.builder()
-                    .resource(referenceProperties
-                                      .expectStringMember("resource")
-                                      .expectShapeId(namespace))
+                    .resource(loadShapeId(namespace, referenceProperties.expectStringMember("resource")))
                     .ids(referenceProperties.getObjectMember("ids")
                                  .map(obj -> obj.getMembers().entrySet().stream()
                                          .map(entry -> Pair.of(
@@ -282,12 +282,20 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
                                  .orElseGet(Collections::emptyMap))
                     .service(referenceProperties
                                      .getStringMember("service")
-                                     .map(string -> string.expectShapeId(namespace))
+                                     .map(s -> loadShapeId(namespace, s))
                                      .orElse(null))
                     .rel(referenceProperties.getStringMember("rel")
                                  .map(StringNode::getValue)
                                  .orElse(null))
                     .build();
+        }
+
+        private static ShapeId loadShapeId(String namespace, StringNode string) {
+            if (!string.getValue().contains("#")) {
+                LOGGER.warning("@references traits should use absolute references. Support for relative references "
+                               + "will be removed in future versions of Smithy: " + string.getSourceLocation());
+            }
+            return string.expectShapeId(namespace);
         }
     }
 }

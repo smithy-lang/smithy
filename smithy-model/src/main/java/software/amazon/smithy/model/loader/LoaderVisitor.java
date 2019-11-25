@@ -57,7 +57,6 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * rather than logic around duplication detection, trait loading, etc.
  */
 final class LoaderVisitor {
-    private static final String[] SUPPORTED_VERSION_PARTS = Model.MODEL_VERSION.split("\\.");
     private static final Logger LOGGER = Logger.getLogger(LoaderVisitor.class.getName());
     private static final TraitDefinition.Provider TRAIT_DEF_PROVIDER = new TraitDefinition.Provider();
 
@@ -66,12 +65,6 @@ final class LoaderVisitor {
 
     /** Nullable version that was defined. */
     private String smithyVersion;
-
-    /** Nullable version that was defined parsed into parts. */
-    private String[] smithyVersionParts;
-
-    /** Where the version was first defined. */
-    private SourceLocation versionSourceLocation;
 
     /** Factory used to create traits. */
     private final TraitFactory traitFactory;
@@ -229,8 +222,6 @@ final class LoaderVisitor {
      * @param resolver The consumer to invoke once the shape ID is resolved.
      */
     public void onShapeTarget(String target, FromSourceLocation sourceLocation, Consumer<ShapeId> resolver) {
-        assertNamespaceIsPresent(SourceLocation.none());
-
         try {
             ShapeId expectedId = ShapeId.fromOptionalNamespace(namespace, target);
             if (namespace.equals(Prelude.NAMESPACE) || hasDefinedShape(expectedId) || target.contains("#")) {
@@ -296,77 +287,16 @@ final class LoaderVisitor {
      * @param smithyVersion Version to set.
      */
     public void onVersion(SourceLocation sourceLocation, String smithyVersion) {
-        // Optimized case of an exact match.
-        if (this.smithyVersion != null && this.smithyVersion.equals(smithyVersion)) {
-            return;
-        }
-
-        String[] versionParts = smithyVersion.split("\\.");
-        validateVersionNumber(sourceLocation, versionParts);
-
-        if (this.smithyVersion != null && !areVersionsCompatible(smithyVersionParts, versionParts)) {
-            throw new SourceException(format(
-                    "Cannot set Smithy version to `%s` because it was previously set to an incompatible version "
-                    + "`%s` in %s", smithyVersion, this.smithyVersion, versionSourceLocation), sourceLocation);
-        }
-
-        if (!isSupportedVersion(versionParts)) {
-            throw new SourceException(
-                    format("Invalid Smithy version provided: `%s`. Expected a version compatible with the tooling "
-                           + "version of `%s`. Perhaps you need to update your version of Smithy?",
-                           String.join(".", versionParts), Model.MODEL_VERSION),
-                    sourceLocation);
-        }
-
-        this.smithyVersion = smithyVersion;
-        this.smithyVersionParts = versionParts;
-        this.versionSourceLocation = sourceLocation;
-
-        validateState(sourceLocation);
-    }
-
-    private static void validateVersionNumber(SourceLocation sourceLocation, String[] versionParts) {
-        // We require at least 2 but a maximum of 3 segments (e.g., "1.0", and "1.0.0" are equal).
-        if (versionParts.length < 2 || versionParts.length > 3) {
-            throw new SourceException(
-                    "Smithy version number should have 2 or 3 parts: "
-                    + String.join(".", versionParts), sourceLocation);
-        }
-
-        for (String part : versionParts) {
-            if (part.isEmpty()) {
-                throw new SourceException("Invalid Smithy version number: "
-                                          + String.join(".", versionParts), sourceLocation);
-            }
-            for (int i = 0; i < part.length(); i++) {
-                if (!Character.isDigit(part.charAt(i))) {
-                    throw new SourceException(
-                            "Invalid Smithy version number: " + String.join(".", versionParts), sourceLocation);
-                }
+        for (SmithyVersion version : SmithyVersion.values()) {
+            if (version.value.equals(smithyVersion)) {
+                this.smithyVersion = smithyVersion;
+                validateState(sourceLocation);
+                return;
             }
         }
-    }
 
-    private static boolean areVersionsCompatible(String[] left, String[] right) {
-        if (!left[0].equals(right[0])) {
-            return false;
-        }
-
-        // A major version of "1" or higher are equal at this point.
-        // A major version of "0" must also check the minor version.
-        return !left[0].equals("0") || left[1].equals(right[1]);
-    }
-
-    private static boolean isSupportedVersion(String[] version) {
-        // First ensure that the version is in the same range.
-        if (!areVersionsCompatible(SUPPORTED_VERSION_PARTS, version)) {
-            return false;
-        }
-
-        // Next ensure that the version does not exceed the latest known
-        // minor version of the model.
-        return version[1].equals(SUPPORTED_VERSION_PARTS[1])
-               || Integer.parseInt(version[1]) < Integer.parseInt(SUPPORTED_VERSION_PARTS[1]);
+        String message = format("Invalid Smithy version number: %s", smithyVersion);
+        throw new SourceException(message, sourceLocation);
     }
 
     private void validateState(FromSourceLocation sourceLocation) {
@@ -398,6 +328,8 @@ final class LoaderVisitor {
      * <p>This method ensures a namespace has been set, the syntax is valid,
      * and that the name does not conflict with any previously defined use
      * statements.
+     *
+     * <p>This method has no side-effects.
      *
      * @param name Name being defined.
      * @param source The location of where it is defined.
@@ -501,24 +433,37 @@ final class LoaderVisitor {
      * if the trait name is not absolute.
      *
      * @param target Shape to add the trait to.
-     * @param traitName Fully-qualified trait name to add.
+     * @param traitName Trait name to add.
      * @param traitValue Trait value as a Node object.
      */
     public void onTrait(ShapeId target, String traitName, Node traitValue) {
-        onShapeTarget(traitName, traitValue.getSourceLocation(), id -> {
-            // Special handling for the loading of trait definitions. These need to be
-            // loaded first before other traits can be resolved.
-            if (id.equals(TraitDefinition.ID)) {
-                TraitDefinition traitDef = TRAIT_DEF_PROVIDER.createTrait(target, traitValue);
-                // Register this as a trait definition to resolve against pending traits.
-                onTraitDefinition(target, traitDef);
-                // Add the definition trait to the shape.
-                onTrait(target, traitDef);
-            } else {
-                PendingTrait pendingTrait = new PendingTrait(id, traitValue);
-                pendingTraits.computeIfAbsent(target, targetId -> new ArrayList<>()).add(pendingTrait);
-            }
-        });
+        onShapeTarget(traitName, traitValue.getSourceLocation(), id -> onTrait(target, id, traitValue));
+    }
+
+    /**
+     * Adds a trait to a shape.
+     *
+     * <p>Resolving the trait against a trait definition is deferred until
+     * the entire model is loaded. A namespace is required to have been set
+     * if the trait name is not absolute.
+     *
+     * @param target Shape to add the trait to.
+     * @param trait SHape ID of the trait to add.
+     * @param traitValue Trait value as a Node object.
+     */
+    public void onTrait(ShapeId target, ShapeId trait, Node traitValue) {
+        // Special handling for the loading of trait definitions. These need to be
+        // loaded first before other traits can be resolved.
+        if (trait.equals(TraitDefinition.ID)) {
+            TraitDefinition traitDef = TRAIT_DEF_PROVIDER.createTrait(target, traitValue);
+            // Register this as a trait definition to resolve against pending traits.
+            onTraitDefinition(target, traitDef);
+            // Add the definition trait to the shape.
+            onTrait(target, traitDef);
+        } else {
+            PendingTrait pendingTrait = new PendingTrait(trait, traitValue);
+            pendingTraits.computeIfAbsent(target, targetId -> new ArrayList<>()).add(pendingTrait);
+        }
     }
 
     /**
@@ -588,7 +533,7 @@ final class LoaderVisitor {
     public ValidatedResult<Model> onEnd() {
         validateState(SourceLocation.NONE);
         calledOnEnd = true;
-        Model.Builder modelBuilder = Model.builder().smithyVersion(smithyVersion).metadata(metadata);
+        Model.Builder modelBuilder = Model.builder().metadata(metadata);
 
         finalizeShapeTargets();
         finalizePendingTraits();
@@ -779,13 +724,12 @@ final class LoaderVisitor {
     }
 
     private ShapeType determineTraitDefinitionType(ShapeId traitId) {
+        assert pendingShapes.containsKey(traitId) || builtShapes.containsKey(traitId);
+
         if (pendingShapes.containsKey(traitId)) {
             return pendingShapes.get(traitId).getShapeType();
-        } else if (builtShapes.containsKey(traitId)) {
-            return builtShapes.get(traitId).getType();
         } else {
-            // This should be unreachable.
-            throw new IllegalStateException("Trait definition trait is applied to a non-existent shape: " + traitId);
+            return builtShapes.get(traitId).getType();
         }
     }
 

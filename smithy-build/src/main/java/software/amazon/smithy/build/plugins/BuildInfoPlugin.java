@@ -66,7 +66,6 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
     private static Node serializeBuildInfo(PluginContext context) {
         return Node.objectNodeBuilder()
                 .withMember("version", Node.from(BUILD_INFO_VERSION))
-                .withMember("smithyVersion", Node.from(context.getModel().getSmithyVersion()))
                 .withMember("projectionName", Node.from(context.getProjectionName()))
                 .withMember("projection", context.getProjection().get().toNode())
                 .withMember("validationEvents", context.getEvents().stream()

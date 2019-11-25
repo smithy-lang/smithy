@@ -229,10 +229,11 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      */
     public static ShapeId fromOptionalNamespace(String defaultNamespace, String shapeName) {
         Objects.requireNonNull(shapeName, "Shape name must not be null");
-        Objects.requireNonNull(defaultNamespace, "Default namespace must not be null");
-        return shapeName.contains("#")
-               ? ShapeId.from(shapeName)
-               : fromRelative(defaultNamespace, shapeName);
+        if (defaultNamespace == null || shapeName.contains("#")) {
+            return ShapeId.from(shapeName);
+        } else {
+            return fromRelative(defaultNamespace, shapeName);
+        }
     }
 
     /**
