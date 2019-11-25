@@ -67,8 +67,8 @@ The following is an example ``smithy-build.json`` configuration:
                 "projection-name": {
                     "imports": ["projection-specific-imports/"],
                     "transforms": [
-                        {"name": "excludeShapesByTag", "arguments": ["internal", "beta", "..."]},
-                        {"name": "excludeTraitsByTag", "arguments": ["internal"]}
+                        {"name": "excludeShapesByTag", "args": ["internal", "beta", "..."]},
+                        {"name": "excludeTraitsByTag", "args": ["internal"]}
                     ],
                     "plugins": {
                         "plugin-name": {
@@ -178,7 +178,7 @@ A transform accepts the following configuration:
     * - name
       - ``string``
       - The required name of the transform.
-    * - arguments
+    * - args
       - ``string[]``
       - Provides a list of arguments to pass to the transform.
 
@@ -210,7 +210,7 @@ projections are applied in the order provided. No cycles are allowed in
                     "imports": ["projection-specific-imports/"],
                     "transforms": [
                         {"name": "baz"},
-                        {"name": "apply", "arguments": ["my-abstract-projection"]},
+                        {"name": "apply", "args": ["my-abstract-projection"]},
                         {"name": "bar"}
                     ]
                 }
@@ -237,7 +237,7 @@ the :ref:`tags trait <tags-trait>`.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "excludeByTag", "arguments": ["foo", "baz"]}
+                        {"name": "excludeByTag", "args": ["foo", "baz"]}
                     ]
                 }
             }
@@ -267,7 +267,7 @@ via the :ref:`tags trait <tags-trait>`.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeByTag", "arguments": ["foo", "baz"]}
+                        {"name": "includeByTag", "args": ["foo", "baz"]}
                     ]
                 }
             }
@@ -295,7 +295,7 @@ Note that this does not filter out traits based on namespaces.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeNamespaces", "arguments": ["com.foo.bar", "my.api"]}
+                        {"name": "includeNamespaces", "args": ["com.foo.bar", "my.api"]}
                     ]
                 }
             }
@@ -323,7 +323,7 @@ service shape IDs.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeServices", "arguments": ["my.api#MyService"]}
+                        {"name": "includeServices", "args": ["my.api#MyService"]}
                     ]
                 }
             }
@@ -348,7 +348,7 @@ provided arguments (a list of allowed tags).
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "excludeTags", "arguments": ["tagA", "tagB"]}
+                        {"name": "excludeTags", "args": ["tagA", "tagB"]}
                     ]
                 }
             }
@@ -377,7 +377,7 @@ orphaned shapes.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "excludeTraits", "arguments": ["since", "com.foo#customTrait"]}
+                        {"name": "excludeTraits", "args": ["since", "com.foo#customTrait"]}
                     ]
                 }
             }
@@ -397,7 +397,7 @@ all traits in the "example.foo" namespace:
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "excludeTraits", "arguments": ["example.foo#"]}
+                        {"name": "excludeTraits", "args": ["example.foo#"]}
                     ]
                 }
             }
@@ -426,7 +426,7 @@ orphaned shapes.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "excludeTraitsByTag", "arguments": ["internal"]}
+                        {"name": "excludeTraitsByTag", "args": ["internal"]}
                     ]
                 }
             }
@@ -454,7 +454,7 @@ given arguments (a list of authentication schemes).
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeAuth", "arguments": ["aws.v4", "http-basic"]}
+                        {"name": "includeAuth", "args": ["aws.v4", "http-basic"]}
                     ]
                 }
             }
@@ -478,7 +478,7 @@ arguments (a list of protocol names).
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeProtocols", "arguments": ["aws.rest-json"]}
+                        {"name": "includeProtocols", "args": ["aws.rest-json"]}
                     ]
                 }
             }
@@ -502,7 +502,7 @@ argument list (a list of allowed tags).
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeTags", "arguments": ["foo", "baz"]}
+                        {"name": "includeTags", "args": ["foo", "baz"]}
                     ]
                 }
             }
@@ -531,7 +531,7 @@ orphaned shapes.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeTraits", "arguments": ["sensitive", "com.foo.baz#customTrait"]}
+                        {"name": "includeTraits", "args": ["sensitive", "com.foo.baz#customTrait"]}
                     ]
                 }
             }
@@ -551,7 +551,7 @@ all traits in the "smithy.api" namespace:
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeTraits", "arguments": ["smithy.api#"]}
+                        {"name": "includeTraits", "args": ["smithy.api#"]}
                     ]
                 }
             }
@@ -580,7 +580,7 @@ orphaned shapes.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeTraitsByTag", "arguments": ["public"]}
+                        {"name": "includeTraitsByTag", "args": ["public"]}
                     ]
                 }
             }
@@ -617,7 +617,7 @@ but keeps the shape if it has any of the provided tags:
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "removeUnusedShapes", "arguments": ["export-tag1", "another-export-tag"]}
+                        {"name": "removeUnusedShapes", "args": ["export-tag1", "another-export-tag"]}
                     ]
                 }
             }
