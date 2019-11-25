@@ -1,243 +1,374 @@
 {
-  "smithy": "0.4.0",
-  "aws.apigateway": {
+    "smithy": "0.5.0",
     "shapes": {
-      "apiKeySource": {
-        "trait": {"selector": "service"},
-        "type": "string",
-        "documentation": "Specifies the source of the caller identifier that will be used to throttle API methods that require a key.",
-        "externalDocumentation": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html",
-        "tags": ["internal"]
-      },
-      "authorizers": {
-        "trait": {"selector": "service"},
-        "type": "map",
-        "documentation": "A list of API Gateway authorizers to augment the service's declared authentication mechanisms.",
-        "key": {"target": "smithy.api#String"},
-        "value": {"target": "aws.apigateway#AuthorizerDefinition"},
-        "tags": ["internal"]
-      },
-      "AuthorizerDefinition": {
-        "type": "structure",
-        "documentation": "An object that associates an authorizer and associated metadata with an authentication mechanism.",
-        "private": true,
-        "members": {
-          "scheme": {
-            "required": true,
-            "target": "smithy.api#String",
-            "documentation": "The Smithy authentication scheme used by the client (e.g, aws.v4)."
-          },
-          "type": {
-            "target": "smithy.api#String",
-            "documentation": "The type of the authorizer. If specifying information beyond the scheme, this value is required. The value must be \"token\", for an authorizer with the caller identity embedded in an authorization token, or \"request\", for an authorizer with the caller identity contained in request parameters."
-          },
-          "customAuthType": {
-            "target": "smithy.api#String",
-            "documentation": "This value is not used directly by APIGateway but will be used for OpenAPI exports. This will default to \"awsSigV4\" if your scheme is \"aws.v4\", or \"custom\" otherwise."
-          },
-          "uri": {
-            "target": "smithy.api#String",
-            "documentation": "The Uniform Resource Identifier (URI) of the authorizer Lambda function"
-          },
-          "credentials": {
-            "target": "smithy.api#String",
-            "documentation": "Credentials required for invoking the authorizer"
-          },
-          "identitySource": {
-            "target": "smithy.api#String",
-            "documentation": "Comma-separated list of mapping expressions of the request parameters as the identity source. Applicable for the authorizer of the \"request\" type only."
-          },
-          "identityValidationExpression": {
-            "target": "smithy.api#String",
-            "documentation": "A regular expression for validating the token as the incoming identity"
-          },
-          "resultTtlInSeconds": {
-            "target": "smithy.api#Integer",
-            "documentation": "The number of seconds for which the resulting IAM policy is cached."
-          }
-        }
-      },
-      "authorizer": {
-        "trait": {"selector": ":test(service, resource, operation)"},
-        "type": "string",
-        "documentation": "Attaches an authorizer to a service, resource, or operation.",
-        "tags": ["internal"]
-      },
-      "requestValidator": {
-        "trait": {"selector": ":test(service, operation)"},
-        "type": "string",
-        "documentation": "Selects which request validation strategy to use. One of: 'full', 'params-only', 'body-only'",
-        "tags": ["internal"]
-      },
-      "integration": {
-        "trait": {
-          "selector": ":test(service, resource, operation)",
-          "conflicts": ["aws.apigateway#mockIntegration"]
+        "aws.apigateway#apiKeySource": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#documentation": "Specifies the source of the caller identifier that will be used to throttle API methods that require a key.",
+                "smithy.api#externalDocumentation": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html",
+                "smithy.api#tags": [
+                    "internal"
+                ]
+            }
         },
-        "documentation": "Defines an API Gateway integration.",
-        "tags": ["internal"],
-        "type": "structure",
-        "members": {
-          "type": {
-            "target": "IntegrationType",
-            "required": true
-          },
-          "uri": {
-            "target": "Arn",
-            "required": true
-          },
-          "credentials": {
-            "target": "IamRoleArn"
-          },
-          "httpMethod": {
-            "target": "smithy.api#String",
-            "required": true
-          },
-          "passThroughBehavior": {
-            "target": "PassThroughBehavior"
-          },
-          "contentHandling": {
-            "target": "ContentHandling"
-          },
-          "timeoutInMillis": {
-            "target": "smithy.api#Integer"
-          },
-          "connectionId": {
-            "target": "String"
-          },
-          "connectionType": {
-            "target": "ConnectionType"
-          },
-          "cacheNamespace": {
-            "target": "smithy.api#String"
-          },
-          "cacheKeyParameters": {
-            "target": "StringList"
-          },
-          "requestParameters": {
-            "target": "RequestParameters"
-          },
-          "requestTemplates": {
-            "target": "Templates"
-          },
-          "responses": {
-            "target": "IntegrationResponses"
-          }
-        }
-      },
-      "mockIntegration": {
-        "trait": {"selector": ":test(service, resource, operation)", "conflicts": ["aws.apigateway#integration"]},
-        "documentation": "Defines an API Gateway mock integration.",
-        "tags": ["internal"],
-        "type": "structure",
-        "members": {
-          "passThroughBehavior": {
-            "target": "PassThroughBehavior"
-          },
-          "requestParameters": {
-            "target": "RequestParameters"
-          },
-          "requestTemplates": {
-            "target": "Templates"
-          },
-          "responses": {
-            "target": "IntegrationResponses"
-          }
-        }
-      },
-      "IntegrationType": {
-        "type": "string",
-        "enum": {
-          "aws": {"name":  "AWS"},
-          "aws_proxy": {"name":  "AWS_PROXY"},
-          "http": {"name":  "HTTP"},
-          "http_proxy": {"name":  "HTTP_PROXY"}
-        }
-      },
-      "IamRoleArn": {
-        "type": "string",
-        "documentation": "<p>The ARN of the IAM role to assume with invoking the integration.</p><p>This string MAY contain the literal string <code>{serviceName}</code> and/or the literal string <code>{operationName}</code>, which will be replaced with the name of the Smithy service shape and the name of the Smithy operation shape, respectively.</p>",
-        "aws.api#arnReference": {
-          "type": "AWS::IAM::Role"
+        "aws.apigateway#authorizers": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
+            },
+            "value": {
+                "$target": "aws.apigateway#AuthorizerDefinition"
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#documentation": "A list of API Gateway authorizers to augment the service's declared authentication mechanisms.",
+                "smithy.api#tags": [
+                    "internal"
+                ]
+            }
         },
-        "private": true
-      },
-      "Arn": {
-        "type": "string",
-        "documentation": "<p>The ARN of an AWS integration target.</p><p>This string MAY contain the literal string <code>{serviceName}</code> and/or the literal string <code>{operationName}</code>, which will be replaced with the name of the Smithy service shape and the name of the Smithy operation shape, respectively.</p>",
-        "aws.api#arnReference": {},
-        "private": true
-      },
-      "RequestParameters": {
-        "type": "map",
-        "documentation": "<p>A mapping of integration request parameters to the API Gateway data mapping expression that should be used to populate the parameter.</p> <p><strong>Note:</strong> This feature is provided primarily to allow injecting static values and context variables for request parameters. Request data MAY be mapped to headers using the syntax described in <a href=\"https://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html#mapping-response-parameters\">the API Gateway Developer Guide</a>; however, the data must be identified according to its location in the serialized request, which may differ from protocol to protocol. Here be dragons!</p>",
-        "key": {"target": "smithy.api#String"},
-        "value": {"target": "smithy.api#String"},
-        "private": true
-      },
-      "Templates": {
-        "type": "map",
-        "documentation": "<p>A map of MIME types to velocity templates allowing you to craft a new integration message from received data.</p><p><strong>Note:</strong> This feature is provided primarily to allow injecting static values and context variables for request parameters. Request data MAY be mapped to headers using the syntax described in <a href=\"https://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html#mapping-response-parameters\">the API Gateway Developer Guide</a>; however, the data must be identified according to its location in the serialized request, which may differ from protocol to protocol. Here be dragons!</p>",
-        "key": {"target": "smithy.api#String"},
-        "value": {"target": "smithy.api#String"},
-        "private": true
-      },
-      "ConnectionType": {
-        "type": "string",
-        "private": true,
-        "enum": {
-          "INTERNET": {},
-          "VPC_LINK": {}
+        "aws.apigateway#AuthorizerDefinition": {
+            "type": "structure",
+            "members": {
+                "scheme": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true,
+                        "smithy.api#documentation": "The Smithy authentication scheme used by the client (e.g, aws.v4)."
+                    }
+                },
+                "type": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The type of the authorizer. If specifying information beyond the scheme, this value is required. The value must be \"token\", for an authorizer with the caller identity embedded in an authorization token, or \"request\", for an authorizer with the caller identity contained in request parameters."
+                    }
+                },
+                "customAuthType": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "This value is not used directly by APIGateway but will be used for OpenAPI exports. This will default to \"awsSigV4\" if your scheme is \"aws.v4\", or \"custom\" otherwise."
+                    }
+                },
+                "uri": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The Uniform Resource Identifier (URI) of the authorizer Lambda function"
+                    }
+                },
+                "credentials": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Credentials required for invoking the authorizer"
+                    }
+                },
+                "identitySource": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Comma-separated list of mapping expressions of the request parameters as the identity source. Applicable for the authorizer of the \"request\" type only."
+                    }
+                },
+                "identityValidationExpression": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A regular expression for validating the token as the incoming identity"
+                    }
+                },
+                "resultTtlInSeconds": {
+                    "$target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#documentation": "The number of seconds for which the resulting IAM policy is cached."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "An object that associates an authorizer and associated metadata with an authentication mechanism.",
+                "smithy.api#private": true
+            }
+        },
+        "aws.apigateway#authorizer": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": ":test(service, resource, operation)"
+                },
+                "smithy.api#documentation": "Attaches an authorizer to a service, resource, or operation.",
+                "smithy.api#tags": [
+                    "internal"
+                ]
+            }
+        },
+        "aws.apigateway#requestValidator": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": ":test(service, operation)"
+                },
+                "smithy.api#documentation": "Selects which request validation strategy to use. One of: 'full', 'params-only', 'body-only'",
+                "smithy.api#tags": [
+                    "internal"
+                ]
+            }
+        },
+        "aws.apigateway#integration": {
+            "type": "structure",
+            "members": {
+                "type": {
+                    "$target": "aws.apigateway#IntegrationType",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "uri": {
+                    "$target": "aws.apigateway#Arn",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "credentials": {
+                    "$target": "aws.apigateway#IamRoleArn"
+                },
+                "httpMethod": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "passThroughBehavior": {
+                    "$target": "aws.apigateway#PassThroughBehavior"
+                },
+                "contentHandling": {
+                    "$target": "aws.apigateway#ContentHandling"
+                },
+                "timeoutInMillis": {
+                    "$target": "smithy.api#Integer"
+                },
+                "connectionId": {
+                    "$target": "smithy.api#String"
+                },
+                "connectionType": {
+                    "$target": "aws.apigateway#ConnectionType"
+                },
+                "cacheNamespace": {
+                    "$target": "smithy.api#String"
+                },
+                "cacheKeyParameters": {
+                    "$target": "aws.apigateway#StringList"
+                },
+                "requestParameters": {
+                    "$target": "aws.apigateway#RequestParameters"
+                },
+                "requestTemplates": {
+                    "$target": "aws.apigateway#Templates"
+                },
+                "responses": {
+                    "$target": "aws.apigateway#IntegrationResponses"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": ":test(service, resource, operation)",
+                    "conflicts": [
+                        "aws.apigateway#mockIntegration"
+                    ]
+                },
+                "smithy.api#documentation": "Defines an API Gateway integration.",
+                "smithy.api#tags": [
+                    "internal"
+                ]
+            }
+        },
+        "aws.apigateway#mockIntegration": {
+            "type": "structure",
+            "members": {
+                "passThroughBehavior": {
+                    "$target": "aws.apigateway#PassThroughBehavior"
+                },
+                "requestParameters": {
+                    "$target": "aws.apigateway#RequestParameters"
+                },
+                "requestTemplates": {
+                    "$target": "aws.apigateway#Templates"
+                },
+                "responses": {
+                    "$target": "aws.apigateway#IntegrationResponses"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": ":test(service, resource, operation)",
+                    "conflicts": [
+                        "aws.apigateway#integration"
+                    ]
+                },
+                "smithy.api#documentation": "Defines an API Gateway mock integration.",
+                "smithy.api#tags": [
+                    "internal"
+                ]
+            }
+        },
+        "aws.apigateway#IntegrationType": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": {
+                    "aws": {
+                        "name": "AWS"
+                    },
+                    "aws_proxy": {
+                        "name": "AWS_PROXY"
+                    },
+                    "http": {
+                        "name": "HTTP"
+                    },
+                    "http_proxy": {
+                        "name": "HTTP_PROXY"
+                    }
+                }
+            }
+        },
+        "aws.apigateway#IamRoleArn": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "<p>The ARN of the IAM role to assume with invoking the integration.</p><p>This string MAY contain the literal string <code>{serviceName}</code> and/or the literal string <code>{operationName}</code>, which will be replaced with the name of the Smithy service shape and the name of the Smithy operation shape, respectively.</p>",
+                "aws.api#arnReference": {
+                    "type": "AWS::IAM::Role"
+                },
+                "smithy.api#private": true
+            }
+        },
+        "aws.apigateway#Arn": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "<p>The ARN of an AWS integration target.</p><p>This string MAY contain the literal string <code>{serviceName}</code> and/or the literal string <code>{operationName}</code>, which will be replaced with the name of the Smithy service shape and the name of the Smithy operation shape, respectively.</p>",
+                "aws.api#arnReference": {},
+                "smithy.api#private": true
+            }
+        },
+        "aws.apigateway#RequestParameters": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
+            },
+            "value": {
+                "$target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>A mapping of integration request parameters to the API Gateway data mapping expression that should be used to populate the parameter.</p> <p><strong>Note:</strong> This feature is provided primarily to allow injecting static values and context variables for request parameters. Request data MAY be mapped to headers using the syntax described in <a href=\"https://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html#mapping-response-parameters\">the API Gateway Developer Guide</a>; however, the data must be identified according to its location in the serialized request, which may differ from protocol to protocol. Here be dragons!</p>",
+                "smithy.api#private": true
+            }
+        },
+        "aws.apigateway#Templates": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
+            },
+            "value": {
+                "$target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#documentation": "<p>A map of MIME types to velocity templates allowing you to craft a new integration message from received data.</p><p><strong>Note:</strong> This feature is provided primarily to allow injecting static values and context variables for request parameters. Request data MAY be mapped to headers using the syntax described in <a href=\"https://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html#mapping-response-parameters\">the API Gateway Developer Guide</a>; however, the data must be identified according to its location in the serialized request, which may differ from protocol to protocol. Here be dragons!</p>",
+                "smithy.api#private": true
+            }
+        },
+        "aws.apigateway#ConnectionType": {
+            "type": "string",
+            "traits": {
+                "smithy.api#private": true,
+                "smithy.api#enum": {
+                    "INTERNET": {},
+                    "VPC_LINK": {}
+                }
+            }
+        },
+        "aws.apigateway#PassThroughBehavior": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Defines the passThroughBehavior for the integration",
+                "smithy.api#enum": {
+                    "when_no_templates": {
+                        "name": "WHEN_NO_TEMPLATES"
+                    },
+                    "when_no_match": {
+                        "name": "WHEN_NO_MATCH"
+                    },
+                    "never": {
+                        "name": "NEVER"
+                    }
+                },
+                "smithy.api#private": true
+            }
+        },
+        "aws.apigateway#ContentHandling": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Defines the contentHandling for the integration",
+                "smithy.api#enum": {
+                    "CONVERT_TO_TEXT": {
+                        "name": "CONVERT_TO_TEXT"
+                    },
+                    "CONVERT_TO_BINARY": {
+                        "name": "CONVERT_TO_BINARY"
+                    }
+                },
+                "smithy.api#private": true
+            }
+        },
+        "aws.apigateway#StringList": {
+            "type": "list",
+            "member": {
+                "$target": "smithy.api#String"
+            }
+        },
+        "aws.apigateway#IntegrationResponses": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
+            },
+            "value": {
+                "$target": "aws.apigateway#IntegrationResponse"
+            },
+            "traits": {
+                "smithy.api#documentation": "A map of response identifiers to responses.",
+                "smithy.api#private": true
+            }
+        },
+        "aws.apigateway#IntegrationResponse": {
+            "type": "structure",
+            "members": {
+                "statusCode": {
+                    "$target": "smithy.api#String"
+                },
+                "contentHandling": {
+                    "$target": "aws.apigateway#ContentHandling"
+                },
+                "responseTemplates": {
+                    "$target": "aws.apigateway#Templates"
+                },
+                "responseParameters": {
+                    "$target": "aws.apigateway#ResponseParameters"
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Defines a response and specifies parameter mappings.",
+                "smithy.api#private": true
+            }
+        },
+        "aws.apigateway#ResponseParameters": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
+            },
+            "value": {
+                "$target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#documentation": "Specifies parameter mappings for the response. Only the header and body parameters of the integration response can be mapped to the header parameters of the method.",
+                "smithy.api#private": true
+            }
         }
-      },
-      "PassThroughBehavior": {
-        "type": "string",
-        "documentation": "Defines the passThroughBehavior for the integration",
-        "enum": {
-          "when_no_templates": {"name": "WHEN_NO_TEMPLATES"},
-          "when_no_match": {"name": "WHEN_NO_MATCH"},
-          "never": {"name": "NEVER"}
-        },
-        "private": true
-      },
-      "ContentHandling": {
-        "type": "string",
-        "documentation": "Defines the contentHandling for the integration",
-        "enum": {
-          "CONVERT_TO_TEXT": {"name": "CONVERT_TO_TEXT"},
-          "CONVERT_TO_BINARY": {"name": "CONVERT_TO_BINARY"}
-        },
-        "private": true
-      },
-      "StringList": {
-        "type": "list",
-        "member": {"target": "smithy.api#String"}
-      },
-      "IntegrationResponses": {
-        "type": "map",
-        "documentation": "A map of response identifiers to responses.",
-        "key": {"target": "smithy.api#String"},
-        "value": {"target": "IntegrationResponse"},
-        "private": true
-      },
-      "IntegrationResponse": {
-        "type": "structure",
-        "documentation": "Defines a response and specifies parameter mappings.",
-        "members": {
-          "statusCode": {"target": "smithy.api#String"},
-          "contentHandling": {"target": "ContentHandling"},
-          "responseTemplates": {"target": "Templates"},
-          "responseParameters": {"target": "ResponseParameters"}
-        },
-        "private": true
-      },
-      "ResponseParameters": {
-        "type": "map",
-        "documentation": "Specifies parameter mappings for the response. Only the header and body parameters of the integration response can be mapped to the header parameters of the method.",
-        "key": {"target": "smithy.api#String"},
-        "value": {"target": "smithy.api#String"},
-        "private": true
-      }
     }
-  }
 }
