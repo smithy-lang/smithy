@@ -58,31 +58,33 @@ stream in its input:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PublishMessages": {
-                        "type": "operation",
-                        "input": "PublishMessagesInput"
-                    },
-                    "PublishMessagesInput": {
-                        "type": "structure",
-                        "members": {
-                            "room": {
-                                "target": "String"
-                            },
-                            "messages": {
-                                "target": "Message",
-                                "eventStream": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PublishMessages": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#PublishMessagesInput"
+                    }
+                },
+                "smithy.example#PublishMessagesInput": {
+                    "type": "structure",
+                    "members": {
+                        "room": {
+                            "$target": "smithy.api#String"
+                        },
+                        "messages": {
+                            "$target": "smithy.example#Message",
+                            "traits": {
+                                "smithy.api#eventStream": true
                             }
                         }
-                    },
-                    "Message": {
-                        "type": "structure",
-                        "members": {
-                            "message": {
-                                "target": "String"
-                            }
+                    }
+                },
+                "smithy.example#Message": {
+                    "type": "structure",
+                    "members": {
+                        "message": {
+                            "$target": "smithy.api#String"
                         }
                     }
                 }
@@ -115,31 +117,33 @@ stream in its output:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "SubscribeToMovements": {
-                        "type": "operation",
-                        "output": "SubscribeToMovementsOutput"
-                    },
-                    "SubscribeToMovementsOutput": {
-                        "type": "structure",
-                        "members": {
-                            "movements": {
-                                "target": "Movement",
-                                "eventStream": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#SubscribeToMovements": {
+                    "type": "operation",
+                    "output": {
+                        "$target": "smithy.example#SubscribeToMovementsOutput"
+                    }
+                },
+                "smithy.example#SubscribeToMovementsOutput": {
+                    "type": "structure",
+                    "members": {
+                        "movements": {
+                            "$target": "smithy.example#Movement",
+                            "traits": {
+                                "smithy.api#eventStream": true
                             }
                         }
-                    },
-                    "Movement": {
-                        "type": "structure",
-                        "members": {
-                            "angle": {
-                                "target": "Float"
-                            },
-                            "velocity": {
-                                "target": "Float"
-                            }
+                    }
+                },
+                "smithy.example#Movement": {
+                    "type": "structure",
+                    "members": {
+                        "angle": {
+                            "$target": "smithy.api#Float"
+                        },
+                        "velocity": {
+                            "$target": "smithy.api#Float"
                         }
                     }
                 }
@@ -209,38 +213,44 @@ stream in its input by referencing a member that targets a union:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PublishMessages": {
-                        "type": "operation",
-                        "input": "PublishMessagesInput"
-                    },
-                    "PublishMessagesInput": {
-                        "type": "structure",
-                        "members": {
-                            "room": {
-                                "target": "String"
-                            },
-                            "messages": {
-                                "target": "PublishEvents",
-                                "eventStream": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PublishMessages": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#PublishMessagesInput"
+                    }
+                },
+                "smithy.example#PublishMessagesInput": {
+                    "type": "structure",
+                    "members": {
+                        "room": {
+                            "$target": "smithy.api#String"
+                        },
+                        "messages": {
+                            "$target": "smithy.example#PublishEvents",
+                            "traits": {
+                                "smithy.api#eventStream": true
                             }
                         }
-                    },
-                    "PublishEvents": {
-                        "type": "union",
-                        "members": {
-                            "message": "Message",
-                            "leave": "LeaveEvent"
+                    }
+                },
+                "smithy.example#PublishEvents": {
+                    "type": "union",
+                    "members": {
+                        "message": {
+                            "$target": "smithy.example#Message"
+                        },
+                        "leave": {
+                            "$target": "smithy.example#LeaveEvent"
                         }
-                    },
-                    "Message": {
-                        "type": "structure",
-                        "members": {
-                            "message": {
-                                "target": "String"
-                            }
+                    }
+                },
+                "smithy.example#Message": {
+                    "type": "structure",
+                    "members": {
+                        "message": {
+                            "$target": "smithy.api#String"
                         }
                     }
                 }
@@ -279,51 +289,52 @@ stream in its output:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "SubscribeToMovements": {
-                        "type": "operation",
-                        "output": "SubscribeToMovementsOutput"
-                    },
-                    "SubscribeToMovementsOutput": {
-                        "type": "structure",
-                        "members": {
-                            "movements": {
-                                "target": "Message",
-                                "eventStream": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#SubscribeToMovements": {
+                    "type": "operation",
+                    "output": {
+                        "$target": "smithy.example#SubscribeToMovementsOutput"
+                    }
+                },
+                "smithy.example#SubscribeToMovementsOutput": {
+                    "type": "structure",
+                    "members": {
+                        "movements": {
+                            "$target": "smithy.example#Message",
+                            "traits": {
+                                "smithy.api#eventStream": true
                             }
                         }
-                    },
-                    "MovementEvents": {
-                        "type": "union",
-                        "members": {
-                            "up": {
-                                "target": "Movement"
-                            },
-                            "down": {
-                                "target": "Movement"
-                            },
-                            "left": {
-                                "target": "Movement"
-                            },
-                            "right": {
-                                "target": "Movement"
-                            }
+                    }
+                },
+                "smithy.example#MovementEvents": {
+                    "type": "union",
+                    "members": {
+                        "up": {
+                            "$target": "smithy.example#Movement"
+                        },
+                        "down": {
+                            "$target": "smithy.example#Movement"
+                        },
+                        "left": {
+                            "$target": "smithy.example#Movement"
+                        },
+                        "right": {
+                            "$target": "smithy.example#Movement"
                         }
-                    },
-                    "Movement": {
-                        "type": "structure",
-                        "members": {
-                            "velocity": {
-                                "target": "Float"
-                            }
+                    }
+                },
+                "smithy.example#Movement": {
+                    "type": "structure",
+                    "members": {
+                        "velocity": {
+                            "$target": "smithy.api#Float"
                         }
                     }
                 }
             }
         }
-
 
 Multi-event client behavior
 ===========================
@@ -428,43 +439,48 @@ service, followed by the events sent in the payload of the HTTP message.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PublishMessages": {
-                        "type": "operation",
-                        "input": "PublishMessagesInput",
-                        "http": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PublishMessages": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#PublishMessagesInput"
+                    },
+                    "traits": {
+                        "smithy.api#http": {
                             "uri": "/messages/{room}",
                             "method": "POST"
                         }
-                    },
-                    "PublishMessagesInput": {
-                        "type": "structure",
-                        "members": {
-                            "room": {
-                                "target": "String",
-                                "httpLabel:": true
-                            },
-                            "messages": {
-                                "target": "Message",
-                                "httpPayload": true,
-                                "eventStream": true
+                    }
+                },
+                "smithy.example#PublishMessagesInput": {
+                    "type": "structure",
+                    "members": {
+                        "room": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#httpLabel:": true
+                            }
+                        },
+                        "messages": {
+                            "$target": "smithy.example#Message",
+                            "traits": {
+                                "smithy.api#httpPayload": true,
+                                "smithy.api#eventStream": true
                             }
                         }
-                    },
-                    "Message": {
-                        "type": "structure",
-                        "members": {
-                            "message": {
-                                "target": "String"
-                            }
+                    }
+                },
+                "smithy.example#Message": {
+                    "type": "structure",
+                    "members": {
+                        "message": {
+                            "$target": "smithy.api#String"
                         }
                     }
                 }
             }
         }
-
 
 .. _initial-response:
 
@@ -512,44 +528,51 @@ message.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PublishMessages": {
-                        "type": "operation",
-                        "input": "PublishMessagesInput",
-                        "http": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PublishMessages": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#PublishMessagesInput"
+                    },
+                    "traits": {
+                        "smithy.api#http": {
                             "uri": "/messages/{room}",
                             "method": "POST"
                         }
-                    },
-                    "SubscribeToMessagesInput": {
-                        "type": "structure",
-                        "members": {
-                            "room": {
-                                "target": "String",
-                                "httpLabel:": true
+                    }
+                },
+                "smithy.example#SubscribeToMessagesInput": {
+                    "type": "structure",
+                    "members": {
+                        "room": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#httpLabel:": true
                             }
                         }
-                    },
-                    "SubscribeToMessagesOutput": {
-                        "type": "structure",
-                        "members": {
-                            "connectionLifetime": {
-                                "target": "Integer",
-                                "httpHeader:": "X-Connection-Lifetime"
-                            },
-                            "messages": {
-                                "target": "Message",
-                                "httpPayload": true,
-                                "eventStream": true
+                    }
+                },
+                "smithy.example#SubscribeToMessagesOutput": {
+                    "type": "structure",
+                    "members": {
+                        "connectionLifetime": {
+                            "$target": "smithy.api#Integer",
+                            "traits": {
+                                "smithy.api#httpHeader:": "X-Connection-Lifetime"
+                            }
+                        },
+                        "messages": {
+                            "$target": "smithy.example#Message",
+                            "traits": {
+                                "smithy.api#httpPayload": true,
+                                "smithy.api#eventStream": true
                             }
                         }
                     }
                 }
             }
         }
-
 
 Initial message client and server behavior
 ==========================================
@@ -602,23 +625,27 @@ headers and the "c" member as the payload.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "ExampleEvent": {
-                        "type": "structure",
-                        "members": {
-                            "a": {
-                                "target": "String",
-                                "eventHeader": true
-                            },
-                            "b": {
-                                "target": "String",
-                                "eventHeader": true
-                            },
-                            "c": {
-                                "target": "Blob",
-                                "eventPayload": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#ExampleEvent": {
+                    "type": "structure",
+                    "members": {
+                        "a": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventHeader": true
+                            }
+                        },
+                        "b": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventHeader": true
+                            }
+                        },
+                        "c": {
+                            "$target": "smithy.api#Blob",
+                            "traits": {
+                                "smithy.api#eventHeader": true
                             }
                         }
                     }
@@ -643,21 +670,24 @@ based protocol, the event payload is serialized as a JSON object:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "ExampleEvent": {
-                        "type": "structure",
-                        "members": {
-                            "a": {"target": "String"},
-                            "b": {"target": "String"},
-                            "c": {"target": "Blob"}
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#ExampleEvent": {
+                    "type": "structure",
+                    "members": {
+                        "a": {
+                            "$target": "smithy.api#String"
+                        },
+                        "b": {
+                            "$target": "smithy.api#String"
+                        },
+                        "c": {
+                            "$target": "smithy.api#Blob"
                         }
                     }
                 }
             }
         }
-
 
 -------------------
 Event stream traits
@@ -734,26 +764,27 @@ The following example defines multiple event headers:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "ExampleEvent": {
-                        "type": "structure",
-                        "members": {
-                            "a": {
-                                "target": "String",
-                                "eventHeader": true
-                            },
-                            "b": {
-                                "target": "String",
-                                "eventHeader": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#ExampleEvent": {
+                    "type": "structure",
+                    "members": {
+                        "a": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventHeader": true
+                            }
+                        },
+                        "b": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventHeader": true
                             }
                         }
                     }
                 }
             }
         }
-
 
 .. _eventpayload-trait:
 
@@ -803,19 +834,21 @@ of an event:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "ExampleEvent": {
-                        "type": "structure",
-                        "members": {
-                            "a": {
-                                "target": "String",
-                                "eventPayload": true
-                            },
-                            "b": {
-                                "target": "String",
-                                "eventHeader": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#ExampleEvent": {
+                    "type": "structure",
+                    "members": {
+                        "a": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventPayload": true
+                            }
+                        },
+                        "b": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#eventHeader": true
                             }
                         }
                     }

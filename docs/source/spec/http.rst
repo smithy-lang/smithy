@@ -948,28 +948,37 @@ and HTTP bindings:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PublishMessages": {
-                        "type": "operation",
-                        "input": "PublishMessagesInput",
-                        "http": { "uri": "/messages", "method": "POST" }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PublishMessages": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#PublishMessagesInput"
                     },
-                    "PublishMessagesInput": {
-                        "type": "structure",
-                        "members": {
-                            "messages": {
-                                "target": "Message",
-                                "httpPayload": true,
-                                "eventStream": true
+                    "traits": {
+                        "smithy.api#http": {
+                            "uri": "/messages",
+                            "method": "POST"
+                        }
+                    }
+                },
+                "smithy.example#PublishMessagesInput": {
+                    "type": "structure",
+                    "members": {
+                        "messages": {
+                            "$target": "smithy.example#Message",
+                            "traits": {
+                                "smithy.api#httpPayload": true,
+                                "smithy.api#eventStream": true
                             }
                         }
-                    },
-                    "Message": {
-                        "type": "structure",
-                        "members": {
-                            "message": { "target": "String" }
+                    }
+                },
+                "smithy.example#Message": {
+                    "type": "structure",
+                    "members": {
+                        "message": {
+                            "$target": "smithy.api#String"
                         }
                     }
                 }

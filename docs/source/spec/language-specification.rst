@@ -99,11 +99,11 @@ Example:
 
 ::
 
-    $version: "0.4.0"
+    $version: "0.5.0"
 
 .. note::
 
-    The Smithy specification is currently at version ``0.2.0``.
+    The Smithy specification is currently at version |version|.
 
 
 .. _metadata-statement:
@@ -309,17 +309,19 @@ is equivalent to the following JSON model:
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "MyString": {
-                    "type": "string",
-                    "documentation": "This is documentation about a shape.\n\n- This is a list\n- More of the list."
-                },
-                "myTrait": {
-                    "trait": {},
-                    "type": "structure",
-                    "documentation": "This is documentation about a trait definition.\n  More docs here."
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyString": {
+                "type": "string",
+                "traits": {
+                    "smithy.api#documentation": "This is documentation about a shape.\n\n- This is a list\n- More of the list."
+                }
+            },
+            "smithy.example#myTrait": {
+                "type": "structure",
+                "traits": {
+                    "smithy.api#trait": {},
+                    "smithy.api#documentation": "This is documentation about a trait definition.\n  More docs here."
                 }
             }
         }
@@ -354,7 +356,7 @@ The following documentation comments are all invalid.
 ::
 
     /// Invalid (cannot apply to control statements)
-    $version: "0.4.0"
+    $version: "0.5.0"
 
     /// Invalid (cannot apply to namespaces)
     namespace smithy.example
@@ -852,6 +854,10 @@ parser.
   Smithy IDL models using the rules defined in :ref:`merging-models`.
 * Unless specified otherwise, the same constraints and logic is used to load
   JSON models that is used to load Smithy IDL models.
+* All shape IDs in the JSON AST MUST be absolute shape IDs that contain a
+  namespace. One of the main drivers of the simplicity of the the JSON AST
+  over the Smithy IDL is that relative and forward references never need to
+  be resolved.
 
 
 Top level properties
@@ -862,7 +868,7 @@ properties:
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 25 65
+    :widths: 10 30 60
 
     * - Property
       - Type
@@ -874,68 +880,60 @@ properties:
     * - metadata
       - object
       - Defines all of the :ref:`metadata <metadata>` about the model
-        using a JSON object.
-    * - *[additional properties]*
-      - Map<``string``, :ref:`namespace <json-namespace>`>
-      - Any additional property is considered a namespace definition
-        (e.g., "my.namespace"). Additional properties MUST match the
-        :token:`namespace` ABNF grammar.
-
-
-.. _json-namespace:
-
-Namespace definition
---------------------
-
-A namespace is an object that contains the following properties:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 10 80
-
-    * - Property
-      - Type
-      - Description
+        using a JSON object. Each key is the metadata key to set, and each
+        value is the metadata value to assign to the key.
     * - shapes
-      - object
-      - Defines shapes in a namespace.
-
-        ``shapes`` is a map of shape names to
-        :ref:`shape definitions <json-shapes>`. Each shape name MUST adhere to
-        the :token:`identifier` ABNF grammar.
-    * - traits
-      - object
-      - Applies traits to shapes outside of a shape's definition.
-
-        ``traits`` is a map of shape names to a map of traits to apply to
-        the shape. Each key is a relative shape ID that MUST be present in
-        the model, and each value is a map of trait names to trait values.
-
-        Trait IDs that do not include a namespace are assumed to refer to
-        traits in the current namespace, if present, or in the prelude.
+      - Map<:ref:`shape ID <shape-id>`, :ref:`AST shape <ast-shapes>`>
+      - A map of absolute shape IDs to shape definitions.
 
 
-.. _json-shapes:
+.. _ast-shapes:
 
-Shapes
-------
+AST shapes
+----------
 
-:ref:`Shapes <shapes>` are defined using objects that always contain a
-``type`` property to define the shape type.
-
-Any additional properties found in shape definitions are considered
-:ref:`traits <traits>` to apply to the shape. The following example defines a
-``string`` shape with a :ref:`documentation-trait` trait:
+AST :ref:`shapes <shapes>` are defined using objects that always contain
+a ``type`` property to define the shape type or ``apply``.
 
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "MyString": {
-                    "type": "string",
-                    "documentation": "My documentation string"
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyString": {
+                "type": "string"
+            }
+        }
+    }
+
+All entries in the ``shapes`` map can contain a ``traits`` property that
+defines the traits attached to the shape. ``traits`` is a map of where
+each key is the absolute shape IDs of a trait definition and each value is
+the value to assign to the trait.
+
+.. code-block:: json
+
+    {
+        "traits": {
+            "smithy.example#documentation": "Hi!",
+            "smithy.example#tags": [
+                "a",
+                "b"
+            ]
+        }
+    }
+
+The following example defines a string shape with a documentation trait.
+
+.. code-block:: json
+
+    {
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyString": {
+                "type": "string",
+                "traits": {
+                    "smithy.api#documentation": "My documentation string"
                 }
             }
         }
@@ -951,21 +949,46 @@ example defines a shape for each simple type:
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "Blob": {"type": "blob"},
-                "Boolean": {"type": "boolean"},
-                "String": {"type": "string"},
-                "Byte": {"type": "byte"},
-                "Short": {"type": "short"},
-                "Integer": {"type": "integer"},
-                "Long": {"type": "long"},
-                "Float": {"type": "float"},
-                "Double": {"type": "double"},
-                "BigInteger": {"type": "bigInteger"},
-                "BigDecimal": {"type": "bigDecimal"},
-                "Timestamp": {"type": "timestamp"}
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#Blob": {
+                "type": "blob"
+            },
+            "smithy.example#Boolean": {
+                "type": "boolean"
+            },
+            "smithy.example#Document": {
+                "type": "document"
+            },
+            "smithy.example#String": {
+                "type": "string"
+            },
+            "smithy.example#Byte": {
+                "type": "byte"
+            },
+            "smithy.example#Short": {
+                "type": "short"
+            },
+            "smithy.example#Integer": {
+                "type": "integer"
+            },
+            "smithy.example#Long": {
+                "type": "long"
+            },
+            "smithy.example#Float": {
+                "type": "float"
+            },
+            "smithy.example#Double": {
+                "type": "double"
+            },
+            "smithy.example#BigInteger": {
+                "type": "bigInteger"
+            },
+            "smithy.example#BigDecimal": {
+                "type": "bigDecimal"
+            },
+            "smithy.example#Timestamp": {
+                "type": "timestamp"
             }
         }
     }
@@ -974,68 +997,147 @@ example defines a shape for each simple type:
 List and set shapes
 ~~~~~~~~~~~~~~~~~~~
 
-The :ref:`list` and :ref:`set` shapes have the following properties:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 20 70
-
-    * - Property
-      - Type
-      - Description
-    * - member
-      - :ref:`json-member`
-      - **Required**. Member of the list.
+:ref:`list` and :ref:`set` shapes have a required ``member`` property
+that is an :ref:`AST member <ast-member>`.
 
 The following example defines a list with a string member:
 
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "MyList": {
-                    "type": "list",
-                    "member": { "target": "smithy.api#String" }
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyList": {
+                "type": "list",
+                "member": {
+                    "$target": "smithy.api#String"
+                }
+            }
+        }
+    }
+
+The following example defines a set with a string member:
+
+.. code-block:: json
+
+    {
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MySet": {
+                "type": "set",
+                "member": {
+                    "$target": "smithy.api#String"
                 }
             }
         }
     }
 
 
+.. _ast-member:
+
+AST member
+~~~~~~~~~~
+
+An *AST member definition* defines a member of a shape. It is a special
+kind of :ref:`AST shape reference <ast-shape-reference>` that also
+contains an optional ``traits`` property that defines traits attached to
+the member. Each key in the ``traits`` property is the absolute shape ID
+of the trait to apply, and each value is the value to assign to the
+trait.
+
+.. code-block:: json
+
+    {
+        "$target": "smithy.example#MyShape",
+        "traits": {
+            "smithy.example#documentation": "Hi!"
+        }
+    }
+
+The following example defines a list shape and its member.
+
+.. code-block:: json
+
+    {
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyList": {
+                "type": "list",
+                "member": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Member documentation"
+                    }
+                }
+            }
+        }
+    }
+
+
+.. _ast-shape-reference:
+
+AST shape reference
+~~~~~~~~~~~~~~~~~~~
+
+An *AST shape reference* is an object with a single property, ``$target``
+that maps to an absolute shape ID.
+
+.. code-block:: json
+
+    {
+        "$target": "smithy.example#MyShape"
+    }
+
+The following example defines a shape reference inside of the ``operations``
+list of a service shape.
+
+.. code-block:: json
+
+    {
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#Service": {
+                "type": "service",
+                "operations": [
+                    {
+                        "$target": "smithy.example#Operation"
+                    }
+                ]
+            },
+            "smithy.example#Operation": {
+                "type": "operation"
+            }
+        }
+    }
+
+.. note::
+
+    ``$target`` is used rather than ``target`` to make it easier for
+    simpler tooling like grep to easily find references between shapes
+    without having to fully parse a model.
+
+
 Map shape
 ~~~~~~~~~
 
-A :ref:`map` shape has the following properties:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 20 70
-
-    * - Property
-      - Type
-      - Description
-    * - key
-      - :ref:`json-member`
-      - **Required**. Defines the shape of the map key that MUST resolve to a
-        string shape.
-    * - value
-      - :ref:`json-member`
-      - **Required**. Value shape of the map.
+A :ref:`map` shape has a required ``key`` and ``value``
+:ref:`AST member <ast-member>`. The shape referenced by the ``key`` member
+MUST target a string shape.
 
 The following example defines a map of strings to numbers:
 
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "IntegerMap": {
-                    "type": "map",
-                    "key": { "target": "smithy.api#String" },
-                    "value": { "target": "smithy.api#Integer" }
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#IntegerMap": {
+                "type": "map",
+                "key": {
+                    "$target": "smithy.api#String"
+                },
+                "value": {
+                    "$target": "smithy.api#Integer"
                 }
             }
         }
@@ -1045,21 +1147,13 @@ The following example defines a map of strings to numbers:
 Structure and union shapes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:ref:`Structure <structure>` and :ref:`union <union>` shapes are defined using
-an object with the following properties:
+:ref:`Structure <structure>` and :ref:`union <union>` shapes are defined
+with a ``members`` property that contains a map of member names to
+:ref:`AST member <ast-member>` definitions. A union shape requires at least
+one member, and a structure shape MAY omit the ``members`` property
+entirely if the structure contains no members.
 
-.. list-table::
-    :header-rows: 1
-    :widths: 10 30 60
-
-    * - Property
-      - Type
-      - Description
-    * - members
-      - Map<string, :ref:`json-member`>
-      - Map of member name to member definitions.
-
-Structure and union member names MUST be case-insensitvely unique across the
+Structure and union member names MUST be case-insensitively unique across the
 entire set of members. Each member name MUST adhere to the :token:`identifier`
 ABNF grammar.
 
@@ -1069,22 +1163,22 @@ member:
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-          "shapes": {
-              "MyStructure": {
-                  "type": "structure",
-                  "members": {
-                      "stringMember": {
-                          "target": "smithy.api#String",
-                          "required": true
-                      },
-                      "numberMember": {
-                          "target": "smithy.api#Integer"
-                      }
-                  }
-              }
-          }
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyStructure": {
+                "type": "structure",
+                "members": {
+                    "stringMember": {
+                        "$target": "smithy.api#String",
+                        "traits": {
+                            "smithy.api#required": true
+                        }
+                    },
+                    "numberMember": {
+                        "$target": "smithy.api#Integer"
+                    }
+                }
+            }
         }
     }
 
@@ -1093,18 +1187,16 @@ The following example defines a union:
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "MyUnion": {
-                    "type": "union",
-                    "members": {
-                        "a": {
-                            "target": "smithy.api#String"
-                        },
-                        "b": {
-                            "target": "smithy.api#Integer"
-                        }
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyUnion": {
+                "type": "union",
+                "members": {
+                    "a": {
+                        "$target": "smithy.api#String"
+                    },
+                    "b": {
+                        "$target": "smithy.api#Integer"
                     }
                 }
             }
@@ -1112,74 +1204,13 @@ The following example defines a union:
     }
 
 
-.. _json-member:
-
-Member shape
-~~~~~~~~~~~~
-
-:ref:`Members <member>` are defined in :ref:`aggregate types <aggregate-types>`
-to reference other shapes. Like other shapes, any additional properties in a
-member definition are considered traits to apply to the member. A member
-definition is an object that contains the following properties:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 20 70
-
-    * - Property
-      - Type
-      - Description
-    * - target
-      - :ref:`shape-id`
-      - **Required**. :ref:`shape-id` string.
-
-The following example defines the member of a list shape and attaches the
-documentation trait to the member:
-
-.. code-block:: json
-
-    {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "MyList": {
-                    "type": "list",
-                    "member": {
-                        "target": "MyString",
-                        "documentation": "Documentation specific to the member of the list."
-                    }
-                }
-            }
-        }
-    }
-
-
-.. _service-json-shape:
+.. _service-ast-shape:
 
 Service shape
 ~~~~~~~~~~~~~
 
-:ref:`Service <service>` shapes are defined using an object. Service Shapes
-defined in JSON support the same properties as the Smithy IDL.
-
-
-.. _resource-json-shape:
-
-Resource shape
-~~~~~~~~~~~~~~
-
-:ref:`Resource <resource>` shapes are defined using an object. Resource Shapes
-defined in JSON support the same properties as the Smithy IDL.
-
-
-.. _operation-json-shape:
-
-Operation shape
-~~~~~~~~~~~~~~~
-
-:ref:`Operation <operation>` shapes are defined using an object with the
-following properties:
-
+:ref:`Service <service>` shapes are defined using an object. Service
+shapes defined in JSON support the same properties as the Smithy IDL.
 
 .. list-table::
     :header-rows: 1
@@ -1188,50 +1219,267 @@ following properties:
     * - Property
       - Type
       - Description
+    * - type
+      - string
+      - ``service``
+    * - version
+      - ``string``
+      - **Required**. Defines the version of the service. The version can be
+        provided in any format (e.g., ``2017-02-11``, ``2.0``, etc).
+    * - :ref:`operations <service-operations>`
+      - [:ref:`AST shape reference <ast-shape-reference>`]
+      - Binds a list of operations to the service. Each reference MUST target
+        an operation.
+    * - :ref:`resources <service-resources>`
+      - [:ref:`AST shape reference <ast-shape-reference>`]
+      - Binds a list of resources to the service. Each reference MUST target
+        a resource.
+    * - traits
+      - Map\<:ref:`shape ID <shape-id>`, trait value>
+      - Traits to apply to the service
+
+.. code-block:: json
+
+    {
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyService": {
+                "type": "service",
+                "version": "2017-02-11",
+                "operations": [
+                    {
+                        "$target": "smithy.example#GetServerTime"
+                    }
+                ],
+                "resources": [
+                    {
+                        "$target": "smithy.example#SomeResource"
+                    }
+                ]
+            }
+        }
+    }
+
+
+.. _resource-ast-shape:
+
+Resource shape
+~~~~~~~~~~~~~~
+
+:ref:`Resource <resource>` shapes are defined using an object. Resource
+shapes defined in JSON support the same properties as the Smithy IDL.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 28 62
+
+    * - Property
+      - Type
+      - Description
+    * - type
+      - string
+      - ``service``
+    * - :ref:`identifiers <resource-identifiers>`
+      - Map<String, :ref:`AST shape reference <ast-shape-reference>`>
+      - Defines identifier names and shape IDs used to identify the resource.
+    * - :ref:`create <create-lifecycle>`
+      - :ref:`AST shape reference <ast-shape-reference>`
+      - Defines the lifecycle operation used to create a resource using one
+        or more identifiers created by the service.
+    * - :ref:`put <put-lifecycle>`
+      - :ref:`AST shape reference <ast-shape-reference>`
+      - Defines an idempotent lifecycle operation used to create a resource
+        using identifiers provided by the client.
+    * - :ref:`read <read-lifecycle>`
+      - :ref:`AST shape reference <ast-shape-reference>`
+      - Defines the lifecycle operation used to retrieve the resource.
+    * - :ref:`update <update-lifecycle>`
+      - :ref:`AST shape reference <ast-shape-reference>`
+      - Defines the lifecycle operation used to update the resource.
+    * - :ref:`delete <delete-lifecycle>`
+      - :ref:`AST shape reference <ast-shape-reference>`
+      - Defines the lifecycle operation used to delete the resource.
+    * - :ref:`list <list-lifecycle>`
+      - :ref:`AST shape reference <ast-shape-reference>`
+      - Defines the lifecycle operation used to list resources of this type.
+    * - operations
+      - [:ref:`AST shape reference <ast-shape-reference>`]
+      - Binds a list of non-lifecycle instance operations to the resource.
+        Each reference MUST target an operation.
+    * - collectionOperations
+      - [:ref:`AST shape reference <ast-shape-reference>`]
+      - Binds a list of non-lifecycle collection operations to the resource.
+        Each reference MUST target an operation.
+    * - resources
+      - [:ref:`AST shape reference <ast-shape-reference>`]
+      - Binds a list of resources to this resource as a child resource,
+        forming a containment relationship. The resources MUST NOT have a
+        cyclical containment hierarchy, and a resource can not be bound more
+        than once in the entire closure of a resource or service.
+        Each reference MUST target a resource.
+    * - traits
+      - Map\<:ref:`shape ID <shape-id>`, trait value>
+      - Traits to apply to the resource.
+
+.. code-block:: json
+
+    {
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#Thing": {
+                "type": "resource",
+                "identifiers": {
+                    "forecastId": {
+                        "$target": "smithy.api#String"
+                    },
+                },
+                "create": {
+                    "$target": "smithy.example#CreateThing"
+                },
+                "read": {
+                    "$target": "smithy.example#GetThing"
+                },
+                "update": {
+                    "$target": "smithy.example#Updatething"
+                },
+                "delete": {
+                    "$target": "smithy.example#DeleteThing"
+                },
+                "list": {
+                    "$target": "smithy.example#ListThings"
+                },
+                "operations": [
+                    {
+                        "$target": "smithy.example#SomeInstanceOperation"
+                    }
+                ],
+                "collectionOperations": [
+                    {
+                        "$target": "smithy.example#SomeCollectionOperation"
+                    }
+                ],
+                "resources": [
+                    {
+                        "$target": "smithy.example#SomeResource"
+                    }
+                ]
+            }
+        }
+    }
+
+
+.. _operation-ast-shape:
+
+Operation shape
+~~~~~~~~~~~~~~~
+
+:ref:`Operation <operation>` shapes are defined using an object with the
+following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 28 62
+
+    * - Property
+      - Type
+      - Description
+    * - type
+      - string
+      - ``operation``
     * - input
-      - :ref:`shape-id`\<:ref:`structure`\>
-      - Defines the optional input structure of the operation.
+      - :ref:`AST shape reference <ast-shape-reference>`
+      - Defines the optional input structure of the operation. The ``input``
+        of an operation MUST resolve to a :ref:`structure`.
     * - output
-      - :ref:`shape-id`\<:ref:`structure`\>
-      - Defines the optional output structure of the operation.
+      - :ref:`AST shape reference <ast-shape-reference>`
+      - Defines the optional output structure of the operation. The ``output``
+        of an operation MUST resolve to a :ref:`structure`.
     * - errors
-      - [ :ref:`shape-id`\<:ref:`structure`\> ]
+      - [:ref:`AST shape reference <ast-shape-reference>`]
       - Defines the list of errors that MAY be encountered when invoking
-        the operation. Each element in the list is a :ref:`shape ID <shape-id>`
-        that MUST resolve to a :ref:`structure` shape that is marked with the
-        :ref:`error-trait` trait.
+        the operation. Each reference MUST resolve to a :ref:`structure`
+        shape that is marked with the :ref:`error-trait` trait.
+    * - traits
+      - Map\<:ref:`shape ID <shape-id>`, trait value>
+      - Traits to apply to the operation.
 
 The following example defines an operation, its input, output, and errors:
 
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "MyOperation": {
-                    "type": "operation",
-                    "input": "MyOperationInput",
-                    "output": "MyOperationOutput",
-                    "errors": ["BadRequestError", "NotFoundError"]
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyOperation": {
+                "type": "operation",
+                "input": {
+                    "$target": "smithy.example#MyOperationInput"
                 },
-                "MyOperationInput": {
-                    "type": "structure",
+                "output": {
+                    "$target": "smithy.example#MyOperationOutput"
                 },
-                "MyOperationOutput": {
-                    "type": "structure",
-                },
-                "BadRequestError": {
-                    "type": "structure",
-                    "error": "client"
-                },
-                "NotFoundError": {
-                    "type": "structure",
-                    "error": "client"
+                "errors": [
+                    {
+                        "$target": "smithy.example#BadRequestError"
+                    },
+                    {
+                        "$target": "smithy.example#NotFoundError"
+                    }
+                ]
+            },
+            "smithy.example#MyOperationInput": {
+                "type": "structure"
+            },
+            "smithy.example#MyOperationOutput": {
+                "type": "structure"
+            },
+            "smithy.example#BadRequestError": {
+                "type": "structure",
+                "traits": {
+                    "smithy.api#error": "client"
+                }
+            },
+            "smithy.example#NotFoundError": {
+                "type": "structure",
+                "traits": {
+                    "smithy.api#error": "client"
                 }
             }
         }
     }
+
+
+AST apply type
+~~~~~~~~~~~~~~
+
+A ``type`` of ``apply`` can be used to apply traits to shapes outside of a
+shape's definition. The ``apply`` entry in the map does not actually define a
+shape; the definition MUST reference a shape that is defined in another file
+or is a member of a shape. The ``apply`` type allows only the ``traits``
+property.
+
+.. code-block:: json
+
+    {
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#Struct": {
+                "type": "structure",
+                "members": {
+                    "foo": {
+                        "$target": "smithy.api#String"
+                    }
+                }
+            },
+            "smithy.example#Struct$foo": {
+                "type": "apply",
+                "traits": {
+                    "smithy.api#documentation": "My documentation string"
+                }
+            }
+        }
+    }
+
 
 .. _ABNF: https://tools.ietf.org/html/rfc5234
 .. _CommonMark: https://spec.commonmark.org/

@@ -112,30 +112,36 @@ and ``{second}``, in the MQTT topic template:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "ExampleOperation": {
-                        "type": "operation",
-                        "input": "ExampleOperationInput",
-                        "smithy.mqtt#publish": "{first}/{second}"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#ExampleOperation": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#ExampleOperationInput"
                     },
-                    "ExampleOperationInput": {
-                        "type": "structure",
-                        "members": {
-                            "first": {
-                                "target": "String",
-                                "required": true,
+                    "traits": {
+                        "smithy.mqtt#publish": "{first}/{second}"
+                    }
+                },
+                "smithy.example#ExampleOperationInput": {
+                    "type": "structure",
+                    "members": {
+                        "first": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true,
                                 "smithy.mqtt#topicLabel": true
-                            },
-                            "second": {
-                                "target": "String",
-                                "required": true,
-                                "smithy.mqtt#topicLabel": true
-                            },
-                            "message": {
-                                "target": "String"
                             }
+                        },
+                        "second": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true,
+                                "smithy.mqtt#topicLabel": true
+                            }
+                        },
+                        "message": {
+                            "$target": "smithy.api#String"
                         }
                     }
                 }
@@ -213,28 +219,32 @@ The following example defines an operation that publishes messages to the
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PostFoo": {
-                        "type": "operation",
-                        "input": "PostFooInput",
-                        "smithy.mqtt#publish": "foo/{bar}"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PostFoo": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#PostFooInput"
                     },
-                    "PostFooInput": {
-                        "type": "structure",
-                        "members": {
-                            "bar": {
-                                "target": "String",
-                                "required": true,
+                    "traits": {
+                        "smithy.mqtt#publish": "foo/{bar}"
+                    }
+                },
+                "smithy.example#PostFooInput": {
+                    "type": "structure",
+                    "members": {
+                        "bar": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true,
                                 "smithy.mqtt#topicLabel": true
-                            },
-                            "message": {
-                                "target": "String"
-                            },
-                            "anotherValue": {
-                                "target": "Boolean"
                             }
+                        },
+                        "message": {
+                            "$target": "smithy.api#String"
+                        },
+                        "anotherValue": {
+                            "$target": "smithy.api#Boolean"
                         }
                     }
                 }
@@ -327,45 +337,50 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "SubscribeForEvents": {
-                        "type": "operation",
-                        "input": "SubscribeForEventsInput",
-                        "smithy.mqtt#subscribe": "events/{id}"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#SubscribeForEvents": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#SubscribeForEventsInput"
                     },
-                    "SubscribeForEventsInput": {
-                        "type": "structure",
-                        "members": {
-                            "id": {
-                                "target": "String",
-                                "required": true,
+                    "traits": {
+                        "smithy.mqtt#subscribe": "events/{id}"
+                    }
+                },
+                "smithy.example#SubscribeForEventsInput": {
+                    "type": "structure",
+                    "members": {
+                        "id": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true,
                                 "smithy.mqtt#topicLabel": true
                             }
                         }
-                    },
-                    "SubscribeForEventsOutput": {
-                        "type": "structure",
-                        "members": {
-                            "events": {
-                                "target": "Event",
-                                "eventStream": true
+                    }
+                },
+                "smithy.example#SubscribeForEventsOutput": {
+                    "type": "structure",
+                    "members": {
+                        "events": {
+                            "$target": "smithy.example#Event",
+                            "traits": {
+                                "smithy.api#eventStream": true
                             }
                         }
-                    },
-                    "Event": {
-                        "type": "structure",
-                        "members": {
-                            "message": {
-                                "target": "String"
-                            }
+                    }
+                },
+                "smithy.example#Event": {
+                    "type": "structure",
+                    "members": {
+                        "message": {
+                            "$target": "smithy.api#String"
                         }
                     }
                 }
             }
         }
-
 
 Subscribe validation
 ====================
@@ -484,8 +499,6 @@ The following Smithy model defines the traits and shapes used to define
 MQTT protocol bindings.
 
 .. code-block:: smithy
-
-    $version: "0.4.0"
 
     namespace smithy.mqtt
 

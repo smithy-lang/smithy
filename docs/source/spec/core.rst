@@ -68,12 +68,12 @@ example sets the version to "|version|":
 
     .. code-tab:: smithy
 
-        $version: "0.4.0"
+        $version: "0.5.0"
 
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0"
+            "smithy": "0.5.0"
         }
 
 When no version number is specified in the IDL, an implementation will assume
@@ -85,10 +85,10 @@ a version is specified in a top-level "smithy" key-value pair.
 Version compatibility
 ---------------------
 
-Multiple version statements MAY appear in a Smithy model or can be encountered
-when merging multiple models together. Multiple versions are supported if and
-only if all of the version statements are compatible according to the
-following constraints:
+A single version statement can appear in a model file. Different versions MAY
+be encountered when merging multiple model files together. Multiple versions
+are supported if and only if all of the version statements are compatible
+according to the following constraints:
 
 1. Each version MUST specify the same major version number. For example,
    ``0.2.0`` and ``1.0.0`` are **not** compatible because they use different
@@ -128,12 +128,14 @@ statements start with ``metadata``, followed by the key to set, followed by
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
+            "smithy": "0.5.0",
             "metadata": {
                 "foo": "baz",
                 "hello": "bar",
                 "lorem": {
-                    "ipsum": ["dolor"]
+                    "ipsum": [
+                        "dolor"
+                    ]
                 }
             }
         }
@@ -172,23 +174,16 @@ The following example defines a string shape named ``MyString`` in the
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyString": {
-                        "type": "string"
-                    }
-                }
-            },
-            "another.example": {
-                "shapes": {
-                    "MyString": {
-                        "type": "string"
-                    }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyString": {
+                    "type": "string"
+                },
+                "another.example#MyString": {
+                    "type": "string"
                 }
             }
         }
-
 
 .. _shapes:
 
@@ -278,48 +273,46 @@ The following example defines a shape for each simple type in the
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "Blob": {
-                        "type": "blob",
-                    },
-                    "Boolean": {
-                        "type": "boolean"
-                    },
-                    "String": {
-                        "type": "string"
-                    },
-                    "Byte": {
-                        "type": "byte"
-                    },
-                    "Short": {
-                        "type": "short"
-                    },
-                    "Integer": {
-                        "type": "integer"
-                    },
-                    "Long": {
-                        "type": "long"
-                    },
-                    "Float": {
-                        "type": "float"
-                    },
-                    "Double": {
-                        "type": "double"
-                    },
-                    "BigInteger": {
-                        "type": "bigInteger"
-                    },
-                    "BigDecimal": {
-                        "type": "bigDecimal"
-                    },
-                    "Timestamp": {
-                        "type": "timestamp"
-                    },
-                    "Document": {
-                        "type": "document"
-                    }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#Blob": {
+                    "type": "blob"
+                },
+                "smithy.example#Boolean": {
+                    "type": "boolean"
+                },
+                "smithy.example#String": {
+                    "type": "string"
+                },
+                "smithy.example#Byte": {
+                    "type": "byte"
+                },
+                "smithy.example#Short": {
+                    "type": "short"
+                },
+                "smithy.example#Integer": {
+                    "type": "integer"
+                },
+                "smithy.example#Long": {
+                    "type": "long"
+                },
+                "smithy.example#Float": {
+                    "type": "float"
+                },
+                "smithy.example#Double": {
+                    "type": "double"
+                },
+                "smithy.example#BigInteger": {
+                    "type": "bigInteger"
+                },
+                "smithy.example#BigDecimal": {
+                    "type": "bigDecimal"
+                },
+                "smithy.example#Timestamp": {
+                    "type": "timestamp"
+                },
+                "smithy.example#Document": {
+                    "type": "document"
                 }
             }
         }
@@ -431,13 +424,11 @@ The following example defines a list with a string member from the
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyList": {
-                        "member": {
-                            "target": "String"
-                        }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyList": {
+                    "member": {
+                        "$target": "smithy.api#String"
                     }
                 }
             }
@@ -458,20 +449,22 @@ Traits can be applied to the list shape and its member:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyList": {
-                        "length": {
-                            "min": 3,
-                            "max": 10
-                        },
-                        "member": {
-                            "length": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyList": {
+                    "member": {
+                        "$target": "smithy.api#String",
+                        "traits": {
+                            "smithy.api#length": {
                                 "min": 1,
                                 "max": 100
-                            },
-                            "target": "String"
+                            }
+                        }
+                    },
+                    "traits": {
+                        "smithy.api#length": {
+                            "min": 3,
+                            "max": 10
                         }
                     }
                 }
@@ -491,19 +484,22 @@ definition using an ``apply`` statement:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "traits": {
-                    "MyList": {
-                        "documentation": "Long documentation string..."
-                    },
-                    "MyList$member": {
-                        "documentation": "Long documentation string..."
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyList": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "Long documentation string..."
+                    }
+                },
+                "smithy.example#MyList$member": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "Long documentation string..."
                     }
                 }
             }
         }
-
 
 .. _set:
 
@@ -528,13 +524,11 @@ The following example defines a set of strings:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "StringSet": {
-                        "member": {
-                            "target": "String"
-                        }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#StringSet": {
+                    "member": {
+                        "$target": "smithy.api#String"
                     }
                 }
             }
@@ -558,19 +552,20 @@ Traits can be applied to the set shape and its members:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "StringSet": {
-                        "deprecated" true,
-                        "member": {
-                            "target": "String"
-                        }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#StringSet": {
+                    "member": {
+                        "$target": "smithy.api#String"
+                    },
+                    "traits": {
+                        "smithy.api#deprecated": true
                     }
                 },
-                "traits": {
-                    "StringSet$member": {
-                        "documentation": "text"
+                "smithy.example#StringSet$member": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "text"
                     }
                 }
             }
@@ -609,21 +604,18 @@ The following example defines a map of strings to integers:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "IntegerMap": {
-                        "key": {
-                            "target": "String"
-                        },
-                        "value": {
-                            "target": "String"
-                        }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#IntegerMap": {
+                    "key": {
+                        "$target": "smithy.api#String"
+                    },
+                    "value": {
+                        "$target": "smithy.api#String"
                     }
                 }
             }
         }
-
 
 Traits can be applied to the map shape and its members:
 
@@ -647,38 +639,45 @@ Traits can be applied to the map shape and its members:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "IntegerMap": {
-                        "length": {
-                            "min": 0,
-                            "max": 100
-                        },
-                        "key": {
-                            "target": "String",
-                            "length": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#IntegerMap": {
+                    "key": {
+                        "$target": "smithy.api#String",
+                        "traits": {
+                            "smithy.api#length": {
                                 "min": 1,
                                 "max": 10
                             }
-                        },
-                        "value": {
-                            "target": "String",
-                            "sensitive": true
+                        }
+                    },
+                    "value": {
+                        "$target": "smithy.api#String",
+                        "traits": {
+                            "smithy.api#sensitive": true
+                        }
+                    },
+                    "traits": {
+                        "smithy.api#length": {
+                            "min": 0,
+                            "max": 100
                         }
                     }
                 },
-                "traits": {
-                    "IntegerMap$key": {
-                        "documentation": "Key documentation"
-                    },
-                    "IntegerMap$value": {
-                        "documentation": "Value documentation"
+                "smithy.example#IntegerMap$key": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "Key documentation"
+                    }
+                },
+                "smithy.example#IntegerMap$value": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "Value documentation"
                     }
                 }
             }
         }
-
 
 .. _structure:
 
@@ -706,18 +705,16 @@ The following example defines a structure with two members:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyStructure": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String"
-                            },
-                            "baz": {
-                                "target": "Integer"
-                            }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "$target": "smithy.api#String"
+                        },
+                        "baz": {
+                            "$target": "smithy.api#Integer"
                         }
                     }
                 }
@@ -744,31 +741,33 @@ using the ``apply`` statement:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyStructure": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String",
-                                "required": true
-                            },
-                            "baz": {
-                                "target": "Integer",
-                                "deprecated": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true
+                            }
+                        },
+                        "baz": {
+                            "$target": "smithy.api#Integer",
+                            "traits": {
+                                "smithy.api#deprecated": true
                             }
                         }
                     }
                 },
-                "traits": {
-                    "MyStructure$foo": {
-                        "documentation": "Documentation content..."
+                "smithy.example#MyStructure$foo": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "Documentation content..."
                     }
                 }
             }
         }
-
 
 .. _union:
 
@@ -800,33 +799,33 @@ The following example defines a union shape with several members:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyUnion": {
-                        "type": "structure",
-                        "members": {
-                            "i32": {
-                                "target": "Integer"
-                            },
-                            "stringA": {
-                                "target": "String"
-                            },
-                            "stringB": {
-                                "target": "String",
-                                "sensitive": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyUnion": {
+                    "type": "structure",
+                    "members": {
+                        "i32": {
+                            "$target": "smithy.api#Integer"
+                        },
+                        "stringA": {
+                            "$target": "smithy.api#String"
+                        },
+                        "stringB": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#sensitive": true
                             }
                         }
                     }
                 },
-                "traits": {
-                    "MyUnion$i32": {
-                        "documentation": "text"
+                "smithy.example#MyUnion$i32": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "text"
                     }
                 }
             }
         }
-
 
 .. _member:
 
@@ -855,13 +854,11 @@ targets the ``MyString`` shape in the same namespace.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyList": {
-                        "member": {
-                            "target": "MyString"
-                        }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyList": {
+                    "member": {
+                        "$target": "smithy.example#MyString"
                     }
                 }
             }
@@ -881,13 +878,13 @@ Traits can be attached to members before the member definition:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyList": {
-                        "member": {
-                            "target": "MyString",
-                            "sensitive": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyList": {
+                    "member": {
+                        "$target": "smithy.example#MyString",
+                        "traits": {
+                            "smithy.api#sensitive": true
                         }
                     }
                 }
@@ -908,11 +905,12 @@ applied to shapes outside of their definition in the JSON AST using the
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "traits": {
-                    "MyList$member": {
-                        "documentation": "Hello"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyList$member": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "Hello"
                     }
                 }
             }
@@ -969,14 +967,12 @@ The following shape definition is invalid:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "RecursiveList": {
-                        "type": "list",
-                        "member": {
-                            "target": "RecursiveList"
-                        }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#RecursiveList": {
+                    "type": "list",
+                    "member": {
+                        "$target": "smithy.example#RecursiveList"
                     }
                 }
             }
@@ -999,27 +995,24 @@ The following shape definition is valid:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "ValidList": {
-                        "type": "list",
-                        "member": {
-                            "target": "IntermediateStructure"
-                        }
-                    },
-                    "IntermediateStructure": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "ValidList"
-                            }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#ValidList": {
+                    "type": "list",
+                    "member": {
+                        "$target": "smithy.example#IntermediateStructure"
+                    }
+                },
+                "smithy.example#IntermediateStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "$target": "smithy.example#ValidList"
                         }
                     }
                 }
             }
         }
-
 
 .. _service-types:
 
@@ -1101,17 +1094,21 @@ that do not fit within a resource hierarchy.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyService": {
-                        "type": "service",
-                        "version": "2017-02-11",
-                        "operations": ["GetServerTime"]
-                    },
-                    "GetServerTime": {
-                        "type": "operation",
-                        "output": "GetServerTimeOutput"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyService": {
+                    "type": "service",
+                    "version": "2017-02-11",
+                    "operations": [
+                        {
+                            "$target": "smithy.example#GetServerTime"
+                        }
+                    ]
+                },
+                "smithy.example#GetServerTime": {
+                    "type": "operation",
+                    "output": {
+                        "$target": "smithy.example#GetServerTimeOutput"
                     }
                 }
             }
@@ -1147,17 +1144,19 @@ shape ID of a resource to the ``resources`` property of a service.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyService": {
-                        "type": "service",
-                        "version": "2017-02-11",
-                        "resources": ["MyResource"]
-                    },
-                    "MyResource": {
-                        "type": "resource"
-                    }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyService": {
+                    "type": "service",
+                    "version": "2017-02-11",
+                    "resources": [
+                        {
+                            "$target": "smithy.example#MyResource"
+                        }
+                    ]
+                },
+                "smithy.example#MyResource": {
+                    "type": "resource"
                 }
             }
         }
@@ -1195,19 +1194,27 @@ can potentially return the ``NotFound`` or ``BadRequest``
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyOperation": {
-                        "type": "operation",
-                        "input": "Input",
-                        "output": "Output",
-                        "errors": ["NotFound", "BadRequest"]
-                    }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyOperation": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#Input"
+                    },
+                    "output": {
+                        "$target": "smithy.example#Output"
+                    },
+                    "errors": [
+                        {
+                            "$target": "smithy.example#NotFound"
+                        },
+                        {
+                            "$target": "smithy.example#BadRequest"
+                        }
+                    ]
                 }
             }
         }
-
 
 .. _operation-input:
 
@@ -1229,12 +1236,12 @@ named ``Input``:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyOperation": {
-                        "type": "operation",
-                        "input": "Input"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyOperation": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#Input"
                     }
                 }
             }
@@ -1253,16 +1260,13 @@ input and returns no output:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyOperation": {
-                        "type": "operation"
-                    }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyOperation": {
+                    "type": "operation"
                 }
             }
         }
-
 
 .. _operation-output:
 
@@ -1284,17 +1288,16 @@ structure named ``Output``:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyOperation": {
-                        "type": "operation",
-                        "output": "Output"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyOperation": {
+                    "type": "operation",
+                    "output": {
+                        "$target": "smithy.example#Output"
                     }
                 }
             }
         }
-
 
 .. _operation-errors:
 
@@ -1319,17 +1322,21 @@ returns no output, and can potentially return the
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyOperation": {
-                        "type": "operation",
-                        "errors": ["NotFound", "BadRequest"]
-                    }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyOperation": {
+                    "type": "operation",
+                    "errors": [
+                        {
+                            "$target": "smithy.example#NotFound"
+                        },
+                        {
+                            "$target": "smithy.example#BadRequest"
+                        }
+                    ]
                 }
             }
         }
-
 
 ..  _resource:
 
@@ -1415,18 +1422,18 @@ single identifier named ``forecastId`` that targets the ``ForecastId`` shape:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "Forecast": {
-                        "type": "resource",
-                        "identifiers": {
-                            "forecastId": "ForecastId"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#Forecast": {
+                    "type": "resource",
+                    "identifiers": {
+                        "forecastId": {
+                            "$target": "smithy.example#ForecastId"
                         }
-                    },
-                    "ForecastId": {
-                        "type": "string"
                     }
+                },
+                "smithy.example#ForecastId": {
+                    "type": "string"
                 }
             }
         }
@@ -1474,30 +1481,48 @@ For example, given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "ResourceA": {
-                        "type": "resource",
-                        "resources": ["ResourceB"],
-                        "identifiers": {
-                            "a": "String"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#ResourceA": {
+                    "type": "resource",
+                    "resources": [
+                        {
+                            "$target": "smithy.example#ResourceB"
                         }
-                    },
-                    "ResourceB": {
-                        "type": "resource",
-                        "resources": ["ResourceC"],
-                        "identifiers": {
-                            "a": "String",
-                            "b": "String"
+                    ],
+                    "identifiers": {
+                        "a": {
+                            "$target": "smithy.api#String"
                         }
-                    },
-                    "ResourceC": {
-                        "type": "resource",
-                        "identifiers": {
-                            "a": "String",
-                            "b": "String",
-                            "c": "String"
+                    }
+                },
+                "smithy.example#ResourceB": {
+                    "type": "resource",
+                    "resources": [
+                        {
+                            "$target": "smithy.example#ResourceC"
+                        }
+                    ],
+                    "identifiers": {
+                        "a": {
+                            "$target": "smithy.api#String"
+                        },
+                        "b": {
+                            "$target": "smithy.api#String"
+                        }
+                    }
+                },
+                "smithy.example#ResourceC": {
+                    "type": "resource",
+                    "identifiers": {
+                        "a": {
+                            "$target": "smithy.api#String"
+                        },
+                        "b": {
+                            "$target": "smithy.api#String"
+                        },
+                        "c": {
+                            "$target": "smithy.api#String"
                         }
                     }
                 }
@@ -1541,34 +1566,48 @@ define an ``identifiers`` property that is compatible with their parents:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "ResourceA": {
-                        "type": "resource",
-                        "identifiers": {
-                            "a": "String",
-                            "b": "String"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#ResourceA": {
+                    "type": "resource",
+                    "identifiers": {
+                        "a": {
+                            "$target": "smithy.api#String"
                         },
-                        "resources": ["Invalid1", "Invalid2"]
-                    },
-                    "Invalid1": {
-                        "type": "resource",
-                        "identifiers": {
-                            "b": "String"
+                        "b": {
+                            "$target": "smithy.api#String"
                         }
                     },
-                    "Invalid2": {
-                        "type": "resource",
-                        "identifiers": {
-                            "a": "String",
-                            "b": "SomeOtherString"
+                    "resources": [
+                        {
+                            "$target": "smithy.example#Invalid1"
+                        },
+                        {
+                            "$target": "smithy.example#Invalid2"
+                        }
+                    ]
+                },
+                "smithy.example#Invalid1": {
+                    "type": "resource",
+                    "identifiers": {
+                        "b": {
+                            "$target": "smithy.api#String"
+                        }
+                    }
+                },
+                "smithy.example#Invalid2": {
+                    "type": "resource",
+                    "identifiers": {
+                        "a": {
+                            "$target": "smithy.api#String"
+                        },
+                        "b": {
+                            "$target": "smithy.example#SomeOtherString"
                         }
                     }
                 }
             }
         }
-
 
 .. _binding-identifiers:
 
@@ -1645,37 +1684,49 @@ For example, given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "Forecast": {
-                        "type": "resource",
-                        "identifiers": {
-                            "forecastId": "ForecastId"
-                        },
-                        "read": "GetForecast"
-                    },
-                    "GetForecast": {
-                        "readonly": true,
-                        "type": "operation",
-                        "input": "GetForecastInput",
-                        "output": "GetForecastOutput"
-                    },
-                    "GetForecastInput": {
-                        "type": "structure",
-                        "members": {
-                            "forecastId": {
-                                "target": "ForecastId",
-                                "required": true
-                            }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#Forecast": {
+                    "type": "resource",
+                    "identifiers": {
+                        "forecastId": {
+                            "$target": "smithy.example#ForecastId"
                         }
                     },
-                    "GetForecastOutput": {
-                        "type": "structure",
-                        "members": {
-                            "weather": {
-                                "target": "WeatherData",
-                                "required": true
+                    "read": {
+                        "$target": "smithy.example#GetForecast"
+                    }
+                },
+                "smithy.example#GetForecast": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#GetForecastInput"
+                    },
+                    "output": {
+                        "$target": "smithy.example#GetForecastOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true
+                    }
+                },
+                "smithy.example#GetForecastInput": {
+                    "type": "structure",
+                    "members": {
+                        "forecastId": {
+                            "$target": "smithy.example#ForecastId",
+                            "traits": {
+                                "smithy.api#required": true
+                            }
+                        }
+                    }
+                },
+                "smithy.example#GetForecastOutput": {
+                    "type": "structure",
+                    "members": {
+                        "weather": {
+                            "$target": "smithy.example#WeatherData",
+                            "traits": {
+                                "smithy.api#required": true
                             }
                         }
                     }
@@ -1716,27 +1767,37 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "Forecast": {
-                        "type": "resource",
-                        "identifiers": {
-                            "forecastId": "ForecastId"
-                        },
-                        "operations": ["BatchPutForecasts"]
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#Forecast": {
+                    "type": "resource",
+                    "identifiers": {
+                        "forecastId": {
+                            "$target": "smithy.example#ForecastId"
+                        }
                     },
-                    "BatchPutForecasts": {
-                        "type": "operation",
-                        "input": "BatchPutForecastsInput",
-                        "output": "BatchPutForecastsOutput"
+                    "operations": [
+                        {
+                            "$target": "smithy.example#BatchPutForecasts"
+                        }
+                    ]
+                },
+                "smithy.example#BatchPutForecasts": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#BatchPutForecastsInput"
                     },
-                    "BatchPutForecastsInput": {
-                        "type": "structure",
-                        "members": {
-                            "forecasts": {
-                                "target": "BatchPutForecastList",
-                                "required": true
+                    "output": {
+                        "$target": "smithy.example#BatchPutForecastsOutput"
+                    }
+                },
+                "smithy.example#BatchPutForecastsInput": {
+                    "type": "structure",
+                    "members": {
+                        "forecasts": {
+                            "$target": "smithy.example#BatchPutForecastList",
+                            "traits": {
+                                "smithy.api#required": true
                             }
                         }
                     }
@@ -2182,21 +2243,27 @@ For example, given the following Smithy model:
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "MyStructure": {
-                    "type": "structure",
-                    "members": {
-                        "a": {"target": "MyString"},
-                        "b": {"target": "String"},
-                        "c": {"target": "smithy.example#Foo"},
-                        "d": {"target": "InvalidShape"}
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyStructure": {
+                "type": "structure",
+                "members": {
+                    "a": {
+                        "$target": "smithy.example#MyString"
+                    },
+                    "b": {
+                        "$target": "smithy.api#String"
+                    },
+                    "c": {
+                        "$target": "smithy.example#Foo"
+                    },
+                    "d": {
+                        "$target": "smithy.example#InvalidShape"
                     }
-                },
-                "MyString": {
-                    "type": "string"
                 }
+            },
+            "smithy.example#MyString": {
+                "type": "string"
             }
         }
     }
@@ -2327,19 +2394,16 @@ following JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyString": {
+                "type": "string"
+            }
+        },
         "metadata": {
             "MyString": "smithy.example#MyString"
-        },
-        "smithy.example": {
-            "shapes": {
-                "MyString": {
-                    "type": "string"
-                }
-            }
         }
     }
-
 
 ..  _prelude:
 
@@ -2357,7 +2421,7 @@ defined in the prelude are available inside of the ``smithy.api`` namespace.
     :caption: Smithy prelude
     :name: prelude-shapes
 
-    $version: "0.4.0"
+    $version: "0.5.0"
 
     namespace smithy.api
 
@@ -2448,13 +2512,13 @@ to ``MyString``:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyString": {
-                        "type": "string",
-                        "documentation": "Contains a string",
-                        "sensitive": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyString": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#documentation": "Contains a string",
+                        "smithy.api#sensitive": true
                     }
                 }
             }
@@ -2486,17 +2550,20 @@ The following example applies the :ref:`documentation-trait` and
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "traits": {
-                    "MyString": {
-                        "documentation": "This is my string!",
-                        "length": { "min": 1, "max": 10 }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyString": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#documentation": "This is my string!",
+                        "smithy.api#length": {
+                            "min": 1,
+                            "max": 10
+                        }
                     }
                 }
             }
         }
-
 
 .. _trait-values:
 
@@ -2553,12 +2620,12 @@ following example defines an annotation trait named ``foo``:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "foo": {
-                        "type": "structure",
-                        "trait": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#foo": {
+                    "type": "structure",
+                    "traits": {
+                        "smithy.api#trait": true
                     }
                 }
             }
@@ -2592,24 +2659,30 @@ The following applications of the ``foo`` annotation trait are all equivalent:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyString1": {
-                        "type": "string",
-                        "foo": null
-                    },
-                    "MyString2": {
-                        "type": "string",
-                        "foo": {}
-                    },
-                    "MyString3": {
-                        "type": "string",
-                        "foo": true
-                    },
-                    "MyString4": {
-                        "type": "string",
-                        "foo": null
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyString1": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#foo": null
+                    }
+                },
+                "smithy.example#MyString2": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#foo": {}
+                    }
+                },
+                "smithy.example#MyString3": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#foo": true
+                    }
+                },
+                "smithy.example#MyString4": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#foo": null
                     }
                 }
             }
@@ -2637,26 +2710,29 @@ example and the following example are all valid even after adding a member to th
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "foo": {
-                        "type": "structure",
-                        "trait": true,
-                        "members": {
-                            "baz": {"target": "String"}
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#foo": {
+                    "type": "structure",
+                    "members": {
+                        "baz": {
+                            "$target": "smithy.api#String"
                         }
                     },
-                    "MyString5": {
-                        "type": "string",
-                        "foo": {
+                    "traits": {
+                        "smithy.api#trait": true
+                    }
+                },
+                "smithy.example#MyString5": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#foo": {
                             "baz": "bar"
                         }
                     }
                 }
             }
         }
-
 
 Other trait values
 ------------------
@@ -2749,12 +2825,12 @@ The following example defines a trait named ``myTraitName`` in the
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "myTraitName": {
-                        "type": "structure",
-                        "trait": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#myTraitName": {
+                    "type": "structure",
+                    "traits": {
+                        "smithy.api#trait": {
                             "selector": "*"
                         }
                     }
@@ -2784,12 +2860,12 @@ namespace:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyString": {
-                        "type": "string",
-                        "myTraitName": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyString": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#myTraitName": true
                     }
                 }
             }
@@ -2880,40 +2956,58 @@ The following example defines two custom traits: ``beta`` and
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "traits": {
-                    "beta": {
-                        "type": "structure",
-                        "trait": {"selector": "member:of(structure)"},
-                        "documentation": "A trait that can be applied to a member."
-                    },
-                    "structuredTrait": {
-                        "type": "structure",
-                        "trait": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#beta": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#type": "structure",
+                        "smithy.api#trait": {
+                            "selector": "member:of(structure)"
+                        },
+                        "smithy.api#documentation": "A trait that can be applied to a member."
+                    }
+                },
+                "smithy.example#structuredTrait": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#type": "structure",
+                        "smithy.api#trait": {
                             "selector": "string",
-                            "conflicts": ["smithy.example#beta"]
+                            "conflicts": [
+                                "smithy.example#beta"
+                            ]
                         },
-                        "members": {
-                            "lorem": {"target": "StringShape", "required": true},
-                            "lorem": {"target": "StringShape", "required": true},
-                            "dolor": {"target": "StringShape"}
+                        "smithy.api#members": {
+                            "lorem": {
+                                "target": "StringShape",
+                                "required": true
+                            },
+                            "dolor": {
+                                "target": "StringShape"
+                            }
                         },
-                        "documentation": "A trait that has members."
-                    },
-                    "MyShape": {
-                        "type": "structure",
-                        "members": {
+                        "smithy.api#documentation": "A trait that has members."
+                    }
+                },
+                "smithy.example#MyShape": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#type": "structure",
+                        "smithy.api#members": {
                             "beta": {
                                 "target": "StringShape",
                                 "required": true,
                                 "beta": true
                             }
                         }
-                    },
-                    "StringShape": {
-                        "type": "string",
-                        "structuredTrait": {
+                    }
+                },
+                "smithy.example#StringShape": {
+                    "type": "apply",
+                    "traits": {
+                        "smithy.api#type": "string",
+                        "smithy.api#structuredTrait": {
                             "lorem": "This is a custom trait!",
                             "ipsum": "lorem and ipsum are both required values."
                         }
@@ -2921,7 +3015,6 @@ The following example defines two custom traits: ``beta`` and
                 }
             }
         }
-
 
 .. _trait-definition-values:
 
@@ -3058,12 +3151,12 @@ is wrapped in an `Option type`_.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "BoxedInteger": {
-                        "type": "integer",
-                        "box": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#BoxedInteger": {
+                    "type": "integer",
+                    "traits": {
+                        "smithy.api#box": true
                     }
                 }
             }
@@ -3115,16 +3208,18 @@ The ``deprecated`` trait is an object that supports the following properties:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "SomeString": {
-                        "type": "string",
-                        "deprecated": {}
-                    },
-                    "OtherString": {
-                        "type": "string",
-                        "deprecated": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#SomeString": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#deprecated": {}
+                    }
+                },
+                "smithy.example#OtherString": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#deprecated": {
                             "message": "This shape is no longer used.",
                             "since": "1.3"
                         }
@@ -3132,7 +3227,6 @@ The ``deprecated`` trait is an object that supports the following properties:
                 }
             }
         }
-
 
 .. _error-trait:
 
@@ -3311,21 +3405,25 @@ The following example defines an enum of valid string values for ``MyString``.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyString": {
-                        "type": "string",
-                        "enum": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyString": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#enum": {
                             "t2.nano": {
                                 "name": "T2_NANO",
                                 "documentation": "T2 instances are ...",
-                                "tags": ["ebsOnly"]
+                                "tags": [
+                                    "ebsOnly"
+                                ]
                             },
                             "t2.micro": {
                                 "name": "T2_MICRO",
-                                "documentation": "T2 instances are ..."
-                                "tags": ["ebsOnly"]
+                                "documentation": "T2 instances are ...",
+                                "tags": [
+                                    "ebsOnly"
+                                ]
                             },
                             "m256.mega": {
                                 "name": "M256_MEGA",
@@ -3337,19 +3435,14 @@ The following example defines an enum of valid string values for ``MyString``.
             }
         }
 
-
 .. _idref-trait:
 
 ``idRef`` trait
 ---------------
 
 Summary
-    Indicates that a string value MUST contain a valid
-    :ref:`shape ID <shape-id>`. The provided shape ID MAY be absolute or
-    relative to the shape to which the trait is applied. A relative
-    shape ID that does not resolve to a shape defined in the same namespace
-    resolves to a shape defined in the :ref:`prelude <prelude>` if the
-    prelude shape is not marked with the :ref:`private-trait`.
+    Indicates that a string value MUST contain a valid absolute
+    :ref:`shape ID <shape-id>`.
 
     The ``idRef`` trait is used primarily when declaring
     :ref:`trait definitions <trait-definition>` in a model. A trait definition
@@ -3408,13 +3501,13 @@ contain a valid shape ID that targets an integer shape in the model.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "integerRef": {
-                        "trait": true,
-                        "type": "string",
-                        "idRef": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#integerRef": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#trait": true,
+                        "smithy.api#idRef": {
                             "failWhenMissing": true,
                             "selector": "integer"
                         }
@@ -3451,32 +3544,40 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "InvalidShape1": {
-                        "type": "string",
-                        "integerRef": "NotFound"
-                    },
-                    "InvalidShape2": {
-                        "type": "string",
-                        "integerRef": "String"
-                    },
-                    "InvalidShape3": {
-                        "type": "string",
-                        "integerRef": "invalid-shape-id!"
-                    },
-                    "ValidShape": {
-                        "type": "string",
-                        "integerRef": "Integer"
-                    },
-                    "ValidShape2": {
-                        "type": "string",
-                        "integerRef": "MyShape"
-                    },
-                    "MyShape": {
-                        "type": "string"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#InvalidShape1": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#integerRef": "NotFound"
                     }
+                },
+                "smithy.example#InvalidShape2": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#integerRef": "String"
+                    }
+                },
+                "smithy.example#InvalidShape3": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#integerRef": "invalid-shape-id!"
+                    }
+                },
+                "smithy.example#ValidShape": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#integerRef": "Integer"
+                    }
+                },
+                "smithy.example#ValidShape2": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#integerRef": "MyShape"
+                    }
+                },
+                "smithy.example#MyShape": {
+                    "type": "string"
                 }
             }
         }
@@ -3486,10 +3587,11 @@ Given the following model,
 - ``InvalidShape2`` is invalid because "smithy.api#String" targets a
   string which does not match the "integer" selector.
 - ``InvalidShape3`` is invalid because "invalid-shape-id!" is not a
-  syntactically correct shape ID.
+  syntactically correct absolute shape ID.
 - ``ValidShape`` is valid because "smithy.api#Integer" targets an integer.
 - ``ValidShape2`` is valid because "MyShape" is a relative ID that targets
   ``smithy.example#MyShape``.
+
 
 .. _length-trait:
 
@@ -3545,12 +3647,12 @@ blob         The size of the blob in bytes
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyString": {
-                        "type": "string",
-                        "length": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyString": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#length": {
                             "min": 1,
                             "max": 10
                         }
@@ -3558,7 +3660,6 @@ blob         The size of the blob in bytes
                 }
             }
         }
-
 
 .. _pattern-trait:
 
@@ -3590,17 +3691,16 @@ languages.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyString": {
-                        "type": "string",
-                        "pattern": "\\w+"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyString": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#pattern": "\\w+"
                     }
                 }
             }
         }
-
 
 .. _private-trait:
 
@@ -3668,12 +3768,12 @@ of the targeted numeric shape to which it is applied.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyInt": {
-                        "type": "integer",
-                        "range": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyInt": {
+                    "type": "integer",
+                    "traits": {
+                        "smithy.api#range": {
                             "min": 1,
                             "max": 10
                         }
@@ -3681,7 +3781,6 @@ of the targeted numeric shape to which it is applied.
                 }
             }
         }
-
 
 .. _required-trait:
 
@@ -3717,22 +3816,21 @@ in a response.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyStructure": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "required": true,
-                                "target": "FooString"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "$target": "smithy.example#FooString",
+                            "traits": {
+                                "smithy.api#required": true
                             }
                         }
                     }
                 }
             }
         }
-
 
 .. _uniqueItems:
 
@@ -3760,20 +3858,19 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyList": {
-                        "type": "list",
-                        "uniqueItems": true,
-                        "member": {
-                            "target": "String"
-                        }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyList": {
+                    "type": "list",
+                    "member": {
+                        "$target": "smithy.api#String"
+                    },
+                    "traits": {
+                        "smithy.api#uniqueItems": true
                     }
                 }
             }
         }
-
 
 Behavior traits
 ===============
@@ -4021,50 +4118,56 @@ explicitly on the operation.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "GetFoos": {
-                        "type": "operation",
-                        "input" :"GetFoosInput",
-                        "output": "GetFoosOutput",
-                        "readonly": true,
-                        "collection": true,
-                        "paginated": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#GetFoos": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#GetFoosInput"
+                    },
+                    "output": {
+                        "$target": "smithy.example#GetFoosOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true,
+                        "smithy.api#collection": true,
+                        "smithy.api#paginated": {
                             "inputToken": "nextToken",
                             "outputToken": "nextToken",
                             "pageSize": "maxResults",
                             "items": "foos"
                         }
-                    },
-                    "GetFoosInput": {
-                        "type": "structure",
-                        "members": {
-                            "maxResults": {
-                                "target": "Integer"
-                            }
-                            "nextToken": {
-                                "target": "String"
+                    }
+                },
+                "smithy.example#GetFoosInput": {
+                    "type": "structure",
+                    "members": {
+                        "maxResults": {
+                            "$target": "smithy.api#Integer"
+                        },
+                        "nextToken": {
+                            "$target": "smithy.api#String"
+                        }
+                    }
+                },
+                "smithy.example#GetFoosOutput": {
+                    "type": "structure",
+                    "members": {
+                        "nextToken": {
+                            "$target": "smithy.api#String"
+                        },
+                        "foos": {
+                            "$target": "smithy.example#StringList",
+                            "traits": {
+                                "smithy.api#required": true
                             }
                         }
-                    },
-                    "GetFoosOutput": {
-                        "type": "structure",
-                        "members": {
-                            "nextToken": {
-                                "target": "String"
-                            },
-                            "foos": {
-                                "target": "StringList",
-                                "required": true
-                            }
-                        }
-                    },
-                    "StringList": {
-                        "type": "list",
-                        "member": {
-                            "target": "String"
-                        }
+                    }
+                },
+                "smithy.example#StringList": {
+                    "type": "list",
+                    "member": {
+                        "$target": "smithy.api#String"
                     }
                 }
             }
@@ -4097,25 +4200,33 @@ settings from a service.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "Example": {
-                        "type": "service",
-                        "version": "2019-06-27",
-                        "paginated": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#Example": {
+                    "type": "service",
+                    "version": "2019-06-27",
+                    "traits": {
+                        "smithy.api#paginated": {
                             "inputToken": "nextToken",
                             "outputToken": "nextToken",
                             "pageSize": "maxResults"
                         }
+                    }
+                },
+                "smithy.example#GetFoos": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#GetFoosInput"
                     },
-                    "GetFoos": {
-                        "type": "operation",
-                        "input" :"GetFoosInput",
-                        "output": "GetFoosOutput",
-                        "readonly": true,
-                        "collection": true,
-                        "paginated": {"items": "foos"}
+                    "output": {
+                        "$target": "smithy.example#GetFoosOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true,
+                        "smithy.api#collection": true,
+                        "smithy.api#paginated": {
+                            "items": "foos"
+                        }
                     }
                 }
             }
@@ -4169,63 +4280,70 @@ wrapper where the output token and items are referenced by paths.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "GetFoos": {
-                        "type": "operation",
-                        "input" :"GetFoosInput",
-                        "output": "GetFoosOutput",
-                        "readonly": true,
-                        "paginated": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#GetFoos": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#GetFoosInput"
+                    },
+                    "output": {
+                        "$target": "smithy.example#GetFoosOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true,
+                        "smithy.api#paginated": {
                             "inputToken": "nextToken",
                             "outputToken": "result.nextToken",
                             "pageSize": "maxResults",
                             "items": "result.foos"
                         }
-                    },
-                    "GetFoosInput": {
-                        "type": "structure",
-                        "members": {
-                            "maxResults": {
-                                "target": "Integer"
-                            }
-                            "nextToken": {
-                                "target": "String"
-                            }
+                    }
+                },
+                "smithy.example#GetFoosInput": {
+                    "type": "structure",
+                    "members": {
+                        "maxResults": {
+                            "$target": "smithy.api#Integer"
+                        },
+                        "nextToken": {
+                            "$target": "smithy.api#String"
                         }
-                    },
-                    "GetFoosOutput": {
-                        "type": "structure",
-                        "members": {
-                            "result": {
-                                "target": "ResultWrapper",
-                                "required": true
-                            }
-                        }
-                    },
-                    "ResultWrapper": {
-                        "type": "structure",
-                        "members": {
-                            "nextToken": {
-                                "target": "String"
-                            },
-                            "foos": {
-                                "target": "StringList",
-                                "required": true
+                    }
+                },
+                "smithy.example#GetFoosOutput": {
+                    "type": "structure",
+                    "members": {
+                        "result": {
+                            "$target": "smithy.example#ResultWrapper",
+                            "traits": {
+                                "smithy.api#required": true
                             }
                         }
-                    },
-                    "StringList": {
-                        "type": "list",
-                        "member": {
-                            "target": "String"
+                    }
+                },
+                "smithy.example#ResultWrapper": {
+                    "type": "structure",
+                    "members": {
+                        "nextToken": {
+                            "$target": "smithy.api#String"
+                        },
+                        "foos": {
+                            "$target": "smithy.example#StringList",
+                            "traits": {
+                                "smithy.api#required": true
+                            }
                         }
+                    }
+                },
+                "smithy.example#StringList": {
+                    "type": "list",
+                    "member": {
+                        "$target": "smithy.api#String"
                     }
                 }
             }
         }
-
 
 Pagination Behavior
 ```````````````````
@@ -4374,12 +4492,12 @@ following properties:
       - Description
     * - service
       - :ref:`shape-id`
-      - The shape ID of the service to which the resource is bound. As with
-        the ``resource`` property, the provided shape ID is not required to
-        be resolvable at build time.
+      - The absolute shape ID of the service to which the resource is bound.
+        As with the ``resource`` property, the provided shape ID is not
+        required to be resolvable at build time.
     * - resource
       - :ref:`shape-id`
-      - **Required**. The shape ID of the referenced resource.
+      - **Required**. The absolute shape ID of the referenced resource.
 
         The provided shape ID is not required to be part of the model;
         references may refer to resources in other models without directly
@@ -4584,15 +4702,28 @@ The following example defines a service that supports both the
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "WeatherService": {
-                        "type": "service",
-                        "version": "2017-02-11",
-                        "protocols": [
-                            {"name": "smithy.example", "auth": ["http-basic"]},
-                            {"name": "aws.mqtt", "auth": ["x.509"], "tags": ["internal"]}
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#WeatherService": {
+                    "type": "service",
+                    "version": "2017-02-11",
+                    "traits": {
+                        "smithy.api#protocols": [
+                            {
+                                "name": "smithy.example",
+                                "auth": [
+                                    "http-basic"
+                                ]
+                            },
+                            {
+                                "name": "aws.mqtt",
+                                "auth": [
+                                    "x.509"
+                                ],
+                                "tags": [
+                                    "internal"
+                                ]
+                            }
                         ]
                     }
                 }
@@ -4702,26 +4833,45 @@ The following example defines two operations:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "AuthenticatedService": {
-                        "type": "service",
-                        "version": "2017-02-11",
-                        "protocols": [{"name": "smithy.example", "auth": ["http-basic", "http-digest"]}],
-                        "operations": ["OperationA", "OperationB"]
-                    },
-                    "OperationA": {
-                        "type": "operation",
-                        "auth": ["none", "http-basic"]
-                    },
-                    "OperationB": {
-                        "type": "operation"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#AuthenticatedService": {
+                    "type": "service",
+                    "version": "2017-02-11",
+                    "operations": [
+                        {
+                            "$target": "smithy.example#OperationA"
+                        },
+                        {
+                            "$target": "smithy.example#OperationB"
+                        }
+                    ],
+                    "traits": {
+                        "smithy.api#protocols": [
+                            {
+                                "name": "smithy.example",
+                                "auth": [
+                                    "http-basic",
+                                    "http-digest"
+                                ]
+                            }
+                        ]
                     }
+                },
+                "smithy.example#OperationA": {
+                    "type": "operation",
+                    "traits": {
+                        "smithy.api#auth": [
+                            "none",
+                            "http-basic"
+                        ]
+                    }
+                },
+                "smithy.example#OperationB": {
+                    "type": "operation"
                 }
             }
         }
-
 
 The following ``auth`` trait is invalid because it uses an ``auth`` trait
 scheme that is not supported by any of the ``protocols`` of the service:
@@ -4758,25 +4908,48 @@ protocols can define different authentication schemes for each protocol.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "AuthenticatedService": {
-                        "type": "service",
-                        "version": "2017-02-11",
-                        "protocols": [
-                            {"name": "example.foo", "auth": ["http-basic", "http-digest"]},
-                            {"name": "example.baz", "auth": ["x.509"]},
-                        ],
-                        "operations": ["OperationA", "OperationB"]
-                    },
-                    "OperationA": {
-                        "type": "operation",
-                        "auth": ["http-digest", "x.509"]
-                    },
-                    "OperationB": {
-                        "type": "operation"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#AuthenticatedService": {
+                    "type": "service",
+                    "version": "2017-02-11",
+                    "operations": [
+                        {
+                            "$target": "smithy.example#OperationA"
+                        },
+                        {
+                            "$target": "smithy.example#OperationB"
+                        }
+                    ],
+                    "traits": {
+                        "smithy.api#protocols": [
+                            {
+                                "name": "example.foo",
+                                "auth": [
+                                    "http-basic",
+                                    "http-digest"
+                                ]
+                            },
+                            {
+                                "name": "example.baz",
+                                "auth": [
+                                    "x.509"
+                                ]
+                            }
+                        ]
                     }
+                },
+                "smithy.example#OperationA": {
+                    "type": "operation",
+                    "traits": {
+                        "smithy.api#auth": [
+                            "http-digest",
+                            "x.509"
+                        ]
+                    }
+                },
+                "smithy.example#OperationB": {
+                    "type": "operation"
                 }
             }
         }
@@ -4823,19 +4996,19 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyStructure": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String",
-                                "jsonName": "Foo"
-                            },
-                            "bar": {
-                                "target": "String"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#jsonName": "Foo"
                             }
+                        },
+                        "bar": {
+                            "$target": "smithy.api#String"
                         }
                     }
                 }
@@ -4995,27 +5168,29 @@ For example, given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "Foo": {
-                        "type": "structure",
-                        "members": {
-                            "baz": {
-                                "target": "Baz",
-                                "documentation": "Member documentation"
-                            },
-                            "bar": {
-                                "target": "Baz"
-                            },
-                            "qux": {
-                                "target": "String"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#Foo": {
+                    "type": "structure",
+                    "members": {
+                        "baz": {
+                            "$target": "smithy.example#Baz",
+                            "traits": {
+                                "smithy.api#documentation": "Member documentation"
                             }
+                        },
+                        "bar": {
+                            "$target": "smithy.example#Baz"
+                        },
+                        "qux": {
+                            "$target": "smithy.api#String"
                         }
-                    },
-                    "Baz": {
-                        "type": "string",
-                        "documentation": "Shape documentation"
+                    }
+                },
+                "smithy.example#Baz": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#documentation": "Shape documentation"
                     }
                 }
             }
@@ -5285,32 +5460,37 @@ The following example defines an operation that uses a custom endpoint:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "GetStatus": {
-                        "type": "operation",
-                        "input": "GetStatusInput",
-                        "output": "GetStatusOutput",
-                        "readonly": true,
-                        "endpoint": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#GetStatus": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#GetStatusInput"
+                    },
+                    "output": {
+                        "$target": "smithy.example#GetStatusOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true,
+                        "smithy.api#endpoint": {
                             "hostPrefix": "{foo}.data."
                         }
-                    },
-                    "GetStatusInput": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String",
-                                "required": true,
-                                "hostLabel": true
+                    }
+                },
+                "smithy.example#GetStatusInput": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true,
+                                "smithy.api#hostLabel": true
                             }
                         }
                     }
                 }
             }
         }
-
 
 .. _endpoint-Labels:
 
@@ -5343,25 +5523,31 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "GetStatus": {
-                        "type": "operation",
-                        "input": "GetStatusInput",
-                        "output": "GetStatusOutput",
-                        "readonly": true,
-                        "endpoint": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#GetStatus": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#GetStatusInput"
+                    },
+                    "output": {
+                        "$target": "smithy.example#GetStatusOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true,
+                        "smithy.api#endpoint": {
                             "hostPrefix": "{foo}.data."
                         }
-                    },
-                    "GetStatusInput": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String",
-                                "required": true,
-                                "hostLabel": true
+                    }
+                },
+                "smithy.example#GetStatusInput": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true,
+                                "smithy.api#hostLabel": true
                             }
                         }
                     }
@@ -5403,30 +5589,38 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "GetStatus": {
-                        "type": "operation",
-                        "input": "GetStatusInput",
-                        "output": "GetStatusOutput",
-                        "readonly": true,
-                        "endpoint": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#GetStatus": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#GetStatusInput"
+                    },
+                    "output": {
+                        "$target": "smithy.example#GetStatusOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true,
+                        "smithy.api#endpoint": {
                             "hostPrefix": "{foo}-{bar}.data."
                         }
-                    },
-                    "GetStatusInput": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String",
-                                "required": true,
-                                "hostLabel": true
-                            },
-                            "bar": {
-                                "target": "String",
-                                "required": true,
-                                "hostLabel": true
+                    }
+                },
+                "smithy.example#GetStatusInput": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true,
+                                "smithy.api#hostLabel": true
+                            }
+                        },
+                        "bar": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true,
+                                "smithy.api#hostLabel": true
                             }
                         }
                     }
@@ -5457,22 +5651,25 @@ invalid because the ``{foo}`` and ``{bar}`` labels are adjacent:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "GetStatus": {
-                        "type": "operation",
-                        "input": "GetStatusInput",
-                        "output": "GetStatusOutput",
-                        "readonly": true,
-                        "endpoint": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#GetStatus": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#GetStatusInput"
+                    },
+                    "output": {
+                        "$target": "smithy.example#GetStatusOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true,
+                        "smithy.api#endpoint": {
                             "hostPrefix": "{foo}{bar}.data."
                         }
                     }
                 }
             }
         }
-
 
 .. _endpoint-ClientBehavior:
 
@@ -5519,30 +5716,36 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "GetStatus": {
-                        "type": "operation",
-                        "input": "GetStatusInput",
-                        "output": "GetStatusOutput",
-                        "readonly": true,
-                        "endpoint": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#GetStatus": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#GetStatusInput"
+                    },
+                    "output": {
+                        "$target": "smithy.example#GetStatusOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true,
+                        "smithy.api#endpoint": {
                             "hostPrefix": "{foo}.data."
                         },
-                        "http": {
+                        "smithy.api#http": {
                             "method": "GET",
                             "uri": "/status"
                         }
-                    },
-                    "GetStatusInput": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String",
-                                "required": true,
-                                "hostLabel": true,
-                                "httpHeader": "X-Foo"
+                    }
+                },
+                "smithy.example#GetStatusInput": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true,
+                                "smithy.api#hostLabel": true,
+                                "smithy.api#httpHeader": "X-Foo"
                             }
                         }
                     }
@@ -5600,32 +5803,37 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "GetStatus": {
-                        "type": "operation",
-                        "input": "GetStatusInput",
-                        "output": "GetStatusOutput",
-                        "readonly": true,
-                        "endpoint": {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#GetStatus": {
+                    "type": "operation",
+                    "input": {
+                        "$target": "smithy.example#GetStatusInput"
+                    },
+                    "output": {
+                        "$target": "smithy.example#GetStatusOutput"
+                    },
+                    "traits": {
+                        "smithy.api#readonly": true,
+                        "smithy.api#endpoint": {
                             "hostPrefix": "{foo}.data."
                         }
-                    },
-                    "GetStatusInput": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String",
-                                "required": true,
-                                "hostLabel": true
+                    }
+                },
+                "smithy.example#GetStatusInput": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "$target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#required": true,
+                                "smithy.api#hostLabel": true
                             }
                         }
                     }
                 }
             }
         }
-
 
 .. _merging-models:
 
@@ -5642,8 +5850,6 @@ models together to form a composite model:
 #. If both models define the same :ref:`namespace <namespaces>`, merge the
    namespaces.
 
-   - Duplicate :ref:`trait definitions <trait-definition>` if found, MUST
-     cause the model merge to fail.
    - Duplicate shape names, if found, MUST cause the model merge to fail.
    - Merge any conflicting :ref:`trait <traits>` definitions using
      :ref:`trait conflict resolution  <trait-conflict-resolution>`.
