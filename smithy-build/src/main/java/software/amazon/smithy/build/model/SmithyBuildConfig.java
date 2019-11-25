@@ -77,7 +77,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
      *     "projections": {
      *         "projection-name": {
      *             "transforms": [
-     *                 {"name": "transform-name", "config": ["argument1", "argument2", "..."]},
+     *                 {"name": "transform-name", "args": ["argument1", "argument2", "..."]},
      *                 {"name": "other-transform"}
      *             },
      *             "plugins": {
