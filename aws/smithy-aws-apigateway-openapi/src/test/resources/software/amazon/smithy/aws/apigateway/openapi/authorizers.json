@@ -1,24 +1,31 @@
 {
-  "smithy": "0.4.0",
-  "ns.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "SomeService": {
-        "type": "service",
-        "version": "2018-03-17",
-        "protocols": [{"name": "aws.rest-json", "auth": ["aws.v4"]}],
-        "aws.apigateway#authorizer": "sigv4",
-        "aws.apigateway#authorizers": {
-          "sigv4": {
-            "scheme": "aws.v4",
-            "type": "request",
-            "uri": "arn:foo:baz",
-            "credentials": "arn:foo:bar",
-            "identitySource": "mapping.expression",
-            "identityValidationExpression": "[A-Z]+",
-            "resultTtlInSeconds": 100
-          }
+        "ns.foo#SomeService": {
+            "type": "service",
+            "version": "2018-03-17",
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "aws.rest-json",
+                        "auth": [
+                            "aws.v4"
+                        ]
+                    }
+                ],
+                "aws.apigateway#authorizer": "sigv4",
+                "aws.apigateway#authorizers": {
+                    "sigv4": {
+                        "scheme": "aws.v4",
+                        "type": "request",
+                        "uri": "arn:foo:baz",
+                        "credentials": "arn:foo:bar",
+                        "identitySource": "mapping.expression",
+                        "identityValidationExpression": "[A-Z]+",
+                        "resultTtlInSeconds": 100
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }

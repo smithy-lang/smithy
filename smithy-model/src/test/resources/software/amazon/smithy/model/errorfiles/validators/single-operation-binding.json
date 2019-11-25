@@ -1,70 +1,112 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "MyService": {
-                "type": "service",
-                "version": "2017-01-17",
-                "protocols": [{"name": "foo"}],
-                "resources": [
-                    "RA",
-                    "RB",
-                    "RC"
-                ],
-                "operations": [
-                    "OA",
-                    "OB",
-                    "OC"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "resources": [
+                {
+                    "target": "ns.foo#RA"
+                },
+                {
+                    "target": "ns.foo#RB"
+                },
+                {
+                    "target": "ns.foo#RC"
+                }
+            ],
+            "operations": [
+                {
+                    "target": "ns.foo#OA"
+                },
+                {
+                    "target": "ns.foo#OB"
+                },
+                {
+                    "target": "ns.foo#OC"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "foo"
+                    }
                 ]
+            }
+        },
+        "ns.foo#RA": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "ns.foo#OA"
+                }
+            ]
+        },
+        "ns.foo#RB": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "ns.foo#OA"
+                }
+            ]
+        },
+        "ns.foo#RC": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "ns.foo#OA"
+                },
+                {
+                    "target": "ns.foo#OB"
+                }
+            ],
+            "resources": [
+                {
+                    "target": "ns.foo#RD"
+                }
+            ]
+        },
+        "ns.foo#RD": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "ns.foo#OA"
+                },
+                {
+                    "target": "ns.foo#OB"
+                }
+            ],
+            "resources": [
+                {
+                    "target": "ns.foo#RE"
+                }
+            ]
+        },
+        "ns.foo#RE": {
+            "type": "resource",
+            "read": {
+                "target": "ns.foo#OA"
             },
-            "RA": {
-                "type": "resource",
-                "operations": [
-                    "OA"
-                ]
-            },
-            "RB": {
-                "type": "resource",
-                "operations": [
-                    "OA"
-                ]
-            },
-            "RC": {
-                "type": "resource",
-                "operations": [
-                    "OA",
-                    "OB"
-                ],
-                "resources": [
-                    "RD"
-                ]
-            },
-            "RD": {
-                "type": "resource",
-                "operations": [
-                    "OA",
-                    "OB"
-                ],
-                "resources": [
-                    "RE"
-                ]
-            },
-            "RE": {
-                "type": "resource",
-                "read": "OA",
-                "delete": "OB"
-            },
-            "OA": {
-                "type": "operation",
-                "readonly": true
-            },
-            "OB": {
-                "type": "operation",
-                "idempotent": true
-            },
-            "OC": {
-                "type": "operation",
-                "readonly": true
+            "delete": {
+                "target": "ns.foo#OB"
+            }
+        },
+        "ns.foo#OA": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#OB": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#idempotent": true
+            }
+        },
+        "ns.foo#OC": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true
             }
         }
     }

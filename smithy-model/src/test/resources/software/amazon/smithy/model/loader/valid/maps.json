@@ -1,91 +1,109 @@
 {
-  "smithy": "0.4.0",
-  "com.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "A": {
-        "type": "map",
-        "key": {
-          "target": "smithy.api#String"
+        "com.example#A": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            }
         },
-        "value": {
-          "target": "smithy.api#String"
+        "com.example#B": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String"
+            },
+            "value": {
+                "target": "com.example#String"
+            }
+        },
+        "com.example#C": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String"
+            },
+            "value": {
+                "target": "com.example#String"
+            },
+            "traits": {
+                "smithy.api#deprecated": {}
+            }
+        },
+        "com.example#D": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String"
+            },
+            "value": {
+                "target": "com.example#String"
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#E": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String",
+                "traits": {
+                    "smithy.api#sensitive": true,
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "value": {
+                "target": "com.example#String"
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#F": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String",
+                "traits": {
+                    "smithy.api#sensitive": true,
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "value": {
+                "target": "com.example#String",
+                "traits": {
+                    "smithy.api#sensitive": true,
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#G": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String",
+                "traits": {
+                    "smithy.api#sensitive": true,
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "value": {
+                "target": "com.example#String",
+                "traits": {
+                    "smithy.api#since": "1.2"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#String": {
+            "type": "string"
         }
-      },
-      "B": {
-        "type": "map",
-        "key": {
-          "target": "String"
-        },
-        "value": {
-          "target": "String"
-        }
-      },
-      "C": {
-        "type": "map",
-        "key": {
-          "target": "String"
-        },
-        "value": {
-          "target": "String"
-        },
-        "deprecated": {}
-      },
-      "D": {
-        "type": "map",
-        "key": {
-          "target": "String"
-        },
-        "value": {
-          "target": "String"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "E": {
-        "type": "map",
-        "key": {
-          "target": "String",
-          "sensitive": true,
-          "since": "1.1"
-        },
-        "value": {
-          "target": "String"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "F": {
-        "type": "map",
-        "key": {
-          "target": "String",
-          "sensitive": true,
-          "since": "1.1"
-        },
-        "value": {
-          "target": "String",
-          "sensitive": true,
-          "since": "1.1"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "G": {
-        "type": "map",
-        "key": {
-          "target": "String",
-          "sensitive": true,
-          "since": "1.1"
-        },
-        "value": {
-          "target": "String",
-          "since": "1.2"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "String": {
-        "type": "string"
-      }
     }
-  }
 }

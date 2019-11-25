@@ -1,121 +1,153 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "A": {
-                "type": "operation",
-                "readonly": true,
-                "http": {
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#A": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/A"
                 }
-            },
-            "B": {
-                "type": "operation",
-                "readonly": true,
-                "http": {
+            }
+        },
+        "ns.foo#B": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "HEAD",
                     "uri": "/B"
                 }
-            },
-            "C": {
-                "type": "operation",
-                "idempotent": true,
-                "http": {
+            }
+        },
+        "ns.foo#C": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#idempotent": true,
+                "smithy.api#http": {
                     "method": "DELETE",
                     "uri": "/C"
                 }
-            },
-            "D": {
-                "type": "operation",
-                "idempotent": true,
-                "http": {
+            }
+        },
+        "ns.foo#D": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#idempotent": true,
+                "smithy.api#http": {
                     "method": "PUT",
                     "uri": "/D"
                 }
-            },
-            "E": {
-                "type": "operation",
-                "http": {
+            }
+        },
+        "ns.foo#E": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
                     "method": "PATCH",
                     "uri": "/E"
                 }
-            },
-            "F": {
-                "type": "operation",
-                "http": {
+            }
+        },
+        "ns.foo#F": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
                     "method": "POST",
                     "uri": "/F"
                 }
-            },
-            "G": {
-                "type": "operation",
-                "readonly": true,
-                "http": {
+            }
+        },
+        "ns.foo#G": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "POST",
                     "uri": "/G"
                 }
-            },
-            "H": {
-                "type": "operation",
-                "http": {
+            }
+        },
+        "ns.foo#H": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
                     "method": "DELETE",
                     "uri": "/H"
                 }
-            },
-            "I": {
-                "type": "operation",
-                "http": {
+            }
+        },
+        "ns.foo#I": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/I"
                 }
-            },
-            "J": {
-                "type": "operation",
-                "idempotent": true,
-                "http": {
+            }
+        },
+        "ns.foo#J": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#idempotent": true,
+                "smithy.api#http": {
                     "method": "POST",
                     "uri": "/J"
                 }
+            }
+        },
+        "ns.foo#K": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#KInput"
             },
-            "K": {
-                "type": "operation",
-                "readonly": true,
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/K"
-                },
-                "input": "KInput"
-            },
-            "KInput": {
-                "type": "structure",
-                "members": {
-                    "payload": {
-                        "target": "String",
-                        "required": true,
-                        "httpPayload": true
+                }
+            }
+        },
+        "ns.foo#KInput": {
+            "type": "structure",
+            "members": {
+                "payload": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true,
+                        "smithy.api#httpPayload": true
                     }
                 }
+            }
+        },
+        "ns.foo#L": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#LInput"
             },
-            "L": {
-                "type": "operation",
-                "readonly": true,
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/L"
+                }
+            }
+        },
+        "ns.foo#LInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
+                    }
                 },
-                "input": "LInput"
-            },
-            "LInput": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String",
-                        "httpHeader": "X-Foo"
-                    },
-                    "payload": {
-                        "target": "String",
-                        "required": true
+                "payload": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
                     }
                 }
             }

@@ -1,39 +1,47 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Valid": {
-                "type": "structure",
-                "deprecated": {
-                    "message": "Message"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Valid": {
+            "type": "structure",
+            "members": {
+                "abc": {
+                    "target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#deprecated": {}
+                    }
                 },
-                "members": {
-                    "abc": {
-                        "target": "String",
-                        "deprecated": {}
-                    },
-                    "def": {
-                        "target": "String",
-                        "deprecated": {
+                "def": {
+                    "target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#deprecated": {
                             "message": "Another message"
                         }
                     }
                 }
             },
-            "Invalid1": {
-                "type": "integer"
-            },
-            "Invalid2": {
-                "type": "integer",
-                "deprecated": "Foo"
-            },
-            "Invalid3": {
-                "type": "integer",
-                "deprecated": "Foo"
-            },
-            "String": {
-                "type": "string"
+            "traits": {
+                "smithy.api#deprecated": {
+                    "message": "Message"
+                }
             }
+        },
+        "ns.foo#Invalid1": {
+            "type": "integer"
+        },
+        "ns.foo#Invalid2": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#deprecated": "Foo"
+            }
+        },
+        "ns.foo#Invalid3": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#deprecated": "Foo"
+            }
+        },
+        "ns.foo#String": {
+            "type": "string"
         }
     }
 }

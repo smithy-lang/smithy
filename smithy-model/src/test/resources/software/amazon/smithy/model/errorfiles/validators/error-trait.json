@@ -1,22 +1,28 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "ValidClient": {
-                "type": "structure",
-                "error": "client"
-            },
-            "ValidServer": {
-                "type": "structure",
-                "error": "server"
-            },
-            "ValidServerWithTag": {
-                "type": "structure",
-                "error": "server"
-            },
-            "InvalidDoesNotStartWithClientOrServer": {
-                "type": "structure",
-                "error": "notFound"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#ValidClient": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "ns.foo#ValidServer": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "ns.foo#ValidServerWithTag": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "ns.foo#InvalidDoesNotStartWithClientOrServer": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "notFound"
             }
         }
     }

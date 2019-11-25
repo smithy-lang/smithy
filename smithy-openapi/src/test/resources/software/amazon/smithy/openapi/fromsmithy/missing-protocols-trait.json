@@ -1,11 +1,9 @@
 {
-  "smithy": "0.4.0",
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "Service": {
-        "type": "service",
-        "version": "2006-03-01"
-      }
+        "smithy.example#Service": {
+            "type": "service",
+            "version": "2006-03-01"
+        }
     }
-  }
 }

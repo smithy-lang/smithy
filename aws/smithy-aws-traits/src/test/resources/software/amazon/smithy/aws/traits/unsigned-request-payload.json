@@ -1,16 +1,19 @@
 {
-  "smithy": "0.4.0",
-
-  "ns.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "Unsigned1": {
-        "type": "operation",
-        "aws.api#unsignedPayload": []
-      },
-      "Unsigned2": {
-        "type": "operation",
-        "aws.api#unsignedPayload": ["aws.v4"]
-      }
+        "ns.foo#Unsigned1": {
+            "type": "operation",
+            "traits": {
+                "aws.api#unsignedPayload": []
+            }
+        },
+        "ns.foo#Unsigned2": {
+            "type": "operation",
+            "traits": {
+                "aws.api#unsignedPayload": [
+                    "aws.v4"
+                ]
+            }
+        }
     }
-  }
 }

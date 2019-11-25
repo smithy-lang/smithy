@@ -34,7 +34,6 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.Shape;
@@ -461,9 +460,8 @@ public final class ModelAssembler {
         }
 
         if (!documentNodes.isEmpty()) {
-            NodeModelLoader loader = new NodeModelLoader();
             for (Node node : documentNodes) {
-                loader.load(visitor, node);
+                JsonModelLoader.INSTANCE.loadParsedNode(visitor, node);
             }
         }
 
@@ -485,7 +483,6 @@ public final class ModelAssembler {
     }
 
     private static void mergeModelIntoVisitor(Model model, LoaderVisitor visitor) {
-        visitor.onVersion(SourceLocation.NONE, model.getSmithyVersion());
         model.getMetadata().forEach(visitor::onMetadata);
         model.shapes().forEach(visitor::onShape);
     }

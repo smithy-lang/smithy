@@ -1,77 +1,104 @@
 {
-  "smithy": "0.4.0",
-  "foo.alpha": {
+    "smithy": "0.5.0",
     "shapes": {
-      "MyString1": {
-        "type": "string",
-        "hello": true
-      },
-      "MyString2": {
-        "type": "string",
-        "foo.alpha#hello": true
-      },
-      "MyString3": {
-        "type": "string",
-        "foo.beta#hello": true
-      },
-      "MyString4": {
-        "type": "string",
-        "foo.gamma#hello": true
-      },
-      "hello": {
-        "type": "structure",
-        "trait": {"selector": "*"}
-      }
-    }
-  },
-  "foo.beta": {
-    "shapes": {
-      "MyString1": {
-        "type": "string",
-        "hello": true
-      },
-      "MyString2": {
-        "type": "string",
-        "foo.alpha#hello": true
-      },
-      "MyString3": {
-        "type": "string",
-        "foo.beta#hello": true
-      },
-      "MyString4": {
-        "type": "string",
-        "foo.gamma#hello": true
-      },
-      "hello": {
-        "type": "structure",
-        "trait": {
-          "selector": "*"
+        "foo.beta#MyString1": {
+            "type": "string",
+            "traits": {
+                "foo.beta#hello": {}
+            }
+        },
+        "foo.gamma#MyString1": {
+            "type": "string",
+            "traits": {
+                "foo.gamma#hello": {}
+            }
+        },
+        "foo.alpha#MyString1": {
+            "type": "string",
+            "traits": {
+                "foo.alpha#hello": {}
+            }
+        },
+        "foo.gamma#MyString2": {
+            "type": "string",
+            "traits": {
+                "foo.alpha#hello": {}
+            }
+        },
+        "foo.beta#MyString2": {
+            "type": "string",
+            "traits": {
+                "foo.alpha#hello": {}
+            }
+        },
+        "foo.alpha#MyString2": {
+            "type": "string",
+            "traits": {
+                "foo.alpha#hello": {}
+            }
+        },
+        "foo.beta#MyString3": {
+            "type": "string",
+            "traits": {
+                "foo.beta#hello": {}
+            }
+        },
+        "foo.gamma#MyString3": {
+            "type": "string",
+            "traits": {
+                "foo.beta#hello": {}
+            }
+        },
+        "foo.alpha#MyString3": {
+            "type": "string",
+            "traits": {
+                "foo.beta#hello": {}
+            }
+        },
+        "foo.alpha#MyString4": {
+            "type": "string",
+            "traits": {
+                "foo.gamma#hello": {}
+            }
+        },
+        "foo.beta#MyString4": {
+            "type": "string",
+            "traits": {
+                "foo.gamma#hello": {}
+            }
+        },
+        "foo.gamma#MyString4": {
+            "type": "string",
+            "traits": {
+                "foo.gamma#hello": {}
+            }
+        },
+        "foo.gamma#hello": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "*"
+                }
+            }
+        },
+        "foo.beta#hello": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "*"
+                }
+            }
+        },
+        "foo.alpha#hello": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "*"
+                }
+            }
         }
-      }
     }
-  },
-  "foo.gamma": {
-    "shapes": {
-      "MyString1": {
-        "type": "string",
-        "hello": true
-      },
-      "MyString2": {
-        "type": "string",
-        "foo.alpha#hello": true
-      },
-      "MyString3": {
-        "type": "string",
-        "foo.beta#hello": true
-      },
-      "MyString4": {
-        "type": "string",
-        "foo.gamma#hello": true
-      },
-      "hello": {
-        "type": "structure",
-        "trait": {"selector": "*"}
-      }
-    }
-  }
 }

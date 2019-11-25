@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.SourceException;
 
 public class UnionShapeTest {
     @Test
@@ -36,7 +37,7 @@ public class UnionShapeTest {
 
     @Test
     public void mustNotContainMembersInShapeId() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(SourceException.class, () -> {
             UnionShape.builder().id("ns.foo#bar$baz").build();
         });
     }

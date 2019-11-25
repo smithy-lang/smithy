@@ -1,43 +1,59 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "String1": {
-                "type": "string",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#String1": {
+            "type": "string",
+            "traits": {
                 "ns.foo#custom1": true
-            },
-            "String2": {
-                "type": "string",
+            }
+        },
+        "ns.foo#String2": {
+            "type": "string",
+            "traits": {
                 "ns.foo#custom1": 10
-            },
-            "String3": {
-                "type": "string",
+            }
+        },
+        "ns.foo#String3": {
+            "type": "string",
+            "traits": {
                 "ns.foo#custom2": {
                     "foo": "hello"
                 }
-            },
-            "String4": {
-                "type": "string",
+            }
+        },
+        "ns.foo#String4": {
+            "type": "string",
+            "traits": {
                 "ns.foo#custom2": {
                     "baz": "hello"
                 }
-            },
-            "custom1": {
-                "type": "structure",
-                "trait": {"selector": "string"}
-            },
-            "custom2": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String1",
-                        "required": true
-                    },
-                    "baz": {
-                        "target": "String1"
+            }
+        },
+        "ns.foo#custom1": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "string"
+                }
+            }
+        },
+        "ns.foo#custom2": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "ns.foo#String1",
+                    "traits": {
+                        "smithy.api#required": true
                     }
                 },
-                "trait": {"selector": "string"}
+                "baz": {
+                    "target": "ns.foo#String1"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "string"
+                }
             }
         }
     }

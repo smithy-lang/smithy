@@ -1,9 +1,10 @@
 {
-    "smithy": "0.4.0",
-    "com.foo": {
-        "traits": {
-            "String": {
-                "documentation": "b.json"
+    "smithy": "0.5.0",
+    "shapes": {
+        "com.foo#String": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#documentation": "b.json"
             }
         }
     }

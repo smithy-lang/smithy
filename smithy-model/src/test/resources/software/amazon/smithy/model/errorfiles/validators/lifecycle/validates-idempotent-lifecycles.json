@@ -1,29 +1,39 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Resource": {
-                "type": "resource",
-                "identifiers": {
-                    "id": "smithy.api#String"
-                },
-                "put": "PutResource",
-                "delete": "DeleteResource"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Resource": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
             },
-            "PutResource": {
-                "type": "operation",
-                "input": "ResourceInput"
+            "put": {
+                "target": "ns.foo#PutResource"
             },
-            "DeleteResource": {
-                "type": "operation",
-                "input": "ResourceInput"
-            },
-            "ResourceInput": {
-                "type": "structure",
-                "members": {
-                    "id": {
-                        "target": "smithy.api#String",
-                        "required": true
+            "delete": {
+                "target": "ns.foo#DeleteResource"
+            }
+        },
+        "ns.foo#PutResource": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#ResourceInput"
+            }
+        },
+        "ns.foo#DeleteResource": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#ResourceInput"
+            }
+        },
+        "ns.foo#ResourceInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
                     }
                 }
             }

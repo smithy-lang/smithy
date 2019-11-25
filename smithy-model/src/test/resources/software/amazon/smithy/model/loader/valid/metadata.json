@@ -1,77 +1,77 @@
 {
-  "smithy": "0.4.0",
-  "metadata": {
-    "exp1": 10e0,
-    "exp2": 10e0,
-    "exp3": 1000e0,
-    "exp4": -0.1e0,
-    "float1": -2e0,
-    "float2": 10e0,
-    "foo": "abc",
-    "foo.1": "def",
-    "foo.10": [
-      true,
-      "true",
-      false,
-      "false",
-      null,
-      "null"
-    ],
-    "foo.11": [
-      true,
-      "true",
-      false,
-      "false",
-      null,
-      "null"
-    ],
-    "foo.12": {},
-    "foo.13": {},
-    "foo.14": {
-      "abc": 123
-    },
-    "foo.15": {
-      "abc": "def"
-    },
-    "foo.16": {
-      "abc": "def",
-      "foo": "baz"
-    },
-    "foo.17": {
-      "abc": "def",
-      "foo": "baz"
-    },
-    "foo.18": {
-      "abc": "def",
-      "foo": "baz"
-    },
-    "foo.19": {
-      "abc.123": "def",
-      "def": {
-        "bar": [],
-        "foo": [
-          1,
-          2,
-          -10
-        ]
-      }
-    },
-    "foo.20": {
-      "a": "b"
-    },
-    "foo.4": "def",
-    "foo.5": "def",
-    "foo.6": "def",
-    "foo.7": true,
-    "foo.8": false,
-    "foo.9": null,
-    "trailing_commas1": {
-      "a": "b"
-    },
-    "trailing_commas2": [
-      "a",
-      "b"
-    ],
-    "shape_id": "foo.baz#Bam"
-  }
+    "smithy": "0.5.0",
+    "metadata": {
+        "exp1": 10.0,
+        "exp2": 10.0,
+        "exp3": 1000.0,
+        "exp4": -0.1,
+        "float1": -2.0,
+        "float2": 10.0,
+        "foo": "abc",
+        "foo.1": "def",
+        "foo.10": [
+            true,
+            "true",
+            false,
+            "false",
+            null,
+            "null"
+        ],
+        "foo.11": [
+            true,
+            "true",
+            false,
+            "false",
+            null,
+            "null"
+        ],
+        "foo.12": {},
+        "foo.13": {},
+        "foo.14": {
+            "abc": 123
+        },
+        "foo.15": {
+            "abc": "def"
+        },
+        "foo.16": {
+            "abc": "def",
+            "foo": "baz"
+        },
+        "foo.17": {
+            "abc": "def",
+            "foo": "baz"
+        },
+        "foo.18": {
+            "abc": "def",
+            "foo": "baz"
+        },
+        "foo.19": {
+            "abc.123": "def",
+            "def": {
+                "bar": [],
+                "foo": [
+                    1,
+                    2,
+                    -10
+                ]
+            }
+        },
+        "foo.20": {
+            "a": "b"
+        },
+        "foo.4": "def",
+        "foo.5": "def",
+        "foo.6": "def",
+        "foo.7": true,
+        "foo.8": false,
+        "foo.9": null,
+        "trailing_commas1": {
+            "a": "b"
+        },
+        "trailing_commas2": [
+            "a",
+            "b"
+        ],
+        "shape_id": "foo.baz#Bam"
+    }
 }

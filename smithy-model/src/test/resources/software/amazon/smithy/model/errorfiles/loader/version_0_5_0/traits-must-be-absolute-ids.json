@@ -1,0 +1,11 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "smithy.example#Hi": {
+            "type": "string",
+            "traits": {
+                "documentation": "This is not absolute!"
+            }
+        }
+    }
+}

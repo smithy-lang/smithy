@@ -1,5 +1,46 @@
 {
-    "smithy": "0.4.0",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#CreateFoo": {
+            "type": "operation"
+        },
+        "ns.foo#DeleteFoo": {
+            "type": "operation"
+        },
+        "ns.foo#UpdateFoo": {
+            "type": "operation"
+        },
+        "ns.foo#BatchCreateFoo": {
+            "type": "operation"
+        },
+        "ns.foo#BatchDeleteFoo": {
+            "type": "operation"
+        },
+        "ns.foo#BatchUpdateFoo": {
+            "type": "operation"
+        },
+        "ns.foo#BatchMakeFoo": {
+            "type": "operation"
+        },
+        "ns.foo#BatchDestroyFoo": {
+            "type": "operation"
+        },
+        "ns.foo#BatchChangeFoo": {
+            "type": "operation"
+        },
+        "ns.foo#MakeFoo": {
+            "type": "operation"
+        },
+        "ns.foo#DestroyFoo": {
+            "type": "operation"
+        },
+        "ns.foo#ChangeFoo": {
+            "type": "operation"
+        },
+        "ns.foo#Batch": {
+            "type": "operation"
+        }
+    },
     "metadata": {
         "validators": [
             {
@@ -47,48 +88,5 @@
                 }
             }
         ]
-    },
-    "ns.foo": {
-        "shapes": {
-            "CreateFoo": {
-                "type": "operation"
-            },
-            "DeleteFoo": {
-                "type": "operation"
-            },
-            "UpdateFoo": {
-                "type": "operation"
-            },
-            "BatchCreateFoo": {
-                "type": "operation"
-            },
-            "BatchDeleteFoo": {
-                "type": "operation"
-            },
-            "BatchUpdateFoo": {
-                "type": "operation"
-            },
-            "BatchMakeFoo": {
-                "type": "operation"
-            },
-            "BatchDestroyFoo": {
-                "type": "operation"
-            },
-            "BatchChangeFoo": {
-                "type": "operation"
-            },
-            "MakeFoo": {
-                "type": "operation"
-            },
-            "DestroyFoo": {
-                "type": "operation"
-            },
-            "ChangeFoo": {
-                "type": "operation"
-            },
-            "Batch": {
-                "type": "operation"
-            }
-        }
     }
 }

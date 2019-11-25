@@ -1,40 +1,52 @@
 {
-  "smithy": "0.4.0",
-  "example.namespace": {
+    "smithy": "0.5.0",
     "shapes": {
-      "MyString1": {
-        "type": "string",
-        "example.namespace#customTrait": true,
-        "example.namespace#documentation": "foo"
-      },
-      "MyString2": {
-        "type": "string",
-        "example.namespace#customTrait": true,
-        "smithy.api#documentation": "foo"
-      },
-      "MyString3": {
-        "type": "string",
-        "example.namespace#documentation": "baz",
-        "smithy.api#documentation": "foo"
-      },
-      "MyString4": {
-        "type": "string",
-        "numeric": 10
-      },
-      "customTrait": {
-        "type": "structure",
-        "trait": true
-      },
-      "documentation": {
-        "type": "string",
-        "trait": {
-          "selector": "*"
+        "example.namespace#MyString1": {
+            "type": "string",
+            "traits": {
+                "example.namespace#customTrait": true,
+                "example.namespace#documentation": "foo"
+            }
+        },
+        "example.namespace#MyString2": {
+            "type": "string",
+            "traits": {
+                "example.namespace#customTrait": true,
+                "smithy.api#documentation": "foo"
+            }
+        },
+        "example.namespace#MyString3": {
+            "type": "string",
+            "traits": {
+                "example.namespace#documentation": "baz",
+                "smithy.api#documentation": "foo"
+            }
+        },
+        "example.namespace#MyString4": {
+            "type": "string",
+            "traits": {
+                "example.namespace#numeric": 10
+            }
+        },
+        "example.namespace#customTrait": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "example.namespace#documentation": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "*"
+                }
+            }
+        },
+        "example.namespace#numeric": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#trait": {}
+            }
         }
-      },
-      "numeric": {
-        "type": "integer",
-        "trait": {}
-      }
     }
-  }
 }

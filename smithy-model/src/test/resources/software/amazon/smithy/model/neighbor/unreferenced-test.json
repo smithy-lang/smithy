@@ -1,70 +1,88 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "bar": {
-                "trait": true,
-                "type": "structure",
-                "members": {
-                    "member": {"target": "BarTraitShapeMember"}
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#bar": {
+            "type": "structure",
+            "members": {
+                "member": {
+                    "target": "ns.foo#BarTraitShapeMember"
                 }
             },
-            "quux": {
-                "trait": true,
-                "type": "structure",
-                "members": {
-                    "member": {
-                        "target": "QuuxTraitShapeMember"
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#quux": {
+            "type": "structure",
+            "members": {
+                "member": {
+                    "target": "ns.foo#QuuxTraitShapeMember"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-19",
+            "operations": [
+                {
+                    "target": "ns.foo#MyOperation"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "foo"
                     }
-                }
-            },
-            "MyService": {
-                "type": "service",
-                "protocols": [{"name": "foo"}],
-                "version": "2017-01-19",
-                "operations": [
-                    "MyOperation"
                 ]
-            },
-            "MyOperation": {
-                "type": "operation",
-                "input": "MyOperationInput"
-            },
-            "MyOperationInput": {
-                "type": "structure",
-                "members": {
-                    "fizz": {
-                        "target": "Include1"
-                    },
-                    "buzz": {
-                        "target": "Include2"
-                    }
+            }
+        },
+        "ns.foo#MyOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#MyOperationInput"
+            }
+        },
+        "ns.foo#MyOperationInput": {
+            "type": "structure",
+            "members": {
+                "fizz": {
+                    "target": "ns.foo#Include1"
+                },
+                "buzz": {
+                    "target": "ns.foo#Include2"
                 }
-            },
-            "Exclude1": {
-                "type": "string",
+            }
+        },
+        "ns.foo#Exclude1": {
+            "type": "string",
+            "traits": {
                 "ns.foo#quux": {
                     "member": "pop"
                 }
-            },
-            "Exclude2": {
-                "type": "string"
-            },
-            "Include1": {
-                "type": "string",
+            }
+        },
+        "ns.foo#Exclude2": {
+            "type": "string"
+        },
+        "ns.foo#Include1": {
+            "type": "string",
+            "traits": {
                 "ns.foo#bar": {
                     "member": "baz"
                 }
-            },
-            "Include2": {
-                "type": "string"
-            },
-            "BarTraitShapeMember": {
-                "type": "string"
-            },
-            "QuuxTraitShapeMember": {
-                "type": "string"
             }
+        },
+        "ns.foo#Include2": {
+            "type": "string"
+        },
+        "ns.foo#BarTraitShapeMember": {
+            "type": "string"
+        },
+        "ns.foo#QuuxTraitShapeMember": {
+            "type": "string"
         }
     }
 }

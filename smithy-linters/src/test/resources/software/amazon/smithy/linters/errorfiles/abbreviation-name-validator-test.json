@@ -1,5 +1,42 @@
 {
-    "smithy": "0.4.0",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#FooId": {
+            "type": "string"
+        },
+        "ns.foo#BazID": {
+            "type": "string"
+        },
+        "ns.foo#FooIdHttp": {
+            "type": "string"
+        },
+        "ns.foo#BamID2HTTP": {
+            "type": "string"
+        },
+        "ns.foo#ID": {
+            "type": "string"
+        },
+        "ns.foo#Structure": {
+            "type": "structure",
+            "members": {
+                "fooId": {
+                    "target": "ns.foo#FooId"
+                },
+                "bazID": {
+                    "target": "ns.foo#FooId"
+                },
+                "bamHTTP": {
+                    "target": "ns.foo#FooId"
+                },
+                "loremIPSUM": {
+                    "target": "ns.foo#FooId"
+                },
+                "ID": {
+                    "target": "ns.foo#FooId"
+                }
+            }
+        }
+    },
     "metadata": {
         "validators": [
             {
@@ -17,44 +54,5 @@
                 }
             }
         ]
-    },
-    "ns.foo": {
-        "shapes": {
-            "FooId": {
-                "type": "string"
-            },
-            "BazID": {
-                "type": "string"
-            },
-            "FooIdHttp": {
-                "type": "string"
-            },
-            "BamID2HTTP": {
-                "type": "string"
-            },
-            "ID": {
-                "type": "string"
-            },
-            "Structure": {
-                "type": "structure",
-                "members": {
-                    "fooId": {
-                        "target": "FooId"
-                    },
-                    "bazID": {
-                        "target": "FooId"
-                    },
-                    "bamHTTP": {
-                        "target": "FooId"
-                    },
-                    "loremIPSUM": {
-                        "target": "FooId"
-                    },
-                    "ID": {
-                        "target": "FooId"
-                    }
-                }
-            }
-        }
     }
 }

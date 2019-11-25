@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 
 public class ListShapeTest {
@@ -37,7 +38,7 @@ public class ListShapeTest {
 
     @Test
     public void mustNotContainMembersInShapeId() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(SourceException.class, () -> {
             ListShape.builder()
                     .id("ns.foo#bar$baz")
                     .member(MemberShape.builder().id("ns.foo#bar$member").target("ns.foo#bam").build())

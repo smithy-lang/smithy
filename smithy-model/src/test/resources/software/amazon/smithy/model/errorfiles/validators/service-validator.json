@@ -1,138 +1,216 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "InvalidServiceWithDuplicateNames": {
-                "type": "service",
-                "version": "XYZ",
-                "protocols": [{"name": "a", "auth": ["b"]}],
-                "resources": [
-                    "ResourceA",
-                    "ns.baz#ResourceA"
-                ],
-                "operations": [
-                    "OperationA"
-                ]
-            },
-            "OperationA": {
-                "type": "operation",
-                "readonly": true
-            },
-            "ResourceA": {
-                "type": "resource",
-                "identifiers": {
-                    "resourceAId": "ResourceAId"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#InvalidServiceWithDuplicateNames": {
+            "type": "service",
+            "version": "XYZ",
+            "resources": [
+                {
+                    "target": "ns.foo#ResourceA"
                 },
-                "resources": [
-                    "ResourceB"
+                {
+                    "target": "ns.baz#ResourceA"
+                }
+            ],
+            "operations": [
+                {
+                    "target": "ns.foo#OperationA"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "a",
+                        "auth": [
+                            "b"
+                        ]
+                    }
                 ]
+            }
+        },
+        "ns.foo#OperationA": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#ResourceA": {
+            "type": "resource",
+            "identifiers": {
+                "resourceAId": {
+                    "target": "ns.foo#ResourceAId"
+                }
             },
-            "ResourceAId": {
-                "type": "string"
+            "resources": [
+                {
+                    "target": "ns.foo#ResourceB"
+                }
+            ]
+        },
+        "ns.foo#ResourceAId": {
+            "type": "string"
+        },
+        "ns.foo#ResourceB": {
+            "type": "resource",
+            "identifiers": {
+                "resourceAId": {
+                    "target": "ns.foo#ResourceAId"
+                }
             },
-            "ResourceB": {
-                "type": "resource",
-                "identifiers": {
-                    "resourceAId": "ResourceAId"
-                },
-                "operations": [
-                    "OperationB"
-                ]
+            "operations": [
+                {
+                    "target": "ns.foo#OperationB"
+                }
+            ]
+        },
+        "ns.foo#OperationB": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#OperationBInput"
             },
-            "OperationB": {
-                "type": "operation",
-                "readonly": true,
-                "input": "OperationBInput"
-            },
-            "OperationBInput": {
-                "type": "structure",
-                "members": {
-                    "resourceAId": {
-                        "target": "ResourceAId",
-                        "required": true
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#OperationBInput": {
+            "type": "structure",
+            "members": {
+                "resourceAId": {
+                    "target": "ns.foo#ResourceAId",
+                    "traits": {
+                        "smithy.api#required": true
                     }
                 }
             }
-        }
-    },
-    "ns.baz": {
-        "shapes": {
-            "ResourceA": {
-                "type": "resource",
-                "identifiers": {
-                    "resourceAId": "ResourceAId"
-                },
-                "operations": [
-                    "OperationA",
-                    "OperationB"
-                ],
-                "resources": [
-                    "ResourceB"
-                ]
-            },
-            "ResourceAId": {
-                "type": "string"
-            },
-            "ResourceB": {
-                "type": "resource",
-                "identifiers": {
-                    "resourceAId": "ResourceAId"
-                },
-                "operations": [
-                    "OperationB"
-                ]
-            },
-            "OperationA": {
-                "type": "operation",
-                "readonly": true,
-                "input": "OperationAInput"
-            },
-            "OperationAInput": {
-                "type": "structure",
-                "members": {
-                    "resourceAId": {
-                        "target": "ResourceAId",
-                        "required": true
-                    }
+        },
+        "ns.baz#ResourceA": {
+            "type": "resource",
+            "identifiers": {
+                "resourceAId": {
+                    "target": "ns.baz#ResourceAId"
                 }
             },
-            "OperationB": {
-                "type": "operation",
-                "readonly": true,
-                "input": "OperationBInput"
+            "operations": [
+                {
+                    "target": "ns.baz#OperationA"
+                },
+                {
+                    "target": "ns.baz#OperationB"
+                }
+            ],
+            "resources": [
+                {
+                    "target": "ns.baz#ResourceB"
+                }
+            ]
+        },
+        "ns.baz#ResourceAId": {
+            "type": "string"
+        },
+        "ns.baz#ResourceB": {
+            "type": "resource",
+            "identifiers": {
+                "resourceAId": {
+                    "target": "ns.baz#ResourceAId"
+                }
             },
-            "OperationBInput": {
-                "type": "structure",
-                "members": {
-                    "resourceAId": {
-                        "target": "ResourceAId",
-                        "required": true
+            "operations": [
+                {
+                    "target": "ns.baz#OperationB"
+                }
+            ]
+        },
+        "ns.baz#OperationA": {
+            "type": "operation",
+            "input": {
+                "target": "ns.baz#OperationAInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.baz#OperationAInput": {
+            "type": "structure",
+            "members": {
+                "resourceAId": {
+                    "target": "ns.baz#ResourceAId",
+                    "traits": {
+                        "smithy.api#required": true
                     }
                 }
             }
-        }
-    },
-    "ns.invalid": {
-        "shapes": {
-            "InvalidService1": {
-                "type": "service",
-                "version": "XYZ",
-                "protocols": [
-                    {"name": "1"},
-                    {"name": "-"},
-                    {"name": "a.$"},
-                    {"name": "a.B"},
-                    {"name": "a.-+-."},
-                    {"name": "abc"},
-                    {"name": "skip.me.too-1.1"},
-                    {"name": "skip.me.too-1.1++"},
-                    {"name": "foo", "auth": ["abc", "def"]}
-                ]
+        },
+        "ns.baz#OperationB": {
+            "type": "operation",
+            "input": {
+                "target": "ns.baz#OperationBInput"
             },
-            "InvalidService2": {
-                "type": "service",
-                "version": "XYZ",
-                "protocols": [{"name": "foo", "auth": ["bar"]}]
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.baz#OperationBInput": {
+            "type": "structure",
+            "members": {
+                "resourceAId": {
+                    "target": "ns.baz#ResourceAId",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.invalid#InvalidService1": {
+            "type": "service",
+            "version": "XYZ",
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "1"
+                    },
+                    {
+                        "name": "-"
+                    },
+                    {
+                        "name": "a.$"
+                    },
+                    {
+                        "name": "a.B"
+                    },
+                    {
+                        "name": "a.-+-."
+                    },
+                    {
+                        "name": "abc"
+                    },
+                    {
+                        "name": "skip.me.too-1.1"
+                    },
+                    {
+                        "name": "skip.me.too-1.1++"
+                    },
+                    {
+                        "name": "foo",
+                        "auth": [
+                            "abc",
+                            "def"
+                        ]
+                    }
+                ]
+            }
+        },
+        "ns.invalid#InvalidService2": {
+            "type": "service",
+            "version": "XYZ",
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "foo",
+                        "auth": [
+                            "bar"
+                        ]
+                    }
+                ]
             }
         }
     }

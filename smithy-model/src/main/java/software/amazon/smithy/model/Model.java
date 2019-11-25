@@ -57,11 +57,10 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class Model implements ToSmithyBuilder<Model> {
     /** Specifies the highest supported version of the IDL. */
-    public static final String MODEL_VERSION = "0.4.0";
+    public static final String MODEL_VERSION = "0.5.0";
 
     private final Map<String, Node> metadata;
     private final ShapeIndex shapeIndex;
-    private final String smithyVersion;
 
     private volatile Map<Shape, TraitDefinition> traitDefinitions;
 
@@ -72,7 +71,6 @@ public final class Model implements ToSmithyBuilder<Model> {
     private int hash;
 
     private Model(Builder builder) {
-        smithyVersion = builder.smithyVersion;
         shapeIndex = builder.shapeIndex != null ? builder.shapeIndex : ShapeIndex.builder().build();
         metadata = builder.metadata.isEmpty() ? MapUtils.of() : MapUtils.copyOf(builder.metadata);
     }
@@ -136,10 +134,6 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     public Map<String, Node> getMetadata() {
         return metadata;
-    }
-
-    public String getSmithyVersion() {
-        return smithyVersion;
     }
 
     /**
@@ -251,16 +245,14 @@ public final class Model implements ToSmithyBuilder<Model> {
         }
 
         Model otherModel = (Model) other;
-        return getSmithyVersion().equals(otherModel.getSmithyVersion())
-               && getMetadata().equals(otherModel.getMetadata())
-               && getShapeIndex().equals(otherModel.getShapeIndex());
+        return getMetadata().equals(otherModel.getMetadata()) && getShapeIndex().equals(otherModel.getShapeIndex());
     }
 
     @Override
     public int hashCode() {
         int result = hash;
         if (result == 0) {
-            result = Objects.hash(getSmithyVersion(), getMetadata(), shapeIndex);
+            result = Objects.hash(getMetadata(), shapeIndex);
             hash = result;
         }
         return result;
@@ -269,7 +261,6 @@ public final class Model implements ToSmithyBuilder<Model> {
     @Override
     public Builder toBuilder() {
         return builder()
-                .smithyVersion(smithyVersion)
                 .metadata(getMetadata())
                 .shapeIndex(getShapeIndex());
     }
@@ -316,16 +307,10 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     public static final class Builder implements SmithyBuilder<Model> {
         private Map<String, Node> metadata = new HashMap<>();
-        private String smithyVersion = MODEL_VERSION;
         private ShapeIndex shapeIndex;
         private ShapeIndex.Builder shapeIndexBuilder;
 
         private Builder() {}
-
-        public Builder smithyVersion(String smithyVersion) {
-            this.smithyVersion = smithyVersion;
-            return this;
-        }
 
         public Builder metadata(Map<String, Node> metadata) {
             clearMetadata();

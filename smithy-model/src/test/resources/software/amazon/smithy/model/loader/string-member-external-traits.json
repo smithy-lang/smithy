@@ -1,22 +1,20 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "String": {
-                "type": "string"
-            },
-            "List": {
-                "type": "list",
-                "member": {
-                    "target": "String",
-                    "sensitive": true
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#String": {
+            "type": "string"
+        },
+        "ns.foo#List": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#String",
+                "traits": {
+                    "smithy.api#sensitive": true
                 }
             }
         },
-        "traits": {
-            "List$member": {
-                "documentation": "Foo"
-            }
+        "ns.foo#List$member": {
+            "smithy.api#documentation": "Foo"
         }
     }
 }

@@ -1,23 +1,27 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "MyStructure": {
-                "type": "structure",
-                "members": {
-                    "abc": {
-                        "target": "smithy.api#String",
-                        "required": true
-                    },
-                    "def": {
-                        "target": "smithy.api#String",
-                        "required": true
-                    },
-                    "hij": {
-                        "target": "smithy.api#Float"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#MyStructure": {
+            "type": "structure",
+            "members": {
+                "abc": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
                     }
                 },
-                "references": [
+                "def": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "hij": {
+                    "target": "smithy.api#Float"
+                }
+            },
+            "traits": {
+                "smithy.api#references": [
                     {
                         "resource": "MyResource",
                         "ids": {
@@ -40,12 +44,16 @@
                         }
                     }
                 ]
-            },
-            "MyResource": {
-                "type": "resource",
-                "identifiers": {
-                    "abc": "smithy.api#String",
-                    "def": "smithy.api#String"
+            }
+        },
+        "ns.foo#MyResource": {
+            "type": "resource",
+            "identifiers": {
+                "abc": {
+                    "target": "smithy.api#String"
+                },
+                "def": {
+                    "target": "smithy.api#String"
                 }
             }
         }

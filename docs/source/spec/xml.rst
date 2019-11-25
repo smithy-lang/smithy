@@ -52,19 +52,19 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyStructure": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String",
-                                "xmlAttribute": true
-                            },
-                            "bar": {
-                                "target": "String"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#xmlAttribute": true
                             }
+                        },
+                        "bar": {
+                            "target": "smithy.api#String"
                         }
                     }
                 }
@@ -118,15 +118,15 @@ Given the following list definition:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyList": {
-                        "type": "list",
-                        "member": {
-                            "target": "String"
-                        },
-                        "xmlFlattened": true
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyList": {
+                    "type": "list",
+                    "member": {
+                        "target": "smithy.api#String"
+                    },
+                    "traits": {
+                        "smithy.api#xmlFlattened": true
                     }
                 }
             }
@@ -162,19 +162,19 @@ Given the following definition:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyMap": {
-                        "type": "map",
-                        "key": {
-                            "target": "String"
-                        },
-                        "value": {
-                            "target": "String"
-                        },
-                        "xmlFlattened": true,
-                        "xmlName": "MyMapEntry"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyMap": {
+                    "type": "map",
+                    "key": {
+                        "target": "smithy.api#String"
+                    },
+                    "value": {
+                        "target": "smithy.api#String"
+                    },
+                    "traits": {
+                        "smithy.api#xmlFlattened": true,
+                        "smithy.api#xmlName": "MyMapEntry"
                     }
                 }
             }
@@ -234,19 +234,19 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyStructure": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String",
-                                "xmlName": "Foo"
-                            },
-                            "bar": {
-                                "target": "String"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#xmlName": "Foo"
                             }
+                        },
+                        "bar": {
+                            "target": "smithy.api#String"
                         }
                     }
                 }
@@ -328,20 +328,20 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyStructure": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String"
-                            },
-                            "bar": {
-                                "target": "String"
-                            }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "target": "smithy.api#String"
                         },
-                        "xmlNamespace": {
+                        "bar": {
+                            "target": "smithy.api#String"
+                        }
+                    },
+                    "traits": {
+                        "smithy.api#xmlNamespace": {
                             "uri": "http://foo.com"
                         }
                     }
@@ -382,21 +382,23 @@ Given the following definition with a prefix:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyStructure": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String"
-                            },
-                            "bar": {
-                                "target": "String",
-                                "xmlName": "baz:bar"
-                            }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "target": "smithy.api#String"
                         },
-                        "xmlNamespace": {
+                        "bar": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#xmlName": "baz:bar"
+                            }
+                        }
+                    },
+                    "traits": {
+                        "smithy.api#xmlNamespace": {
                             "uri": "http://foo.com",
                             "prefix": "baz"
                         }
@@ -464,32 +466,38 @@ influence the overall structure of the payload.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyStructure": {
-                        "type": "structure",
-                        "members": {
-                            "foo": {
-                                "target": "String",
-                                "xmlAttribute": true,
-                            },
-                            "bar": {
-                                "target": "String",
-                                "xmlName": "Bar"
-                            },
-                            "baz": {
-                                "target": "MyList"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "foo": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#xmlAttribute": true
                             }
+                        },
+                        "bar": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#xmlName": "Bar"
+                            }
+                        },
+                        "baz": {
+                            "target": "smithy.example#MyList"
+                        }
+                    }
+                },
+                "smithy.example#MyList": {
+                    "type": "list",
+                    "member": {
+                        "target": "smithy.api#String",
+                        "traits": {
+                            "smithy.api#xmlName": "Item"
                         }
                     },
-                    "MyList": {
-                        "type": "list",
-                        "member": {
-                            "target": "String",
-                            "xmlName": "Item"
-                        },
-                        "xmlFlattened": true
+                    "traits": {
+                        "smithy.api#xmlFlattened": true
                     }
                 }
             }

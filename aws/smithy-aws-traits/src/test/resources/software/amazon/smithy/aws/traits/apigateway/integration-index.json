@@ -1,40 +1,97 @@
 {
-  "smithy": "0.4.0",
-  "ns.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "Service": {
-        "type": "service",
-        "version": "2018-03-17",
-        "aws.api#service": {"sdkId": "Some Value"},
-        "aws.apigateway#integration": {"type": "aws", "uri" : "arn:Service", "httpMethod" : "POST"},
-        "resources": ["A", "B"],
-        "operations": ["O1"]
-      },
-      "A": {
-        "type": "resource",
-        "operations": ["O2", "O3"]
-      },
-      "B": {
-        "type": "resource",
-        "aws.apigateway#integration": {"type": "aws", "uri" : "arn:B", "httpMethod" : "POST"},
-        "operations": ["O4", "O5"]
-      },
-      "O1": {
-        "type": "operation",
-        "aws.apigateway#integration": {"type": "aws", "uri" : "arn:O1", "httpMethod" : "POST"}
-      },
-      "O2": {"type": "operation"},
-      "O3": {
-        "type": "operation",
-        "aws.apigateway#integration": {"type": "aws", "uri" : "arn:O3", "httpMethod" : "POST"}
-      },
-      "O4": {
-        "type": "operation"
-      },
-      "O5": {
-        "type": "operation",
-        "aws.apigateway#integration": {"type": "aws", "uri" : "arn:O5", "httpMethod" : "POST"}
-      }
+        "ns.foo#Service": {
+            "type": "service",
+            "version": "2018-03-17",
+            "resources": [
+                {
+                    "target": "ns.foo#A"
+                },
+                {
+                    "target": "ns.foo#B"
+                }
+            ],
+            "operations": [
+                {
+                    "target": "ns.foo#O1"
+                }
+            ],
+            "traits": {
+                "aws.api#service": {
+                    "sdkId": "Some Value"
+                },
+                "aws.apigateway#integration": {
+                    "type": "aws",
+                    "uri": "arn:Service",
+                    "httpMethod": "POST"
+                }
+            }
+        },
+        "ns.foo#A": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "ns.foo#O2"
+                },
+                {
+                    "target": "ns.foo#O3"
+                }
+            ]
+        },
+        "ns.foo#B": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "ns.foo#O4"
+                },
+                {
+                    "target": "ns.foo#O5"
+                }
+            ],
+            "traits": {
+                "aws.apigateway#integration": {
+                    "type": "aws",
+                    "uri": "arn:B",
+                    "httpMethod": "POST"
+                }
+            }
+        },
+        "ns.foo#O1": {
+            "type": "operation",
+            "traits": {
+                "aws.apigateway#integration": {
+                    "type": "aws",
+                    "uri": "arn:O1",
+                    "httpMethod": "POST"
+                }
+            }
+        },
+        "ns.foo#O2": {
+            "type": "operation"
+        },
+        "ns.foo#O3": {
+            "type": "operation",
+            "traits": {
+                "aws.apigateway#integration": {
+                    "type": "aws",
+                    "uri": "arn:O3",
+                    "httpMethod": "POST"
+                }
+            }
+        },
+        "ns.foo#O4": {
+            "type": "operation"
+        },
+        "ns.foo#O5": {
+            "type": "operation",
+            "traits": {
+                "aws.apigateway#integration": {
+                    "type": "aws",
+                    "uri": "arn:O5",
+                    "httpMethod": "POST"
+                }
+            }
+        }
     }
-  }
 }

@@ -1,40 +1,54 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Invalid1": {
-                "type": "resource",
-                "identifiers": {
-                    "id": "smithy.api#Float"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Invalid1": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "target": "smithy.api#Float"
                 }
-            },
-            "Valid1": {
-                "type": "resource",
-                "identifiers": {
-                    "a": "smithy.api#String",
-                    "b": "smithy.api#String"
-                },
-                "resources": [
-                    "Invalid2",
-                    "Invalid3"
-                ]
-            },
-            "Invalid2": {
-                "type": "resource",
-                "identifiers": {
-                    "a": "smithy.api#String"
-                }
-            },
-            "Invalid3": {
-                "type": "resource",
-                "identifiers": {
-                    "a": "smithy.api#String",
-                    "b": "MyString"
-                }
-            },
-            "MyString": {
-                "type": "string"
             }
+        },
+        "ns.foo#Valid1": {
+            "type": "resource",
+            "identifiers": {
+                "a": {
+                    "target": "smithy.api#String"
+                },
+                "b": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "resources": [
+                {
+                    "target": "ns.foo#Invalid2"
+                },
+                {
+                    "target": "ns.foo#Invalid3"
+                }
+            ]
+        },
+        "ns.foo#Invalid2": {
+            "type": "resource",
+            "identifiers": {
+                "a": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "ns.foo#Invalid3": {
+            "type": "resource",
+            "identifiers": {
+                "a": {
+                    "target": "smithy.api#String"
+                },
+                "b": {
+                    "target": "ns.foo#MyString"
+                }
+            }
+        },
+        "ns.foo#MyString": {
+            "type": "string"
         }
     }
 }

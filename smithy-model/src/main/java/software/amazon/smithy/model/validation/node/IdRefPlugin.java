@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.util.List;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
@@ -35,6 +36,9 @@ import software.amazon.smithy.utils.ListUtils;
  * resolve to shapes defined in the same namespace as the ID.
  */
 public final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, IdRefTrait> {
+
+    private static final Logger LOGGER = Logger.getLogger(IdRefPlugin.class.getName());
+
     public IdRefPlugin() {
         super(StringShape.class, StringNode.class, IdRefTrait.class);
     }
@@ -43,6 +47,12 @@ public final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, St
     protected List<String> check(Shape shape, IdRefTrait trait, StringNode node, ShapeIndex index) {
         try {
             String target = node.getValue();
+
+            if (!target.contains("#")) {
+                LOGGER.warning("idRef traits should use absolute shape IDs. A future version of Smithy will remove "
+                               + "support for relative shape IDs.");
+            }
+
             Shape resolved = Prelude.resolveShapeId(index, shape.getId().getNamespace(), target).orElse(null);
             if (resolved == null) {
                 return trait.failWhenMissing()

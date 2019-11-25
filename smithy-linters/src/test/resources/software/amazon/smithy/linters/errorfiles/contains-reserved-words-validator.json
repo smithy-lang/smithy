@@ -1,189 +1,223 @@
 {
-  "smithy": "0.4.0",
-  "metadata": {
-    "validators": [
-      {
-        "id": "FooReservedWords",
-        "name": "ReservedWords",
-        "configuration": {
-          "reserved": [
-            {
-              "words": [
-                "fooshape"
-              ]
-            },
-            {
-              "words": [
-                "_*"
-              ],
-              "reason": "Foo does not allow preceding underscores."
-            },
-            {
-              "selector": "operation",
-              "words": [
-                "operationb"
-              ],
-              "reason": "Foo has a built in OperationB, we can rename around it."
-            },
-            {
-              "selector": "structure",
-              "words": [
-                "*errorb*"
-              ]
-            },
-            {
-              "selector": "member:of(structure)",
-              "words": [
-                "*hermembername",
-                "string"
-              ]
-            }
-          ]
-        }
-      }
-    ]
-  },
-  "ns.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "_foo": {
-        "type": "structure",
-        "members": {
-          "bar": {
-            "target": "String"
-          }
-        }
-      },
-      "String": {
-        "type": "string"
-      },
-      "Integer": {
-        "type": "integer"
-      },
-      "Long": {
-        "type": "long"
-      },
-      "Float": {
-        "type": "float"
-      },
-      "Boolean": {
-        "type": "boolean"
-      },
-      "List": {
-        "type": "list",
-        "member": {
-          "target": "String"
-        }
-      },
-      "Map": {
-        "type": "map",
-        "key": {
-          "target": "String"
+        "ns.foo#_foo": {
+            "type": "structure",
+            "members": {
+                "bar": {
+                    "target": "ns.foo#String"
+                }
+            }
         },
-        "value": {
-          "target": "String"
-        }
-      },
-      "MyService": {
-        "type": "service",
-        "version": "2017-01-17",
-        "protocols": [{"name": "foo"}],
-        "resources": [
-          "MyResource"
-        ],
-        "operations": [
-          "OperationA"
-        ]
-      },
-      "MyResource": {
-        "type": "resource",
-        "identifiers": {
-          "id": "MyResourceIdentifier"
+        "ns.foo#String": {
+            "type": "string"
         },
-        "operations": [
-          "OperationB"
+        "ns.foo#Integer": {
+            "type": "integer"
+        },
+        "ns.foo#Long": {
+            "type": "long"
+        },
+        "ns.foo#Float": {
+            "type": "float"
+        },
+        "ns.foo#Boolean": {
+            "type": "boolean"
+        },
+        "ns.foo#List": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#String"
+            }
+        },
+        "ns.foo#Map": {
+            "type": "map",
+            "key": {
+                "target": "ns.foo#String"
+            },
+            "value": {
+                "target": "ns.foo#String"
+            }
+        },
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "resources": [
+                {
+                    "target": "ns.foo#MyResource"
+                }
+            ],
+            "operations": [
+                {
+                    "target": "ns.foo#OperationA"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "foo"
+                    }
+                ]
+            }
+        },
+        "ns.foo#MyResource": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "target": "ns.foo#MyResourceIdentifier"
+                }
+            },
+            "operations": [
+                {
+                    "target": "ns.foo#OperationB"
+                }
+            ]
+        },
+        "ns.foo#MyResourceIdentifier": {
+            "type": "string"
+        },
+        "ns.foo#OperationA": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#OperationAInput"
+            },
+            "output": {
+                "target": "ns.foo#OperationAOutput"
+            },
+            "errors": [
+                {
+                    "target": "ns.foo#OperationErrorA"
+                },
+                {
+                    "target": "ns.foo#OperationErrorB"
+                }
+            ],
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#OperationAInput": {
+            "type": "structure",
+            "members": {
+                "memberName": {
+                    "target": "ns.foo#String"
+                },
+                "otherMemberName": {
+                    "target": "ns.foo#Integer"
+                },
+                "fooShape": {
+                    "target": "ns.foo#FooShape"
+                }
+            }
+        },
+        "ns.foo#OperationAOutput": {
+            "type": "structure",
+            "members": {
+                "b": {
+                    "target": "ns.foo#Map"
+                }
+            }
+        },
+        "ns.foo#OperationErrorA": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "ns.foo#OperationErrorB": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "ns.foo#OperationB": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#OperationBInput"
+            }
+        },
+        "ns.foo#OperationBInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "ns.foo#MyResourceIdentifier",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#_OperationBaz": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#_foo"
+            }
+        },
+        "ns.foo#UtcTimestamp": {
+            "type": "timestamp"
+        },
+        "ns.foo#FooShape": {
+            "type": "structure",
+            "members": {
+                "c": {
+                    "target": "ns.foo#Float"
+                },
+                "string": {
+                    "target": "ns.foo#String"
+                },
+                "_qux": {
+                    "target": "ns.foo#String"
+                }
+            }
+        },
+        "ns.foo#Blob": {
+            "type": "blob",
+            "traits": {
+                "smithy.api#mediaType": "text/plain"
+            }
+        }
+    },
+    "metadata": {
+        "validators": [
+            {
+                "id": "FooReservedWords",
+                "name": "ReservedWords",
+                "configuration": {
+                    "reserved": [
+                        {
+                            "words": [
+                                "fooshape"
+                            ]
+                        },
+                        {
+                            "words": [
+                                "_*"
+                            ],
+                            "reason": "Foo does not allow preceding underscores."
+                        },
+                        {
+                            "selector": "operation",
+                            "words": [
+                                "operationb"
+                            ],
+                            "reason": "Foo has a built in OperationB, we can rename around it."
+                        },
+                        {
+                            "selector": "structure",
+                            "words": [
+                                "*errorb*"
+                            ]
+                        },
+                        {
+                            "selector": "member:of(structure)",
+                            "words": [
+                                "*hermembername",
+                                "string"
+                            ]
+                        }
+                    ]
+                }
+            }
         ]
-      },
-      "MyResourceIdentifier": {
-        "type": "string"
-      },
-      "OperationA": {
-        "type": "operation",
-        "readonly": true,
-        "input": "OperationAInput",
-        "output": "OperationAOutput",
-        "errors": [
-          "OperationErrorA",
-          "OperationErrorB"
-        ]
-      },
-      "OperationAInput": {
-        "type": "structure",
-        "members": {
-          "memberName": {
-            "target": "String"
-          },
-          "otherMemberName": {
-            "target": "Integer"
-          },
-          "fooShape": {
-            "target": "FooShape"
-          }
-        }
-      },
-      "OperationAOutput": {
-        "type": "structure",
-        "members": {
-          "b": {
-            "target": "Map"
-          }
-        }
-      },
-      "OperationErrorA": {
-        "type": "structure",
-        "error": "client"
-      },
-      "OperationErrorB": {
-        "type": "structure",
-        "error": "server"
-      },
-      "OperationB": {
-        "type": "operation",
-        "input": "OperationBInput"
-      },
-      "OperationBInput": {
-        "type": "structure",
-        "members": {
-          "id": {
-            "target": "MyResourceIdentifier",
-            "required": true
-          }
-        }
-      },
-      "_OperationBaz": {
-        "type": "operation",
-        "input": "_foo"
-      },
-      "UtcTimestamp": {
-        "type": "timestamp"
-      },
-      "FooShape": {
-        "type": "structure",
-        "members": {
-          "c": {
-            "target": "Float"
-          },
-          "string": {
-            "target": "String"
-          },
-          "_qux": {
-            "target": "String"
-          }
-        }
-      },
-      "Blob": {
-        "type": "blob",
-        "mediaType": "text\/plain"
-      }
     }
-  }
 }

@@ -1,44 +1,48 @@
 {
-  "smithy": "0.4.0",
-  "ns.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "ValidNamespace1": {
-        "type": "structure",
-        "members": {
-          "a": {
-            "target": "String"
-          }
+        "ns.foo#ValidNamespace1": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "ns.foo#String"
+                }
+            },
+            "traits": {
+                "smithy.api#xmlNamespace": {
+                    "uri": "http://foo.com"
+                }
+            }
         },
-        "smithy.api#xmlNamespace": {
-          "uri": "http://foo.com"
-        }
-      },
-      "ValidNamespace2": {
-        "type": "structure",
-        "members": {
-          "a": {
-            "target": "String"
-          }
+        "ns.foo#ValidNamespace2": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "ns.foo#String"
+                }
+            },
+            "traits": {
+                "smithy.api#xmlNamespace": {
+                    "uri": "http://www.w3.org/2001/XMLSchema-instance",
+                    "prefix": "xsi"
+                }
+            }
         },
-        "smithy.api#xmlNamespace": {
-          "uri": "http://www.w3.org/2001/XMLSchema-instance",
-          "prefix": "xsi"
-        }
-      },
-      "InvalidNamespace": {
-        "type": "structure",
-        "members": {
-          "a": {
-            "target": "String"
-          }
+        "ns.foo#InvalidNamespace": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "ns.foo#String"
+                }
+            },
+            "traits": {
+                "smithy.api#xmlNamespace": {
+                    "uri": "::foo"
+                }
+            }
         },
-        "smithy.api#xmlNamespace": {
-          "uri": "::foo"
+        "ns.foo#String": {
+            "type": "string"
         }
-      },
-      "String": {
-        "type": "string"
-      }
     }
-  }
 }
