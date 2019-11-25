@@ -1,81 +1,115 @@
 {
-  "smithy": "0.4.0",
-  "example.smithy": {
+    "smithy": "0.5.0",
     "shapes": {
-      "EmptyOperation": {
-        "type": "operation"
-      },
-
-      "NotEventStreamOperation": {
-        "type": "operation",
-        "input": "NotEventStreamStructure",
-        "output": "NotEventStreamStructure"
-      },
-      "NotEventStreamStructure": {
-        "type": "structure",
-        "members": {
-          "foo": {"target": "smithy.api#String"}
+        "example.smithy#EmptyOperation": {
+            "type": "operation"
+        },
+        "example.smithy#NotEventStreamOperation": {
+            "type": "operation",
+            "input": {
+                "target": "example.smithy#NotEventStreamStructure"
+            },
+            "output": {
+                "target": "example.smithy#NotEventStreamStructure"
+            }
+        },
+        "example.smithy#NotEventStreamStructure": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "example.smithy#EventStreamOperation": {
+            "type": "operation",
+            "input": {
+                "target": "example.smithy#EventStreamOperationInput"
+            },
+            "output": {
+                "target": "example.smithy#EventStreamOperationOutput"
+            }
+        },
+        "example.smithy#EventStreamOperationInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String"
+                },
+                "b": {
+                    "target": "smithy.api#Integer"
+                },
+                "c": {
+                    "target": "example.smithy#InputEventStream",
+                    "traits": {
+                        "smithy.api#eventStream": true
+                    }
+                }
+            }
+        },
+        "example.smithy#EventStreamOperationOutput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String"
+                },
+                "b": {
+                    "target": "smithy.api#Integer"
+                },
+                "c": {
+                    "target": "example.smithy#OutputEventStream",
+                    "traits": {
+                        "smithy.api#eventStream": true
+                    }
+                }
+            }
+        },
+        "example.smithy#InputEventStream": {
+            "type": "union",
+            "members": {
+                "eventA": {
+                    "target": "example.smithy#EventStructure"
+                },
+                "eventB": {
+                    "target": "example.smithy#EventStructure"
+                }
+            }
+        },
+        "example.smithy#OutputEventStream": {
+            "type": "union",
+            "members": {
+                "eventA": {
+                    "target": "example.smithy#EventStructure"
+                },
+                "eventB": {
+                    "target": "example.smithy#EventStructure"
+                }
+            }
+        },
+        "example.smithy#EventStructure": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "example.smithy#SingleEventOperation": {
+            "type": "operation",
+            "input": {
+                "target": "example.smithy#SingleEventOperationInput"
+            }
+        },
+        "example.smithy#SingleEventOperationInput": {
+            "type": "structure",
+            "members": {
+                "messages": {
+                    "target": "example.smithy#EventStructure",
+                    "traits": {
+                        "smithy.api#eventStream": true
+                    }
+                }
+            }
         }
-      },
-
-      "EventStreamOperation": {
-        "type": "operation",
-        "input": "EventStreamOperationInput",
-        "output": "EventStreamOperationOutput"
-      },
-
-      "EventStreamOperationInput": {
-        "type": "structure",
-        "members": {
-          "a": {"target": "smithy.api#String"},
-          "b": {"target": "smithy.api#Integer"},
-          "c": {"target": "InputEventStream", "eventStream": true}
-        }
-      },
-
-      "EventStreamOperationOutput": {
-        "type": "structure",
-        "members": {
-          "a": {"target": "smithy.api#String"},
-          "b": {"target": "smithy.api#Integer"},
-          "c": {"target": "OutputEventStream", "eventStream": true}
-        }
-      },
-
-      "InputEventStream": {
-        "type": "union",
-        "members": {
-          "eventA": {"target": "EventStructure"},
-          "eventB": {"target": "EventStructure"}
-        }
-      },
-
-      "OutputEventStream": {
-        "type": "union",
-        "members": {
-          "eventA": {"target": "EventStructure"},
-          "eventB": {"target": "EventStructure"}
-        }
-      },
-
-      "EventStructure": {
-        "type": "structure",
-        "members": {
-          "foo": {"target": "smithy.api#String"}
-        }
-      },
-
-      "SingleEventOperation": {
-        "type": "operation",
-        "input": "SingleEventOperationInput"
-      },
-
-      "SingleEventOperationInput": {
-        "type": "structure",
-        "members": {
-          "messages": {"target": "EventStructure", "eventStream": true}
-        }
-      }
     }
-  }
 }

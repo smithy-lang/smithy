@@ -26,40 +26,40 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.node.DefaultNodeFactory;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 
-public class NodeModelLoaderTest {
+public class DeprecatedAstModelLoaderTest {
     @Test
     public void validatesNamespaceNames() {
         Assertions.assertThrows(SourceException.class, () -> {
             LoaderVisitor visitor = new LoaderVisitor(TraitFactory.createServiceFactory());
-            new NodeModelLoader(new DefaultNodeFactory())
-                    .load("foo.json", () -> "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"foo.baz!\": {}}", visitor);
+            ObjectNode node = Node.parse("{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"foo.baz!\": {}}")
+                    .expectObjectNode();
+            DeprecatedAstModelLoader.INSTANCE.load(node, node.expectStringMember("smithy"), visitor);
         });
     }
 
     @Test
     public void validatesShapeIds() {
         LoaderVisitor visitor = new LoaderVisitor(TraitFactory.createServiceFactory());
-        new NodeModelLoader(new DefaultNodeFactory()).load(
-                "foo.json",
-                () -> "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"foo.baz\": {\"shapes\": {\"ns.bar#bam\": {\"type\": \"string\"}}}}",
-                visitor);
+        ObjectNode node = Node.parse("{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"foo.baz\": {\"shapes\": {\"ns.bar#bam\": {\"type\": \"string\"}}}}")
+                .expectObjectNode();
+        DeprecatedAstModelLoader.INSTANCE.load(node, node.expectStringMember("smithy"), visitor);
         assertThat(visitor.onEnd().getValidationEvents(Severity.ERROR), not(empty()));
     }
 
     @Test
     public void validatesTraitShapeIds() {
         LoaderVisitor visitor = new LoaderVisitor(TraitFactory.createServiceFactory());
-        new NodeModelLoader(new DefaultNodeFactory()).load(
-                "foo.json",
-                () -> "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"foo.baz\": {\"traits\": {\"ns.bar#bam\": {\"sensitive\": true}}}}",
-                visitor);
+        ObjectNode node = Node.parse("{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"foo.baz\": {\"traits\": {\"ns.bar#bam\": {\"sensitive\": true}}}}")
+                .expectObjectNode();
+        DeprecatedAstModelLoader.INSTANCE.load(node, node.expectStringMember("smithy"), visitor);
         assertThat(visitor.onEnd().getValidationEvents(Severity.ERROR), not(empty()));
     }
 

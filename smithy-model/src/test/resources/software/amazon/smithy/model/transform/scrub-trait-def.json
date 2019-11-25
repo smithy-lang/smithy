@@ -1,74 +1,101 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "foo": {
-                "trait": true,
-                "type": "structure",
-                "members": {
-                    "foo": {"target": "smithy.api#String"},
-                    "bar": {"target": "BarString"},
-                    "ipsum": {"target": "IpsumString"}
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#foo": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String"
+                },
+                "bar": {
+                    "target": "ns.foo#BarString"
+                },
+                "ipsum": {
+                    "target": "ns.foo#IpsumString"
                 }
             },
-            "IpsumString": {
-                "type": "string"
-            },
-            "BarString": {
-                "type": "string"
-            },
-
-            "baz": {
-                "trait": true,
-                "type": "structure",
-                "members": {
-                    "foo": {"target": "smithy.api#String"},
-                    "bar": {"target": "BarString"},
-                    "ipsum": {"target": "IpsumString"}
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#IpsumString": {
+            "type": "string"
+        },
+        "ns.foo#BarString": {
+            "type": "string"
+        },
+        "ns.foo#baz": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String"
+                },
+                "bar": {
+                    "target": "ns.foo#BarString"
+                },
+                "ipsum": {
+                    "target": "ns.foo#IpsumString"
                 }
             },
-
-            "bam": {
-                "type": "string",
-                "trait": true
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#bam": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#qux": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#BarString"
             },
-
-            "qux": {
-                "trait": true,
-                "type": "list",
-                "member": {"target": "BarString"},
-                "length": {
+            "traits": {
+                "smithy.api#trait": true,
+                "smithy.api#length": {
                     "min": 1
                 }
-            },
-
-            "lorem": {
-                "trait": true,
-                "type": "structure",
-                "members": {
-                    "foo": {"target": "Struct"},
-                    "bar": {"target": "ComplexRemoved"}
-                }
-            },
-            "ComplexRemoved": {
-                "type": "structure",
-                "members": {
-                    "foo": {"target": "Struct"},
-                    "bar": {"target": "ComplexRemoved"}
-                }
-            },
-            "Struct": {
-                "type": "structure",
-                "members": {}
-            },
-
-            "IpsumList": {
-                "type": "list",
-                "member": {"target": "IpsumString"}
-            },
-            "KeepStructure": {
-                "type": "structure"
             }
+        },
+        "ns.foo#lorem": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "ns.foo#Struct"
+                },
+                "bar": {
+                    "target": "ns.foo#ComplexRemoved"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#ComplexRemoved": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "ns.foo#Struct"
+                },
+                "bar": {
+                    "target": "ns.foo#ComplexRemoved"
+                }
+            }
+        },
+        "ns.foo#Struct": {
+            "type": "structure",
+            "members": {}
+        },
+        "ns.foo#IpsumList": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#IpsumString"
+            }
+        },
+        "ns.foo#KeepStructure": {
+            "type": "structure"
         }
     }
 }

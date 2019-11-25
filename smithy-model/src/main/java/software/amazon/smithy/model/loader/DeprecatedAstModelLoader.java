@@ -19,12 +19,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.DefaultNodeFactory;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeFactory;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
@@ -60,9 +58,23 @@ import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
- * Adds shapes and definitions from a JSON file to a loader visitor.
+ * A singleton that adds shapes and definitions from a JSON file to a
+ * loader visitor using version 0.4.0.
+ *
+ * <p>This version was deprecated because it's harder to parse than a
+ * machine readable format needs to be. This version requires forward
+ * reference resolution because shape IDs are allowed to be null,
+ * utilizes additional properties which are harder to parse, and is
+ * harder to use with tools like grep, jq, and jmespath because it's
+ * not uniform in how shapes are referenced or where traits are applied.
+ *
+ * @see AstModelLoader
  */
-final class NodeModelLoader implements ModelLoader {
+enum DeprecatedAstModelLoader {
+
+    INSTANCE;
+
+    private static final Logger LOGGER = Logger.getLogger(DeprecatedAstModelLoader.class.getName());
     private static final String SMITHY = "smithy";
     private static final String METADATA = "metadata";
     private static final String SHAPES = "shapes";
@@ -76,52 +88,33 @@ final class NodeModelLoader implements ModelLoader {
     private static final List<String> STRUCTURE_PROPERTY_NAMES = ListUtils.of("type", "members");
     private static final List<String> UNION_PROPERTY_NAMES = ListUtils.of("type", "members");
 
-    private final NodeFactory nodeFactory;
+    void load(ObjectNode model, StringNode version, LoaderVisitor visitor) {
+        LOGGER.warning("Version 0.4.0 of the Smithy JSON format is deprecated and will be removed in "
+                       + "a future version of Smithy. Please migrate to version 0.5.0 or higher "
+                       + "(" + version.getSourceLocation() + ")");
 
-    NodeModelLoader() {
-        this(new DefaultNodeFactory());
-    }
+        visitor.onOpenFile(model.getSourceLocation().getFilename());
+        visitor.onVersion(version.getSourceLocation(), version.expectStringNode().getValue());
 
-    NodeModelLoader(NodeFactory nodeFactory) {
-        this.nodeFactory = nodeFactory;
-    }
-
-    @Override
-    public boolean load(String filename, Supplier<String> contentSupplier, LoaderVisitor visitor) {
-        if (test(filename, contentSupplier)) {
-            Node node = nodeFactory.createNode(filename, contentSupplier.get());
-            visitor.onOpenFile(filename);
-            load(visitor, node);
-            return true;
+        try {
+            model.getMember(METADATA).ifPresent(value -> {
+                ObjectNode metadata = value.expectObjectNode("`metadata` must be an object");
+                metadata.getMembers().forEach((k, v) -> visitor.onMetadata(k.getValue(), v));
+            });
+        } catch (SourceException e) {
+            visitor.onError(ValidationEvent.fromSourceException(e));
         }
 
-        return false;
+        model.getMembers().forEach((key, value) -> {
+            String keyValue = key.getValue();
+            if (!keyValue.equals(SMITHY) && !keyValue.equals(METADATA)) {
+                // Additional properties are considered namespaces.
+                visitor.onNamespace(key.getValue(), key);
+                loadNamespace(visitor, key.getValue(), value.expectObjectNode());
+            }
+        });
     }
 
-    private boolean test(String path, Supplier<String> contentSupplier) {
-        if (path.endsWith(".json")) {
-            return true;
-        }
-
-        // Loads the contents of a file if the file has a source location
-        // of "N/A", isn't empty, and the first character is "{".
-        String contents = contentSupplier.get();
-        return path.equals(SourceLocation.NONE.getFilename())
-               && !contents.isEmpty()
-               && contents.charAt(0) == '{';
-    }
-
-    /**
-     * Loads a shape from the JSON definition of a shape into the given loader visitor.
-     *
-     * <p>This method is public because other JSON based formats may want to use it
-     * to load shapes with different serialization formats that are similar to JSON.
-     *
-     * @param id The shape ID to load. The current namespace of traits is assumed to be the same as the shape ID.
-     * @param type The type of shape to load.
-     * @param value The shape's value to load.
-     * @param visitor The visitor to update while loading the shape.
-     */
     private void loadShape(ShapeId id, String type, ObjectNode value, LoaderVisitor visitor) {
         switch (type) {
             case "blob":
@@ -190,26 +183,6 @@ final class NodeModelLoader implements ModelLoader {
             default:
                 throw new SourceException("Invalid shape `type`: " + type, value);
         }
-    }
-
-    void load(LoaderVisitor visitor, Node node) {
-        ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
-        StringNode version = model.expectStringMember(SMITHY);
-        visitor.onVersion(version.getSourceLocation(), version.expectStringNode().getValue());
-
-        model.getMember(METADATA).ifPresent(value -> {
-            ObjectNode metadata = value.expectObjectNode("`metadata` must be an object");
-            metadata.getMembers().forEach((k, v) -> visitor.onMetadata(k.getValue(), v));
-        });
-
-        model.getMembers().forEach((key, value) -> {
-            String keyValue = key.getValue();
-            if (!keyValue.equals(SMITHY) && !keyValue.equals(METADATA)) {
-                // Additional properties are considered namespaces.
-                visitor.onNamespace(key.getValue(), key);
-                loadNamespace(visitor, key.getValue(), value.expectObjectNode());
-            }
-        });
     }
 
     private void loadNamespace(LoaderVisitor visitor, String namespace, ObjectNode node) {

@@ -1,0 +1,1 @@
+[ERROR] ns.foo#Baz$bar: Shapes of type `string` cannot contain a member in their shape ID. Found `ns.foo#Baz$bar` | Model

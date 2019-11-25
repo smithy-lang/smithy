@@ -1,17 +1,17 @@
 {
-  "smithy": "0.4.0",
-  "metadata": {
-    "c": "metadata-c"
-  },
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "CString": {
-        "type": "string"
-      },
-      "Ctrait": {
-        "type": "structure",
-        "trait": true
-      }
+        "smithy.example#CString": {
+            "type": "string"
+        },
+        "smithy.example#Ctrait": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": true
+            }
+        }
+    },
+    "metadata": {
+        "c": "metadata-c"
     }
-  }
 }

@@ -39,7 +39,7 @@ The following example defines an AWS service that uses the default values of
 
     .. code-tab:: smithy
 
-        $version: "0.4.0"
+        $version: "0.5.0"
         namespace aws.fooBaz
 
         use aws.api#service
@@ -52,12 +52,12 @@ The following example defines an AWS service that uses the default values of
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "aws.fooBaz": {
-                "shapes": {
-                    "FooBaz": {
-                        "type": "service",
-                        "version": "2018-03-17",
+            "smithy": "0.5.0",
+            "shapes": {
+                "aws.fooBaz#FooBaz": {
+                    "type": "service",
+                    "version": "2018-03-17",
+                    "traits": {
                         "aws.api#service": {
                             "sdkId": "Some Value"
                         }
@@ -72,7 +72,7 @@ The following example provides explicit values for all properties:
 
     .. code-tab:: smithy
 
-        $version: "0.4.0"
+        $version: "0.5.0"
         namespace aws.fooBaz
 
         use aws.api#service
@@ -89,12 +89,12 @@ The following example provides explicit values for all properties:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "aws.fooBaz": {
-                "shapes": {
-                    "FooBaz": {
-                        "type": "service",
-                        "version": "2018-03-17",
+            "smithy": "0.5.0",
+            "shapes": {
+                "aws.fooBaz#FooBaz": {
+                    "type": "service",
+                    "version": "2018-03-17",
+                    "traits": {
                         "aws.api#service": {
                             "sdkId": "Some Value",
                             "cloudFormationName": "FooBaz",
@@ -105,7 +105,6 @@ The following example provides explicit values for all properties:
                 }
             }
         }
-
 
 .. _service-sdk-id:
 
@@ -368,7 +367,6 @@ For example, given the following service:
 
     .. code-tab:: smithy
 
-        $version: "0.4.0"
         namespace aws.fooBaz
 
         use aws.api#service
@@ -388,20 +386,30 @@ For example, given the following service:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "FooBaz": {
-                        "type": "service",
-                        "version": "2018-03-17",
-                        "resources": ["MyResource"],
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#FooBaz": {
+                    "type": "service",
+                    "version": "2018-03-17",
+                    "resources": [
+                        {
+                            "target": "smithy.example#MyResource"
+                        }
+                    ],
+                    "traits": {
                         "aws.api#service": {
                             "sdkId": "Some Value"
                         }
+                    }
+                },
+                "smithy.example#MyResource": {
+                    "type": "resource",
+                    "identifiers": {
+                        "myId": {
+                            "target": "smithy.example#MyResourceId"
+                        }
                     },
-                    "MyResource": {
-                        "type": "resource",
-                        "identifiers": {"myId": "MyResourceId"},
+                    "traits": {
                         "aws.api#arn": {
                             "template": "myresource/{myId}"
                         }
@@ -444,21 +452,25 @@ resource.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyResource": {
-                        "type": "resource",
-                        "identifiers": {
-                            "arn": "Arn"
-                        },
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyResource": {
+                    "type": "resource",
+                    "identifiers": {
+                        "arn": {
+                            "target": "smithy.example#Arn"
+                        }
+                    },
+                    "traits": {
                         "aws.api#arn": {
                             "template": "{arn}",
                             "absolute": true
                         }
-                    },
-                    "Arn": {
-                        "type": "string",
+                    }
+                },
+                "smithy.example#Arn": {
+                    "type": "string",
+                    "traits": {
                         "aws.api#arnReference": {
                             "service": "FooBaz",
                             "resource": "MyResource"
@@ -467,7 +479,6 @@ resource.
                 }
             }
         }
-
 
 .. _aws.api#arnReference-trait:
 
@@ -527,7 +538,6 @@ referenced resource.
 
     .. code-tab:: smithy
 
-        $version: "0.4.0"
         namespace smithy.example
 
         use aws.api#arnReference
@@ -541,11 +551,11 @@ referenced resource.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "SomeResourceId": {
-                        "type": "string",
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#SomeResourceId": {
+                    "type": "string",
+                    "traits": {
                         "aws.api#arnReference": {
                             "type": "AWS::SomeService::SomeResource",
                             "service": "com.foo#SomeService",
@@ -564,7 +574,7 @@ previous example:
 
     .. code-tab:: smithy
 
-        $version: "0.4.0"
+        $version: "0.5.0"
         namespace smithy.example
 
         use aws.api#arnReference
@@ -575,17 +585,16 @@ previous example:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "SomeResourceId": {
-                        "type": "string",
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#SomeResourceId": {
+                    "type": "string",
+                    "traits": {
                         "aws.api#arnReference": {}
                     }
                 }
             }
         }
-
 
 .. _aws.api#data-trait:
 
@@ -630,31 +639,29 @@ structure, union, or collection unless overridden.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "MyStructure": {
-                        "type": "structure",
-                        "members": {
-                            "content": {
-                                "target": "String",
-                                "aws.api#data": "content"
-                            },
-                            "tags": {
-                                "target": "TagList"
-                            },
-                            "name": {
-                                "target": "String",
-                            }
-                        }
-                    },
-                    "TagList": {
-                        "type": "list",
-                        "member": {
-                            "target": "String"
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStructure": {
+                    "type": "structure",
+                    "members": {
+                        "content": {
+                            "target": "smithy.api#String",
+                            "aws.api#data": "content"
                         },
-                        "aws.api#data": "tagging"
+                        "tags": {
+                            "target": "smithy.example#TagList"
+                        },
+                        "name": {
+                            "target": "smithy.api#String",
+                        }
                     }
+                },
+                "smithy.example#TagList": {
+                    "type": "list",
+                    "member": {
+                        "target": "smithy.api#String"
+                    },
+                    "aws.api#data": "tagging"
                 }
             }
         }
@@ -750,19 +757,22 @@ plane unless an operation or resource is marked with the
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PutThings": {
-                        "type": "operation",
-                        "input": "PutThingsInput",
-                        "output": "PutThingsOutput",
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PutThings": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PutThingsInput"
+                    },
+                    "output": {
+                        "target": "smithy.example#PutThingsOutput"
+                    },
+                    "traits": {
                         "aws.api#controlPlane": true
                     }
                 }
             }
         }
-
 
 .. _aws.api#dataPlane-trait:
 
@@ -798,19 +808,22 @@ plane unless an operation or resource is marked with the
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PutThings": {
-                        "type": "operation",
-                        "input": "PutThingsInput",
-                        "output": "PutThingsOutput",
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PutThings": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PutThingsInput"
+                    },
+                    "output": {
+                        "target": "smithy.example#PutThingsOutput"
+                    },
+                    "traits": {
                         "aws.api#dataPlane": true
                     }
                 }
             }
         }
-
 
 .. _aws.api#unsignedPayload-trait:
 
@@ -851,13 +864,17 @@ operation MUST NOT be used as part of the request signature calculation:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PutThings": {
-                        "type": "operation",
-                        "input": "PutThingsInput",
-                        "output": "PutThingsOutput",
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PutThings": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PutThingsInput"
+                    },
+                    "output": {
+                        "target": "smithy.example#PutThingsOutput"
+                    },
+                    "traits": {
                         "aws.api#unsignedPayload": []
                     }
                 }
@@ -879,19 +896,24 @@ only when using the "aws.v4" authentication scheme:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PutThings": {
-                        "type": "operation",
-                        "input": "PutThingsInput",
-                        "output": "PutThingsOutput",
-                        "aws.api#unsignedPayload": ["aws.v4"]
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PutThings": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PutThingsInput"
+                    },
+                    "output": {
+                        "target": "smithy.example#PutThingsOutput"
+                    },
+                    "traits": {
+                        "aws.api#unsignedPayload": [
+                            "aws.v4"
+                        ]
                     }
                 }
             }
         }
-
 
 Unsigned Payloads and signature version 4
 =========================================
@@ -1075,102 +1097,124 @@ using an ``clientEndpointDiscoveryId``.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "ns.foo": {
-                "shapes": {
-                    "FooService": {
-                        "type": "service",
-                        "version": "2019-09-10",
+            "smithy": "0.5.0",
+            "shapes": {
+                "ns.foo#FooService": {
+                    "type": "service",
+                    "version": "2019-09-10",
+                    "operations": [
+                        {
+                            "target": "ns.foo#DescribeEndpoints"
+                        },
+                        {
+                            "target": "ns.foo#GetObject"
+                        }
+                    ],
+                    "traits": {
                         "aws.api#clientEndpointDiscovery": {
                             "operation": "ns.foo#DescribeEndpoints",
                             "error": "InvalidEndpointError"
+                        }
+                    }
+                },
+                "ns.foo#DescribeEndpoints": {
+                    "type": "operation",
+                    "input": {
+                        "target": "ns.foo#DescribeEndpointsInput"
+                    },
+                    "output": {
+                        "target": "ns.foo#DescribeEndpointsOutput"
+                    }
+                },
+                "ns.foo#DescribeEndpointsInput": {
+                    "type": "structure",
+                    "members": {
+                        "Operation": {
+                            "target": "smithy.api#String"
                         },
-                        "operations": [
-                            "DescribeEndpoints",
-                            "GetObject"
-                        ]
-                    },
-                    "DescribeEndpoints": {
-                        "type": "operation",
-                        "input": "DescribeEndpointsInput",
-                        "output": "DescribeEndpointsOutput"
-                    },
-                    "DescribeEndpointsInput": {
-                        "type": "structure",
-                        "members": {
-                            "Operation": {
-                                "target": "String"
-                            },
-                            "Identifiers": {
-                                "target": "Identifiers"
-                            }
+                        "Identifiers": {
+                            "target": "ns.foo#Identifiers"
                         }
+                    }
+                },
+                "ns.foo#Identifiers": {
+                    "type": "map",
+                    "key": {
+                        "target": "smithy.api#String"
                     },
-                    "Identifiers": {
-                        "type": "map",
-                        "key": {
-                            "target": "String"
+                    "value": {
+                        "target": "smithy.api#String"
+                    }
+                },
+                "ns.foo#DescribeEndpointsOutput": {
+                    "type": "structure",
+                    "members": {
+                        "Endpoints": {
+                            "target": "ns.foo#Endpoints"
+                        }
+                    }
+                },
+                "ns.foo#Endpoints": {
+                    "type": "list",
+                    "member": {
+                        "target": "ns.foo#Endpoint"
+                    }
+                },
+                "ns.foo#Endpoint": {
+                    "type": "structure",
+                    "members": {
+                        "Address": {
+                            "target": "smithy.api#String"
                         },
-                        "value": {
-                            "target": "String"
+                        "CachePeriodInMinutes": {
+                            "target": "smithy.api#Long"
                         }
+                    }
+                },
+                "ns.foo#GetObject": {
+                    "type": "operation",
+                    "input": {
+                        "target": "ns.foo#GetObjectInput"
                     },
-                    "DescribeEndpointsOutput": {
-                        "type": "structure",
-                        "members": {
-                            "Endpoints": {
-                                "target": "Endpoints"
-                            }
+                    "output": {
+                        "target": "ns.foo#GetObjectOutput"
+                    },
+                    "errors": [
+                        {
+                            "target": "ns.foo#InvalidEndpointError"
                         }
-                    },
-                    "Endpoints": {
-                        "type": "list",
-                        "member": {
-                            "target": "Endpoint"
-                        }
-                    },
-                    "Endpoint": {
-                        "type": "structure",
-                        "members": {
-                            "Address": {
-                                "target": "String"
-                            },
-                            "CachePeriodInMinutes": {
-                                "target": "Long"
-                            }
-                        }
-                    },
-                    "GetObject": {
-                        "type": "operation",
-                        "input": "GetObjectInput",
-                        "output": "GetObjectOutput",
+                    ],
+                    "traits": {
                         "aws.api#clientDiscoveredEndpoint": {
                             "required": true
-                        },
-                        "errors": ["InvalidEndpointError"]
-                    },
-                    "GetObjectInput": {
-                        "type": "structure",
-                        "members": {
-                            "Id": {
-                                "target": "String",
+                        }
+                    }
+                },
+                "ns.foo#GetObjectInput": {
+                    "type": "structure",
+                    "members": {
+                        "Id": {
+                            "target": "smithy.api#String",
+                            "traits": {
                                 "aws.api#clientEndpointDiscoveryId": true,
-                                "required": true
+                                "smithy.api#required": true
                             }
                         }
-                    },
-                    "GetObjectOutput": {
-                        "type": "structure",
-                        "members": {
-                            "Object": {
-                                "target": "Blob"
-                            }
+                    }
+                },
+                "ns.foo#GetObjectOutput": {
+                    "type": "structure",
+                    "members": {
+                        "Object": {
+                            "target": "smithy.api#Blob"
                         }
-                    },
-                    "InvalidEndpointError": {
-                        "type": "structure",
-                        "error": "client",
-                        "httpError": 421
+                    }
+                },
+                "ns.foo#InvalidEndpointError": {
+                    "type": "structure",
+                    "traits": {
+                        "smithy.api#error": "client",
+                        "smithy.api#httpError": 421
                     }
                 }
             }
@@ -1206,7 +1250,7 @@ response. The client SHOULD prioritize endpoints by the order in which they
 appear in the list.
 
 Caching
-~~~~~~~
+-------
 
 In order to reduce the necessary number of calls needed, clients SHOULD cache
 the endpoints returned in the response. Clients SHOULD evict an endpoint from
@@ -1255,7 +1299,6 @@ the service converted to lowercase characters).
 
     .. code-tab:: smithy
 
-        $version: "0.4.0"
         namespace aws.fooBaz
 
         use aws.api#service
@@ -1269,13 +1312,20 @@ the service converted to lowercase characters).
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "aws.fooBaz": {
-                "shapes": {
-                    "FooBaz": {
-                        "type": "service",
-                        "version": "2018-03-17",
-                        "protocols": [{"name": "aws.rest-json", "auth": ["aws.v4"]}],
+            "smithy": "0.5.0",
+            "shapes": {
+                "aws.fooBaz#FooBaz": {
+                    "type": "service",
+                    "version": "2018-03-17",
+                    "traits": {
+                        "smithy.api#protocols": [
+                            {
+                                "name": "aws.rest-json",
+                                "auth": [
+                                    "aws.v4"
+                                ]
+                            }
+                        ],
                         "aws.api#service": {
                             "sdkId": "Some Value"
                         }
@@ -1283,7 +1333,6 @@ the service converted to lowercase characters).
                 }
             }
         }
-
 
 --------
 Appendix

@@ -1,26 +1,34 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Valid1": {
-                "type": "timestamp",
-                "timestampFormat": "date-time"
-            },
-            "Valid2": {
-                "type": "timestamp",
-                "timestampFormat": "http-date"
-            },
-            "Valid3": {
-                "type": "timestamp",
-                "timestampFormat": "epoch-seconds"
-            },
-            "Invalid1": {
-                "type": "timestamp",
-                "timestampFormat": "foo"
-            },
-            "Invalid2": {
-                "type": "string",
-                "timestampFormat": "date-time"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Valid1": {
+            "type": "timestamp",
+            "traits": {
+                "smithy.api#timestampFormat": "date-time"
+            }
+        },
+        "ns.foo#Valid2": {
+            "type": "timestamp",
+            "traits": {
+                "smithy.api#timestampFormat": "http-date"
+            }
+        },
+        "ns.foo#Valid3": {
+            "type": "timestamp",
+            "traits": {
+                "smithy.api#timestampFormat": "epoch-seconds"
+            }
+        },
+        "ns.foo#Invalid1": {
+            "type": "timestamp",
+            "traits": {
+                "smithy.api#timestampFormat": "foo"
+            }
+        },
+        "ns.foo#Invalid2": {
+            "type": "string",
+            "traits": {
+                "smithy.api#timestampFormat": "date-time"
             }
         }
     }

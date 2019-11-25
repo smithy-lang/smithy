@@ -92,9 +92,9 @@ public class SourcesPluginTest {
 
         assertThat(manifestString, containsString("model.json"));
         assertThat(manifestString, not(containsString("jar-import")));
-        assertThat(manifest.getFileString("model.json").get(), containsString("\"A\""));
-        assertThat(manifest.getFileString("model.json").get(), containsString("\"B\""));
-        assertThat(manifest.getFileString("model.json").get(), containsString("\"C\""));
+        assertThat(manifest.getFileString("model.json").get(), containsString("\"foo.baz#A\""));
+        assertThat(manifest.getFileString("model.json").get(), containsString("\"foo.baz#B\""));
+        assertThat(manifest.getFileString("model.json").get(), containsString("\"foo.baz#C\""));
     }
 
     @Test

@@ -1,45 +1,81 @@
 {
-  "smithy": "0.4.0",
-  "ns.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "SomeService": {
-        "type": "service",
-        "version": "2018-03-17",
-        "aws.api#service": {"sdkServiceId": "Some Value"},
-        "resources": ["Resource1"]
-      },
-      "Resource1": {
-        "type": "resource",
-        "aws.api#arn": {"template": "foo"},
-        "resources": ["Resource2"]
-      },
-      "Resource2": {
-        "type": "resource",
-        "identifiers": {"id": "String"},
-        "aws.api#arn": {"template": "foo/{id}"},
-        "operations": ["InstanceOperation"],
-        "collectionOperations": ["CollectionOperation"]
-      },
-      "InstanceOperation": {
-        "type": "operation",
-        "input": "InstanceOperationInput"
-      },
-      "InstanceOperationInput": {
-        "type": "structure",
-        "members": {
-          "id": {
-            "required": true,
-            "target": "String"
-          }
+        "ns.foo#SomeService": {
+            "type": "service",
+            "version": "2018-03-17",
+            "resources": [
+                {
+                    "target": "ns.foo#Resource1"
+                }
+            ],
+            "traits": {
+                "aws.api#service": {
+                    "sdkServiceId": "Some Value"
+                }
+            }
+        },
+        "ns.foo#Resource1": {
+            "type": "resource",
+            "resources": [
+                {
+                    "target": "ns.foo#Resource2"
+                }
+            ],
+            "traits": {
+                "aws.api#arn": {
+                    "template": "foo"
+                }
+            }
+        },
+        "ns.foo#Resource2": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "operations": [
+                {
+                    "target": "ns.foo#InstanceOperation"
+                }
+            ],
+            "collectionOperations": [
+                {
+                    "target": "ns.foo#CollectionOperation"
+                }
+            ],
+            "traits": {
+                "aws.api#arn": {
+                    "template": "foo/{id}"
+                }
+            }
+        },
+        "ns.foo#InstanceOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#InstanceOperationInput"
+            }
+        },
+        "ns.foo#InstanceOperationInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#CollectionOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#CollectionOperationInput"
+            }
+        },
+        "ns.foo#CollectionOperationInput": {
+            "type": "structure"
         }
-      },
-      "CollectionOperation": {
-        "type": "operation",
-        "input": "CollectionOperationInput"
-      },
-      "CollectionOperationInput": {
-        "type": "structure"
-      }
     }
-  }
 }

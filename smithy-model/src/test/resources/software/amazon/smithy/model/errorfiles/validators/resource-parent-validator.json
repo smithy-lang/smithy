@@ -1,50 +1,70 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "MyService": {
-                "type": "service",
-                "version": "2017-01-17",
-                "protocols": [{"name": "foo"}],
-                "resources": [
-                    "ValidResource",
-                    "InvalidSelfResourceBinding",
-                    "InvalidResourceBindingType"
-                ]
-            },
-            "ValidResource": {
-                "type": "resource"
-            },
-            "InvalidSelfResourceBinding": {
-                "type": "resource",
-                "resources": [
-                    "InvalidSelfResourceBinding"
-                ]
-            },
-            "InvalidResourceBindingType": {
-                "type": "resource",
-                "resources": [
-                    "smithy.api#String"
-                ]
-            },
-            "CycleA": {
-                "type": "resource",
-                "resources": [
-                    "CycleB"
-                ]
-            },
-            "CycleB": {
-                "type": "resource",
-                "resources": [
-                    "CycleC"
-                ]
-            },
-            "CycleC": {
-                "type": "resource",
-                "resources": [
-                    "CycleA"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "resources": [
+                {
+                    "target": "ns.foo#ValidResource"
+                },
+                {
+                    "target": "ns.foo#InvalidSelfResourceBinding"
+                },
+                {
+                    "target": "ns.foo#InvalidResourceBindingType"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "foo"
+                    }
                 ]
             }
+        },
+        "ns.foo#ValidResource": {
+            "type": "resource"
+        },
+        "ns.foo#InvalidSelfResourceBinding": {
+            "type": "resource",
+            "resources": [
+                {
+                    "target": "ns.foo#InvalidSelfResourceBinding"
+                }
+            ]
+        },
+        "ns.foo#InvalidResourceBindingType": {
+            "type": "resource",
+            "resources": [
+                {
+                    "target": "smithy.api#String"
+                }
+            ]
+        },
+        "ns.foo#CycleA": {
+            "type": "resource",
+            "resources": [
+                {
+                    "target": "ns.foo#CycleB"
+                }
+            ]
+        },
+        "ns.foo#CycleB": {
+            "type": "resource",
+            "resources": [
+                {
+                    "target": "ns.foo#CycleC"
+                }
+            ]
+        },
+        "ns.foo#CycleC": {
+            "type": "resource",
+            "resources": [
+                {
+                    "target": "ns.foo#CycleA"
+                }
+            ]
         }
     }
 }

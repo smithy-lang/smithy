@@ -1,0 +1,8 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "Hi": {
+            "type": "string"
+        }
+    }
+}

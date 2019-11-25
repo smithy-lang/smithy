@@ -1,20 +1,22 @@
 {
-  "smithy": "0.4.0",
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "MyList": {
-        "type": "list",
-        "member": {
-          "target": "smithy.api#String"
+        "smithy.example#MyList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        },
+        "smithy.example#Struct": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "smithy.api#Integer"
+                },
+                "b": {
+                    "target": "smithy.api#Long"
+                }
+            }
         }
-      },
-      "Struct": {
-        "type": "structure",
-        "members": {
-          "a": {"target": "smithy.api#Integer"},
-          "b": {"target": "smithy.api#Long"}
-        }
-      }
     }
-  }
 }

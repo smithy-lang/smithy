@@ -1,0 +1,17 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "smithy.example#Operation": {
+            "type": "operation",
+            "errors": [
+                "Foo"
+            ]
+        },
+        "smithy.example#Foo": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        }
+    }
+}

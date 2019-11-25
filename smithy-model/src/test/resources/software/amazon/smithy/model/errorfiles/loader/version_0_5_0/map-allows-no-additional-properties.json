@@ -1,0 +1,15 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "smithy.example#Hi": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            },
+            "foo": true
+        }
+    }
+}

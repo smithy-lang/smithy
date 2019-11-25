@@ -1,5 +1,154 @@
 {
-    "smithy": "0.4.0",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#String": {
+            "type": "string"
+        },
+        "ns.foo#Integer": {
+            "type": "integer"
+        },
+        "ns.foo#Long": {
+            "type": "long"
+        },
+        "ns.foo#Float": {
+            "type": "float"
+        },
+        "ns.foo#Boolean": {
+            "type": "boolean"
+        },
+        "ns.foo#Blob": {
+            "type": "blob",
+            "traits": {
+                "smithy.api#mediaType": "text/plain"
+            }
+        },
+        "ns.foo#List": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#String"
+            }
+        },
+        "ns.foo#Map": {
+            "type": "map",
+            "key": {
+                "target": "ns.foo#String"
+            },
+            "value": {
+                "target": "ns.foo#String"
+            }
+        },
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "resources": [
+                {
+                    "target": "ns.foo#MyResource"
+                }
+            ],
+            "operations": [
+                {
+                    "target": "ns.foo#OperationA"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "foo"
+                    }
+                ]
+            }
+        },
+        "ns.foo#MyResource": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "target": "ns.foo#MyResourceIdentifier"
+                }
+            },
+            "operations": [
+                {
+                    "target": "ns.foo#OperationB"
+                }
+            ]
+        },
+        "ns.foo#MyResourceIdentifier": {
+            "type": "string"
+        },
+        "ns.foo#OperationA": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#OperationAInput"
+            },
+            "output": {
+                "target": "ns.foo#OperationAOutput"
+            },
+            "errors": [
+                {
+                    "target": "ns.foo#OperationErrorA"
+                },
+                {
+                    "target": "ns.foo#OperationErrorB"
+                }
+            ],
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#OperationAInput": {
+            "type": "structure",
+            "members": {
+                "memberName": {
+                    "target": "ns.foo#String"
+                },
+                "otherMemberName": {
+                    "target": "ns.foo#Integer"
+                }
+            }
+        },
+        "ns.foo#OperationAOutput": {
+            "type": "structure",
+            "members": {
+                "b": {
+                    "target": "ns.foo#Map"
+                }
+            }
+        },
+        "ns.foo#OperationErrorA": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "ns.foo#OperationErrorB": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "ns.foo#OperationB": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#OperationBInput"
+            }
+        },
+        "ns.foo#OperationBInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "ns.foo#MyResourceIdentifier",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#UtcTimestamp": {
+            "type": "timestamp"
+        },
+        "other.ns#String": {
+            "type": "string"
+        }
+    },
     "metadata": {
         "validators": [
             {
@@ -349,14 +498,14 @@
                 "id": "traitEqualTo",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": "[trait|mediaType='text\/plain']"
+                    "selector": "[trait|mediaType='text/plain']"
                 }
             },
             {
                 "id": "traitEqualToCaseInsensitive",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": "[trait|mediaType='TEXT\/PLAIN' i]"
+                    "selector": "[trait|mediaType='TEXT/PLAIN' i]"
                 }
             },
             {
@@ -493,129 +642,5 @@
                 }
             }
         ]
-    },
-    "ns.foo": {
-        "shapes": {
-            "String": {
-                "type": "string"
-            },
-            "Integer": {
-                "type": "integer"
-            },
-            "Long": {
-                "type": "long"
-            },
-            "Float": {
-                "type": "float"
-            },
-            "Boolean": {
-                "type": "boolean"
-            },
-            "Blob": {
-                "type": "blob"
-            },
-            "List": {
-                "type": "list",
-                "member": {
-                    "target": "String"
-                }
-            },
-            "Map": {
-                "type": "map",
-                "key": {
-                    "target": "String"
-                },
-                "value": {
-                    "target": "String"
-                }
-            },
-            "MyService": {
-                "type": "service",
-                "version": "2017-01-17",
-                "protocols": [{"name": "foo"}],
-                "resources": [
-                    "MyResource"
-                ],
-                "operations": [
-                    "OperationA"
-                ]
-            },
-            "MyResource": {
-                "type": "resource",
-                "identifiers": {
-                    "id": "MyResourceIdentifier"
-                },
-                "operations": [
-                    "OperationB"
-                ]
-            },
-            "MyResourceIdentifier": {
-                "type": "string"
-            },
-            "OperationA": {
-                "type": "operation",
-                "readonly": true,
-                "input": "OperationAInput",
-                "output": "OperationAOutput",
-                "errors": [
-                    "OperationErrorA",
-                    "OperationErrorB"
-                ]
-            },
-            "OperationAInput": {
-                "type": "structure",
-                "members": {
-                    "memberName": {
-                        "target": "String"
-                    },
-                    "otherMemberName": {
-                        "target": "Integer"
-                    }
-                }
-            },
-            "OperationAOutput": {
-                "type": "structure",
-                "members": {
-                    "b": {
-                        "target": "Map"
-                    }
-                }
-            },
-            "OperationErrorA": {
-                "type": "structure",
-                "error": "client"
-            },
-            "OperationErrorB": {
-                "type": "structure",
-                "error": "server"
-            },
-            "OperationB": {
-                "type": "operation",
-                "input": "OperationBInput"
-            },
-            "OperationBInput": {
-                "type": "structure",
-                "members": {
-                    "id": {
-                        "target": "MyResourceIdentifier",
-                        "required": true
-                    }
-                }
-            },
-            "UtcTimestamp": {
-                "type": "timestamp"
-            },
-            "Blob": {
-                "type": "blob",
-                "mediaType": "text\/plain"
-            }
-        }
-    },
-    "other.ns": {
-        "shapes": {
-            "String": {
-                "type": "string"
-            }
-        }
     }
 }

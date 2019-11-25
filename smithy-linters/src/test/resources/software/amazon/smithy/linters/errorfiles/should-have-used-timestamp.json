@@ -1,5 +1,77 @@
 {
-    "smithy": "0.4.0",
+    "smithy": "0.5.0",
+    "shapes": {
+        "example.namespace#WrongType": {
+            "type": "string"
+        },
+        "example.namespace#OopsString": {
+            "type": "string"
+        },
+        "example.namespace#OopsInteger": {
+            "type": "integer"
+        },
+        "example.namespace#OopsFloat": {
+            "type": "integer"
+        },
+        "example.namespace#OopsLong": {
+            "type": "long"
+        },
+        "example.namespace#Structure": {
+            "type": "structure",
+            "members": {
+                "OopsStructureMember": {
+                    "target": "example.namespace#WrongType"
+                }
+            }
+        },
+        "example.namespace#TaggedUnion": {
+            "type": "union",
+            "members": {
+                "OopsTaggedUnionMember": {
+                    "target": "example.namespace#WrongType"
+                }
+            }
+        },
+        "example.namespace#Timestamp": {
+            "type": "string"
+        },
+        "example.namespace#TimestampFoo": {
+            "type": "string"
+        },
+        "example.namespace#FooTimestamp": {
+            "type": "string"
+        },
+        "example.namespace#Time": {
+            "type": "string"
+        },
+        "example.namespace#TimeFoo": {
+            "type": "string"
+        },
+        "example.namespace#FooTime": {
+            "type": "string"
+        },
+        "example.namespace#Date": {
+            "type": "string"
+        },
+        "example.namespace#DateFoo": {
+            "type": "string"
+        },
+        "example.namespace#FooDate": {
+            "type": "string"
+        },
+        "example.namespace#CreatedAt": {
+            "type": "string"
+        },
+        "example.namespace#StartedAt": {
+            "type": "string"
+        },
+        "example.namespace#CreatedOn": {
+            "type": "string"
+        },
+        "example.namespace#StartedOn": {
+            "type": "string"
+        }
+    },
     "metadata": {
         "validators": [
             {
@@ -11,79 +83,5 @@
                 }
             }
         ]
-    },
-    "example.namespace": {
-        "shapes": {
-            "WrongType": {
-                "type": "string"
-            },
-            "OopsString": {
-                "type": "string"
-            },
-            "OopsInteger": {
-                "type": "integer"
-            },
-            "OopsFloat": {
-                "type": "integer"
-            },
-            "OopsLong": {
-                "type": "long"
-            },
-            "Structure": {
-                "type": "structure",
-                "members": {
-                    "OopsStructureMember": {
-                        "target": "WrongType"
-                    }
-                }
-            },
-            "TaggedUnion": {
-                "type": "union",
-                "members": {
-                    "OopsTaggedUnionMember": {
-                        "target": "WrongType"
-                    }
-                }
-            },
-            "Timestamp": {
-                "type": "string"
-            },
-            "TimestampFoo": {
-                "type": "string"
-            },
-            "FooTimestamp": {
-                "type": "string"
-            },
-            "Time": {
-                "type": "string"
-            },
-            "TimeFoo": {
-                "type": "string"
-            },
-            "FooTime": {
-                "type": "string"
-            },
-            "Date": {
-                "type": "string"
-            },
-            "DateFoo": {
-                "type": "string"
-            },
-            "FooDate": {
-                "type": "string"
-            },
-            "CreatedAt": {
-                "type": "string"
-            },
-            "StartedAt": {
-                "type": "string"
-            },
-            "CreatedOn": {
-                "type": "string"
-            },
-            "StartedOn": {
-                "type": "string"
-            }
-        }
     }
 }

@@ -1,5 +1,13 @@
 {
-    "smithy": "0.4.0",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#String": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Foo"
+            }
+        }
+    },
     "metadata": {
         "validators": [
             {
@@ -17,13 +25,5 @@
                 }
             }
         ]
-    },
-    "ns.foo": {
-        "shapes": {
-            "String": {
-                "type": "string",
-                "documentation": "Foo"
-            }
-        }
     }
 }

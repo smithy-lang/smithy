@@ -1,9 +1,10 @@
 {
-    "smithy": "0.4.0",
-    "example.namespace": {
-        "traits": {
-            "String": {
-                "documentation": "This will not get picked up due to the import path order in the test"
+    "smithy": "0.5.0",
+    "shapes": {
+        "example.namespace#String": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#documentation": "This will not get picked up due to the import path order in the test"
             }
         }
     }

@@ -1,93 +1,141 @@
 {
-  "smithy": "0.4.0",
-  "com.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "A": {
-        "type": "operation"
-      },
-      "B": {
-        "type": "operation",
-        "errors": [
-          "com.foo#Error1"
-        ]
-      },
-      "C": {
-        "type": "operation",
-        "errors": [
-          "com.foo#Error1",
-          "com.foo#Error2"
-        ]
-      },
-      "D": {
-        "type": "operation",
-        "input": "com.foo#Input",
-        "errors": [
-          "com.foo#Error1",
-          "com.foo#Error2"
-        ]
-      },
-      "E": {
-        "type": "operation",
-        "input": "com.foo#Input",
-        "errors": [
-          "com.foo#Error1",
-          "com.foo#Error2"
-        ]
-      },
-      "Error1": {
-        "type": "structure",
-        "members": {},
-        "error": "client"
-      },
-      "Error2": {
-        "type": "structure",
-        "members": {},
-        "error": "client"
-      },
-      "F": {
-        "type": "operation",
-        "input": "com.foo#Input",
-        "output": "com.foo#Output",
-        "errors": [
-          "com.foo#Error1",
-          "com.foo#Error2"
-        ]
-      },
-      "G": {
-        "type": "operation",
-        "input": "com.foo#Input",
-        "output": "com.foo#Output"
-      },
-      "H": {
-        "type": "operation",
-        "input": "com.foo#Input",
-        "output": "com.foo#Output"
-      },
-      "I": {
-        "type": "operation",
-        "input": "com.foo#Input",
-        "output": "com.foo#Output"
-      },
-      "Input": {
-        "type": "structure",
-        "members": {}
-      },
-      "J": {
-        "type": "operation",
-        "input": "com.foo#Input",
-        "output": "com.foo#Output",
-        "errors": [
-          "com.foo#Error1",
-          "com.foo#Error2"
-        ]
-      },
-      "K": {
-        "type": "operation"
-      },
-      "Output": {
-        "type": "structure",
-        "members": {}
-      }
+        "com.foo#A": {
+            "type": "operation"
+        },
+        "com.foo#B": {
+            "type": "operation",
+            "errors": [
+                {
+                    "target": "com.foo#Error1"
+                }
+            ]
+        },
+        "com.foo#C": {
+            "type": "operation",
+            "errors": [
+                {
+                    "target": "com.foo#Error1"
+                },
+                {
+                    "target": "com.foo#Error2"
+                }
+            ]
+        },
+        "com.foo#D": {
+            "type": "operation",
+            "input": {
+                "target": "com.foo#Input"
+            },
+            "errors": [
+                {
+                    "target": "com.foo#Error1"
+                },
+                {
+                    "target": "com.foo#Error2"
+                }
+            ]
+        },
+        "com.foo#E": {
+            "type": "operation",
+            "input": {
+                "target": "com.foo#Input"
+            },
+            "errors": [
+                {
+                    "target": "com.foo#Error1"
+                },
+                {
+                    "target": "com.foo#Error2"
+                }
+            ]
+        },
+        "com.foo#Error1": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "com.foo#Error2": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "com.foo#F": {
+            "type": "operation",
+            "input": {
+                "target": "com.foo#Input"
+            },
+            "output": {
+                "target": "com.foo#Output"
+            },
+            "errors": [
+                {
+                    "target": "com.foo#Error1"
+                },
+                {
+                    "target": "com.foo#Error2"
+                }
+            ]
+        },
+        "com.foo#G": {
+            "type": "operation",
+            "input": {
+                "target": "com.foo#Input"
+            },
+            "output": {
+                "target": "com.foo#Output"
+            }
+        },
+        "com.foo#H": {
+            "type": "operation",
+            "input": {
+                "target": "com.foo#Input"
+            },
+            "output": {
+                "target": "com.foo#Output"
+            }
+        },
+        "com.foo#I": {
+            "type": "operation",
+            "input": {
+                "target": "com.foo#Input"
+            },
+            "output": {
+                "target": "com.foo#Output"
+            }
+        },
+        "com.foo#Input": {
+            "type": "structure",
+            "members": {}
+        },
+        "com.foo#J": {
+            "type": "operation",
+            "input": {
+                "target": "com.foo#Input"
+            },
+            "output": {
+                "target": "com.foo#Output"
+            },
+            "errors": [
+                {
+                    "target": "com.foo#Error1"
+                },
+                {
+                    "target": "com.foo#Error2"
+                }
+            ]
+        },
+        "com.foo#K": {
+            "type": "operation"
+        },
+        "com.foo#Output": {
+            "type": "structure",
+            "members": {}
+        }
     }
-  }
 }

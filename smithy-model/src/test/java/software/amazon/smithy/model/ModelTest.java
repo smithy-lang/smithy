@@ -19,7 +19,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -37,11 +36,9 @@ public class ModelTest {
                                   .id("smithy.example#String")
                                   .addTrait(TraitDefinition.builder().build())
                                   .build())
-                .smithyVersion(Model.MODEL_VERSION)
                 .build();
 
         assertTrue(model.getMetadataProperty("name.name").isPresent());
-        assertEquals(model.getSmithyVersion(), Model.MODEL_VERSION);
         assertThat(model.getTraitDefinitions().entrySet(), hasSize(1));
     }
 
