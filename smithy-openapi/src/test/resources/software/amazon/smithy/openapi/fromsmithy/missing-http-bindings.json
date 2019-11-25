@@ -1,16 +1,24 @@
 {
-  "smithy": "0.4.0",
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "Service": {
-        "type": "service",
-        "version": "2006-03-01",
-        "protocols": [{"name": "aws.rest-json"}],
-        "operations": ["Operation1"]
-      },
-      "Operation1": {
-        "type": "operation"
-      }
+        "smithy.example#Service": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "$target": "smithy.example#Operation1"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "aws.rest-json"
+                    }
+                ]
+            }
+        },
+        "smithy.example#Operation1": {
+            "type": "operation"
+        }
     }
-  }
 }

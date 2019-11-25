@@ -1,196 +1,284 @@
 {
-  "smithy": "0.4.0",
-  "ns.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "MyService": {
-        "type": "service",
-        "version": "2017-01-17",
-        "protocols": [{"name": "foo"}],
-        "operations": [
-          "A",
-          "B",
-          "C",
-          "D",
-          "E",
-          "F",
-          "G",
-          "H",
-          "J",
-          "K",
-          "L"
-        ]
-      },
-      "A": {
-        "type": "operation",
-        "readonly": true,
-        "endpoint": {
-          "hostPrefix": "A-{foo}"
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "operations": [
+                {
+                    "$target": "ns.foo#A"
+                },
+                {
+                    "$target": "ns.foo#B"
+                },
+                {
+                    "$target": "ns.foo#C"
+                },
+                {
+                    "$target": "ns.foo#D"
+                },
+                {
+                    "$target": "ns.foo#E"
+                },
+                {
+                    "$target": "ns.foo#F"
+                },
+                {
+                    "$target": "ns.foo#G"
+                },
+                {
+                    "$target": "ns.foo#H"
+                },
+                {
+                    "$target": "ns.foo#J"
+                },
+                {
+                    "$target": "ns.foo#K"
+                },
+                {
+                    "$target": "ns.foo#L"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "foo"
+                    }
+                ]
+            }
+        },
+        "ns.foo#A": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "A-{foo}"
+                }
+            }
+        },
+        "ns.foo#B": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#BInput"
+            },
+            "output": {
+                "$target": "ns.foo#BOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "B-{foo}"
+                }
+            }
+        },
+        "ns.foo#BInput": {
+            "type": "structure"
+        },
+        "ns.foo#BOutput": {
+            "type": "structure"
+        },
+        "ns.foo#C": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#CInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "C-{foo}"
+                }
+            }
+        },
+        "ns.foo#CInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#hostLabel": true,
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#D": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#DInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "D-{foo}"
+                }
+            }
+        },
+        "ns.foo#DInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#E": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#EInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "E-{foo}"
+                }
+            }
+        },
+        "ns.foo#EInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#hostLabel": true
+                    }
+                }
+            }
+        },
+        "ns.foo#F": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#FInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "F-{foo}"
+                }
+            }
+        },
+        "ns.foo#FInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#Integer",
+                    "traits": {
+                        "smithy.api#hostLabel": true,
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#G": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#GInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "G-{foo}-{bar}"
+                }
+            }
+        },
+        "ns.foo#GInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#hostLabel": true,
+                        "smithy.api#required": true
+                    }
+                },
+                "bar": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#hostLabel": true,
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#H": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#BInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "H.1234567890123456789012345678901234567890123456789012345678901234."
+                }
+            }
+        },
+        "ns.foo#J": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#BInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "1234567890123456789012345678901234567890123456789012345678901234.J."
+                }
+            }
+        },
+        "ns.foo#K": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#BInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "data.||+."
+                }
+            }
+        },
+        "ns.foo#L": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#BInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "L."
+                }
+            }
+        },
+        "ns.foo#M": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#MInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#endpoint": {
+                    "hostPrefix": "M-{foo}."
+                }
+            }
+        },
+        "ns.foo#MInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#hostLabel": true,
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#Integer": {
+            "type": "integer"
+        },
+        "ns.foo#String": {
+            "type": "string"
         }
-      },
-      "B": {
-        "type": "operation",
-        "readonly": true,
-        "input": "BInput",
-        "output": "BOutput",
-        "endpoint": {
-          "hostPrefix": "B-{foo}"
-        }
-      },
-      "BInput": {
-        "type": "structure"
-      },
-      "BOutput": {
-        "type": "structure"
-      },
-      "C": {
-        "type": "operation",
-        "readonly": true,
-        "input": "CInput",
-        "endpoint": {
-          "hostPrefix": "C-{foo}"
-        }
-      },
-      "CInput": {
-        "type": "structure",
-        "members": {
-          "foo": {
-            "target": "String",
-            "hostLabel": true,
-            "required": true
-          }
-        }
-      },
-      "D": {
-        "type": "operation",
-        "readonly": true,
-        "input": "DInput",
-        "endpoint": {
-          "hostPrefix": "D-{foo}"
-        }
-      },
-      "DInput": {
-        "type": "structure",
-        "members": {
-          "foo": {
-            "target": "String",
-            "required": true
-          }
-        }
-      },
-      "E": {
-        "type": "operation",
-        "readonly": true,
-        "input": "EInput",
-        "endpoint": {
-          "hostPrefix": "E-{foo}"
-        }
-      },
-      "EInput": {
-        "type": "structure",
-        "members": {
-          "foo": {
-            "target": "String",
-            "hostLabel": true
-          }
-        }
-      },
-      "F": {
-        "type": "operation",
-        "readonly": true,
-        "input": "FInput",
-        "endpoint": {
-          "hostPrefix": "F-{foo}"
-        }
-      },
-      "FInput": {
-        "type": "structure",
-        "members": {
-          "foo": {
-            "target": "Integer",
-            "hostLabel": true,
-            "required": true
-          }
-        }
-      },
-      "G": {
-        "type": "operation",
-        "readonly": true,
-        "input": "GInput",
-        "endpoint": {
-          "hostPrefix": "G-{foo}-{bar}"
-        }
-      },
-      "GInput": {
-        "type": "structure",
-        "members": {
-          "foo": {
-            "target": "String",
-            "hostLabel": true,
-            "required": true
-          },
-          "bar": {
-            "target": "String",
-            "hostLabel": true,
-            "required": true
-          }
-        }
-      },
-      "H": {
-        "type": "operation",
-        "readonly": true,
-        "input": "BInput",
-        "endpoint": {
-          "hostPrefix": "H.1234567890123456789012345678901234567890123456789012345678901234."
-        }
-      },
-      "J": {
-        "type": "operation",
-        "readonly": true,
-        "input": "BInput",
-        "endpoint": {
-          "hostPrefix": "1234567890123456789012345678901234567890123456789012345678901234.J."
-        }
-      },
-      "K": {
-        "type": "operation",
-        "readonly": true,
-        "input": "BInput",
-        "endpoint": {
-          "hostPrefix": "data.||+."
-        }
-      },
-      "L": {
-        "type": "operation",
-        "readonly": true,
-        "input": "BInput",
-        "endpoint": {
-          "hostPrefix": "L."
-        }
-      },
-      "M": {
-        "type": "operation",
-        "readonly": true,
-        "input": "MInput",
-        "endpoint": {
-          "hostPrefix": "M-{foo}."
-        }
-      },
-      "MInput": {
-        "type": "structure",
-        "members": {
-          "foo": {
-            "target": "String",
-            "hostLabel": true,
-            "required": true
-          }
-        }
-      },
-      "Integer": {
-        "type": "integer"
-      },
-      "String": {
-        "type": "string"
-      }
     }
-  }
 }

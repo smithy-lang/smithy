@@ -1,499 +1,695 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "MyService": {
-                "type": "service",
-                "version": "2017-01-17",
-                "protocols": [{"name": "foo"}],
-                "operations": [
-                    "A",
-                    "B",
-                    "C",
-                    "D",
-                    "E",
-                    "F",
-                    "G",
-                    "H",
-                    "J",
-                    "K",
-                    "L",
-                    "M",
-                    "N",
-                    "O",
-                    "P",
-                    "R"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "operations": [
+                {
+                    "$target": "ns.foo#A"
+                },
+                {
+                    "$target": "ns.foo#B"
+                },
+                {
+                    "$target": "ns.foo#C"
+                },
+                {
+                    "$target": "ns.foo#D"
+                },
+                {
+                    "$target": "ns.foo#E"
+                },
+                {
+                    "$target": "ns.foo#F"
+                },
+                {
+                    "$target": "ns.foo#G"
+                },
+                {
+                    "$target": "ns.foo#H"
+                },
+                {
+                    "$target": "ns.foo#J"
+                },
+                {
+                    "$target": "ns.foo#K"
+                },
+                {
+                    "$target": "ns.foo#L"
+                },
+                {
+                    "$target": "ns.foo#M"
+                },
+                {
+                    "$target": "ns.foo#N"
+                },
+                {
+                    "$target": "ns.foo#O"
+                },
+                {
+                    "$target": "ns.foo#P"
+                },
+                {
+                    "$target": "ns.foo#R"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "foo"
+                    }
                 ]
-            },
-            "A": {
-                "type": "operation",
-                "readonly": true,
-                "http": {
+            }
+        },
+        "ns.foo#A": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/A/{foo}",
                     "code": 200
                 }
+            }
+        },
+        "ns.foo#B": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#BInput"
             },
-            "B": {
-                "type": "operation",
-                "readonly": true,
-                "input": "BInput",
-                "output": "BOutput",
-                "http": {
+            "output": {
+                "$target": "ns.foo#BOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/b/{d}",
                     "code": 200
                 }
+            }
+        },
+        "ns.foo#BInput": {
+            "type": "structure"
+        },
+        "ns.foo#BOutput": {
+            "type": "structure"
+        },
+        "ns.foo#C": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#CInput"
             },
-            "BInput": {
-                "type": "structure"
+            "output": {
+                "$target": "ns.foo#COutput"
             },
-            "BOutput": {
-                "type": "structure"
-            },
-            "C": {
-                "type": "operation",
-                "idempotent": true,
-                "input": "CInput",
-                "output": "COutput",
-                "http": {
+            "traits": {
+                "smithy.api#idempotent": true,
+                "smithy.api#http": {
                     "method": "PUT",
                     "uri": "/c/{a}",
                     "code": 200
                 }
-            },
-            "CInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "httpLabel": true,
-                        "required": true
-                    },
-                    "b": {
-                        "target": "String",
-                        "httpHeader": "X-B"
-                    },
-                    "c": {
-                        "target": "MapOfString",
-                        "httpPrefixHeaders": "X-C-"
-                    },
-                    "d": {
-                        "target": "String",
-                        "httpQuery": "d"
-                    },
-                    "e": {
-                        "target": "Blob",
-                        "httpPayload": true
-                    },
-                    "otherHeader": {
-                        "target": "String",
-                        "httpHeader": "X-Bb"
-                    },
-                    "otherQuery": {
-                        "target": "String",
-                        "httpQuery": "otherQuery"
-                    },
-                    "headerList": {
-                        "target": "StringList",
-                        "httpHeader": "X-Plural"
-                    },
-                    "queryList": {
-                        "target": "StringList",
-                        "httpQuery": "queryList"
+            }
+        },
+        "ns.foo#CInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
+                    }
+                },
+                "b": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-B"
+                    }
+                },
+                "c": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": "X-C-"
+                    }
+                },
+                "d": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpQuery": "d"
+                    }
+                },
+                "e": {
+                    "$target": "ns.foo#Blob",
+                    "traits": {
+                        "smithy.api#httpPayload": true
+                    }
+                },
+                "otherHeader": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Bb"
+                    }
+                },
+                "otherQuery": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpQuery": "otherQuery"
+                    }
+                },
+                "headerList": {
+                    "$target": "ns.foo#StringList",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Plural"
+                    }
+                },
+                "queryList": {
+                    "$target": "ns.foo#StringList",
+                    "traits": {
+                        "smithy.api#httpQuery": "queryList"
                     }
                 }
-            },
-            "COutput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "httpHeader": "X-B"
-                    },
-                    "b": {
-                        "target": "MapOfString",
-                        "httpPrefixHeaders": "X-B-"
-                    },
-                    "c": {
-                        "target": "Blob",
-                        "httpPayload": true
+            }
+        },
+        "ns.foo#COutput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-B"
+                    }
+                },
+                "b": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": "X-B-"
+                    }
+                },
+                "c": {
+                    "$target": "ns.foo#Blob",
+                    "traits": {
+                        "smithy.api#httpPayload": true
                     }
                 }
+            }
+        },
+        "ns.foo#D": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#DInput"
             },
-            "D": {
-                "type": "operation",
-                "readonly": true,
-                "input": "DInput",
-                "output": "DOutput",
-                "http": {
+            "output": {
+                "$target": "ns.foo#DOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/d",
                     "code": 200
                 }
-            },
-            "DInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "httpHeader": "X-Foo"
-                    },
-                    "b": {
-                        "target": "String",
-                        "httpHeader": "X-Foo"
-                    },
-                    "c": {
-                        "target": "String",
-                        "httpHeader": "X-Baz"
-                    },
-                    "d": {
-                        "target": "String",
-                        "httpHeader": "X-Baz"
-                    },
-                    "e": {
-                        "target": "MapOfString",
-                        "httpPrefixHeaders": "X-Foo"
+            }
+        },
+        "ns.foo#DInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
+                    }
+                },
+                "b": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
+                    }
+                },
+                "c": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Baz"
+                    }
+                },
+                "d": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Baz"
+                    }
+                },
+                "e": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": "X-Foo"
                     }
                 }
-            },
-            "DOutput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "httpHeader": "X-Foo"
-                    },
-                    "b": {
-                        "target": "String",
-                        "httpHeader": "X-Foo"
-                    },
-                    "c": {
-                        "target": "MapOfString",
-                        "httpPrefixHeaders": "X-Foo"
+            }
+        },
+        "ns.foo#DOutput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
+                    }
+                },
+                "b": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
+                    }
+                },
+                "c": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": "X-Foo"
                     }
                 }
+            }
+        },
+        "ns.foo#E": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#EInput"
             },
-            "E": {
-                "type": "operation",
-                "readonly": true,
-                "input": "EInput",
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/e/{label1}/{label2}"
                 }
-            },
-            "EInput": {
-                "type": "structure",
-                "members": {
-                    "label1": {
-                        "target": "String",
-                        "httpLabel": true,
-                        "required": true
-                    },
-                    "label2": {
-                        "target": "MapOfString",
-                        "httpLabel": true,
-                        "required": true
+            }
+        },
+        "ns.foo#EInput": {
+            "type": "structure",
+            "members": {
+                "label1": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
+                    }
+                },
+                "label2": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
                     }
                 }
+            }
+        },
+        "ns.foo#F": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#FInputOutput"
             },
-            "F": {
-                "type": "operation",
-                "idempotent": true,
-                "input": "FInputOutput",
-                "output": "FInputOutput",
-                "http": {
+            "output": {
+                "$target": "ns.foo#FInputOutput"
+            },
+            "traits": {
+                "smithy.api#idempotent": true,
+                "smithy.api#http": {
                     "method": "PUT",
                     "uri": "/f",
                     "code": 204
                 }
-            },
-            "FInputOutput": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String"
-                    }
+            }
+        },
+        "ns.foo#FInputOutput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String"
                 }
+            }
+        },
+        "ns.foo#G": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#GInput"
             },
-            "G": {
-                "type": "operation",
-                "readonly": true,
-                "input": "GInput",
-                "output": "GOutput",
-                "http": {
+            "output": {
+                "$target": "ns.foo#GOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/g/{a}",
                     "code": 200
                 }
-            },
-            "GInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "httpHeader": "X-Foo",
-                        "httpQuery": "a",
-                        "httpPayload": true,
-                        "httpLabel": true,
-                        "required": true
-                    },
-                    "b": {
-                        "target": "MapOfString",
-                        "httpHeader": "Map-",
-                        "httpPrefixHeaders": "X-C-"
+            }
+        },
+        "ns.foo#GInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo",
+                        "smithy.api#httpQuery": "a",
+                        "smithy.api#httpPayload": true,
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
+                    }
+                },
+                "b": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpHeader": "Map-",
+                        "smithy.api#httpPrefixHeaders": "X-C-"
                     }
                 }
-            },
-            "GOutput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "httpHeader": "X-B",
-                        "httpPayload": true
-                    },
-                    "b": {
-                        "target": "MapOfString",
-                        "httpHeader": "Map-",
-                        "httpPrefixHeaders": "X-B-"
+            }
+        },
+        "ns.foo#GOutput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-B",
+                        "smithy.api#httpPayload": true
+                    }
+                },
+                "b": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpHeader": "Map-",
+                        "smithy.api#httpPrefixHeaders": "X-B-"
                     }
                 }
+            }
+        },
+        "ns.foo#H": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#HInput"
             },
-            "H": {
-                "type": "operation",
-                "readonly": true,
-                "input": "HInput",
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/g"
                 }
-            },
-            "HInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "Structure",
-                        "httpHeader": "X-Foo"
+            }
+        },
+        "ns.foo#HInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#Structure",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
                     }
                 }
+            }
+        },
+        "ns.foo#J": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#JInput"
             },
-            "J": {
-                "type": "operation",
-                "readonly": true,
-                "input": "JInput",
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/j"
                 }
-            },
-            "JInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "MapOfString",
-                        "httpPrefixHeaders": "X-Foo-"
-                    },
-                    "b": {
-                        "target": "MapOfString",
-                        "httpPrefixHeaders": "X-Baz-"
+            }
+        },
+        "ns.foo#JInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": "X-Foo-"
+                    }
+                },
+                "b": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": "X-Baz-"
                     }
                 }
+            }
+        },
+        "ns.foo#K": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#KInput"
             },
-            "K": {
-                "type": "operation",
-                "readonly": true,
-                "input": "KInput",
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/k"
                 }
-            },
-            "KInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "httpHeader": "X-Foo"
-                    },
-                    "b": {
-                        "target": "String",
-                        "httpHeader": "x-foo"
-                    },
-                    "c": {
-                        "target": "String",
-                        "httpQuery": "foo"
-                    },
-                    "d": {
-                        "target": "String",
-                        "httpQuery": "foo"
+            }
+        },
+        "ns.foo#KInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
+                    }
+                },
+                "b": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "x-foo"
+                    }
+                },
+                "c": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpQuery": "foo"
+                    }
+                },
+                "d": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpQuery": "foo"
                     }
                 }
-            },
-            "L": {
-                "type": "operation",
-                "readonly": true,
-                "http": {
+            }
+        },
+        "ns.foo#L": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/k"
                 }
+            }
+        },
+        "ns.foo#M": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#MInput"
             },
-            "M": {
-                "type": "operation",
-                "idempotent": true,
-                "input": "MInput",
-                "http": {
+            "traits": {
+                "smithy.api#idempotent": true,
+                "smithy.api#http": {
                     "method": "PUT",
                     "uri": "/m"
                 }
-            },
-            "MInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "httpHeader": "Authorization"
+            }
+        },
+        "ns.foo#MInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "Authorization"
                     }
                 }
+            }
+        },
+        "ns.foo#N": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#NInput"
             },
-            "N": {
-                "type": "operation",
-                "readonly": true,
-                "input": "NInput",
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/n"
                 }
-            },
-            "NInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "httpLabel": true,
-                        "required": true
+            }
+        },
+        "ns.foo#NInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
                     }
                 }
+            }
+        },
+        "ns.foo#O": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#OInput"
             },
-            "O": {
-                "type": "operation",
-                "readonly": true,
-                "input": "OInput",
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/o/{a}"
                 }
-            },
-            "OInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "httpLabel": true
+            }
+        },
+        "ns.foo#OInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpLabel": true
                     }
                 }
+            }
+        },
+        "ns.foo#P": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#PInput"
             },
-            "P": {
-                "type": "operation",
-                "readonly": true,
-                "input": "PInput",
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/p/{a+}"
                 }
-            },
-            "PInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "Integer",
-                        "httpLabel": true,
-                        "required": true
+            }
+        },
+        "ns.foo#PInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#Integer",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
                     }
                 }
+            }
+        },
+        "ns.foo#Q": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#QInput"
             },
-            "Q": {
-                "type": "operation",
-                "readonly": true,
-                "input": "QInput",
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/q"
                 }
-            },
-            "QInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "MapOfString",
-                        "httpPrefixHeaders": ""
+            }
+        },
+        "ns.foo#QInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": ""
                     }
                 }
+            }
+        },
+        "ns.foo#R": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#RInput"
             },
-            "R": {
-                "type": "operation",
-                "readonly": true,
-                "input": "RInput",
-                "http": {
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
                     "uri": "/r"
                 }
-            },
-            "RInput": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "MapOfString",
-                        "httpPrefixHeaders": ""
-                    },
-                    "b": {
-                        "target": "String",
-                        "httpHeader": "X-Foo"
+            }
+        },
+        "ns.foo#RInput": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#MapOfString",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": ""
                     }
-                }
-            },
-            "Integer": {
-                "type": "integer"
-            },
-            "Blob": {
-                "type": "blob"
-            },
-            "String": {
-                "type": "string"
-            },
-            "StringList": {
-                "type": "list",
-                "member": {
-                    "target": "String"
-                }
-            },
-            "Structure": {
-                "type": "structure"
-            },
-            "MapOfString": {
-                "type": "map",
-                "key": {
-                    "target": "String"
                 },
-                "value": {
-                    "target": "String"
-                }
-            },
-            "BadError": {
-                "type": "structure",
-                "httpError": 404
-            },
-            "BadErrorMultipleBindings": {
-                "type": "structure",
-                "error": "client",
-                "members": {
-                    "foo": {
-                        "target": "String",
-                        "httpHeader": "X-Foo",
-                        "httpPayload": true
+                "b": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
                     }
                 }
+            }
+        },
+        "ns.foo#Integer": {
+            "type": "integer"
+        },
+        "ns.foo#Blob": {
+            "type": "blob"
+        },
+        "ns.foo#String": {
+            "type": "string"
+        },
+        "ns.foo#StringList": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#String"
+            }
+        },
+        "ns.foo#Structure": {
+            "type": "structure"
+        },
+        "ns.foo#MapOfString": {
+            "type": "map",
+            "key": {
+                "$target": "ns.foo#String"
+            },
+            "value": {
+                "$target": "ns.foo#String"
+            }
+        },
+        "ns.foo#BadError": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#httpError": 404
+            }
+        },
+        "ns.foo#BadErrorMultipleBindings": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo",
+                        "smithy.api#httpPayload": true
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
             }
         }
     }

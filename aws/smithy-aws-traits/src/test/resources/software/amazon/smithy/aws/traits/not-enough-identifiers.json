@@ -1,39 +1,53 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "SomeService": {
-                "type": "service",
-                "version": "2018-03-17",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#SomeService": {
+            "type": "service",
+            "version": "2018-03-17",
+            "resources": [
+                {
+                    "$target": "ns.foo#A"
+                }
+            ],
+            "traits": {
                 "aws.api#service": {
                     "sdkId": "Some Value",
                     "arnNamespace": "service",
                     "cloudFormationName": "SomeService"
-                },
-                "resources": [
-                    "A"
-                ]
+                }
+            }
+        },
+        "ns.foo#A": {
+            "type": "resource",
+            "identifiers": {
+                "aid": {
+                    "$target": "smithy.api#String"
+                }
             },
-            "A": {
-                "type": "resource",
-                "identifiers": {
-                    "aid": "smithy.api#String"
-                },
+            "resources": [
+                {
+                    "$target": "ns.foo#B"
+                }
+            ],
+            "traits": {
                 "aws.api#arn": {
                     "template": "a"
+                }
+            }
+        },
+        "ns.foo#B": {
+            "type": "resource",
+            "identifiers": {
+                "aid": {
+                    "$target": "smithy.api#String"
                 },
-                "resources": [
-                    "B"
-                ]
+                "bid": {
+                    "$target": "smithy.api#String"
+                }
             },
-            "B": {
-                "type": "resource",
-                "identifiers": {
-                    "aid": "smithy.api#String",
-                    "bid": "smithy.api#String"
-                },
+            "traits": {
                 "aws.api#arn": {
-                    "template": "a\/b"
+                    "template": "a/b"
                 }
             }
         }

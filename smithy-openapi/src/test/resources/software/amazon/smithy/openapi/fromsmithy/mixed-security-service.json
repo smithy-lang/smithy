@@ -1,32 +1,68 @@
 {
-  "smithy": "0.4.0",
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "Service": {
-        "type": "service",
-        "version": "2006-03-01",
-        "protocols": [{"name": "aws.rest-json", "auth": ["http-basic", "aws.v4"]}],
-        "auth": ["aws.v4"],
-        "operations": [
-          "Operation1",
-          "Operation2",
-          "Operation3"
-        ]
-      },
-      "Operation1": {
-        "type": "operation",
-        "http": {"uri": "/1", "method": "GET"}
-      },
-      "Operation2": {
-        "type": "operation",
-        "http": {"uri": "/2", "method": "GET"},
-        "auth": ["http-basic"]
-      },
-      "Operation3": {
-        "type": "operation",
-        "http": {"uri": "/3", "method": "GET"},
-        "auth": ["http-basic", "aws.v4"]
-      }
+        "smithy.example#Service": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "$target": "smithy.example#Operation1"
+                },
+                {
+                    "$target": "smithy.example#Operation2"
+                },
+                {
+                    "$target": "smithy.example#Operation3"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "aws.rest-json",
+                        "auth": [
+                            "http-basic",
+                            "aws.v4"
+                        ]
+                    }
+                ],
+                "smithy.api#auth": [
+                    "aws.v4"
+                ]
+            }
+        },
+        "smithy.example#Operation1": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/1",
+                    "method": "GET"
+                }
+            }
+        },
+        "smithy.example#Operation2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/2",
+                    "method": "GET"
+                },
+                "smithy.api#auth": [
+                    "http-basic"
+                ]
+            }
+        },
+        "smithy.example#Operation3": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/3",
+                    "method": "GET"
+                },
+                "smithy.api#auth": [
+                    "http-basic",
+                    "aws.v4"
+                ]
+            }
+        }
     }
-  }
 }

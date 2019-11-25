@@ -1,35 +1,86 @@
 {
-  "smithy": "0.4.0",
-  "ns.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "ValidService": {
-        "type": "service",
-        "version": "2019-02-11",
-        "protocols": [{"name": "a", "auth": ["foo", "baz", "bar"]}],
-        "auth": ["foo", "bar"],
-        "operations": ["ValidOperation1", "ValidOperation2", "ValidOperation3", "InvalidOperation1"]
-      },
-      "ValidOperation1": {
-        "type": "operation",
-        "auth": ["baz"]
-      },
-      "ValidOperation2": {
-        "type": "operation"
-      },
-      "ValidOperation3": {
-        "type": "operation",
-        "auth": ["none"]
-      },
-      "InvalidOperation1": {
-        "type": "operation",
-        "auth": ["invalid"]
-      },
-      "InvalidService": {
-        "type": "service",
-        "version": "2019-02-11",
-        "protocols": [{"name": "a", "auth": ["foo", "baz", "bar"]}],
-        "auth": ["foo", "qux"]
-      }
+        "ns.foo#ValidService": {
+            "type": "service",
+            "version": "2019-02-11",
+            "operations": [
+                {
+                    "$target": "ns.foo#ValidOperation1"
+                },
+                {
+                    "$target": "ns.foo#ValidOperation2"
+                },
+                {
+                    "$target": "ns.foo#ValidOperation3"
+                },
+                {
+                    "$target": "ns.foo#InvalidOperation1"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "a",
+                        "auth": [
+                            "foo",
+                            "baz",
+                            "bar"
+                        ]
+                    }
+                ],
+                "smithy.api#auth": [
+                    "foo",
+                    "bar"
+                ]
+            }
+        },
+        "ns.foo#ValidOperation1": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#auth": [
+                    "baz"
+                ]
+            }
+        },
+        "ns.foo#ValidOperation2": {
+            "type": "operation"
+        },
+        "ns.foo#ValidOperation3": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#auth": [
+                    "none"
+                ]
+            }
+        },
+        "ns.foo#InvalidOperation1": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#auth": [
+                    "invalid"
+                ]
+            }
+        },
+        "ns.foo#InvalidService": {
+            "type": "service",
+            "version": "2019-02-11",
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "a",
+                        "auth": [
+                            "foo",
+                            "baz",
+                            "bar"
+                        ]
+                    }
+                ],
+                "smithy.api#auth": [
+                    "foo",
+                    "qux"
+                ]
+            }
+        }
     }
-  }
 }

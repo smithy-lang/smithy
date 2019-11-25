@@ -100,9 +100,9 @@ public class ModelAssemblerTest {
     }
 
     @Test
-    public void addsExplicitDocumentNode() {
+    public void addsExplicitDocumentNode_0_4_0() {
         ObjectNode node = Node.objectNode()
-                .withMember("smithy", Node.from(Model.MODEL_VERSION))
+                .withMember("smithy", "0.4.0")
                 .withMember("ns.foo", Node.objectNode()
                         .withMember("shapes", Node.objectNode()
                                 .withMember("String", Node.objectNode()
@@ -114,8 +114,21 @@ public class ModelAssemblerTest {
     }
 
     @Test
+    public void addsExplicitDocumentNode_0_5_0() {
+        ObjectNode node = Node.objectNode()
+                .withMember("smithy", "0.5.0")
+                .withMember("shapes", Node.objectNode()
+                        .withMember("ns.foo#String", Node.objectNode()
+                                .withMember("type", Node.from("string"))));
+        ValidatedResult<Model> result = new ModelAssembler().addDocumentNode(node).assemble();
+
+        assertThat(result.getValidationEvents(), empty());
+        assertTrue(result.unwrap().getShape(ShapeId.from("ns.foo#String")).isPresent());
+    }
+
+    @Test
     public void addsExplicitUnparsedDocumentNode() {
-        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"ns.foo\": { \"shapes\": { \"String\": { \"type\": \"string\"}}}}";
+        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": { \"ns.foo#String\": { \"type\": \"string\"}}}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .assemble();
@@ -139,7 +152,7 @@ public class ModelAssemblerTest {
 
     @Test
     public void detectsTraitsOnUnknownShape() {
-        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"ns.foo\": {\"traits\": {\"Unknown\": {\"documentation\": \"foo\"}}}}";
+        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": {\"ns.foo#Unknown\": {\"type\": \"apply\", \"traits\": {\"smithy.api#documentation\": \"foo\"}}}}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .assemble();
@@ -341,25 +354,9 @@ public class ModelAssemblerTest {
                 .unwrap();
 
         assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getSourceLocation(),
-                is(new SourceLocation(getClass().getResource("main.json").toString(), 13, 23)));
+                is(new SourceLocation(getClass().getResource("main.json").toString(), 4, 37)));
         assertThat(model.getShape(ShapeId.from("example.namespace#TaggedUnion$foo")).get().getSourceLocation(),
-                is(new SourceLocation(getClass().getResource("main.json").toString(), 76, 28)));
-    }
-
-    @Test
-    public void supportsMultiNamespaceDocuments() {
-        ValidatedResult<Model> result = new ModelAssembler()
-                .addImport(getClass().getResource("multiple-namespaces.json"))
-                .disablePrelude()
-                .assemble();
-
-        assertThat(result.getValidationEvents(), empty());
-        // Each namespace had a separate name.
-        assertThat(result.unwrap().shapes().count(), equalTo(4L));
-        // Each shape had a documentation trait in each namespace.
-        assertThat(result.unwrap().shapes()
-                           .filter(shape -> shape.findTrait("ns.shared#customTrait").isPresent())
-                           .count(), equalTo(3L));
+                is(new SourceLocation(getClass().getResource("main.json").toString(), 69, 24)));
     }
 
     @Test
@@ -411,7 +408,7 @@ public class ModelAssemblerTest {
         Model model = new ModelAssembler().addImport(getClass().getResource("main.json")).assemble().unwrap();
         Model model2 = Model.assembler()
                 .addModel(model)
-                .addUnparsedModel("N/A", "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"example.namespace\": {\"traits\": {\"String\": {\"documentation\": \"hi\"}}}}")
+                .addUnparsedModel("N/A", "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": {\"example.namespace#String\": {\"type\": \"apply\", \"traits\": {\"smithy.api#documentation\": \"hi\"}}}}")
                 .assemble()
                 .unwrap();
 
@@ -454,12 +451,17 @@ public class ModelAssemblerTest {
 
     @Test
     public void canIgnoreUnknownTraits() {
-        String document = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"ns.foo\": { \"shapes\": { \"String\": { \"type\": \"string\", \"invalidTrait\": true}}}}";
+        String document =
+                "{\"smithy\": \"" + Model.MODEL_VERSION + "\", "
+                + "\"shapes\": { "
+                + "\"ns.foo#String\": {"
+                + "\"type\": \"string\", \"traits\": {\"com.foo#invalidTrait\": true}}}}";
         ValidatedResult<Model> result = new ModelAssembler()
                 .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
                 .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
                 .assemble();
 
+        System.out.println(result.getValidationEvents());
         assertThat(result.getValidationEvents(), not(empty()));
         assertFalse(result.isBroken());
     }

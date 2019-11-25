@@ -1,47 +1,63 @@
 {
-  "smithy": "0.4.0",
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "Service": {
-        "type": "service",
-        "version": "2006-03-01",
-        "protocols": [{"name": "aws.rest-json"}],
-        "operations": [
-          "Operation"
-        ]
-      },
-      "Operation": {
-        "type": "operation",
-        "input": "OperationInput",
-        "http": {
-          "uri": "/",
-          "method": "POST"
+        "smithy.example#Service": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "$target": "smithy.example#Operation"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "aws.rest-json"
+                    }
+                ]
+            }
+        },
+        "smithy.example#Operation": {
+            "type": "operation",
+            "input": {
+                "$target": "smithy.example#OperationInput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/",
+                    "method": "POST"
+                }
+            }
+        },
+        "smithy.example#OperationInput": {
+            "type": "structure",
+            "members": {
+                "timestamp1": {
+                    "$target": "smithy.api#Timestamp",
+                    "traits": {
+                        "smithy.api#httpQuery": "query1"
+                    }
+                },
+                "timestamp2": {
+                    "$target": "smithy.api#Timestamp",
+                    "traits": {
+                        "smithy.api#httpQuery": "query2",
+                        "smithy.api#timestampFormat": "epoch-seconds"
+                    }
+                },
+                "timestampList": {
+                    "$target": "smithy.example#TimestampList",
+                    "traits": {
+                        "smithy.api#httpQuery": "query3"
+                    }
+                }
+            }
+        },
+        "smithy.example#TimestampList": {
+            "type": "list",
+            "member": {
+                "$target": "smithy.api#Timestamp"
+            }
         }
-      },
-      "OperationInput": {
-        "type": "structure",
-        "members": {
-          "timestamp1": {
-            "target": "Timestamp",
-            "httpQuery": "query1"
-          },
-          "timestamp2": {
-            "target": "Timestamp",
-            "httpQuery": "query2",
-            "timestampFormat": "epoch-seconds"
-          },
-          "timestampList": {
-            "target": "TimestampList",
-            "httpQuery": "query3"
-          }
-        }
-      },
-      "TimestampList": {
-        "type": "list",
-        "member": {
-          "target": "Timestamp"
-        }
-      }
     }
-  }
 }

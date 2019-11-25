@@ -1,96 +1,130 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "NonAwsService": {
-                "type": "service",
-                "version": "2018-03-17"
-            },
-            "EmptyAwsService": {
-                "type": "service",
-                "version": "2018-03-17",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#NonAwsService": {
+            "type": "service",
+            "version": "2018-03-17"
+        },
+        "ns.foo#EmptyAwsService": {
+            "type": "service",
+            "version": "2018-03-17",
+            "traits": {
                 "aws.api#service": {
                     "sdkId": "Something Empty"
                 }
-            },
-            "SomeService": {
-                "type": "service",
-                "version": "2018-03-17",
+            }
+        },
+        "ns.foo#SomeService": {
+            "type": "service",
+            "version": "2018-03-17",
+            "resources": [
+                {
+                    "$target": "ns.foo#SomeResource"
+                },
+                {
+                    "$target": "ns.foo#RootArnResource"
+                },
+                {
+                    "$target": "ns.foo#AbsoluteResource"
+                }
+            ],
+            "traits": {
                 "aws.api#service": {
                     "sdkServiceId": "Some Value",
                     "arnNamespace": "service",
                     "cloudFormationName": "SomeService"
-                },
-                "resources": [
-                    "SomeResource",
-                    "RootArnResource",
-                    "AbsoluteResource"
-                ]
-            },
-            "RootArnResource": {
-                "type": "resource",
+                }
+            }
+        },
+        "ns.foo#RootArnResource": {
+            "type": "resource",
+            "traits": {
                 "aws.api#arn": {
                     "noRegion": true,
                     "noAccount": true,
                     "template": "rootArnResource"
                 }
-            },
-            "SomeResource": {
-                "type": "resource",
-                "identifiers": {
-                    "someId": "SomeResourceId"
-                },
-                "aws.api#arn": {
-                    "template": "someresource\/{someId}"
-                },
-                "resources": [
-                    "ChildResource"
-                ]
-            },
-            "ChildResource": {
-                "type": "resource",
-                "identifiers": {
-                    "someId": "SomeResourceId",
-                    "childId": "ChildResourceId"
-                },
-                "aws.api#arn": {
-                    "template": "someresource\/{someId}\/{childId}"
-                },
-                "resources": [
-                    "AnotherChild"
-                ]
-            },
-            "AnotherChild": {
-                "type": "resource",
-                "identifiers": {
-                    "someId": "SomeResourceId",
-                    "childId": "ChildResourceId"
+            }
+        },
+        "ns.foo#SomeResource": {
+            "type": "resource",
+            "identifiers": {
+                "someId": {
+                    "$target": "ns.foo#SomeResourceId"
                 }
             },
-            "AbsoluteResource": {
-                "type": "resource",
-                "identifiers": {
-                    "arn": "AbsoluteResourceArn"
+            "resources": [
+                {
+                    "$target": "ns.foo#ChildResource"
+                }
+            ],
+            "traits": {
+                "aws.api#arn": {
+                    "template": "someresource/{someId}"
+                }
+            }
+        },
+        "ns.foo#ChildResource": {
+            "type": "resource",
+            "identifiers": {
+                "someId": {
+                    "$target": "ns.foo#SomeResourceId"
                 },
+                "childId": {
+                    "$target": "ns.foo#ChildResourceId"
+                }
+            },
+            "resources": [
+                {
+                    "$target": "ns.foo#AnotherChild"
+                }
+            ],
+            "traits": {
+                "aws.api#arn": {
+                    "template": "someresource/{someId}/{childId}"
+                }
+            }
+        },
+        "ns.foo#AnotherChild": {
+            "type": "resource",
+            "identifiers": {
+                "someId": {
+                    "$target": "ns.foo#SomeResourceId"
+                },
+                "childId": {
+                    "$target": "ns.foo#ChildResourceId"
+                }
+            }
+        },
+        "ns.foo#AbsoluteResource": {
+            "type": "resource",
+            "identifiers": {
+                "arn": {
+                    "$target": "ns.foo#AbsoluteResourceArn"
+                }
+            },
+            "traits": {
                 "aws.api#arn": {
                     "template": "{arn}",
                     "absolute": true
                 }
-            },
-            "AbsoluteResourceArn": {
-                "type": "string",
+            }
+        },
+        "ns.foo#AbsoluteResourceArn": {
+            "type": "string",
+            "traits": {
                 "aws.api#arnReference": {
                     "type": "AWS::SomeService::AbsoluteResource",
                     "service": "ns.foo#SomeService",
                     "resource": "ns.foo#AbsoluteResource"
                 }
-            },
-            "SomeResourceId": {
-                "type": "string"
-            },
-            "ChildResourceId": {
-                "type": "string"
             }
+        },
+        "ns.foo#SomeResourceId": {
+            "type": "string"
+        },
+        "ns.foo#ChildResourceId": {
+            "type": "string"
         }
     }
 }

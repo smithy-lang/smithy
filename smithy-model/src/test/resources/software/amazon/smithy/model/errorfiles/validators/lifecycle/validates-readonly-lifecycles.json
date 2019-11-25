@@ -1,51 +1,81 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Resource": {
-                "type": "resource",
-                "identifiers": {
-                    "id": "smithy.api#String"
-                },
-                "put": "PutResource",
-                "create": "CreateResource",
-                "read": "GetResource",
-                "update": "UpdateResource",
-                "delete": "DeleteResource",
-                "list": "ListResource"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Resource": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "$target": "smithy.api#String"
+                }
             },
-            "PutResource": {
-                "type": "operation",
-                "readonly": true,
-                "input": "ResourceInput"
+            "put": {
+                "$target": "ns.foo#PutResource"
             },
-            "CreateResource": {
-                "type": "operation",
-                "readonly": true
+            "create": {
+                "$target": "ns.foo#CreateResource"
             },
-            "GetResource": {
-                "type": "operation",
-                "input": "ResourceInput"
+            "read": {
+                "$target": "ns.foo#GetResource"
             },
-            "UpdateResource": {
-                "type": "operation",
-                "readonly": true,
-                "input": "ResourceInput"
+            "update": {
+                "$target": "ns.foo#UpdateResource"
             },
-            "DeleteResource": {
-                "type": "operation",
-                "readonly": true,
-                "input": "ResourceInput"
+            "delete": {
+                "$target": "ns.foo#DeleteResource"
             },
-            "ListResource": {
-                "type": "operation"
+            "list": {
+                "$target": "ns.foo#ListResource"
+            }
+        },
+        "ns.foo#PutResource": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ResourceInput"
             },
-            "ResourceInput": {
-                "type": "structure",
-                "members": {
-                    "id": {
-                        "target": "smithy.api#String",
-                        "required": true
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#CreateResource": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#GetResource": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ResourceInput"
+            }
+        },
+        "ns.foo#UpdateResource": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ResourceInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#DeleteResource": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ResourceInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#ListResource": {
+            "type": "operation"
+        },
+        "ns.foo#ResourceInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
                     }
                 }
             }

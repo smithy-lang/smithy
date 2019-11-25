@@ -1,0 +1,1 @@
+[ERROR] ns.foo#InvalidStruct$foo: Conflicting `smithy.api#documentation` trait found on shape `ns.foo#InvalidStruct$foo`. | Model

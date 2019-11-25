@@ -81,15 +81,10 @@ public class ModelSerializerTest {
                 .build();
         ObjectNode result = serializer.serialize(model);
 
-        assertThat(result.getMember("ns.foo"), not(Optional.empty()));
-        assertThat(result.getMember("ns.foo").get().expectObjectNode().getMember("shapes"), not(Optional.empty()));
-        ObjectNode shapes = result.getMember("ns.foo").get()
-                .expectObjectNode()
-                .expectMember("shapes")
-                .expectObjectNode();
-        assertThat(shapes.getMember("foo"), not(Optional.empty()));
-        assertThat(shapes.getMember("baz"), is(Optional.empty()));
-        assertThat(result.getMember("metadata"), is(Optional.empty()));
+        ObjectNode shapes = result.expectObjectMember("shapes");
+        assertThat(shapes.getMember("ns.foo#foo"), not(Optional.empty()));
+        assertThat(shapes.getMember("ns.foo#baz"), is(Optional.empty()));
+        assertThat(result.getMember("ns.foo#metadata"), is(Optional.empty()));
     }
 
     @Test
@@ -103,20 +98,20 @@ public class ModelSerializerTest {
         ModelSerializer serializer = ModelSerializer.builder()
                 .traitFilter(trait -> trait.toShapeId().toString().equals("smithy.api#documentation"))
                 .build();
-        ObjectNode obj = serializer.serialize(model)
-                .expectMember("ns.foo").expectObjectNode()
-                .expectMember("shapes").expectObjectNode()
-                .expectMember("baz").expectObjectNode();
 
-        assertThat(obj.getMember("type"), is(Optional.of(Node.from("string"))));
-        assertThat(obj.getMember("smithy.api#documentation"), equalTo(Optional.of(Node.from("docs"))));
-        assertThat(obj.getMember("smithy.api#sensitive"), is(Optional.empty()));
+        ObjectNode obj = serializer.serialize(model)
+                .expectObjectMember("shapes")
+                .expectObjectMember("ns.foo#baz");
+        obj.expectStringMember("type");
+        ObjectNode traits = obj.expectObjectMember("traits");
+        assertThat(traits.expectStringMember("smithy.api#documentation"), equalTo(Node.from("docs")));
+        assertThat(traits.getMember("smithy.api#sensitive"), is(Optional.empty()));
     }
 
     @Test
     public void serializesAliasedPreludeTraitsUsingFullyQualifiedFormWhenNecessary() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("prelude-trait-alias.json"))
+                .addImport(getClass().getResource("prelude-trait-alias.smithy"))
                 .assemble()
                 .unwrap();
         ModelSerializer serializer = ModelSerializer.builder().build();
@@ -145,53 +140,5 @@ public class ModelSerializerTest {
         ObjectNode serialized = serializer.serialize(model);
 
         assertFalse(serialized.getMember("smithy.api").isPresent());
-    }
-
-    @Test
-    public void serializesAbsoluteShapeIdsOnlyWhenNeeded() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("test-model.json"))
-                .assemble()
-                .unwrap();
-        ModelSerializer serializer = ModelSerializer.builder().build();
-        ObjectNode serialized = serializer.serialize(model);
-
-        ObjectNode resourceWithRelativeIds = serialized.expectObjectMember("ns.foo")
-                .expectObjectMember("shapes")
-                .expectObjectMember("MyResource");
-        ObjectNode resourceWithAbsoluteIds = serialized.expectObjectMember("ns.foo")
-                .expectObjectMember("shapes")
-                .expectObjectMember("ResourceNeedingAbsoluteShapeIds");
-        ObjectNode structureWithAbsoluteIds = serialized.expectObjectMember("ns.resource.needing.ids")
-                .expectObjectMember("shapes")
-                .expectObjectMember("GetResourceNeedingAbsoluteShapeIdsInput");
-        ObjectNode structureWithMixedIds = serialized.expectObjectMember("ns.foo")
-                .expectObjectMember("shapes")
-                .expectObjectMember("Structure");
-
-        assertThat(resourceWithAbsoluteIds.expectObjectMember("identifiers").expectStringMember("id").getValue(),
-                   equalTo("ns.baz#String"));
-        assertThat(resourceWithAbsoluteIds.expectStringMember("read").getValue(),
-                   equalTo("ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIds"));
-
-        assertThat(resourceWithRelativeIds.expectObjectMember("identifiers").expectStringMember("id").getValue(),
-                   equalTo("MyResourceId"));
-        assertThat(resourceWithRelativeIds.expectStringMember("put").getValue(), equalTo("PutMyResource"));
-        assertThat(resourceWithRelativeIds.expectStringMember("read").getValue(), equalTo("GetMyResource"));
-        assertThat(resourceWithRelativeIds.expectStringMember("delete").getValue(), equalTo("DeleteMyResource"));
-        assertThat(resourceWithRelativeIds.expectArrayMember("collectionOperations")
-                           .get(0).get().expectStringNode().getValue(),
-                   equalTo("BatchDeleteMyResource"));
-
-        assertThat(structureWithAbsoluteIds.expectObjectMember("members").expectObjectMember("id")
-                           .expectStringMember("target").getValue(),
-                   equalTo("ns.baz#String"));
-
-        assertThat(structureWithMixedIds.expectObjectMember("members").expectObjectMember("a")
-                           .expectStringMember("target").getValue(),
-                   equalTo("MyString"));
-        assertThat(structureWithMixedIds.expectObjectMember("members").expectObjectMember("c")
-                           .expectStringMember("target").getValue(),
-                   equalTo("ns.shapes#String"));
     }
 }

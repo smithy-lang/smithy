@@ -1,57 +1,71 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "A": {
-                "type": "operation",
-                "readonly": true,
-                "http": {
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#A": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
-                    "uri": "\/A",
+                    "uri": "/A",
                     "code": 200
                 }
-            },
-            "B": {
-                "type": "operation",
-                "readonly": true,
-                "http": {
+            }
+        },
+        "ns.foo#B": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
-                    "uri": "\/B",
+                    "uri": "/B",
                     "code": 404
                 }
-            },
-            "C": {
-                "type": "operation",
-                "readonly": true,
-                "http": {
+            }
+        },
+        "ns.foo#C": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#http": {
                     "method": "GET",
-                    "uri": "\/C",
+                    "uri": "/C",
                     "code": 100
                 }
-            },
-            "ErrorA": {
-                "type": "structure",
-                "error": "client",
-                "httpError": 404
-            },
-            "ErrorB": {
-                "type": "structure",
-                "error": "server",
-                "httpError": 500
-            },
-            "ErrorC": {
-                "type": "structure",
-                "error": "client"
-            },
-            "ErrorD": {
-                "type": "structure",
-                "error": "server",
-                "httpError": 404
-            },
-            "ErrorE": {
-                "type": "structure",
-                "error": "client",
-                "httpError": 200
+            }
+        },
+        "ns.foo#ErrorA": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "client",
+                "smithy.api#httpError": 404
+            }
+        },
+        "ns.foo#ErrorB": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "server",
+                "smithy.api#httpError": 500
+            }
+        },
+        "ns.foo#ErrorC": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "ns.foo#ErrorD": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "server",
+                "smithy.api#httpError": 404
+            }
+        },
+        "ns.foo#ErrorE": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "client",
+                "smithy.api#httpError": 200
             }
         }
     }

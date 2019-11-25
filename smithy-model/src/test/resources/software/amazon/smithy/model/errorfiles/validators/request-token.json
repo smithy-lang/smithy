@@ -1,38 +1,48 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Valid": {
-                "type": "operation",
-                "input": "ValidInput"
-            },
-            "ValidInput": {
-                "type": "structure",
-                "members": {
-                    "token": {
-                        "target": "String",
-                        "idempotencyToken": true
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Valid": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ValidInput"
+            }
+        },
+        "ns.foo#ValidInput": {
+            "type": "structure",
+            "members": {
+                "token": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#idempotencyToken": true
                     }
                 }
+            }
+        },
+        "ns.foo#String": {
+            "type": "string"
+        },
+        "ns.foo#Invalid": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#InvalidInputWithMultiple"
             },
-            "String": {
-                "type": "string"
-            },
-            "Invalid": {
-                "type": "operation",
-                "readonly": true,
-                "input": "InvalidInputWithMultiple"
-            },
-            "InvalidInputWithMultiple": {
-                "type": "structure",
-                "members": {
-                    "token": {
-                        "target": "String",
-                        "idempotencyToken": true
-                    },
-                    "anotherToken": {
-                        "target": "String",
-                        "idempotencyToken": true
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#InvalidInputWithMultiple": {
+            "type": "structure",
+            "members": {
+                "token": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#idempotencyToken": true
+                    }
+                },
+                "anotherToken": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#idempotencyToken": true
                     }
                 }
             }

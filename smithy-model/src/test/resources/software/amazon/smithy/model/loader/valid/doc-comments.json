@@ -1,24 +1,38 @@
 {
-  "smithy": "0.4.0",
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "MyString": {
-        "type": "string",
-        "documentation": "Foo\nbaz\nBar!"
-      },
-      "MyStructure": {
-        "type": "structure",
-        "documentation": "Structure",
-        "members": {
-          "foo": {"target": "String", "documentation": "Docs on member!"},
-          "baz": {"target": "String", "documentation": "Docs on another member!"}
+        "smithy.example#MyString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Foo\nbaz\nBar!"
+            }
+        },
+        "smithy.example#MyStructure": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Docs on member!"
+                    }
+                },
+                "baz": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Docs on another member!"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Structure"
+            }
+        },
+        "smithy.example#MyTrait": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#documentation": "The documentation\nof this trait!",
+                "smithy.api#trait": {}
+            }
         }
-      },
-      "MyTrait": {
-        "type": "structure",
-        "documentation": "The documentation\nof this trait!",
-        "trait": {}
-      }
     }
-  }
 }

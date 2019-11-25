@@ -1,28 +1,30 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "String1": {
-                "type": "string",
-                "documentation": "docs",
-                "tags": [
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#String1": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "docs",
+                "smithy.api#tags": [
                     "foo"
                 ]
-            },
-            "String2": {
-                "type": "string"
-            },
-            "String3": {
-                "type": "string",
-                "tags": [
+            }
+        },
+        "ns.foo#String2": {
+            "type": "string"
+        },
+        "ns.foo#String3": {
+            "type": "string",
+            "traits": {
+                "smithy.api#tags": [
                     "baz"
                 ],
-                "mediaType": "application\/json",
-                "length": {
+                "smithy.api#mediaType": "application/json",
+                "smithy.api#length": {
                     "min": 0,
                     "max": 10
                 },
-                "documentation": "docs"
+                "smithy.api#documentation": "docs"
             }
         }
     }

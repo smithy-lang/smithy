@@ -76,14 +76,6 @@ public class LoaderVisitorTest {
     }
 
     @Test
-    public void acceptableVersionDifference() {
-        LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, "0.4.0");
-        visitor.onVersion(SourceLocation.NONE, "0.4.1");
-        visitor.onVersion(SourceLocation.NONE, "0.4.3");
-    }
-
-    @Test
     public void cannotMutateAfterOnEnd() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             LoaderVisitor visitor = new LoaderVisitor(FACTORY);

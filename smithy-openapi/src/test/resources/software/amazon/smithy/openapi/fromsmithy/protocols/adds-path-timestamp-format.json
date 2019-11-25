@@ -1,39 +1,53 @@
 {
-  "smithy": "0.4.0",
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "Service": {
-        "type": "service",
-        "version": "2006-03-01",
-        "protocols": [{"name": "aws.rest-json"}],
-        "operations": [
-          "Operation"
-        ]
-      },
-      "Operation": {
-        "type": "operation",
-        "input": "OperationInput",
-        "http": {
-          "uri": "/{timestamp1}/{timestamp2}",
-          "method": "POST"
+        "smithy.example#Service": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "$target": "smithy.example#Operation"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "aws.rest-json"
+                    }
+                ]
+            }
+        },
+        "smithy.example#Operation": {
+            "type": "operation",
+            "input": {
+                "$target": "smithy.example#OperationInput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/{timestamp1}/{timestamp2}",
+                    "method": "POST"
+                }
+            }
+        },
+        "smithy.example#OperationInput": {
+            "type": "structure",
+            "members": {
+                "timestamp1": {
+                    "$target": "smithy.api#Timestamp",
+                    "traits": {
+                        "smithy.api#required": true,
+                        "smithy.api#httpLabel": true
+                    }
+                },
+                "timestamp2": {
+                    "$target": "smithy.api#Timestamp",
+                    "traits": {
+                        "smithy.api#required": true,
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#timestampFormat": "epoch-seconds"
+                    }
+                }
+            }
         }
-      },
-      "OperationInput": {
-        "type": "structure",
-        "members": {
-          "timestamp1": {
-            "target": "Timestamp",
-            "required": true,
-            "httpLabel": true
-          },
-          "timestamp2": {
-            "target": "Timestamp",
-            "required": true,
-            "httpLabel": true,
-            "timestampFormat": "epoch-seconds"
-          }
-        }
-      }
     }
-  }
 }

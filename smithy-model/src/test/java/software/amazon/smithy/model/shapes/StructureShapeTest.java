@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 
 public class StructureShapeTest {
@@ -33,7 +34,7 @@ public class StructureShapeTest {
 
     @Test
     public void mustNotContainMembersInShapeId() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(SourceException.class, () -> {
             StructureShape.builder().id("ns.foo#bar$baz").build();
         });
     }

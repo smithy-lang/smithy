@@ -163,7 +163,6 @@ public class SmithyBuildTest {
         String contents = IoUtils.readUtf8File(outputDirectory.resolve("source/build-info/smithy-build-info.json"));
         ObjectNode badBuildInfo = Node.parse(contents).expectObjectNode();
         assertTrue(badBuildInfo.expectMember("version").isStringNode());
-        assertTrue(badBuildInfo.expectMember("smithyVersion").isStringNode());
         assertThat(badBuildInfo.expectMember("projectionName").expectStringNode().getValue(), equalTo("source"));
         badBuildInfo.expectMember("validationEvents").expectArrayNode();
     }

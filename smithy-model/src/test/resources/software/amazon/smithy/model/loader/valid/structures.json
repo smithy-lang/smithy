@@ -1,112 +1,130 @@
 {
-  "smithy": "0.4.0",
-  "com.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "A": {
-        "type": "structure",
-        "members": {}
-      },
-      "B": {
-        "type": "structure",
-        "members": {}
-      },
-      "C": {
-        "type": "structure",
-        "members": {}
-      },
-      "D": {
-        "type": "structure",
-        "members": {}
-      },
-      "E": {
-        "type": "structure",
-        "members": {}
-      },
-      "F": {
-        "type": "structure",
-        "members": {},
-        "deprecated": {}
-      },
-      "G": {
-        "type": "structure",
-        "members": {},
-        "deprecated": {},
-        "documentation": "foo"
-      },
-      "H": {
-        "type": "structure",
-        "members": {
-          "foo": {
-            "target": "E"
-          }
-        }
-      },
-      "I": {
-        "type": "structure",
-        "members": {
-          "baz": {
-            "target": "H"
-          },
-          "foo": {
-            "target": "E"
-          }
-        }
-      },
-      "J": {
-        "type": "structure",
-        "members": {
-          "baz": {
-            "target": "H"
-          },
-          "foo": {
-            "target": "E",
-            "deprecated": {}
-          }
-        }
-      },
-      "K": {
-        "type": "structure",
-        "members": {
-          "baz": {
-            "target": "H",
-            "deprecated": {}
-          },
-          "foo": {
-            "target": "E",
-            "deprecated": {},
-            "since": "2.0"
-          }
-        }
-      },
-      "L": {
-        "type": "structure",
-        "members": {
-          "baz": {
-            "target": "H",
-            "deprecated": {}
-          },
-          "foo": {
-            "target": "E",
-            "deprecated": {},
-            "since": "2.0"
-          }
-        }
-      },
-      "M": {
-        "type": "structure",
-        "members": {
-          "baz": {
-            "target": "H",
-            "deprecated": {}
-          },
-          "foo": {
-            "target": "E",
-            "deprecated": {},
-            "since": "2.0"
-          }
+        "com.foo#A": {
+            "type": "structure",
+            "members": {}
         },
-        "documentation": "abc"
-      }
+        "com.foo#B": {
+            "type": "structure",
+            "members": {}
+        },
+        "com.foo#C": {
+            "type": "structure",
+            "members": {}
+        },
+        "com.foo#D": {
+            "type": "structure",
+            "members": {}
+        },
+        "com.foo#E": {
+            "type": "structure",
+            "members": {}
+        },
+        "com.foo#F": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#deprecated": {}
+            }
+        },
+        "com.foo#G": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#documentation": "foo"
+            }
+        },
+        "com.foo#H": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "com.foo#E"
+                }
+            }
+        },
+        "com.foo#I": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "com.foo#H"
+                },
+                "foo": {
+                    "$target": "com.foo#E"
+                }
+            }
+        },
+        "com.foo#J": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "com.foo#H"
+                },
+                "foo": {
+                    "$target": "com.foo#E",
+                    "traits": {
+                        "smithy.api#deprecated": {}
+                    }
+                }
+            }
+        },
+        "com.foo#K": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "com.foo#H",
+                    "traits": {
+                        "smithy.api#deprecated": {}
+                    }
+                },
+                "foo": {
+                    "$target": "com.foo#E",
+                    "traits": {
+                        "smithy.api#deprecated": {},
+                        "smithy.api#since": "2.0"
+                    }
+                }
+            }
+        },
+        "com.foo#L": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "com.foo#H",
+                    "traits": {
+                        "smithy.api#deprecated": {}
+                    }
+                },
+                "foo": {
+                    "$target": "com.foo#E",
+                    "traits": {
+                        "smithy.api#deprecated": {},
+                        "smithy.api#since": "2.0"
+                    }
+                }
+            }
+        },
+        "com.foo#M": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "com.foo#H",
+                    "traits": {
+                        "smithy.api#deprecated": {}
+                    }
+                },
+                "foo": {
+                    "$target": "com.foo#E",
+                    "traits": {
+                        "smithy.api#deprecated": {},
+                        "smithy.api#since": "2.0"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "abc"
+            }
+        }
     }
-  }
 }

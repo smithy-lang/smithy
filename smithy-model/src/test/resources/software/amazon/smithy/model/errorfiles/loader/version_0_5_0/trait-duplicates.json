@@ -1,0 +1,43 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#ValidStruct": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#tags": [
+                            "foo"
+                        ]
+                    }
+                }
+            }
+        },
+        "ns.foo#InvalidStruct": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Abc"
+                    }
+                }
+            }
+        },
+        "ns.foo#ValidStruct$foo": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#tags": [
+                    "baz"
+                ]
+            }
+        },
+        "ns.foo#InvalidStruct$foo": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#documentation": "Def"
+            }
+        }
+    }
+}

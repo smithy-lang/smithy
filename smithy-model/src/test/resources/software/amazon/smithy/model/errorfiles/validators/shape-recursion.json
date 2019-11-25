@@ -1,112 +1,106 @@
 {
-  "smithy": "0.4.0",
-  "ns.foo": {
+    "smithy": "0.5.0",
     "shapes": {
-      "InvalidDirectlyRecursiveList": {
-        "type": "list",
-        "member": {
-          "target": "InvalidDirectlyRecursiveList"
-        }
-      },
-      "InvalidDirectlyRecursiveSet": {
-        "type": "set",
-        "member": {
-          "target": "InvalidDirectlyRecursiveSet"
-        }
-      },
-      "InvalidDirectlyRecursiveMap": {
-        "type": "map",
-        "key": {
-          "target": "String"
+        "ns.foo#InvalidDirectlyRecursiveList": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#InvalidDirectlyRecursiveList"
+            }
         },
-        "value": {
-          "target": "InvalidDirectlyRecursiveMap"
-        }
-      },
-
-      "IndirectRecursiveList": {
-        "type": "list",
-        "member": {
-          "target": "IndirectRecursiveListIntermediate1"
-        }
-      },
-      "IndirectRecursiveListIntermediate1": {
-        "type": "list",
-        "member": {
-          "target": "IndirectRecursiveListIntermediate2"
-        }
-      },
-      "IndirectRecursiveListIntermediate2": {
-        "type": "list",
-        "member": {
-          "target": "IndirectRecursiveList"
-        }
-      },
-
-      "IndirectRecursiveSet": {
-        "type": "set",
-        "member": {
-          "target": "IndirectRecursiveSetIntermediate1"
-        }
-      },
-      "IndirectRecursiveSetIntermediate1": {
-        "type": "set",
-        "member": {
-          "target": "IndirectRecursiveSetIntermediate2"
-        }
-      },
-      "IndirectRecursiveSetIntermediate2": {
-        "type": "set",
-        "member": {
-          "target": "IndirectRecursiveSet"
-        }
-      },
-
-      "IndirectRecursiveMap": {
-        "type": "map",
-        "key": {
-          "target": "String"
+        "ns.foo#InvalidDirectlyRecursiveSet": {
+            "type": "set",
+            "member": {
+                "$target": "ns.foo#InvalidDirectlyRecursiveSet"
+            }
         },
-        "value": {
-          "target": "IndirectRecursiveMapIntermediate1"
-        }
-      },
-      "IndirectRecursiveMapIntermediate1": {
-        "type": "map",
-        "key": {
-          "target": "String"
+        "ns.foo#InvalidDirectlyRecursiveMap": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
+            },
+            "value": {
+                "$target": "ns.foo#InvalidDirectlyRecursiveMap"
+            }
         },
-        "value": {
-          "target": "IndirectRecursiveMapIntermediate2"
-        }
-      },
-      "IndirectRecursiveMapIntermediate2": {
-        "type": "map",
-        "key": {
-          "target": "String"
+        "ns.foo#IndirectRecursiveList": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#IndirectRecursiveListIntermediate1"
+            }
         },
-        "value": {
-          "target": "IndirectRecursiveMap"
-        }
-      },
-
-      "ValidRecursiveShape": {
-        "type": "map",
-        "key": {
-          "target": "String"
+        "ns.foo#IndirectRecursiveListIntermediate1": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#IndirectRecursiveListIntermediate2"
+            }
         },
-        "value": {
-          "target": "ValidRecursiveShapeStruct"
+        "ns.foo#IndirectRecursiveListIntermediate2": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#IndirectRecursiveList"
+            }
+        },
+        "ns.foo#IndirectRecursiveSet": {
+            "type": "set",
+            "member": {
+                "$target": "ns.foo#IndirectRecursiveSetIntermediate1"
+            }
+        },
+        "ns.foo#IndirectRecursiveSetIntermediate1": {
+            "type": "set",
+            "member": {
+                "$target": "ns.foo#IndirectRecursiveSetIntermediate2"
+            }
+        },
+        "ns.foo#IndirectRecursiveSetIntermediate2": {
+            "type": "set",
+            "member": {
+                "$target": "ns.foo#IndirectRecursiveSet"
+            }
+        },
+        "ns.foo#IndirectRecursiveMap": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
+            },
+            "value": {
+                "$target": "ns.foo#IndirectRecursiveMapIntermediate1"
+            }
+        },
+        "ns.foo#IndirectRecursiveMapIntermediate1": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
+            },
+            "value": {
+                "$target": "ns.foo#IndirectRecursiveMapIntermediate2"
+            }
+        },
+        "ns.foo#IndirectRecursiveMapIntermediate2": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
+            },
+            "value": {
+                "$target": "ns.foo#IndirectRecursiveMap"
+            }
+        },
+        "ns.foo#ValidRecursiveShape": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
+            },
+            "value": {
+                "$target": "ns.foo#ValidRecursiveShapeStruct"
+            }
+        },
+        "ns.foo#ValidRecursiveShapeStruct": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#ValidRecursiveShape"
+                }
+            }
         }
-      },
-      "ValidRecursiveShapeStruct": {
-        "type": "structure",
-        "members": {
-          "foo": {
-            "target": "ValidRecursiveShape"
-          }
-        }
-      }
     }
-  }
 }

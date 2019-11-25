@@ -1,18 +1,18 @@
 {
-  "smithy": "0.4.0",
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "Struct": {
-        "type": "structure",
-        "members": {
-          "a": {
-            "target": "smithy.api#String",
-            "sensitive": true,
-            "deprecated": true,
-            "required": true
-          }
+        "smithy.example#Struct": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#sensitive": true,
+                        "smithy.api#deprecated": true,
+                        "smithy.api#required": true
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }

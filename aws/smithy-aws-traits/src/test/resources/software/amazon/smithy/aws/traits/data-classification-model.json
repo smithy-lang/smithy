@@ -1,21 +1,23 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "A": {
-                "type": "string",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#A": {
+            "type": "string",
+            "traits": {
                 "aws.api#data": "account"
-            },
-            "B": {
-                "type": "list",
-                "member": {
-                    "target": "BMember"
-                },
-                "aws.api#data": "tagging"
-            },
-            "BMember": {
-                "type": "string"
             }
+        },
+        "ns.foo#B": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#BMember"
+            },
+            "traits": {
+                "aws.api#data": "tagging"
+            }
+        },
+        "ns.foo#BMember": {
+            "type": "string"
         }
     }
 }

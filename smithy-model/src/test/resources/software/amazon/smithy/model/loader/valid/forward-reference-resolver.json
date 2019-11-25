@@ -1,37 +1,45 @@
 {
-  "smithy": "0.4.0",
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "Foo": {
-        "type": "structure",
-        "members": {
-          "baz": {"target": "String"},
-          "bar": {"target":  "Integer"}
+        "smithy.example#Foo": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "smithy.api#String"
+                },
+                "bar": {
+                    "$target": "smithy.example#Integer"
+                }
+            }
+        },
+        "smithy.example#Integer": {
+            "type": "integer"
+        },
+        "smithy.example#MyList": {
+            "type": "list",
+            "member": {
+                "$target": "smithy.api#String"
+            }
+        },
+        "smithy.example#MyString": {
+            "type": "string"
+        },
+        "smithy.example#MyResource": {
+            "type": "resource",
+            "identifiers": {
+                "a": {
+                    "$target": "smithy.example#MyString"
+                },
+                "b": {
+                    "$target": "smithy.example#AnotherString"
+                },
+                "c": {
+                    "$target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.example#AnotherString": {
+            "type": "string"
         }
-      },
-      "Integer": {
-        "type": "integer"
-      },
-      "MyList": {
-        "type": "list",
-        "member": {
-          "target": "String"
-        }
-      },
-      "MyString": {
-        "type": "string"
-      },
-      "MyResource": {
-        "type": "resource",
-        "identifiers": {
-          "a": "MyString",
-          "b": "AnotherString",
-          "c": "String"
-        }
-      },
-      "AnotherString": {
-        "type": "string"
-      }
     }
-  }
 }

@@ -1,189 +1,249 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "ValidList": {
-                "type": "list",
-                "member": {
-                    "target": "String"
-                }
-            },
-            "InvalidListMemberReference": {
-                "type": "list",
-                "member": {
-                    "target": "NotFound"
-                }
-            },
-            "InvalidListMemberMember": {
-                "type": "list",
-                "member": {
-                    "target": "ValidInput$integer"
-                }
-            },
-            "InvalidListMemberResource": {
-                "type": "list",
-                "member": {
-                    "target": "MyResource"
-                }
-            },
-            "InvalidListMemberService": {
-                "type": "list",
-                "member": {
-                    "target": "MyService"
-                }
-            },
-            "MyService": {
-                "type": "service",
-                "version": "2017-01-17",
-                "protocols": [{"name": "foo"}],
-                "resources": [
-                    "MyResource",
-                    "InvalidResourceLifecycle"
-                ]
-            },
-            "MyResource": {
-                "type": "resource",
-                "identifiers": {
-                    "myId": "MyResourceIdentifier"
-                }
-            },
-            "MyResourceIdentifier": {
-                "type": "string"
-            },
-            "Integer": {
-                "type": "integer"
-            },
-            "String": {
-                "type": "string"
-            },
-            "InvalidResourceIdentifierType": {
-                "type": "resource",
-                "identifiers": {
-                    "invalidInteger": "Integer"
-                }
-            },
-            "InvalidResourceIdentifierReference": {
-                "type": "resource",
-                "identifiers": {
-                    "invalidId": "NotFound"
-                }
-            },
-            "InvalidResourceBindingReference": {
-                "type": "resource",
-                "resources": [
-                    "NotFound"
-                ]
-            },
-            "InvalidResourceBindingType": {
-                "type": "resource",
-                "resources": [
-                    "Integer"
-                ]
-            },
-            "ValidOperation": {
-                "type": "operation",
-                "readonly": true,
-                "input": "ValidInput",
-                "output": "ValidOutput",
-                "errors": [
-                    "ValidError"
-                ]
-            },
-            "ValidInput": {
-                "type": "structure",
-                "members": {
-                    "integer": {
-                        "target": "Integer"
-                    }
-                }
-            },
-            "ValidOutput": {
-                "type": "structure",
-                "members": {
-                    "integer": {
-                        "target": "Integer"
-                    }
-                }
-            },
-            "ValidError": {
-                "type": "structure",
-                "error": "client",
-                "members": {
-                    "integer": {
-                        "target": "Integer"
-                    }
-                }
-            },
-            "InalidOperationInputOutputErrorNotFound": {
-                "type": "operation",
-                "readonly": true,
-                "input": "NotFound",
-                "output": "NotFound",
-                "errors": [
-                    "NotFound"
-                ]
-            },
-            "InalidOperationInputOutputErrorBadTypes": {
-                "type": "operation",
-                "readonly": true,
-                "input": "Integer",
-                "output": "Integer",
-                "errors": [
-                    "Integer"
-                ]
-            },
-            "InvalidOperationBadErrorTraits": {
-                "type": "operation",
-                "readonly": true,
-                "input": "ValidError",
-                "output": "ValidError",
-                "errors": [
-                    "ValidInput"
-                ]
-            },
-            "InvalidResourceLifecycle": {
-                "type": "resource",
-                "create": "Integer",
-                "read": "Integer",
-                "update": "Integer",
-                "delete": "Integer"
-            },
-            "InvalidMapType": {
-                "type": "map",
-                "key": {
-                    "target": "ValidInput"
-                },
-                "value": {
-                    "target": "Integer"
-                }
-            },
-            "ValidMap": {
-                "type": "map",
-                "key": {
-                    "target": "String"
-                },
-                "value": {
-                    "target": "String"
-                }
-            },
-            "fooTrait": {
-                "type": "string",
-                "trait": true
-            },
-            "InvalidTraitReference": {
-                "type": "list",
-                "member": {"target": "fooTrait"}
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#ValidList": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#String"
             }
-        }
-    },
-    "another.ns": {
-        "shapes": {
-            "String": {
-                "type": "string"
-            },
-            "InvalidResource2": {
-                "type": "resource"
+        },
+        "ns.foo#InvalidListMemberReference": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#NotFound"
             }
+        },
+        "ns.foo#InvalidListMemberMember": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#ValidInput$integer"
+            }
+        },
+        "ns.foo#InvalidListMemberResource": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#MyResource"
+            }
+        },
+        "ns.foo#InvalidListMemberService": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#MyService"
+            }
+        },
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "resources": [
+                {
+                    "$target": "ns.foo#MyResource"
+                },
+                {
+                    "$target": "ns.foo#InvalidResourceLifecycle"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "foo"
+                    }
+                ]
+            }
+        },
+        "ns.foo#MyResource": {
+            "type": "resource",
+            "identifiers": {
+                "myId": {
+                    "$target": "ns.foo#MyResourceIdentifier"
+                }
+            }
+        },
+        "ns.foo#MyResourceIdentifier": {
+            "type": "string"
+        },
+        "ns.foo#Integer": {
+            "type": "integer"
+        },
+        "ns.foo#String": {
+            "type": "string"
+        },
+        "ns.foo#InvalidResourceIdentifierType": {
+            "type": "resource",
+            "identifiers": {
+                "invalidInteger": {
+                    "$target": "ns.foo#Integer"
+                }
+            }
+        },
+        "ns.foo#InvalidResourceIdentifierReference": {
+            "type": "resource",
+            "identifiers": {
+                "invalidId": {
+                    "$target": "ns.foo#NotFound"
+                }
+            }
+        },
+        "ns.foo#InvalidResourceBindingReference": {
+            "type": "resource",
+            "resources": [
+                {
+                    "$target": "ns.foo#NotFound"
+                }
+            ]
+        },
+        "ns.foo#InvalidResourceBindingType": {
+            "type": "resource",
+            "resources": [
+                {
+                    "$target": "ns.foo#Integer"
+                }
+            ]
+        },
+        "ns.foo#ValidOperation": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ValidInput"
+            },
+            "output": {
+                "$target": "ns.foo#ValidOutput"
+            },
+            "errors": [
+                {
+                    "$target": "ns.foo#ValidError"
+                }
+            ],
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#ValidInput": {
+            "type": "structure",
+            "members": {
+                "integer": {
+                    "$target": "ns.foo#Integer"
+                }
+            }
+        },
+        "ns.foo#ValidOutput": {
+            "type": "structure",
+            "members": {
+                "integer": {
+                    "$target": "ns.foo#Integer"
+                }
+            }
+        },
+        "ns.foo#ValidError": {
+            "type": "structure",
+            "members": {
+                "integer": {
+                    "$target": "ns.foo#Integer"
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "ns.foo#InalidOperationInputOutputErrorNotFound": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#NotFound"
+            },
+            "output": {
+                "$target": "ns.foo#NotFound"
+            },
+            "errors": [
+                {
+                    "$target": "ns.foo#NotFound"
+                }
+            ],
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#InalidOperationInputOutputErrorBadTypes": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#Integer"
+            },
+            "output": {
+                "$target": "ns.foo#Integer"
+            },
+            "errors": [
+                {
+                    "$target": "ns.foo#Integer"
+                }
+            ],
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#InvalidOperationBadErrorTraits": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ValidError"
+            },
+            "output": {
+                "$target": "ns.foo#ValidError"
+            },
+            "errors": [
+                {
+                    "$target": "ns.foo#ValidInput"
+                }
+            ],
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#InvalidResourceLifecycle": {
+            "type": "resource",
+            "create": {
+                "$target": "ns.foo#Integer"
+            },
+            "read": {
+                "$target": "ns.foo#Integer"
+            },
+            "update": {
+                "$target": "ns.foo#Integer"
+            },
+            "delete": {
+                "$target": "ns.foo#Integer"
+            }
+        },
+        "ns.foo#InvalidMapType": {
+            "type": "map",
+            "key": {
+                "$target": "ns.foo#ValidInput"
+            },
+            "value": {
+                "$target": "ns.foo#Integer"
+            }
+        },
+        "ns.foo#ValidMap": {
+            "type": "map",
+            "key": {
+                "$target": "ns.foo#String"
+            },
+            "value": {
+                "$target": "ns.foo#String"
+            }
+        },
+        "ns.foo#fooTrait": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#InvalidTraitReference": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#fooTrait"
+            }
+        },
+        "another.ns#String": {
+            "type": "string"
+        },
+        "another.ns#InvalidResource2": {
+            "type": "resource"
         }
     }
 }

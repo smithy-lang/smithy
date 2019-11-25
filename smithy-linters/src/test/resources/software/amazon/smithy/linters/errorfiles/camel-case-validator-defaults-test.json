@@ -1,5 +1,70 @@
 {
-    "smithy": "0.4.0",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#InvalidTrait": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#validTrait": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#lowerStructureTrait": {
+            "type": "structure",
+            "members": {
+                "lowerCamelCase": {
+                    "$target": "ns.foo#Foo"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#upperStructureTrait": {
+            "type": "structure",
+            "members": {
+                "UpperCamelCase": {
+                    "$target": "ns.foo#Foo"
+                },
+                "snake_case": {
+                    "$target": "ns.foo#Foo"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": true
+            }
+        },
+        "ns.foo#Foo": {
+            "type": "string"
+        },
+        "ns.foo#BazBar": {
+            "type": "string"
+        },
+        "ns.foo#bam": {
+            "type": "string"
+        },
+        "ns.foo#snake_case": {
+            "type": "string"
+        },
+        "ns.foo#Structure": {
+            "type": "structure",
+            "members": {
+                "lowerCamelCase": {
+                    "$target": "ns.foo#Foo"
+                },
+                "UpperCamelCase": {
+                    "$target": "ns.foo#Foo"
+                },
+                "snake_case": {
+                    "$target": "ns.foo#Foo"
+                }
+            }
+        }
+    },
     "metadata": {
         "validators": [
             {
@@ -14,64 +79,5 @@
                 }
             }
         ]
-    },
-    "ns.foo": {
-        "shapes": {
-            "InvalidTrait": {
-                "trait": true,
-                "type": "string"
-            },
-            "validTrait": {
-                "trait": true,
-                "type": "string"
-            },
-            "lowerStructureTrait": {
-                "trait": true,
-                "type": "structure",
-                "members": {
-                    "lowerCamelCase": {
-                        "target": "Foo"
-                    }
-                }
-            },
-            "upperStructureTrait": {
-                "trait": true,
-                "type": "structure",
-                "members": {
-                    "UpperCamelCase": {
-                        "target": "Foo"
-                    },
-                    "snake_case": {
-                        "target": "Foo"
-                    }
-                }
-            },
-            "Foo": {
-                "type": "string"
-            },
-            "BazBar": {
-                "type": "string"
-            },
-            "bam": {
-                "type": "string"
-            },
-            "snake_case": {
-                "type": "string"
-            },
-            "Structure": {
-                "type": "structure",
-                "members": {
-                    "lowerCamelCase": {
-                        "target": "Foo"
-                    },
-                    "UpperCamelCase": {
-                        "target": "Foo"
-                    },
-                    "snake_case": {
-                        "target": "Foo"
-                    }
-                }
-            }
-        }
     }
 }

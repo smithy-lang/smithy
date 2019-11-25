@@ -1,33 +1,31 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "A": {
-                "type": "structure",
-                "members": {
-                    "Foo": {
-                        "target": "String"
-                    },
-                    "foo": {
-                        "target": "String"
-                    },
-                    "fOO": {
-                        "target": "String"
-                    },
-                    "baz": {
-                        "target": "String"
-                    },
-                    "Baz": {
-                        "target": "String"
-                    },
-                    "Bar": {
-                        "target": "String"
-                    }
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#A": {
+            "type": "structure",
+            "members": {
+                "Foo": {
+                    "$target": "ns.foo#String"
+                },
+                "foo": {
+                    "$target": "ns.foo#String"
+                },
+                "fOO": {
+                    "$target": "ns.foo#String"
+                },
+                "baz": {
+                    "$target": "ns.foo#String"
+                },
+                "Baz": {
+                    "$target": "ns.foo#String"
+                },
+                "Bar": {
+                    "$target": "ns.foo#String"
                 }
-            },
-            "String": {
-                "type": "string"
             }
+        },
+        "ns.foo#String": {
+            "type": "string"
         }
     }
 }

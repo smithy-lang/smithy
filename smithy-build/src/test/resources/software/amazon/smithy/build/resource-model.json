@@ -1,37 +1,56 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "MyService": {
-                "type": "service",
-                "protocols": [{"name": "foo"}, {"name": "baz"}],
-                "version": "2017-01-19",
-                "resources": [
-                    "MyResource"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-19",
+            "resources": [
+                {
+                    "$target": "ns.foo#MyResource"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "foo"
+                    },
+                    {
+                        "name": "baz"
+                    }
                 ]
+            }
+        },
+        "ns.foo#MyResource": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "$target": "ns.foo#MyResourceId"
+                }
             },
-            "MyResource": {
-                "type": "resource",
-                "identifiers": {
-                    "id": "MyResourceId"
-                },
-                "read": "GetMyResource"
+            "read": {
+                "$target": "ns.foo#GetMyResource"
+            }
+        },
+        "ns.foo#MyResourceId": {
+            "type": "string"
+        },
+        "ns.foo#GetMyResource": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#GetMyResourceInput"
             },
-            "MyResourceId": {
-                "type": "string"
-            },
-            "GetMyResource": {
-                "type": "operation",
-                "readonly": true,
-                "input": "GetMyResourceInput"
-            },
-            "GetMyResourceInput": {
-                "type": "structure",
-                "members": {
-                    "id": {
-                        "target": "MyResourceId",
-                        "required": true,
-                        "sensitive": true
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#GetMyResourceInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "$target": "ns.foo#MyResourceId",
+                    "traits": {
+                        "smithy.api#required": true,
+                        "smithy.api#sensitive": true
                     }
                 }
             }

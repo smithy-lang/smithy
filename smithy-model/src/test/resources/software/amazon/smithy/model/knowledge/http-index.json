@@ -1,221 +1,299 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "MyService": {
-                "type": "service",
-                "version": "2017-01-17",
-                "protocols": [{"name": "example"}],
-                "operations": [
-                    "ServiceOperationNoInputOutput",
-                    "ServiceOperationExplicitUriMethodAndCode",
-                    "ServiceOperationExplicitMembers",
-                    "ServiceOperationExplicitBody",
-                    "WithLabels"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "operations": [
+                {
+                    "$target": "ns.foo#ServiceOperationNoInputOutput"
+                },
+                {
+                    "$target": "ns.foo#ServiceOperationExplicitUriMethodAndCode"
+                },
+                {
+                    "$target": "ns.foo#ServiceOperationExplicitMembers"
+                },
+                {
+                    "$target": "ns.foo#ServiceOperationExplicitBody"
+                },
+                {
+                    "$target": "ns.foo#WithLabels"
+                }
+            ],
+            "traits": {
+                "smithy.api#protocols": [
+                    {
+                        "name": "example"
+                    }
                 ]
-            },
-            "ServiceOperationNoInputOutput": {
-                "type": "operation",
-                "http": {
-                    "uri": "\/ServiceOperationNoInputOutput",
+            }
+        },
+        "ns.foo#ServiceOperationNoInputOutput": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/ServiceOperationNoInputOutput",
                     "method": "PATCH"
                 }
-            },
-            "ServiceOperationExplicitUriMethodAndCode": {
-                "type": "operation",
-                "http": {
+            }
+        },
+        "ns.foo#ServiceOperationExplicitUriMethodAndCode": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
                     "method": "PATCH",
-                    "uri": "\/someMethod",
+                    "uri": "/someMethod",
                     "code": 204
                 }
+            }
+        },
+        "ns.foo#ServiceOperationExplicitMembers": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ServiceOperationExplicitMembersInput"
             },
-            "ServiceOperationExplicitMembers": {
-                "type": "operation",
-                "input": "ServiceOperationExplicitMembersInput",
-                "output": "ServiceOperationExplicitMembersOutput",
-                "http": {
-                    "uri": "\/explicitMembersA",
+            "output": {
+                "$target": "ns.foo#ServiceOperationExplicitMembersOutput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/explicitMembersA",
                     "method": "POST",
                     "code": 200
                 }
-            },
-            "ServiceOperationExplicitMembersInput": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String",
-                        "httpHeader": "X-Foo"
-                    },
-                    "baz": {
-                        "target": "String",
-                        "httpQuery": "baz"
-                    },
-                    "bar": {
-                        "target": "StringList",
-                        "httpQuery": "bar"
-                    },
-                    "bam": {
-                        "target": "String",
-                        "httpPayload": true
-                    },
-                    "qux": {
-                        "target": "StringMap",
-                        "httpPrefixHeaders": "X-Prefix-"
+            }
+        },
+        "ns.foo#ServiceOperationExplicitMembersInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
+                    }
+                },
+                "baz": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpQuery": "baz"
+                    }
+                },
+                "bar": {
+                    "$target": "ns.foo#StringList",
+                    "traits": {
+                        "smithy.api#httpQuery": "bar"
+                    }
+                },
+                "bam": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpPayload": true
+                    }
+                },
+                "qux": {
+                    "$target": "ns.foo#StringMap",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": "X-Prefix-"
                     }
                 }
-            },
-            "ServiceOperationExplicitMembersOutput": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String",
-                        "httpHeader": "X-Foo"
-                    },
-                    "qux": {
-                        "target": "StringMap",
-                        "httpPrefixHeaders": "X-Prefix-"
-                    },
-                    "baz": {
-                        "target": "String"
-                    },
-                    "bar": {
-                        "target": "String"
-                    },
-                    "bam": {
-                        "target": "String"
+            }
+        },
+        "ns.foo#ServiceOperationExplicitMembersOutput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
                     }
+                },
+                "qux": {
+                    "$target": "ns.foo#StringMap",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": "X-Prefix-"
+                    }
+                },
+                "baz": {
+                    "$target": "ns.foo#String"
+                },
+                "bar": {
+                    "$target": "ns.foo#String"
+                },
+                "bam": {
+                    "$target": "ns.foo#String"
                 }
+            }
+        },
+        "ns.foo#ServiceOperationExplicitBody": {
+            "type": "operation",
+            "output": {
+                "$target": "ns.foo#ServiceOperationExplicitBodyOutput"
             },
-            "ServiceOperationExplicitBody": {
-                "type": "operation",
-                "output": "ServiceOperationExplicitBodyOutput",
-                "http": {
-                    "uri": "\/explicitMembersB",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/explicitMembersB",
                     "method": "POST",
                     "code": 200
                 }
-            },
-            "ServiceOperationExplicitBodyOutput": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String",
-                        "httpHeader": "X-Foo"
-                    },
-                    "qux": {
-                        "target": "StringMap",
-                        "httpPrefixHeaders": "X-Prefix-"
-                    },
-                    "baz": {
-                        "target": "String",
-                        "httpPayload": true
+            }
+        },
+        "ns.foo#ServiceOperationExplicitBodyOutput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Foo"
+                    }
+                },
+                "qux": {
+                    "$target": "ns.foo#StringMap",
+                    "traits": {
+                        "smithy.api#httpPrefixHeaders": "X-Prefix-"
+                    }
+                },
+                "baz": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpPayload": true
                     }
                 }
+            }
+        },
+        "ns.foo#ServiceOperationWithStructurePayload": {
+            "type": "operation",
+            "output": {
+                "$target": "ns.foo#ServiceOperationWithStructurePayloadOutput"
             },
-            "ServiceOperationWithStructurePayload": {
-                "type": "operation",
-                "output": "ServiceOperationWithStructurePayloadOutput",
-                "http": {
+            "traits": {
+                "smithy.api#http": {
                     "uri": "/ServiceOperationWithStructurePayload",
                     "method": "POST",
                     "code": 200
                 }
-            },
-            "ServiceOperationWithStructurePayloadOutput": {
-                "type": "structure",
-                "members": {
-                    "baz": {
-                        "target": "StructurePayload",
-                        "httpPayload": true
+            }
+        },
+        "ns.foo#ServiceOperationWithStructurePayloadOutput": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "ns.foo#StructurePayload",
+                    "traits": {
+                        "smithy.api#httpPayload": true
                     }
                 }
+            }
+        },
+        "ns.foo#ServiceOperationWithMediaType": {
+            "type": "operation",
+            "output": {
+                "$target": "ns.foo#ServiceOperationWithMediaTypeOutput"
             },
-            "ServiceOperationWithMediaType": {
-                "type": "operation",
-                "output": "ServiceOperationWithMediaTypeOutput",
-                "http": {
+            "traits": {
+                "smithy.api#http": {
                     "uri": "/ServiceOperationWithMediaType",
                     "method": "POST",
                     "code": 200
                 }
-            },
-            "ServiceOperationWithMediaTypeOutput": {
-                "type": "structure",
-                "members": {
-                    "baz": {
-                        "target": "XmlBlob",
-                        "httpPayload": true
+            }
+        },
+        "ns.foo#ServiceOperationWithMediaTypeOutput": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "ns.foo#XmlBlob",
+                    "traits": {
+                        "smithy.api#httpPayload": true
                     }
                 }
+            }
+        },
+        "ns.foo#ServiceOperationWithBlobPayload": {
+            "type": "operation",
+            "output": {
+                "$target": "ns.foo#ServiceOperationWithBlobPayloadOutput"
             },
-            "ServiceOperationWithBlobPayload": {
-                "type": "operation",
-                "output": "ServiceOperationWithBlobPayloadOutput",
-                "http": {
+            "traits": {
+                "smithy.api#http": {
                     "uri": "/ServiceOperationWithMediaType",
                     "method": "POST",
                     "code": 200
                 }
-            },
-            "ServiceOperationWithBlobPayloadOutput": {
-                "type": "structure",
-                "members": {
-                    "baz": {
-                        "target": "Blob",
-                        "httpPayload": true
+            }
+        },
+        "ns.foo#ServiceOperationWithBlobPayloadOutput": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "smithy.api#Blob",
+                    "traits": {
+                        "smithy.api#httpPayload": true
                     }
                 }
-            },
-            "XmlBlob": {
-                "type": "blob",
-                "mediaType": "application/xml"
-            },
-            "StructurePayload": {
-                "type": "structure",
-                "members": {
-                    "foo": {"target": "String"}
+            }
+        },
+        "ns.foo#XmlBlob": {
+            "type": "blob",
+            "traits": {
+                "smithy.api#mediaType": "application/xml"
+            }
+        },
+        "ns.foo#StructurePayload": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String"
                 }
+            }
+        },
+        "ns.foo#WithLabels": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#WithLabelsInput"
             },
-            "WithLabels": {
-                "type": "operation",
-                "input": "WithLabelsInput",
-                "http": {
-                    "uri": "\/foo\/{baz}",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/foo/{baz}",
                     "method": "POST"
                 }
-            },
-            "WithLabelsInput": {
-                "type": "structure",
-                "members": {
-                    "baz": {
-                        "target": "String",
-                        "httpLabel": true,
-                        "required": true
+            }
+        },
+        "ns.foo#WithLabelsInput": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
                     }
                 }
+            }
+        },
+        "ns.foo#ErrorExplicitStatus": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "client",
+                "smithy.api#httpError": 403
+            }
+        },
+        "ns.foo#String": {
+            "type": "string"
+        },
+        "ns.foo#StringList": {
+            "type": "list",
+            "member": {
+                "$target": "smithy.api#String"
+            }
+        },
+        "ns.foo#StringMap": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
             },
-            "ErrorExplicitStatus": {
-                "type": "structure",
-                "error": "client",
-                "httpError": 403
-            },
-            "String": {
-                "type": "string"
-            },
-            "StringList": {
-                "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                }
-            },
-            "StringMap": {
-                "type": "map",
-                "key": {
-                    "target": "smithy.api#String"
-                },
-                "value": {
-                    "target": "smithy.api#String"
-                }
+            "value": {
+                "$target": "smithy.api#String"
             }
         }
     }

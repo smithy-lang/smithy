@@ -1,10 +1,10 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "MyStructure": {
-                "type": "structure",
-                "references": [
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#MyStructure": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#references": [
                     {
                         "resource": "MyResource",
                         "ids": {
@@ -12,11 +12,13 @@
                         }
                     }
                 ]
-            },
-            "MyResource": {
-                "type": "resource",
-                "identifiers": {
-                    "abc": "smithy.api#String"
+            }
+        },
+        "ns.foo#MyResource": {
+            "type": "resource",
+            "identifiers": {
+                "abc": {
+                    "$target": "smithy.api#String"
                 }
             }
         }

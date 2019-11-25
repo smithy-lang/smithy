@@ -1,39 +1,49 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "String": {
-                "type": "string",
-                "range": {
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#String": {
+            "type": "string",
+            "traits": {
+                "smithy.api#range": {
                     "min": 0,
                     "max": 10
                 }
-            },
-            "Invoke": {
-                "type": "operation",
-                "input": "InvokeInput"
-            },
-            "InvokeInput": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String",
-                        "test": true
+            }
+        },
+        "ns.foo#Invoke": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#InvokeInput"
+            }
+        },
+        "ns.foo#InvokeInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "ns.foo#test": true
                     }
                 }
-            },
-            "Invalid": {
-                "type": "structure",
-                "members": {
-                    "baz": {
-                        "target": "String",
-                        "test": true
+            }
+        },
+        "ns.foo#Invalid": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "ns.foo#test": true
                     }
                 }
-            },
-            "test": {
-                "type": "structure",
-                "trait": {"selector": "operation -[input]-> structure > member"}
+            }
+        },
+        "ns.foo#test": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "operation -[input]-> structure > member"
+                }
             }
         }
     }

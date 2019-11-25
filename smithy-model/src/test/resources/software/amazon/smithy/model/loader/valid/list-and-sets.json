@@ -1,124 +1,154 @@
 {
-  "smithy": "0.4.0",
-  "com.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "A": {
-        "type": "list",
-        "member": {
-          "target": "smithy.api#String"
+        "com.example#A": {
+            "type": "list",
+            "member": {
+                "$target": "smithy.api#String"
+            }
+        },
+        "com.example#B": {
+            "type": "list",
+            "member": {
+                "$target": "com.example#String"
+            }
+        },
+        "com.example#C": {
+            "type": "list",
+            "member": {
+                "$target": "com.example#String"
+            },
+            "traits": {
+                "smithy.api#deprecated": {}
+            }
+        },
+        "com.example#D": {
+            "type": "list",
+            "member": {
+                "$target": "com.example#String"
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#E": {
+            "type": "list",
+            "member": {
+                "$target": "com.example#String",
+                "traits": {
+                    "smithy.api#sensitive": true,
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#F": {
+            "type": "list",
+            "member": {
+                "$target": "com.example#String",
+                "traits": {
+                    "smithy.api#sensitive": true,
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#G": {
+            "type": "list",
+            "member": {
+                "$target": "com.example#String",
+                "traits": {
+                    "smithy.api#sensitive": true,
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#H": {
+            "type": "set",
+            "member": {
+                "$target": "smithy.api#String"
+            }
+        },
+        "com.example#I": {
+            "type": "set",
+            "member": {
+                "$target": "com.example#String"
+            }
+        },
+        "com.example#J": {
+            "type": "set",
+            "member": {
+                "$target": "com.example#String"
+            },
+            "traits": {
+                "smithy.api#deprecated": {}
+            }
+        },
+        "com.example#K": {
+            "type": "set",
+            "member": {
+                "$target": "com.example#String"
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#L": {
+            "type": "set",
+            "member": {
+                "$target": "com.example#String",
+                "traits": {
+                    "smithy.api#sensitive": true,
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#M": {
+            "type": "set",
+            "member": {
+                "$target": "com.example#String",
+                "traits": {
+                    "smithy.api#sensitive": true,
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#N": {
+            "type": "set",
+            "member": {
+                "$target": "com.example#String",
+                "traits": {
+                    "smithy.api#sensitive": true,
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#String": {
+            "type": "string"
         }
-      },
-      "B": {
-        "type": "list",
-        "member": {
-          "target": "String"
-        }
-      },
-      "C": {
-        "type": "list",
-        "member": {
-          "target": "String"
-        },
-        "deprecated": {}
-      },
-      "D": {
-        "type": "list",
-        "member": {
-          "target": "String"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "E": {
-        "type": "list",
-        "member": {
-          "target": "String",
-          "sensitive": true,
-          "since": "1.1"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "F": {
-        "type": "list",
-        "member": {
-          "target": "String",
-          "sensitive": true,
-          "since": "1.1"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "G": {
-        "type": "list",
-        "member": {
-          "target": "String",
-          "sensitive": true,
-          "since": "1.1"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "H": {
-        "type": "set",
-        "member": {
-          "target": "smithy.api#String"
-        }
-      },
-      "I": {
-        "type": "set",
-        "member": {
-          "target": "String"
-        }
-      },
-      "J": {
-        "type": "set",
-        "member": {
-          "target": "String"
-        },
-        "deprecated": {}
-      },
-      "K": {
-        "type": "set",
-        "member": {
-          "target": "String"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "L": {
-        "type": "set",
-        "member": {
-          "target": "String",
-          "sensitive": true,
-          "since": "1.1"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "M": {
-        "type": "set",
-        "member": {
-          "target": "String",
-          "sensitive": true,
-          "since": "1.1"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "N": {
-        "type": "set",
-        "member": {
-          "target": "String",
-          "sensitive": true,
-          "since": "1.1"
-        },
-        "deprecated": {},
-        "since": "1.0"
-      },
-      "String": {
-        "type": "string"
-      }
     }
-  }
 }

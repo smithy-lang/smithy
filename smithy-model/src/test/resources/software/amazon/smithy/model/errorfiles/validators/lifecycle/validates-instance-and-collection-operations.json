@@ -1,58 +1,94 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "ResourceA": {
-                "type": "resource",
-                "identifiers": {
-                    "id": "smithy.api#String"
-                },
-                "put": "PutValidA",
-                "create": "CreateValidA",
-                "read": "GetValidA",
-                "update": "UpdateValidA",
-                "delete": "DeleteValidA",
-                "list": "ListValidA",
-                "operations": ["GenericInstanceOperation"],
-                "collectionOperations": ["GenericCollectionOperation"]
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#ResourceA": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "$target": "smithy.api#String"
+                }
             },
-            "PutValidA": {
-                "type": "operation",
-                "idempotent": true
+            "put": {
+                "$target": "ns.foo#PutValidA"
             },
-            "CreateValidA": {
-                "type": "operation",
-                "input": "ResourceAInput"
+            "create": {
+                "$target": "ns.foo#CreateValidA"
             },
-            "GetValidA": {
-                "type": "operation",
-                "readonly": true
+            "read": {
+                "$target": "ns.foo#GetValidA"
             },
-            "DeleteValidA": {
-                "type": "operation",
-                "idempotent": true
+            "update": {
+                "$target": "ns.foo#UpdateValidA"
             },
-            "UpdateValidA": {
-                "type": "operation"
+            "delete": {
+                "$target": "ns.foo#DeleteValidA"
             },
-            "ListValidA": {
-                "type": "operation",
-                "readonly": true,
-                "input": "ResourceAInput"
+            "list": {
+                "$target": "ns.foo#ListValidA"
             },
-            "GenericInstanceOperation": {
-                "type": "operation"
+            "operations": [
+                {
+                    "$target": "ns.foo#GenericInstanceOperation"
+                }
+            ],
+            "collectionOperations": [
+                {
+                    "$target": "ns.foo#GenericCollectionOperation"
+                }
+            ]
+        },
+        "ns.foo#PutValidA": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#idempotent": true
+            }
+        },
+        "ns.foo#CreateValidA": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ResourceAInput"
+            }
+        },
+        "ns.foo#GetValidA": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#DeleteValidA": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#idempotent": true
+            }
+        },
+        "ns.foo#UpdateValidA": {
+            "type": "operation"
+        },
+        "ns.foo#ListValidA": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ResourceAInput"
             },
-            "GenericCollectionOperation": {
-                "type": "operation",
-                "input": "ResourceAInput"
-            },
-            "ResourceAInput": {
-                "type": "structure",
-                "members": {
-                    "id": {
-                        "target": "smithy.api#String",
-                        "required": true
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#GenericInstanceOperation": {
+            "type": "operation"
+        },
+        "ns.foo#GenericCollectionOperation": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#ResourceAInput"
+            }
+        },
+        "ns.foo#ResourceAInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
                     }
                 }
             }

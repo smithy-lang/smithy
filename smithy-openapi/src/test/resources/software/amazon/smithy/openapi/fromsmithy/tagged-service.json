@@ -1,28 +1,66 @@
 {
-  "smithy": "0.4.0",
-  "smithy.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "Service": {
-        "type": "service",
-        "version": "2006-03-01",
-        "tags": ["foo"],
-        "protocols": [{"name": "aws.rest-json"}],
-        "operations": ["Operation1", "Operation2", "Operation3"]
-      },
-      "Operation1": {
-        "type": "operation",
-        "tags": ["bar", "baz", "foo", "qux"],
-        "http": {"uri": "/operation1", "method": "GET"}
-      },
-      "Operation2": {
-        "type": "operation",
-        "tags": ["qux"],
-        "http": {"uri": "/operation2", "method": "GET"}
-      },
-      "Operation3": {
-        "type": "operation",
-        "http": {"uri": "/operation3", "method": "GET"}
-      }
+        "smithy.example#Service": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "$target": "smithy.example#Operation1"
+                },
+                {
+                    "$target": "smithy.example#Operation2"
+                },
+                {
+                    "$target": "smithy.example#Operation3"
+                }
+            ],
+            "traits": {
+                "smithy.api#tags": [
+                    "foo"
+                ],
+                "smithy.api#protocols": [
+                    {
+                        "name": "aws.rest-json"
+                    }
+                ]
+            }
+        },
+        "smithy.example#Operation1": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#tags": [
+                    "bar",
+                    "baz",
+                    "foo",
+                    "qux"
+                ],
+                "smithy.api#http": {
+                    "uri": "/operation1",
+                    "method": "GET"
+                }
+            }
+        },
+        "smithy.example#Operation2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#tags": [
+                    "qux"
+                ],
+                "smithy.api#http": {
+                    "uri": "/operation2",
+                    "method": "GET"
+                }
+            }
+        },
+        "smithy.example#Operation3": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/operation3",
+                    "method": "GET"
+                }
+            }
+        }
     }
-  }
 }

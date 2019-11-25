@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 
@@ -36,8 +37,8 @@ public class MemberShapeTest {
 
     @Test
     public void mustContainMembersInShapeId() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            MemberShape.builder().id("ns.foo#bar$baz").target("foo$bar").build();
+        Assertions.assertThrows(SourceException.class, () -> {
+            MemberShape.builder().id("ns.foo#bar").target("ns.foo#bar").build();
         });
     }
 

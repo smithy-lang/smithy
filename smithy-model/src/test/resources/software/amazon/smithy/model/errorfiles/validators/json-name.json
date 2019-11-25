@@ -1,27 +1,31 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "A": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String",
-                        "jsonName": "A"
-                    },
-                    "b": {
-                        "target": "String",
-                        "jsonName": "B"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#A": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#jsonName": "A"
+                    }
+                },
+                "b": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#jsonName": "B"
                     }
                 }
-            },
-            "B": {
-                "type": "structure",
-                "jsonName": "Foo"
-            },
-            "String": {
-                "type": "string"
             }
+        },
+        "ns.foo#B": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#jsonName": "Foo"
+            }
+        },
+        "ns.foo#String": {
+            "type": "string"
         }
     }
 }

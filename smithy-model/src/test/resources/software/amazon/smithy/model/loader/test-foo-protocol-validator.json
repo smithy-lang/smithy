@@ -1,20 +1,22 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "MyService": {
-                "type": "service",
-                "version": "2017-01-17",
-                "protocols": [
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "traits": {
+                "smithy.api#protocols": [
                     {
                         "name": "example.foo"
                     }
                 ]
-            },
-            "OtherService": {
-                "type": "service",
-                "version": "2017-01-17",
-                "protocols": [
+            }
+        },
+        "ns.foo#OtherService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "traits": {
+                "smithy.api#protocols": [
                     {
                         "name": "example.foo"
                     }

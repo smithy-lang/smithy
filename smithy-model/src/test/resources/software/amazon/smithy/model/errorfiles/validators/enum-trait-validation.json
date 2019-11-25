@@ -1,19 +1,19 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Valid1": {
-                "type": "string",
-                "enum": {
-                    "foo": {
-                    },
-                    "bar": {
-                    }
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Valid1": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": {
+                    "foo": {},
+                    "bar": {}
                 }
-            },
-            "Valid2": {
-                "type": "string",
-                "enum": {
+            }
+        },
+        "ns.foo#Valid2": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": {
                     "foo": {
                         "name": "FOO",
                         "documentation": "foo",
@@ -31,10 +31,12 @@
                         ]
                     }
                 }
-            },
-            "Warn1": {
-                "type": "string",
-                "enum": {
+            }
+        },
+        "ns.foo#Warn1": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": {
                     "bar": {
                         "name": "_bar"
                     },
@@ -42,12 +44,13 @@
                         "name": "baz"
                     }
                 }
-            },
-            "Invalid1": {
-                "type": "string",
-                "enum": {
-                    "foo": {
-                    },
+            }
+        },
+        "ns.foo#Invalid1": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": {
+                    "foo": {},
                     "bar": {
                         "name": "BAR",
                         "documentation": "bar",
@@ -57,10 +60,12 @@
                         ]
                     }
                 }
-            },
-            "Invalid2": {
-                "type": "string",
-                "enum": {
+            }
+        },
+        "ns.foo#Invalid2": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": {
                     "foo": {
                         "name": "invalid!"
                     },
@@ -68,10 +73,12 @@
                         "name": "invalid2!"
                     }
                 }
-            },
-            "Invalid3": {
-                "type": "string",
-                "enum": {
+            }
+        },
+        "ns.foo#Invalid3": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": {
                     "foo": {
                         "name": "a"
                     },

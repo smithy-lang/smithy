@@ -1,59 +1,71 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Invalid1": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String",
-                        "eventPayload": true
-                    },
-                    "baz": {
-                        "target": "String",
-                        "eventPayload": true
-                    },
-                    "bar": {
-                        "target": "String",
-                        "eventHeader": true
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Invalid1": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#eventPayload": true
+                    }
+                },
+                "baz": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#eventPayload": true
+                    }
+                },
+                "bar": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#eventHeader": true
                     }
                 }
-            },
-            "Invalid2": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String",
-                        "idempotencyToken": true
-                    },
-                    "baz": {
-                        "target": "String",
-                        "idempotencyToken": true
-                    },
-                    "bar": {
-                        "target": "String"
-                    }
-                }
-            },
-            "Invalid3": {
-                "type": "structure",
-                "members": {
-                    "foo": {
-                        "target": "String",
-                        "httpPayload": true
-                    },
-                    "baz": {
-                        "target": "String",
-                        "httpPayload": true
-                    },
-                    "bar": {
-                        "target": "String"
-                    }
-                }
-            },
-            "String": {
-                "type": "string"
             }
+        },
+        "ns.foo#Invalid2": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#idempotencyToken": true
+                    }
+                },
+                "baz": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#idempotencyToken": true
+                    }
+                },
+                "bar": {
+                    "$target": "ns.foo#String"
+                }
+            }
+        },
+        "ns.foo#Invalid3": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpPayload": true
+                    }
+                },
+                "baz": {
+                    "$target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#httpPayload": true
+                    }
+                },
+                "bar": {
+                    "$target": "ns.foo#String"
+                }
+            }
+        },
+        "ns.foo#String": {
+            "type": "string"
         }
     }
 }

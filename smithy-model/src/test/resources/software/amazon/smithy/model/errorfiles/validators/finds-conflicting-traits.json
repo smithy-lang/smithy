@@ -1,63 +1,81 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "String1": {
-                "type": "string",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#String1": {
+            "type": "string",
+            "traits": {
                 "ns.foo#foo": true
-            },
-            "String2": {
-                "type": "string",
+            }
+        },
+        "ns.foo#String2": {
+            "type": "string",
+            "traits": {
                 "ns.foo#foo": true,
                 "ns.foo#baz": true
-            },
-            "String3": {
-                "type": "string",
+            }
+        },
+        "ns.foo#String3": {
+            "type": "string",
+            "traits": {
                 "ns.foo#foo": true,
                 "ns.foo#baz": true,
                 "ns.foo#qux": true
-            },
-            "String4": {
-                "type": "string",
+            }
+        },
+        "ns.foo#String4": {
+            "type": "string",
+            "traits": {
                 "ns.foo#bam": true,
                 "ns.foo#qux": true
-            },
-            "String5": {
-                "type": "string",
+            }
+        },
+        "ns.foo#String5": {
+            "type": "string",
+            "traits": {
                 "ns.foo#bam": true
-            },
-            "String6": {
-                "type": "string",
+            }
+        },
+        "ns.foo#String6": {
+            "type": "string",
+            "traits": {
                 "ns.foo#qux": true
-            },
-            "foo": {
-                "type": "structure",
-                "trait": {
+            }
+        },
+        "ns.foo#foo": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
                     "selector": "*",
                     "conflicts": [
                         "ns.foo#baz",
                         "ns.foo#qux"
                     ]
                 }
-            },
-            "baz": {
-                "type": "structure",
-                "trait": {
+            }
+        },
+        "ns.foo#baz": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
                     "selector": "*"
                 }
-            },
-            "qux": {
-                "type": "structure",
-                "trait": {
+            }
+        },
+        "ns.foo#qux": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
                     "selector": "*",
                     "conflicts": [
                         "ns.foo#bam"
                     ]
                 }
-            },
-            "bam": {
-                "type": "structure",
-                "trait": {
+            }
+        },
+        "ns.foo#bam": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
                     "selector": "*"
                 }
             }

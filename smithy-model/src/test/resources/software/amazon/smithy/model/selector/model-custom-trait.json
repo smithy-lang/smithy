@@ -1,64 +1,74 @@
 {
-  "smithy": "0.4.0",
-
-  "com.example": {
+    "smithy": "0.5.0",
     "shapes": {
-      "beta": {
-        "type": "structure",
-        "trait": {"selector": "member:of(structure)"}
-      },
-      "structuredTrait": {
-        "type": "structure",
-        "members": {
-          "lorem": {
-            "target": "StringShape",
-            "required": true
-          },
-          "ipsum": {
-            "target": "StringShape",
-            "required": true
-          },
-          "dolor": {
-            "target": "StringShape"
-          }
+        "com.example#beta": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "member:of(structure)"
+                }
+            }
         },
-        "trait": {
-          "selector": "string",
-          "conflicts": [
-            "com.example#beta"
-          ]
-        }
-      },
-
-      "MyShape": {
-        "type": "structure",
-        "members": {
-          "foo": {
-            "target": "StringShape",
-            "required": true,
-            "com.example#beta": true
-          }
-        }
-      },
-
-      "StringShape": {
-        "type": "string",
         "com.example#structuredTrait": {
-          "lorem": "This is a custom trait!",
-          "ipsum": "lorem and ipsum are both required values."
+            "type": "structure",
+            "members": {
+                "lorem": {
+                    "$target": "com.example#StringShape",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "ipsum": {
+                    "$target": "com.example#StringShape",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "dolor": {
+                    "$target": "com.example#StringShape"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "string",
+                    "conflicts": [
+                        "com.example#beta"
+                    ]
+                }
+            }
+        },
+        "com.example#MyShape": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "$target": "com.example#StringShape",
+                    "traits": {
+                        "smithy.api#required": true,
+                        "com.example#beta": true
+                    }
+                }
+            }
+        },
+        "com.example#StringShape": {
+            "type": "string",
+            "traits": {
+                "com.example#structuredTrait": {
+                    "lorem": "This is a custom trait!",
+                    "ipsum": "lorem and ipsum are both required values."
+                }
+            }
+        },
+        "com.example#AnotherStructureShape": {
+            "type": "structure",
+            "members": {
+                "bar": {
+                    "$target": "com.example#MyShape",
+                    "traits": {
+                        "smithy.api#required": true,
+                        "com.example#beta": true
+                    }
+                }
+            }
         }
-      },
-
-      "AnotherStructureShape": {
-        "type" : "structure",
-        "members": {
-          "bar" : {
-            "target": "MyShape",
-            "required": true,
-            "com.example#beta" : true
-          }
-        }
-      }
     }
-  }
 }

@@ -1,5 +1,207 @@
 {
-    "smithy": "0.4.0",
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#String": {
+            "type": "string"
+        },
+        "ns.foo#StringList": {
+            "type": "list",
+            "member": {
+                "$target": "ns.foo#String"
+            }
+        },
+        "ns.foo#Integer": {
+            "type": "integer"
+        },
+        "ns.foo#ListFoos": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#IgnoreMe": {
+            "type": "operation",
+            "output": {
+                "$target": "ns.foo#IgnoreMeOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#IgnoreMeOutput": {
+            "type": "structure"
+        },
+        "ns.foo#IgnoreMeToo": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#IgnoreMeTooInput"
+            },
+            "output": {
+                "$target": "ns.foo#IgnoreMeTooOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true,
+                "smithy.api#paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "items": "items",
+                    "pageSize": "maxResults"
+                }
+            }
+        },
+        "ns.foo#IgnoreMeTooInput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "$target": "ns.foo#String"
+                },
+                "maxResults": {
+                    "$target": "ns.foo#Integer"
+                }
+            }
+        },
+        "ns.foo#IgnoreMeTooOutput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "$target": "ns.foo#String"
+                },
+                "items": {
+                    "$target": "ns.foo#StringList",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#A": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#AInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#AInput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "$target": "ns.foo#String"
+                }
+            }
+        },
+        "ns.foo#B": {
+            "type": "operation",
+            "output": {
+                "$target": "ns.foo#BOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#BOutput": {
+            "type": "structure",
+            "members": {
+                "marker": {
+                    "$target": "ns.foo#String"
+                }
+            }
+        },
+        "ns.foo#GetFoos": {
+            "type": "operation",
+            "output": {
+                "$target": "ns.foo#GetFoosOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#GetFoosOutput": {
+            "type": "structure",
+            "members": {
+                "items": {
+                    "$target": "ns.foo#StringList",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#GetBars": {
+            "type": "operation",
+            "output": {
+                "$target": "ns.foo#GetBarsOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#GetBarsOutput": {
+            "type": "structure",
+            "members": {}
+        },
+        "ns.foo#SchwiftyFoos": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#SquanchFoos": {
+            "type": "operation",
+            "output": {
+                "$target": "ns.foo#SquanchFoosOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#SquanchFoosOutput": {
+            "type": "structure",
+            "members": {
+                "items": {
+                    "$target": "ns.foo#StringList",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#SomeOperation": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#SomeOperationInput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#SomeOperationInput": {
+            "type": "structure",
+            "members": {
+                "fizz": {
+                    "$target": "ns.foo#String"
+                }
+            }
+        },
+        "ns.foo#SomeOtherOperation": {
+            "type": "operation",
+            "output": {
+                "$target": "ns.foo#SomeOtherOperationOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "ns.foo#SomeOtherOperationOutput": {
+            "type": "structure",
+            "members": {
+                "buzz": {
+                    "$target": "ns.foo#String"
+                }
+            }
+        }
+    },
     "metadata": {
         "validators": [
             {
@@ -24,170 +226,5 @@
                 }
             }
         ]
-    },
-    "ns.foo": {
-        "shapes": {
-            "String": {
-                "type": "string"
-            },
-            "StringList": {
-                "type": "list",
-                "member": {
-                    "target": "String"
-                }
-            },
-            "Integer": {
-                "type": "integer"
-            },
-            "ListFoos": {
-                "type": "operation",
-                "readonly": true
-            },
-            "IgnoreMe": {
-                "type": "operation",
-                "readonly": true,
-                "output": "IgnoreMeOutput"
-            },
-            "IgnoreMeOutput": {
-                "type": "structure"
-            },
-            "IgnoreMeToo": {
-                "type": "operation",
-                "readonly": true,
-                "input": "IgnoreMeTooInput",
-                "output": "IgnoreMeTooOutput",
-                "paginated": {
-                    "inputToken": "nextToken",
-                    "outputToken": "nextToken",
-                    "items": "items",
-                    "pageSize": "maxResults"
-                }
-            },
-            "IgnoreMeTooInput": {
-                "type": "structure",
-                "members": {
-                    "nextToken": {
-                        "target": "String"
-                    },
-                    "maxResults": {
-                        "target": "Integer"
-                    }
-                }
-            },
-            "IgnoreMeTooOutput": {
-                "type": "structure",
-                "members": {
-                    "nextToken": {
-                        "target": "String"
-                    },
-                    "items": {
-                        "target": "StringList",
-                        "required": true
-                    }
-                }
-            },
-            "A": {
-                "type": "operation",
-                "readonly": true,
-                "input": "AInput"
-            },
-            "AInput": {
-                "type": "structure",
-                "members": {
-                    "nextToken": {
-                        "target": "String"
-                    }
-                }
-            },
-            "AInput": {
-                "type": "structure",
-                "members": {
-                    "nextToken": {
-                        "target": "String"
-                    }
-                }
-            },
-            "B": {
-                "type": "operation",
-                "readonly": true,
-                "output": "BOutput"
-            },
-            "BOutput": {
-                "type": "structure",
-                "members": {
-                    "marker": {
-                        "target": "String"
-                    }
-                }
-            },
-            "GetFoos": {
-                "type": "operation",
-                "readonly": true,
-                "output": "GetFoosOutput"
-            },
-            "GetFoosOutput": {
-                "type": "structure",
-                "members": {
-                    "items": {
-                        "target": "StringList",
-                        "required": true
-                    }
-                }
-            },
-            "GetBars": {
-                "type": "operation",
-                "readonly": true,
-                "output": "GetBarsOutput"
-            },
-            "GetBarsOutput": {
-                "type": "structure",
-                "members": {
-                }
-            },
-            "SchwiftyFoos": {
-                "type": "operation",
-                "readonly": true
-            },
-            "SquanchFoos": {
-                "type": "operation",
-                "readonly": true,
-                "output": "SquanchFoosOutput"
-            },
-            "SquanchFoosOutput": {
-                "type": "structure",
-                "members": {
-                    "items": {
-                        "target": "StringList",
-                        "required": true
-                    }
-                }
-            },
-            "SomeOperation": {
-                "type": "operation",
-                "readonly": true,
-                "input": "SomeOperationInput"
-            },
-            "SomeOperationInput": {
-                "type": "structure",
-                "members": {
-                    "fizz": {
-                        "target": "String"
-                    }
-                }
-            },
-            "SomeOtherOperation": {
-                "type": "operation",
-                "readonly": true,
-                "output": "SomeOtherOperationOutput"
-            },
-            "SomeOtherOperationOutput": {
-                "type": "structure",
-                "members": {
-                    "buzz": {
-                        "target": "String"
-                    }
-                }
-            }
-        }
     }
 }

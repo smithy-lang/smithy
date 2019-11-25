@@ -1,61 +1,67 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "FlatCollection": {
-                "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                },
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#FlatCollection": {
+            "type": "list",
+            "member": {
+                "$target": "smithy.api#String"
+            },
+            "traits": {
                 "smithy.api#xmlFlattened": true
+            }
+        },
+        "ns.foo#NotFlatCollection": {
+            "type": "list",
+            "member": {
+                "$target": "smithy.api#String"
+            }
+        },
+        "ns.foo#FlatMap": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
             },
-            "NotFlatCollection": {
-                "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                }
+            "value": {
+                "$target": "smithy.api#String"
             },
-            "FlatMap": {
-                "type": "map",
-                "key": {
-                    "target": "String"
-                },
-                "value": {
-                    "target": "String"
-                },
+            "traits": {
                 "smithy.api#xmlFlattened": true
+            }
+        },
+        "ns.foo#NotFlatMap": {
+            "type": "map",
+            "key": {
+                "$target": "smithy.api#String"
             },
-            "NotFlatMap": {
-                "type": "map",
-                "key": {
-                    "target": "String"
-                },
-                "value": {
-                    "target": "String"
+            "value": {
+                "$target": "smithy.api#String"
+            }
+        },
+        "ns.foo#ValidStructure1": {
+            "type": "structure",
+            "members": {
+                "flatList": {
+                    "$target": "ns.foo#FlatCollection"
                 }
-            },
-            "ValidStructure1": {
-                "type": "structure",
-                "members": {
-                    "flatList": {
-                        "target": "FlatCollection"
-                    }
-                }
-            },
-            "ValidStructure2": {
-                "type": "structure",
-                "members": {
-                    "flatList": {
-                        "target": "NotFlatCollection",
+            }
+        },
+        "ns.foo#ValidStructure2": {
+            "type": "structure",
+            "members": {
+                "flatList": {
+                    "$target": "ns.foo#NotFlatCollection",
+                    "traits": {
                         "smithy.api#xmlFlattened": true
                     }
                 }
-            },
-            "ValidStructure3": {
-                "type": "structure",
-                "members": {
-                    "flatmap": {
-                        "target": "NotFlatMap",
+            }
+        },
+        "ns.foo#ValidStructure3": {
+            "type": "structure",
+            "members": {
+                "flatmap": {
+                    "$target": "ns.foo#NotFlatMap",
+                    "traits": {
                         "smithy.api#xmlFlattened": true
                     }
                 }

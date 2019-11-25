@@ -1,0 +1,12 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "smithy.example#Hi": {
+            "type": "list",
+            "member": {
+                "$target": "smithy.api#String",
+                "foo": true
+            }
+        }
+    }
+}

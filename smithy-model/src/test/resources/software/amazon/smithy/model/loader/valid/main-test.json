@@ -1,197 +1,275 @@
 {
-  "smithy": "0.4.0",
-  "example.weather": {
+    "smithy": "0.5.0",
     "shapes": {
-      "City": {
-        "type": "resource",
-        "identifiers": {
-          "cityId": "example.weather#CityId"
+        "example.weather#City": {
+            "type": "resource",
+            "identifiers": {
+                "cityId": {
+                    "$target": "example.weather#CityId"
+                }
+            },
+            "read": {
+                "$target": "example.weather#GetCity"
+            },
+            "list": {
+                "$target": "example.weather#ListCities"
+            },
+            "resources": [
+                {
+                    "$target": "example.weather#Forecast"
+                }
+            ]
         },
-        "read": "example.weather#GetCity",
-        "list": "example.weather#ListCities",
-        "resources": [
-          "example.weather#Forecast"
-        ]
-      },
-      "CityCoordinates": {
-        "type": "structure",
-        "members": {
-          "latitude": {
-            "target": "smithy.api#Float",
-            "required": true
-          },
-          "longitude": {
-            "target": "smithy.api#Float",
-            "required": true
-          }
-        }
-      },
-      "CityId": {
-        "type": "string",
-        "pattern": "^[A-Za-z0-9 ]+$"
-      },
-      "CitySummaries": {
-        "type": "list",
-        "member": {
-          "target": "CitySummary"
-        }
-      },
-      "CitySummary": {
-        "type": "structure",
-        "members": {
-          "cityId": {
-            "target": "CityId",
-            "required": true
-          },
-          "name": {
-            "target": "smithy.api#String",
-            "required": true
-          }
+        "example.weather#CityCoordinates": {
+            "type": "structure",
+            "members": {
+                "latitude": {
+                    "$target": "smithy.api#Float",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "longitude": {
+                    "$target": "smithy.api#Float",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
         },
-        "references": [{"resource": "example.weather#City"}]
-      },
-      "Forecast": {
-        "type": "resource",
-        "identifiers": {
-          "cityId": "example.weather#CityId"
+        "example.weather#CityId": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "^[A-Za-z0-9 ]+$"
+            }
         },
-        "read": "example.weather#GetForecast"
-      },
-      "GetCity": {
-        "type": "operation",
-        "input": "example.weather#GetCityInput",
-        "output": "example.weather#GetCityOutput",
-        "errors": [
-          "example.weather#NoSuchResource"
-        ],
-        "readonly": true
-      },
-      "GetCityInput": {
-        "type": "structure",
-        "members": {
-          "cityId": {
-            "target": "CityId",
-            "required": true
-          }
-        }
-      },
-      "GetCityOutput": {
-        "type": "structure",
-        "members": {
-          "coordinates": {
-            "target": "CityCoordinates",
-            "required": true
-          },
-          "name": {
-            "target": "smithy.api#String",
-            "required": true
-          }
-        }
-      },
-      "GetCurrentTime": {
-        "type": "operation",
-        "output": "example.weather#GetCurrentTimeOutput",
-        "readonly": true
-      },
-      "GetCurrentTimeOutput": {
-        "type": "structure",
-        "members": {
-          "time": {
-            "target": "smithy.api#Timestamp"
-          }
-        }
-      },
-      "GetForecast": {
-        "type": "operation",
-        "input": "example.weather#GetForecastInput",
-        "output": "example.weather#GetForecastOutput",
-        "errors": [
-          "example.weather#NoSuchResource"
-        ],
-        "readonly": true
-      },
-      "GetForecastInput": {
-        "type": "structure",
-        "members": {
-          "cityId": {
-            "target": "CityId",
-            "required": true
-          }
-        }
-      },
-      "GetForecastOutput": {
-        "type": "structure",
-        "members": {
-          "chanceOfRain": {
-            "target": "smithy.api#Float",
-            "required": true
-          },
-          "high": {
-            "target": "smithy.api#Integer",
-            "required": true
-          },
-          "low": {
-            "target": "smithy.api#Integer",
-            "required": true
-          }
-        }
-      },
-      "ListCities": {
-        "type": "operation",
-        "input": "example.weather#ListCitiesInput",
-        "output": "example.weather#ListCitiesOutput",
-        "paginated": {
-          "inputToken": "nextToken",
-          "items": "items",
-          "outputToken": "nextToken",
-          "pageSize": "pageSize"
+        "example.weather#CitySummaries": {
+            "type": "list",
+            "member": {
+                "$target": "example.weather#CitySummary"
+            }
         },
-        "readonly": true
-      },
-      "ListCitiesInput": {
-        "type": "structure",
-        "members": {
-          "nextToken": {
-            "target": "smithy.api#String"
-          },
-          "pageSize": {
-            "target": "smithy.api#Integer"
-          }
+        "example.weather#CitySummary": {
+            "type": "structure",
+            "members": {
+                "cityId": {
+                    "$target": "example.weather#CityId",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "name": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#references": [
+                    {
+                        "resource": "example.weather#City"
+                    }
+                ]
+            }
         },
-        "documentation": "hello!"
-      },
-      "ListCitiesOutput": {
-        "type": "structure",
-        "members": {
-          "items": {
-            "target": "CitySummaries",
-            "required": true
-          },
-          "nextToken": {
-            "target": "smithy.api#String"
-          }
+        "example.weather#Forecast": {
+            "type": "resource",
+            "identifiers": {
+                "cityId": {
+                    "$target": "example.weather#CityId"
+                }
+            },
+            "read": {
+                "$target": "example.weather#GetForecast"
+            }
+        },
+        "example.weather#GetCity": {
+            "type": "operation",
+            "input": {
+                "$target": "example.weather#GetCityInput"
+            },
+            "output": {
+                "$target": "example.weather#GetCityOutput"
+            },
+            "errors": [
+                {
+                    "$target": "example.weather#NoSuchResource"
+                }
+            ],
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "example.weather#GetCityInput": {
+            "type": "structure",
+            "members": {
+                "cityId": {
+                    "$target": "example.weather#CityId",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "example.weather#GetCityOutput": {
+            "type": "structure",
+            "members": {
+                "coordinates": {
+                    "$target": "example.weather#CityCoordinates",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "name": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "example.weather#GetCurrentTime": {
+            "type": "operation",
+            "output": {
+                "$target": "example.weather#GetCurrentTimeOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "example.weather#GetCurrentTimeOutput": {
+            "type": "structure",
+            "members": {
+                "time": {
+                    "$target": "smithy.api#Timestamp"
+                }
+            }
+        },
+        "example.weather#GetForecast": {
+            "type": "operation",
+            "input": {
+                "$target": "example.weather#GetForecastInput"
+            },
+            "output": {
+                "$target": "example.weather#GetForecastOutput"
+            },
+            "errors": [
+                {
+                    "$target": "example.weather#NoSuchResource"
+                }
+            ],
+            "traits": {
+                "smithy.api#readonly": true
+            }
+        },
+        "example.weather#GetForecastInput": {
+            "type": "structure",
+            "members": {
+                "cityId": {
+                    "$target": "example.weather#CityId",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "example.weather#GetForecastOutput": {
+            "type": "structure",
+            "members": {
+                "chanceOfRain": {
+                    "$target": "smithy.api#Float",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "high": {
+                    "$target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "low": {
+                    "$target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "example.weather#ListCities": {
+            "type": "operation",
+            "input": {
+                "$target": "example.weather#ListCitiesInput"
+            },
+            "output": {
+                "$target": "example.weather#ListCitiesOutput"
+            },
+            "traits": {
+                "smithy.api#paginated": {
+                    "inputToken": "nextToken",
+                    "items": "items",
+                    "outputToken": "nextToken",
+                    "pageSize": "pageSize"
+                },
+                "smithy.api#readonly": true
+            }
+        },
+        "example.weather#ListCitiesInput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "$target": "smithy.api#String"
+                },
+                "pageSize": {
+                    "$target": "smithy.api#Integer"
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "hello!"
+            }
+        },
+        "example.weather#ListCitiesOutput": {
+            "type": "structure",
+            "members": {
+                "items": {
+                    "$target": "example.weather#CitySummaries",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                },
+                "nextToken": {
+                    "$target": "smithy.api#String"
+                }
+            }
+        },
+        "example.weather#NoSuchResource": {
+            "type": "structure",
+            "members": {
+                "resourceType": {
+                    "$target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "example.weather#Weather": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "$target": "example.weather#GetCurrentTime"
+                }
+            ],
+            "resources": [
+                {
+                    "$target": "example.weather#City"
+                }
+            ]
         }
-      },
-      "NoSuchResource": {
-        "type": "structure",
-        "members": {
-          "resourceType": {
-            "target": "smithy.api#String",
-            "required": true
-          }
-        },
-        "error": "client"
-      },
-      "Weather": {
-        "type": "service",
-        "version": "2006-03-01",
-        "operations": [
-          "example.weather#GetCurrentTime"
-        ],
-        "resources": [
-          "example.weather#City"
-        ]
-      }
     }
-  }
 }
