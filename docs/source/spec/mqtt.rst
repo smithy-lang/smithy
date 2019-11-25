@@ -117,7 +117,7 @@ and ``{second}``, in the MQTT topic template:
                 "smithy.example#ExampleOperation": {
                     "type": "operation",
                     "input": {
-                        "target": "smithy.example#ExampleOperationInput"
+                        "$target": "smithy.example#ExampleOperationInput"
                     },
                     "traits": {
                         "smithy.mqtt#publish": "{first}/{second}"
@@ -127,21 +127,21 @@ and ``{second}``, in the MQTT topic template:
                     "type": "structure",
                     "members": {
                         "first": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true,
                                 "smithy.mqtt#topicLabel": true
                             }
                         },
                         "second": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true,
                                 "smithy.mqtt#topicLabel": true
                             }
                         },
                         "message": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     }
                 }
@@ -224,7 +224,7 @@ The following example defines an operation that publishes messages to the
                 "smithy.example#PostFoo": {
                     "type": "operation",
                     "input": {
-                        "target": "smithy.example#PostFooInput"
+                        "$target": "smithy.example#PostFooInput"
                     },
                     "traits": {
                         "smithy.mqtt#publish": "foo/{bar}"
@@ -234,17 +234,17 @@ The following example defines an operation that publishes messages to the
                     "type": "structure",
                     "members": {
                         "bar": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true,
                                 "smithy.mqtt#topicLabel": true
                             }
                         },
                         "message": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         },
                         "anotherValue": {
-                            "target": "smithy.api#Boolean"
+                            "$target": "smithy.api#Boolean"
                         }
                     }
                 }
@@ -342,7 +342,7 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
                 "smithy.example#SubscribeForEvents": {
                     "type": "operation",
                     "input": {
-                        "target": "smithy.example#SubscribeForEventsInput"
+                        "$target": "smithy.example#SubscribeForEventsInput"
                     },
                     "traits": {
                         "smithy.mqtt#subscribe": "events/{id}"
@@ -352,7 +352,7 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
                     "type": "structure",
                     "members": {
                         "id": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true,
                                 "smithy.mqtt#topicLabel": true
@@ -364,7 +364,7 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
                     "type": "structure",
                     "members": {
                         "events": {
-                            "target": "smithy.example#Event",
+                            "$target": "smithy.example#Event",
                             "traits": {
                                 "smithy.api#eventStream": true
                             }
@@ -375,7 +375,7 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
                     "type": "structure",
                     "members": {
                         "message": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     }
                 }

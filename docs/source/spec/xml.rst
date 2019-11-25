@@ -58,13 +58,13 @@ Given the following structure definition,
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#xmlAttribute": true
                             }
                         },
                         "bar": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     }
                 }
@@ -123,7 +123,7 @@ Given the following list definition:
                 "smithy.example#MyList": {
                     "type": "list",
                     "member": {
-                        "target": "smithy.api#String"
+                        "$target": "smithy.api#String"
                     },
                     "traits": {
                         "smithy.api#xmlFlattened": true
@@ -167,10 +167,10 @@ Given the following definition:
                 "smithy.example#MyMap": {
                     "type": "map",
                     "key": {
-                        "target": "smithy.api#String"
+                        "$target": "smithy.api#String"
                     },
                     "value": {
-                        "target": "smithy.api#String"
+                        "$target": "smithy.api#String"
                     },
                     "traits": {
                         "smithy.api#xmlFlattened": true,
@@ -240,13 +240,13 @@ Given the following structure definition,
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#xmlName": "Foo"
                             }
                         },
                         "bar": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     }
                 }
@@ -334,10 +334,10 @@ Given the following structure definition,
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         },
                         "bar": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     },
                     "traits": {
@@ -388,10 +388,10 @@ Given the following definition with a prefix:
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         },
                         "bar": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#xmlName": "baz:bar"
                             }
@@ -472,26 +472,26 @@ influence the overall structure of the payload.
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#xmlAttribute": true
                             }
                         },
                         "bar": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#xmlName": "Bar"
                             }
                         },
                         "baz": {
-                            "target": "smithy.example#MyList"
+                            "$target": "smithy.example#MyList"
                         }
                     }
                 },
                 "smithy.example#MyList": {
                     "type": "list",
                     "member": {
-                        "target": "smithy.api#String",
+                        "$target": "smithy.api#String",
                         "traits": {
                             "smithy.api#xmlName": "Item"
                         }

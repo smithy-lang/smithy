@@ -953,7 +953,7 @@ and HTTP bindings:
                 "smithy.example#PublishMessages": {
                     "type": "operation",
                     "input": {
-                        "target": "smithy.example#PublishMessagesInput"
+                        "$target": "smithy.example#PublishMessagesInput"
                     },
                     "traits": {
                         "smithy.api#http": {
@@ -966,7 +966,7 @@ and HTTP bindings:
                     "type": "structure",
                     "members": {
                         "messages": {
-                            "target": "smithy.example#Message",
+                            "$target": "smithy.example#Message",
                             "traits": {
                                 "smithy.api#httpPayload": true,
                                 "smithy.api#eventStream": true
@@ -978,7 +978,7 @@ and HTTP bindings:
                     "type": "structure",
                     "members": {
                         "message": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     }
                 }

@@ -181,7 +181,7 @@ identifiers, operations, and any number of child resources.
                     "version": "2006-03-01",
                     "resources": [
                         {
-                            "target": "example.weather#City"
+                            "$target": "example.weather#City"
                         }
                     ]
                 },
@@ -189,14 +189,14 @@ identifiers, operations, and any number of child resources.
                     "type": "resource",
                     "identifiers": {
                         "cityId": {
-                            "target": "example.weather#CityId"
+                            "$target": "example.weather#CityId"
                         }
                     },
                     "read": {
-                        "target": "example.weather#GetCity"
+                        "$target": "example.weather#GetCity"
                     },
                     "list": {
-                        "target": "example.weather#ListCities"
+                        "$target": "example.weather#ListCities"
                     }
                 },
                 "example.weather#CityId": {
@@ -246,18 +246,18 @@ Each ``City`` has a single ``Forecast``. This can be defined by adding the
                     "type": "resource",
                     "identifiers": {
                         "cityId": {
-                            "target": "example.weather#CityId"
+                            "$target": "example.weather#CityId"
                         }
                     },
                     "read": {
-                        "target": "example.weather#GetCity"
+                        "$target": "example.weather#GetCity"
                     },
                     "list": {
-                        "target": "example.weather#ListCities"
+                        "$target": "example.weather#ListCities"
                     },
                     "resources": [
                         {
-                            "target": "example.weather#Forecast"
+                            "$target": "example.weather#Forecast"
                         }
                     ]
                 },
@@ -265,11 +265,11 @@ Each ``City`` has a single ``Forecast``. This can be defined by adding the
                     "type": "resource",
                     "identifiers": {
                         "cityId": {
-                            "target": "example.weather#CityId"
+                            "$target": "example.weather#CityId"
                         }
                     },
                     "read": {
-                        "target": "example.weather#GetForecast"
+                        "$target": "example.weather#GetForecast"
                     }
                 }
             }
@@ -350,14 +350,14 @@ Let's define the operation used to "read" a ``City``.
                 "example.weather#GetCity": {
                     "type": "operation",
                     "input": {
-                        "target": "example.weather#GetCityInput"
+                        "$target": "example.weather#GetCityInput"
                     },
                     "output": {
-                        "target": "example.weather#GetCityOutput"
+                        "$target": "example.weather#GetCityOutput"
                     },
                     "errors": [
                         {
-                            "target": "example.weather#NoSuchResource"
+                            "$target": "example.weather#NoSuchResource"
                         }
                     ]
                 },
@@ -365,7 +365,7 @@ Let's define the operation used to "read" a ``City``.
                     "type": "structure",
                     "members": {
                         "cityId": {
-                            "target": "example.weather#CityId",
+                            "$target": "example.weather#CityId",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -376,13 +376,13 @@ Let's define the operation used to "read" a ``City``.
                     "type": "structure",
                     "members": {
                         "name": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true
                             }
                         },
                         "coordinates": {
-                            "target": "example.weather#CityCoordinates",
+                            "$target": "example.weather#CityCoordinates",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -393,13 +393,13 @@ Let's define the operation used to "read" a ``City``.
                     "type": "structure",
                     "members": {
                         "latitude": {
-                            "target": "smithy.api#Float",
+                            "$target": "smithy.api#Float",
                             "traits": {
                                 "smithy.api#required": true
                             }
                         },
                         "longitude": {
-                            "target": "smithy.api#Float",
+                            "$target": "smithy.api#Float",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -410,7 +410,7 @@ Let's define the operation used to "read" a ``City``.
                     "type": "structure",
                     "members": {
                         "resourceType": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -499,7 +499,7 @@ cities, so there's no way we could provide a City identifier.
                     "version": "2006-03-01",
                     "resources": [
                         {
-                            "target": "example.weather#City"
+                            "$target": "example.weather#City"
                         }
                     ],
                     "traits": {
@@ -513,10 +513,10 @@ cities, so there's no way we could provide a City identifier.
                 "example.weather#ListCities": {
                     "type": "operation",
                     "input": {
-                        "target": "example.weather#ListCitiesInput"
+                        "$target": "example.weather#ListCitiesInput"
                     },
                     "output": {
-                        "target": "example.weather#ListCitiesOutput"
+                        "$target": "example.weather#ListCitiesOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true,
@@ -529,10 +529,10 @@ cities, so there's no way we could provide a City identifier.
                     "type": "structure",
                     "members": {
                         "nextToken": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         },
                         "pageSize": {
-                            "target": "smithy.api#Integer"
+                            "$target": "smithy.api#Integer"
                         }
                     }
                 },
@@ -540,10 +540,10 @@ cities, so there's no way we could provide a City identifier.
                     "type": "structure",
                     "members": {
                         "nextToken": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         },
                         "items": {
-                            "target": "example.weather#CitySummaries",
+                            "$target": "example.weather#CitySummaries",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -553,20 +553,20 @@ cities, so there's no way we could provide a City identifier.
                 "example.weather#CitySummaries": {
                     "type": "list",
                     "member": {
-                        "target": "example.weather#CitySummary"
+                        "$target": "example.weather#CitySummary"
                     }
                 },
                 "example.weather#CitySummary": {
                     "type": "structure",
                     "members": {
                         "cityId": {
-                            "target": "example.weather#CityId",
+                            "$target": "example.weather#CityId",
                             "traits": {
                                 "smithy.api#required": true
                             }
                         },
                         "name": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -639,19 +639,19 @@ service.
                     "version": "2006-03-01",
                     "resources": [
                         {
-                            "target": "example.weather#City"
+                            "$target": "example.weather#City"
                         }
                     ],
                     "operations": [
                         {
-                            "target": "example.weather#GetCurrentTime"
+                            "$target": "example.weather#GetCurrentTime"
                         }
                     ]
                 },
                 "example.weather#GetCurrentTime": {
                     "type": "operation",
                     "output": {
-                        "target": "example.weather#GetCurrentTimeOutput"
+                        "$target": "example.weather#GetCurrentTimeOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true
@@ -661,7 +661,7 @@ service.
                     "type": "structure",
                     "members": {
                         "time": {
-                            "target": "smithy.api#Timestamp",
+                            "$target": "smithy.api#Timestamp",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -821,12 +821,12 @@ Complete example
                     "version": "2006-03-01",
                     "operations": [
                         {
-                            "target": "example.weather#GetCurrentTime"
+                            "$target": "example.weather#GetCurrentTime"
                         }
                     ],
                     "resources": [
                         {
-                            "target": "example.weather#City"
+                            "$target": "example.weather#City"
                         }
                     ],
                     "traits": {
@@ -841,18 +841,18 @@ Complete example
                     "type": "resource",
                     "identifiers": {
                         "cityId": {
-                            "target": "example.weather#CityId"
+                            "$target": "example.weather#CityId"
                         }
                     },
                     "read": {
-                        "target": "example.weather#GetCity"
+                        "$target": "example.weather#GetCity"
                     },
                     "list": {
-                        "target": "example.weather#ListCities"
+                        "$target": "example.weather#ListCities"
                     },
                     "resources": [
                         {
-                            "target": "example.weather#Forecast"
+                            "$target": "example.weather#Forecast"
                         }
                     ]
                 },
@@ -860,13 +860,13 @@ Complete example
                     "type": "structure",
                     "members": {
                         "latitude": {
-                            "target": "smithy.api#Float",
+                            "$target": "smithy.api#Float",
                             "traits": {
                                 "smithy.api#required": true
                             }
                         },
                         "longitude": {
-                            "target": "smithy.api#Float",
+                            "$target": "smithy.api#Float",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -882,20 +882,20 @@ Complete example
                 "example.weather#CitySummaries": {
                     "type": "list",
                     "member": {
-                        "target": "example.weather#CitySummary"
+                        "$target": "example.weather#CitySummary"
                     }
                 },
                 "example.weather#CitySummary": {
                     "type": "structure",
                     "members": {
                         "cityId": {
-                            "target": "example.weather#CityId",
+                            "$target": "example.weather#CityId",
                             "traits": {
                                 "smithy.api#required": true
                             }
                         },
                         "name": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -913,24 +913,24 @@ Complete example
                     "type": "resource",
                     "identifiers": {
                         "cityId": {
-                            "target": "example.weather#CityId"
+                            "$target": "example.weather#CityId"
                         }
                     },
                     "read": {
-                        "target": "example.weather#GetForecast"
+                        "$target": "example.weather#GetForecast"
                     }
                 },
                 "example.weather#GetCity": {
                     "type": "operation",
                     "input": {
-                        "target": "example.weather#GetCityInput"
+                        "$target": "example.weather#GetCityInput"
                     },
                     "output": {
-                        "target": "example.weather#GetCityOutput"
+                        "$target": "example.weather#GetCityOutput"
                     },
                     "errors": [
                         {
-                            "target": "example.weather#NoSuchResource"
+                            "$target": "example.weather#NoSuchResource"
                         }
                     ],
                     "traits": {
@@ -941,7 +941,7 @@ Complete example
                     "type": "structure",
                     "members": {
                         "cityId": {
-                            "target": "example.weather#CityId",
+                            "$target": "example.weather#CityId",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -952,13 +952,13 @@ Complete example
                     "type": "structure",
                     "members": {
                         "coordinates": {
-                            "target": "example.weather#CityCoordinates",
+                            "$target": "example.weather#CityCoordinates",
                             "traits": {
                                 "smithy.api#required": true
                             }
                         },
                         "name": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -968,7 +968,7 @@ Complete example
                 "example.weather#GetCurrentTime": {
                     "type": "operation",
                     "output": {
-                        "target": "example.weather#GetCurrentTimeOutput"
+                        "$target": "example.weather#GetCurrentTimeOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true
@@ -978,7 +978,7 @@ Complete example
                     "type": "structure",
                     "members": {
                         "time": {
-                            "target": "smithy.api#Timestamp",
+                            "$target": "smithy.api#Timestamp",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -988,10 +988,10 @@ Complete example
                 "example.weather#GetForecast": {
                     "type": "operation",
                     "input": {
-                        "target": "example.weather#GetForecastInput"
+                        "$target": "example.weather#GetForecastInput"
                     },
                     "output": {
-                        "target": "example.weather#GetForecastOutput"
+                        "$target": "example.weather#GetForecastOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true
@@ -1001,7 +1001,7 @@ Complete example
                     "type": "structure",
                     "members": {
                         "cityId": {
-                            "target": "example.weather#CityId",
+                            "$target": "example.weather#CityId",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -1012,17 +1012,17 @@ Complete example
                     "type": "structure",
                     "members": {
                         "chanceOfRain": {
-                            "target": "smithy.api#Float"
+                            "$target": "smithy.api#Float"
                         }
                     }
                 },
                 "example.weather#ListCities": {
                     "type": "operation",
                     "input": {
-                        "target": "example.weather#ListCitiesInput"
+                        "$target": "example.weather#ListCitiesInput"
                     },
                     "output": {
-                        "target": "example.weather#ListCitiesOutput"
+                        "$target": "example.weather#ListCitiesOutput"
                     },
                     "traits": {
                         "smithy.api#paginated": {
@@ -1035,10 +1035,10 @@ Complete example
                     "type": "structure",
                     "members": {
                         "nextToken": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         },
                         "pageSize": {
-                            "target": "smithy.api#Integer"
+                            "$target": "smithy.api#Integer"
                         }
                     }
                 },
@@ -1046,13 +1046,13 @@ Complete example
                     "type": "structure",
                     "members": {
                         "items": {
-                            "target": "example.weather#CitySummaries",
+                            "$target": "example.weather#CitySummaries",
                             "traits": {
                                 "smithy.api#required": true
                             }
                         },
                         "nextToken": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     }
                 },
@@ -1060,7 +1060,7 @@ Complete example
                     "type": "structure",
                     "members": {
                         "resourceType": {
-                            "target": "smithy.api#String",
+                            "$target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true
                             }

@@ -119,7 +119,7 @@ The following example's ``MyResource`` resource has the
                     "version": "2017-02-11",
                     "resources": [
                         {
-                            "target": "smithy.example#MyResource"
+                            "$target": "smithy.example#MyResource"
                         }
                     ],
                     "traits": {
@@ -138,12 +138,12 @@ The following example's ``MyResource`` resource has the
                     "type": "resource",
                     "identifiers": {
                         "foo": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     },
                     "operations": [
                         {
-                            "target": "smithy.example#MyOperation"
+                            "$target": "smithy.example#MyOperation"
                         }
                     ],
                     "traits": {
@@ -242,7 +242,7 @@ Each condition key object supports the following key-value pairs:
                     "version": "2017-02-11",
                     "resources": [
                         {
-                            "target": "smithy.example#MyResource"
+                            "$target": "smithy.example#MyResource"
                         }
                     ],
                     "traits": {
@@ -365,7 +365,7 @@ condition key inference disabled.
                     "version": "2017-02-11",
                     "resources": [
                         {
-                            "target": "smithy.example#MyResource"
+                            "$target": "smithy.example#MyResource"
                         }
                     ],
                     "traits": {
@@ -379,10 +379,10 @@ condition key inference disabled.
                     "type": "resource",
                     "identifiers": {
                         "foo": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         },
                         "bar": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     },
                     "traits": {
@@ -446,7 +446,7 @@ operation for it to complete successfully.
                     "version": "2017-02-11",
                     "resources": [
                         {
-                            "target": "smithy.example#MyResource"
+                            "$target": "smithy.example#MyResource"
                         }
                     ],
                     "traits": {
@@ -460,12 +460,12 @@ operation for it to complete successfully.
                     "type": "resource",
                     "identifiers": {
                         "foo": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     },
                     "operations": [
                         {
-                            "target": "smithy.example#MyOperation"
+                            "$target": "smithy.example#MyOperation"
                         }
                     ]
                 },
@@ -542,7 +542,7 @@ Given the following model,
                     "version": "2017-02-11",
                     "resources": [
                         {
-                            "target": "smithy.example#MyResource"
+                            "$target": "smithy.example#MyResource"
                         }
                     ],
                     "traits": {
@@ -561,7 +561,7 @@ Given the following model,
                     "type": "resource",
                     "identifiers": {
                         "yum": {
-                            "target": "smithy.api#String"
+                            "$target": "smithy.api#String"
                         }
                     }
                 },
