@@ -5135,9 +5135,9 @@ Summary
     Indicates that the data stored in the shape or member is sensitive
     and MUST be handled with care.
 Trait selector
-    ``:test(blob, string, member > :test(blob, string))``
+    ``:not(:test(service, operation, resource))``
 
-    *Any blob or string; or a member that targets a blob/string*
+    *Any shape that is not a service, operation, or resource.*
 Value type
     Annotation trait
 
