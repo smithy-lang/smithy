@@ -8,7 +8,7 @@
 [ERROR] ns.foo#Invalid4: Shape `ns.foo#Invalid4` is marked with the `range` trait, but its `min` property is a decimal (0.5) when its shape (`long`) does not support decimals. | RangeTrait
 [ERROR] ns.foo#Invalid5: Shape `ns.foo#Invalid5` is marked with the `range` trait, but its `max` property is a decimal (10.5) when its shape (`bigInteger`) does not support decimals. | RangeTrait
 [ERROR] ns.foo#Invalid5: Shape `ns.foo#Invalid5` is marked with the `range` trait, but its `min` property is a decimal (0.5) when its shape (`bigInteger`) does not support decimals. | RangeTrait
-[ERROR] ns.foo#Invalid6: A range trait is applied with a `min` value greater than or equal to its `max` value. | RangeTrait
+[ERROR] ns.foo#Invalid6: A range trait is applied with a `min` value greater than its `max` value. | RangeTrait
 [ERROR] ns.foo#Structure$InvalidMember1: Member `ns.foo#Structure$InvalidMember1` is marked with the `range` trait, but its `max` property is a decimal (10.5) when its target (`smithy.api#Byte`) does not support decimals. | RangeTrait
 [ERROR] ns.foo#Structure$InvalidMember1: Member `ns.foo#Structure$InvalidMember1` is marked with the `range` trait, but its `min` property is a decimal (0.5) when its target (`smithy.api#Byte`) does not support decimals. | RangeTrait
 [ERROR] ns.foo#Structure$InvalidMember2: Member `ns.foo#Structure$InvalidMember2` is marked with the `range` trait, but its `max` property is a decimal (10.5) when its target (`smithy.api#Short`) does not support decimals. | RangeTrait
@@ -19,4 +19,4 @@
 [ERROR] ns.foo#Structure$InvalidMember4: Member `ns.foo#Structure$InvalidMember4` is marked with the `range` trait, but its `min` property is a decimal (0.5) when its target (`smithy.api#Long`) does not support decimals. | RangeTrait
 [ERROR] ns.foo#Structure$InvalidMember5: Member `ns.foo#Structure$InvalidMember5` is marked with the `range` trait, but its `max` property is a decimal (10.5) when its target (`smithy.api#BigInteger`) does not support decimals. | RangeTrait
 [ERROR] ns.foo#Structure$InvalidMember5: Member `ns.foo#Structure$InvalidMember5` is marked with the `range` trait, but its `min` property is a decimal (0.5) when its target (`smithy.api#BigInteger`) does not support decimals. | RangeTrait
-[ERROR] ns.foo#Structure$InvalidMember6: A range trait is applied with a `min` value greater than or equal to its `max` value. | RangeTrait
+[ERROR] ns.foo#Structure$InvalidMember6: A range trait is applied with a `min` value greater than its `max` value. | RangeTrait

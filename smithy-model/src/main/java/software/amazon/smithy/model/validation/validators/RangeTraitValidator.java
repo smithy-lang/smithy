@@ -57,9 +57,9 @@ public class RangeTraitValidator extends AbstractValidator {
         // Makes sure that `min` is less than `max`
         trait.getMin()
                 .flatMap(min -> trait.getMax().map(max -> Pair.of(min, max)))
-                .filter(pair -> pair.getLeft().compareTo(pair.getRight()) >= 0)
+                .filter(pair -> pair.getLeft().compareTo(pair.getRight()) > 0)
                 .map(pair -> error(shape, trait, "A range trait is applied with a `min` value greater than "
-                        + "or equal to its `max` value."))
+                        + "its `max` value."))
                 .map(events::add);
 
         return events;
