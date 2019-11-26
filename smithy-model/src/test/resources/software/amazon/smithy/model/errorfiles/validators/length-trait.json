@@ -1,0 +1,73 @@
+{
+    "smithy": "0.4.0",
+    "ns.foo": {
+        "shapes": {
+            "Valid1": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                },
+                "smithy.api#length": {
+                    "min": 0
+                }
+            },
+            "Valid2": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                },
+                "smithy.api#length": {
+                    "max": 1
+                }
+            },
+            "Valid3": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                },
+                "smithy.api#length": {
+                    "min": 0,
+                    "max": 1
+                }
+            },
+            "Valid4": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                },
+                "smithy.api#length": {
+                    "min": 4,
+                    "max": 4
+                }
+            },
+            "Invalid1": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                },
+                "smithy.api#length": {
+                    "max": -1
+                }
+            },
+            "Invalid2": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                },
+                "smithy.api#length": {
+                    "min": -1
+                }
+            },
+            "Invalid3": {
+                "type": "list",
+                "member": {
+                    "target": "smithy.api#String"
+                },
+                "smithy.api#length": {
+                    "min": 5,
+                    "max": 4
+                }
+            }
+        }
+    }
+}
