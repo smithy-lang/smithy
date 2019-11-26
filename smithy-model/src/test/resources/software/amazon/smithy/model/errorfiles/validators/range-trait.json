@@ -89,6 +89,13 @@
               "max": 10.5e4
             }
           },
+          "ValidMember13": {
+            "target": "smithy.api#Integer",
+            "range": {
+              "min": 5,
+              "max": 5
+            }
+          },
           "InvalidMember1": {
             "target": "smithy.api#Byte",
             "range": {
@@ -208,6 +215,13 @@
         "range": {
           "min": 0.5,
           "max": 10.5
+        }
+      },
+      "Valid12": {
+        "type": "integer",
+        "range": {
+          "min": 5,
+          "max": 5
         }
       },
       "Invalid1": {
