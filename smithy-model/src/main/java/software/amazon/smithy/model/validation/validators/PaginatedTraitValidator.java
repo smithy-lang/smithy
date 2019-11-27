@@ -87,7 +87,13 @@ public final class PaginatedTraitValidator extends AbstractValidator {
             events.add(error(operation, trait, "paginated operations require an input"));
         } else {
             events.addAll(validateMember(opIndex, model, null, operation, trait, new InputTokenValidator()));
-            events.addAll(validateMember(opIndex, model, null, operation, trait, new PageSizeValidator()));
+            PageSizeValidator pageSizeValidator = new PageSizeValidator();
+            events.addAll(validateMember(opIndex, model, null, operation, trait, pageSizeValidator));
+            pageSizeValidator.getMember(model, opIndex, operation, trait)
+                    .filter(MemberShape::isRequired)
+                    .ifPresent(member -> events.add(danger(operation, trait, String.format(
+                            "paginated trait `%s` member `%s` should not be required",
+                            pageSizeValidator.propertyName(), member.getMemberName()))));
         }
 
         if (!opIndex.getOutput(operation).isPresent()) {
@@ -283,7 +289,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
 
     private static final class PageSizeValidator extends PropertyValidator {
         boolean mustBeOptional() {
-            return true;
+            return false;
         }
 
         boolean isRequiredToBePresent() {

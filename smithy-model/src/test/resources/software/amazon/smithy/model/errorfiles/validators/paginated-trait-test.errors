@@ -6,7 +6,7 @@
 [ERROR] ns.foo#Invalid3: paginated trait `outputToken` member `OutputNotString` targets a integer shape, but must target one of the following: [`string`] | PaginatedTrait
 [ERROR] ns.foo#Invalid4: paginated trait `inputToken` member `nextToken` must not be required | PaginatedTrait
 [ERROR] ns.foo#Invalid4: paginated trait `outputToken` member `nextToken` must not be required | PaginatedTrait
-[ERROR] ns.foo#Invalid4: paginated trait `pageSize` member `pageSize` must not be required | PaginatedTrait
+[DANGER] ns.foo#Invalid4: paginated trait `pageSize` member `pageSize` should not be required | PaginatedTrait
 [ERROR] ns.foo#Invalid6: paginated trait `pageSize` member `Invalid6Input` targets a string shape, but must target one of the following: [`integer`] | PaginatedTrait
 [ERROR] ns.foo#Invalid7: paginated trait `items` member `Invalid7Input` targets a string shape, but must target one of the following: [`list`, `map`] | PaginatedTrait
 [ERROR] ns.foo#Invalid8: paginated trait `items` targets a member `items` that does not exist | PaginatedTrait

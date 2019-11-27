@@ -3979,7 +3979,7 @@ The ``paginated`` trait is an object that contains the following properties:
       - ``string``
       - The name of an operation input member that limits the maximum number
         of results to include in the operation output. This input member
-        MUST NOT be required and MUST target an integer shape.
+        SHOULD NOT be required and MUST target an integer shape.
 
         .. warning::
 
