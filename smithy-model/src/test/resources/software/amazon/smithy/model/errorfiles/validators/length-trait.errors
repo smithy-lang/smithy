@@ -1,0 +1,3 @@
+[ERROR] ns.foo#Invalid1: A length trait is applied with a negative `max` value. | LengthTrait
+[ERROR] ns.foo#Invalid2: A length trait is applied with a negative `min` value. | LengthTrait
+[ERROR] ns.foo#Invalid3: A length trait is applied with a `min` value greater than its `max` value. | LengthTrait
