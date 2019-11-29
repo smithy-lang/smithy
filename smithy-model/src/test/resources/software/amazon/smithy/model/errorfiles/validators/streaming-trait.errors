@@ -1,0 +1,1 @@
+[ERROR] ns.foo#InvalidStreamingStructure$Body: Trait `streaming` cannot be applied to `ns.foo#InvalidStreamingStructure$Body`. This trait may only be applied to shapes that match the following selector: :each(operation -[input, output]-> structure > :test(member > blob), :test(member:of(structure[trait|error]) > blob)) | TraitTarget

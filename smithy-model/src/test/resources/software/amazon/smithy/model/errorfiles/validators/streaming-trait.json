@@ -1,0 +1,52 @@
+{
+    "smithy": "0.4.0",
+    "ns.foo": {
+        "shapes": {
+            "Blob": {
+                "type": "blob"
+            },
+            "StreamingOperation": {
+                "type": "operation",
+                "input": "StreamingInput",
+                "output": "StreamingOutput"
+            },
+            "StreamingInput": {
+                "type": "structure",
+                "members": {
+                    "Body": {
+                        "target": "Blob",
+                        "smithy.api#streaming": true
+                    }
+                }
+            },
+            "StreamingOutput": {
+                "type": "structure",
+                "members": {
+                    "Body": {
+                        "target": "Blob",
+                        "smithy.api#streaming": true
+                    }
+                }
+            },
+            "StreamingError": {
+                "type": "structure",
+                "members": {
+                    "Body": {
+                        "target": "Blob",
+                        "smithy.api#streaming": true
+                    }
+                },
+                "smithy.api#error": "client"
+            },
+            "InvalidStreamingStructure": {
+                "type": "structure",
+                "members": {
+                    "Body": {
+                        "target": "Blob",
+                        "smithy.api#streaming": true
+                    }
+                }
+            }
+        }
+    }
+}
