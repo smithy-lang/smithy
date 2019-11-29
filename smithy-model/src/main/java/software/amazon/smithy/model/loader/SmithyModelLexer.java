@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.loader;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -22,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
@@ -44,7 +47,7 @@ import software.amazon.smithy.utils.StringUtils;
  * models within quoted strings using unicode escapes or by escaping
  * {@code \r} and {@code \n}.
  */
-final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
+final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token>, AutoCloseable {
 
     private final String filename;
     private final String input;
@@ -64,6 +67,11 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
         }
 
         this.input = input;
+    }
+
+    SmithyModelLexer(String filename, InputStream input) {
+        // TODO: convert this lexer to just using a buffered reader.
+        this(filename, IoUtils.toUtf8String(input));
     }
 
     enum TokenType {
@@ -128,6 +136,11 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token> {
                    ? lexeme.substring(4)
                    : lexeme.substring(3);
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        // TODO: convert to using the buffered reader directly.
     }
 
     /**

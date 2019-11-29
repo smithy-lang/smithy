@@ -63,9 +63,6 @@ final class LoaderVisitor {
     /** Whether or not a call to {@link #onEnd()} has been made. */
     private boolean calledOnEnd;
 
-    /** Nullable version that was defined. */
-    private String smithyVersion;
-
     /** Factory used to create traits. */
     private final TraitFactory traitFactory;
 
@@ -280,35 +277,9 @@ final class LoaderVisitor {
         });
     }
 
-    /**
-     * Called when visiting the Smithy model version.
-     *
-     * @param sourceLocation Location of the version number.
-     * @param smithyVersion Version to set.
-     */
-    public void onVersion(SourceLocation sourceLocation, String smithyVersion) {
-        for (SmithyVersion version : SmithyVersion.values()) {
-            if (version.value.equals(smithyVersion)) {
-                this.smithyVersion = smithyVersion;
-                validateState(sourceLocation);
-                return;
-            }
-        }
-
-        String message = format("Invalid Smithy version number: %s", smithyVersion);
-        throw new SourceException(message, sourceLocation);
-    }
-
     private void validateState(FromSourceLocation sourceLocation) {
         if (calledOnEnd) {
             throw new IllegalStateException("Cannot call visitor method because visitor has called onEnd");
-        }
-
-        if (smithyVersion == null) {
-            // Assume latest supported version.
-            LOGGER.warning(format("No Smithy version explicitly specified in %s, so assuming version of %s",
-                                  sourceLocation.getSourceLocation().getFilename(), Model.MODEL_VERSION));
-            onVersion(sourceLocation.getSourceLocation(), Model.MODEL_VERSION);
         }
     }
 

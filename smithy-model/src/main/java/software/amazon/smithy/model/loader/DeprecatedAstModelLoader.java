@@ -94,8 +94,6 @@ enum DeprecatedAstModelLoader {
                        + "(" + version.getSourceLocation() + ")");
 
         visitor.onOpenFile(model.getSourceLocation().getFilename());
-        visitor.onVersion(version.getSourceLocation(), version.expectStringNode().getValue());
-
         try {
             model.getMember(METADATA).ifPresent(value -> {
                 ObjectNode metadata = value.expectObjectNode("`metadata` must be an object");

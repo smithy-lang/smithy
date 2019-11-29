@@ -29,7 +29,6 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.selector.Selector;
@@ -53,33 +52,9 @@ public class LoaderVisitorTest {
     private static final TraitFactory FACTORY = TraitFactory.createServiceFactory();
 
     @Test
-    public void versionMustBeConsistent() {
-        Assertions.assertThrows(SourceException.class, () -> {
-            LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-            visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
-            visitor.onVersion(SourceLocation.NONE, "1.1");
-        });
-    }
-
-    @Test
-    public void versionMustBeSupported() {
-        Assertions.assertThrows(SourceException.class, () -> {
-            LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-            visitor.onVersion(SourceLocation.NONE, "9.99");
-        });
-    }
-
-    @Test
-    public void versionDefaults() {
-        LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onMetadata("foo", Node.from("bar"));
-    }
-
-    @Test
     public void cannotMutateAfterOnEnd() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-            visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
             visitor.onEnd();
             visitor.onMetadata("foo", Node.from("bar"));
         });
@@ -89,7 +64,6 @@ public class LoaderVisitorTest {
     public void cannotCallOnEndTwice() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-            visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
             visitor.onEnd();
             visitor.onEnd();
         });
@@ -98,7 +72,6 @@ public class LoaderVisitorTest {
     @Test
     public void cannotDuplicateTraitDefs() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         StringShape def1 = StringShape.builder()
                 .id("foo.baz#Bar")
                 .addTrait(TraitDefinition.builder().build())
@@ -118,7 +91,6 @@ public class LoaderVisitorTest {
     @Test
     public void ignoresDuplicateTraitDefsFromPrelude() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         Shape def1 = StructureShape.builder()
                 .id("smithy.api#deprecated")
                 .addTrait(TraitDefinition.builder().build())
@@ -138,7 +110,6 @@ public class LoaderVisitorTest {
     @Test
     public void cannotDuplicateNonPreludeTraitDefs() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         Shape def1 = StructureShape.builder()
                 .id("smithy.example#deprecated")
                 .addTrait(TraitDefinition.builder().build())
@@ -159,7 +130,6 @@ public class LoaderVisitorTest {
     public void cannotDuplicateTraits() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
         visitor.onOpenFile("/foo/baz");
-        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         visitor.onNamespace("foo.bam", SourceLocation.NONE);
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));
@@ -174,7 +144,6 @@ public class LoaderVisitorTest {
     public void createsDynamicTraitWhenTraitFactoryReturnsEmpty() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
         visitor.onOpenFile("/foo/baz.smithy");
-        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         visitor.onNamespace("foo.bam", SourceLocation.none());
         Shape def = StructureShape.builder()
                 .id("foo.baz#Bar")
@@ -194,7 +163,6 @@ public class LoaderVisitorTest {
     public void failsWhenTraitNotFound() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
         visitor.onOpenFile("/foo/baz.smithy");
-        visitor.onVersion(SourceLocation.NONE, Model.MODEL_VERSION);
         visitor.onNamespace("foo.bam", SourceLocation.none());
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));

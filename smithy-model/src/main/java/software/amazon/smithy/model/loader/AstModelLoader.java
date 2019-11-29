@@ -88,7 +88,6 @@ enum AstModelLoader {
     void load(ObjectNode model, StringNode version, LoaderVisitor visitor) {
         model.expectNoAdditionalProperties(TOP_LEVEL_PROPERTIES);
         visitor.onOpenFile(model.getSourceLocation().getFilename());
-        visitor.onVersion(version.getSourceLocation(), version.expectStringNode().getValue());
         loadMetadata(model, visitor);
         loadShapes(model, visitor);
     }
