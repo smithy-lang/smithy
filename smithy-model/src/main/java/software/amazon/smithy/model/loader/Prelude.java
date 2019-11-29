@@ -277,7 +277,7 @@ public final class Prelude {
 
             try (InputStream inputStream = Prelude.class.getResourceAsStream(filename)) {
                 String contents = IoUtils.toUtf8String(inputStream);
-                new SmithyModelLoader().load(filename, () -> contents, visitor);
+                IdlModelLoader.load(filename, () -> contents, visitor);
                 Model preludeModel = visitor.onEnd().unwrap();
 
                 // Sanity check to ensure that the prelude model and the tracked prelude traits are consistent.

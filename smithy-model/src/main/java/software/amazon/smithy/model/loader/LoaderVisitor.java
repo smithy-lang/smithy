@@ -285,13 +285,14 @@ final class LoaderVisitor {
      *
      * @param sourceLocation Location of the version number.
      * @param smithyVersion Version to set.
+     * @return Returns the loaded version number.
      */
-    public void onVersion(SourceLocation sourceLocation, String smithyVersion) {
+    public String onVersion(SourceLocation sourceLocation, String smithyVersion) {
         for (SmithyVersion version : SmithyVersion.values()) {
             if (version.value.equals(smithyVersion)) {
                 this.smithyVersion = smithyVersion;
                 validateState(sourceLocation);
-                return;
+                return smithyVersion;
             }
         }
 

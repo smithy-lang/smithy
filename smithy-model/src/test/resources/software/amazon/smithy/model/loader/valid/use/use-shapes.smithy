@@ -1,10 +1,10 @@
 $version: "0.5.0"
 
+namespace smithy.example
+
 use smithy.api#String
 use smithy.api#Integer
 use smithy.api#Long
-
-namespace smithy.example
 
 list MyList {
     member: String,

@@ -30,4 +30,14 @@ enum SmithyVersion {
     public String toString() {
         return value;
     }
+
+    public static boolean isSupported(String value) {
+        for (SmithyVersion version : SmithyVersion.values()) {
+            if (version.value.equals(value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

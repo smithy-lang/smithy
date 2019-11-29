@@ -67,7 +67,7 @@ interface ModelLoader {
     static ModelLoader createDefaultLoader() {
         ModelLoader delegate = ModelLoader.composeLoaders(ListUtils.of(
                 JsonModelLoader.INSTANCE,
-                new SmithyModelLoader()));
+                IdlModelLoader::load));
         return recoveringModelLoader(new JarModelLoader(delegate));
     }
 
