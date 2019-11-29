@@ -1,0 +1,1 @@
+[WARNING] -: Detected deprecated IDL features that will break in future versions of Smithy: Only a single namespace can be declared per/file. The previous namespace was set to `com.foo`. | Model

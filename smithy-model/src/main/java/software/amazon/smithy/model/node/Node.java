@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
@@ -79,6 +80,31 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ModelSyntaxException if the JSON text is invalid.
      */
     public static Node parse(String json, String file) {
+        return NODE_FACTORY.createNode(file, json);
+    }
+
+    /**
+     * Attempts to parse the given JSON input stream and returns a Node.
+     *
+     * @param json JSON input stream to parse. The input stream is closed
+     *   automatically when the content is fully parsed.
+     * @return Returns the parsed Node on success.
+     * @throws ModelSyntaxException if the JSON text is invalid.
+     */
+    public static Node parse(InputStream json) {
+        return parse(json, "");
+    }
+
+    /**
+     * Attempts to parse the given JSON input stream and returns a Node.
+     *
+     * @param json JSON input stream to parse. The input stream is closed
+     *   automatically when the content is fully parsed.
+     * @param file Filename corresponding to json text
+     * @return Returns the parsed Node on success.
+     * @throws ModelSyntaxException if the JSON text is invalid.
+     */
+    public static Node parse(InputStream json, String file) {
         return NODE_FACTORY.createNode(file, json);
     }
 

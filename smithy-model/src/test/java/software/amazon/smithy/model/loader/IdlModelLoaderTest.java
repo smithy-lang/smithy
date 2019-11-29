@@ -26,7 +26,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-public class SmithyModelLoaderTest {
+public class IdlModelLoaderTest {
     @Test
     public void loadsAppropriateSourceLocations() {
         Model model = Model.assembler()

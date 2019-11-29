@@ -94,6 +94,7 @@ Version statement
 
 The version control statement is used to set the :ref:`version <smithy-version>`
 of a Smithy model file. The value of a version statement MUST be a string.
+Only a single version statement can appear in a model file.
 
 Example:
 
@@ -133,7 +134,27 @@ Example:
     metadata example.null = null
 
 Top-level metadata key-value pair conflicts are resolved by
-:ref:`merging metadata <merging-metadata>`
+:ref:`merging metadata <merging-metadata>`. Metadata statements MUST appear
+before any namespace statements or shapes are defined.
+
+
+.. _namespace-statement:
+
+Namespace statement
+-------------------
+
+The namespace statement is used to set the *current namespace*. Shapes
+can only be defined if a current namespace is defined. Only a single
+namespace can appear in an IDL model file.
+
+.. productionlist:: smithy
+    namespace_statement     :"namespace" `namespace`
+
+Example:
+
+::
+
+    namespace com.foo.baz
 
 
 .. _use-statement:
@@ -142,8 +163,9 @@ Use statement
 -------------
 
 A use statement is used to import shapes and traits into the current namespace
-so that they can be referred to using relative shape. A use statement MUST come
-before any shapes are defined in an IDL model file.
+so that they can be referred to using relative shape. A use statement MUST
+come after a :ref:`namespace statement <namespace-statement>` and before any
+shapes are defined in an IDL model file.
 
 .. productionlist:: smithy
     use_statement         :"use" `absolute_shape_id`
@@ -187,25 +209,6 @@ they can be applied using relative shape IDs:
 
 See :ref:`relative-shape-id` for an in-depth description of how relative
 shape IDs are resolved in the IDL.
-
-
-.. _namespace-statement:
-
-Namespace statement
--------------------
-
-The namespace statement is used to set the *current namespace*. Shapes
-can only be defined if a current namespace is defined. Any number of namespace
-statements can appear in a model.
-
-.. productionlist:: smithy
-    namespace_statement     :"namespace" `namespace`
-
-Example:
-
-::
-
-    namespace com.foo.baz
 
 
 Shape statements
