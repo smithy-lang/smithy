@@ -15,11 +15,13 @@
 
 package software.amazon.smithy.model.loader;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +45,6 @@ import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
-import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -78,12 +79,10 @@ public final class ModelAssembler {
     public static final String DISABLE_JAR_CACHE = "assembler.disableJarCache";
 
     private static final Logger LOGGER = Logger.getLogger(ModelAssembler.class.getName());
-    private static final ModelLoader DEFAULT_LOADER = ModelLoader.createDefaultLoader();
 
     private TraitFactory traitFactory;
     private ValidatorFactory validatorFactory;
-    private ModelLoader modelLoader = DEFAULT_LOADER;
-    private final Map<String, Supplier<String>> stringModels = new HashMap<>();
+    private final Map<String, Supplier<InputStream>> inputStreamModels = new HashMap<>();
     private final List<Validator> validators = new ArrayList<>();
     private final List<Suppression> suppressions = new ArrayList<>();
     private final List<Node> documentNodes = new ArrayList<>();
@@ -113,8 +112,7 @@ public final class ModelAssembler {
         ModelAssembler assembler = new ModelAssembler();
         assembler.traitFactory = traitFactory;
         assembler.validatorFactory = validatorFactory;
-        assembler.modelLoader = modelLoader;
-        assembler.stringModels.putAll(stringModels);
+        assembler.inputStreamModels.putAll(inputStreamModels);
         assembler.validators.addAll(validators);
         assembler.suppressions.addAll(suppressions);
         assembler.documentNodes.addAll(documentNodes);
@@ -152,7 +150,7 @@ public final class ModelAssembler {
         shapes.clear();
         metadata.clear();
         mergeModels.clear();
-        stringModels.clear();
+        inputStreamModels.clear();
         validators.clear();
         suppressions.clear();
         documentNodes.clear();
@@ -219,7 +217,8 @@ public final class ModelAssembler {
      * @return Returns the assembler.
      */
     public ModelAssembler addUnparsedModel(String sourceLocation, String model) {
-        stringModels.put(sourceLocation, () -> model);
+        inputStreamModels.put(sourceLocation,
+                              () -> new ByteArrayInputStream(model.getBytes(Charset.forName("UTF-8"))));
         return this;
     }
 
@@ -268,7 +267,14 @@ public final class ModelAssembler {
                 throw new ModelImportException("Error loading the contents of " + importPath, e);
             }
         } else if (Files.isRegularFile(importPath)) {
-            stringModels.put(importPath.toString(), () -> IoUtils.readUtf8File(importPath));
+            inputStreamModels.put(importPath.toString(), () -> {
+                try {
+                    return Files.newInputStream(importPath);
+                } catch (IOException e) {
+                    throw new ModelImportException(
+                            "Unable to import Smithy model from " + importPath + ": " + e.getMessage(), e);
+                }
+            });
         } else {
             throw new ModelImportException("Cannot find import file: " + importPath);
         }
@@ -296,9 +302,9 @@ public final class ModelAssembler {
      */
     public ModelAssembler addImport(URL url) {
         Objects.requireNonNull(url, "The provided url to ModelAssembler#addImport was null");
-        stringModels.put(url.toExternalForm(), () -> {
-            try (InputStream inputStream = url.openStream()) {
-                return IoUtils.toUtf8String(inputStream);
+        inputStreamModels.put(url.toExternalForm(), () -> {
+            try {
+                return url.openStream();
             } catch (IOException | UncheckedIOException e) {
                 throw new ModelImportException("Unable to open Smithy model import URL: " + url.toExternalForm(), e);
             }
@@ -453,15 +459,15 @@ public final class ModelAssembler {
         LoaderVisitor visitor = new LoaderVisitor(traitFactory, properties);
 
         // Load models first to ensure a version is set.
-        for (Map.Entry<String, Supplier<String>> modelEntry : stringModels.entrySet()) {
-            if (!modelLoader.load(modelEntry.getKey(), modelEntry.getValue(), visitor)) {
+        for (Map.Entry<String, Supplier<InputStream>> modelEntry : inputStreamModels.entrySet()) {
+            if (!ModelLoader.load(modelEntry.getKey(), modelEntry.getValue(), visitor)) {
                 LOGGER.warning(() -> "No ModelLoader was able to load " + modelEntry.getKey());
             }
         }
 
         if (!documentNodes.isEmpty()) {
             for (Node node : documentNodes) {
-                JsonModelLoader.INSTANCE.loadParsedNode(visitor, node);
+                ModelLoader.loadParsedNode(node, visitor);
             }
         }
 

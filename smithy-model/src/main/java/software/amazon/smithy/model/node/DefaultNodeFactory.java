@@ -21,7 +21,10 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,11 +53,18 @@ public final class DefaultNodeFactory implements NodeFactory {
 
     @Override
     public Node createNode(String filename, String text) {
-        JsonParser parser = createParser(filename, text);
+        InputStream targetStream = new ByteArrayInputStream(text.getBytes(Charset.forName("UTF-8")));
+        return createNode(filename, targetStream);
+    }
+
+    public Node createNode(String filename, InputStream input) {
+        JsonParser parser = createParser(filename, input);
 
         try {
             parser.nextToken();
-            return parse(filename, parser);
+            Node result = parse(filename, parser);
+            parser.close();
+            return result;
         } catch (IOException e) {
             SourceLocation current = getSourceLocation(filename, parser);
             String message = filename.isEmpty()
@@ -64,7 +74,7 @@ public final class DefaultNodeFactory implements NodeFactory {
         }
     }
 
-    private JsonParser createParser(String filename, String text) {
+    private JsonParser createParser(String filename, InputStream text) {
         try {
             return jsonFactory.createParser(text);
         } catch (IOException e) {

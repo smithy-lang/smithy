@@ -36,6 +36,8 @@ import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RET
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RPAREN;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.UNQUOTED;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -123,11 +125,10 @@ final class IdlModelLoader {
     private boolean definedMetadata;
     private boolean definedShapes;
 
-    private IdlModelLoader(String filename, String contents, LoaderVisitor visitor) {
+    private IdlModelLoader(String filename, SmithyModelLexer lexer, LoaderVisitor visitor) {
         this.filename = filename;
         this.visitor = visitor;
-        lexer = new SmithyModelLexer(filename, contents);
-
+        this.lexer = lexer;
         visitor.onOpenFile(filename);
 
         while (!eof()) {
@@ -185,6 +186,8 @@ final class IdlModelLoader {
 
         abstract void validate(IdlModelLoader loader);
 
+        // Halts parsing if a version has been explicitly set, otherwise
+        // adds a WARNING event.
         void raise(IdlModelLoader loader, String message) {
             if (loader.definedVersion != null) {
                 throw loader.syntax(message);
@@ -215,13 +218,12 @@ final class IdlModelLoader {
         }
     }
 
-    public static boolean load(String path, Supplier<String> contentSupplier, LoaderVisitor visitor) {
-        if (!path.endsWith(".smithy")) {
-            return false;
+    public static void load(String path, Supplier<InputStream> contentSupplier, LoaderVisitor visitor) {
+        try (SmithyModelLexer lexer = new SmithyModelLexer(path, contentSupplier.get())) {
+            new IdlModelLoader(path, lexer, visitor);
+        } catch (IOException e) {
+            throw new ModelImportException("Error loading " + path + ": " + e.getMessage(), e);
         }
-
-        new IdlModelLoader(path, contentSupplier.get(), visitor);
-        return true;
     }
 
     private void parseStatement(Token token) {

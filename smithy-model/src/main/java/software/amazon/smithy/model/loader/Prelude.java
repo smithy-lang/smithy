@@ -15,9 +15,6 @@
 
 package software.amazon.smithy.model.loader;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -91,7 +88,6 @@ import software.amazon.smithy.model.traits.XmlAttributeTrait;
 import software.amazon.smithy.model.traits.XmlFlattenedTrait;
 import software.amazon.smithy.model.traits.XmlNameTrait;
 import software.amazon.smithy.model.traits.XmlNamespaceTrait;
-import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
@@ -273,30 +269,24 @@ public final class Prelude {
             // Register prelude trait definitions.
             String filename = "prelude-traits.smithy";
 
-            try (InputStream inputStream = Prelude.class.getResourceAsStream(filename)) {
-                String contents = IoUtils.toUtf8String(inputStream);
-                IdlModelLoader.load(filename, () -> contents, visitor);
-                Model preludeModel = visitor.onEnd().unwrap();
+            IdlModelLoader.load(filename, () -> Prelude.class.getResourceAsStream(filename), visitor);
+            Model preludeModel = visitor.onEnd().unwrap();
 
-                // Sanity check to ensure that the prelude model and the tracked prelude traits are consistent.
-                // TODO: Can this be moved to a build step in Gradle?
-                for (Shape trait : preludeModel.getTraitShapes()) {
-                    if (!PRELUDE_TRAITS.contains(trait.getId())) {
-                        throw new IllegalStateException(
-                                "PRELUDE_TRAITS property of prelude is inconsistent with the traits defined in the "
-                                + "prelude-traits.smithy file. This property MUST be kept consistent with the file. "
-                                + PRELUDE_TRAITS + " in PRELUDE_TRAITS vs "
-                                + preludeModel.getTraitShapes().stream()
-                                        .map(Shape::getId)
-                                        .collect(Collectors.toList()));
-                    }
+            // Sanity check to ensure that the prelude model and the tracked prelude traits are consistent.
+            // TODO: Can this be moved to a build step in Gradle?
+            for (Shape trait : preludeModel.getTraitShapes()) {
+                if (!PRELUDE_TRAITS.contains(trait.getId())) {
+                    throw new IllegalStateException(
+                            "PRELUDE_TRAITS property of prelude is inconsistent with the traits defined in the "
+                            + "prelude-traits.smithy file. This property MUST be kept consistent with the file. "
+                            + PRELUDE_TRAITS + " in PRELUDE_TRAITS vs "
+                            + preludeModel.getTraitShapes().stream()
+                                    .map(Shape::getId)
+                                    .collect(Collectors.toList()));
                 }
-
-                return preludeModel;
-            } catch (IOException | UncheckedIOException e) {
-                throw new ModelImportException(String.format("Unable to load prelude model `%s`: %s",
-                        filename, e.getMessage()), e);
             }
+
+            return preludeModel;
         }
     }
 }
