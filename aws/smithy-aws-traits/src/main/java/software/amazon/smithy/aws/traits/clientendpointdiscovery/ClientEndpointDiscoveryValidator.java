@@ -38,6 +38,8 @@ import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
 
 public class ClientEndpointDiscoveryValidator extends AbstractValidator {
+    private static final Set<String> VALID_INPUT_MEMBERS = SetUtils.of("Operation", "Identifiers");
+
     @Override
     public List<ValidationEvent> validate(Model model) {
         ClientEndpointDiscoveryIndex discoveryIndex = model.getKnowledge(ClientEndpointDiscoveryIndex.class);
@@ -133,37 +135,9 @@ public class ClientEndpointDiscoveryValidator extends AbstractValidator {
             Model model, OperationIndex opIndex, OperationShape operation
     ) {
         List<ValidationEvent> events = new ArrayList<>();
-        opIndex.getInput(operation).ifPresent(input -> {
-            Set<String> memberNames = SetUtils.copyOf(input.getMemberNames());
-            if (!memberNames.equals(SetUtils.of("Operation", "Identifiers"))) {
-                events.add(error(input, String.format(
-                        "Input for endpoint discovery operation `%s` may only have the members Operation and "
-                                + "Identifiers but found: %s",
-                        operation.getId().toString(),
-                        String.join(", ", memberNames)
-                )));
-            }
-
-            input.getMember("Operation")
-                    .flatMap(member -> model.getShape(member.getTarget()))
-                    .filter(shape -> !shape.isStringShape())
-                    .ifPresent(shape -> events.add(error(
-                            shape, "The Operation member of an endpoint discovery operation must be a string")));
-
-            input.getMember("Identifiers")
-                    .map(member -> Pair.of(member, model.getShape(member.getTarget())))
-                    .ifPresent(pair -> {
-                        Optional<MapShape> map = pair.getRight().flatMap(Shape::asMapShape);
-                        if (map.isPresent()) {
-                            Optional<Shape> value = model.getShape(map.get().getValue().getTarget());
-                            if (value.isPresent() && value.get().isStringShape()) {
-                                return;
-                            }
-                        }
-                        events.add(error(pair.getLeft(), "The Identifiers member of an endpoint discovery "
-                                + "operation must be a map whose keys and values are strings."));
-                    });
-        });
+        opIndex.getInput(operation)
+                .map(input -> validateEndpointOperationInput(model, input, operation))
+                .ifPresent(events::addAll);
 
         Optional<StructureShape> output = opIndex.getOutput(operation);
         if (!output.isPresent()) {
@@ -222,6 +196,42 @@ public class ClientEndpointDiscoveryValidator extends AbstractValidator {
                     }
                 });
 
+        return events;
+    }
+
+    private List<ValidationEvent> validateEndpointOperationInput(
+            Model model, StructureShape input, OperationShape operation
+    ) {
+        List<ValidationEvent> events = new ArrayList<>();
+        Set<String> memberNames = SetUtils.copyOf(input.getMemberNames());
+        if (!VALID_INPUT_MEMBERS.containsAll(memberNames)) {
+            events.add(error(input, String.format(
+                    "Input for endpoint discovery operation `%s` may only have the members Operation and "
+                            + "Identifiers but found: %s",
+                    operation.getId().toString(),
+                    String.join(", ", memberNames)
+            )));
+        }
+
+        input.getMember("Operation")
+                .flatMap(member -> model.getShape(member.getTarget()))
+                .filter(shape -> !shape.isStringShape())
+                .ifPresent(shape -> events.add(error(
+                        shape, "The Operation member of an endpoint discovery operation must be a string")));
+
+        input.getMember("Identifiers")
+                .map(member -> Pair.of(member, model.getShape(member.getTarget())))
+                .ifPresent(pair -> {
+                    Optional<MapShape> map = pair.getRight().flatMap(Shape::asMapShape);
+                    if (map.isPresent()) {
+                        Optional<Shape> value = model.getShape(map.get().getValue().getTarget());
+                        if (value.isPresent() && value.get().isStringShape()) {
+                            return;
+                        }
+                    }
+                    events.add(error(pair.getLeft(), "The Identifiers member of an endpoint discovery "
+                            + "operation must be a map whose keys and values are strings."));
+                });
         return events;
     }
 }
