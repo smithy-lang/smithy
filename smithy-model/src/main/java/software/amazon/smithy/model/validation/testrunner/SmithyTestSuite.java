@@ -25,6 +25,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -33,8 +38,10 @@ import software.amazon.smithy.model.loader.ModelAssembler;
  * Runs test cases against a directory of models and error files.
  */
 public final class SmithyTestSuite {
-    private List<SmithyTestCase> testCases = new ArrayList<>();
+    private List<Callable<Void>> testCaseCallables = new ArrayList<>();
     private Supplier<ModelAssembler> modelAssemblerFactory = ModelAssembler::new;
+    private final List<SmithyTestCase.Result> failedResults = Collections.synchronizedList(new ArrayList<>());
+    private ExecutorService executorService;
 
     private SmithyTestSuite() {}
 
@@ -54,8 +61,20 @@ public final class SmithyTestSuite {
      * @return Returns the test suite.
      */
     public SmithyTestSuite addTestCase(SmithyTestCase testCase) {
-        testCases.add(testCase);
+        addTestCaseCallable(testCase);
         return this;
+    }
+
+    private void addTestCaseCallable(SmithyTestCase testCase) {
+        testCaseCallables.add(() -> {
+            ModelAssembler assembler = modelAssemblerFactory.get();
+            assembler.addImport(testCase.getModelLocation());
+            SmithyTestCase.Result result = testCase.createResult(assembler.assemble());
+            if (result.isInvalid()) {
+                failedResults.add(result);
+            }
+            return null;
+        });
     }
 
     /**
@@ -123,27 +142,64 @@ public final class SmithyTestSuite {
     }
 
     /**
+     * Sets a custom {@code ExecutorService} to use for executing test cases.
+     *
+     * @param executorService ExecutorService to use.
+     * @return Returns the test suite.
+     */
+    public SmithyTestSuite setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+        return this;
+    }
+
+    /**
      * Executes the test runner.
      *
      * @return Returns the test case result object on success.
      * @throws Error if the validation events do not match expectations.
      */
     public Result run() {
-        List<SmithyTestCase.Result> failedResults = testCases.parallelStream()
-                .map(testCase -> {
-                    ModelAssembler assembler = modelAssemblerFactory.get();
-                    assembler.addImport(testCase.getModelLocation());
-                    return testCase.createResult(assembler.assemble());
-                })
-                .filter(SmithyTestCase.Result::isInvalid)
-                .collect(Collectors.toList());
+        failedResults.clear();
 
-        Result result = new Result(testCases.size() - failedResults.size(), failedResults);
-        if (failedResults.isEmpty()) {
-            return result;
+        if (executorService == null) {
+            // Tests are mostly CPU bound. But rather than use all available
+            // cores, use cores - 1 since test suites are usually run along
+            // with other unit tests which are probably running in multiple
+            // threads.
+            int numberOfCores = Runtime.getRuntime().availableProcessors();
+            executorService = Executors.newFixedThreadPool(numberOfCores - 1);
         }
 
-        throw new Error(result);
+        try {
+            for (Future<Void> future : executorService.invokeAll(testCaseCallables)) {
+                waitOnFuture(future);
+            }
+            Result result = new Result(testCaseCallables.size() - failedResults.size(), failedResults);
+            if (failedResults.isEmpty()) {
+                return result;
+            }
+            throw new Error(result);
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+            throw new Error("Error executing test suite: " + e.getMessage(), e);
+        } finally {
+            executorService.shutdown();
+            testCaseCallables.clear();
+        }
+    }
+
+    private void waitOnFuture(Future<Void> future) throws InterruptedException {
+        try {
+            future.get();
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            // Try to throw the original exception as-is if possible.
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            } else {
+                throw new Error("Error executing test case: " + e.getMessage(), cause);
+            }
+        }
     }
 
     /**
@@ -220,6 +276,11 @@ public final class SmithyTestSuite {
         Error(Result result) {
             super(result.toString());
             this.result = result;
+        }
+
+        Error(String message, Throwable previous) {
+            super(message, previous);
+            this.result = new Result(0, Collections.emptyList());
         }
     }
 }
