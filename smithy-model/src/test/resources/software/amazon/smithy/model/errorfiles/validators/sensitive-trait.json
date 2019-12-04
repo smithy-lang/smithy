@@ -1,29 +1,35 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Operation": {
-                "type": "operation",
+    "smithy": "0.5.0", 
+    "shapes": {
+        "ns.foo#Operation": {
+            "type": "operation", 
+            "traits": {
                 "smithy.api#sensitive": true
-            },
-            "Structure": {
-                "type": "structure",
-                "members": {
-                    "a": {
-                        "target": "String"
-                    }
-                },
+            }
+        }, 
+        "ns.foo#Structure": {
+            "type": "structure", 
+            "members": {
+                "a": {
+                    "$target": "smithy.api#String"
+                }
+            }, 
+            "traits": {
                 "smithy.api#sensitive": true
-            },
-            "Blob": {
-                "type": "blob",
+            }
+        }, 
+        "ns.foo#Blob": {
+            "type": "blob", 
+            "traits": {
                 "smithy.api#sensitive": true
-            },
-            "String": {
-                "type": "string"
-            },
-            "SensitiveString": {
-                "type": "string",
+            }
+        }, 
+        "ns.foo#String": {
+            "type": "string"
+        }, 
+        "ns.foo#SensitiveString": {
+            "type": "string", 
+            "traits": {
                 "smithy.api#sensitive": true
             }
         }

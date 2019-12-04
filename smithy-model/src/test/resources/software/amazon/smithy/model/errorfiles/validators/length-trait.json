@@ -1,70 +1,82 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Valid1": {
-                "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                },
+    "smithy": "0.5.0", 
+    "shapes": {
+        "ns.foo#Valid1": {
+            "type": "list", 
+            "member": {
+                "$target": "smithy.api#String"
+            }, 
+            "traits": {
                 "smithy.api#length": {
                     "min": 0
                 }
-            },
-            "Valid2": {
-                "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                },
+            }
+        }, 
+        "ns.foo#Valid2": {
+            "type": "list", 
+            "member": {
+                "$target": "smithy.api#String"
+            }, 
+            "traits": {
                 "smithy.api#length": {
                     "max": 1
                 }
-            },
-            "Valid3": {
-                "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                },
+            }
+        }, 
+        "ns.foo#Valid3": {
+            "type": "list", 
+            "member": {
+                "$target": "smithy.api#String"
+            }, 
+            "traits": {
                 "smithy.api#length": {
-                    "min": 0,
+                    "min": 0, 
                     "max": 1
                 }
-            },
-            "Valid4": {
-                "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                },
+            }
+        }, 
+        "ns.foo#Valid4": {
+            "type": "list", 
+            "member": {
+                "$target": "smithy.api#String"
+            }, 
+            "traits": {
                 "smithy.api#length": {
-                    "min": 4,
+                    "min": 4, 
                     "max": 4
                 }
-            },
-            "Invalid1": {
-                "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                },
+            }
+        }, 
+        "ns.foo#Invalid1": {
+            "type": "list", 
+            "member": {
+                "$target": "smithy.api#String"
+            }, 
+            "traits": {
                 "smithy.api#length": {
                     "max": -1
                 }
-            },
-            "Invalid2": {
-                "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                },
+            }
+        }, 
+        "ns.foo#Invalid2": {
+            "type": "list", 
+            "member": {
+                "$target": "smithy.api#String"
+            }, 
+            "traits": {
                 "smithy.api#length": {
                     "min": -1
                 }
-            },
-            "Invalid3": {
-                "type": "list",
-                "member": {
-                    "target": "smithy.api#String"
-                },
+            }
+        }, 
+        "ns.foo#Invalid3": {
+            "type": "list", 
+            "member": {
+                "$target": "smithy.api#String"
+            }, 
+            "traits": {
                 "smithy.api#length": {
-                    "min": 5,
+                    "min": 5, 
                     "max": 4
                 }
             }
