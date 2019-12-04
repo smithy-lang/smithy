@@ -87,22 +87,8 @@ Version compatibility
 
 A single version statement can appear in a model file. Different versions MAY
 be encountered when merging multiple model files together. Multiple versions
-are supported if and only if all of the version statements are compatible
-according to the following constraints:
-
-1. Each version MUST specify the same major version number. For example,
-   ``0.2.0`` and ``1.0.0`` are **not** compatible because they use different
-   major version numbers.
-2. When dealing with a major version of "0" (for example, ``0.2.0``), versions
-   that use the same minor version are considered compatible regardless of the
-   patch version. For example, if models are loaded that use a version of
-   ``0.2.0``, ``0.1.1``, and ``0.1.2``, then all of the models are considered
-   to be compatible. However, ``0.2.0`` and ``0.1.99`` are **not** compatible.
-3. When dealing with a major version of "1" or higher, all versions that use
-   the same major version number are considered compatible. For example, if
-   models are loaded that use a version of ``1.0.0``, ``1.0.1``, and
-   ``1.1.0``, then all of the models are considered to be compatible.
-   However, ``1.0.0`` and ``2.0.0`` are **not** compatible.
+are supported if and only if all of the version statements are supported by
+the tool loading the models.
 
 
 .. _metadata:
@@ -114,6 +100,8 @@ Model metadata
 to a model using a :ref:`metadata statement <metadata-statement>`. Metadata
 statements start with ``metadata``, followed by the key to set, followed by
 ``=``, followed by the JSON-like :ref:`node value <node-values>` to assign.
+Metadata statements MUST appear before any namespace statements or shapes
+are defined.
 
 .. tabs::
 
@@ -155,20 +143,18 @@ models without naming conflicts.
 
 A :ref:`namespace statement <namespace-statement>` is used to change the
 *current namespace*. A namespace MUST be defined before a shape can be
-defined. Any number of namespaces can appear in a model.
+defined. Only a single namespace can appear in an IDL model file, but any
+number of namespaces can appear in a JSON AST model file.
 
 The following example defines a string shape named ``MyString`` in the
-``smithy.example`` namespace and a string shape named ``MyString`` in the
-``another.example`` namespace:
+``smithy.example`` namespace:
 
 .. tabs::
 
     .. code-tab:: smithy
 
         namespace smithy.example
-        string MyString
 
-        namespace another.example
         string MyString
 
     .. code-tab:: json
@@ -177,9 +163,6 @@ The following example defines a string shape named ``MyString`` in the
             "smithy": "0.5.0",
             "shapes": {
                 "smithy.example#MyString": {
-                    "type": "string"
-                },
-                "another.example#MyString": {
                     "type": "string"
                 }
             }
@@ -2378,30 +2361,23 @@ Consider the following metadata definition:
 
 .. code-block:: smithy
 
-    namespace smithy.example
-
     metadata foo = {
-        MyString: MyString,
+        String: String,
     }
 
-    string MyString
+    string String
 
-The object key remains the same literal string value while the value is
-treated as a shape ID and resolves to the string literal
-``"smithy.example#MyString"``. This IDL model is equivalent to the
-following JSON AST model:
+The object key remains the same literal string value of ``String`` while the
+value is treated as a shape ID and resolves to the string literal
+``"smithy.api#String"``. This IDL model is equivalent to the following
+JSON AST model:
 
 .. code-block:: json
 
     {
         "smithy": "0.5.0",
-        "shapes": {
-            "smithy.example#MyString": {
-                "type": "string"
-            }
-        },
         "metadata": {
-            "MyString": "smithy.example#MyString"
+            "String": "smithy.api#String"
         }
     }
 
