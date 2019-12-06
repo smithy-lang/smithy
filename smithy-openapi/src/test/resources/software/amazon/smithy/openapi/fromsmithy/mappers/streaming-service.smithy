@@ -12,8 +12,8 @@ operation StreamingOperation() -> Output
 
 structure Output {
   @httpPayload
+  @streaming
   body: StreamingPayload,
 }
 
-@streaming
 blob StreamingPayload
