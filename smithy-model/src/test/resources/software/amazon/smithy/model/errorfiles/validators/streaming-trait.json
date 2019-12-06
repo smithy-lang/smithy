@@ -1,48 +1,60 @@
 {
-    "smithy": "0.4.0",
-    "ns.foo": {
-        "shapes": {
-            "Blob": {
-                "type": "blob"
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Blob": {
+            "type": "blob"
+        },
+        "ns.foo#StreamingOperation": {
+            "type": "operation",
+            "input": {
+                "$target": "ns.foo#StreamingInput"
             },
-            "StreamingOperation": {
-                "type": "operation",
-                "input": "StreamingInput",
-                "output": "StreamingOutput"
-            },
-            "StreamingInput": {
-                "type": "structure",
-                "members": {
-                    "Body": {
-                        "target": "Blob",
+            "output": {
+                "$target": "ns.foo#StreamingOutput"
+            }
+        },
+        "ns.foo#StreamingInput": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "$target": "smithy.api#Blob",
+                    "traits": {
+                        "smithy.api#streaming": true
+                    }
+                }
+            }
+        },
+        "ns.foo#StreamingOutput": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "$target": "smithy.api#Blob",
+                    "traits": {
+                        "smithy.api#streaming": true
+                    }
+                }
+            }
+        },
+        "ns.foo#StreamingError": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "$target": "smithy.api#Blob",
+                    "traits": {
                         "smithy.api#streaming": true
                     }
                 }
             },
-            "StreamingOutput": {
-                "type": "structure",
-                "members": {
-                    "Body": {
-                        "target": "Blob",
-                        "smithy.api#streaming": true
-                    }
-                }
-            },
-            "StreamingError": {
-                "type": "structure",
-                "members": {
-                    "Body": {
-                        "target": "Blob",
-                        "smithy.api#streaming": true
-                    }
-                },
+            "traits": {
                 "smithy.api#error": "client"
-            },
-            "InvalidStreamingStructure": {
-                "type": "structure",
-                "members": {
-                    "Body": {
-                        "target": "Blob",
+            }
+        },
+        "ns.foo#InvalidStreamingStructure": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "$target": "smithy.api#Blob",
+                    "traits": {
                         "smithy.api#streaming": true
                     }
                 }
