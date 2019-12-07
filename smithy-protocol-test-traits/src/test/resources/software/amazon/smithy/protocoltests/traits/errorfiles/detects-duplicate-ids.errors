@@ -1,0 +1,6 @@
+[ERROR] smithy.example#MyError: Conflicting `smithy.test#httpResponseTests` test case IDs found for ID `foo`: `smithy.example#MyError`, `smithy.example#SayGoodbye`, `smithy.example#SayGoodbye` | UniqueProtocolTestCaseId
+[ERROR] smithy.example#SayGoodbye: Conflicting `smithy.test#httpResponseTests` test case IDs found for ID `foo`: `smithy.example#MyError`, `smithy.example#SayGoodbye`, `smithy.example#SayGoodbye` | UniqueProtocolTestCaseId
+[ERROR] smithy.example#SayGoodbye: Conflicting `smithy.test#httpResponseTests` test case IDs found for ID `foo`: `smithy.example#MyError`, `smithy.example#SayGoodbye`, `smithy.example#SayGoodbye` | UniqueProtocolTestCaseId
+[ERROR] smithy.example#SayHello2: Conflicting `smithy.test#httpRequestTests` test case IDs found for ID `foo`: `smithy.example#SayHello`, `smithy.example#SayHello`, `smithy.example#SayHello2` | UniqueProtocolTestCaseId
+[ERROR] smithy.example#SayHello: Conflicting `smithy.test#httpRequestTests` test case IDs found for ID `foo`: `smithy.example#SayHello`, `smithy.example#SayHello`, `smithy.example#SayHello2` | UniqueProtocolTestCaseId
+[ERROR] smithy.example#SayHello: Conflicting `smithy.test#httpRequestTests` test case IDs found for ID `foo`: `smithy.example#SayHello`, `smithy.example#SayHello`, `smithy.example#SayHello2` | UniqueProtocolTestCaseId

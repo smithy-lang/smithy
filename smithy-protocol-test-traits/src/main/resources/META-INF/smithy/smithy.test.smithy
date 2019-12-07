@@ -1,0 +1,207 @@
+$version: "0.5.0"
+
+namespace smithy.test
+
+/// Define how an HTTP request is serialized given a specific protocol,
+/// authentication scheme, and set of input parameters.
+@trait(selector: "operation")
+@length(min: 1)
+list httpRequestTests {
+    member: HttpRequestTestCase,
+}
+
+@private
+structure HttpRequestTestCase {
+    /// The identifier of the test case. This identifier can be used by
+    /// protocol test implementations to filter out unsupported test
+    /// cases by ID, to generate test case names, etc. The provided `id`
+    /// MUST match Smithy's `identifier` ABNF. No two `httpRequestTests`
+    /// test cases can share the same ID.
+    @required
+    @pattern("[A-Za-z_][A-Za-z0-9_]+")
+    id: String,
+
+    /// The name of the protocol to test.
+    @required
+    protocol: String,
+
+    /// The expected serialized HTTP request method.
+    @required
+    @length(min: 1)
+    method: String,
+
+    /// The request-target of the HTTP request, not including
+    /// the query string (for example, "/foo/bar").
+    @required
+    @length(min: 1)
+    uri: String,
+
+    /// The optional authentication scheme to assume. It's possible that
+    /// specific authentication schemes might influence the serialization
+    /// logic of an HTTP request.
+    authScheme: String,
+
+    /// A map of expected query string parameters.
+    ///
+    /// A serialized HTTP request is not in compliance with the protocol
+    /// if any query string parameter defined in `queryParams` is not
+    /// defined in the request or if the value of a query string parameter
+    /// in the request differs from the expected value.
+    ///
+    /// Each key represents the query string parameter name, and each
+    /// value represents the query string parameter value. Both keys and
+    /// values MUST appear in the format in which it is expected to be
+    /// sent over the wire; if a key or value needs to be percent-encoded,
+    /// then it MUST appear percent-encoded in this map.
+    ///
+    /// `queryParams` applies no constraints on additional query parameters.
+    queryParams: StringMap,
+
+    /// A list of query string parameter names that must not appear in the
+    /// serialized HTTP request.
+    ///
+    /// Each value MUST appear in the format in which it is sent over the
+    /// wire; if a key needs to be percent-encoded, then it MUST appear
+    /// percent-encoded in this list.
+    forbidQueryParams: StringList,
+
+    /// A list of query string parameter names that MUST appear in the
+    /// serialized request URI, but no assertion is made on the value.
+    ///
+    /// Each value MUST appear in the format in which it is sent over the
+    /// wire; if a key needs to be percent-encoded, then it MUST appear
+    /// percent-encoded in this list.
+    requireQueryParams: StringList,
+
+    /// Defines a map of expected HTTP headers.
+    ///
+    /// Headers that are not listed in this map are ignored unless they are
+    /// explicitly forbidden through `forbidHeaders`.
+    headers: StringMap,
+
+    /// A list of header field names that must not appear in the serialized
+    /// HTTP request.
+    forbidHeaders: StringList,
+
+    /// A list of header field names that must appear in the serialized
+    /// HTTP message, but no assertion is made on the value.
+    ///
+    /// Headers listed in `headers` do not need to appear in this list.
+    requireHeaders: StringList,
+
+    /// The expected HTTP message body.
+    ///
+    /// If no request body is defined, then no assertions are made about
+    /// the body of the message.
+    body: String,
+
+    /// The media type of the `body`.
+    ///
+    /// This is used to help test runners to parse and validate the expected
+    /// data against generated data.
+    bodyMediaType: String,
+
+    /// Defines the input parameters used to generated the HTTP request.
+    ///
+    /// These parameters MUST be compatible with the input of the operation.
+    params: Document,
+
+    /// Defines vendor-specific parameters that are used to influence the
+    /// request. For example, some vendors might utilize environment
+    /// variables, configuration files on disk, or other means to influence
+    /// the serialization formats used by clients or servers.
+    vendorParams: Document,
+
+    /// A description of the test and what is being asserted.
+    documentation: String,
+}
+
+@private
+map StringMap {
+    key: String,
+    value: String,
+}
+
+@private
+list StringList {
+    member: String,
+}
+
+/// Define how an HTTP response is serialized given a specific protocol,
+/// authentication scheme, and set of output or error parameters.
+@trait(selector: ":each(operation, structure[trait|error])")
+@length(min: 1)
+list httpResponseTests {
+    member: HttpResponseTestCase,
+}
+
+@private
+structure HttpResponseTestCase {
+    /// The identifier of the test case. This identifier can be used by
+    /// protocol test implementations to filter out unsupported test
+    /// cases by ID, to generate test case names, etc. The provided `id`
+    /// MUST match Smithy's `identifier` ABNF. No two `httpResponseTests`
+    /// test cases can share the same ID.
+    @required
+    @pattern("[A-Za-z_][A-Za-z0-9_]+")
+    id: String,
+
+    /// The name of the protocol to test.
+    @required
+    protocol: String,
+
+    /// Defines the HTTP response code.
+    @required
+    @range(min: 100, max: 599)
+    code: Integer,
+
+    /// The optional authentication scheme to assume. It's possible that
+    /// specific authentication schemes might influence the serialization
+    /// logic of an HTTP response.
+    authScheme: String,
+
+    /// A map of expected HTTP headers. Each key represents a header field
+    /// name and each value represents the expected header value. An HTTP
+    /// response is not in compliance with the protocol if any listed header
+    /// is missing from the serialized response or if the expected header
+    /// value differs from the serialized response value.
+    ///
+    /// `headers` applies no constraints on additional headers.
+    headers: StringMap,
+
+    /// A list of header field names that must not appear.
+    forbidHeaders: StringList,
+
+    /// A list of header field names that must appear in the serialized
+    /// HTTP message, but no assertion is made on the value.
+    ///
+    /// Headers listed in `headers` map do not need to appear in this list.
+    requireHeaders: StringList,
+
+    /// Defines the HTTP message body.
+    ///
+    /// If no response body is defined, then no assertions are made about
+    /// the body of the message.
+    body: String,
+
+    /// The media type of the `body`.
+    ///
+    /// This is used to help test runners to parse and validate the expected
+    /// data against generated data. Binary media type formats require that
+    /// the contents of `body` are base64 encoded.
+    bodyMediaType: String,
+
+    /// Defines the output parameters deserialized from the HTTP response.
+    ///
+    /// These parameters MUST be compatible with the output of the operation.
+    params: Document,
+
+    /// Defines vendor-specific parameters that are used to influence the
+    /// response. For example, some vendors might utilize environment
+    /// variables, configuration files on disk, or other means to influence
+    /// the serialization formats used by clients or servers.
+    vendorParams: Document,
+
+    /// A description of the test and what is being asserted.
+    documentation: String,
+}
