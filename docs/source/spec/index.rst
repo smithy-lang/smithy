@@ -56,6 +56,7 @@ Additional specifications
 
     validation
     mqtt
+    http-protocol-compliance-tests
 
 *Additional specifications* define additional functionality and
 enhancements.
@@ -67,6 +68,9 @@ enhancements.
       - Defines how to configure custom validation.
     * - :doc:`mqtt`
       - Defines how to bind models to MQTT.
+    * - :doc:`http-protocol-compliance-tests`
+      - Defines traits used to validate HTTP-based
+        client and server protocol implementations.
 
 
 ------------------

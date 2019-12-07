@@ -1,0 +1,295 @@
+/*
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.smithy.protocoltests.traits;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
+import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+
+public abstract class HttpMessageTestCase implements ToNode {
+
+    private static final String ID = "id";
+    private static final String PROTOCOL = "protocol";
+    private static final String DOCUMENTATION = "documentation";
+    private static final String AUTH_SCHEME = "authScheme";
+    private static final String BODY = "body";
+    private static final String BODY_MEDIA_TYPE = "bodyMediaType";
+    private static final String PARAMS = "params";
+    private static final String VENDOR_PARAMS = "vendorParams";
+    private static final String HEADERS = "headers";
+    private static final String FORBID_HEADERS = "forbidHeaders";
+    private static final String REQUIRE_HEADERS = "requireHeaders";
+
+    private final String id;
+    private final String documentation;
+    private final String protocol;
+    private final String authScheme;
+    private final String body;
+    private final String bodyMediaType;
+    private final ObjectNode params;
+    private final ObjectNode vendorParams;
+    private final Map<String, String> headers;
+    private final List<String> forbidHeaders;
+    private final List<String> requireHeaders;
+
+    HttpMessageTestCase(Builder<?, ?> builder) {
+        id = SmithyBuilder.requiredState(ID, builder.id);
+        protocol = SmithyBuilder.requiredState(PROTOCOL, builder.protocol);
+        documentation = builder.documentation;
+        authScheme = builder.authScheme;
+        body = builder.body;
+        bodyMediaType = builder.bodyMediaType;
+        params = builder.params;
+        vendorParams = builder.vendorParams;
+        headers = Collections.unmodifiableMap(new TreeMap<>(builder.headers));
+        forbidHeaders = ListUtils.copyOf(builder.forbidHeaders);
+        requireHeaders = ListUtils.copyOf(builder.requireHeaders);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Optional<String> getDocumentation() {
+        return Optional.ofNullable(documentation);
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public Optional<String> getAuthScheme() {
+        return Optional.ofNullable(authScheme);
+    }
+
+    public Optional<String> getBody() {
+        return Optional.ofNullable(body);
+    }
+
+    public Optional<String> getBodyMediaType() {
+        return Optional.ofNullable(bodyMediaType);
+    }
+
+    public ObjectNode getParams() {
+        return params;
+    }
+
+    public ObjectNode getVendorParams() {
+        return vendorParams;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public List<String> getForbidHeaders() {
+        return forbidHeaders;
+    }
+
+    public List<String> getRequireHeaders() {
+        return requireHeaders;
+    }
+
+    static void updateBuilderFromNode(Builder<?, ?> builder, Node node) {
+        ObjectNode o = node.expectObjectNode();
+        builder.id(o.expectStringMember(ID).getValue());
+        builder.protocol(o.expectStringMember(PROTOCOL).getValue());
+        o.getStringMember(DOCUMENTATION).map(StringNode::getValue).ifPresent(builder::documentation);
+        o.getStringMember(AUTH_SCHEME).map(StringNode::getValue).ifPresent(builder::authScheme);
+        o.getStringMember(BODY).map(StringNode::getValue).ifPresent(builder::body);
+        o.getStringMember(BODY_MEDIA_TYPE).map(StringNode::getValue).ifPresent(builder::bodyMediaType);
+        o.getObjectMember(PARAMS).ifPresent(builder::params);
+        o.getObjectMember(VENDOR_PARAMS).ifPresent(builder::vendorParams);
+
+        o.getObjectMember(HEADERS).ifPresent(headers -> {
+            headers.getStringMap().forEach((k, v) -> {
+                builder.putHeader(k, v.expectStringNode().getValue());
+            });
+        });
+
+        o.getArrayMember(FORBID_HEADERS).ifPresent(headers -> {
+            builder.forbidHeaders(headers.getElementsAs(StringNode::getValue));
+        });
+
+        o.getArrayMember(REQUIRE_HEADERS).ifPresent(headers -> {
+            builder.requireHeaders(headers.getElementsAs(StringNode::getValue));
+        });
+    }
+
+    @Override
+    public Node toNode() {
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
+                .withMember(ID, getId())
+                .withMember(PROTOCOL, getProtocol())
+                .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
+                .withOptionalMember(AUTH_SCHEME, getAuthScheme().map(Node::from))
+                .withOptionalMember(BODY, getBody().map(Node::from))
+                .withOptionalMember(BODY_MEDIA_TYPE, getBodyMediaType().map(Node::from));
+
+        if (!headers.isEmpty()) {
+            builder.withMember(HEADERS, ObjectNode.fromStringMap(getHeaders()));
+        }
+
+        if (!forbidHeaders.isEmpty()) {
+            builder.withMember(FORBID_HEADERS, ArrayNode.fromStrings(forbidHeaders));
+        }
+
+        if (!requireHeaders.isEmpty()) {
+            builder.withMember(REQUIRE_HEADERS, ArrayNode.fromStrings(requireHeaders));
+        }
+
+        if (!params.isEmpty()) {
+            builder.withMember(PARAMS, getParams());
+        }
+
+        if (!vendorParams.isEmpty()) {
+            builder.withMember(VENDOR_PARAMS, getVendorParams());
+        }
+
+        return builder.build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o == null || o.getClass() != getClass()) {
+            return false;
+        } else {
+            return toNode().equals(((HttpMessageTestCase) o).toNode());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return toNode().hashCode();
+    }
+
+    void updateBuilder(Builder<?, ?> builder) {
+        builder
+                .id(id)
+                .headers(headers)
+                .forbidHeaders(forbidHeaders)
+                .requireHeaders(requireHeaders)
+                .params(params)
+                .vendorParams(vendorParams)
+                .documentation(documentation)
+                .authScheme(authScheme)
+                .protocol(protocol)
+                .body(body)
+                .bodyMediaType(bodyMediaType);
+    }
+
+    abstract static class Builder<B extends Builder, T extends HttpMessageTestCase> implements SmithyBuilder<T> {
+
+        private String id;
+        private String documentation;
+        private String protocol;
+        private String authScheme;
+        private String body;
+        private String bodyMediaType;
+        private ObjectNode params = Node.objectNode();
+        private ObjectNode vendorParams = Node.objectNode();
+        private final Map<String, String> headers = new TreeMap<>();
+        private final List<String> forbidHeaders = new ArrayList<>();
+        private final List<String> requireHeaders = new ArrayList<>();
+
+        @SuppressWarnings("unchecked")
+        public B id(String id) {
+            this.id = id;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B documentation(String documentation) {
+            this.documentation = documentation;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B protocol(String protocol) {
+            this.protocol = protocol;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B authScheme(String authScheme) {
+            this.authScheme = authScheme;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B body(String body) {
+            this.body = body;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B bodyMediaType(String bodyMediaType) {
+            this.bodyMediaType = bodyMediaType;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B params(ObjectNode params) {
+            this.params = params;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B vendorParams(ObjectNode vendorParams) {
+            this.vendorParams = vendorParams;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B headers(Map<String, String> headers) {
+            this.headers.clear();
+            this.headers.putAll(headers);
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B putHeader(String key, String value) {
+            headers.put(key, value);
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B forbidHeaders(List<String> forbidHeaders) {
+            this.forbidHeaders.clear();
+            this.forbidHeaders.addAll(forbidHeaders);
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B requireHeaders(List<String> requireHeaders) {
+            this.requireHeaders.clear();
+            this.requireHeaders.addAll(requireHeaders);
+            return (B) this;
+        }
+    }
+}
