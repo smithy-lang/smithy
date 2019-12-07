@@ -393,7 +393,7 @@ For example, given the following service:
                     "version": "2018-03-17",
                     "resources": [
                         {
-                            "$target": "smithy.example#MyResource"
+                            "target": "smithy.example#MyResource"
                         }
                     ],
                     "traits": {
@@ -406,7 +406,7 @@ For example, given the following service:
                     "type": "resource",
                     "identifiers": {
                         "myId": {
-                            "$target": "smithy.example#MyResourceId"
+                            "target": "smithy.example#MyResourceId"
                         }
                     },
                     "traits": {
@@ -458,7 +458,7 @@ resource.
                     "type": "resource",
                     "identifiers": {
                         "arn": {
-                            "$target": "smithy.example#Arn"
+                            "target": "smithy.example#Arn"
                         }
                     },
                     "traits": {
@@ -645,21 +645,21 @@ structure, union, or collection unless overridden.
                     "type": "structure",
                     "members": {
                         "content": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "aws.api#data": "content"
                         },
                         "tags": {
-                            "$target": "smithy.example#TagList"
+                            "target": "smithy.example#TagList"
                         },
                         "name": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                         }
                     }
                 },
                 "smithy.example#TagList": {
                     "type": "list",
                     "member": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     },
                     "aws.api#data": "tagging"
                 }
@@ -762,10 +762,10 @@ plane unless an operation or resource is marked with the
                 "smithy.example#PutThings": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#PutThingsInput"
+                        "target": "smithy.example#PutThingsInput"
                     },
                     "output": {
-                        "$target": "smithy.example#PutThingsOutput"
+                        "target": "smithy.example#PutThingsOutput"
                     },
                     "traits": {
                         "aws.api#controlPlane": true
@@ -813,10 +813,10 @@ plane unless an operation or resource is marked with the
                 "smithy.example#PutThings": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#PutThingsInput"
+                        "target": "smithy.example#PutThingsInput"
                     },
                     "output": {
-                        "$target": "smithy.example#PutThingsOutput"
+                        "target": "smithy.example#PutThingsOutput"
                     },
                     "traits": {
                         "aws.api#dataPlane": true
@@ -869,10 +869,10 @@ operation MUST NOT be used as part of the request signature calculation:
                 "smithy.example#PutThings": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#PutThingsInput"
+                        "target": "smithy.example#PutThingsInput"
                     },
                     "output": {
-                        "$target": "smithy.example#PutThingsOutput"
+                        "target": "smithy.example#PutThingsOutput"
                     },
                     "traits": {
                         "aws.api#unsignedPayload": []
@@ -901,10 +901,10 @@ only when using the "aws.v4" authentication scheme:
                 "smithy.example#PutThings": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#PutThingsInput"
+                        "target": "smithy.example#PutThingsInput"
                     },
                     "output": {
-                        "$target": "smithy.example#PutThingsOutput"
+                        "target": "smithy.example#PutThingsOutput"
                     },
                     "traits": {
                         "aws.api#unsignedPayload": [
@@ -1104,10 +1104,10 @@ using an ``clientEndpointDiscoveryId``.
                     "version": "2019-09-10",
                     "operations": [
                         {
-                            "$target": "ns.foo#DescribeEndpoints"
+                            "target": "ns.foo#DescribeEndpoints"
                         },
                         {
-                            "$target": "ns.foo#GetObject"
+                            "target": "ns.foo#GetObject"
                         }
                     ],
                     "traits": {
@@ -1120,68 +1120,68 @@ using an ``clientEndpointDiscoveryId``.
                 "ns.foo#DescribeEndpoints": {
                     "type": "operation",
                     "input": {
-                        "$target": "ns.foo#DescribeEndpointsInput"
+                        "target": "ns.foo#DescribeEndpointsInput"
                     },
                     "output": {
-                        "$target": "ns.foo#DescribeEndpointsOutput"
+                        "target": "ns.foo#DescribeEndpointsOutput"
                     }
                 },
                 "ns.foo#DescribeEndpointsInput": {
                     "type": "structure",
                     "members": {
                         "Operation": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "Identifiers": {
-                            "$target": "ns.foo#Identifiers"
+                            "target": "ns.foo#Identifiers"
                         }
                     }
                 },
                 "ns.foo#Identifiers": {
                     "type": "map",
                     "key": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     },
                     "value": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     }
                 },
                 "ns.foo#DescribeEndpointsOutput": {
                     "type": "structure",
                     "members": {
                         "Endpoints": {
-                            "$target": "ns.foo#Endpoints"
+                            "target": "ns.foo#Endpoints"
                         }
                     }
                 },
                 "ns.foo#Endpoints": {
                     "type": "list",
                     "member": {
-                        "$target": "ns.foo#Endpoint"
+                        "target": "ns.foo#Endpoint"
                     }
                 },
                 "ns.foo#Endpoint": {
                     "type": "structure",
                     "members": {
                         "Address": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "CachePeriodInMinutes": {
-                            "$target": "smithy.api#Long"
+                            "target": "smithy.api#Long"
                         }
                     }
                 },
                 "ns.foo#GetObject": {
                     "type": "operation",
                     "input": {
-                        "$target": "ns.foo#GetObjectInput"
+                        "target": "ns.foo#GetObjectInput"
                     },
                     "output": {
-                        "$target": "ns.foo#GetObjectOutput"
+                        "target": "ns.foo#GetObjectOutput"
                     },
                     "errors": [
                         {
-                            "$target": "ns.foo#InvalidEndpointError"
+                            "target": "ns.foo#InvalidEndpointError"
                         }
                     ],
                     "traits": {
@@ -1194,7 +1194,7 @@ using an ``clientEndpointDiscoveryId``.
                     "type": "structure",
                     "members": {
                         "Id": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "traits": {
                                 "aws.api#clientEndpointDiscoveryId": true,
                                 "smithy.api#required": true
@@ -1206,7 +1206,7 @@ using an ``clientEndpointDiscoveryId``.
                     "type": "structure",
                     "members": {
                         "Object": {
-                            "$target": "smithy.api#Blob"
+                            "target": "smithy.api#Blob"
                         }
                     }
                 },

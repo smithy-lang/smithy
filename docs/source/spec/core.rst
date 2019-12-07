@@ -428,7 +428,7 @@ The following example defines a list with a string member from the
             "shapes": {
                 "smithy.example#MyList": {
                     "member": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     }
                 }
             }
@@ -453,7 +453,7 @@ Traits can be applied to the list shape and its member:
             "shapes": {
                 "smithy.example#MyList": {
                     "member": {
-                        "$target": "smithy.api#String",
+                        "target": "smithy.api#String",
                         "traits": {
                             "smithy.api#length": {
                                 "min": 1,
@@ -528,7 +528,7 @@ The following example defines a set of strings:
             "shapes": {
                 "smithy.example#StringSet": {
                     "member": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     }
                 }
             }
@@ -556,7 +556,7 @@ Traits can be applied to the set shape and its members:
             "shapes": {
                 "smithy.example#StringSet": {
                     "member": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     },
                     "traits": {
                         "smithy.api#deprecated": true
@@ -608,10 +608,10 @@ The following example defines a map of strings to integers:
             "shapes": {
                 "smithy.example#IntegerMap": {
                     "key": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     },
                     "value": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     }
                 }
             }
@@ -643,7 +643,7 @@ Traits can be applied to the map shape and its members:
             "shapes": {
                 "smithy.example#IntegerMap": {
                     "key": {
-                        "$target": "smithy.api#String",
+                        "target": "smithy.api#String",
                         "traits": {
                             "smithy.api#length": {
                                 "min": 1,
@@ -652,7 +652,7 @@ Traits can be applied to the map shape and its members:
                         }
                     },
                     "value": {
-                        "$target": "smithy.api#String",
+                        "target": "smithy.api#String",
                         "traits": {
                             "smithy.api#sensitive": true
                         }
@@ -711,10 +711,10 @@ The following example defines a structure with two members:
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "baz": {
-                            "$target": "smithy.api#Integer"
+                            "target": "smithy.api#Integer"
                         }
                     }
                 }
@@ -747,13 +747,13 @@ using the ``apply`` statement:
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true
                             }
                         },
                         "baz": {
-                            "$target": "smithy.api#Integer",
+                            "target": "smithy.api#Integer",
                             "traits": {
                                 "smithy.api#deprecated": true
                             }
@@ -805,13 +805,13 @@ The following example defines a union shape with several members:
                     "type": "structure",
                     "members": {
                         "i32": {
-                            "$target": "smithy.api#Integer"
+                            "target": "smithy.api#Integer"
                         },
                         "stringA": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "stringB": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#sensitive": true
                             }
@@ -858,7 +858,7 @@ targets the ``MyString`` shape in the same namespace.
             "shapes": {
                 "smithy.example#MyList": {
                     "member": {
-                        "$target": "smithy.example#MyString"
+                        "target": "smithy.example#MyString"
                     }
                 }
             }
@@ -882,7 +882,7 @@ Traits can be attached to members before the member definition:
             "shapes": {
                 "smithy.example#MyList": {
                     "member": {
-                        "$target": "smithy.example#MyString",
+                        "target": "smithy.example#MyString",
                         "traits": {
                             "smithy.api#sensitive": true
                         }
@@ -972,7 +972,7 @@ The following shape definition is invalid:
                 "smithy.example#RecursiveList": {
                     "type": "list",
                     "member": {
-                        "$target": "smithy.example#RecursiveList"
+                        "target": "smithy.example#RecursiveList"
                     }
                 }
             }
@@ -1000,14 +1000,14 @@ The following shape definition is valid:
                 "smithy.example#ValidList": {
                     "type": "list",
                     "member": {
-                        "$target": "smithy.example#IntermediateStructure"
+                        "target": "smithy.example#IntermediateStructure"
                     }
                 },
                 "smithy.example#IntermediateStructure": {
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "$target": "smithy.example#ValidList"
+                            "target": "smithy.example#ValidList"
                         }
                     }
                 }
@@ -1101,14 +1101,14 @@ that do not fit within a resource hierarchy.
                     "version": "2017-02-11",
                     "operations": [
                         {
-                            "$target": "smithy.example#GetServerTime"
+                            "target": "smithy.example#GetServerTime"
                         }
                     ]
                 },
                 "smithy.example#GetServerTime": {
                     "type": "operation",
                     "output": {
-                        "$target": "smithy.example#GetServerTimeOutput"
+                        "target": "smithy.example#GetServerTimeOutput"
                     }
                 }
             }
@@ -1151,7 +1151,7 @@ shape ID of a resource to the ``resources`` property of a service.
                     "version": "2017-02-11",
                     "resources": [
                         {
-                            "$target": "smithy.example#MyResource"
+                            "target": "smithy.example#MyResource"
                         }
                     ]
                 },
@@ -1199,17 +1199,17 @@ can potentially return the ``NotFound`` or ``BadRequest``
                 "smithy.example#MyOperation": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#Input"
+                        "target": "smithy.example#Input"
                     },
                     "output": {
-                        "$target": "smithy.example#Output"
+                        "target": "smithy.example#Output"
                     },
                     "errors": [
                         {
-                            "$target": "smithy.example#NotFound"
+                            "target": "smithy.example#NotFound"
                         },
                         {
-                            "$target": "smithy.example#BadRequest"
+                            "target": "smithy.example#BadRequest"
                         }
                     ]
                 }
@@ -1241,7 +1241,7 @@ named ``Input``:
                 "smithy.example#MyOperation": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#Input"
+                        "target": "smithy.example#Input"
                     }
                 }
             }
@@ -1293,7 +1293,7 @@ structure named ``Output``:
                 "smithy.example#MyOperation": {
                     "type": "operation",
                     "output": {
-                        "$target": "smithy.example#Output"
+                        "target": "smithy.example#Output"
                     }
                 }
             }
@@ -1328,10 +1328,10 @@ returns no output, and can potentially return the
                     "type": "operation",
                     "errors": [
                         {
-                            "$target": "smithy.example#NotFound"
+                            "target": "smithy.example#NotFound"
                         },
                         {
-                            "$target": "smithy.example#BadRequest"
+                            "target": "smithy.example#BadRequest"
                         }
                     ]
                 }
@@ -1428,7 +1428,7 @@ single identifier named ``forecastId`` that targets the ``ForecastId`` shape:
                     "type": "resource",
                     "identifiers": {
                         "forecastId": {
-                            "$target": "smithy.example#ForecastId"
+                            "target": "smithy.example#ForecastId"
                         }
                     }
                 },
@@ -1487,12 +1487,12 @@ For example, given the following model,
                     "type": "resource",
                     "resources": [
                         {
-                            "$target": "smithy.example#ResourceB"
+                            "target": "smithy.example#ResourceB"
                         }
                     ],
                     "identifiers": {
                         "a": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         }
                     }
                 },
@@ -1500,15 +1500,15 @@ For example, given the following model,
                     "type": "resource",
                     "resources": [
                         {
-                            "$target": "smithy.example#ResourceC"
+                            "target": "smithy.example#ResourceC"
                         }
                     ],
                     "identifiers": {
                         "a": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "b": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         }
                     }
                 },
@@ -1516,13 +1516,13 @@ For example, given the following model,
                     "type": "resource",
                     "identifiers": {
                         "a": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "b": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "c": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         }
                     }
                 }
@@ -1572,18 +1572,18 @@ define an ``identifiers`` property that is compatible with their parents:
                     "type": "resource",
                     "identifiers": {
                         "a": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "b": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         }
                     },
                     "resources": [
                         {
-                            "$target": "smithy.example#Invalid1"
+                            "target": "smithy.example#Invalid1"
                         },
                         {
-                            "$target": "smithy.example#Invalid2"
+                            "target": "smithy.example#Invalid2"
                         }
                     ]
                 },
@@ -1591,7 +1591,7 @@ define an ``identifiers`` property that is compatible with their parents:
                     "type": "resource",
                     "identifiers": {
                         "b": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         }
                     }
                 },
@@ -1599,10 +1599,10 @@ define an ``identifiers`` property that is compatible with their parents:
                     "type": "resource",
                     "identifiers": {
                         "a": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "b": {
-                            "$target": "smithy.example#SomeOtherString"
+                            "target": "smithy.example#SomeOtherString"
                         }
                     }
                 }
@@ -1690,20 +1690,20 @@ For example, given the following model,
                     "type": "resource",
                     "identifiers": {
                         "forecastId": {
-                            "$target": "smithy.example#ForecastId"
+                            "target": "smithy.example#ForecastId"
                         }
                     },
                     "read": {
-                        "$target": "smithy.example#GetForecast"
+                        "target": "smithy.example#GetForecast"
                     }
                 },
                 "smithy.example#GetForecast": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#GetForecastInput"
+                        "target": "smithy.example#GetForecastInput"
                     },
                     "output": {
-                        "$target": "smithy.example#GetForecastOutput"
+                        "target": "smithy.example#GetForecastOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true
@@ -1713,7 +1713,7 @@ For example, given the following model,
                     "type": "structure",
                     "members": {
                         "forecastId": {
-                            "$target": "smithy.example#ForecastId",
+                            "target": "smithy.example#ForecastId",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -1724,7 +1724,7 @@ For example, given the following model,
                     "type": "structure",
                     "members": {
                         "weather": {
-                            "$target": "smithy.example#WeatherData",
+                            "target": "smithy.example#WeatherData",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -1773,29 +1773,29 @@ Given the following model,
                     "type": "resource",
                     "identifiers": {
                         "forecastId": {
-                            "$target": "smithy.example#ForecastId"
+                            "target": "smithy.example#ForecastId"
                         }
                     },
                     "operations": [
                         {
-                            "$target": "smithy.example#BatchPutForecasts"
+                            "target": "smithy.example#BatchPutForecasts"
                         }
                     ]
                 },
                 "smithy.example#BatchPutForecasts": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#BatchPutForecastsInput"
+                        "target": "smithy.example#BatchPutForecastsInput"
                     },
                     "output": {
-                        "$target": "smithy.example#BatchPutForecastsOutput"
+                        "target": "smithy.example#BatchPutForecastsOutput"
                     }
                 },
                 "smithy.example#BatchPutForecastsInput": {
                     "type": "structure",
                     "members": {
                         "forecasts": {
-                            "$target": "smithy.example#BatchPutForecastList",
+                            "target": "smithy.example#BatchPutForecastList",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -2249,16 +2249,16 @@ For example, given the following Smithy model:
                 "type": "structure",
                 "members": {
                     "a": {
-                        "$target": "smithy.example#MyString"
+                        "target": "smithy.example#MyString"
                     },
                     "b": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     },
                     "c": {
-                        "$target": "smithy.example#Foo"
+                        "target": "smithy.example#Foo"
                     },
                     "d": {
-                        "$target": "smithy.example#InvalidShape"
+                        "target": "smithy.example#InvalidShape"
                     }
                 }
             },
@@ -2716,7 +2716,7 @@ example and the following example are all valid even after adding a member to th
                     "type": "structure",
                     "members": {
                         "baz": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         }
                     },
                     "traits": {
@@ -3822,7 +3822,7 @@ in a response.
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "$target": "smithy.example#FooString",
+                            "target": "smithy.example#FooString",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -3863,7 +3863,7 @@ Value type
                 "smithy.example#MyList": {
                     "type": "list",
                     "member": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     },
                     "traits": {
                         "smithy.api#uniqueItems": true
@@ -4123,10 +4123,10 @@ explicitly on the operation.
                 "smithy.example#GetFoos": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#GetFoosInput"
+                        "target": "smithy.example#GetFoosInput"
                     },
                     "output": {
-                        "$target": "smithy.example#GetFoosOutput"
+                        "target": "smithy.example#GetFoosOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true,
@@ -4143,10 +4143,10 @@ explicitly on the operation.
                     "type": "structure",
                     "members": {
                         "maxResults": {
-                            "$target": "smithy.api#Integer"
+                            "target": "smithy.api#Integer"
                         },
                         "nextToken": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         }
                     }
                 },
@@ -4154,10 +4154,10 @@ explicitly on the operation.
                     "type": "structure",
                     "members": {
                         "nextToken": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "foos": {
-                            "$target": "smithy.example#StringList",
+                            "target": "smithy.example#StringList",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -4167,7 +4167,7 @@ explicitly on the operation.
                 "smithy.example#StringList": {
                     "type": "list",
                     "member": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     }
                 }
             }
@@ -4216,10 +4216,10 @@ settings from a service.
                 "smithy.example#GetFoos": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#GetFoosInput"
+                        "target": "smithy.example#GetFoosInput"
                     },
                     "output": {
-                        "$target": "smithy.example#GetFoosOutput"
+                        "target": "smithy.example#GetFoosOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true,
@@ -4285,10 +4285,10 @@ wrapper where the output token and items are referenced by paths.
                 "smithy.example#GetFoos": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#GetFoosInput"
+                        "target": "smithy.example#GetFoosInput"
                     },
                     "output": {
-                        "$target": "smithy.example#GetFoosOutput"
+                        "target": "smithy.example#GetFoosOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true,
@@ -4304,10 +4304,10 @@ wrapper where the output token and items are referenced by paths.
                     "type": "structure",
                     "members": {
                         "maxResults": {
-                            "$target": "smithy.api#Integer"
+                            "target": "smithy.api#Integer"
                         },
                         "nextToken": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         }
                     }
                 },
@@ -4315,7 +4315,7 @@ wrapper where the output token and items are referenced by paths.
                     "type": "structure",
                     "members": {
                         "result": {
-                            "$target": "smithy.example#ResultWrapper",
+                            "target": "smithy.example#ResultWrapper",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -4326,10 +4326,10 @@ wrapper where the output token and items are referenced by paths.
                     "type": "structure",
                     "members": {
                         "nextToken": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         },
                         "foos": {
-                            "$target": "smithy.example#StringList",
+                            "target": "smithy.example#StringList",
                             "traits": {
                                 "smithy.api#required": true
                             }
@@ -4339,7 +4339,7 @@ wrapper where the output token and items are referenced by paths.
                 "smithy.example#StringList": {
                     "type": "list",
                     "member": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     }
                 }
             }
@@ -4840,10 +4840,10 @@ The following example defines two operations:
                     "version": "2017-02-11",
                     "operations": [
                         {
-                            "$target": "smithy.example#OperationA"
+                            "target": "smithy.example#OperationA"
                         },
                         {
-                            "$target": "smithy.example#OperationB"
+                            "target": "smithy.example#OperationB"
                         }
                     ],
                     "traits": {
@@ -4915,10 +4915,10 @@ protocols can define different authentication schemes for each protocol.
                     "version": "2017-02-11",
                     "operations": [
                         {
-                            "$target": "smithy.example#OperationA"
+                            "target": "smithy.example#OperationA"
                         },
                         {
-                            "$target": "smithy.example#OperationB"
+                            "target": "smithy.example#OperationB"
                         }
                     ],
                     "traits": {
@@ -5002,13 +5002,13 @@ Given the following structure definition,
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#jsonName": "Foo"
                             }
                         },
                         "bar": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         }
                     }
                 }
@@ -5174,16 +5174,16 @@ For example, given the following model,
                     "type": "structure",
                     "members": {
                         "baz": {
-                            "$target": "smithy.example#Baz",
+                            "target": "smithy.example#Baz",
                             "traits": {
                                 "smithy.api#documentation": "Member documentation"
                             }
                         },
                         "bar": {
-                            "$target": "smithy.example#Baz"
+                            "target": "smithy.example#Baz"
                         },
                         "qux": {
-                            "$target": "smithy.api#String"
+                            "target": "smithy.api#String"
                         }
                     }
                 },
@@ -5465,10 +5465,10 @@ The following example defines an operation that uses a custom endpoint:
                 "smithy.example#GetStatus": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#GetStatusInput"
+                        "target": "smithy.example#GetStatusInput"
                     },
                     "output": {
-                        "$target": "smithy.example#GetStatusOutput"
+                        "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true,
@@ -5481,7 +5481,7 @@ The following example defines an operation that uses a custom endpoint:
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true,
                                 "smithy.api#hostLabel": true
@@ -5528,10 +5528,10 @@ Given the following operation,
                 "smithy.example#GetStatus": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#GetStatusInput"
+                        "target": "smithy.example#GetStatusInput"
                     },
                     "output": {
-                        "$target": "smithy.example#GetStatusOutput"
+                        "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true,
@@ -5544,7 +5544,7 @@ Given the following operation,
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true,
                                 "smithy.api#hostLabel": true
@@ -5594,10 +5594,10 @@ Given the following operation,
                 "smithy.example#GetStatus": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#GetStatusInput"
+                        "target": "smithy.example#GetStatusInput"
                     },
                     "output": {
-                        "$target": "smithy.example#GetStatusOutput"
+                        "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true,
@@ -5610,14 +5610,14 @@ Given the following operation,
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true,
                                 "smithy.api#hostLabel": true
                             }
                         },
                         "bar": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true,
                                 "smithy.api#hostLabel": true
@@ -5656,10 +5656,10 @@ invalid because the ``{foo}`` and ``{bar}`` labels are adjacent:
                 "smithy.example#GetStatus": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#GetStatusInput"
+                        "target": "smithy.example#GetStatusInput"
                     },
                     "output": {
-                        "$target": "smithy.example#GetStatusOutput"
+                        "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true,
@@ -5721,10 +5721,10 @@ Given the following operation,
                 "smithy.example#GetStatus": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#GetStatusInput"
+                        "target": "smithy.example#GetStatusInput"
                     },
                     "output": {
-                        "$target": "smithy.example#GetStatusOutput"
+                        "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true,
@@ -5741,7 +5741,7 @@ Given the following operation,
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true,
                                 "smithy.api#hostLabel": true,
@@ -5808,10 +5808,10 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
                 "smithy.example#GetStatus": {
                     "type": "operation",
                     "input": {
-                        "$target": "smithy.example#GetStatusInput"
+                        "target": "smithy.example#GetStatusInput"
                     },
                     "output": {
-                        "$target": "smithy.example#GetStatusOutput"
+                        "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
                         "smithy.api#readonly": true,
@@ -5824,7 +5824,7 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
                     "type": "structure",
                     "members": {
                         "foo": {
-                            "$target": "smithy.api#String",
+                            "target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#required": true,
                                 "smithy.api#hostLabel": true
