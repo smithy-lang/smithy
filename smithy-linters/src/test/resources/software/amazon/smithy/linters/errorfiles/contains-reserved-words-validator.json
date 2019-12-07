@@ -5,7 +5,7 @@
             "type": "structure",
             "members": {
                 "bar": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },
@@ -27,16 +27,16 @@
         "ns.foo#List": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             }
         },
         "ns.foo#Map": {
             "type": "map",
             "key": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             },
             "value": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             }
         },
         "ns.foo#MyService": {
@@ -44,12 +44,12 @@
             "version": "2017-01-17",
             "resources": [
                 {
-                    "$target": "ns.foo#MyResource"
+                    "target": "ns.foo#MyResource"
                 }
             ],
             "operations": [
                 {
-                    "$target": "ns.foo#OperationA"
+                    "target": "ns.foo#OperationA"
                 }
             ],
             "traits": {
@@ -64,12 +64,12 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "ns.foo#MyResourceIdentifier"
+                    "target": "ns.foo#MyResourceIdentifier"
                 }
             },
             "operations": [
                 {
-                    "$target": "ns.foo#OperationB"
+                    "target": "ns.foo#OperationB"
                 }
             ]
         },
@@ -79,17 +79,17 @@
         "ns.foo#OperationA": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#OperationAInput"
+                "target": "ns.foo#OperationAInput"
             },
             "output": {
-                "$target": "ns.foo#OperationAOutput"
+                "target": "ns.foo#OperationAOutput"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#OperationErrorA"
+                    "target": "ns.foo#OperationErrorA"
                 },
                 {
-                    "$target": "ns.foo#OperationErrorB"
+                    "target": "ns.foo#OperationErrorB"
                 }
             ],
             "traits": {
@@ -100,13 +100,13 @@
             "type": "structure",
             "members": {
                 "memberName": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "otherMemberName": {
-                    "$target": "ns.foo#Integer"
+                    "target": "ns.foo#Integer"
                 },
                 "fooShape": {
-                    "$target": "ns.foo#FooShape"
+                    "target": "ns.foo#FooShape"
                 }
             }
         },
@@ -114,7 +114,7 @@
             "type": "structure",
             "members": {
                 "b": {
-                    "$target": "ns.foo#Map"
+                    "target": "ns.foo#Map"
                 }
             }
         },
@@ -133,14 +133,14 @@
         "ns.foo#OperationB": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#OperationBInput"
+                "target": "ns.foo#OperationBInput"
             }
         },
         "ns.foo#OperationBInput": {
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "ns.foo#MyResourceIdentifier",
+                    "target": "ns.foo#MyResourceIdentifier",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -150,7 +150,7 @@
         "ns.foo#_OperationBaz": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#_foo"
+                "target": "ns.foo#_foo"
             }
         },
         "ns.foo#UtcTimestamp": {
@@ -160,13 +160,13 @@
             "type": "structure",
             "members": {
                 "c": {
-                    "$target": "ns.foo#Float"
+                    "target": "ns.foo#Float"
                 },
                 "string": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "_qux": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },

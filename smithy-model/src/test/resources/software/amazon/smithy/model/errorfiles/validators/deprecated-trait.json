@@ -5,13 +5,13 @@
             "type": "structure",
             "members": {
                 "abc": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#deprecated": {}
                     }
                 },
                 "def": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#deprecated": {
                             "message": "Another message"

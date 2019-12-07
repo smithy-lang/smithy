@@ -6,13 +6,13 @@
             "version": "2019-09-10",
             "operations": [
                 {
-                    "$target": "ns.foo#DescribeEndpointsFoo"
+                    "target": "ns.foo#DescribeEndpointsFoo"
                 },
                 {
-                    "$target": "ns.foo#GetObjectFoo"
+                    "target": "ns.foo#GetObjectFoo"
                 },
                 {
-                    "$target": "ns.foo#PutObject"
+                    "target": "ns.foo#PutObject"
                 }
             ],
             "traits": {
@@ -27,13 +27,13 @@
             "version": "2019-09-10",
             "operations": [
                 {
-                    "$target": "ns.foo#DescribeEndpointsBar"
+                    "target": "ns.foo#DescribeEndpointsBar"
                 },
                 {
-                    "$target": "ns.foo#GetObjectBar"
+                    "target": "ns.foo#GetObjectBar"
                 },
                 {
-                    "$target": "ns.foo#PutObject"
+                    "target": "ns.foo#PutObject"
                 }
             ],
             "traits": {
@@ -46,77 +46,77 @@
         "ns.foo#DescribeEndpointsFoo": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#DescribeEndpointsInput"
+                "target": "ns.foo#DescribeEndpointsInput"
             },
             "output": {
-                "$target": "ns.foo#DescribeEndpointsOutput"
+                "target": "ns.foo#DescribeEndpointsOutput"
             }
         },
         "ns.foo#DescribeEndpointsBar": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#DescribeEndpointsInput"
+                "target": "ns.foo#DescribeEndpointsInput"
             },
             "output": {
-                "$target": "ns.foo#DescribeEndpointsOutput"
+                "target": "ns.foo#DescribeEndpointsOutput"
             }
         },
         "ns.foo#DescribeEndpointsInput": {
             "type": "structure",
             "members": {
                 "Operation": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "Identifiers": {
-                    "$target": "ns.foo#Identifiers"
+                    "target": "ns.foo#Identifiers"
                 }
             }
         },
         "ns.foo#Identifiers": {
             "type": "map",
             "key": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             },
             "value": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }
         },
         "ns.foo#DescribeEndpointsOutput": {
             "type": "structure",
             "members": {
                 "Endpoints": {
-                    "$target": "ns.foo#Endpoints"
+                    "target": "ns.foo#Endpoints"
                 }
             }
         },
         "ns.foo#Endpoints": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#Endpoint"
+                "target": "ns.foo#Endpoint"
             }
         },
         "ns.foo#Endpoint": {
             "type": "structure",
             "members": {
                 "Address": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "CachePeriodInMinutes": {
-                    "$target": "smithy.api#Long"
+                    "target": "smithy.api#Long"
                 }
             }
         },
         "ns.foo#GetObjectFoo": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#GetObjectInput"
+                "target": "ns.foo#GetObjectInput"
             },
             "output": {
-                "$target": "ns.foo#GetObjectOutput"
+                "target": "ns.foo#GetObjectOutput"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#InvalidEndpointError"
+                    "target": "ns.foo#InvalidEndpointError"
                 }
             ],
             "traits": {
@@ -128,14 +128,14 @@
         "ns.foo#GetObjectBar": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#GetObjectInput"
+                "target": "ns.foo#GetObjectInput"
             },
             "output": {
-                "$target": "ns.foo#GetObjectOutput"
+                "target": "ns.foo#GetObjectOutput"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#InvalidEndpointError"
+                    "target": "ns.foo#InvalidEndpointError"
                 }
             ],
             "traits": {
@@ -148,7 +148,7 @@
             "type": "structure",
             "members": {
                 "Id": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "aws.api#clientEndpointDiscoveryId": true,
                         "smithy.api#required": true
@@ -160,18 +160,18 @@
             "type": "structure",
             "members": {
                 "Object": {
-                    "$target": "smithy.api#Blob"
+                    "target": "smithy.api#Blob"
                 }
             }
         },
         "ns.foo#PutObject": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#PutObjectInput"
+                "target": "ns.foo#PutObjectInput"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#InvalidEndpointError"
+                    "target": "ns.foo#InvalidEndpointError"
                 }
             ],
             "traits": {
@@ -184,7 +184,7 @@
             "type": "structure",
             "members": {
                 "Object": {
-                    "$target": "smithy.api#Blob"
+                    "target": "smithy.api#Blob"
                 }
             }
         },

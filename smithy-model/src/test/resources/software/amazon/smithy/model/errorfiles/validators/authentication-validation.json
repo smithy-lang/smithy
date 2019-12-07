@@ -6,16 +6,16 @@
             "version": "2019-02-11",
             "operations": [
                 {
-                    "$target": "ns.foo#ValidOperation1"
+                    "target": "ns.foo#ValidOperation1"
                 },
                 {
-                    "$target": "ns.foo#ValidOperation2"
+                    "target": "ns.foo#ValidOperation2"
                 },
                 {
-                    "$target": "ns.foo#ValidOperation3"
+                    "target": "ns.foo#ValidOperation3"
                 },
                 {
-                    "$target": "ns.foo#InvalidOperation1"
+                    "target": "ns.foo#InvalidOperation1"
                 }
             ],
             "traits": {

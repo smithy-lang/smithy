@@ -6,7 +6,7 @@
             "version": "2018-03-17",
             "resources": [
                 {
-                    "$target": "ns.foo#Resource1"
+                    "target": "ns.foo#Resource1"
                 }
             ],
             "traits": {
@@ -19,7 +19,7 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "ns.foo#Resource2"
+                    "target": "ns.foo#Resource2"
                 }
             ],
             "traits": {
@@ -32,17 +32,17 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "operations": [
                 {
-                    "$target": "ns.foo#InstanceOperation"
+                    "target": "ns.foo#InstanceOperation"
                 }
             ],
             "collectionOperations": [
                 {
-                    "$target": "ns.foo#CollectionOperation"
+                    "target": "ns.foo#CollectionOperation"
                 }
             ],
             "traits": {
@@ -54,14 +54,14 @@
         "ns.foo#InstanceOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#InstanceOperationInput"
+                "target": "ns.foo#InstanceOperationInput"
             }
         },
         "ns.foo#InstanceOperationInput": {
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -71,7 +71,7 @@
         "ns.foo#CollectionOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#CollectionOperationInput"
+                "target": "ns.foo#CollectionOperationInput"
             }
         },
         "ns.foo#CollectionOperationInput": {

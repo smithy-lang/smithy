@@ -11,7 +11,7 @@
             "type": "structure", 
             "members": {
                 "a": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }, 
             "traits": {

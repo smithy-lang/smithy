@@ -13,19 +13,19 @@
             "type": "structure",
             "members": {
                 "lorem": {
-                    "$target": "com.example#StringShape",
+                    "target": "com.example#StringShape",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "ipsum": {
-                    "$target": "com.example#StringShape",
+                    "target": "com.example#StringShape",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "dolor": {
-                    "$target": "com.example#StringShape"
+                    "target": "com.example#StringShape"
                 }
             },
             "traits": {
@@ -41,7 +41,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "com.example#StringShape",
+                    "target": "com.example#StringShape",
                     "traits": {
                         "smithy.api#required": true,
                         "com.example#beta": true
@@ -62,7 +62,7 @@
             "type": "structure",
             "members": {
                 "bar": {
-                    "$target": "com.example#MyShape",
+                    "target": "com.example#MyShape",
                     "traits": {
                         "smithy.api#required": true,
                         "com.example#beta": true

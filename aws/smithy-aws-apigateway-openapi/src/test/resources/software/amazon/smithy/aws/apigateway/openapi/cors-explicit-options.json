@@ -6,10 +6,10 @@
             "version": "2006-03-01",
             "operations": [
                 {
-                    "$target": "example.smithy#Foo"
+                    "target": "example.smithy#Foo"
                 },
                 {
-                    "$target": "example.smithy#FooOptions"
+                    "target": "example.smithy#FooOptions"
                 }
             ],
             "traits": {
@@ -45,7 +45,7 @@
         "example.smithy#FooOptions": {
             "type": "operation",
             "output": {
-                "$target": "example.smithy#FooOptionsOutput"
+                "target": "example.smithy#FooOptionsOutput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -65,7 +65,7 @@
             "type": "structure",
             "members": {
                 "hd": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Hd"
                     }

@@ -6,10 +6,10 @@
             "version": "2017-01-17",
             "operations": [
                 {
-                    "$target": "ns.foo#A"
+                    "target": "ns.foo#A"
                 },
                 {
-                    "$target": "ns.foo#B"
+                    "target": "ns.foo#B"
                 }
             ],
             "traits": {
@@ -29,17 +29,17 @@
         "ns.foo#B": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#Input"
+                "target": "ns.foo#Input"
             },
             "output": {
-                "$target": "ns.foo#Output"
+                "target": "ns.foo#Output"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#Error1"
+                    "target": "ns.foo#Error1"
                 },
                 {
-                    "$target": "ns.foo#Error2"
+                    "target": "ns.foo#Error2"
                 }
             ],
             "traits": {

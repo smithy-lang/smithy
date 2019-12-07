@@ -4,10 +4,10 @@
         "ns.foo#MyOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ErrorStructure"
+                "target": "ns.foo#ErrorStructure"
             },
             "output": {
-                "$target": "ns.foo#ErrorStructure"
+                "target": "ns.foo#ErrorStructure"
             }
         },
         "ns.foo#ErrorStructure": {

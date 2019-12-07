@@ -5,32 +5,32 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "put": {
-                "$target": "ns.foo#PutResource"
+                "target": "ns.foo#PutResource"
             },
             "create": {
-                "$target": "ns.foo#CreateResource"
+                "target": "ns.foo#CreateResource"
             },
             "read": {
-                "$target": "ns.foo#GetResource"
+                "target": "ns.foo#GetResource"
             },
             "update": {
-                "$target": "ns.foo#UpdateResource"
+                "target": "ns.foo#UpdateResource"
             },
             "delete": {
-                "$target": "ns.foo#DeleteResource"
+                "target": "ns.foo#DeleteResource"
             },
             "list": {
-                "$target": "ns.foo#ListResource"
+                "target": "ns.foo#ListResource"
             }
         },
         "ns.foo#PutResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ResourceInput"
+                "target": "ns.foo#ResourceInput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -45,13 +45,13 @@
         "ns.foo#GetResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ResourceInput"
+                "target": "ns.foo#ResourceInput"
             }
         },
         "ns.foo#UpdateResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ResourceInput"
+                "target": "ns.foo#ResourceInput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -60,7 +60,7 @@
         "ns.foo#DeleteResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ResourceInput"
+                "target": "ns.foo#ResourceInput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -73,7 +73,7 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }

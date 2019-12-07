@@ -5,10 +5,10 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "bar": {
-                    "$target": "smithy.example#Integer"
+                    "target": "smithy.example#Integer"
                 }
             }
         },
@@ -18,7 +18,7 @@
         "smithy.example#MyList": {
             "type": "list",
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }
         },
         "smithy.example#MyString": {
@@ -28,13 +28,13 @@
             "type": "resource",
             "identifiers": {
                 "a": {
-                    "$target": "smithy.example#MyString"
+                    "target": "smithy.example#MyString"
                 },
                 "b": {
-                    "$target": "smithy.example#AnotherString"
+                    "target": "smithy.example#AnotherString"
                 },
                 "c": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         },

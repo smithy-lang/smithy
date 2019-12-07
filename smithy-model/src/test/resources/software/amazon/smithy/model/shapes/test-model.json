@@ -20,10 +20,10 @@
             "version": "2017-01-17",
             "resources": [
                 {
-                    "$target": "ns.foo#MyResource"
+                    "target": "ns.foo#MyResource"
                 },
                 {
-                    "$target": "ns.foo#BasicResource"
+                    "target": "ns.foo#BasicResource"
                 }
             ],
             "traits": {
@@ -41,21 +41,21 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "ns.foo#MyResourceId"
+                    "target": "ns.foo#MyResourceId"
                 }
             },
             "put": {
-                "$target": "ns.foo#PutMyResource"
+                "target": "ns.foo#PutMyResource"
             },
             "read": {
-                "$target": "ns.foo#GetMyResource"
+                "target": "ns.foo#GetMyResource"
             },
             "delete": {
-                "$target": "ns.foo#DeleteMyResource"
+                "target": "ns.foo#DeleteMyResource"
             },
             "collectionOperations": [
                 {
-                    "$target": "ns.foo#BatchDeleteMyResource"
+                    "target": "ns.foo#BatchDeleteMyResource"
                 }
             ]
         },
@@ -65,7 +65,7 @@
         "ns.foo#BatchDeleteMyResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#BatchDeleteMyResourceInput"
+                "target": "ns.foo#BatchDeleteMyResourceInput"
             },
             "traits": {
                 "smithy.api#idempotent": true
@@ -75,7 +75,7 @@
             "type": "structure",
             "members": {
                 "ids": {
-                    "$target": "ns.foo#AList",
+                    "target": "ns.foo#AList",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -85,7 +85,7 @@
         "ns.foo#DeleteMyResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#DeleteMyResourceInput"
+                "target": "ns.foo#DeleteMyResourceInput"
             },
             "traits": {
                 "smithy.api#idempotent": true
@@ -95,7 +95,7 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "ns.foo#MyResourceId",
+                    "target": "ns.foo#MyResourceId",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -105,14 +105,14 @@
         "ns.foo#GetMyResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#GetMyResourceInput"
+                "target": "ns.foo#GetMyResourceInput"
             },
             "output": {
-                "$target": "ns.foo#GetMyResourceOutput"
+                "target": "ns.foo#GetMyResourceOutput"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#ResourceNotFoundError"
+                    "target": "ns.foo#ResourceNotFoundError"
                 }
             ],
             "traits": {
@@ -123,7 +123,7 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "ns.foo#MyResourceId",
+                    "target": "ns.foo#MyResourceId",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -134,14 +134,14 @@
             "type": "structure",
             "members": {
                 "someValue": {
-                    "$target": "ns.foo#AList"
+                    "target": "ns.foo#AList"
                 }
             }
         },
         "ns.foo#PutMyResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#PutMyResourceInput"
+                "target": "ns.foo#PutMyResourceInput"
             },
             "traits": {
                 "smithy.api#idempotent": true
@@ -151,7 +151,7 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "ns.foo#MyResourceId",
+                    "target": "ns.foo#MyResourceId",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -174,7 +174,7 @@
         "ns.foo#AList": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#MyString"
+                "target": "ns.foo#MyString"
             },
             "traits": {
                 "smithy.api#documentation": "abc"
@@ -183,7 +183,7 @@
         "ns.foo#ASet": {
             "type": "set",
             "member": {
-                "$target": "ns.foo#MyString"
+                "target": "ns.foo#MyString"
             },
             "traits": {
                 "smithy.api#documentation": "abc"
@@ -192,10 +192,10 @@
         "ns.foo#Map": {
             "type": "map",
             "key": {
-                "$target": "ns.foo#MyString"
+                "target": "ns.foo#MyString"
             },
             "value": {
-                "$target": "ns.foo#MyString"
+                "target": "ns.foo#MyString"
             },
             "traits": {
                 "smithy.api#documentation": "abc"
@@ -205,10 +205,10 @@
             "type": "union",
             "members": {
                 "b": {
-                    "$target": "ns.foo#MyString"
+                    "target": "ns.foo#MyString"
                 },
                 "a": {
-                    "$target": "ns.foo#MyString"
+                    "target": "ns.foo#MyString"
                 }
             },
             "traits": {
@@ -219,19 +219,19 @@
             "type": "structure",
             "members": {
                 "b": {
-                    "$target": "ns.foo#MyString",
+                    "target": "ns.foo#MyString",
                     "traits": {
                         "smithy.api#documentation": "docs"
                     }
                 },
                 "a": {
-                    "$target": "ns.foo#MyString",
+                    "target": "ns.foo#MyString",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "c": {
-                    "$target": "ns.shapes#String"
+                    "target": "ns.shapes#String"
                 }
             },
             "traits": {
@@ -256,14 +256,14 @@
         "ns.foo#OperationNeedingAbsoluteShapeIds": {
             "type": "operation",
             "input": {
-                "$target": "ns.shapes#Structure"
+                "target": "ns.shapes#Structure"
             },
             "output": {
-                "$target": "ns.shapes#Structure"
+                "target": "ns.shapes#Structure"
             },
             "errors": [
                 {
-                    "$target": "ns.shapes#ErrorStructure"
+                    "target": "ns.shapes#ErrorStructure"
                 }
             ],
             "traits": {
@@ -274,20 +274,20 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "ns.baz#String"
+                    "target": "ns.baz#String"
                 }
             },
             "read": {
-                "$target": "ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIds"
+                "target": "ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIds"
             }
         },
         "ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIds": {
             "type": "operation",
             "input": {
-                "$target": "ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIdsInput"
+                "target": "ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIdsInput"
             },
             "output": {
-                "$target": "ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIdsOutput"
+                "target": "ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIdsOutput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -297,7 +297,7 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "ns.baz#String",
+                    "target": "ns.baz#String",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -353,29 +353,29 @@
         "ns.shapes#List": {
             "type": "list",
             "member": {
-                "$target": "ns.shapes#Timestamp"
+                "target": "ns.shapes#Timestamp"
             }
         },
         "ns.shapes#Set": {
             "type": "set",
             "member": {
-                "$target": "ns.shapes#Long"
+                "target": "ns.shapes#Long"
             }
         },
         "ns.shapes#Map": {
             "type": "map",
             "key": {
-                "$target": "ns.shapes#String"
+                "target": "ns.shapes#String"
             },
             "value": {
-                "$target": "ns.shapes#List"
+                "target": "ns.shapes#List"
             }
         },
         "ns.shapes#Structure": {
             "type": "structure",
             "members": {
                 "memberName": {
-                    "$target": "ns.shapes#String"
+                    "target": "ns.shapes#String"
                 }
             }
         },
@@ -389,10 +389,10 @@
             "type": "union",
             "members": {
                 "foo": {
-                    "$target": "ns.shapes#String"
+                    "target": "ns.shapes#String"
                 },
                 "baz": {
-                    "$target": "ns.shapes#Integer"
+                    "target": "ns.shapes#Integer"
                 }
             }
         }

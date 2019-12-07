@@ -6,18 +6,18 @@
             "version": "2018-03-17",
             "resources": [
                 {
-                    "$target": "smithy.example#Resource1"
+                    "target": "smithy.example#Resource1"
                 }
             ],
             "operations": [
                 {
-                    "$target": "smithy.example#Operation1"
+                    "target": "smithy.example#Operation1"
                 },
                 {
-                    "$target": "smithy.example#Operation2"
+                    "target": "smithy.example#Operation2"
                 },
                 {
-                    "$target": "smithy.example#Operation3"
+                    "target": "smithy.example#Operation3"
                 }
             ],
             "traits": {
@@ -43,18 +43,18 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "smithy.example#Resource2"
+                    "target": "smithy.example#Resource2"
                 }
             ],
             "operations": [
                 {
-                    "$target": "smithy.example#Operation4"
+                    "target": "smithy.example#Operation4"
                 },
                 {
-                    "$target": "smithy.example#Operation5"
+                    "target": "smithy.example#Operation5"
                 },
                 {
-                    "$target": "smithy.example#Operation6"
+                    "target": "smithy.example#Operation6"
                 }
             ]
         },
@@ -77,10 +77,10 @@
             "type": "resource",
             "operations": [
                 {
-                    "$target": "smithy.example#Operation7"
+                    "target": "smithy.example#Operation7"
                 },
                 {
-                    "$target": "smithy.example#Operation8"
+                    "target": "smithy.example#Operation8"
                 }
             ],
             "traits": {

@@ -5,13 +5,13 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "bar": {
-                    "$target": "ns.foo#BarString"
+                    "target": "ns.foo#BarString"
                 },
                 "ipsum": {
-                    "$target": "ns.foo#IpsumString"
+                    "target": "ns.foo#IpsumString"
                 }
             },
             "traits": {
@@ -28,13 +28,13 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "bar": {
-                    "$target": "ns.foo#BarString"
+                    "target": "ns.foo#BarString"
                 },
                 "ipsum": {
-                    "$target": "ns.foo#IpsumString"
+                    "target": "ns.foo#IpsumString"
                 }
             },
             "traits": {
@@ -50,7 +50,7 @@
         "ns.foo#qux": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#BarString"
+                "target": "ns.foo#BarString"
             },
             "traits": {
                 "smithy.api#trait": true,
@@ -63,10 +63,10 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#Struct"
+                    "target": "ns.foo#Struct"
                 },
                 "bar": {
-                    "$target": "ns.foo#ComplexRemoved"
+                    "target": "ns.foo#ComplexRemoved"
                 }
             },
             "traits": {
@@ -77,10 +77,10 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#Struct"
+                    "target": "ns.foo#Struct"
                 },
                 "bar": {
-                    "$target": "ns.foo#ComplexRemoved"
+                    "target": "ns.foo#ComplexRemoved"
                 }
             }
         },
@@ -91,7 +91,7 @@
         "ns.foo#IpsumList": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#IpsumString"
+                "target": "ns.foo#IpsumString"
             }
         },
         "ns.foo#KeepStructure": {

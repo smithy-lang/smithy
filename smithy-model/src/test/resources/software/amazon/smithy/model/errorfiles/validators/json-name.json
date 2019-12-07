@@ -5,13 +5,13 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#jsonName": "A"
                     }
                 },
                 "b": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#jsonName": "B"
                     }

@@ -5,12 +5,12 @@
             "type": "resource",
             "identifiers": {
                 "a": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "resources": [
                 {
-                    "$target": "ns.foo#B"
+                    "target": "ns.foo#B"
                 }
             ]
         },
@@ -18,22 +18,22 @@
             "type": "resource",
             "identifiers": {
                 "a": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "b": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "collectionOperations": [
                 {
-                    "$target": "ns.foo#InvokeB"
+                    "target": "ns.foo#InvokeB"
                 }
             ]
         },
         "ns.foo#InvokeB": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#InvokeBInput"
+                "target": "ns.foo#InvokeBInput"
             }
         },
         "ns.foo#InvokeBInput": {

@@ -5,19 +5,19 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#eventHeader": true
                     }
                 },
                 "bar": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#eventHeader": true
                     }
                 },
                 "baz": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#eventPayload": true
                     }
@@ -28,13 +28,13 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#eventPayload": true
                     }
                 },
                 "baz": {
-                    "$target": "smithy.api#Blob"
+                    "target": "smithy.api#Blob"
                 }
             }
         },
@@ -42,13 +42,13 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#Boolean",
+                    "target": "smithy.api#Boolean",
                     "traits": {
                         "smithy.api#eventPayload": true
                     }
                 },
                 "baz": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#eventPayload": true
                     }
@@ -59,13 +59,13 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#Structure",
+                    "target": "ns.foo#Structure",
                     "traits": {
                         "smithy.api#eventHeader": true
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#Structure",
+                    "target": "ns.foo#Structure",
                     "traits": {
                         "smithy.api#eventPayload": true
                     }
@@ -76,7 +76,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#Boolean",
+                    "target": "smithy.api#Boolean",
                     "traits": {
                         "smithy.api#eventPayload": true
                     }

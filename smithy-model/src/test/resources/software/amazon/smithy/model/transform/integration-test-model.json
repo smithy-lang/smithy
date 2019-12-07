@@ -6,12 +6,12 @@
             "version": "2017-01-17",
             "operations": [
                 {
-                    "$target": "ns.foo#MyOperation"
+                    "target": "ns.foo#MyOperation"
                 }
             ],
             "resources": [
                 {
-                    "$target": "ns.foo#MyResource"
+                    "target": "ns.foo#MyResource"
                 }
             ],
             "traits": {
@@ -29,14 +29,14 @@
         "ns.foo#MyOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#MyOperationInput"
+                "target": "ns.foo#MyOperationInput"
             },
             "output": {
-                "$target": "ns.foo#MyOperationOutput"
+                "target": "ns.foo#MyOperationOutput"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#MyOperationError"
+                    "target": "ns.foo#MyOperationError"
                 }
             ],
             "traits": {
@@ -50,7 +50,7 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "ns.foo#MyResourceIdentifier",
+                    "target": "ns.foo#MyResourceIdentifier",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -77,15 +77,15 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "ns.foo#MyResourceIdentifier"
+                    "target": "ns.foo#MyResourceIdentifier"
                 }
             },
             "create": {
-                "$target": "ns.foo#CreateMyResource"
+                "target": "ns.foo#CreateMyResource"
             },
             "operations": [
                 {
-                    "$target": "ns.foo#MyResourceOperation"
+                    "target": "ns.foo#MyResourceOperation"
                 }
             ]
         },
@@ -95,21 +95,21 @@
         "ns.foo#CreateMyResource": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#CreateMyResourceOutput"
+                "target": "ns.foo#CreateMyResourceOutput"
             }
         },
         "ns.foo#CreateMyResourceOutput": {
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "ns.foo#MyResourceIdentifier"
+                    "target": "ns.foo#MyResourceIdentifier"
                 }
             }
         },
         "ns.foo#MyResourceOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#MyResourceOperationInput"
+                "target": "ns.foo#MyResourceOperationInput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -119,13 +119,13 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "ns.foo#MyResourceIdentifier",
+                    "target": "ns.foo#MyResourceIdentifier",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "otherValue": {
-                    "$target": "ns.foo#MyResourceOperationInputString"
+                    "target": "ns.foo#MyResourceOperationInputString"
                 }
             }
         },

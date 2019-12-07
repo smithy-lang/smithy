@@ -6,7 +6,7 @@
             "version": "2017-01-17",
             "operations": [
                 {
-                    "$target": "ns.foo#MyOperation"
+                    "target": "ns.foo#MyOperation"
                 }
             ],
             "traits": {
@@ -20,14 +20,14 @@
         "ns.foo#MyOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#MyOperationInput"
+                "target": "ns.foo#MyOperationInput"
             },
             "output": {
-                "$target": "ns.foo#MyOperationOutput"
+                "target": "ns.foo#MyOperationOutput"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#MyOperationError"
+                    "target": "ns.foo#MyOperationError"
                 }
             ],
             "traits": {

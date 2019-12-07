@@ -6,7 +6,7 @@
             "version": "2006-03-01",
             "operations": [
                 {
-                    "$target": "smithy.example#Operation"
+                    "target": "smithy.example#Operation"
                 }
             ],
             "traits": {
@@ -20,7 +20,7 @@
         "smithy.example#Operation": {
             "type": "operation",
             "input": {
-                "$target": "smithy.example#OperationInput"
+                "target": "smithy.example#OperationInput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -33,13 +33,13 @@
             "type": "structure",
             "members": {
                 "blob1": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#httpQuery": "blob1"
                     }
                 },
                 "blobList": {
-                    "$target": "smithy.example#BlobList",
+                    "target": "smithy.example#BlobList",
                     "traits": {
                         "smithy.api#httpQuery": "blob2"
                     }
@@ -49,7 +49,7 @@
         "smithy.example#BlobList": {
             "type": "list",
             "member": {
-                "$target": "smithy.api#Blob"
+                "target": "smithy.api#Blob"
             }
         }
     }

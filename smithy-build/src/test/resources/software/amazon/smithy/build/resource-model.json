@@ -6,7 +6,7 @@
             "version": "2017-01-19",
             "resources": [
                 {
-                    "$target": "ns.foo#MyResource"
+                    "target": "ns.foo#MyResource"
                 }
             ],
             "traits": {
@@ -24,11 +24,11 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "ns.foo#MyResourceId"
+                    "target": "ns.foo#MyResourceId"
                 }
             },
             "read": {
-                "$target": "ns.foo#GetMyResource"
+                "target": "ns.foo#GetMyResource"
             }
         },
         "ns.foo#MyResourceId": {
@@ -37,7 +37,7 @@
         "ns.foo#GetMyResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#GetMyResourceInput"
+                "target": "ns.foo#GetMyResourceInput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -47,7 +47,7 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "ns.foo#MyResourceId",
+                    "target": "ns.foo#MyResourceId",
                     "traits": {
                         "smithy.api#required": true,
                         "smithy.api#sensitive": true

@@ -5,7 +5,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#tags": [
                             "foo"
@@ -18,7 +18,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#documentation": "Abc"
                     }

@@ -43,23 +43,23 @@
         "example.namespace#List": {
             "type": "list",
             "member": {
-                "$target": "example.namespace#Timestamp"
+                "target": "example.namespace#Timestamp"
             }
         },
         "example.namespace#Map": {
             "type": "map",
             "key": {
-                "$target": "example.namespace#String"
+                "target": "example.namespace#String"
             },
             "value": {
-                "$target": "example.namespace#List"
+                "target": "example.namespace#List"
             }
         },
         "example.namespace#Structure": {
             "type": "structure",
             "members": {
                 "memberName": {
-                    "$target": "example.namespace#String"
+                    "target": "example.namespace#String"
                 }
             }
         },
@@ -67,10 +67,10 @@
             "type": "union",
             "members": {
                 "foo": {
-                    "$target": "example.namespace#String"
+                    "target": "example.namespace#String"
                 },
                 "baz": {
-                    "$target": "example.namespace#Integer"
+                    "target": "example.namespace#Integer"
                 }
             }
         }

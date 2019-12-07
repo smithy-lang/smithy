@@ -13,10 +13,10 @@
         "aws.iam#defineConditionKeys": {
             "type": "map",
             "key": {
-                "$target": "aws.iam#IamIdentifier"
+                "target": "aws.iam#IamIdentifier"
             },
             "value": {
-                "$target": "aws.iam#ConditionKeyDefinition"
+                "target": "aws.iam#ConditionKeyDefinition"
             },
             "traits": {
                 "smithy.api#trait": {
@@ -28,7 +28,7 @@
         "aws.iam#conditionKeys": {
             "type": "list",
             "member": {
-                "$target": "aws.iam#IamIdentifier"
+                "target": "aws.iam#IamIdentifier"
             },
             "traits": {
                 "smithy.api#trait": {
@@ -49,7 +49,7 @@
         "aws.iam#requiredActions": {
             "type": "list",
             "member": {
-                "$target": "aws.iam#IamIdentifier"
+                "target": "aws.iam#IamIdentifier"
             },
             "traits": {
                 "smithy.api#trait": {
@@ -69,13 +69,13 @@
             "type": "structure",
             "members": {
                 "documentation": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "externalDocumentation": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "type": {
-                    "$target": "aws.iam#ConditionKeyType",
+                    "target": "aws.iam#ConditionKeyType",
                     "traits": {
                         "smithy.api#required": true
                     }

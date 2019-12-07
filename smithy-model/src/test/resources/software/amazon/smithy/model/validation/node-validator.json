@@ -128,7 +128,7 @@
         "ns.foo#List": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             },
             "traits": {
                 "smithy.api#length": {
@@ -140,7 +140,7 @@
         "ns.foo#Set": {
             "type": "set",
             "member": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             },
             "traits": {
                 "smithy.api#length": {
@@ -164,10 +164,10 @@
         "ns.foo#Map": {
             "type": "map",
             "key": {
-                "$target": "ns.foo#KeyString"
+                "target": "ns.foo#KeyString"
             },
             "value": {
-                "$target": "ns.foo#List"
+                "target": "ns.foo#List"
             },
             "traits": {
                 "smithy.api#length": {
@@ -180,19 +180,19 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "bar": {
-                    "$target": "ns.foo#List"
+                    "target": "ns.foo#List"
                 },
                 "bam": {
-                    "$target": "ns.foo#Structure"
+                    "target": "ns.foo#Structure"
                 }
             }
         },
@@ -200,10 +200,10 @@
             "type": "union",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "baz": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },
@@ -228,7 +228,7 @@
         "ns.foo#TimestampList": {
             "type": "list",
             "member": {
-                "$target": "smithy.api#Timestamp",
+                "target": "smithy.api#Timestamp",
                 "traits": {
                     "smithy.api#timestampFormat": "date-time"
                 }
@@ -237,20 +237,20 @@
         "ns.foo#TimestampListNoFormatTrait": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#Timestamp"
+                "target": "ns.foo#Timestamp"
             }
         },
         "ns.foo#Structure2": {
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#pattern": "^[0-9]"
                     }
                 },
                 "b": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#length": {
                             "min": 10
@@ -258,7 +258,7 @@
                     }
                 },
                 "c": {
-                    "$target": "smithy.api#Integer",
+                    "target": "smithy.api#Integer",
                     "traits": {
                         "smithy.api#range": {
                             "min": 10
@@ -271,16 +271,16 @@
             "type": "structure",
             "members": {
                 "optionalInt": {
-                    "$target": "smithy.api#PrimitiveInteger"
+                    "target": "smithy.api#PrimitiveInteger"
                 },
                 "requiredInt": {
-                    "$target": "smithy.api#PrimitiveInteger",
+                    "target": "smithy.api#PrimitiveInteger",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "requiredInt2": {
-                    "$target": "smithy.api#PrimitiveInteger",
+                    "target": "smithy.api#PrimitiveInteger",
                     "traits": {
                         "smithy.api#required": true,
                         "smithy.api#box": true
@@ -293,12 +293,12 @@
             "version": "2017-17-01",
             "operations": [
                 {
-                    "$target": "ns.foo#Operation"
+                    "target": "ns.foo#Operation"
                 }
             ],
             "resources": [
                 {
-                    "$target": "ns.foo#Resource"
+                    "target": "ns.foo#Resource"
                 }
             ],
             "traits": {

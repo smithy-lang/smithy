@@ -5,35 +5,35 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "put": {
-                "$target": "ns.foo#PutValidA"
+                "target": "ns.foo#PutValidA"
             },
             "create": {
-                "$target": "ns.foo#CreateValidA"
+                "target": "ns.foo#CreateValidA"
             },
             "read": {
-                "$target": "ns.foo#GetValidA"
+                "target": "ns.foo#GetValidA"
             },
             "update": {
-                "$target": "ns.foo#UpdateValidA"
+                "target": "ns.foo#UpdateValidA"
             },
             "delete": {
-                "$target": "ns.foo#DeleteValidA"
+                "target": "ns.foo#DeleteValidA"
             },
             "list": {
-                "$target": "ns.foo#ListValidA"
+                "target": "ns.foo#ListValidA"
             },
             "operations": [
                 {
-                    "$target": "ns.foo#GenericInstanceOperation"
+                    "target": "ns.foo#GenericInstanceOperation"
                 }
             ],
             "collectionOperations": [
                 {
-                    "$target": "ns.foo#GenericCollectionOperation"
+                    "target": "ns.foo#GenericCollectionOperation"
                 }
             ]
         },
@@ -46,7 +46,7 @@
         "ns.foo#CreateValidA": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ResourceAInput"
+                "target": "ns.foo#ResourceAInput"
             }
         },
         "ns.foo#GetValidA": {
@@ -67,7 +67,7 @@
         "ns.foo#ListValidA": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ResourceAInput"
+                "target": "ns.foo#ResourceAInput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -79,14 +79,14 @@
         "ns.foo#GenericCollectionOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ResourceAInput"
+                "target": "ns.foo#ResourceAInput"
             }
         },
         "ns.foo#ResourceAInput": {
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }

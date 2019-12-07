@@ -6,31 +6,31 @@
             "version": "2006-03-01",
             "operations": [
                 {
-                    "$target": "smithy.example#Patch"
+                    "target": "smithy.example#Patch"
                 },
                 {
-                    "$target": "smithy.example#Post"
+                    "target": "smithy.example#Post"
                 },
                 {
-                    "$target": "smithy.example#Put"
+                    "target": "smithy.example#Put"
                 },
                 {
-                    "$target": "smithy.example#Head"
+                    "target": "smithy.example#Head"
                 },
                 {
-                    "$target": "smithy.example#Trace"
+                    "target": "smithy.example#Trace"
                 },
                 {
-                    "$target": "smithy.example#Options"
+                    "target": "smithy.example#Options"
                 },
                 {
-                    "$target": "smithy.example#Get"
+                    "target": "smithy.example#Get"
                 },
                 {
-                    "$target": "smithy.example#Delete"
+                    "target": "smithy.example#Delete"
                 },
                 {
-                    "$target": "smithy.example#LoremIpsum"
+                    "target": "smithy.example#LoremIpsum"
                 }
             ],
             "traits": {

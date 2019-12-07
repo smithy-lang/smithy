@@ -5,7 +5,7 @@
             "type": "structure",
             "members": {
                 "abc": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "traits": {
@@ -26,10 +26,10 @@
             "type": "resource",
             "identifiers": {
                 "abc": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "def": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         }

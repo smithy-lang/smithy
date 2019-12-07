@@ -5,7 +5,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#xmlName": "customname"
                     }
@@ -16,7 +16,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#xmlName": "customprefix:customname"
                     }
@@ -27,7 +27,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#xmlName": "too:many:colons"
                     }

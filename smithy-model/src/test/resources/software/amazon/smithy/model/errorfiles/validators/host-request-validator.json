@@ -6,37 +6,37 @@
             "version": "2017-01-17",
             "operations": [
                 {
-                    "$target": "ns.foo#A"
+                    "target": "ns.foo#A"
                 },
                 {
-                    "$target": "ns.foo#B"
+                    "target": "ns.foo#B"
                 },
                 {
-                    "$target": "ns.foo#C"
+                    "target": "ns.foo#C"
                 },
                 {
-                    "$target": "ns.foo#D"
+                    "target": "ns.foo#D"
                 },
                 {
-                    "$target": "ns.foo#E"
+                    "target": "ns.foo#E"
                 },
                 {
-                    "$target": "ns.foo#F"
+                    "target": "ns.foo#F"
                 },
                 {
-                    "$target": "ns.foo#G"
+                    "target": "ns.foo#G"
                 },
                 {
-                    "$target": "ns.foo#H"
+                    "target": "ns.foo#H"
                 },
                 {
-                    "$target": "ns.foo#J"
+                    "target": "ns.foo#J"
                 },
                 {
-                    "$target": "ns.foo#K"
+                    "target": "ns.foo#K"
                 },
                 {
-                    "$target": "ns.foo#L"
+                    "target": "ns.foo#L"
                 }
             ],
             "traits": {
@@ -59,10 +59,10 @@
         "ns.foo#B": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#BInput"
+                "target": "ns.foo#BInput"
             },
             "output": {
-                "$target": "ns.foo#BOutput"
+                "target": "ns.foo#BOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -80,7 +80,7 @@
         "ns.foo#C": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#CInput"
+                "target": "ns.foo#CInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -93,7 +93,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#hostLabel": true,
                         "smithy.api#required": true
@@ -104,7 +104,7 @@
         "ns.foo#D": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#DInput"
+                "target": "ns.foo#DInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -117,7 +117,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -127,7 +127,7 @@
         "ns.foo#E": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#EInput"
+                "target": "ns.foo#EInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -140,7 +140,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#hostLabel": true
                     }
@@ -150,7 +150,7 @@
         "ns.foo#F": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#FInput"
+                "target": "ns.foo#FInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -163,7 +163,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#Integer",
+                    "target": "ns.foo#Integer",
                     "traits": {
                         "smithy.api#hostLabel": true,
                         "smithy.api#required": true
@@ -174,7 +174,7 @@
         "ns.foo#G": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#GInput"
+                "target": "ns.foo#GInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -187,14 +187,14 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#hostLabel": true,
                         "smithy.api#required": true
                     }
                 },
                 "bar": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#hostLabel": true,
                         "smithy.api#required": true
@@ -205,7 +205,7 @@
         "ns.foo#H": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#BInput"
+                "target": "ns.foo#BInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -217,7 +217,7 @@
         "ns.foo#J": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#BInput"
+                "target": "ns.foo#BInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -229,7 +229,7 @@
         "ns.foo#K": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#BInput"
+                "target": "ns.foo#BInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -241,7 +241,7 @@
         "ns.foo#L": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#BInput"
+                "target": "ns.foo#BInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -253,7 +253,7 @@
         "ns.foo#M": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#MInput"
+                "target": "ns.foo#MInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -266,7 +266,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#hostLabel": true,
                         "smithy.api#required": true

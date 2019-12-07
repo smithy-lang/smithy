@@ -6,10 +6,10 @@
             "version": "2006-03-01",
             "operations": [
                 {
-                    "$target": "example.smithy#MyOperation"
+                    "target": "example.smithy#MyOperation"
                 },
                 {
-                    "$target": "example.smithy#OtherOperation"
+                    "target": "example.smithy#OtherOperation"
                 }
             ],
             "traits": {
@@ -23,10 +23,10 @@
         "example.smithy#MyOperation": {
             "type": "operation",
             "input": {
-                "$target": "example.smithy#MyOperationInput"
+                "target": "example.smithy#MyOperationInput"
             },
             "output": {
-                "$target": "example.smithy#MyOperationOutput"
+                "target": "example.smithy#MyOperationOutput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -38,7 +38,7 @@
         "example.smithy#OtherOperation": {
             "type": "operation",
             "output": {
-                "$target": "example.smithy#OtherOperationOutput"
+                "target": "example.smithy#OtherOperationOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -52,7 +52,7 @@
             "type": "structure",
             "members": {
                 "payload": {
-                    "$target": "example.smithy#InboundBinaryPayload",
+                    "target": "example.smithy#InboundBinaryPayload",
                     "traits": {
                         "smithy.api#required": true,
                         "smithy.api#httpPayload": true
@@ -64,7 +64,7 @@
             "type": "structure",
             "members": {
                 "payload": {
-                    "$target": "example.smithy#OutboundBinaryPayload",
+                    "target": "example.smithy#OutboundBinaryPayload",
                     "traits": {
                         "smithy.api#required": true,
                         "smithy.api#httpPayload": true
@@ -76,10 +76,10 @@
             "type": "structure",
             "members": {
                 "abc": {
-                    "$target": "example.smithy#StringShape"
+                    "target": "example.smithy#StringShape"
                 },
                 "def": {
-                    "$target": "example.smithy#NonPayloadBinaryShape"
+                    "target": "example.smithy#NonPayloadBinaryShape"
                 }
             }
         },

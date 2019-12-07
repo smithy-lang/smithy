@@ -6,52 +6,52 @@
             "version": "2017-01-17",
             "operations": [
                 {
-                    "$target": "ns.foo#A"
+                    "target": "ns.foo#A"
                 },
                 {
-                    "$target": "ns.foo#B"
+                    "target": "ns.foo#B"
                 },
                 {
-                    "$target": "ns.foo#C"
+                    "target": "ns.foo#C"
                 },
                 {
-                    "$target": "ns.foo#D"
+                    "target": "ns.foo#D"
                 },
                 {
-                    "$target": "ns.foo#E"
+                    "target": "ns.foo#E"
                 },
                 {
-                    "$target": "ns.foo#F"
+                    "target": "ns.foo#F"
                 },
                 {
-                    "$target": "ns.foo#G"
+                    "target": "ns.foo#G"
                 },
                 {
-                    "$target": "ns.foo#H"
+                    "target": "ns.foo#H"
                 },
                 {
-                    "$target": "ns.foo#J"
+                    "target": "ns.foo#J"
                 },
                 {
-                    "$target": "ns.foo#K"
+                    "target": "ns.foo#K"
                 },
                 {
-                    "$target": "ns.foo#L"
+                    "target": "ns.foo#L"
                 },
                 {
-                    "$target": "ns.foo#M"
+                    "target": "ns.foo#M"
                 },
                 {
-                    "$target": "ns.foo#N"
+                    "target": "ns.foo#N"
                 },
                 {
-                    "$target": "ns.foo#O"
+                    "target": "ns.foo#O"
                 },
                 {
-                    "$target": "ns.foo#P"
+                    "target": "ns.foo#P"
                 },
                 {
-                    "$target": "ns.foo#R"
+                    "target": "ns.foo#R"
                 }
             ],
             "traits": {
@@ -76,10 +76,10 @@
         "ns.foo#B": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#BInput"
+                "target": "ns.foo#BInput"
             },
             "output": {
-                "$target": "ns.foo#BOutput"
+                "target": "ns.foo#BOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -99,10 +99,10 @@
         "ns.foo#C": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#CInput"
+                "target": "ns.foo#CInput"
             },
             "output": {
-                "$target": "ns.foo#COutput"
+                "target": "ns.foo#COutput"
             },
             "traits": {
                 "smithy.api#idempotent": true,
@@ -117,56 +117,56 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpLabel": true,
                         "smithy.api#required": true
                     }
                 },
                 "b": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-B"
                     }
                 },
                 "c": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": "X-C-"
                     }
                 },
                 "d": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpQuery": "d"
                     }
                 },
                 "e": {
-                    "$target": "ns.foo#Blob",
+                    "target": "ns.foo#Blob",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
                 },
                 "otherHeader": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Bb"
                     }
                 },
                 "otherQuery": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpQuery": "otherQuery"
                     }
                 },
                 "headerList": {
-                    "$target": "ns.foo#StringList",
+                    "target": "ns.foo#StringList",
                     "traits": {
                         "smithy.api#httpHeader": "X-Plural"
                     }
                 },
                 "queryList": {
-                    "$target": "ns.foo#StringList",
+                    "target": "ns.foo#StringList",
                     "traits": {
                         "smithy.api#httpQuery": "queryList"
                     }
@@ -177,19 +177,19 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-B"
                     }
                 },
                 "b": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": "X-B-"
                     }
                 },
                 "c": {
-                    "$target": "ns.foo#Blob",
+                    "target": "ns.foo#Blob",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -199,10 +199,10 @@
         "ns.foo#D": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#DInput"
+                "target": "ns.foo#DInput"
             },
             "output": {
-                "$target": "ns.foo#DOutput"
+                "target": "ns.foo#DOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -217,31 +217,31 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
                 },
                 "b": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
                 },
                 "c": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Baz"
                     }
                 },
                 "d": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Baz"
                     }
                 },
                 "e": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": "X-Foo"
                     }
@@ -252,19 +252,19 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
                 },
                 "b": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
                 },
                 "c": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": "X-Foo"
                     }
@@ -274,7 +274,7 @@
         "ns.foo#E": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#EInput"
+                "target": "ns.foo#EInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -288,14 +288,14 @@
             "type": "structure",
             "members": {
                 "label1": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpLabel": true,
                         "smithy.api#required": true
                     }
                 },
                 "label2": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpLabel": true,
                         "smithy.api#required": true
@@ -306,10 +306,10 @@
         "ns.foo#F": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#FInputOutput"
+                "target": "ns.foo#FInputOutput"
             },
             "output": {
-                "$target": "ns.foo#FInputOutput"
+                "target": "ns.foo#FInputOutput"
             },
             "traits": {
                 "smithy.api#idempotent": true,
@@ -324,17 +324,17 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },
         "ns.foo#G": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#GInput"
+                "target": "ns.foo#GInput"
             },
             "output": {
-                "$target": "ns.foo#GOutput"
+                "target": "ns.foo#GOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -349,7 +349,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo",
                         "smithy.api#httpQuery": "a",
@@ -359,7 +359,7 @@
                     }
                 },
                 "b": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpHeader": "Map-",
                         "smithy.api#httpPrefixHeaders": "X-C-"
@@ -371,14 +371,14 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-B",
                         "smithy.api#httpPayload": true
                     }
                 },
                 "b": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpHeader": "Map-",
                         "smithy.api#httpPrefixHeaders": "X-B-"
@@ -389,7 +389,7 @@
         "ns.foo#H": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#HInput"
+                "target": "ns.foo#HInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -403,7 +403,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#Structure",
+                    "target": "ns.foo#Structure",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
@@ -413,7 +413,7 @@
         "ns.foo#J": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#JInput"
+                "target": "ns.foo#JInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -427,13 +427,13 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": "X-Foo-"
                     }
                 },
                 "b": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": "X-Baz-"
                     }
@@ -443,7 +443,7 @@
         "ns.foo#K": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#KInput"
+                "target": "ns.foo#KInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -457,25 +457,25 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
                 },
                 "b": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "x-foo"
                     }
                 },
                 "c": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpQuery": "foo"
                     }
                 },
                 "d": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpQuery": "foo"
                     }
@@ -495,7 +495,7 @@
         "ns.foo#M": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#MInput"
+                "target": "ns.foo#MInput"
             },
             "traits": {
                 "smithy.api#idempotent": true,
@@ -509,7 +509,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "Authorization"
                     }
@@ -519,7 +519,7 @@
         "ns.foo#N": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#NInput"
+                "target": "ns.foo#NInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -533,7 +533,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpLabel": true,
                         "smithy.api#required": true
@@ -544,7 +544,7 @@
         "ns.foo#O": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#OInput"
+                "target": "ns.foo#OInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -558,7 +558,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpLabel": true
                     }
@@ -568,7 +568,7 @@
         "ns.foo#P": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#PInput"
+                "target": "ns.foo#PInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -582,7 +582,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#Integer",
+                    "target": "ns.foo#Integer",
                     "traits": {
                         "smithy.api#httpLabel": true,
                         "smithy.api#required": true
@@ -593,7 +593,7 @@
         "ns.foo#Q": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#QInput"
+                "target": "ns.foo#QInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -607,7 +607,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": ""
                     }
@@ -617,7 +617,7 @@
         "ns.foo#R": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#RInput"
+                "target": "ns.foo#RInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -631,13 +631,13 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "ns.foo#MapOfString",
+                    "target": "ns.foo#MapOfString",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": ""
                     }
                 },
                 "b": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
@@ -656,7 +656,7 @@
         "ns.foo#StringList": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             }
         },
         "ns.foo#Structure": {
@@ -665,10 +665,10 @@
         "ns.foo#MapOfString": {
             "type": "map",
             "key": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             },
             "value": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             }
         },
         "ns.foo#BadError": {
@@ -681,7 +681,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo",
                         "smithy.api#httpPayload": true

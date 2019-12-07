@@ -6,13 +6,13 @@
             "version": "2017-01-17",
             "resources": [
                 {
-                    "$target": "ns.foo#ValidResource"
+                    "target": "ns.foo#ValidResource"
                 },
                 {
-                    "$target": "ns.foo#InvalidSelfResourceBinding"
+                    "target": "ns.foo#InvalidSelfResourceBinding"
                 },
                 {
-                    "$target": "ns.foo#InvalidResourceBindingType"
+                    "target": "ns.foo#InvalidResourceBindingType"
                 }
             ],
             "traits": {
@@ -30,7 +30,7 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "ns.foo#InvalidSelfResourceBinding"
+                    "target": "ns.foo#InvalidSelfResourceBinding"
                 }
             ]
         },
@@ -38,7 +38,7 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             ]
         },
@@ -46,7 +46,7 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "ns.foo#CycleB"
+                    "target": "ns.foo#CycleB"
                 }
             ]
         },
@@ -54,7 +54,7 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "ns.foo#CycleC"
+                    "target": "ns.foo#CycleC"
                 }
             ]
         },
@@ -62,7 +62,7 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "ns.foo#CycleA"
+                    "target": "ns.foo#CycleA"
                 }
             ]
         }

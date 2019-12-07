@@ -5,19 +5,19 @@
             "type": "structure",
             "members": {
                 "template": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "absolute": {
-                    "$target": "smithy.api#Boolean"
+                    "target": "smithy.api#Boolean"
                 },
                 "noRegion": {
-                    "$target": "smithy.api#Boolean"
+                    "target": "smithy.api#Boolean"
                 },
                 "noAccount": {
-                    "$target": "smithy.api#Boolean"
+                    "target": "smithy.api#Boolean"
                 }
             },
             "traits": {
@@ -32,19 +32,19 @@
             "type": "structure",
             "members": {
                 "sdkId": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "arnNamespace": {
-                    "$target": "aws.api#ArnNamespace"
+                    "target": "aws.api#ArnNamespace"
                 },
                 "cloudFormationName": {
-                    "$target": "aws.api#CloudFormationName"
+                    "target": "aws.api#CloudFormationName"
                 },
                 "cloudTrailEventSource": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "traits": {
@@ -57,13 +57,13 @@
             "type": "structure",
             "members": {
                 "type": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "resource": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "service": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "traits": {
@@ -76,7 +76,7 @@
         "aws.api#unsignedPayload": {
             "type": "list",
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             },
             "traits": {
                 "smithy.api#trait": {
@@ -120,7 +120,7 @@
             "type": "structure",
             "members": {
                 "providerArns": {
-                    "$target": "aws.api#StringList",
+                    "target": "aws.api#StringList",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -177,14 +177,14 @@
         "aws.api#StringList": {
             "type": "list",
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }
         },
         "aws.api#clientDiscoveredEndpoint": {
             "type": "structure",
             "members": {
                 "required": {
-                    "$target": "smithy.api#Boolean",
+                    "target": "smithy.api#Boolean",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -210,7 +210,7 @@
             "type": "structure",
             "members": {
                 "operation": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#idRef": {
                             "failWhenMissing": true,
@@ -221,7 +221,7 @@
                     }
                 },
                 "error": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#idRef": {
                             "failWhenMissing": true,

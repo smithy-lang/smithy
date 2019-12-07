@@ -7,17 +7,17 @@
         "ns.foo#StreamingOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#StreamingInput"
+                "target": "ns.foo#StreamingInput"
             },
             "output": {
-                "$target": "ns.foo#StreamingOutput"
+                "target": "ns.foo#StreamingOutput"
             }
         },
         "ns.foo#StreamingInput": {
             "type": "structure",
             "members": {
                 "Body": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#streaming": true
                     }
@@ -28,7 +28,7 @@
             "type": "structure",
             "members": {
                 "Body": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#streaming": true
                     }
@@ -39,7 +39,7 @@
             "type": "structure",
             "members": {
                 "Body": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#streaming": true
                     }
@@ -53,7 +53,7 @@
             "type": "structure",
             "members": {
                 "Body": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#streaming": true
                     }

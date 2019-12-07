@@ -5,19 +5,19 @@
             "type": "structure",
             "members": {
                 "abc": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "def": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "hij": {
-                    "$target": "smithy.api#Float"
+                    "target": "smithy.api#Float"
                 }
             },
             "traits": {
@@ -50,10 +50,10 @@
             "type": "resource",
             "identifiers": {
                 "abc": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "def": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         }

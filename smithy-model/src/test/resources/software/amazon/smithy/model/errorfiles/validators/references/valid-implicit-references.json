@@ -5,13 +5,13 @@
             "type": "structure",
             "members": {
                 "abc": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "def": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -35,10 +35,10 @@
             "type": "structure",
             "members": {
                 "abc": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "def": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -66,10 +66,10 @@
             "type": "resource",
             "identifiers": {
                 "abc": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "def": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         },
@@ -77,7 +77,7 @@
             "type": "resource",
             "identifiers": {
                 "abc": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         }

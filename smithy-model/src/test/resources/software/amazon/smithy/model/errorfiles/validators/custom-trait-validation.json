@@ -41,13 +41,13 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String1",
+                    "target": "ns.foo#String1",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#String1"
+                    "target": "ns.foo#String1"
                 }
             },
             "traits": {

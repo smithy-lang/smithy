@@ -6,7 +6,7 @@
             "version": "2006-03-01",
             "resources": [
                 {
-                    "$target": "example.smithy#Payload"
+                    "target": "example.smithy#Payload"
                 }
             ],
             "traits": {
@@ -41,26 +41,26 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "put": {
-                "$target": "example.smithy#PutPayload"
+                "target": "example.smithy#PutPayload"
             },
             "read": {
-                "$target": "example.smithy#GetPayload"
+                "target": "example.smithy#GetPayload"
             },
             "delete": {
-                "$target": "example.smithy#DeletePayload"
+                "target": "example.smithy#DeletePayload"
             },
             "list": {
-                "$target": "example.smithy#ListPayloads"
+                "target": "example.smithy#ListPayloads"
             }
         },
         "example.smithy#PutPayload": {
             "type": "operation",
             "input": {
-                "$target": "example.smithy#PutPayloadInput"
+                "target": "example.smithy#PutPayloadInput"
             },
             "traits": {
                 "smithy.api#idempotent": true,
@@ -74,10 +74,10 @@
         "example.smithy#GetPayload": {
             "type": "operation",
             "input": {
-                "$target": "example.smithy#GetPayloadInput"
+                "target": "example.smithy#GetPayloadInput"
             },
             "output": {
-                "$target": "example.smithy#GetPayloadOutput"
+                "target": "example.smithy#GetPayloadOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -90,7 +90,7 @@
         "example.smithy#DeletePayload": {
             "type": "operation",
             "input": {
-                "$target": "example.smithy#DeletePayloadInput"
+                "target": "example.smithy#DeletePayloadInput"
             },
             "traits": {
                 "smithy.api#idempotent": true,
@@ -104,7 +104,7 @@
         "example.smithy#ListPayloads": {
             "type": "operation",
             "output": {
-                "$target": "example.smithy#ListPayloadsOutput"
+                "target": "example.smithy#ListPayloadsOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -118,32 +118,32 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true,
                         "smithy.api#httpLabel": true
                     }
                 },
                 "header": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo-Header"
                     }
                 },
                 "query": {
-                    "$target": "smithy.api#Integer",
+                    "target": "smithy.api#Integer",
                     "traits": {
                         "smithy.api#httpQuery": "query"
                     }
                 },
                 "enum": {
-                    "$target": "example.smithy#EnumString",
+                    "target": "example.smithy#EnumString",
                     "traits": {
                         "smithy.api#httpHeader": "X-EnumString"
                     }
                 },
                 "body": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -154,7 +154,7 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpLabel": true,
                         "smithy.api#required": true
@@ -166,13 +166,13 @@
             "type": "structure",
             "members": {
                 "header": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo-Header"
                     }
                 },
                 "body": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -183,7 +183,7 @@
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpLabel": true,
                         "smithy.api#required": true
@@ -195,7 +195,7 @@
             "type": "structure",
             "members": {
                 "items": {
-                    "$target": "example.smithy#PayloadDescriptions"
+                    "target": "example.smithy#PayloadDescriptions"
                 }
             }
         },
@@ -215,20 +215,20 @@
         "example.smithy#PayloadDescriptions": {
             "type": "list",
             "member": {
-                "$target": "example.smithy#PayloadDescription"
+                "target": "example.smithy#PayloadDescription"
             }
         },
         "example.smithy#PayloadDescription": {
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "createdAt": {
-                    "$target": "smithy.api#Timestamp",
+                    "target": "smithy.api#Timestamp",
                     "traits": {
                         "smithy.api#required": true
                     }

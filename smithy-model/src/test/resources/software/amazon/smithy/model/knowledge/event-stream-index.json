@@ -7,40 +7,40 @@
         "example.smithy#NotEventStreamOperation": {
             "type": "operation",
             "input": {
-                "$target": "example.smithy#NotEventStreamStructure"
+                "target": "example.smithy#NotEventStreamStructure"
             },
             "output": {
-                "$target": "example.smithy#NotEventStreamStructure"
+                "target": "example.smithy#NotEventStreamStructure"
             }
         },
         "example.smithy#NotEventStreamStructure": {
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         },
         "example.smithy#EventStreamOperation": {
             "type": "operation",
             "input": {
-                "$target": "example.smithy#EventStreamOperationInput"
+                "target": "example.smithy#EventStreamOperationInput"
             },
             "output": {
-                "$target": "example.smithy#EventStreamOperationOutput"
+                "target": "example.smithy#EventStreamOperationOutput"
             }
         },
         "example.smithy#EventStreamOperationInput": {
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "b": {
-                    "$target": "smithy.api#Integer"
+                    "target": "smithy.api#Integer"
                 },
                 "c": {
-                    "$target": "example.smithy#InputEventStream",
+                    "target": "example.smithy#InputEventStream",
                     "traits": {
                         "smithy.api#eventStream": true
                     }
@@ -51,13 +51,13 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "b": {
-                    "$target": "smithy.api#Integer"
+                    "target": "smithy.api#Integer"
                 },
                 "c": {
-                    "$target": "example.smithy#OutputEventStream",
+                    "target": "example.smithy#OutputEventStream",
                     "traits": {
                         "smithy.api#eventStream": true
                     }
@@ -68,10 +68,10 @@
             "type": "union",
             "members": {
                 "eventA": {
-                    "$target": "example.smithy#EventStructure"
+                    "target": "example.smithy#EventStructure"
                 },
                 "eventB": {
-                    "$target": "example.smithy#EventStructure"
+                    "target": "example.smithy#EventStructure"
                 }
             }
         },
@@ -79,10 +79,10 @@
             "type": "union",
             "members": {
                 "eventA": {
-                    "$target": "example.smithy#EventStructure"
+                    "target": "example.smithy#EventStructure"
                 },
                 "eventB": {
-                    "$target": "example.smithy#EventStructure"
+                    "target": "example.smithy#EventStructure"
                 }
             }
         },
@@ -90,21 +90,21 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         },
         "example.smithy#SingleEventOperation": {
             "type": "operation",
             "input": {
-                "$target": "example.smithy#SingleEventOperationInput"
+                "target": "example.smithy#SingleEventOperationInput"
             }
         },
         "example.smithy#SingleEventOperationInput": {
             "type": "structure",
             "members": {
                 "messages": {
-                    "$target": "example.smithy#EventStructure",
+                    "target": "example.smithy#EventStructure",
                     "traits": {
                         "smithy.api#eventStream": true
                     }

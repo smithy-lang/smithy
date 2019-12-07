@@ -67,7 +67,7 @@ enum AstModelLoader {
     private static final String SHAPES = "shapes";
     private static final String TRAITS = "traits";
     private static final String TYPE = "type";
-    private static final String TARGET = "$target";
+    private static final String TARGET = "target";
 
     private static final List<String> TOP_LEVEL_PROPERTIES = ListUtils.of("smithy", SHAPES, METADATA);
     private static final List<String> APPLY_PROPERTIES = ListUtils.of(TYPE, TRAITS);

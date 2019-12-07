@@ -5,33 +5,33 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "put": {
-                "$target": "ns.foo#PutResource"
+                "target": "ns.foo#PutResource"
             },
             "delete": {
-                "$target": "ns.foo#DeleteResource"
+                "target": "ns.foo#DeleteResource"
             }
         },
         "ns.foo#PutResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ResourceInput"
+                "target": "ns.foo#ResourceInput"
             }
         },
         "ns.foo#DeleteResource": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ResourceInput"
+                "target": "ns.foo#ResourceInput"
             }
         },
         "ns.foo#ResourceInput": {
             "type": "structure",
             "members": {
                 "id": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }

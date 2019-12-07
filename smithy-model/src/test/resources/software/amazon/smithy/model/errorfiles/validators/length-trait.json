@@ -4,7 +4,7 @@
         "ns.foo#Valid1": {
             "type": "list", 
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }, 
             "traits": {
                 "smithy.api#length": {
@@ -15,7 +15,7 @@
         "ns.foo#Valid2": {
             "type": "list", 
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }, 
             "traits": {
                 "smithy.api#length": {
@@ -26,7 +26,7 @@
         "ns.foo#Valid3": {
             "type": "list", 
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }, 
             "traits": {
                 "smithy.api#length": {
@@ -38,7 +38,7 @@
         "ns.foo#Valid4": {
             "type": "list", 
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }, 
             "traits": {
                 "smithy.api#length": {
@@ -50,7 +50,7 @@
         "ns.foo#Invalid1": {
             "type": "list", 
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }, 
             "traits": {
                 "smithy.api#length": {
@@ -61,7 +61,7 @@
         "ns.foo#Invalid2": {
             "type": "list", 
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }, 
             "traits": {
                 "smithy.api#length": {
@@ -72,7 +72,7 @@
         "ns.foo#Invalid3": {
             "type": "list", 
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }, 
             "traits": {
                 "smithy.api#length": {

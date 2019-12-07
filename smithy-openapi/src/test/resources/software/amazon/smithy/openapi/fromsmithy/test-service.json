@@ -6,10 +6,10 @@
             "version": "2006-03-01",
             "operations": [
                 {
-                    "$target": "example.rest#CreateDocument"
+                    "target": "example.rest#CreateDocument"
                 },
                 {
-                    "$target": "example.rest#PutPayload"
+                    "target": "example.rest#PutPayload"
                 }
             ],
             "traits": {
@@ -23,14 +23,14 @@
         "example.rest#PutPayload": {
             "type": "operation",
             "input": {
-                "$target": "example.rest#PutPayloadInput"
+                "target": "example.rest#PutPayloadInput"
             },
             "output": {
-                "$target": "example.rest#PutPayloadOutput"
+                "target": "example.rest#PutPayloadOutput"
             },
             "errors": [
                 {
-                    "$target": "example.rest#PayloadNotFound"
+                    "target": "example.rest#PayloadNotFound"
                 }
             ],
             "traits": {
@@ -46,38 +46,38 @@
             "type": "structure",
             "members": {
                 "path": {
-                    "$target": "example.rest#String",
+                    "target": "example.rest#String",
                     "traits": {
                         "smithy.api#httpLabel": true,
                         "smithy.api#required": true
                     }
                 },
                 "header": {
-                    "$target": "example.rest#String",
+                    "target": "example.rest#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo-Header"
                     }
                 },
                 "query": {
-                    "$target": "example.rest#Integer",
+                    "target": "example.rest#Integer",
                     "traits": {
                         "smithy.api#httpQuery": "query"
                     }
                 },
                 "timeQuery": {
-                    "$target": "smithy.api#Timestamp",
+                    "target": "smithy.api#Timestamp",
                     "traits": {
                         "smithy.api#httpQuery": "timeQuery"
                     }
                 },
                 "enum": {
-                    "$target": "example.rest#EnumString",
+                    "target": "example.rest#EnumString",
                     "traits": {
                         "smithy.api#httpHeader": "X-EnumString"
                     }
                 },
                 "body": {
-                    "$target": "example.rest#Blob",
+                    "target": "example.rest#Blob",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -88,13 +88,13 @@
             "type": "structure",
             "members": {
                 "header": {
-                    "$target": "example.rest#String",
+                    "target": "example.rest#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo-Header"
                     }
                 },
                 "body": {
-                    "$target": "example.rest#Blob",
+                    "target": "example.rest#Blob",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -111,10 +111,10 @@
         "example.rest#CreateDocument": {
             "type": "operation",
             "input": {
-                "$target": "example.rest#CreateDocumentInput"
+                "target": "example.rest#CreateDocumentInput"
             },
             "output": {
-                "$target": "example.rest#CreateDocumentOutput"
+                "target": "example.rest#CreateDocumentOutput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -127,25 +127,25 @@
             "type": "structure",
             "members": {
                 "query": {
-                    "$target": "example.rest#QueryList",
+                    "target": "example.rest#QueryList",
                     "traits": {
                         "smithy.api#httpQuery": "query"
                     }
                 },
                 "abc": {
-                    "$target": "example.rest#String",
+                    "target": "example.rest#String",
                     "traits": {
                         "smithy.api#sensitive": true
                     }
                 },
                 "def": {
-                    "$target": "example.rest#Integer"
+                    "target": "example.rest#Integer"
                 },
                 "hij": {
-                    "$target": "example.rest#Map"
+                    "target": "example.rest#Map"
                 },
                 "stringDateTime": {
-                    "$target": "example.rest#StringDateTime"
+                    "target": "example.rest#StringDateTime"
                 }
             }
         },
@@ -153,22 +153,22 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "example.rest#String"
+                    "target": "example.rest#String"
                 },
                 "baz": {
-                    "$target": "example.rest#String"
+                    "target": "example.rest#String"
                 },
                 "list": {
-                    "$target": "example.rest#List"
+                    "target": "example.rest#List"
                 },
                 "time": {
-                    "$target": "example.rest#Timestamp",
+                    "target": "example.rest#Timestamp",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "taggedUnion": {
-                    "$target": "example.rest#TaggedUnion"
+                    "target": "example.rest#TaggedUnion"
                 }
             }
         },
@@ -184,7 +184,7 @@
         "example.rest#Map": {
             "type": "map",
             "key": {
-                "$target": "example.rest#String",
+                "target": "example.rest#String",
                 "traits": {
                     "smithy.api#length": {
                         "min": 2,
@@ -193,7 +193,7 @@
                 }
             },
             "value": {
-                "$target": "example.rest#String",
+                "target": "example.rest#String",
                 "traits": {
                     "smithy.api#sensitive": true
                 }
@@ -202,7 +202,7 @@
         "example.rest#List": {
             "type": "list",
             "member": {
-                "$target": "example.rest#String"
+                "target": "example.rest#String"
             },
             "traits": {
                 "smithy.api#length": {
@@ -214,7 +214,7 @@
         "example.rest#QueryList": {
             "type": "list",
             "member": {
-                "$target": "example.rest#String",
+                "target": "example.rest#String",
                 "traits": {
                     "smithy.api#documentation": "Query list member reference docs!"
                 }
@@ -253,10 +253,10 @@
             "type": "union",
             "members": {
                 "a": {
-                    "$target": "example.rest#String"
+                    "target": "example.rest#String"
                 },
                 "b": {
-                    "$target": "example.rest#String"
+                    "target": "example.rest#String"
                 }
             }
         }

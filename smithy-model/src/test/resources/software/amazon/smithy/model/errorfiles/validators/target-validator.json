@@ -4,31 +4,31 @@
         "ns.foo#ValidList": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             }
         },
         "ns.foo#InvalidListMemberReference": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#NotFound"
+                "target": "ns.foo#NotFound"
             }
         },
         "ns.foo#InvalidListMemberMember": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#ValidInput$integer"
+                "target": "ns.foo#ValidInput$integer"
             }
         },
         "ns.foo#InvalidListMemberResource": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#MyResource"
+                "target": "ns.foo#MyResource"
             }
         },
         "ns.foo#InvalidListMemberService": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#MyService"
+                "target": "ns.foo#MyService"
             }
         },
         "ns.foo#MyService": {
@@ -36,10 +36,10 @@
             "version": "2017-01-17",
             "resources": [
                 {
-                    "$target": "ns.foo#MyResource"
+                    "target": "ns.foo#MyResource"
                 },
                 {
-                    "$target": "ns.foo#InvalidResourceLifecycle"
+                    "target": "ns.foo#InvalidResourceLifecycle"
                 }
             ],
             "traits": {
@@ -54,7 +54,7 @@
             "type": "resource",
             "identifiers": {
                 "myId": {
-                    "$target": "ns.foo#MyResourceIdentifier"
+                    "target": "ns.foo#MyResourceIdentifier"
                 }
             }
         },
@@ -71,7 +71,7 @@
             "type": "resource",
             "identifiers": {
                 "invalidInteger": {
-                    "$target": "ns.foo#Integer"
+                    "target": "ns.foo#Integer"
                 }
             }
         },
@@ -79,7 +79,7 @@
             "type": "resource",
             "identifiers": {
                 "invalidId": {
-                    "$target": "ns.foo#NotFound"
+                    "target": "ns.foo#NotFound"
                 }
             }
         },
@@ -87,7 +87,7 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "ns.foo#NotFound"
+                    "target": "ns.foo#NotFound"
                 }
             ]
         },
@@ -95,21 +95,21 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "ns.foo#Integer"
+                    "target": "ns.foo#Integer"
                 }
             ]
         },
         "ns.foo#ValidOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             },
             "output": {
-                "$target": "ns.foo#ValidOutput"
+                "target": "ns.foo#ValidOutput"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#ValidError"
+                    "target": "ns.foo#ValidError"
                 }
             ],
             "traits": {
@@ -120,7 +120,7 @@
             "type": "structure",
             "members": {
                 "integer": {
-                    "$target": "ns.foo#Integer"
+                    "target": "ns.foo#Integer"
                 }
             }
         },
@@ -128,7 +128,7 @@
             "type": "structure",
             "members": {
                 "integer": {
-                    "$target": "ns.foo#Integer"
+                    "target": "ns.foo#Integer"
                 }
             }
         },
@@ -136,7 +136,7 @@
             "type": "structure",
             "members": {
                 "integer": {
-                    "$target": "ns.foo#Integer"
+                    "target": "ns.foo#Integer"
                 }
             },
             "traits": {
@@ -146,14 +146,14 @@
         "ns.foo#InalidOperationInputOutputErrorNotFound": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#NotFound"
+                "target": "ns.foo#NotFound"
             },
             "output": {
-                "$target": "ns.foo#NotFound"
+                "target": "ns.foo#NotFound"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#NotFound"
+                    "target": "ns.foo#NotFound"
                 }
             ],
             "traits": {
@@ -163,14 +163,14 @@
         "ns.foo#InalidOperationInputOutputErrorBadTypes": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#Integer"
+                "target": "ns.foo#Integer"
             },
             "output": {
-                "$target": "ns.foo#Integer"
+                "target": "ns.foo#Integer"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#Integer"
+                    "target": "ns.foo#Integer"
                 }
             ],
             "traits": {
@@ -180,14 +180,14 @@
         "ns.foo#InvalidOperationBadErrorTraits": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidError"
+                "target": "ns.foo#ValidError"
             },
             "output": {
-                "$target": "ns.foo#ValidError"
+                "target": "ns.foo#ValidError"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#ValidInput"
+                    "target": "ns.foo#ValidInput"
                 }
             ],
             "traits": {
@@ -197,34 +197,34 @@
         "ns.foo#InvalidResourceLifecycle": {
             "type": "resource",
             "create": {
-                "$target": "ns.foo#Integer"
+                "target": "ns.foo#Integer"
             },
             "read": {
-                "$target": "ns.foo#Integer"
+                "target": "ns.foo#Integer"
             },
             "update": {
-                "$target": "ns.foo#Integer"
+                "target": "ns.foo#Integer"
             },
             "delete": {
-                "$target": "ns.foo#Integer"
+                "target": "ns.foo#Integer"
             }
         },
         "ns.foo#InvalidMapType": {
             "type": "map",
             "key": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             },
             "value": {
-                "$target": "ns.foo#Integer"
+                "target": "ns.foo#Integer"
             }
         },
         "ns.foo#ValidMap": {
             "type": "map",
             "key": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             },
             "value": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             }
         },
         "ns.foo#fooTrait": {
@@ -236,7 +236,7 @@
         "ns.foo#InvalidTraitReference": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#fooTrait"
+                "target": "ns.foo#fooTrait"
             }
         },
         "another.ns#String": {

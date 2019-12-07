@@ -6,7 +6,7 @@
             "version": "2006-03-01",
             "operations": [
                 {
-                    "$target": "smithy.example#Operation"
+                    "target": "smithy.example#Operation"
                 }
             ],
             "traits": {
@@ -20,7 +20,7 @@
         "smithy.example#Operation": {
             "type": "operation",
             "input": {
-                "$target": "smithy.example#OperationInput"
+                "target": "smithy.example#OperationInput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -33,20 +33,20 @@
             "type": "structure",
             "members": {
                 "timestamp1": {
-                    "$target": "smithy.api#Timestamp",
+                    "target": "smithy.api#Timestamp",
                     "traits": {
                         "smithy.api#httpQuery": "query1"
                     }
                 },
                 "timestamp2": {
-                    "$target": "smithy.api#Timestamp",
+                    "target": "smithy.api#Timestamp",
                     "traits": {
                         "smithy.api#httpQuery": "query2",
                         "smithy.api#timestampFormat": "epoch-seconds"
                     }
                 },
                 "timestampList": {
-                    "$target": "smithy.example#TimestampList",
+                    "target": "smithy.example#TimestampList",
                     "traits": {
                         "smithy.api#httpQuery": "query3"
                     }
@@ -56,7 +56,7 @@
         "smithy.example#TimestampList": {
             "type": "list",
             "member": {
-                "$target": "smithy.api#Timestamp"
+                "target": "smithy.api#Timestamp"
             }
         }
     }

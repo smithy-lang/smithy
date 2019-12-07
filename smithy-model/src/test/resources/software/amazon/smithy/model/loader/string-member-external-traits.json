@@ -7,7 +7,7 @@
         "ns.foo#List": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#String",
+                "target": "ns.foo#String",
                 "traits": {
                     "smithy.api#sensitive": true
                 }

@@ -5,7 +5,7 @@
             "type": "structure",
             "members": {
                 "a": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#sensitive": true,
                         "smithy.api#deprecated": true,

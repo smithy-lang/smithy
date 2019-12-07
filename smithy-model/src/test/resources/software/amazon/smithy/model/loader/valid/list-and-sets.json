@@ -4,19 +4,19 @@
         "com.example#A": {
             "type": "list",
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }
         },
         "com.example#B": {
             "type": "list",
             "member": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             }
         },
         "com.example#C": {
             "type": "list",
             "member": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             },
             "traits": {
                 "smithy.api#deprecated": {}
@@ -25,7 +25,7 @@
         "com.example#D": {
             "type": "list",
             "member": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             },
             "traits": {
                 "smithy.api#deprecated": {},
@@ -35,7 +35,7 @@
         "com.example#E": {
             "type": "list",
             "member": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#sensitive": true,
                     "smithy.api#since": "1.1"
@@ -49,7 +49,7 @@
         "com.example#F": {
             "type": "list",
             "member": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#sensitive": true,
                     "smithy.api#since": "1.1"
@@ -63,7 +63,7 @@
         "com.example#G": {
             "type": "list",
             "member": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#sensitive": true,
                     "smithy.api#since": "1.1"
@@ -77,19 +77,19 @@
         "com.example#H": {
             "type": "set",
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }
         },
         "com.example#I": {
             "type": "set",
             "member": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             }
         },
         "com.example#J": {
             "type": "set",
             "member": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             },
             "traits": {
                 "smithy.api#deprecated": {}
@@ -98,7 +98,7 @@
         "com.example#K": {
             "type": "set",
             "member": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             },
             "traits": {
                 "smithy.api#deprecated": {},
@@ -108,7 +108,7 @@
         "com.example#L": {
             "type": "set",
             "member": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#sensitive": true,
                     "smithy.api#since": "1.1"
@@ -122,7 +122,7 @@
         "com.example#M": {
             "type": "set",
             "member": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#sensitive": true,
                     "smithy.api#since": "1.1"
@@ -136,7 +136,7 @@
         "com.example#N": {
             "type": "set",
             "member": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#sensitive": true,
                     "smithy.api#since": "1.1"

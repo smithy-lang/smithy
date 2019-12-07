@@ -1010,7 +1010,7 @@ The following example defines a list with a string member:
             "smithy.example#MyList": {
                 "type": "list",
                 "member": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         }
@@ -1026,7 +1026,7 @@ The following example defines a set with a string member:
             "smithy.example#MySet": {
                 "type": "set",
                 "member": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         }
@@ -1048,7 +1048,7 @@ trait.
 .. code-block:: json
 
     {
-        "$target": "smithy.example#MyShape",
+        "target": "smithy.example#MyShape",
         "traits": {
             "smithy.example#documentation": "Hi!"
         }
@@ -1064,7 +1064,7 @@ The following example defines a list shape and its member.
             "smithy.example#MyList": {
                 "type": "list",
                 "member": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#documentation": "Member documentation"
                     }
@@ -1079,13 +1079,13 @@ The following example defines a list shape and its member.
 AST shape reference
 ~~~~~~~~~~~~~~~~~~~
 
-An *AST shape reference* is an object with a single property, ``$target``
+An *AST shape reference* is an object with a single property, ``target``
 that maps to an absolute shape ID.
 
 .. code-block:: json
 
     {
-        "$target": "smithy.example#MyShape"
+        "target": "smithy.example#MyShape"
     }
 
 The following example defines a shape reference inside of the ``operations``
@@ -1100,7 +1100,7 @@ list of a service shape.
                 "type": "service",
                 "operations": [
                     {
-                        "$target": "smithy.example#Operation"
+                        "target": "smithy.example#Operation"
                     }
                 ]
             },
@@ -1109,12 +1109,6 @@ list of a service shape.
             }
         }
     }
-
-.. note::
-
-    ``$target`` is used rather than ``target`` to make it easier for
-    simpler tooling like grep to easily find references between shapes
-    without having to fully parse a model.
 
 
 Map shape
@@ -1134,10 +1128,10 @@ The following example defines a map of strings to numbers:
             "smithy.example#IntegerMap": {
                 "type": "map",
                 "key": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "value": {
-                    "$target": "smithy.api#Integer"
+                    "target": "smithy.api#Integer"
                 }
             }
         }
@@ -1169,13 +1163,13 @@ member:
                 "type": "structure",
                 "members": {
                     "stringMember": {
-                        "$target": "smithy.api#String",
+                        "target": "smithy.api#String",
                         "traits": {
                             "smithy.api#required": true
                         }
                     },
                     "numberMember": {
-                        "$target": "smithy.api#Integer"
+                        "target": "smithy.api#Integer"
                     }
                 }
             }
@@ -1193,10 +1187,10 @@ The following example defines a union:
                 "type": "union",
                 "members": {
                     "a": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     },
                     "b": {
-                        "$target": "smithy.api#Integer"
+                        "target": "smithy.api#Integer"
                     }
                 }
             }
@@ -1248,12 +1242,12 @@ shapes defined in JSON support the same properties as the Smithy IDL.
                 "version": "2017-02-11",
                 "operations": [
                     {
-                        "$target": "smithy.example#GetServerTime"
+                        "target": "smithy.example#GetServerTime"
                     }
                 ],
                 "resources": [
                     {
-                        "$target": "smithy.example#SomeResource"
+                        "target": "smithy.example#SomeResource"
                     }
                 ]
             }
@@ -1330,37 +1324,37 @@ shapes defined in JSON support the same properties as the Smithy IDL.
                 "type": "resource",
                 "identifiers": {
                     "forecastId": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     },
                 },
                 "create": {
-                    "$target": "smithy.example#CreateThing"
+                    "target": "smithy.example#CreateThing"
                 },
                 "read": {
-                    "$target": "smithy.example#GetThing"
+                    "target": "smithy.example#GetThing"
                 },
                 "update": {
-                    "$target": "smithy.example#Updatething"
+                    "target": "smithy.example#Updatething"
                 },
                 "delete": {
-                    "$target": "smithy.example#DeleteThing"
+                    "target": "smithy.example#DeleteThing"
                 },
                 "list": {
-                    "$target": "smithy.example#ListThings"
+                    "target": "smithy.example#ListThings"
                 },
                 "operations": [
                     {
-                        "$target": "smithy.example#SomeInstanceOperation"
+                        "target": "smithy.example#SomeInstanceOperation"
                     }
                 ],
                 "collectionOperations": [
                     {
-                        "$target": "smithy.example#SomeCollectionOperation"
+                        "target": "smithy.example#SomeCollectionOperation"
                     }
                 ],
                 "resources": [
                     {
-                        "$target": "smithy.example#SomeResource"
+                        "target": "smithy.example#SomeResource"
                     }
                 ]
             }
@@ -1413,17 +1407,17 @@ The following example defines an operation, its input, output, and errors:
             "smithy.example#MyOperation": {
                 "type": "operation",
                 "input": {
-                    "$target": "smithy.example#MyOperationInput"
+                    "target": "smithy.example#MyOperationInput"
                 },
                 "output": {
-                    "$target": "smithy.example#MyOperationOutput"
+                    "target": "smithy.example#MyOperationOutput"
                 },
                 "errors": [
                     {
-                        "$target": "smithy.example#BadRequestError"
+                        "target": "smithy.example#BadRequestError"
                     },
                     {
-                        "$target": "smithy.example#NotFoundError"
+                        "target": "smithy.example#NotFoundError"
                     }
                 ]
             },
@@ -1467,7 +1461,7 @@ property.
                 "type": "structure",
                 "members": {
                     "foo": {
-                        "$target": "smithy.api#String"
+                        "target": "smithy.api#String"
                     }
                 }
             },

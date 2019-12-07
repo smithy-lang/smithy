@@ -8,7 +8,7 @@
             "type": "operation",
             "errors": [
                 {
-                    "$target": "com.foo#Error1"
+                    "target": "com.foo#Error1"
                 }
             ]
         },
@@ -16,38 +16,38 @@
             "type": "operation",
             "errors": [
                 {
-                    "$target": "com.foo#Error1"
+                    "target": "com.foo#Error1"
                 },
                 {
-                    "$target": "com.foo#Error2"
+                    "target": "com.foo#Error2"
                 }
             ]
         },
         "com.foo#D": {
             "type": "operation",
             "input": {
-                "$target": "com.foo#Input"
+                "target": "com.foo#Input"
             },
             "errors": [
                 {
-                    "$target": "com.foo#Error1"
+                    "target": "com.foo#Error1"
                 },
                 {
-                    "$target": "com.foo#Error2"
+                    "target": "com.foo#Error2"
                 }
             ]
         },
         "com.foo#E": {
             "type": "operation",
             "input": {
-                "$target": "com.foo#Input"
+                "target": "com.foo#Input"
             },
             "errors": [
                 {
-                    "$target": "com.foo#Error1"
+                    "target": "com.foo#Error1"
                 },
                 {
-                    "$target": "com.foo#Error2"
+                    "target": "com.foo#Error2"
                 }
             ]
         },
@@ -68,45 +68,45 @@
         "com.foo#F": {
             "type": "operation",
             "input": {
-                "$target": "com.foo#Input"
+                "target": "com.foo#Input"
             },
             "output": {
-                "$target": "com.foo#Output"
+                "target": "com.foo#Output"
             },
             "errors": [
                 {
-                    "$target": "com.foo#Error1"
+                    "target": "com.foo#Error1"
                 },
                 {
-                    "$target": "com.foo#Error2"
+                    "target": "com.foo#Error2"
                 }
             ]
         },
         "com.foo#G": {
             "type": "operation",
             "input": {
-                "$target": "com.foo#Input"
+                "target": "com.foo#Input"
             },
             "output": {
-                "$target": "com.foo#Output"
+                "target": "com.foo#Output"
             }
         },
         "com.foo#H": {
             "type": "operation",
             "input": {
-                "$target": "com.foo#Input"
+                "target": "com.foo#Input"
             },
             "output": {
-                "$target": "com.foo#Output"
+                "target": "com.foo#Output"
             }
         },
         "com.foo#I": {
             "type": "operation",
             "input": {
-                "$target": "com.foo#Input"
+                "target": "com.foo#Input"
             },
             "output": {
-                "$target": "com.foo#Output"
+                "target": "com.foo#Output"
             }
         },
         "com.foo#Input": {
@@ -116,17 +116,17 @@
         "com.foo#J": {
             "type": "operation",
             "input": {
-                "$target": "com.foo#Input"
+                "target": "com.foo#Input"
             },
             "output": {
-                "$target": "com.foo#Output"
+                "target": "com.foo#Output"
             },
             "errors": [
                 {
-                    "$target": "com.foo#Error1"
+                    "target": "com.foo#Error1"
                 },
                 {
-                    "$target": "com.foo#Error2"
+                    "target": "com.foo#Error2"
                 }
             ]
         },

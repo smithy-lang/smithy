@@ -5,7 +5,7 @@
             "type": "resource",
             "identifiers": {
                 "id": {
-                    "$target": "smithy.api#Float"
+                    "target": "smithy.api#Float"
                 }
             }
         },
@@ -13,18 +13,18 @@
             "type": "resource",
             "identifiers": {
                 "a": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "b": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "resources": [
                 {
-                    "$target": "ns.foo#Invalid2"
+                    "target": "ns.foo#Invalid2"
                 },
                 {
-                    "$target": "ns.foo#Invalid3"
+                    "target": "ns.foo#Invalid3"
                 }
             ]
         },
@@ -32,7 +32,7 @@
             "type": "resource",
             "identifiers": {
                 "a": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         },
@@ -40,10 +40,10 @@
             "type": "resource",
             "identifiers": {
                 "a": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "b": {
-                    "$target": "ns.foo#MyString"
+                    "target": "ns.foo#MyString"
                 }
             }
         },

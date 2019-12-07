@@ -6,15 +6,15 @@
             "version": "2018-03-17",
             "resources": [
                 {
-                    "$target": "ns.foo#A"
+                    "target": "ns.foo#A"
                 },
                 {
-                    "$target": "ns.foo#B"
+                    "target": "ns.foo#B"
                 }
             ],
             "operations": [
                 {
-                    "$target": "ns.foo#O1"
+                    "target": "ns.foo#O1"
                 }
             ],
             "traits": {
@@ -32,10 +32,10 @@
             "type": "resource",
             "operations": [
                 {
-                    "$target": "ns.foo#O2"
+                    "target": "ns.foo#O2"
                 },
                 {
-                    "$target": "ns.foo#O3"
+                    "target": "ns.foo#O3"
                 }
             ]
         },
@@ -43,10 +43,10 @@
             "type": "resource",
             "operations": [
                 {
-                    "$target": "ns.foo#O4"
+                    "target": "ns.foo#O4"
                 },
                 {
-                    "$target": "ns.foo#O5"
+                    "target": "ns.foo#O5"
                 }
             ],
             "traits": {

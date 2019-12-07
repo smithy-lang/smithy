@@ -5,19 +5,19 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#eventPayload": true
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#eventPayload": true
                     }
                 },
                 "bar": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#eventHeader": true
                     }
@@ -28,19 +28,19 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#idempotencyToken": true
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#idempotencyToken": true
                     }
                 },
                 "bar": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },
@@ -48,19 +48,19 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
                 },
                 "bar": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },

@@ -19,13 +19,13 @@
             "version": "2018-03-17",
             "resources": [
                 {
-                    "$target": "ns.foo#SomeResource"
+                    "target": "ns.foo#SomeResource"
                 },
                 {
-                    "$target": "ns.foo#RootArnResource"
+                    "target": "ns.foo#RootArnResource"
                 },
                 {
-                    "$target": "ns.foo#AbsoluteResource"
+                    "target": "ns.foo#AbsoluteResource"
                 }
             ],
             "traits": {
@@ -50,12 +50,12 @@
             "type": "resource",
             "identifiers": {
                 "someId": {
-                    "$target": "ns.foo#SomeResourceId"
+                    "target": "ns.foo#SomeResourceId"
                 }
             },
             "resources": [
                 {
-                    "$target": "ns.foo#ChildResource"
+                    "target": "ns.foo#ChildResource"
                 }
             ],
             "traits": {
@@ -68,15 +68,15 @@
             "type": "resource",
             "identifiers": {
                 "someId": {
-                    "$target": "ns.foo#SomeResourceId"
+                    "target": "ns.foo#SomeResourceId"
                 },
                 "childId": {
-                    "$target": "ns.foo#ChildResourceId"
+                    "target": "ns.foo#ChildResourceId"
                 }
             },
             "resources": [
                 {
-                    "$target": "ns.foo#AnotherChild"
+                    "target": "ns.foo#AnotherChild"
                 }
             ],
             "traits": {
@@ -89,10 +89,10 @@
             "type": "resource",
             "identifiers": {
                 "someId": {
-                    "$target": "ns.foo#SomeResourceId"
+                    "target": "ns.foo#SomeResourceId"
                 },
                 "childId": {
-                    "$target": "ns.foo#ChildResourceId"
+                    "target": "ns.foo#ChildResourceId"
                 }
             }
         },
@@ -100,7 +100,7 @@
             "type": "resource",
             "identifiers": {
                 "arn": {
-                    "$target": "ns.foo#AbsoluteResourceArn"
+                    "target": "ns.foo#AbsoluteResourceArn"
                 }
             },
             "traits": {

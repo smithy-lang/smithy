@@ -6,7 +6,7 @@
             "version": "2018-03-17",
             "resources": [
                 {
-                    "$target": "ns.foo#A"
+                    "target": "ns.foo#A"
                 }
             ],
             "traits": {
@@ -21,12 +21,12 @@
             "type": "resource",
             "identifiers": {
                 "aid": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "resources": [
                 {
-                    "$target": "ns.foo#B"
+                    "target": "ns.foo#B"
                 }
             ],
             "traits": {
@@ -39,10 +39,10 @@
             "type": "resource",
             "identifiers": {
                 "aid": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "bid": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "traits": {

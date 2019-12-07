@@ -6,10 +6,10 @@
             "version": "XYZ",
             "resources": [
                 {
-                    "$target": "ns.foo#ValidResource"
+                    "target": "ns.foo#ValidResource"
                 },
                 {
-                    "$target": "ns.foo#InvalidResource"
+                    "target": "ns.foo#InvalidResource"
                 }
             ]
         },
@@ -17,29 +17,29 @@
             "type": "resource",
             "identifiers": {
                 "foo": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "operations": [
                 {
-                    "$target": "ns.foo#ValidResourceOperation1"
+                    "target": "ns.foo#ValidResourceOperation1"
                 },
                 {
-                    "$target": "ns.foo#ValidResourceOperation2"
+                    "target": "ns.foo#ValidResourceOperation2"
                 }
             ]
         },
         "ns.foo#ValidResourceOperation1": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidResourceOperation1Input"
+                "target": "ns.foo#ValidResourceOperation1Input"
             }
         },
         "ns.foo#ValidResourceOperation1Input": {
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -49,7 +49,7 @@
         "ns.foo#ValidResourceOperation2": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidResourceOperation2Input"
+                "target": "ns.foo#ValidResourceOperation2Input"
             }
         },
         "ns.foo#ValidResourceOperation2Input": {
@@ -60,22 +60,22 @@
             "type": "resource",
             "identifiers": {
                 "foo": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "operations": [
                 {
-                    "$target": "ns.foo#InvalidResourceOperation1"
+                    "target": "ns.foo#InvalidResourceOperation1"
                 },
                 {
-                    "$target": "ns.foo#InvalidResourceOperation2"
+                    "target": "ns.foo#InvalidResourceOperation2"
                 }
             ]
         },
         "ns.foo#InvalidResourceOperation1": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#InvalidResourceOperation1Input"
+                "target": "ns.foo#InvalidResourceOperation1Input"
             }
         },
         "ns.foo#InvalidResourceOperation1Input": {
@@ -85,14 +85,14 @@
         "ns.foo#InvalidResourceOperation2": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#InvalidResourceOperation2Input"
+                "target": "ns.foo#InvalidResourceOperation2Input"
             }
         },
         "ns.foo#InvalidResourceOperation2Input": {
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }

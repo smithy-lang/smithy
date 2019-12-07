@@ -11,13 +11,13 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#documentation": "Docs on member!"
                     }
                 },
                 "baz": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#documentation": "Docs on another member!"
                     }

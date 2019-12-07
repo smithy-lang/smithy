@@ -5,10 +5,10 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "example.rest#Foo"
+                    "target": "example.rest#Foo"
                 },
                 "bar": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         }

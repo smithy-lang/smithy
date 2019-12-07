@@ -5,22 +5,22 @@
             "type": "union",
             "members": {
                 "Foo": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "foo": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "fOO": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "baz": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "Baz": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "Bar": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },

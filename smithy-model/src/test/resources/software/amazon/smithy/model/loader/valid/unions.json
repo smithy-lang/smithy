@@ -5,7 +5,7 @@
             "type": "union",
             "members": {
                 "a": {
-                    "$target": "com.foo#B"
+                    "target": "com.foo#B"
                 }
             }
         },
@@ -13,7 +13,7 @@
             "type": "union",
             "members": {
                 "a": {
-                    "$target": "com.foo#A"
+                    "target": "com.foo#A"
                 }
             }
         },
@@ -21,7 +21,7 @@
             "type": "union",
             "members": {
                 "a": {
-                    "$target": "com.foo#A"
+                    "target": "com.foo#A"
                 }
             }
         },
@@ -29,7 +29,7 @@
             "type": "union",
             "members": {
                 "a": {
-                    "$target": "com.foo#A"
+                    "target": "com.foo#A"
                 }
             }
         },
@@ -37,7 +37,7 @@
             "type": "union",
             "members": {
                 "a": {
-                    "$target": "com.foo#D"
+                    "target": "com.foo#D"
                 }
             }
         },
@@ -45,7 +45,7 @@
             "type": "union",
             "members": {
                 "a": {
-                    "$target": "com.foo#E"
+                    "target": "com.foo#E"
                 }
             },
             "traits": {
@@ -56,7 +56,7 @@
             "type": "union",
             "members": {
                 "abc": {
-                    "$target": "com.foo#F"
+                    "target": "com.foo#F"
                 }
             },
             "traits": {
@@ -68,7 +68,7 @@
             "type": "union",
             "members": {
                 "foo": {
-                    "$target": "com.foo#E"
+                    "target": "com.foo#E"
                 }
             }
         },
@@ -76,10 +76,10 @@
             "type": "union",
             "members": {
                 "baz": {
-                    "$target": "com.foo#H"
+                    "target": "com.foo#H"
                 },
                 "foo": {
-                    "$target": "com.foo#E"
+                    "target": "com.foo#E"
                 }
             }
         },
@@ -87,10 +87,10 @@
             "type": "union",
             "members": {
                 "baz": {
-                    "$target": "com.foo#H"
+                    "target": "com.foo#H"
                 },
                 "foo": {
-                    "$target": "com.foo#E",
+                    "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {}
                     }
@@ -101,13 +101,13 @@
             "type": "union",
             "members": {
                 "baz": {
-                    "$target": "com.foo#H",
+                    "target": "com.foo#H",
                     "traits": {
                         "smithy.api#deprecated": {}
                     }
                 },
                 "foo": {
-                    "$target": "com.foo#E",
+                    "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {},
                         "smithy.api#since": "2.0"
@@ -119,13 +119,13 @@
             "type": "union",
             "members": {
                 "baz": {
-                    "$target": "com.foo#H",
+                    "target": "com.foo#H",
                     "traits": {
                         "smithy.api#deprecated": {}
                     }
                 },
                 "foo": {
-                    "$target": "com.foo#E",
+                    "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {},
                         "smithy.api#since": "2.0"
@@ -137,13 +137,13 @@
             "type": "union",
             "members": {
                 "baz": {
-                    "$target": "com.foo#H",
+                    "target": "com.foo#H",
                     "traits": {
                         "smithy.api#deprecated": {}
                     }
                 },
                 "foo": {
-                    "$target": "com.foo#E",
+                    "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {},
                         "smithy.api#since": "2.0"

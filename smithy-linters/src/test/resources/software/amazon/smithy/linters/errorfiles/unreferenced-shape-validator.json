@@ -6,7 +6,7 @@
             "version": "2017-01-17",
             "operations": [
                 {
-                    "$target": "ns.foo#ReferencedOperation"
+                    "target": "ns.foo#ReferencedOperation"
                 }
             ],
             "traits": {
@@ -20,14 +20,14 @@
         "ns.foo#ReferencedOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ReferencedOperationInput"
+                "target": "ns.foo#ReferencedOperationInput"
             },
             "output": {
-                "$target": "ns.foo#ReferencedOperationOutput"
+                "target": "ns.foo#ReferencedOperationOutput"
             },
             "errors": [
                 {
-                    "$target": "ns.foo#ReferencedOperationError"
+                    "target": "ns.foo#ReferencedOperationError"
                 }
             ],
             "traits": {
@@ -38,7 +38,7 @@
             "type": "structure",
             "members": {
                 "int": {
-                    "$target": "ns.foo#ReferencedInteger"
+                    "target": "ns.foo#ReferencedInteger"
                 }
             }
         },
@@ -46,7 +46,7 @@
             "type": "structure",
             "members": {
                 "float": {
-                    "$target": "ns.foo#ReferencedFloat"
+                    "target": "ns.foo#ReferencedFloat"
                 }
             }
         },
@@ -66,7 +66,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#UnreferencedString"
+                    "target": "ns.foo#UnreferencedString"
                 }
             }
         },

@@ -15,32 +15,32 @@
         "ns.foo#SomeList": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             }
         },
         "ns.foo#Map": {
             "type": "map",
             "key": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             },
             "value": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             }
         },
         "ns.foo#Structure": {
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#documentation": "docs"
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "bar": {
-                    "$target": "ns.foo#DocString"
+                    "target": "ns.foo#DocString"
                 }
             }
         },

@@ -40,7 +40,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "com.foo#E"
+                    "target": "com.foo#E"
                 }
             }
         },
@@ -48,10 +48,10 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "com.foo#H"
+                    "target": "com.foo#H"
                 },
                 "foo": {
-                    "$target": "com.foo#E"
+                    "target": "com.foo#E"
                 }
             }
         },
@@ -59,10 +59,10 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "com.foo#H"
+                    "target": "com.foo#H"
                 },
                 "foo": {
-                    "$target": "com.foo#E",
+                    "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {}
                     }
@@ -73,13 +73,13 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "com.foo#H",
+                    "target": "com.foo#H",
                     "traits": {
                         "smithy.api#deprecated": {}
                     }
                 },
                 "foo": {
-                    "$target": "com.foo#E",
+                    "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {},
                         "smithy.api#since": "2.0"
@@ -91,13 +91,13 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "com.foo#H",
+                    "target": "com.foo#H",
                     "traits": {
                         "smithy.api#deprecated": {}
                     }
                 },
                 "foo": {
-                    "$target": "com.foo#E",
+                    "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {},
                         "smithy.api#since": "2.0"
@@ -109,13 +109,13 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "com.foo#H",
+                    "target": "com.foo#H",
                     "traits": {
                         "smithy.api#deprecated": {}
                     }
                 },
                 "foo": {
-                    "$target": "com.foo#E",
+                    "target": "com.foo#E",
                     "traits": {
                         "smithy.api#deprecated": {},
                         "smithy.api#since": "2.0"

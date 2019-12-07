@@ -20,7 +20,7 @@
             "type": "structure",
             "members": {
                 "OopsStructureMember": {
-                    "$target": "example.namespace#WrongType"
+                    "target": "example.namespace#WrongType"
                 }
             }
         },
@@ -28,7 +28,7 @@
             "type": "union",
             "members": {
                 "OopsTaggedUnionMember": {
-                    "$target": "example.namespace#WrongType"
+                    "target": "example.namespace#WrongType"
                 }
             }
         },

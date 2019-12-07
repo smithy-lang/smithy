@@ -17,7 +17,7 @@
             "type": "structure",
             "members": {
                 "lowerCamelCase": {
-                    "$target": "ns.foo#Foo"
+                    "target": "ns.foo#Foo"
                 }
             },
             "traits": {
@@ -28,10 +28,10 @@
             "type": "structure",
             "members": {
                 "UpperCamelCase": {
-                    "$target": "ns.foo#Foo"
+                    "target": "ns.foo#Foo"
                 },
                 "snake_case": {
-                    "$target": "ns.foo#Foo"
+                    "target": "ns.foo#Foo"
                 }
             },
             "traits": {
@@ -54,13 +54,13 @@
             "type": "structure",
             "members": {
                 "lowerCamelCase": {
-                    "$target": "ns.foo#Foo"
+                    "target": "ns.foo#Foo"
                 },
                 "UpperCamelCase": {
-                    "$target": "ns.foo#Foo"
+                    "target": "ns.foo#Foo"
                 },
                 "snake_case": {
-                    "$target": "ns.foo#Foo"
+                    "target": "ns.foo#Foo"
                 }
             }
         }

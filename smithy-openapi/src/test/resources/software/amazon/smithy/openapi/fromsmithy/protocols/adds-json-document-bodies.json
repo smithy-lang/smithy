@@ -6,7 +6,7 @@
             "version": "2006-03-01",
             "operations": [
                 {
-                    "$target": "smithy.example#CreateDocument"
+                    "target": "smithy.example#CreateDocument"
                 }
             ],
             "traits": {
@@ -20,7 +20,7 @@
         "smithy.example#CreateDocument": {
             "type": "operation",
             "input": {
-                "$target": "smithy.example#CreateDocumentInput"
+                "target": "smithy.example#CreateDocumentInput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -33,16 +33,16 @@
             "type": "structure",
             "members": {
                 "query": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpQuery": "query"
                     }
                 },
                 "abc": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "def": {
-                    "$target": "smithy.api#Integer"
+                    "target": "smithy.api#Integer"
                 }
             }
         }

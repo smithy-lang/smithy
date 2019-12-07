@@ -6,19 +6,19 @@
             "version": "2017-01-17",
             "operations": [
                 {
-                    "$target": "ns.foo#ServiceOperationNoInputOutput"
+                    "target": "ns.foo#ServiceOperationNoInputOutput"
                 },
                 {
-                    "$target": "ns.foo#ServiceOperationExplicitUriMethodAndCode"
+                    "target": "ns.foo#ServiceOperationExplicitUriMethodAndCode"
                 },
                 {
-                    "$target": "ns.foo#ServiceOperationExplicitMembers"
+                    "target": "ns.foo#ServiceOperationExplicitMembers"
                 },
                 {
-                    "$target": "ns.foo#ServiceOperationExplicitBody"
+                    "target": "ns.foo#ServiceOperationExplicitBody"
                 },
                 {
-                    "$target": "ns.foo#WithLabels"
+                    "target": "ns.foo#WithLabels"
                 }
             ],
             "traits": {
@@ -51,10 +51,10 @@
         "ns.foo#ServiceOperationExplicitMembers": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ServiceOperationExplicitMembersInput"
+                "target": "ns.foo#ServiceOperationExplicitMembersInput"
             },
             "output": {
-                "$target": "ns.foo#ServiceOperationExplicitMembersOutput"
+                "target": "ns.foo#ServiceOperationExplicitMembersOutput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -68,31 +68,31 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpQuery": "baz"
                     }
                 },
                 "bar": {
-                    "$target": "ns.foo#StringList",
+                    "target": "ns.foo#StringList",
                     "traits": {
                         "smithy.api#httpQuery": "bar"
                     }
                 },
                 "bam": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
                 },
                 "qux": {
-                    "$target": "ns.foo#StringMap",
+                    "target": "ns.foo#StringMap",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": "X-Prefix-"
                     }
@@ -103,32 +103,32 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
                 },
                 "qux": {
-                    "$target": "ns.foo#StringMap",
+                    "target": "ns.foo#StringMap",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": "X-Prefix-"
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "bar": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "bam": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },
         "ns.foo#ServiceOperationExplicitBody": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#ServiceOperationExplicitBodyOutput"
+                "target": "ns.foo#ServiceOperationExplicitBodyOutput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -142,19 +142,19 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
                 },
                 "qux": {
-                    "$target": "ns.foo#StringMap",
+                    "target": "ns.foo#StringMap",
                     "traits": {
                         "smithy.api#httpPrefixHeaders": "X-Prefix-"
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -164,7 +164,7 @@
         "ns.foo#ServiceOperationWithStructurePayload": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#ServiceOperationWithStructurePayloadOutput"
+                "target": "ns.foo#ServiceOperationWithStructurePayloadOutput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -178,7 +178,7 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "ns.foo#StructurePayload",
+                    "target": "ns.foo#StructurePayload",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -188,7 +188,7 @@
         "ns.foo#ServiceOperationWithMediaType": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#ServiceOperationWithMediaTypeOutput"
+                "target": "ns.foo#ServiceOperationWithMediaTypeOutput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -202,7 +202,7 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "ns.foo#XmlBlob",
+                    "target": "ns.foo#XmlBlob",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -212,7 +212,7 @@
         "ns.foo#ServiceOperationWithBlobPayload": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#ServiceOperationWithBlobPayloadOutput"
+                "target": "ns.foo#ServiceOperationWithBlobPayloadOutput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -226,7 +226,7 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -243,14 +243,14 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },
         "ns.foo#WithLabels": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#WithLabelsInput"
+                "target": "ns.foo#WithLabelsInput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -263,7 +263,7 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpLabel": true,
                         "smithy.api#required": true
@@ -284,16 +284,16 @@
         "ns.foo#StringList": {
             "type": "list",
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }
         },
         "ns.foo#StringMap": {
             "type": "map",
             "key": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             },
             "value": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }
         }
     }

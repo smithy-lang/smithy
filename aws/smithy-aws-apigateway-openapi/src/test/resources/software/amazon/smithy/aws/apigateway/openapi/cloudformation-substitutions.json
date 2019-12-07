@@ -6,7 +6,7 @@
             "version": "2006-03-01",
             "operations": [
                 {
-                    "$target": "example.smithy#MyOperation"
+                    "target": "example.smithy#MyOperation"
                 }
             ],
             "traits": {

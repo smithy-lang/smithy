@@ -6,7 +6,7 @@
             "version": "2006-03-01",
             "operations": [
                 {
-                    "$target": "example.smithy#MyOperation"
+                    "target": "example.smithy#MyOperation"
                 }
             ],
             "traits": {
@@ -21,7 +21,7 @@
         "example.smithy#MyOperation": {
             "type": "operation",
             "input": {
-                "$target": "example.smithy#MyOperationInput"
+                "target": "example.smithy#MyOperationInput"
             },
             "traits": {
                 "smithy.api#http": {

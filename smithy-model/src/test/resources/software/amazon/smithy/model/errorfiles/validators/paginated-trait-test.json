@@ -6,50 +6,50 @@
             "version": "2019-06-27",
             "operations": [
                 {
-                    "$target": "ns.foo#Valid1"
+                    "target": "ns.foo#Valid1"
                 },
                 {
-                    "$target": "ns.foo#Valid2"
+                    "target": "ns.foo#Valid2"
                 },
                 {
-                    "$target": "ns.foo#Valid3"
+                    "target": "ns.foo#Valid3"
                 },
                 {
-                    "$target": "ns.foo#Invalid1"
+                    "target": "ns.foo#Invalid1"
                 },
                 {
-                    "$target": "ns.foo#Invalid2"
+                    "target": "ns.foo#Invalid2"
                 },
                 {
-                    "$target": "ns.foo#Invalid3"
+                    "target": "ns.foo#Invalid3"
                 },
                 {
-                    "$target": "ns.foo#Invalid4"
+                    "target": "ns.foo#Invalid4"
                 },
                 {
-                    "$target": "ns.foo#Invalid5"
+                    "target": "ns.foo#Invalid5"
                 },
                 {
-                    "$target": "ns.foo#Invalid6"
+                    "target": "ns.foo#Invalid6"
                 },
                 {
-                    "$target": "ns.foo#Invalid7"
+                    "target": "ns.foo#Invalid7"
                 },
                 {
-                    "$target": "ns.foo#Invalid8"
+                    "target": "ns.foo#Invalid8"
                 },
                 {
-                    "$target": "ns.foo#Invalid9"
+                    "target": "ns.foo#Invalid9"
                 }
             ]
         },
         "ns.foo#Valid1": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             },
             "output": {
-                "$target": "ns.foo#ValidOutput"
+                "target": "ns.foo#ValidOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -63,10 +63,10 @@
         "ns.foo#Valid2": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             },
             "output": {
-                "$target": "ns.foo#ValidOutput"
+                "target": "ns.foo#ValidOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -81,10 +81,10 @@
         "ns.foo#Valid3": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput3"
+                "target": "ns.foo#ValidInput3"
             },
             "output": {
-                "$target": "ns.foo#ValidOutput3"
+                "target": "ns.foo#ValidOutput3"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -97,10 +97,10 @@
         "ns.foo#ValidNestedOutputOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             },
             "output": {
-                "$target": "ns.foo#ValidWrappedOutput"
+                "target": "ns.foo#ValidWrappedOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -114,10 +114,10 @@
         "ns.foo#DeeplyNestedOutputOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             },
             "output": {
-                "$target": "ns.foo#DeeplyNestedOutput"
+                "target": "ns.foo#DeeplyNestedOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -132,7 +132,7 @@
             "type": "structure",
             "members": {
                 "output": {
-                    "$target": "ns.foo#ValidWrappedOutput"
+                    "target": "ns.foo#ValidWrappedOutput"
                 }
             }
         },
@@ -140,7 +140,7 @@
             "type": "structure",
             "members": {
                 "result": {
-                    "$target": "ns.foo#ValidOutput"
+                    "target": "ns.foo#ValidOutput"
                 }
             }
         },
@@ -148,7 +148,7 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         },
@@ -156,14 +156,14 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         },
         "ns.foo#Invalid1": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#ValidOutput"
+                "target": "ns.foo#ValidOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -178,7 +178,7 @@
         "ns.foo#InvalidNoOutput": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -193,10 +193,10 @@
         "ns.foo#Invalid2": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#MissingInputToken"
+                "target": "ns.foo#MissingInputToken"
             },
             "output": {
-                "$target": "ns.foo#MissingOutputToken"
+                "target": "ns.foo#MissingOutputToken"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -212,7 +212,7 @@
             "type": "structure",
             "members": {
                 "pageSize": {
-                    "$target": "smithy.api#Integer"
+                    "target": "smithy.api#Integer"
                 }
             }
         },
@@ -220,17 +220,17 @@
             "type": "structure",
             "members": {
                 "items": {
-                    "$target": "ns.foo#StringList"
+                    "target": "ns.foo#StringList"
                 }
             }
         },
         "ns.foo#Invalid3": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#InputNotString"
+                "target": "ns.foo#InputNotString"
             },
             "output": {
-                "$target": "ns.foo#OutputNotString"
+                "target": "ns.foo#OutputNotString"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -246,10 +246,10 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#Integer"
+                    "target": "smithy.api#Integer"
                 },
                 "pageSize": {
-                    "$target": "smithy.api#Integer"
+                    "target": "smithy.api#Integer"
                 }
             }
         },
@@ -257,17 +257,17 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#Integer"
+                    "target": "smithy.api#Integer"
                 }
             }
         },
         "ns.foo#Invalid4": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#NonOptionalInput"
+                "target": "ns.foo#NonOptionalInput"
             },
             "output": {
-                "$target": "ns.foo#NonOptionalOutput"
+                "target": "ns.foo#NonOptionalOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -283,13 +283,13 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "pageSize": {
-                    "$target": "ns.foo#Number",
+                    "target": "ns.foo#Number",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -300,23 +300,23 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "items": {
-                    "$target": "ns.foo#StringList"
+                    "target": "ns.foo#StringList"
                 }
             }
         },
         "ns.foo#Invalid5": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#UnresolvedInput"
+                "target": "ns.foo#UnresolvedInput"
             },
             "output": {
-                "$target": "ns.foo#UnresolvedOutput"
+                "target": "ns.foo#UnresolvedOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -332,10 +332,10 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "ns.foo#Missing"
+                    "target": "ns.foo#Missing"
                 },
                 "pageSize": {
-                    "$target": "ns.foo#Missing"
+                    "target": "ns.foo#Missing"
                 }
             }
         },
@@ -343,10 +343,10 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "ns.foo#Missing"
+                    "target": "ns.foo#Missing"
                 },
                 "items": {
-                    "$target": "ns.foo#Missing",
+                    "target": "ns.foo#Missing",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -356,10 +356,10 @@
         "ns.foo#Invalid6": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#Invalid6Input"
+                "target": "ns.foo#Invalid6Input"
             },
             "output": {
-                "$target": "ns.foo#ValidOutput"
+                "target": "ns.foo#ValidOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -375,20 +375,20 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "pageSize": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         },
         "ns.foo#Invalid7": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             },
             "output": {
-                "$target": "ns.foo#Invalid7Input"
+                "target": "ns.foo#Invalid7Input"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -404,10 +404,10 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "items": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -417,10 +417,10 @@
         "ns.foo#Invalid8": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             },
             "output": {
-                "$target": "ns.foo#Invalid8Output"
+                "target": "ns.foo#Invalid8Output"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -436,17 +436,17 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             }
         },
         "ns.foo#Invalid9": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             },
             "output": {
-                "$target": "ns.foo#ValidOutput"
+                "target": "ns.foo#ValidOutput"
             },
             "traits": {
                 "smithy.api#paginated": true
@@ -455,10 +455,10 @@
         "ns.foo#InvalidNestedInput": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#NestedInput"
+                "target": "ns.foo#NestedInput"
             },
             "output": {
-                "$target": "ns.foo#ValidOutput"
+                "target": "ns.foo#ValidOutput"
             },
             "traits": {
                 "smithy.api#paginated": {
@@ -473,7 +473,7 @@
             "type": "structure",
             "members": {
                 "input": {
-                    "$target": "ns.foo#ValidInput"
+                    "target": "ns.foo#ValidInput"
                 }
             }
         },
@@ -481,10 +481,10 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "pageSize": {
-                    "$target": "smithy.api#Integer"
+                    "target": "smithy.api#Integer"
                 }
             }
         },
@@ -492,10 +492,10 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "items": {
-                    "$target": "ns.foo#StringList",
+                    "target": "ns.foo#StringList",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -505,7 +505,7 @@
         "ns.foo#StringList": {
             "type": "list",
             "member": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }
         },
         "smithy.api#String": {
@@ -519,7 +519,7 @@
             "version": "2019-06-27",
             "resources": [
                 {
-                    "$target": "ns.foo#Resource"
+                    "target": "ns.foo#Resource"
                 }
             ],
             "traits": {
@@ -534,20 +534,20 @@
             "type": "resource",
             "identifiers": {
                 "foo": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 }
             },
             "list": {
-                "$target": "ns.foo#ListResources"
+                "target": "ns.foo#ListResources"
             }
         },
         "ns.foo#ListResources": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ListResourcesInput"
+                "target": "ns.foo#ListResourcesInput"
             },
             "output": {
-                "$target": "ns.foo#ListResourcesOutput"
+                "target": "ns.foo#ListResourcesOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -560,10 +560,10 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "pageSize": {
-                    "$target": "smithy.api#Integer"
+                    "target": "smithy.api#Integer"
                 }
             }
         },
@@ -571,10 +571,10 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "smithy.api#String"
+                    "target": "smithy.api#String"
                 },
                 "items": {
-                    "$target": "ns.foo#StringList"
+                    "target": "ns.foo#StringList"
                 }
             }
         }

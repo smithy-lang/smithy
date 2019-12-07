@@ -4,28 +4,28 @@
         "com.example#A": {
             "type": "map",
             "key": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             },
             "value": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             }
         },
         "com.example#B": {
             "type": "map",
             "key": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             },
             "value": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             }
         },
         "com.example#C": {
             "type": "map",
             "key": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             },
             "value": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             },
             "traits": {
                 "smithy.api#deprecated": {}
@@ -34,10 +34,10 @@
         "com.example#D": {
             "type": "map",
             "key": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             },
             "value": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             },
             "traits": {
                 "smithy.api#deprecated": {},
@@ -47,14 +47,14 @@
         "com.example#E": {
             "type": "map",
             "key": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#sensitive": true,
                     "smithy.api#since": "1.1"
                 }
             },
             "value": {
-                "$target": "com.example#String"
+                "target": "com.example#String"
             },
             "traits": {
                 "smithy.api#deprecated": {},
@@ -64,14 +64,14 @@
         "com.example#F": {
             "type": "map",
             "key": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#sensitive": true,
                     "smithy.api#since": "1.1"
                 }
             },
             "value": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#sensitive": true,
                     "smithy.api#since": "1.1"
@@ -85,14 +85,14 @@
         "com.example#G": {
             "type": "map",
             "key": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#sensitive": true,
                     "smithy.api#since": "1.1"
                 }
             },
             "value": {
-                "$target": "com.example#String",
+                "target": "com.example#String",
                 "traits": {
                     "smithy.api#since": "1.2"
                 }

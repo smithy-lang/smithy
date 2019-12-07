@@ -6,22 +6,22 @@
             "version": "2017-01-17",
             "operations": [
                 {
-                    "$target": "ns.foo#A"
+                    "target": "ns.foo#A"
                 },
                 {
-                    "$target": "ns.foo#B"
+                    "target": "ns.foo#B"
                 },
                 {
-                    "$target": "ns.foo#C"
+                    "target": "ns.foo#C"
                 },
                 {
-                    "$target": "ns.foo#D"
+                    "target": "ns.foo#D"
                 },
                 {
-                    "$target": "ns.foo#E"
+                    "target": "ns.foo#E"
                 },
                 {
-                    "$target": "ns.foo#F"
+                    "target": "ns.foo#F"
                 }
             ],
             "traits": {

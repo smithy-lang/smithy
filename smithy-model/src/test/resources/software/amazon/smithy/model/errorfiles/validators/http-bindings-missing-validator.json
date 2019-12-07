@@ -6,13 +6,13 @@
             "version": "2017-01-17",
             "operations": [
                 {
-                    "$target": "ns.foo#HasBindings"
+                    "target": "ns.foo#HasBindings"
                 },
                 {
-                    "$target": "ns.foo#MissingBindings1"
+                    "target": "ns.foo#MissingBindings1"
                 },
                 {
-                    "$target": "ns.foo#MissingBindings2"
+                    "target": "ns.foo#MissingBindings2"
                 }
             ],
             "traits": {

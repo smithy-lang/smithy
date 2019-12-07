@@ -6,44 +6,44 @@
             "version": "2018-04-08",
             "operations": [
                 {
-                    "$target": "smithy.private#PrivateOperation"
+                    "target": "smithy.private#PrivateOperation"
                 }
             ]
         },
         "smithy.example#InvalidList": {
             "type": "list",
             "member": {
-                "$target": "smithy.private#PrivateString"
+                "target": "smithy.private#PrivateString"
             }
         },
         "smithy.example#InvalidStructure": {
             "type": "structure",
             "members": {
                 "invalid": {
-                    "$target": "smithy.private#PrivateString"
+                    "target": "smithy.private#PrivateString"
                 }
             }
         },
         "smithy.example#InvalidMap": {
             "type": "map",
             "key": {
-                "$target": "smithy.private#PrivateString"
+                "target": "smithy.private#PrivateString"
             },
             "value": {
-                "$target": "smithy.private#PrivateString"
+                "target": "smithy.private#PrivateString"
             }
         },
         "smithy.example#InvalidOperation": {
             "type": "operation",
             "input": {
-                "$target": "smithy.private#PrivateStructure"
+                "target": "smithy.private#PrivateStructure"
             },
             "output": {
-                "$target": "smithy.private#PrivateStructure"
+                "target": "smithy.private#PrivateStructure"
             },
             "errors": [
                 {
-                    "$target": "smithy.private#PrivateError"
+                    "target": "smithy.private#PrivateError"
                 }
             ]
         },
@@ -51,7 +51,7 @@
             "type": "structure",
             "members": {
                 "valid": {
-                    "$target": "smithy.private#PrivateString"
+                    "target": "smithy.private#PrivateString"
                 }
             },
             "traits": {
@@ -74,14 +74,14 @@
         "smithy.private#PrivateOperation": {
             "type": "operation",
             "input": {
-                "$target": "smithy.private#PrivateStructure"
+                "target": "smithy.private#PrivateStructure"
             },
             "output": {
-                "$target": "smithy.private#PrivateStructure"
+                "target": "smithy.private#PrivateStructure"
             },
             "errors": [
                 {
-                    "$target": "smithy.private#PrivateError"
+                    "target": "smithy.private#PrivateError"
                 }
             ],
             "traits": {

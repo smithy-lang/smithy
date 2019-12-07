@@ -7,7 +7,7 @@
         "ns.foo#StringList": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#String"
+                "target": "ns.foo#String"
             }
         },
         "ns.foo#Integer": {
@@ -22,7 +22,7 @@
         "ns.foo#IgnoreMe": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#IgnoreMeOutput"
+                "target": "ns.foo#IgnoreMeOutput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -34,10 +34,10 @@
         "ns.foo#IgnoreMeToo": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#IgnoreMeTooInput"
+                "target": "ns.foo#IgnoreMeTooInput"
             },
             "output": {
-                "$target": "ns.foo#IgnoreMeTooOutput"
+                "target": "ns.foo#IgnoreMeTooOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -53,10 +53,10 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "maxResults": {
-                    "$target": "ns.foo#Integer"
+                    "target": "ns.foo#Integer"
                 }
             }
         },
@@ -64,10 +64,10 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 },
                 "items": {
-                    "$target": "ns.foo#StringList",
+                    "target": "ns.foo#StringList",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -77,7 +77,7 @@
         "ns.foo#A": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#AInput"
+                "target": "ns.foo#AInput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -87,14 +87,14 @@
             "type": "structure",
             "members": {
                 "nextToken": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },
         "ns.foo#B": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#BOutput"
+                "target": "ns.foo#BOutput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -104,14 +104,14 @@
             "type": "structure",
             "members": {
                 "marker": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },
         "ns.foo#GetFoos": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#GetFoosOutput"
+                "target": "ns.foo#GetFoosOutput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -121,7 +121,7 @@
             "type": "structure",
             "members": {
                 "items": {
-                    "$target": "ns.foo#StringList",
+                    "target": "ns.foo#StringList",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -131,7 +131,7 @@
         "ns.foo#GetBars": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#GetBarsOutput"
+                "target": "ns.foo#GetBarsOutput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -150,7 +150,7 @@
         "ns.foo#SquanchFoos": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#SquanchFoosOutput"
+                "target": "ns.foo#SquanchFoosOutput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -160,7 +160,7 @@
             "type": "structure",
             "members": {
                 "items": {
-                    "$target": "ns.foo#StringList",
+                    "target": "ns.foo#StringList",
                     "traits": {
                         "smithy.api#required": true
                     }
@@ -170,7 +170,7 @@
         "ns.foo#SomeOperation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#SomeOperationInput"
+                "target": "ns.foo#SomeOperationInput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -180,14 +180,14 @@
             "type": "structure",
             "members": {
                 "fizz": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },
         "ns.foo#SomeOtherOperation": {
             "type": "operation",
             "output": {
-                "$target": "ns.foo#SomeOtherOperationOutput"
+                "target": "ns.foo#SomeOtherOperationOutput"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -197,7 +197,7 @@
             "type": "structure",
             "members": {
                 "buzz": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         }

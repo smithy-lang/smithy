@@ -20,19 +20,19 @@
             "type": "structure",
             "members": {
                 "fooId": {
-                    "$target": "ns.foo#FooId"
+                    "target": "ns.foo#FooId"
                 },
                 "bazID": {
-                    "$target": "ns.foo#FooId"
+                    "target": "ns.foo#FooId"
                 },
                 "bamHTTP": {
-                    "$target": "ns.foo#FooId"
+                    "target": "ns.foo#FooId"
                 },
                 "loremIPSUM": {
-                    "$target": "ns.foo#FooId"
+                    "target": "ns.foo#FooId"
                 },
                 "ID": {
-                    "$target": "ns.foo#FooId"
+                    "target": "ns.foo#FooId"
                 }
             }
         }

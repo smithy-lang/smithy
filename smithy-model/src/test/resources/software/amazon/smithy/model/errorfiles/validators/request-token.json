@@ -4,14 +4,14 @@
         "ns.foo#Valid": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#ValidInput"
+                "target": "ns.foo#ValidInput"
             }
         },
         "ns.foo#ValidInput": {
             "type": "structure",
             "members": {
                 "token": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#idempotencyToken": true
                     }
@@ -24,7 +24,7 @@
         "ns.foo#Invalid": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#InvalidInputWithMultiple"
+                "target": "ns.foo#InvalidInputWithMultiple"
             },
             "traits": {
                 "smithy.api#readonly": true
@@ -34,13 +34,13 @@
             "type": "structure",
             "members": {
                 "token": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#idempotencyToken": true
                     }
                 },
                 "anotherToken": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#idempotencyToken": true
                     }

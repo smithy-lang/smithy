@@ -262,7 +262,7 @@ public final class ModelSerializer {
         }
 
         private ObjectNode serializeReference(ShapeId id) {
-            return Node.objectNode().withMember("$target", id.toString());
+            return Node.objectNode().withMember("target", id.toString());
         }
     }
 }

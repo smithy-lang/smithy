@@ -6,7 +6,7 @@
             "version": "2018-03-17",
             "resources": [
                 {
-                    "$target": "ns.foo#A"
+                    "target": "ns.foo#A"
                 }
             ],
             "traits": {
@@ -21,7 +21,7 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "ns.foo#B"
+                    "target": "ns.foo#B"
                 }
             ]
         },
@@ -29,7 +29,7 @@
             "type": "resource",
             "resources": [
                 {
-                    "$target": "ns.foo#A"
+                    "target": "ns.foo#A"
                 }
             ]
         }

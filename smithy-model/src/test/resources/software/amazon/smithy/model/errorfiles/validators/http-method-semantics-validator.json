@@ -100,7 +100,7 @@
         "ns.foo#K": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#KInput"
+                "target": "ns.foo#KInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -114,7 +114,7 @@
             "type": "structure",
             "members": {
                 "payload": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true,
                         "smithy.api#httpPayload": true
@@ -125,7 +125,7 @@
         "ns.foo#L": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#LInput"
+                "target": "ns.foo#LInput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -139,13 +139,13 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo"
                     }
                 },
                 "payload": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true
                     }

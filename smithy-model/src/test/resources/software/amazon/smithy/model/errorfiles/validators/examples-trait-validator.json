@@ -4,10 +4,10 @@
         "ns.foo#Operation": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#OperationInput"
+                "target": "ns.foo#OperationInput"
             },
             "output": {
-                "$target": "ns.foo#OperationOutput"
+                "target": "ns.foo#OperationOutput"
             },
             "traits": {
                 "smithy.api#readonly": true,
@@ -37,13 +37,13 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#required": true
                     }
                 },
                 "baz": {
-                    "$target": "ns.foo#String"
+                    "target": "ns.foo#String"
                 }
             }
         },
@@ -51,7 +51,7 @@
             "type": "structure",
             "members": {
                 "bam": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#required": true
                     }

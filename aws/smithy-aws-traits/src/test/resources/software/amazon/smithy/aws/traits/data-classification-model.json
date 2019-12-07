@@ -10,7 +10,7 @@
         "ns.foo#B": {
             "type": "list",
             "member": {
-                "$target": "ns.foo#BMember"
+                "target": "ns.foo#BMember"
             },
             "traits": {
                 "aws.api#data": "tagging"

@@ -4,10 +4,10 @@
         "smithy.example#Hi": {
             "type": "map",
             "key": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             },
             "value": {
-                "$target": "smithy.api#String"
+                "target": "smithy.api#String"
             },
             "foo": true
         }

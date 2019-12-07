@@ -13,14 +13,14 @@
         "ns.foo#Invoke": {
             "type": "operation",
             "input": {
-                "$target": "ns.foo#InvokeInput"
+                "target": "ns.foo#InvokeInput"
             }
         },
         "ns.foo#InvokeInput": {
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "ns.foo#test": true
                     }
@@ -31,7 +31,7 @@
             "type": "structure",
             "members": {
                 "baz": {
-                    "$target": "ns.foo#String",
+                    "target": "ns.foo#String",
                     "traits": {
                         "ns.foo#test": true
                     }

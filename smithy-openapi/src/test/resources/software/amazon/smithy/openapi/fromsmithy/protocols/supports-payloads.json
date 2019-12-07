@@ -6,7 +6,7 @@
             "version": "2006-03-01",
             "operations": [
                 {
-                    "$target": "smithy.example#Operation"
+                    "target": "smithy.example#Operation"
                 }
             ],
             "traits": {
@@ -20,14 +20,14 @@
         "smithy.example#Operation": {
             "type": "operation",
             "input": {
-                "$target": "smithy.example#OperationInput"
+                "target": "smithy.example#OperationInput"
             },
             "output": {
-                "$target": "smithy.example#OperationOutput"
+                "target": "smithy.example#OperationOutput"
             },
             "errors": [
                 {
-                    "$target": "smithy.example#Error"
+                    "target": "smithy.example#Error"
                 }
             ],
             "traits": {
@@ -42,13 +42,13 @@
             "type": "structure",
             "members": {
                 "header": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo-Header"
                     }
                 },
                 "body": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -59,13 +59,13 @@
             "type": "structure",
             "members": {
                 "header": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo-Header"
                     }
                 },
                 "body": {
-                    "$target": "smithy.api#Blob",
+                    "target": "smithy.api#Blob",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
@@ -76,7 +76,7 @@
             "type": "structure",
             "members": {
                 "foo": {
-                    "$target": "smithy.api#String",
+                    "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#httpPayload": true
                     }
