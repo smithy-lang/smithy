@@ -610,11 +610,11 @@ headers and the "c" member as the payload.
                         "members": {
                             "a": {
                                 "target": "String",
-                                "eventPayload": true
+                                "eventHeader": true
                             },
                             "b": {
                                 "target": "String",
-                                "eventPayload": true
+                                "eventHeader": true
                             },
                             "c": {
                                 "target": "Blob",
