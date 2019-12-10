@@ -762,6 +762,55 @@ final class IdlModelLoader {
         }
     }
 
+    /**
+     * Tests if a lookahead token matches the given type.
+     *
+     * @param type Token type to test for.
+     * @return Returns true if the next token is of the given type.
+     */
+    private boolean test(TokenType type) {
+        return !eof() && lexer.peek().type == type;
+    }
+
+    /**
+     * Peeks at the next token.
+     *
+     * @return Returns the optionally present next token.
+     */
+    private Optional<Token> peek() {
+        return Optional.ofNullable(lexer.peek());
+    }
+
+    /**
+     * Expects either EOF or that the next token is on a new line.
+     */
+    private void expectNewline() {
+        if (peek().isPresent() && peek().get().line == current().line) {
+            next();
+            throw syntax("Expected a new line before this token");
+        }
+    }
+
+    /**
+     * Creates a syntax error using the provided message.
+     *
+     * @param message Syntax error message.
+     * @return Returns the created syntax error.
+     */
+    private ModelSyntaxException syntax(String message) {
+        return syntax(message, 0);
+    }
+
+    private ModelSyntaxException syntax(String message, int offset) {
+        Token token = current();
+        int line = token.line;
+        int column = token.column + offset;
+        String lexeme = token.lexeme;
+        String formatted = format(
+                "Parse error at line %d, column %d near `%s`: %s", line, column, lexeme, message);
+        return new ModelSyntaxException(formatted, new SourceLocation(filename, line, column));
+    }
+
     private void parseService() {
         SourceLocation sourceLocation = currentLocation();
         ShapeId shapeId = parseShapeName();
@@ -826,54 +875,5 @@ final class IdlModelLoader {
         }
 
         expectNewline();
-    }
-
-    /**
-     * Tests if a lookahead token matches the given type.
-     *
-     * @param type Token type to test for.
-     * @return Returns true if the next token is of the given type.
-     */
-    private boolean test(TokenType type) {
-        return !eof() && lexer.peek().type == type;
-    }
-
-    /**
-     * Peeks at the next token.
-     *
-     * @return Returns the optionally present next token.
-     */
-    private Optional<Token> peek() {
-        return Optional.ofNullable(lexer.peek());
-    }
-
-    /**
-     * Expects either EOF or that the next token is on a new line.
-     */
-    private void expectNewline() {
-        if (peek().isPresent() && peek().get().line == current().line) {
-            next();
-            throw syntax("Expected a new line before this token");
-        }
-    }
-
-    /**
-     * Creates a syntax error using the provided message.
-     *
-     * @param message Syntax error message.
-     * @return Returns the created syntax error.
-     */
-    private ModelSyntaxException syntax(String message) {
-        return syntax(message, 0);
-    }
-
-    private ModelSyntaxException syntax(String message, int offset) {
-        Token token = current();
-        int line = token.line;
-        int column = token.column + offset;
-        String lexeme = token.lexeme;
-        String formatted = format(
-                "Parse error at line %d, column %d near `%s`: %s", line, column, lexeme, message);
-        return new ModelSyntaxException(formatted, new SourceLocation(filename, line, column));
     }
 }

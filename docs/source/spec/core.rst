@@ -2365,8 +2365,6 @@ Consider the following metadata definition:
         String: String,
     }
 
-    string String
-
 The object key remains the same literal string value of ``String`` while the
 value is treated as a shape ID and resolves to the string literal
 ``"smithy.api#String"``. This IDL model is equivalent to the following
