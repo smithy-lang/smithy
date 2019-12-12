@@ -54,6 +54,7 @@ public final class SdkServiceIdValidator extends AbstractValidator {
      */
     private static final Set<String> PREEXISTING_SERVICE_IDS = SetUtils.of(
             "ACM PCA",
+            "ApiGatewayManagementApi",
             "Config Service",
             "Cost and Usage Report Service",
             "Application Discovery Service",
