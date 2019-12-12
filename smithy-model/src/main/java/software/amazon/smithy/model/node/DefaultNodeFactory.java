@@ -39,7 +39,11 @@ import software.amazon.smithy.utils.MapUtils;
  *
  * <p>Uses Jackson internally, but that is free to change in the
  * future if needed.
+ *
+ * <p>Using this class directly is deprecated and it will be made
+ * package-private in 0.10.0. Use {@link Node#parse} instead.
  */
+@Deprecated
 public final class DefaultNodeFactory implements NodeFactory {
     private final JsonFactory jsonFactory;
 
