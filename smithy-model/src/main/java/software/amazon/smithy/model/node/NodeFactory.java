@@ -22,6 +22,7 @@ import software.amazon.smithy.model.loader.ModelSyntaxException;
  * from strings.
  */
 @FunctionalInterface
+@Deprecated
 public interface NodeFactory {
     /**
      * Creates a {@link Node} from a document {@code String}.
