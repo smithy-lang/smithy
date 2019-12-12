@@ -1,0 +1,14 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#ApiGatewayManagementApi": {
+            "type": "service",
+            "version": "2019-09-10",
+            "traits": {
+                "aws.api#service": {
+                    "sdkId": "ApiGatewayManagementApi"
+                }
+            }
+        }
+    }
+}
