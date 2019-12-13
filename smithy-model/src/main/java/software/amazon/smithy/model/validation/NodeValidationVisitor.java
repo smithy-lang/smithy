@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.validation;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,7 @@ import software.amazon.smithy.model.validation.node.PatternTraitPlugin;
 import software.amazon.smithy.model.validation.node.RangeTraitPlugin;
 import software.amazon.smithy.model.validation.node.StringEnumPlugin;
 import software.amazon.smithy.model.validation.node.StringLengthPlugin;
-import software.amazon.smithy.model.validation.node.TimestampFormatPlugin;
+import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -76,22 +77,14 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * applied to the shape of the data.
  */
 public final class NodeValidationVisitor implements ShapeVisitor<List<ValidationEvent>> {
-    private static final List<NodeValidatorPlugin> PLUGINS = ListUtils.of(
-            new BlobLengthPlugin(),
-            new CollectionLengthPlugin(),
-            new IdRefPlugin(),
-            new MapLengthPlugin(),
-            new PatternTraitPlugin(),
-            new RangeTraitPlugin(),
-            new StringEnumPlugin(),
-            new StringLengthPlugin(),
-            new TimestampFormatPlugin());
 
     private final String eventId;
     private final Node value;
     private final ShapeIndex index;
     private final String context;
     private final ShapeId eventShapeId;
+    private final List<NodeValidatorPlugin> plugins;
+    private final TimestampValidationStrategy timestampValidationStrategy;
 
     private NodeValidationVisitor(Builder builder) {
         this.value = SmithyBuilder.requiredState("value", builder.value);
@@ -99,6 +92,19 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         this.context = builder.context;
         this.eventId = builder.eventId;
         this.eventShapeId = builder.eventShapeId;
+        this.timestampValidationStrategy = builder.timestampValidationStrategy;
+
+        plugins = Arrays.asList(
+                new BlobLengthPlugin(),
+                new CollectionLengthPlugin(),
+                new IdRefPlugin(),
+                new MapLengthPlugin(),
+                new PatternTraitPlugin(),
+                new RangeTraitPlugin(),
+                new StringEnumPlugin(),
+                new StringLengthPlugin(),
+                timestampValidationStrategy
+        );
     }
 
     public static Builder builder() {
@@ -112,6 +118,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         builder.value(node);
         builder.index(index);
         builder.startingContext(context.isEmpty() ? segment : (context + "." + segment));
+        builder.timestampValidationStrategy(timestampValidationStrategy);
         return new NodeValidationVisitor(builder);
     }
 
@@ -377,7 +384,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     private List<ValidationEvent> applyPlugins(Shape shape) {
-        return PLUGINS.stream()
+        return plugins.stream()
                 .flatMap(plugin -> plugin.apply(shape, value, index).stream())
                 .map(this::event)
                 .collect(Collectors.toList());
@@ -387,11 +394,12 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
      * Builds a {@link NodeValidationVisitor}.
      */
     public static final class Builder implements SmithyBuilder<NodeValidationVisitor> {
-        String eventId = Validator.MODEL_ERROR;
-        String context = "";
-        ShapeId eventShapeId;
-        Node value;
-        ShapeIndex index;
+        private String eventId = Validator.MODEL_ERROR;
+        private String context = "";
+        private ShapeId eventShapeId;
+        private Node value;
+        private ShapeIndex index;
+        private TimestampValidationStrategy timestampValidationStrategy = TimestampValidationStrategy.FORMAT;
 
         Builder() {}
 
@@ -455,6 +463,20 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          */
         public Builder eventShapeId(ShapeId eventShapeId) {
             this.eventShapeId = eventShapeId;
+            return this;
+        }
+
+        /**
+         * Sets the strategy used to validate timestamps.
+         *
+         * <p>By default, timestamps are validated using
+         * {@link TimestampValidationStrategy#FORMAT}.
+         *
+         * @param timestampValidationStrategy Timestamp validation strategy.
+         * @return Returns the builder.
+         */
+        public Builder timestampValidationStrategy(TimestampValidationStrategy timestampValidationStrategy) {
+            this.timestampValidationStrategy = timestampValidationStrategy;
             return this;
         }
 
