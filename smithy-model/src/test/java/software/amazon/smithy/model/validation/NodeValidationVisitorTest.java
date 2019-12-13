@@ -17,6 +17,8 @@ package software.amazon.smithy.model.validation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,20 +27,19 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.DefaultNodeFactory;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
 
 public class NodeValidationVisitorTest {
     private static Model MODEL;
-    private static DefaultNodeFactory FACTORY;
 
     @BeforeAll
     public static void onlyOnce() {
-        FACTORY = new DefaultNodeFactory();
         MODEL = Model.assembler()
                 .addImport(NodeValidationVisitorTest.class.getResource("node-validator.json"))
                 .assemble()
@@ -47,7 +48,6 @@ public class NodeValidationVisitorTest {
 
     @AfterAll
     public static void after() {
-        FACTORY = null;
         MODEL = null;
     }
 
@@ -55,7 +55,7 @@ public class NodeValidationVisitorTest {
     @MethodSource("data")
     public void nodeValidationVisitorTest(String target, String value, String[] errors) {
         ShapeId targetId = ShapeId.from(target);
-        Node nodeValue = FACTORY.createNode("N/A", value);
+        Node nodeValue = Node.parse(value);
         NodeValidationVisitor cases = NodeValidationVisitor.builder()
                 .value(nodeValue)
                 .model(MODEL)
@@ -273,5 +273,33 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#Structure3", "{\"requiredInt2\": 2}", null},
                 {"ns.foo#Structure3", "{}", new String[] {"Missing required structure member `requiredInt2` for `ns.foo#Structure3`"}},
         });
+    }
+
+    @Test
+    public void canSuccessfullyValidateTimestampsAsUnixTimestamps() {
+        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+                .value(Node.from(1234))
+                .model(MODEL)
+                .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#TimestampList$member"))
+                .accept(cases);
+
+        assertThat(events, empty());
+    }
+
+    @Test
+    public void canUnsuccessfullyValidateTimestampsAsUnixTimestamps() {
+        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+                .value(Node.from("foo"))
+                .model(MODEL)
+                .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("ns.foo#TimestampList$member"))
+                .accept(cases);
+
+        assertThat(events, not(empty()));
     }
 }

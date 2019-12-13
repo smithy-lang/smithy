@@ -31,6 +31,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
 
 abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValidator {
 
@@ -94,6 +95,7 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
                 .value(value)
                 .startingContext(traitId + "." + position + ".params")
                 .eventId(getName())
+                .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
                 .build();
     }
 }
