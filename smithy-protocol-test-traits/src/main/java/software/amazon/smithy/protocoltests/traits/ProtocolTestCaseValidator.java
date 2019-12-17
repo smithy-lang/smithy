@@ -96,6 +96,7 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
                 .startingContext(traitId + "." + position + ".params")
                 .eventId(getName())
                 .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
+                .allowBoxedNull(true)
                 .build();
     }
 }
