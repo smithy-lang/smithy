@@ -19,12 +19,19 @@ use smithy.test#httpRequestTests
         requireHeaders: ["X-Yap"],
         body: "Hi",
         bodyMediaType: "text/plain",
-        params: {body: "Hi"},
+        params: {
+            body: "Hi",
+            header: null,
+        },
         vendorParams: {foo: "Bar"}
     }
 ])
 operation SayHello(SayHelloInput)
+
 structure SayHelloInput {
     @httpPayload
     body: String,
+
+    @httpHeader("X-OmitMe")
+    header: String,
 }
