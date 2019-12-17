@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Represents a URI pattern.
@@ -124,6 +125,48 @@ public final class UriPattern extends Pattern {
      * @return Returns true if there is a conflict.
      */
     public boolean conflictsWith(UriPattern otherPattern) {
+        if (!getConflictingLabelSegments(otherPattern).isEmpty()) {
+            return true;
+        }
+
+        List<Segment> segments = getSegments();
+        List<Segment> otherSegments = otherPattern.getSegments();
+
+        // By now we know there are no label conflicts, so one uri has more
+        // segments than the other then they don't conflict.
+        if (segments.size() != otherSegments.size()) {
+            return false;
+        }
+
+        // Now we need to check for the differences  in the static segments of the uri.
+        for (int i = 0; i < segments.size(); i++) {
+            Segment segment = segments.get(i);
+            Segment otherSegment = otherSegments.get(i);
+            // We've already checked for label conflicts, so we can skip them here.
+            if (segment.isLabel() || otherSegment.isLabel()) {
+                continue;
+            }
+            if (!segment.getContent().equals(otherSegment.getContent())) {
+                return false;
+            }
+        }
+
+        // At this point, the path portions are equivalent. If the query
+        // string literals are the same, then the patterns conflict.
+        return queryLiterals.equals(otherPattern.queryLiterals);
+    }
+
+    /**
+     * Gets a list of explicitly conflicting uri label segments between this
+     * pattern and another.
+     *
+     * @param otherPattern Pattern to check against.
+     * @return A list of Segment Pairs where each pair represents a conflict
+     *     and where the left side of the Pair is a segment from this pattern.
+     */
+    public List<Pair<Segment, Segment>> getConflictingLabelSegments(UriPattern otherPattern) {
+        List<Pair<Segment, Segment>> conflictingSegments = new ArrayList<>();
+
         List<Segment> segments = getSegments();
         List<Segment> otherSegments = otherPattern.getSegments();
         int minSize = Math.min(segments.size(), otherSegments.size());
@@ -133,30 +176,21 @@ public final class UriPattern extends Pattern {
             if (thisSegment.isLabel() != otherSegment.isLabel()) {
                 // The segments conflict if one is a literal and the other
                 // is a label.
-                return true;
+                conflictingSegments.add(Pair.of(thisSegment, otherSegment));
             } else if  (thisSegment.isGreedyLabel() != otherSegment.isGreedyLabel()) {
                 // The segments conflict if a greedy label is introduced at
                 // or before segments in the other pattern.
-                return true;
+                conflictingSegments.add(Pair.of(thisSegment, otherSegment));
             } else if (!thisSegment.isLabel()) {
                 // Both are literals. They can only conflict if they are the
                 // same exact string.
                 if (!thisSegment.getContent().equals(otherSegment.getContent())) {
-                    return false;
+                    return conflictingSegments;
                 }
             }
         }
 
-        // At this point, the two patterns are identical. If the segment
-        // length is different, then one pattern is more explicit than the
-        // other, disambiguating them.
-        if (segments.size() != otherSegments.size()) {
-            return false;
-        }
-
-        // At this point, the path portions are equivalent. If the query
-        // string literals are the same, then the patterns conflict.
-        return queryLiterals.equals(otherPattern.queryLiterals);
+        return conflictingSegments;
     }
 
     @Override
