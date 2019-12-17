@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.BoxIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeType;
 import software.amazon.smithy.model.node.StringNode;
@@ -52,7 +53,6 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.validation.node.BlobLengthPlugin;
 import software.amazon.smithy.model.validation.node.CollectionLengthPlugin;
 import software.amazon.smithy.model.validation.node.IdRefPlugin;
@@ -80,19 +80,21 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private final String eventId;
     private final Node value;
-    private final ShapeIndex index;
+    private final Model model;
     private final String context;
     private final ShapeId eventShapeId;
     private final List<NodeValidatorPlugin> plugins;
     private final TimestampValidationStrategy timestampValidationStrategy;
+    private final boolean allowBoxedNull;
 
     private NodeValidationVisitor(Builder builder) {
         this.value = SmithyBuilder.requiredState("value", builder.value);
-        this.index = SmithyBuilder.requiredState("index", builder.index);
+        this.model = SmithyBuilder.requiredState("model", builder.model);
         this.context = builder.context;
         this.eventId = builder.eventId;
         this.eventShapeId = builder.eventShapeId;
         this.timestampValidationStrategy = builder.timestampValidationStrategy;
+        this.allowBoxedNull = builder.allowBoxedNull;
 
         plugins = Arrays.asList(
                 new BlobLengthPlugin(),
@@ -116,9 +118,10 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         builder.eventShapeId(eventShapeId);
         builder.eventId(eventId);
         builder.value(node);
-        builder.index(index);
+        builder.model(model);
         builder.startingContext(context.isEmpty() ? segment : (context + "." + segment));
         builder.timestampValidationStrategy(timestampValidationStrategy);
+        builder.allowBoxedNull(allowBoxedNull);
         return new NodeValidationVisitor(builder);
     }
 
@@ -291,20 +294,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     private boolean isMemberPrimitive(MemberShape member) {
-        Shape target = index.getShape(member.getTarget()).orElse(null);
-        if (member.getTrait(BoxTrait.class).isPresent()
-                || target == null
-                || target.getTrait(BoxTrait.class).isPresent()) {
-            return false;
-        }
-
-        return target.isBooleanShape()
-                || target.isByteShape()
-                || target.isShortShape()
-                || target.isIntegerShape()
-                || target.isLongShape()
-                || target.isFloatShape()
-                || target.isDoubleShape();
+        return !model.getKnowledge(BoxIndex.class).isBoxed(member);
     }
 
     @Override
@@ -334,7 +324,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     @Override
     public List<ValidationEvent> memberShape(MemberShape shape) {
         List<ValidationEvent> events = applyPlugins(shape);
-        events.addAll(index.getShape(shape.getTarget())
+        events.addAll(model.getShape(shape.getTarget())
                               .map(member -> member.accept(this))
                               .orElse(ListUtils.of()));
         return events;
@@ -356,6 +346,11 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     private List<ValidationEvent> invalidShape(Shape shape, NodeType expectedType) {
+        // Boxed shapes allow null values.
+        if (allowBoxedNull && value.isNullNode() && model.getKnowledge(BoxIndex.class).isBoxed(shape)) {
+            return Collections.emptyList();
+        }
+
         String message = String.format(
                 "Expected %s value for %s shape, `%s`; found %s value",
                 expectedType, shape.getType(), shape.getId(), value.getType());
@@ -385,7 +380,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private List<ValidationEvent> applyPlugins(Shape shape) {
         return plugins.stream()
-                .flatMap(plugin -> plugin.apply(shape, value, index).stream())
+                .flatMap(plugin -> plugin.apply(shape, value, model).stream())
                 .map(this::event)
                 .collect(Collectors.toList());
     }
@@ -398,14 +393,15 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         private String context = "";
         private ShapeId eventShapeId;
         private Node value;
-        private ShapeIndex index;
+        private Model model;
         private TimestampValidationStrategy timestampValidationStrategy = TimestampValidationStrategy.FORMAT;
+        private boolean allowBoxedNull;
 
         Builder() {}
 
         @Deprecated
         public Builder index(ShapeIndex index) {
-            this.index = Objects.requireNonNull(index);
+            this.model = Model.builder().shapeIndex(index).build();
             return this;
         }
 
@@ -417,7 +413,8 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          * @return Returns the builder.
          */
         public Builder model(Model model) {
-            return index(model.getShapeIndex());
+            this.model = model;
+            return this;
         }
 
         /**
@@ -477,6 +474,20 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          */
         public Builder timestampValidationStrategy(TimestampValidationStrategy timestampValidationStrategy) {
             this.timestampValidationStrategy = timestampValidationStrategy;
+            return this;
+        }
+
+        /**
+         * Configure how null values are handled when they are provided for
+         * boxed types.
+         *
+         * <p>By default, null values are not allowed for boxed types.
+         *
+         * @param allowBoxedNull Set to true to allow null values for boxed shapes.
+         * @return Returns the builder.
+         */
+        public Builder allowBoxedNull(boolean allowBoxedNull) {
+            this.allowBoxedNull = allowBoxedNull;
             return this;
         }
 
