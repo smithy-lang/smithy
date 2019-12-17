@@ -302,4 +302,31 @@ public class NodeValidationVisitorTest {
 
         assertThat(events, not(empty()));
     }
+
+    @Test
+    public void doesNotAllowNullByDefault() {
+        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+                .value(Node.nullNode())
+                .model(MODEL)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("smithy.api#String"))
+                .accept(cases);
+
+        assertThat(events, not(empty()));
+    }
+
+    @Test
+    public void canConfigureToSupportNull() {
+        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+                .value(Node.nullNode())
+                .model(MODEL)
+                .allowBoxedNull(true)
+                .build();
+        List<ValidationEvent> events = MODEL
+                .expectShape(ShapeId.from("smithy.api#String"))
+                .accept(cases);
+
+        assertThat(events, empty());
+    }
 }
