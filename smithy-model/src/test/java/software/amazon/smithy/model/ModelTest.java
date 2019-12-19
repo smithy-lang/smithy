@@ -21,8 +21,12 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.IntegerShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.TraitDefinition;
 
@@ -55,5 +59,23 @@ public class ModelTest {
         assertThat(modelA, equalTo(modelA));
         assertThat(modelA, not(equalTo(modelB)));
         assertThat(modelA, not(equalTo(null)));
+    }
+
+    @Test
+    public void successfullyExpectsShapesOfType() {
+        StringShape shape = StringShape.builder().id("ns.foo#A").build();
+        Model model = Model.builder().addShape(shape).build();
+
+        assertThat(model.expectShape(ShapeId.from("ns.foo#A"), StringShape.class), equalTo(shape));
+    }
+
+    @Test
+    public void throwsIfShapeNotOfRightType() {
+        StringShape shape = StringShape.builder().id("ns.foo#A").build();
+        Model model = Model.builder().addShape(shape).build();
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            model.expectShape(ShapeId.from("ns.foo#A"), IntegerShape.class);
+        });
     }
 }

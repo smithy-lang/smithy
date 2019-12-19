@@ -203,6 +203,27 @@ public final class Model implements ToSmithyBuilder<Model> {
     }
 
     /**
+     * Attempts to retrieve a {@link Shape} by {@link ShapeId} and
+     * throws if not found or if the shape is not of the expected type.
+     *
+     * @param id Shape to retrieve by ID.
+     * @param type Shape type to expect and convert to.
+     * @return Returns the shape.
+     * @throws ExpectationNotMetException if the shape is not found or is not the expected type.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Shape> T expectShape(ShapeId id, Class<T> type) {
+        Shape shape = expectShape(id);
+        if (type.isInstance(shape)) {
+            return (T) shape;
+        }
+
+        throw new ExpectationNotMetException(String.format(
+                "Expected shape `%s` to be an instance of `%s`, but found `%s`",
+                id, type.getSimpleName(), shape.getType()), shape);
+    }
+
+    /**
      * Gets a stream of {@link Shape}s in the index.
      *
      * @return Returns a stream of shapes.

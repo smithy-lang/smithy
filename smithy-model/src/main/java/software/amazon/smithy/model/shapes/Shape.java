@@ -24,6 +24,7 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.MapUtils;
@@ -205,6 +206,19 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
                 .filter(traitClass::isInstance)
                 .findFirst()
                 .map(trait -> (T) trait);
+    }
+
+    /**
+     * Gets specific {@link Trait} by class from the shape or throws if not found.
+     *
+     * @param traitClass Trait class to retrieve.
+     * @param <T> The instance of the trait to retrieve.
+     * @return Returns the matching trait.
+     * @throws ExpectationNotMetException if the trait cannot be found.
+     */
+    public final <T extends Trait> T expectTrait(Class<T> traitClass) {
+        return getTrait(traitClass).orElseThrow(() -> new ExpectationNotMetException(String.format(
+                "Expected shape `%s` to have a trait `%s`", getId(), traitClass.getCanonicalName()), this));
     }
 
     /**
