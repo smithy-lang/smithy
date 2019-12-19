@@ -31,7 +31,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.Trait;
 
@@ -126,6 +128,7 @@ public class ShapeTest {
 
         assertTrue(shape.getTrait(MyTrait.class).isPresent());
         assertTrue(shape.getMemberTrait(model, MyTrait.class).isPresent());
+        assertEquals(shape.getTrait(MyTrait.class).get(), shape.expectTrait(MyTrait.class));
 
         assertTrue(shape.findTrait("foo.baz#foo").isPresent());
         assertTrue(shape.findMemberTrait(model, "foo.baz#foo").isPresent());
@@ -148,6 +151,13 @@ public class ShapeTest {
         assertThat(traits, hasItem(trait));
         assertThat(traits, hasItem(otherTrait));
         assertThat(traits, hasItem(documentationTrait));
+    }
+
+    @Test
+    public void throwsWhenTraitNotFound() {
+        Shape string = StringShape.builder().id("com.foo#example").build();
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> string.expectTrait(DeprecatedTrait.class));
     }
 
     @Test
