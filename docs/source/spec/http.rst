@@ -419,12 +419,13 @@ following rules are in place:
    - Pattern ``/foo/{bar}`` and ``/foo/{baz}`` conflict regardless of any
      constraint traits on the label members.
 
-#. A label and a literal cannot both occupy the same segment in patterns which
-   are equivalent to that point.
+#. A label and a literal SHOULD NOT both occupy the same segment in patterns
+   which are equivalent to that point.
 
    - ``/foo/bar/{baz}`` and ``/foo/baz/bam`` can coexist.
-   - ``/foo/bar`` and ``/foo/{baz}/bam`` cannot coexist because a label occupies
-     the same segment of another pattern with the same prefix.
+   - ``/foo/bar`` and ``/foo/{baz}/bam`` cannot coexist unless pattern
+     traits prevent ``{baz}`` from evaluating to ``bar`` because the label
+     occupies the same segment of another pattern with the same prefix.
 
 #. A query string literal with no value and a query string literal with an
    empty value are considered equivalent. For example, ``/foo?baz`` and

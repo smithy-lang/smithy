@@ -22,6 +22,39 @@
                 },
                 {
                     "target": "ns.foo#F"
+                },
+                {
+                    "target": "ns.foo#G"
+                },
+                {
+                    "target": "ns.foo#H"
+                },
+                {
+                    "target": "ns.foo#I"
+                },
+                {
+                    "target": "ns.foo#J"
+                },
+                {
+                    "target": "ns.foo#K"
+                },
+                {
+                    "target": "ns.foo#NestedAllowableConflicts"
+                },
+                {
+                    "target": "ns.foo#NestedAllowableConflicts2"
+                },
+                {
+                    "target": "ns.foo#DifferingSegmentEndsConflictChecks"
+                },
+                {
+                    "target": "ns.foo#DifferingSegmentEndsConflictChecks2"
+                },
+                {
+                    "target": "ns.foo#ConflictsWithoutPattern"
+                },
+                {
+                    "target": "ns.foo#ConflictsWithoutPattern2"
                 }
             ],
             "traits": {
@@ -93,6 +126,200 @@
                 "smithy.api#http": {
                     "uri": "/qux",
                     "method": "GET"
+                }
+            }
+        },
+        "ns.foo#H": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/pattern-match/{Id}",
+                    "method": "POST"
+                }
+            },
+            "input": {
+                "target": "ns.foo#FooMemberInput"
+            }
+        },
+        "ns.foo#I": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/pattern-match/{Id}",
+                    "method": "POST"
+                }
+            },
+            "input": {
+                "target": "ns.foo#FooTargetInput"
+            }
+        },
+        "ns.foo#J": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/pattern-match/{Id}",
+                    "method": "POST"
+                }
+            },
+            "input": {
+                "target": "ns.foo#BarTargetInput"
+            }
+        },
+        "ns.foo#K": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/pattern-match/foo",
+                    "method": "POST"
+                }
+            }
+        },
+        "ns.foo#FooMemberInput": {
+            "type": "structure",
+            "members": {
+                "Id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#pattern": "foo",
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#FooTargetInput": {
+            "type": "structure",
+            "members": {
+                "Id": {
+                    "target": "ns.foo#FooPatternString",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#BarTargetInput": {
+            "type": "structure",
+            "members": {
+                "Id": {
+                    "target": "ns.foo#BarPatternString",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#FooPatternString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "foo"
+            }
+        },
+        "ns.foo#BarPatternString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "bar"
+            }
+        },
+        "ns.foo#NestedAllowableConflicts": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/nested/{Id}/bar/baz",
+                    "method": "POST"
+                }
+            },
+            "input": {
+                "target": "ns.foo#BarTargetInput"
+            }
+        },
+        "ns.foo#NestedAllowableConflicts2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/nested/foo/{Id}/baz",
+                    "method": "POST"
+                }
+            },
+            "input": {
+                "target": "ns.foo#FooTargetInput"
+            }
+        },
+        "ns.foo#DifferingSegmentEndsConflictChecks": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/differing/{Id}/bar/bam/{OtherId}",
+                    "method": "POST"
+                }
+            },
+            "input": {
+                "target": "ns.foo#BarFooTargetInput"
+            }
+        },
+        "ns.foo#DifferingSegmentEndsConflictChecks2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/differing/foo/bar/bin/{Id}",
+                    "method": "POST"
+                }
+            },
+            "input": {
+                "target": "ns.foo#FooTargetInput"
+            }
+        },
+        "ns.foo#BarFooTargetInput": {
+            "type": "structure",
+            "members": {
+                "Id": {
+                    "target": "ns.foo#BarPatternString",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
+                    }
+                },
+                "OtherId": {
+                    "target": "ns.foo#FooPatternString",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
+                    }
+                }
+            }
+        },
+        "ns.foo#ConflictsWithoutPattern": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/no-pattern-conflict/foo",
+                    "method": "POST"
+                }
+            }
+        },
+        "ns.foo#ConflictsWithoutPattern2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/no-pattern-conflict/{Id}",
+                    "method": "POST"
+                }
+            },
+            "input": {
+                "target": "ns.foo#PatternlessInput"
+            }
+        },
+        "ns.foo#PatternlessInput": {
+            "type": "structure",
+            "members": {
+                "Id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": true
+                    }
                 }
             }
         }
