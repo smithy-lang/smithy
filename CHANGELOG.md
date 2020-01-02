@@ -1,5 +1,32 @@
 # Smithy Changelog
 
+## 0.9.6 (2020-01-02)
+
+### Features
+
+* Allow XML maps to be flattened ([#205](https://github.com/awslabs/smithy/pull/205))
+* Add and remove shape members to model automatically ([#206](https://github.com/awslabs/smithy/pull/206))
+* Deprecate ShapeIndex in favor of Model ([#209](https://github.com/awslabs/smithy/pull/209))
+* Allow the sensitive trait to be applied to all but operations, services, and resources ([#212](https://github.com/awslabs/smithy/pull/212))
+* Added 0.5.0 IDL and AST format ([#213](https://github.com/awslabs/smithy/pull/213))
+* Allow min to equal max in range trait ([#216](https://github.com/awslabs/smithy/pull/216))
+* Added validation for length trait values ([#217](https://github.com/awslabs/smithy/pull/217))
+* Limit streaming trait to top-level members ([#221](https://github.com/awslabs/smithy/pull/221))
+* Added protocol compliance test traits ([#226](https://github.com/awslabs/smithy/pull/226))
+* Added ability to configure timestamp validation ([#229](https://github.com/awslabs/smithy/pull/229))
+* Moved `TemplateEngine` implementation into FreeMarker implementation ([#230](https://github.com/awslabs/smithy/pull/230))
+* Added `BoxIndex` ([#234](https://github.com/awslabs/smithy/pull/234))
+* Added more expect methods to `Shape` and `Model` ([#237](https://github.com/awslabs/smithy/pull/237))
+
+### Optimizations
+
+* Update smithy-build to be streaming ([#211](https://github.com/awslabs/smithy/pull/211))
+
+### Bug Fixes
+
+* Prevent bad list, set, and map recursion ([#204](https://github.com/awslabs/smithy/pull/204))
+* Properly allow omitting endpoint discovery operation inputs ([#220](https://github.com/awslabs/smithy/pull/220))
+
 ## 0.9.5 (2019-11-11)
 
 ### Features
