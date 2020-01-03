@@ -16,10 +16,7 @@
 package software.amazon.smithy.protocoltests.traits;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -41,7 +38,7 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
 
     private final String method;
     private final String uri;
-    private final Map<String, String> queryParams;
+    private final List<String> queryParams;
     private final List<String> forbidQueryParams;
     private final List<String> requireQueryParams;
 
@@ -49,7 +46,7 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
         super(builder);
         method = SmithyBuilder.requiredState(METHOD, builder.method);
         uri = SmithyBuilder.requiredState(URI, builder.uri);
-        queryParams = Collections.unmodifiableMap(new LinkedHashMap<>(builder.queryParams));
+        queryParams = ListUtils.copyOf(builder.queryParams);
         forbidQueryParams = ListUtils.copyOf(builder.forbidQueryParams);
         requireQueryParams = ListUtils.copyOf(builder.requireQueryParams);
     }
@@ -62,7 +59,7 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
         return uri;
     }
 
-    public Map<String, String> getQueryParams() {
+    public List<String> getQueryParams() {
         return queryParams;
     }
 
@@ -80,10 +77,8 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
         ObjectNode o = node.expectObjectNode();
         builder.method(o.expectStringMember(METHOD).getValue());
         builder.uri(o.expectStringMember(URI).getValue());
-        o.getObjectMember(QUERY_PARAMS).ifPresent(headers -> {
-            headers.getStringMap().forEach((k, v) -> {
-                builder.putQueryParam(k, v.expectStringNode().getValue());
-            });
+        o.getArrayMember(QUERY_PARAMS).ifPresent(queryParams -> {
+            builder.queryParams(queryParams.getElementsAs(StringNode::getValue));
         });
         o.getArrayMember(FORBID_QUERY_PARAMS).ifPresent(params -> {
             builder.forbidQueryParams(params.getElementsAs(StringNode::getValue));
@@ -100,7 +95,7 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
         node.withMember(METHOD, getMethod());
         node.withMember(URI, getUri());
         if (!queryParams.isEmpty()) {
-            node.withMember(QUERY_PARAMS, ObjectNode.fromStringMap(getQueryParams()));
+            node.withMember(QUERY_PARAMS, ArrayNode.fromStrings(getQueryParams()));
         }
         if (!forbidQueryParams.isEmpty()) {
             node.withMember(FORBID_QUERY_PARAMS, ArrayNode.fromStrings(getForbidQueryParams()));
@@ -134,7 +129,7 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
 
         private String method;
         private String uri;
-        private final Map<String, String> queryParams = new LinkedHashMap<>();
+        private final List<String> queryParams = new ArrayList<>();
         private final List<String> forbidQueryParams = new ArrayList<>();
         private final List<String> requireQueryParams = new ArrayList<>();
 
@@ -150,14 +145,9 @@ public final class HttpRequestTestCase extends HttpMessageTestCase implements To
             return this;
         }
 
-        public Builder queryParams(Map<String, String> queryParams) {
+        public Builder queryParams(List<String> queryParams) {
             this.queryParams.clear();
-            this.queryParams.putAll(queryParams);
-            return this;
-        }
-
-        public Builder putQueryParam(String key, String value) {
-            queryParams.put(key, value);
+            this.queryParams.addAll(queryParams);
             return this;
         }
 
