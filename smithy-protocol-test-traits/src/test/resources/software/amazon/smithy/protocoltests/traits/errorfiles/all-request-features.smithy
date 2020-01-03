@@ -11,7 +11,7 @@ use smithy.test#httpRequestTests
         authScheme: "test",
         method: "POST",
         uri: "/",
-        queryParams: {"foo": "baz"},
+        queryParams: ["foo=baz"],
         forbidQueryParams: ["Nope"],
         requireQueryParams: ["Yap"],
         headers: {"X-Foo": "baz"},

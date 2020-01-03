@@ -41,21 +41,24 @@ structure HttpRequestTestCase {
     /// logic of an HTTP request.
     authScheme: String,
 
-    /// A map of expected query string parameters.
+    /// A list of the expected serialized query string parameters.
+    ///
+    /// Each element in the list is a query string key value pair
+    /// that starts with the query string parameter name optionally
+    /// followed by "=", optionally followed by the query string
+    /// parameter value. For example, "foo=bar", "foo=", and "foo"
+    /// are all valid values. The query string parameter name and
+    /// the value MUST appear in the format in which it is expected
+    /// to be sent over the wire; if a key or value needs to be
+    /// percent-encoded, then it MUST appear percent-encoded in this list.
     ///
     /// A serialized HTTP request is not in compliance with the protocol
     /// if any query string parameter defined in `queryParams` is not
     /// defined in the request or if the value of a query string parameter
     /// in the request differs from the expected value.
     ///
-    /// Each key represents the query string parameter name, and each
-    /// value represents the query string parameter value. Both keys and
-    /// values MUST appear in the format in which it is expected to be
-    /// sent over the wire; if a key or value needs to be percent-encoded,
-    /// then it MUST appear percent-encoded in this map.
-    ///
     /// `queryParams` applies no constraints on additional query parameters.
-    queryParams: StringMap,
+    queryParams: StringList,
 
     /// A list of query string parameter names that must not appear in the
     /// serialized HTTP request.

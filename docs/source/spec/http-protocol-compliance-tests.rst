@@ -108,19 +108,30 @@ that support the following properties:
         It's possible that specific authentication schemes might influence
         the serialization logic of an HTTP request.
     * - queryParams
-      - ``Map<String, String>``
-      - A map of expected query string parameters.
+      - ``[string]``
+      - A list of the expected serialized query string parameters.
+
+        Each element in the list is a query string key value pair
+        that starts with the query string parameter name optionally
+        followed by "=", optionally followed by the query string
+        parameter value. For example, "foo=bar", "foo=", and "foo"
+        are all valid values.
+
+        .. note::
+
+            This kind of list is used instead of a map so that query string
+            parameter values for lists can be represented using repeated
+            key-value pairs.
+
+        The query string parameter name and the value MUST appear in the
+        format in which it is expected to be sent over the wire; if a key or
+        value needs to be percent-encoded, then it MUST appear
+        percent-encoded in this list.
 
         A serialized HTTP request is not in compliance with the protocol
         if any query string parameter defined in ``queryParams`` is not
         defined in the request or if the value of a query string parameter
         in the request differs from the expected value.
-
-        Each key represents the query string parameter name, and each
-        value represents the query string parameter value. Both keys and
-        values MUST appear in the format in which it is expected to be
-        sent over the wire; if a key or value needs to be percent-encoded,
-        then it MUST appear percent-encoded in this map.
 
         ``queryParams`` applies no constraints on additional query parameters.
     * - forbidQueryParams
@@ -204,10 +215,14 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                 protocol: "example",
                 params: {
                     "greeting": "Hi",
-                    "name": "Teddy"
+                    "name": "Teddy",
+                    "query": "Hello there"
                 },
                 method: "POST",
                 uri: "/",
+                queryParams: [
+                    "Hi=Hello%20there"
+                ],
                 headers: {
                     "X-Greeting": "Hi",
                 },
@@ -220,6 +235,9 @@ that uses :ref:`HTTP binding traits <http-traits>`.
         structure SayHelloInput {
             @httpHeader("X-Greeting")
             greeting: String,
+
+            @httpQuery("Hi")
+            query: String,
 
             name: String
         }
@@ -244,17 +262,21 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                             {
                                 "id": "say_hello",
                                 "protocol": "example",
+                                "method": "POST",
+                                "uri": "/",
                                 "headers": {
                                     "X-Greeting": "Hi"
                                 },
+                                "queryParams": [
+                                    "Hi=Hello%20there"
+                                ],
                                 "body": "{\"name\": \"Teddy\"}",
                                 "bodyMediaType": "application/json"
                                 "params": {
                                     "greeting": "Hi",
-                                    "name": "Teddy"
-                                },
-                                "method": "POST",
-                                "uri": "/"
+                                    "name": "Teddy",
+                                    "query": "Hello there"
+                                }
                             }
                         ]
                     }
