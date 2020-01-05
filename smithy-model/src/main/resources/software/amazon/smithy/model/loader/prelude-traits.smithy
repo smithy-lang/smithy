@@ -140,21 +140,19 @@ structure idempotencyToken {}
 @tags(["diff.error.const"])
 string jsonName
 
-/// Moves a serialized object property to an attribute of the enclosing structure.
+/// Serializes an object property as an XML attribute rather than a nested XML element.
 @trait(selector: ":test(member:of(structure) > :test(boolean, number, string, timestamp))",
        conflicts: ["xmlNamespace"])
 @tags(["diff.error.const"])
 structure xmlAttribute {}
 
-/// Moves serialized collection members from their collection element to that of
-/// the collection's container.
-@trait(selector: ":test(map, collection, member:of(structure) > :test(map, collection))")
+/// Unwraps the values of a list, set, or map into the containing structure/union.
+@trait(selector: ":test(member:of(structure, union) > :each(collection, map))")
 @tags(["diff.error.const"])
 structure xmlFlattened {}
 
-/// Allows a serialized object property name to differ from a structure member name
-/// used in the model.
-@trait
+/// Changes the serialized element or attribute name of a structure or member.
+@trait(selector: ":test(structure, member)")
 @tags(["diff.error.const"])
 @pattern("^[a-zA-Z_][a-zA-Z_0-9-]*(:[a-zA-Z_][a-zA-Z_0-9-]*)?$")
 string xmlName
