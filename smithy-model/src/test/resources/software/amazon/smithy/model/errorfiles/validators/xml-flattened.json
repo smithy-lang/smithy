@@ -1,7 +1,22 @@
 {
     "smithy": "0.5.0",
     "shapes": {
-        "ns.foo#FlatCollection": {
+        "ns.foo#StringList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        },
+        "ns.foo#StringMap": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            }
+        },
+        "ns.foo#InvalidStringList": {
             "type": "list",
             "member": {
                 "target": "smithy.api#String"
@@ -10,13 +25,7 @@
                 "smithy.api#xmlFlattened": true
             }
         },
-        "ns.foo#NotFlatCollection": {
-            "type": "list",
-            "member": {
-                "target": "smithy.api#String"
-            }
-        },
-        "ns.foo#FlatMap": {
+        "ns.foo#InvalidStringMap": {
             "type": "map",
             "key": {
                 "target": "smithy.api#String"
@@ -28,39 +37,17 @@
                 "smithy.api#xmlFlattened": true
             }
         },
-        "ns.foo#NotFlatMap": {
-            "type": "map",
-            "key": {
-                "target": "smithy.api#String"
-            },
-            "value": {
-                "target": "smithy.api#String"
-            }
-        },
-        "ns.foo#ValidStructure1": {
+        "ns.foo#ValidStructure": {
             "type": "structure",
             "members": {
                 "flatList": {
-                    "target": "ns.foo#FlatCollection"
-                }
-            }
-        },
-        "ns.foo#ValidStructure2": {
-            "type": "structure",
-            "members": {
-                "flatList": {
-                    "target": "ns.foo#NotFlatCollection",
+                    "target": "ns.foo#StringList",
                     "traits": {
                         "smithy.api#xmlFlattened": true
                     }
-                }
-            }
-        },
-        "ns.foo#ValidStructure3": {
-            "type": "structure",
-            "members": {
-                "flatmap": {
-                    "target": "ns.foo#NotFlatMap",
+                },
+                "flatMap": {
+                    "target": "ns.foo#StringMap",
                     "traits": {
                         "smithy.api#xmlFlattened": true
                     }

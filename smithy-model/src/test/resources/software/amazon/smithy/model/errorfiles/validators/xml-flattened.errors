@@ -1,0 +1,2 @@
+[ERROR] ns.foo#InvalidStringList: Trait `xmlFlattened` cannot be applied to `ns.foo#InvalidStringList`. | TraitTarget
+[ERROR] ns.foo#InvalidStringMap: Trait `xmlFlattened` cannot be applied to `ns.foo#InvalidStringMap`. | TraitTarget
