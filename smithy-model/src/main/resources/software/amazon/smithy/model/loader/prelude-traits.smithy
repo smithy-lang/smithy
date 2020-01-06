@@ -151,8 +151,8 @@ structure xmlAttribute {}
 @tags(["diff.error.const"])
 structure xmlFlattened {}
 
-/// Changes the serialized element or attribute name of a structure or member.
-@trait(selector: ":test(structure, member)")
+/// Changes the serialized element or attribute name of a structure, union, or member.
+@trait(selector: ":test(structure, union, member)")
 @tags(["diff.error.const"])
 @pattern("^[a-zA-Z_][a-zA-Z_0-9-]*(:[a-zA-Z_][a-zA-Z_0-9-]*)?$")
 string xmlName
