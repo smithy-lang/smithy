@@ -25,10 +25,10 @@ if necessary.
 Structure and union serialization
 =================================
 
-All XML serialization starts with a structure. The shape name of a structure
-is used as the outermost XML element name. Members of a structure or union
-shape are serialized as nested XML elements where the name of the element is
-the same as the name of the member.
+All XML serialization starts with a structure or union. The shape name of a
+structure/union is used as the outermost XML element name. Members of a
+structure/union are serialized as nested XML elements where the name of the
+element is the same as the name of the member.
 
 For example, given the following:
 
@@ -61,11 +61,11 @@ The :ref:`xmlattribute-trait` is used to serialize a structure
 member as an XML attribute.
 
 
-``xmlName`` on structures
--------------------------
+``xmlName`` on structures and unions
+------------------------------------
 
-An ``xmlName`` trait applied to a structure changes the element name of the
-serialized structure; however, it does not influence the serialization of
+An ``xmlName`` trait applied to a structure or union changes the element name
+of the serialized shape; however, it does not influence the serialization of
 members that target it. Given the following:
 
 .. tabs::
@@ -849,11 +849,12 @@ The XML serialization is:
 -----------------
 
 Summary
-    Changes the serialized element or attribute name of a structure or member.
+    Changes the serialized element or attribute name of a structure, union,
+    or member.
 Trait selector
-    ``:test(structure, member)``
+    ``:test(structure, union, member)``
 
-    *A structure or member*
+    *A structure, union, or member*
 Value type
     ``string`` value that MUST adhere to the :token:`xml_name` ABNF production:
 
