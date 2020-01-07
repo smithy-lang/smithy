@@ -304,7 +304,11 @@ public final class ModelAssembler {
         Objects.requireNonNull(url, "The provided url to ModelAssembler#addImport was null");
         inputStreamModels.put(url.toExternalForm(), () -> {
             try {
-                return url.openStream();
+                URLConnection connection = url.openConnection();
+                if (properties.containsKey(ModelAssembler.DISABLE_JAR_CACHE)) {
+                    connection.setUseCaches(false);
+                }
+                return connection.getInputStream();
             } catch (IOException | UncheckedIOException e) {
                 throw new ModelImportException("Unable to open Smithy model import URL: " + url.toExternalForm(), e);
             }
