@@ -1,0 +1,1155 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "aws.protocols.tests.json#JsonProtocol": {
+            "type": "service",
+            "version": "2018-01-01",
+            "operations": [
+                {
+                    "target": "aws.protocols.tests.json#EmptyOperation"
+                },
+                {
+                    "target": "aws.protocols.tests.json#KitchenSinkOperation"
+                },
+                {
+                    "target": "aws.protocols.tests.json#OperationWithOptionalInputOutput"
+                }
+            ],
+            "traits": {
+                "aws.api#service": {
+                    "sdkId": "Json Protocol"
+                },
+                "smithy.api#protocols": [
+                    {
+                        "name": "aws.json-1.1",
+                        "auth": ["aws.v4"]
+                    }
+                ],
+                "smithy.api#auth": ["aws.v4"],
+                "smithy.api#title": "Sample Json 1.1 Protocol Service"
+            }
+        },
+        "aws.protocols.tests.json#Blob": {
+            "type": "blob"
+        },
+        "aws.protocols.tests.json#Boolean": {
+            "type": "boolean"
+        },
+        "aws.protocols.tests.json#Double": {
+            "type": "double"
+        },
+        "aws.protocols.tests.json#EmptyOperation": {
+            "type": "operation",
+            "traits": {
+                "smithy.test#httpRequestTests": [
+                    {
+                        "id": "sends_requests_to_slash",
+                        "description": "Sends requests to /",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {}
+                    },
+                    {
+                        "id": "includes_x_amz_target_and_content_type",
+                        "description": "Includes X-Amz-Target header and Content-Type",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {},
+                        "headers": {
+                            "Content-Type": "application/x-amz-json-1.1",
+                            "X-Amz-Target": "JsonProtocolService.OperationWithOptionalInputOutput"
+                        }
+                    }
+                ],
+                "smithy.test#httpResponseTests": [
+                    {
+                        "id": "handles_empty_output_shape",
+                        "description": "Handles empty output shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "headers": {
+                            "Content-Type": "application/x-amz-json-1.1"
+                        },
+                        "requireHeaders": ["Content-Length"],
+                        "bodyMediaType": "application/json",
+                        "body": "{}",
+                        "params": {}
+                    }
+                ]
+            }
+        },
+        "aws.protocols.tests.json#EmptyStruct": {
+            "type": "structure",
+            "members": {}
+        },
+        "aws.protocols.tests.json#ErrorWithMembers": {
+            "type": "structure",
+            "members": {
+                "Code": {
+                    "target": "smithy.api#String"
+                },
+                "ComplexData": {
+                    "target": "aws.protocols.tests.json#KitchenSink"
+                },
+                "IntegerField": {
+                    "target": "smithy.api#Integer"
+                },
+                "ListField": {
+                    "target": "aws.protocols.tests.json#ListOfStrings"
+                },
+                "MapField": {
+                    "target": "aws.protocols.tests.json#MapOfStrings"
+                },
+                "Message": {
+                    "target": "smithy.api#String"
+                },
+                "StringField": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "abc"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "aws.protocols.tests.json#ErrorWithoutMembers": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "aws.protocols.tests.json#Float": {
+            "type": "float"
+        },
+        "aws.protocols.tests.json#Integer": {
+            "type": "integer"
+        },
+        "aws.protocols.tests.json#JsonValue": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mediaType": "application/json"
+            }
+        },
+        "aws.protocols.tests.json#KitchenSink": {
+            "type": "structure",
+            "members": {
+                "Blob": {
+                    "target": "smithy.api#Blob"
+                },
+                "Boolean": {
+                    "target": "smithy.api#Boolean"
+                },
+                "Double": {
+                    "target": "smithy.api#Double"
+                },
+                "EmptyStruct": {
+                    "target": "aws.protocols.tests.json#EmptyStruct"
+                },
+                "Float": {
+                    "target": "smithy.api#Float"
+                },
+                "HttpdateTimestamp": {
+                    "target": "smithy.api#Timestamp",
+                    "traits": {
+                        "smithy.api#timestampFormat": "http-date"
+                    }
+                },
+                "Integer": {
+                    "target": "smithy.api#Integer"
+                },
+                "Iso8601Timestamp": {
+                    "target": "smithy.api#Timestamp",
+                    "traits": {
+                        "smithy.api#timestampFormat": "date-time"
+                    }
+                },
+                "JsonValue": {
+                    "target": "aws.protocols.tests.json#JsonValue"
+                },
+                "ListOfLists": {
+                    "target": "aws.protocols.tests.json#ListOfListOfStrings"
+                },
+                "ListOfMapsOfStrings": {
+                    "target": "aws.protocols.tests.json#ListOfMapsOfStrings"
+                },
+                "ListOfStrings": {
+                    "target": "aws.protocols.tests.json#ListOfStrings"
+                },
+                "ListOfStructs": {
+                    "target": "aws.protocols.tests.json#ListOfStructs"
+                },
+                "Long": {
+                    "target": "smithy.api#Long"
+                },
+                "MapOfListsOfStrings": {
+                    "target": "aws.protocols.tests.json#MapOfListsOfStrings"
+                },
+                "MapOfMaps": {
+                    "target": "aws.protocols.tests.json#MapOfMapOfStrings"
+                },
+                "MapOfStrings": {
+                    "target": "aws.protocols.tests.json#MapOfStrings"
+                },
+                "MapOfStructs": {
+                    "target": "aws.protocols.tests.json#MapOfStructs"
+                },
+                "RecursiveList": {
+                    "target": "aws.protocols.tests.json#ListOfKitchenSinks"
+                },
+                "RecursiveMap": {
+                    "target": "aws.protocols.tests.json#MapOfKitchenSinks"
+                },
+                "RecursiveStruct": {
+                    "target": "aws.protocols.tests.json#KitchenSink"
+                },
+                "SimpleStruct": {
+                    "target": "aws.protocols.tests.json#SimpleStruct"
+                },
+                "String": {
+                    "target": "smithy.api#String"
+                },
+                "StructWithLocationName": {
+                    "target": "aws.protocols.tests.json#StructWithLocationName"
+                },
+                "Timestamp": {
+                    "target": "smithy.api#Timestamp"
+                },
+                "UnixTimestamp": {
+                    "target": "smithy.api#Timestamp",
+                    "traits": {
+                        "smithy.api#timestampFormat": "epoch-seconds"
+                    }
+                }
+            }
+        },
+        "aws.protocols.tests.json#KitchenSinkOperation": {
+            "type": "operation",
+            "input": {
+                "target": "aws.protocols.tests.json#KitchenSink"
+            },
+            "output": {
+                "target": "aws.protocols.tests.json#KitchenSink"
+            },
+            "errors": [
+                {
+                    "target": "aws.protocols.tests.json#ErrorWithMembers"
+                },
+                {
+                    "target": "aws.protocols.tests.json#ErrorWithoutMembers"
+                }
+            ],
+            "traits": {
+                "smithy.test#httpRequestTests": [
+                    {
+                        "id": "serializes_string_shapes",
+                        "documentation": "Serializes string shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "String": "abc xyz"
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"String\":\"abc xyz\"}"
+                    },
+                    {
+                        "id": "serializes_string_shapes_with_jsonvalue_trait",
+                        "documentation": "Serializes string shapes with jsonvalue trait",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "JsonValue": "{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"JsonValue\":\"{\\\"string\\\":\\\"value\\\",\\\"number\\\":1234.5,\\\"boolTrue\\\":true,\\\"boolFalse\\\":false,\\\"array\\\":[1,2,3,4],\\\"object\\\":{\\\"key\\\":\\\"value\\\"},\\\"null\\\":null}\"}"
+                    },
+                    {
+                        "id": "serializes_integer_shapes",
+                        "documentation": "Serializes integer shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "Integer": 1234
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Integer\":1234}"
+                    },
+                    {
+                        "id": "serializes_long_shapes",
+                        "documentation": "Serializes long shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "Long": 999999999999
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Long\":999999999999}"
+                    },
+                    {
+                        "id": "serializes_float_shapes",
+                        "documentation": "Serializes float shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "Float": 1234.5
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Float\":1234.5}"
+                    },
+                    {
+                        "id": "serializes_double_shapes",
+                        "documentation": "Serializes double shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "Double": 1234.5
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Double\":1234.5}"
+                    },
+                    {
+                        "id": "serializes_blob_shapes",
+                        "documentation": "Serializes blob shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "Blob": "YmluYXJ5LXZhbHVl"
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Blob\":\"YmluYXJ5LXZhbHVl\"}"
+                    },
+                    {
+                        "id": "serializes_boolean_shapes_true",
+                        "documentation": "Serializes boolean shapes (true)",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "Boolean": true
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Boolean\":true}"
+                    },
+                    {
+                        "id": "serializes_boolean_shapes_false",
+                        "documentation": "Serializes boolean shapes (false)",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "Boolean": false
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Boolean\":false}"
+                    },
+                    {
+                        "id": "serializes_timestamp_shapes",
+                        "documentation": "Serializes timestamp shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "Timestamp": 946845296
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Timestamp\":946845296}"
+                    },
+                    {
+                        "id": "serializes_timestamp_shapes_with_iso8601_timestampformat",
+                        "documentation": "Serializes timestamp shapes with iso8601 timestampFormat",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "Iso8601Timestamp": 946845296
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Iso8601Timestamp\":\"2000-01-02T20:34:56Z\"}"
+                    },
+                    {
+                        "id": "serializes_timestamp_shapes_with_httpdate_timestampformat",
+                        "documentation": "Serializes timestamp shapes with httpdate timestampFormat",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "HttpdateTimestamp": 946845296
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"HttpdateTimestamp\":\"Sun, 02 Jan 2000 20:34:56 GMT\"}"
+                    },
+                    {
+                        "id": "serializes_timestamp_shapes_with_unixtimestamp_timestampformat",
+                        "documentation": "Serializes timestamp shapes with unixTimestamp timestampFormat",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "UnixTimestamp": 946845296
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"UnixTimestamp\":946845296}"
+                    },
+                    {
+                        "id": "serializes_list_shapes",
+                        "documentation": "Serializes list shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "ListOfStrings": [
+                                "abc",
+                                "mno",
+                                "xyz"
+                            ]
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"ListOfStrings\":[\"abc\",\"mno\",\"xyz\"]}"
+                    },
+                    {
+                        "id": "serializes_empty_list_shapes",
+                        "documentation": "Serializes empty list shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "ListOfStrings": []
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"ListOfStrings\":[]}"
+                    },
+                    {
+                        "id": "serializes_list_of_map_shapes",
+                        "documentation": "Serializes list of map shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "ListOfMapsOfStrings": [
+                                {
+                                    "foo": "bar"
+                                },
+                                {
+                                    "abc": "xyz"
+                                },
+                                {
+                                    "red": "blue"
+                                }
+                            ]
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"ListOfMapsOfStrings\":[{\"foo\":\"bar\"},{\"abc\":\"xyz\"},{\"red\":\"blue\"}]}"
+                    },
+                    {
+                        "id": "serializes_list_of_structure_shapes",
+                        "documentation": "Serializes list of structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "ListOfStructs": [
+                                {
+                                    "Value": "abc"
+                                },
+                                {
+                                    "Value": "mno"
+                                },
+                                {
+                                    "Value": "xyz"
+                                }
+                            ]
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"ListOfStructs\":[{\"Value\":\"abc\"},{\"Value\":\"mno\"},{\"Value\":\"xyz\"}]}"
+                    },
+                    {
+                        "id": "serializes_list_of_recursive_structure_shapes",
+                        "documentation": "Serializes list of recursive structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "RecursiveList": [
+                                {
+                                    "RecursiveList": [
+                                        {
+                                            "RecursiveList": [
+                                                {
+                                                    "Integer": 123
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"RecursiveList\":[{\"RecursiveList\":[{\"RecursiveList\":[{\"Integer\":123}]}]}]}"
+                    },
+                    {
+                        "id": "serializes_map_shapes",
+                        "documentation": "Serializes map shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "MapOfStrings": {
+                                "abc": "xyz",
+                                "mno": "hjk"
+                            }
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"MapOfStrings\":{\"abc\":\"xyz\",\"mno\":\"hjk\"}}"
+                    },
+                    {
+                        "id": "serializes_empty_map_shapes",
+                        "documentation": "Serializes empty map shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "MapOfStrings": {}
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"MapOfStrings\":[]}"
+                    },
+                    {
+                        "id": "serializes_map_of_list_shapes",
+                        "documentation": "Serializes map of list shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "MapOfListsOfStrings": {
+                                "abc": [
+                                    "abc",
+                                    "xyz"
+                                ],
+                                "mno": [
+                                    "xyz",
+                                    "abc"
+                                ]
+                            }
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"MapOfListsOfStrings\":{\"abc\":[\"abc\",\"xyz\"],\"mno\":[\"xyz\",\"abc\"]}}"
+                    },
+                    {
+                        "id": "serializes_map_of_structure_shapes",
+                        "documentation": "Serializes map of structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "MapOfStructs": {
+                                "key1": {
+                                    "Value": "value-1"
+                                },
+                                "key2": {
+                                    "Value": "value-2"
+                                }
+                            }
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"MapOfStructs\":{\"key1\":{\"Value\":\"value-1\"},\"key2\":{\"Value\":\"value-2\"}}}"
+                    },
+                    {
+                        "id": "serializes_map_of_recursive_structure_shapes",
+                        "documentation": "Serializes map of recursive structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "RecursiveMap": {
+                                "key1": {
+                                    "RecursiveMap": {
+                                        "key2": {
+                                            "RecursiveMap": {
+                                                "key3": {
+                                                    "Boolean": false
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"RecursiveMap\":{\"key1\":{\"RecursiveMap\":{\"key2\":{\"RecursiveMap\":{\"key3\":{\"Boolean\":false}}}}}}}"
+                    },
+                    {
+                        "id": "serializes_structure_shapes",
+                        "documentation": "Serializes structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "SimpleStruct": {
+                                "Value": "abc"
+                            }
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"SimpleStruct\":{\"Value\":\"abc\"}}"
+                    },
+                    {
+                        "id": "serializes_structure_members_with_locationname_traits",
+                        "documentation": "Serializes structure members with locationName traits",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "StructWithLocationName": {
+                                "Value": "some-value"
+                            }
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"StructWithLocationName\":{\"RenamedMember\":\"some-value\"}}"
+                    },
+                    {
+                        "id": "serializes_empty_structure_shapes",
+                        "documentation": "Serializes empty structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "SimpleStruct": {}
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"SimpleStruct\":[]}"
+                    },
+                    {
+                        "id": "serializes_structure_which_have_no_members",
+                        "documentation": "Serializes structure which have no members",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "EmptyStruct": {}
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"EmptyStruct\":[]}"
+                    },
+                    {
+                        "id": "serializes_recursive_structure_shapes",
+                        "documentation": "Serializes recursive structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "String": "top-value",
+                            "Boolean": false,
+                            "RecursiveStruct": {
+                                "String": "nested-value",
+                                "Boolean": true,
+                                "RecursiveList": [
+                                    {
+                                        "String": "string-only"
+                                    },
+                                    {
+                                        "RecursiveStruct": {
+                                            "MapOfStrings": {
+                                                "color": "red",
+                                                "size": "large"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{\"String\":\"top-value\",\"Boolean\":false,\"RecursiveStruct\":{\"String\":\"nested-value\",\"Boolean\":true,\"RecursiveList\":[{\"String\":\"string-only\"},{\"RecursiveStruct\":{\"MapOfStrings\":{\"color\":\"red\",\"size\":\"large\"}}}]}}"
+                    }
+                ],
+                "smithy.test#httpResponseTests": [
+                    {
+                        "id": "parses_operations_with_empty_json_bodies",
+                        "documentation": "Parses operations with empty JSON bodies",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{}",
+                        "params": {}
+                    },
+                    {
+                        "id": "parses_string_shapes",
+                        "documentation": "Parses string shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"String\":\"string-value\"}",
+                        "params": {
+                            "String": "string-value"
+                        }
+                    },
+                    {
+                        "id": "parses_integer_shapes",
+                        "documentation": "Parses integer shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Integer\":1234}",
+                        "params": {
+                            "Integer": 1234
+                        }
+                    },
+                    {
+                        "id": "parses_long_shapes",
+                        "documentation": "Parses long shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Long\":1234567890123456789}",
+                        "params": {
+                            "Long": 1234567890123456789
+                        }
+                    },
+                    {
+                        "id": "parses_float_shapes",
+                        "documentation": "Parses float shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Float\":1234.5}",
+                        "params": {
+                            "Float": 1234.5
+                        }
+                    },
+                    {
+                        "id": "parses_double_shapes",
+                        "documentation": "Parses double shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Double\":123456789.12345679}",
+                        "params": {
+                            "Double": 123456789.12345679
+                        }
+                    },
+                    {
+                        "id": "parses_boolean_shapes_true",
+                        "documentation": "Parses boolean shapes (true)",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Boolean\":true}",
+                        "params": {
+                            "Boolean": true
+                        }
+                    },
+                    {
+                        "id": "parses_boolean_false",
+                        "documentation": "Parses boolean (false)",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Boolean\":false}",
+                        "params": {
+                            "Boolean": false
+                        }
+                    },
+                    {
+                        "id": "parses_blob_shapes",
+                        "documentation": "Parses blob shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Blob\":\"YmluYXJ5LXZhbHVl\"}",
+                        "params": {
+                            "Blob": "YmluYXJ5LXZhbHVl"
+                        }
+                    },
+                    {
+                        "id": "parses_timestamp_shapes",
+                        "documentation": "Parses timestamp shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Timestamp\":946845296}",
+                        "params": {
+                            "Timestamp": 946845296
+                        }
+                    },
+                    {
+                        "id": "parses_iso8601_timestamps",
+                        "documentation": "Parses iso8601 timestamps",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Timestamp\":\"2000-01-02T20:34:56.000Z\"}",
+                        "params": {
+                            "Timestamp": 946845296
+                        }
+                    },
+                    {
+                        "id": "parses_httpdate_timestamps",
+                        "documentation": "Parses httpdate timestamps",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Timestamp\":\"Sun, 02 Jan 2000 20:34:56.000 GMT\"}",
+                        "params": {
+                            "Timestamp": 946845296
+                        }
+                    },
+                    {
+                        "id": "parses_list_shapes",
+                        "documentation": "Parses list shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"ListOfStrings\":[\"abc\",\"mno\",\"xyz\"]}",
+                        "params": {
+                            "ListOfStrings": [
+                                "abc",
+                                "mno",
+                                "xyz"
+                            ]
+                        }
+                    },
+                    {
+                        "id": "parses_list_of_map_shapes",
+                        "documentation": "Parses list of map shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"ListOfMapsOfStrings\":[{\"size\":\"large\"},{\"color\":\"red\"}]}",
+                        "params": {
+                            "ListOfMapsOfStrings": [
+                                {
+                                    "size": "large"
+                                },
+                                {
+                                    "color": "red"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "parses_list_of_list_shapes",
+                        "documentation": "Parses list of list shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"ListOfLists\":[[\"abc\",\"mno\",\"xyz\"],[\"hjk\",\"qrs\",\"tuv\"]]}",
+                        "params": {
+                            "ListOfLists": [
+                                [
+                                    "abc",
+                                    "mno",
+                                    "xyz"
+                                ],
+                                [
+                                    "hjk",
+                                    "qrs",
+                                    "tuv"
+                                ]
+                            ]
+                        }
+                    },
+                    {
+                        "id": "parses_list_of_structure_shapes",
+                        "documentation": "Parses list of structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"ListOfStructs\":[{\"Value\":\"value-1\"},{\"Value\":\"value-2\"}]}",
+                        "params": {
+                            "ListOfStructs": [
+                                {
+                                    "Value": "value-1"
+                                },
+                                {
+                                    "Value": "value-2"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "parses_list_of_recursive_structure_shapes",
+                        "documentation": "Parses list of recursive structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"RecursiveList\":[{\"RecursiveList\":[{\"RecursiveList\":[{\"String\":\"value\"}]}]}]}",
+                        "params": {
+                            "RecursiveList": [
+                                {
+                                    "RecursiveList": [
+                                        {
+                                            "RecursiveList": [
+                                                {
+                                                    "String": "value"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "id": "parses_map_shapes",
+                        "documentation": "Parses map shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"MapOfStrings\":{\"size\":\"large\",\"color\":\"red\"}}",
+                        "params": {
+                            "MapOfStrings": {
+                                "size": "large",
+                                "color": "red"
+                            }
+                        }
+                    },
+                    {
+                        "id": "parses_map_of_list_shapes",
+                        "documentation": "Parses map of list shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"MapOfListsOfStrings\":{\"sizes\":[\"large\",\"small\"],\"colors\":[\"red\",\"green\"]}}",
+                        "params": {
+                            "MapOfListsOfStrings": {
+                                "sizes": [
+                                    "large",
+                                    "small"
+                                ],
+                                "colors": [
+                                    "red",
+                                    "green"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "id": "parses_map_of_map_shapes",
+                        "documentation": "Parses map of map shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"MapOfMaps\":{\"sizes\":{\"large\":\"L\",\"medium\":\"M\"},\"colors\":{\"red\":\"R\",\"blue\":\"B\"}}}",
+                        "params": {
+                            "MapOfMaps": {
+                                "sizes": {
+                                    "large": "L",
+                                    "medium": "M"
+                                },
+                                "colors": {
+                                    "red": "R",
+                                    "blue": "B"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "id": "parses_map_of_structure_shapes",
+                        "documentation": "Parses map of structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"MapOfStructs\":{\"size\":{\"Value\":\"small\"},\"color\":{\"Value\":\"red\"}}}",
+                        "params": {
+                            "MapOfStructs": {
+                                "size": {
+                                    "Value": "small"
+                                },
+                                "color": {
+                                    "Value": "red"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "id": "parses_map_of_recursive_structure_shapes",
+                        "documentation": "Parses map of recursive structure shapes",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "bodyMediaType": "application/json",
+                        "body": "{\"RecursiveMap\":{\"key-1\":{\"RecursiveMap\":{\"key-2\":{\"RecursiveMap\":{\"key-3\":{\"String\":\"value\"}}}}}}}",
+                        "params": {
+                            "RecursiveMap": {
+                                "key-1": {
+                                    "RecursiveMap": {
+                                        "key-2": {
+                                            "RecursiveMap": {
+                                                "key-3": {
+                                                    "String": "value"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "id": "parses_the_request_id_from_the_response",
+                        "documentation": "Parses the request id from the response",
+                        "protocol": "aws.json-1.1",
+                        "code": 200,
+                        "headers": {
+                            "X-Amzn-Requestid": "amazon-uniq-request-id"
+                        }
+                    }
+                ]
+            }
+        },
+        "aws.protocols.tests.json#ListOfKitchenSinks": {
+            "type": "list",
+            "member": {
+                "target": "aws.protocols.tests.json#KitchenSink"
+            }
+        },
+        "aws.protocols.tests.json#ListOfListOfStrings": {
+            "type": "list",
+            "member": {
+                "target": "aws.protocols.tests.json#ListOfStrings"
+            }
+        },
+        "aws.protocols.tests.json#ListOfMapsOfStrings": {
+            "type": "list",
+            "member": {
+                "target": "aws.protocols.tests.json#MapOfStrings"
+            }
+        },
+        "aws.protocols.tests.json#ListOfStrings": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        },
+        "aws.protocols.tests.json#ListOfStructs": {
+            "type": "list",
+            "member": {
+                "target": "aws.protocols.tests.json#SimpleStruct"
+            }
+        },
+        "aws.protocols.tests.json#Long": {
+            "type": "long"
+        },
+        "aws.protocols.tests.json#MapOfKitchenSinks": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "aws.protocols.tests.json#KitchenSink"
+            }
+        },
+        "aws.protocols.tests.json#MapOfListsOfStrings": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "aws.protocols.tests.json#ListOfStrings"
+            }
+        },
+        "aws.protocols.tests.json#MapOfMapOfStrings": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "aws.protocols.tests.json#MapOfStrings"
+            }
+        },
+        "aws.protocols.tests.json#MapOfStrings": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            }
+        },
+        "aws.protocols.tests.json#MapOfStructs": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "aws.protocols.tests.json#SimpleStruct"
+            }
+        },
+        "aws.protocols.tests.json#OperationWithOptionalInputOutput": {
+            "type": "operation",
+            "input": {
+                "target": "aws.protocols.tests.json#SimpleStruct"
+            },
+            "output": {
+                "target": "aws.protocols.tests.json#SimpleStruct"
+            },
+            "traits": {
+                "smithy.test#httpRequestTests": [
+                    {
+                        "id": "can_call_operation_with_no_input_or_output",
+                        "description": "Can call operations with no input or output",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "headers": {
+                            "Content-Type": "application/x-amz-json-1.1",
+                            "X-Amz-Target": "JsonProtocolService.OperationWithOptionalInputOutput"
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{}"
+                    },
+                    {
+                        "id": "can_call_operation_with_optional_input",
+                        "description": "Can invoke operations with optional input",
+                        "protocol": "aws.json-1.1",
+                        "method": "POST",
+                        "uri": "/",
+                        "params": {
+                            "Value": "Hi"
+                        },
+                        "headers": {
+                            "Content-Type": "application/x-amz-json-1.1",
+                            "X-Amz-Target": "JsonProtocolService.OperationWithOptionalInputOutput"
+                        },
+                        "requireHeaders": ["Content-Length"],
+                        "bodyMediaType": "application/json",
+                        "body": "{\"Value\":\"Hi\"}"
+                    }
+                ]
+            }
+        },
+        "aws.protocols.tests.json#SimpleStruct": {
+            "type": "structure",
+            "members": {
+                "Value": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "aws.protocols.tests.json#String": {
+            "type": "string"
+        },
+        "aws.protocols.tests.json#StructWithLocationName": {
+            "type": "structure",
+            "members": {
+                "Value": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#jsonName": "RenamedMember"
+                    }
+                }
+            }
+        },
+        "aws.protocols.tests.json#Timestamp": {
+            "type": "timestamp"
+        }
+    }
+}
