@@ -4,6 +4,15 @@ $version: "0.5.0"
 
 namespace aws.protocols.tests.restxml
 
+use aws.protocols.tests.shared#BooleanList
+use aws.protocols.tests.shared#EpochSeconds
+use aws.protocols.tests.shared#FooEnumList
+use aws.protocols.tests.shared#GreetingList
+use aws.protocols.tests.shared#IntegerList
+use aws.protocols.tests.shared#NestedStringList
+use aws.protocols.tests.shared#StringList
+use aws.protocols.tests.shared#StringSet
+use aws.protocols.tests.shared#TimestampList
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
