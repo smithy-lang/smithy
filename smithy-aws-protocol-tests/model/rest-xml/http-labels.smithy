@@ -5,6 +5,8 @@ $version: "0.5.0"
 
 namespace aws.protocols.tests.restxml
 
+use aws.protocols.tests.shared#EpochSeconds
+use aws.protocols.tests.shared#HttpDate
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 

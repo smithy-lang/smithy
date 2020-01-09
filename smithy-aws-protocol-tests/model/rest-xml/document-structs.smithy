@@ -5,6 +5,10 @@ $version: "0.5.0"
 
 namespace aws.protocols.tests.restxml
 
+use aws.protocols.tests.shared#FooEnum
+use aws.protocols.tests.shared#FooEnumList
+use aws.protocols.tests.shared#FooEnumSet
+use aws.protocols.tests.shared#FooEnumMap
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 

@@ -1,12 +1,13 @@
-// This file contains shared types that are used throughout the rest-xml
-// test cases. Anything that is generic enough that it could potentially
-// be reused should be defined in this file. However, things like input
-// or output structures or other test-case specific shapes should be
-// defined closer to the test case and in its same file.
+// This file contains shared types that are used throughout the test cases.
+//
+// Anything that is generic enough that it could potentially be reused
+// should be defined in this file. However, things like input or output
+// structures or other test-case specific shapes should be defined closer to
+// the test case and in its same file.
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocols.tests.shared
 
 list StringList {
     member: String,
@@ -14,6 +15,11 @@ list StringList {
 
 set StringSet {
     member: String,
+}
+
+map StringMap {
+    key: String,
+    value: String,
 }
 
 /// A list of lists of strings.
@@ -74,3 +80,11 @@ timestamp HttpDate
 
 @mediaType("text/plain")
 blob TextPlainBlob
+
+structure GreetingStruct {
+    hi: String,
+}
+
+list GreetingList {
+    member: GreetingStruct
+}
