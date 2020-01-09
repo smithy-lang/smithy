@@ -208,6 +208,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      *
      * @param id Shape to retrieve by ID.
      * @param type Shape type to expect and convert to.
+     * @param <T> Expected shape type.
      * @return Returns the shape.
      * @throws ExpectationNotMetException if the shape is not found or is not the expected type.
      */

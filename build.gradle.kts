@@ -241,6 +241,21 @@ subprojects {
     }
 
     /*
+     * Tests
+     * ====================================================
+     *
+     * Configure the running of tests.
+     */
+    if (plugins.hasPlugin("java")) {
+        // Log on passed, skipped, and failed test events if the `-Plog-tests` property is set.
+        if (project.hasProperty("log-tests")) {
+            tasks.test {
+                testLogging.events("passed", "skipped", "failed")
+            }
+        }
+    }
+
+    /*
      * Spotbugs
      * ====================================================
      *
