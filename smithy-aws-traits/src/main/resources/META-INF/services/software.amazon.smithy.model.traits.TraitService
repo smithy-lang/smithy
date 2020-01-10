@@ -20,3 +20,4 @@ software.amazon.smithy.aws.traits.apigateway.MockIntegrationTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryIdTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientDiscoveredEndpointTrait$Provider
+software.amazon.smithy.aws.traits.Ec2QueryNameTrait$Provider

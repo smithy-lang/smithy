@@ -1,0 +1,17 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "com.example#Input": {
+            "type": "structure",
+            "members": {
+                "Ipv6AddressSet": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#xmlName": "ipv6AddressSet",
+                        "aws.api#ec2QueryName": "Ipv6Addresses"
+                    }
+                }
+            }
+        }
+    }
+}

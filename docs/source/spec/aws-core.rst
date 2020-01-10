@@ -923,6 +923,64 @@ literal string ``UNSIGNED-PAYLOAD`` is used when constructing a
 `canonical request`_, and the same value is sent in the
 `x-amz-content-sha256`_ header when sending an HTTP request.
 
+.. _aws.api#ec2QueryName-trait:
+
+---------------------------------
+``aws.api#ec2QueryName`` trait
+---------------------------------
+
+Summary
+    Indicates the serialized name of a structure member when that structure is
+    serialized for the input of an EC2 operation.
+Trait selector
+    ``member:of(structure)``
+Value type
+    ``string``
+
+It is very important to note that the ``aws.api#ec2QueryName`` ONLY applies
+when serializing an INPUT. For example, given the following Smithy model:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        structure MyStruct {
+            @ec2QueryName("foo")
+            bar: String
+        }
+
+    .. code-tabe:: json
+
+        {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyStruct": {
+                    "type": "structure",
+                    "members": {
+                        "bar": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "aws.api#ec2QueryName": "foo"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+The serialization of this structure as an input is:
+
+.. code-block::
+
+    MyStruct.bar=baz
+
+The serialization of the structure as an (XML) output is:
+
+.. code-block:: xml
+
+    <MyStruct>
+        <foo>baz</foo>
+    </MyStruct>
 
 .. _endpoint-discovery:
 
