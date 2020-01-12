@@ -1,6 +1,10 @@
 namespace smithy.example
 
-operation Operation(Input) -> Output errors [Error]
+operation Operation {
+    input: Input,
+    output: Output,
+    errors: [Error]
+}
 
 structure Input {
   foo: smithy.api#String,

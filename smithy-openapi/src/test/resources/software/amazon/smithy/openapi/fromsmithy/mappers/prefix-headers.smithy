@@ -7,7 +7,10 @@ service PrefixHeaders {
 }
 
 @http(method: "GET", uri: "/")
-operation PrefixHeadersOperation(Input) -> Output
+operation PrefixHeadersOperation {
+    input: Input,
+    output: Output
+}
 
 structure Input {
     @httpPrefixHeaders("x-custom-")

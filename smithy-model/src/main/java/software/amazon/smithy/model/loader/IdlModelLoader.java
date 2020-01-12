@@ -112,6 +112,9 @@ final class IdlModelLoader {
     // Valid map keys.
     private static final Collection<String> MAP_KEYS = ListUtils.of("key", "value");
 
+    // Valid operation properties.
+    private static final Collection<String> OPERATION_PROPERTY_NAMES = ListUtils.of("input", "output", "errors");
+
     private final String filename;
     private final SmithyModelLexer lexer;
     private final LoaderVisitor visitor;
@@ -842,8 +845,37 @@ final class IdlModelLoader {
         OperationShape.Builder builder = OperationShape.builder().id(id).source(sourceLocation);
         visitor.onShape(builder);
 
-        // Parse the optionally present input target.
-        expect(LPAREN);
+        Token opening = expect(LPAREN, LBRACE);
+        if (opening.type == LPAREN) {
+            parseDeprecatedOperationSyntax(builder);
+        } else {
+            ObjectNode node = parseObjectNode(opening.getSourceLocation(), RBRACE);
+            node.expectNoAdditionalProperties(OPERATION_PROPERTY_NAMES);
+            node.getStringMember("input").ifPresent(input -> {
+                visitor.onShapeTarget(input.getValue(), input, builder::input);
+            });
+            node.getStringMember("output").ifPresent(output -> {
+                visitor.onShapeTarget(output.getValue(), output, builder::output);
+            });
+            node.getArrayMember("errors").ifPresent(errors -> {
+                for (StringNode value : errors.getElementsAs(StringNode.class)) {
+                    visitor.onShapeTarget(value.getValue(), value, builder::addError);
+                }
+            });
+        }
+
+        expectNewline();
+    }
+
+    private void parseDeprecatedOperationSyntax(OperationShape.Builder builder) {
+        visitor.onError(ValidationEvent.builder()
+                .eventId(Validator.MODEL_ERROR)
+                .sourceLocation(builder.getSourceLocation())
+                .shapeId(builder.getId())
+                .message("Deprecated IDL syntax detected for operation definition")
+                .severity(Severity.WARNING)
+                .build());
+
         Token next = expect(RPAREN, UNQUOTED);
         if (next.type == UNQUOTED) {
             visitor.onShapeTarget(next.lexeme, next, builder::input);
@@ -873,7 +905,5 @@ final class IdlModelLoader {
             }
             expect(RBRACKET);
         }
-
-        expectNewline();
     }
 }

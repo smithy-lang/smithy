@@ -9,4 +9,4 @@ service MyService {
 }
 
 @aws.iam#conditionKeys(["foo:qux"])
-operation Operation()
+operation Operation {}

@@ -8,7 +8,10 @@ use smithy.mqtt#topicLabel
 use smithy.mqtt#subscribe
 
 @subscribe("events/{foo}")
-operation Foo(FooInput) -> FooOutput
+operation Foo {
+    input: FooInput,
+    output: FooOutput
+}
 
 structure FooInput {
   @required

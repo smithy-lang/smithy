@@ -62,7 +62,9 @@ The following example defines an operation that uses HTTP bindings:
 
         @idempotent
         @http(method: "PUT", uri: "/{bucketName}/{key}", code: 200)
-        operation PutObject(PutObjectInput)
+        operation PutObject {
+            input: PutObjectInput
+        }
 
         structure PutObjectInput {
             // Sent in the URI label named "key".
@@ -138,7 +140,9 @@ constraints:
 
     @readonly
     @http(method: "GET", uri: "/foo/{baz}")
-    operation GetService() -> GetServiceOutput
+    operation GetService {
+        output: GetServiceOutput
+    }
 
 
 Literal character sequences
@@ -621,7 +625,10 @@ Serialization rules:
 
         @readonly
         @http(method: "GET", uri: "/{foo}")
-        operation GetStatus(GetStatusInput) -> GetStatusOutput
+        operation GetStatus {
+            input: GetStatusInput,
+            output: GetStatusOutput
+        }
 
         structure GetStatusInput {
             @required
@@ -723,7 +730,9 @@ Given the following Smithy model:
 
         @readonly
         @http(method: "GET", uri: "/myOperation")
-        operation MyOperation(MyOperationInput)
+        operation MyOperation {
+            input: MyOperationInput
+        }
 
         structure MyOperationInput {
             @httpPrefixHeaders("X-Foo-")
@@ -934,7 +943,9 @@ and HTTP bindings:
         namespace smithy.example
 
         @http(method: "POST", uri: "/messages")
-        operation PublishMessages(PublishMessagesInput)
+        operation PublishMessages {
+            input: PublishMessagesInput
+        }
 
         structure PublishMessagesInput {
             @httpPayload
@@ -995,7 +1006,9 @@ marked with the ``httpPayload`` trait:
     namespace smithy.example
 
     @http(method: "POST", uri: "/messages")
-    operation InvalidOperation(InvalidOperationInput)
+    operation InvalidOperation {
+        input: InvalidOperationInput
+    }
 
     structure InvalidOperationInput {
         @eventStream

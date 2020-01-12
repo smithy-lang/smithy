@@ -230,7 +230,9 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                 bodyMediaType: "application/json"
             }
         ])
-        operation SayHello(SayHelloInput)
+        operation SayHello {
+            input: SayHelloInput
+        }
 
         structure SayHelloInput {
             @httpHeader("X-Greeting")
@@ -418,7 +420,9 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                 }
             }
         ])
-        operation SayGoodbye() -> SayGoodbyeOutput
+        operation SayGoodbye {
+            output: SayGoodbyeOutput
+        }
 
         structure SayGoodbyeOutput {
             @httpHeader("X-Farewell")

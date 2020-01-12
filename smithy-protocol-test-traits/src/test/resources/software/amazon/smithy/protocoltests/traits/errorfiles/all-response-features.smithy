@@ -27,7 +27,9 @@ use smithy.test#httpResponseTests
         documentation: "Hi"
     }
 ])
-operation GetFoo() -> GetFooOutput
+operation GetFoo {
+    output: GetFooOutput
+}
 
 structure GetFooOutput {
     @httpPayload

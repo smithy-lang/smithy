@@ -23,14 +23,20 @@ resource Forecast {
 string CityId
 
 @readonly
-operation GetCurrentTime() -> GetCurrentTimeOutput
+operation GetCurrentTime {
+    output: GetCurrentTimeOutput
+}
 
 structure GetCurrentTimeOutput {
   time: smithy.api#Timestamp
 }
 
 @readonly
-operation GetForecast(GetForecastInput) -> GetForecastOutput errors [NoSuchResource]
+operation GetForecast {
+    input: GetForecastInput,
+    output: GetForecastOutput,
+    errors: [NoSuchResource]
+}
 
 structure GetForecastInput {
   @required cityId: CityId
@@ -43,7 +49,11 @@ structure GetForecastOutput {
 }
 
 @readonly
-operation GetCity(GetCityInput) -> GetCityOutput errors [NoSuchResource]
+operation GetCity {
+    input: GetCityInput,
+    output: GetCityOutput,
+    errors: [NoSuchResource]
+}
 
 structure GetCityInput {
   @required cityId: CityId
@@ -57,7 +67,10 @@ structure GetCityOutput {
 @readonly
 @paginated(inputToken: "nextToken", outputToken: "nextToken",
            pageSize: "pageSize", items: "items")
-operation ListCities(ListCitiesInput) -> ListCitiesOutput
+operation ListCities {
+    input: ListCitiesInput,
+    output: ListCitiesOutput
+}
 
 structure ListCitiesInput {
   nextToken: smithy.api#String,

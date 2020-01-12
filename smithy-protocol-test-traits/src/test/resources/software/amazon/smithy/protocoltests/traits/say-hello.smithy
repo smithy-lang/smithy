@@ -20,7 +20,9 @@ use smithy.test#httpRequestTests
         bodyMediaType: "application/json"
     }
 ])
-operation SayHello(SayHelloInput)
+operation SayHello {
+    input: SayHelloInput
+}
 
 structure SayHelloInput {
     @httpHeader("X-Greeting")

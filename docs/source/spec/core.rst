@@ -1072,7 +1072,9 @@ that do not fit within a resource hierarchy.
         }
 
         @readonly
-        operation GetServerTime() -> GetServerTimeOutput
+        operation GetServerTime {
+            output: GetServerTimeOutput
+        }
 
     .. code-tab:: json
 
@@ -1163,6 +1165,21 @@ an API operation. Operation shapes are bound to :ref:`resource <resource>`
 shapes and :ref:`service <service>` shapes. Operation shapes are defined using
 the :token:`operation_statement`.
 
+An operation is an object that supports the following key-value pairs:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 90
+
+    * - Type
+      - Description
+    * - :ref:`input <operation-input>`
+      - The optional input structure of the operation.
+    * - :ref:`output <operation-output>`
+      - The optional output structure of the operation.
+    * - :ref:`errors <operation-errors>`
+      - The optional list of errors the operation can return.
+
 The following example defines an operation shape that accepts an input
 structure named ``Input``, returns an output structure named ``Output``, and
 can potentially return the ``NotFound`` or ``BadRequest``
@@ -1172,7 +1189,11 @@ can potentially return the ``NotFound`` or ``BadRequest``
 
     .. code-tab:: smithy
 
-        operation MyOperation(Input) -> Output errors [NotFound, BadRequest]
+        operation MyOperation {
+            input: Input,
+            output: Output,
+            errors: [NotFound, BadRequest]
+        }
 
     .. code-tab:: json
 
@@ -1214,7 +1235,9 @@ named ``Input``:
 
     .. code-tab:: smithy
 
-        operation MyOperation(Input)
+        operation MyOperation {
+            input: Input
+        }
 
     .. code-tab:: json
 
@@ -1230,26 +1253,6 @@ named ``Input``:
             }
         }
 
-The input of an operation can be omitted with empty parenthesis after the
-shape name. The following example defines an operation that accepts no
-input and returns no output:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        operation MyOperation()
-
-    .. code-tab:: json
-
-        {
-            "smithy": "0.5.0",
-            "shapes": {
-                "smithy.example#MyOperation": {
-                    "type": "operation"
-                }
-            }
-        }
 
 .. _operation-output:
 
@@ -1266,7 +1269,9 @@ structure named ``Output``:
 
     .. code-tab:: smithy
 
-        operation MyOperation() -> Output
+        operation MyOperation {
+            output: Output
+        }
 
     .. code-tab:: json
 
@@ -1282,15 +1287,16 @@ structure named ``Output``:
             }
         }
 
+
 .. _operation-errors:
 
 Operation errors
 ````````````````
 
-The errors of an operation is an optional, comma-separated, list of shape IDs
-that MUST target structure shapes that are marked with the
-:ref:`error-trait`. Errors defined on an operation are errors that can
-potentially occur when calling an operation.
+The errors of an operation is an optional array of shape IDs that MUST
+target structure shapes that are marked with the :ref:`error-trait`. Errors
+defined on an operation are errors that can potentially occur when calling
+an operation.
 
 The following example defines an operation shape that accepts no input,
 returns no output, and can potentially return the
@@ -1300,7 +1306,9 @@ returns no output, and can potentially return the
 
     .. code-tab:: smithy
 
-        operation MyOperation() errors [NotFound, BadRequest]
+        operation MyOperation {
+            errors: [NotFound, BadRequest]
+        }
 
     .. code-tab:: json
 
@@ -1320,6 +1328,7 @@ returns no output, and can potentially return the
                 }
             }
         }
+
 
 ..  _resource:
 
@@ -1652,7 +1661,10 @@ For example, given the following model,
         }
 
         @readonly
-        operation GetForecast(GetForecastInput) -> GetForecastOutput
+        operation GetForecast {
+            input: GetForecastInput,
+            output: GetForecastOutput
+        }
 
         structure GetForecastInput {
             @required
@@ -1739,8 +1751,10 @@ Given the following model,
             operations: [BatchPutForecasts],
         }
 
-        operation BatchPutForecasts(BatchPutForecastsInput)
-            -> BatchPutForecastsOutput
+        operation BatchPutForecasts {
+            input: BatchPutForecastsInput,
+            output: BatchPutForecastsOutput
+        }
 
         structure BatchPutForecastsInput {
             @required
@@ -1821,8 +1835,10 @@ For example, given the following,
     }
 
     @readonly
-    operation GetHistoricalForecast(GetHistoricalForecastInput)
-        -> GetHistoricalForecastOutput
+    operation GetHistoricalForecast {
+        input: GetHistoricalForecastInput,
+        output: GetHistoricalForecastOutput
+    }
 
     structure GetHistoricalForecastInput {
         @required
@@ -1886,7 +1902,10 @@ The following snippet defines the ``PutForecast`` operation.
 
 .. code-block:: smithy
 
-    operation PutForecast(PutForecastInput) -> PutForecastOutput
+    operation PutForecast {
+        input: PutForecastInput,
+        output: PutForecastOutput
+    }
 
     @idempotent
     structure PutForecastInput {
@@ -1914,10 +1933,16 @@ The following snippet defines the ``CreateForecast`` operation.
 
 .. code-block:: smithy
 
-    operation CreateForecast(CreateForecastInput) -> CreateForecastOutput
+    operation CreateForecast {
+        input: CreateForecastInput,
+        output: CreateForecastOutput
+    }
 
     @collection
-    operation CreateForecast(CreateForecastInput) -> CreateForecastOutput
+    operation CreateForecast {
+        input: CreateForecastInput,
+        output: CreateForecastOutput
+    }
 
     structure CreateForecastInput {
         // No identifier is provided by the client, so the service is
@@ -1946,9 +1971,11 @@ For example:
 .. code-block:: smithy
 
     @readonly
-    operation GetForecast(GetForecastInput)
-        -> GetForecastOutput
-        errors [ResourceNotFound]
+    operation GetForecast {
+        input: GetForecastInput,
+        output: GetForecastOutput,
+        errors: [ResourceNotFound]
+    }
 
     structure GetForecastInput {
         @required
@@ -1973,9 +2000,11 @@ For example:
 
 .. code-block:: smithy
 
-    operation UpdateForecast(UpdateForecastInput)
-        -> UpdateForecastOutput
-        errors [ResourceNotFound]
+    operation UpdateForecast {
+        input: UpdateForecastInput,
+        output: UpdateForecastOutput,
+        errors: [ResourceNotFound]
+    }
 
     structure UpdateForecastInput {
         @required
@@ -2003,9 +2032,11 @@ For example:
 .. code-block:: smithy
 
     @idempotent
-    operation DeleteForecast(DeleteForecastInput)
-        -> DeleteForecastOutput
-        errors [ResourceNotFound]
+    operation DeleteForecast {
+        input: DeleteForecastInput,
+        output: DeleteForecastOutput,
+        errors: [ResourceNotFound]
+    }
 
     structure DeleteForecastInput {
         @required
@@ -2034,7 +2065,10 @@ For example:
 .. code-block:: smithy
 
     @collection @readonly @paginated
-    operation ListForecasts(ListForecastsInput) -> ListForecastsOutput
+    operation ListForecasts {
+        input: ListForecastsInput,
+        output: ListForecastsOutput
+    }
 
     structure ListForecastsInput {
         maxResults: Integer,
@@ -3886,7 +3920,9 @@ member if and only if the member is not explicitly provided.
 
     .. code-tab:: smithy
 
-        operation AllocateWidget(AllocateWidgetInput)
+        operation AllocateWidget {
+            input: AllocateWidgetInput
+        }
 
         structure AllocateWidgetInput {
             @idempotencyToken
@@ -3915,7 +3951,10 @@ Conflicts with
     .. code-tab:: smithy
 
         @idempotent
-        operation GetSomething(DeleteSomething) -> DeleteSomethingOuput
+        operation GetSomething {
+            input: DeleteSomething,
+            output: DeleteSomethingOutput
+        }
 
 .. note::
 
@@ -3942,7 +3981,10 @@ Conflicts with
     .. code-tab:: smithy
 
         @readonly
-        operation GetSomething(GetSomethingInput) -> GetSomethingOutput
+        operation GetSomething {
+            input: GetSomethingInput,
+            output: GetSomethingOutput
+        }
 
 
 .. _retryable-trait:
@@ -4071,7 +4113,10 @@ explicitly on the operation.
         @collection @readonly
         @paginated(inputToken: "nextToken", outputToken: "nextToken",
                    pageSize: "maxResults", items: "foos")
-        operation GetFoos(GetFoosInput) -> GetFoosOutput
+        operation GetFoos {
+            input: GetFoosInput,
+            output: GetFoosOutput
+        }
 
         structure GetFoosInput {
             maxResults: Integer,
@@ -4169,7 +4214,10 @@ settings from a service.
         }
 
         @collection @readonly @paginated(items: "foos")
-        operation GetFoos(GetFoosInput) -> GetFoosOutput
+        operation GetFoos {
+            input: GetFoosInput,
+            output: GetFoosOutput
+        }
 
     .. code-tab:: json
 
@@ -4228,7 +4276,10 @@ wrapper where the output token and items are referenced by paths.
         @readonly
         @paginated(inputToken: "nextToken", outputToken: "result.nextToken",
                    pageSize: "maxResults", items: "result.foos")
-        operation GetFoos(GetFoosInput) -> GetFoosOutput
+        operation GetFoos {
+            input: GetFoosInput,
+            output: GetFoosOutput
+        }
 
         structure GetFoosInput {
             maxResults: Integer,
@@ -4586,7 +4637,11 @@ match for the name of the resource identifier.
         }
 
         @readonly
-        operation GetFile(GetFileInput) -> GetFileOutput errors [NoSuchResource]
+        operation GetFile {
+            input: GetFileInput,
+            output: GetFileOutput,
+            errors: [NoSuchResource]
+        }
 
         structure GetFileInput {
             @required
@@ -4798,11 +4853,11 @@ The following example defines two operations:
         // This operation is configured to either be unauthenticated
         // or to use http-basic. It is not expected to support http-digest.
         @auth(["none", "http-basic"])
-        operation OperationA()
+        operation OperationA {}
 
         // This operation defines no auth, so it is expected to support the auth
         // defined on the service: http-basic and http-digest.
-        operation OperationB()
+        operation OperationB {}
 
     .. code-tab:: json
 
@@ -4875,9 +4930,9 @@ protocols can define different authentication schemes for each protocol.
         }
 
         @auth(["http-digest", "x.509"])
-        operation OperationA()
+        operation OperationA {}
 
-        operation OperationB()
+        operation OperationB {}
 
     .. code-tab:: json
 
@@ -5229,7 +5284,10 @@ These values use the same semantics and format as
     .. code-tab:: smithy
 
         @readonly
-        operation MyOperation(MyOperationInput) -> MyOperationOutput
+        operation MyOperation {
+            input: MyOperationInput,
+            output: MyOperationOutput
+        }
 
         apply MyOperation @examples([
             {
@@ -5423,7 +5481,10 @@ The following example defines an operation that uses a custom endpoint:
 
         @readonly
         @endpoint(hostPrefix: "{foo}.data.")
-        operation GetStatus(GetStatusInput) -> GetStatusOutput
+        operation GetStatus {
+            input: GetStatusInput,
+            output: GetStatusOutput
+        }
 
         structure GetStatusInput {
             @required
@@ -5486,7 +5547,10 @@ Given the following operation,
 
         @readonly
         @endpoint(hostPrefix: "{foo}.data.")
-        operation GetStatus(GetStatusInput) -> GetStatusOutput
+        operation GetStatus {
+            input: GetStatusInput,
+            output: GetStatusOutput
+        }
 
         structure GetStatusInput {
             @required
@@ -5548,7 +5612,10 @@ Given the following operation,
 
         @readonly
         @endpoint(hostPrefix: "{foo}-{bar}.data.")
-        operation GetStatus(GetStatusInput) -> GetStatusOutput
+        operation GetStatus {
+            input: GetStatusInput,
+            output: GetStatusOutput
+        }
 
         structure GetStatusInput {
             @required
@@ -5620,7 +5687,10 @@ invalid because the ``{foo}`` and ``{bar}`` labels are adjacent:
 
         @readonly
         @endpoint(hostPrefix: "{foo}{bar}.data.")
-        operation GetStatus(GetStatusInput) -> GetStatusOutput
+        operation GetStatus {
+            input: GetStatusInput,
+            output: GetStatusOutput
+        }
 
     .. code-tab:: json
 
@@ -5678,7 +5748,10 @@ Given the following operation,
         @readonly
         @endpoint(hostPrefix: "{foo}.data.")
         @http(method: "GET", uri: "/status")
-        operation GetStatus(GetStatusInput) -> GetStatusOutput
+        operation GetStatus {
+            input: GetStatusInput,
+            output: GetStatusOutput
+        }
 
         structure GetStatusInput {
             @required
@@ -5766,7 +5839,10 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
 
         @readonly
         @endpoint(hostPrefix: "{foo}.data")
-        operation GetStatus(GetStatusInput) -> GetStatusOutput
+        operation GetStatus {
+            input: GetStatusInput,
+            output: GetStatusOutput
+        }
 
         structure GetStatusInput {
             @required

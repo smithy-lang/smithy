@@ -7,6 +7,8 @@ service Small {
 }
 
 @http(method: "GET", uri: "/")
-operation SmallOperation(SmallOperationInput)
+operation SmallOperation {
+    input: SmallOperationInput
+}
 
 structure SmallOperationInput {}

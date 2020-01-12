@@ -95,7 +95,9 @@ and ``{second}``, in the MQTT topic template:
         use smithy.mqtt#topicLabel
 
         @publish("{first}/{second}")
-        operation ExampleOperation(ExampleOperationInput)
+        operation ExampleOperation {
+            input: ExampleOperationInput
+        }
 
         structure ExampleOperationInput {
             @required
@@ -205,7 +207,9 @@ The following example defines an operation that publishes messages to the
         use smithy.mqtt#topicLabel
 
         @publish("foo/{bar}")
-        operation PostFoo(PostFooInput)
+        operation PostFoo {
+            input: PostFooInput
+        }
 
         structure PostFooInput {
             @required
@@ -317,7 +321,10 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
         use smithy.mqtt#topicLabel
 
         @subscribe("events/{id}")
-        operation SubscribeForEvents(SubscribeForEventsInput) -> SubscribeForEventsOutput
+        operation SubscribeForEvents {
+            input: SubscribeForEventsInput,
+            output: SubscribeForEventsOutput
+        }
 
         structure SubscribeForEventsInput {
             @required

@@ -14,7 +14,10 @@ use smithy.test#httpRequestTests
         }
     }
 ])
-operation SayGoodbye() -> SayGoodbyeOutput
+operation SayGoodbye {
+    output: SayGoodbyeOutput
+}
+
 structure SayGoodbyeOutput {}
 
 @httpResponseTests([
@@ -44,7 +47,10 @@ structure MyError {
         }
     }
 ])
-operation SayHello(SayHelloInput)
+operation SayHello {
+    input: SayHelloInput
+}
+
 structure SayHelloInput {
     badType: Boolean
 }

@@ -307,7 +307,11 @@ Let's define the operation used to "read" a ``City``.
     .. code-tab:: smithy
 
         @readonly
-        operation GetCity(GetCityInput) -> GetCityOutput errors [NoSuchResource]
+        operation GetCity {
+            input: GetCityInput,
+            output: GetCityOutput,
+            errors: [NoSuchResource]
+        }
 
         structure GetCityInput {
             // "cityId" provides the identifier for the resource and
@@ -460,7 +464,10 @@ cities, so there's no way we could provide a City identifier.
         // sets default pagination configuration settings on each operation.
         @paginated(items: "items")
         @readonly
-        operation ListCities(ListCitiesInput) -> ListCitiesOutput
+        operation ListCities {
+            input: ListCitiesInput,
+            output: ListCitiesOutput
+        }
 
         structure ListCitiesInput {
             nextToken: String,
@@ -622,7 +629,9 @@ service.
         }
 
         @readonly
-        operation GetCurrentTime() -> GetCurrentTimeOutput
+        operation GetCurrentTime {
+            output: GetCurrentTimeOutput
+        }
 
         structure GetCurrentTimeOutput {
             @required
@@ -720,7 +729,11 @@ Complete example
         string CityId
 
         @readonly
-        operation GetCity(GetCityInput) -> GetCityOutput errors [NoSuchResource]
+        operation GetCity {
+            input: GetCityInput,
+            output: GetCityOutput,
+            errors: [NoSuchResource]
+        }
 
         structure GetCityInput {
             // "cityId" provides the identifier for the resource and
@@ -760,7 +773,10 @@ Complete example
         // return truncated results.
         @readonly
         @paginated(items: "items")
-        operation ListCities(ListCitiesInput) -> ListCitiesOutput
+        operation ListCities {
+            input: ListCitiesInput,
+            output: ListCitiesOutput
+        }
 
         structure ListCitiesInput {
             nextToken: String,
@@ -790,7 +806,9 @@ Complete example
         }
 
         @readonly
-        operation GetCurrentTime() -> GetCurrentTimeOutput
+        operation GetCurrentTime {
+            output: GetCurrentTimeOutput
+        }
 
         structure GetCurrentTimeOutput {
             @required
@@ -798,7 +816,10 @@ Complete example
         }
 
         @readonly
-        operation GetForecast(GetForecastInput) -> GetForecastOutput
+        operation GetForecast {
+            input: GetForecastInput,
+            output: GetForecastOutput
+        }
 
         // "cityId" provides the only identifier for the resource since
         // a Forecast doesn't have its own.

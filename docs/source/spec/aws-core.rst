@@ -752,7 +752,10 @@ plane unless an operation or resource is marked with the
         use aws.api#controlPlane
 
         @controlPlane
-        operation PutThings(PutThingsInput) -> PutThingsOutput
+        operation PutThings {
+            input: PutThingsInput,
+            output: PutThingsOutput
+        }
 
     .. code-tab:: json
 
@@ -803,7 +806,10 @@ plane unless an operation or resource is marked with the
         use aws.api#controlPlane
 
         @dataPlane
-        operation PutThings(PutThingsInput) -> PutThingsOutput
+        operation PutThings {
+            input: PutThingsInput,
+            output: PutThingsOutput
+        }
 
     .. code-tab:: json
 
@@ -859,7 +865,10 @@ operation MUST NOT be used as part of the request signature calculation:
         use aws.api#unsignedPayload
 
         @unsignedPayload
-        operation PutThings(PutThingsInput) -> PutThingsOutput
+        operation PutThings {
+            input: PutThingsInput,
+            output: PutThingsOutput
+        }
 
     .. code-tab:: json
 
@@ -891,7 +900,10 @@ only when using the "aws.v4" authentication scheme:
         use aws.api#unsignedPayload
 
         @unsignedPayload(["aws.v4"])
-        operation PutThings(PutThingsInput) -> PutThingsOutput
+        operation PutThings {
+            input: PutThingsInput,
+            output: PutThingsOutput
+        }
 
     .. code-tab:: json
 
@@ -949,7 +961,7 @@ when serializing an INPUT. For example, given the following Smithy model:
             bar: String
         }
 
-    .. code-tabe:: json
+    .. code-tab:: json
 
         {
             "smithy": "0.5.0",
@@ -970,7 +982,7 @@ when serializing an INPUT. For example, given the following Smithy model:
 
 The serialization of this structure as an input is:
 
-.. code-block::
+::
 
     MyStruct.bar=baz
 
@@ -1108,9 +1120,11 @@ using an ``clientEndpointDiscoveryId``.
           operations: [DescribeEndpoints, GetObject]
         }
 
-        operation DescribeEndpoints(DescribeEndpointsInput)
-            -> DescribeEndpointsOutput
-            errors [InvalidEndpointError]
+        operation DescribeEndpoints {
+            input: DescribeEndpointsInput,
+            output: DescribeEndpointsOutput,
+            errors: [InvalidEndpointError]
+        }
 
         @error("client")
         @httpError(421)
@@ -1140,7 +1154,10 @@ using an ``clientEndpointDiscoveryId``.
         }
 
         @aws.api#clientDiscoveredEndpoint(required: true)
-        operation GetObject(GetObjectInput) -> GetObjectOutput
+        operation GetObject {
+            input: GetObjectInput,
+            output: GetObjectOutput
+        }
 
         structure GetObjectInput {
           @clientEndpointDiscoveryId

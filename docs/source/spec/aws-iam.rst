@@ -46,7 +46,7 @@ Value type
         use aws.iam#actionPermissionDescription
 
         @actionPermissionDescription("This will allow the user to Foo.")
-        operation FooOperation()
+        operation FooOperation {}
 
     .. code-tab:: json
 
@@ -107,7 +107,7 @@ The following example's ``MyResource`` resource has the
         }
 
         @conditionKeys(["aws:region"])
-        operation MyOperation
+        operation MyOperation {}
 
     .. code-tab:: json
 
@@ -434,7 +434,7 @@ operation for it to complete successfully.
         }
 
         @requiredActions(["otherservice:OtherOperation"])
-        operation MyOperation
+        operation MyOperation {}
 
     .. code-tab:: json
 
@@ -530,7 +530,7 @@ Given the following model,
         }
 
         @conditionKeys(["aws:region"])
-        operation MyOperation
+        operation MyOperation {}
 
     .. code-tab:: json
 

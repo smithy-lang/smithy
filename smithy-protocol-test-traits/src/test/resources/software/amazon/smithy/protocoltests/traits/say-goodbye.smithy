@@ -15,7 +15,9 @@ use smithy.test#httpResponseTests
         }
     }
 ])
-operation SayGoodbye() -> SayGoodbyeOutput
+operation SayGoodbye {
+    output: SayGoodbyeOutput
+}
 
 structure SayGoodbyeOutput {
     @httpHeader("X-Farewell")

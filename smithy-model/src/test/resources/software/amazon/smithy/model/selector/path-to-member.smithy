@@ -1,6 +1,9 @@
 namespace smithy.example
 
-operation Operation(Input) -> Output
+operation Operation {
+    input: Input,
+    output: Output
+}
 
 structure Input {
   foo: String,

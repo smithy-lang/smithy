@@ -26,7 +26,9 @@ use smithy.test#httpRequestTests
         vendorParams: {foo: "Bar"}
     }
 ])
-operation SayHello(SayHelloInput)
+operation SayHello {
+    input: SayHelloInput
+}
 
 structure SayHelloInput {
     @httpPayload
