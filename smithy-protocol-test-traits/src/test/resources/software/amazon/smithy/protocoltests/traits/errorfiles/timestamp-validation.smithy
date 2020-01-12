@@ -14,7 +14,9 @@ use smithy.test#httpRequestTests
         }
     }
 ])
-operation HasTime(HasTimeInput)
+operation HasTime {
+    input: HasTimeInput
+}
 
 structure HasTimeInput {
     time: Timestamp,

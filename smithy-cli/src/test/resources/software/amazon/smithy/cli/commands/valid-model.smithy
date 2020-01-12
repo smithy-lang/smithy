@@ -8,7 +8,10 @@ resource Foo {
 string FooId
 
 @readonly
-operation GetFoo(GetFooInput) -> GetFooOutput
+operation GetFoo {
+    input: GetFooInput,
+    output: GetFooOutput
+}
 
 structure GetFooInput {
     @required

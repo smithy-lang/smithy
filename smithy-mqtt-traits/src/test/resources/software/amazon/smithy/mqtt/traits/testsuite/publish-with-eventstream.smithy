@@ -1,7 +1,9 @@
 namespace smithy.example
 
 @smithy.mqtt#publish("foo")
-operation Publish(PublishInput)
+operation Publish {
+    input: PublishInput
+}
 
 structure PublishInput {
   @eventStream // invalid

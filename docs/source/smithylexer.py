@@ -32,8 +32,7 @@ class SmithyLexer(RegexLexer):
             (r'///.*$', Comment.Multiline),
             (r'//.*$', Comment),
             (r'@[0-9a-zA-Z\.#-]*', Name.Decorator),
-            (r'(->|=)', Name.Decorator),
-            (r'errors', Name.Decorator),
+            (r'(=)', Name.Decorator),
             (r'^(\$version)(:)(.+)', bygroups(Keyword.Declaration, Name.Decorator, Name.Class)),
             (r'^(namespace)(\s+' + identifier + r')\b', bygroups(Keyword.Declaration, Name.Class)),
             (r'^(use|byte|short|integer|long|float|'

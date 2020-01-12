@@ -16,7 +16,9 @@ use smithy.test#httpRequestTests
         code: 200,
     }
 ])
-operation SayGoodbye() -> SayGoodbyeOutput
+operation SayGoodbye {
+    output: SayGoodbyeOutput
+}
 structure SayGoodbyeOutput {}
 
 @httpResponseTests([
@@ -49,7 +51,9 @@ structure MyError {}
         uri: "/",
     },
 ])
-operation SayHello(SayHelloInput)
+operation SayHello {
+    input: SayHelloInput
+}
 structure SayHelloInput {}
 
 @http(method: "POST", uri: "/")
@@ -67,5 +71,8 @@ structure SayHelloInput {}
         uri: "/",
     }
 ])
-operation SayHello2(SayHelloInput2)
+operation SayHello2 {
+    input: SayHelloInput2
+}
+
 structure SayHelloInput2 {}

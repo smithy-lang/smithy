@@ -12,11 +12,11 @@ service ServiceA {
 }
 
 // Inherits the authorizer of ServiceA
-operation OperationA()
+operation OperationA {}
 
 // Overrides the authorizer of ServiceA
 @aws.apigateway#authorizer("baz")
-operation OperationB()
+operation OperationB {}
 
 // Inherits the authorizer of ServiceA
 resource ResourceA {
@@ -24,11 +24,11 @@ resource ResourceA {
 }
 
 // Inherits the authorizer of ServiceA
-operation OperationC()
+operation OperationC {}
 
 // Overrides the authorizer of ServiceA
 @aws.apigateway#authorizer("baz")
-operation OperationD()
+operation OperationD {}
 
 // Overrides the authorizer of ServiceA
 @aws.apigateway#authorizer("baz")
@@ -37,11 +37,11 @@ resource ResourceB {
 }
 
 // Inherits the authorizer of ResourceB
-operation OperationE()
+operation OperationE {}
 
 // Overrides the authorizer of ResourceB
 @aws.apigateway#authorizer("foo")
-operation OperationF()
+operation OperationF {}
 
 
 @protocols([{name: "aws-rest-json", auth: ["aws.v4"]}])

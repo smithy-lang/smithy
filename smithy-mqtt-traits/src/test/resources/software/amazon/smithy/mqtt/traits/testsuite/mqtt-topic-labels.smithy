@@ -2,12 +2,14 @@ namespace smithy.example
 
 // Missing input for {foo} property.
 @smithy.mqtt#publish("events1/{foo}")
-operation Operation1()
+operation Operation1 {}
 
 
 // Missing {foo} member.
 @smithy.mqtt#publish("events2/{foo}")
-operation Operation2(Operation2Input)
+operation Operation2 {
+    input: Operation2Input
+}
 
 structure Operation2Input {
   baz: smithy.api#String,
@@ -16,7 +18,9 @@ structure Operation2Input {
 
 // Extraneous {baz} label member.
 @smithy.mqtt#publish("events3/{foo}")
-operation Operation3(Operation3Input)
+operation Operation3 {
+    input: Operation3Input
+}
 
 structure Operation3Input {
   @required
@@ -31,7 +35,9 @@ structure Operation3Input {
 
 // Missing topicLabel trait for {foo}
 @smithy.mqtt#publish("events4/{foo}")
-operation Operation4(Operation4Input)
+operation Operation4 {
+    input: Operation4Input
+}
 
 structure Operation4Input {
   @required
@@ -41,7 +47,9 @@ structure Operation4Input {
 
 // No errors.
 @smithy.mqtt#publish("events5/{foo}")
-operation Operation5(Operation5Input)
+operation Operation5 {
+    input: Operation5Input
+}
 
 structure Operation5Input {
   @required

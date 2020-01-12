@@ -10,7 +10,7 @@ service MyService {
 }
 
 @aws.iam#conditionKeys(["aws:accountId", "foo:baz"])
-operation Operation1()
+operation Operation1 {}
 
 @aws.iam#conditionKeys(["aws:accountId", "foo:baz"])
 resource Resource1 {
@@ -30,7 +30,9 @@ resource Resource2 {
 }
 
 @readonly
-operation GetResource2(GetResource2Input)
+operation GetResource2 {
+    input: GetResource2Input
+}
 
 structure GetResource2Input {
   @required
@@ -44,7 +46,10 @@ structure GetResource2Input {
 string FooString
 
 @readonly
-operation ListResource2(ListResource2Input) -> ListResource2Output
+operation ListResource2 {
+    input: ListResource2Input,
+    output: ListResource2Output
+}
 
 structure ListResource2Input {
   @required

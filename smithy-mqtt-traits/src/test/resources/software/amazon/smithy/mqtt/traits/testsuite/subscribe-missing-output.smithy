@@ -3,4 +3,4 @@
 namespace smithy.example
 
 @smithy.mqtt#subscribe("events")
-operation Foo()
+operation Foo {}

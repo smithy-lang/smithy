@@ -42,7 +42,9 @@ stream in its input:
 
         namespace smithy.example
 
-        operation PublishMessages(PublishMessagesInput)
+        operation PublishMessages {
+            input: PublishMessagesInput
+        }
 
         structure PublishMessagesInput {
             room: String,
@@ -102,7 +104,9 @@ stream in its output:
 
         namespace smithy.example
 
-        operation SubscribeToMovements() -> SubscribeToMovementsOutput
+        operation SubscribeToMovements {
+            output: SubscribeToMovementsOutput
+        }
 
         structure SubscribeToMovementsOutput {
             @eventStream
@@ -190,7 +194,9 @@ stream in its input by referencing a member that targets a union:
 
         namespace smithy.example
 
-        operation PublishMessages(PublishMessagesInput)
+        operation PublishMessages {
+            input: PublishMessagesInput
+        }
 
         structure PublishMessagesInput {
             room: String,
@@ -268,7 +274,9 @@ stream in its output:
 
         namespace smithy.example
 
-        operation SubscribeToMovements() -> SubscribeToMovementsOutput
+        operation SubscribeToMovements {
+            output: SubscribeToMovementsOutput
+        }
 
         structure SubscribeToMovementsOutput {
             @eventStream
@@ -354,7 +362,9 @@ on the name of an event. For example, given the following event stream,
 
     namespace smithy.example
 
-    operation SubscribeToEvents() -> SubscribeToEventsOutput
+    operation SubscribeToEvents {
+        output: SubscribeToEventsOutput
+    }
 
     structure SubscribeToEventsOutput {
         @eventStream
@@ -421,7 +431,9 @@ service, followed by the events sent in the payload of the HTTP message.
         namespace smithy.example
 
         @http(method: "POST", uri: "/messages/{room}")
-        operation PublishMessages(PublishMessagesInput)
+        operation PublishMessages {
+            input: PublishMessagesInput
+        }
 
         structure PublishMessagesInput {
             @httpLabel
@@ -509,7 +521,10 @@ message.
         namespace smithy.example
 
         @http(method: "GET", uri: "/messages/{room}")
-        operation SubscribeToMessages(SubscribeToMessagesInput) -> SubscribeToMessagesOutput
+        operation SubscribeToMessages {
+            input: SubscribeToMessagesInput,
+            output: SubscribeToMessagesOutput
+        }
 
         structure SubscribeToMessagesInput {
             @httpLabel

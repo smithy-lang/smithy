@@ -7,7 +7,9 @@ service Greedy {
 }
 
 @http(method: "GET", uri: "/{greedy+}")
-operation GreedyOperation(GreedyOperationInput)
+operation GreedyOperation {
+    input: GreedyOperationInput
+}
 
 structure GreedyOperationInput {
     @required

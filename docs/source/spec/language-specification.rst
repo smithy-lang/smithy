@@ -231,8 +231,7 @@ be defined after a *current namespace* has been defined using a
                             :/ `simple_shape`
     service_statement       :"service" `identifier` `node_object`
     resource_statement      :"resource" `identifier` `node_object`
-    operation_statement     :"operation" `identifier` "(" [`shape_id`] ")" `operation_results`
-    operation_results       :["->" `shape_id`] ["errors" "[" [`shape_id` *("," `shape_id`)] "]"]
+    operation_statement     :"operation" `identifier` `node_object`
     structure_statement     :"structure" `structured_body`
     union_statement         :"union" `structured_body`
     structured_body         :`identifier` "{" [`structured_member` *("," `structured_member`)] "}"
