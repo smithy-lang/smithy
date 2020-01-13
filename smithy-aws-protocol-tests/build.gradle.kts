@@ -17,10 +17,6 @@ description = "Defines protocol tests for AWS HTTP protocols."
 extra["displayName"] = "Smithy :: AWS :: Protocol Tests"
 extra["moduleName"] = "software.amazon.smithy.aws.protocoltests"
 
-plugins {
-    id("software.amazon.smithy").version("0.4.2")
-}
-
 dependencies {
     api(project(":smithy-protocol-test-traits"))
     api(project(":smithy-aws-traits"))
