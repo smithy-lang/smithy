@@ -1,5 +1,24 @@
 # Smithy Changelog
 
+## 0.9.7 (2020-01-15)
+
+### Features
+
+* Updated Operation syntax in the Smithy IDL ([#253](https://github.com/awslabs/smithy/pull/253))
+* Updated specification for XML traits ([#242](https://github.com/awslabs/smithy/pull/242))
+* Add the `@aws.api#ec2QueryName-trait` trait ([#251](https://github.com/awslabs/smithy/pull/251))
+* Add AWS protocol test models ([#246](https://github.com/awslabs/smithy/pull/246), [#247](https://github.com/awslabs/smithy/pull/247),
+  [#250](https://github.com/awslabs/smithy/pull/250), [#255](https://github.com/awslabs/smithy/pull/255),
+  and [#258](https://github.com/awslabs/smithy/pull/258))
+
+### Optimizations
+
+* Use URLConnection cache setting in ModelAssembler ([#244](https://github.com/awslabs/smithy/pull/244))
+
+### Bug Fixes
+
+* Use list of string for queryParams in the `httpRequestTests` trait ([#240](https://github.com/awslabs/smithy/pull/240))
+
 ## 0.9.6 (2020-01-02)
 
 ### Features
