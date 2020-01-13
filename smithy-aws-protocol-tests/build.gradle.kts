@@ -21,6 +21,13 @@ plugins {
     id("software.amazon.smithy").version("0.4.2")
 }
 
+buildscript {
+    dependencies {
+        classpath("software.amazon.smithy:smithy-protocol-test-traits:0.9.6")
+        classpath("software.amazon.smithy:smithy-protocol-test-traits:0.9.6")
+    }
+}
+
 dependencies {
     api(project(":smithy-protocol-test-traits"))
     api(project(":smithy-aws-traits"))
