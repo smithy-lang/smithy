@@ -1,0 +1,66 @@
+// EC2 serialization is very similar to aws.query serialization.
+//
+// The differences for input are:
+//
+// 1. EC2 does not support the xmlFlattened trait on input. All lists are flattened.
+// 2. EC2 does not utilize input maps.
+// 3. EC2 uses a trait called aws.api#ec2QueryName that is used when serializing
+//    query string input parameters. If this trait is found, then it is used.
+//    This trait has no effect on output serialization.
+// 4. EC2 input parameters not marked with aws.api#ec2QueryName fall back to
+//    using xmlName. If xmlName is set, then the first letter is uppercased
+//    and serialized in the query.
+// 5. Because lists are always considered flattened, the member name of a list,
+//    the xmlName on a list, and ec2QueryName on a list have no effect on how
+//    a list is serialized.
+//
+// The differences for output are:
+//
+// 1. Unlike aws.query, there's no result wrapper.
+// 2. EC2 does not utilize output maps.
+// 3. RequestId is a child of the root node. It's not nested in some
+//    ResponseMetadata element like aws.query.
+//
+// EC2 errors have an additional level of nesting. See xml-errors.smithy
+// for details.
+
+$version: "0.5.0"
+
+namespace aws.protocols.tests.ec2
+
+use smithy.test#httpRequestTests
+use smithy.test#httpResponseTests
+
+/// An EC2 query service that sends query requests and XML responses.
+@protocols([{"name": "aws.ec2"}])
+@xmlNamespace(uri: "https://example.com/")
+service AwsEc2 {
+    version: "2020-01-08",
+    operations: [
+        // Basic input and output tests
+        NoInputAndOutput,
+        EmptyInputAndEmptyOutput,
+
+        // Input tests
+        SimpleInputParams,
+        QueryTimestamps,
+        NestedStructures,
+        QueryLists,
+        QueryIdempotencyTokenAutoFill,
+
+        // Output XML list tests
+        XmlLists,
+
+        // Output XML structure tests
+        SimpleScalarXmlProperties,
+        XmlBlobs,
+        XmlTimestamps,
+        XmlEnums,
+        RecursiveXmlShapes,
+        RecursiveXmlShapes,
+        IgnoresWrappingXmlName,
+
+        // Output error tests
+        GreetingWithErrors,
+    ]
+}

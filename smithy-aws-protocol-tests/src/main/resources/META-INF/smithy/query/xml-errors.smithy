@@ -1,6 +1,6 @@
-// This file defines test cases that serialize lists in XML documents.
+// This file defines test cases that serialize aws.query errors.
 //
-// AWS/QUERY serialzies errors using the following format:
+// AWS/QUERY serializes errors using the following format:
 //
 // <ErrorResponse>
 //     <Error>
@@ -42,6 +42,9 @@ apply GreetingWithErrors @httpResponseTests([
         description: "Ensures that operations with errors successfully know how to deserialize the successful response",
         protocol: "aws.query",
         code: 200,
+        headers: {
+            "Content-Type": "text/xml"
+        },
         body: """
               <GreetingWithErrorsResponse xmlns="https://example.com/">
                   <GreetingWithErrorsResult>
@@ -49,9 +52,7 @@ apply GreetingWithErrors @httpResponseTests([
                   </GreetingWithErrorsResult>
               </GreetingWithErrorsResponse>
               """,
-        headers: {
-            "Content-Type": "text/xml"
-        },
+        bodyMediaType: "application/xml",
         params: {
             greeting: "Hello"
         }

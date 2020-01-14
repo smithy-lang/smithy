@@ -2,8 +2,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocols.tests.ec2
 
+use aws.api#ec2QueryName
 use aws.protocols.tests.shared#FooEnum
 use aws.protocols.tests.shared#FooEnumList
 use aws.protocols.tests.shared#FooEnumSet
@@ -12,33 +13,34 @@ use smithy.test#httpResponseTests
 
 // This example serializes simple scalar types in the top level XML document.
 // Note that headers are not serialized in the payload.
-operation SimpleScalarXmlProperties() -> SimpleScalarXmlPropertiesOutput
+operation SimpleScalarXmlProperties {
+    output: SimpleScalarXmlPropertiesOutput
+}
 
 apply SimpleScalarXmlProperties @httpResponseTests([
     {
-        id: "QuerySimpleScalarProperties",
+        id: "Ec2SimpleScalarProperties",
         description: "Serializes simple scalar properties",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         code: 200,
         body: """
               <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
-                  <SimpleScalarXmlPropertiesResult>
-                      <stringValue>string</stringValue>
-                      <emptyStringValue/>
-                      <trueBooleanValue>true</trueBooleanValue>
-                      <falseBooleanValue>false</falseBooleanValue>
-                      <byteValue>1</byteValue>
-                      <shortValue>2</shortValue>
-                      <integerValue>3</integerValue>
-                      <longValue>4</longValue>
-                      <floatValue>5.5</floatValue>
-                      <DoubleDribble>6.5</DoubleDribble>
-                  </SimpleScalarXmlPropertiesResult>
+                  <stringValue>string</stringValue>
+                  <emptyStringValue/>
+                  <trueBooleanValue>true</trueBooleanValue>
+                  <falseBooleanValue>false</falseBooleanValue>
+                  <byteValue>1</byteValue>
+                  <shortValue>2</shortValue>
+                  <integerValue>3</integerValue>
+                  <longValue>4</longValue>
+                  <floatValue>5.5</floatValue>
+                  <DoubleDribble>6.5</DoubleDribble>
+                  <RequestId>requestid</RequestId>
               </SimpleScalarXmlPropertiesResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
-            "Content-Type": "text/xml"
+            "Content-Type": "text/xml;charset=UTF-8"
         },
         params: {
             stringValue: "string",
@@ -56,7 +58,10 @@ apply SimpleScalarXmlProperties @httpResponseTests([
 ])
 
 structure SimpleScalarXmlPropertiesOutput {
+    // @ec2QueryName is ignored on output.
+    @ec2QueryName("IgnoreMe")
     stringValue: String,
+
     emptyStringValue: String,
     trueBooleanValue: Boolean,
     falseBooleanValue: Boolean,
@@ -71,24 +76,25 @@ structure SimpleScalarXmlPropertiesOutput {
 }
 
 /// Blobs are base64 encoded
-operation XmlBlobs() -> XmlBlobsOutput
+operation XmlBlobs {
+    output: XmlBlobsOutput
+}
 
 apply XmlBlobs @httpResponseTests([
     {
-        id: "QueryXmlBlobs",
+        id: "Ec2XmlBlobs",
         description: "Blobs are base64 encoded",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         code: 200,
         body: """
               <XmlBlobsResponse xmlns="https://example.com/">
-                  <XmlBlobsResult>
-                      <data>dmFsdWU=</data>
-                  </XmlBlobsResult>
+                  <data>dmFsdWU=</data>
+                  <RequestId>requestid</RequestId>
               </XmlBlobsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
-            "Content-Type": "text/xml"
+            "Content-Type": "text/xml;charset=UTF-8"
         },
         params: {
             data: "value"
@@ -103,84 +109,82 @@ structure XmlBlobsOutput {
 /// This tests how timestamps are serialized, including using the
 /// default format of date-time and various @timestampFormat trait
 /// values.
-operation XmlTimestamps() -> XmlTimestampsOutput
+operation XmlTimestamps {
+    output: XmlTimestampsOutput
+}
 
 apply XmlTimestamps @httpResponseTests([
     {
-        id: "QueryXmlTimestamps",
+        id: "Ec2XmlTimestamps",
         description: "Tests how normal timestamps are serialized",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
-                  <QueryXmlTimestampsResult>
-                      <normal>2014-04-29T18:30:38Z</normal>
-                  </QueryXmlTimestampsResult>
+                  <normal>2014-04-29T18:30:38Z</normal>
+                  <RequestId>requestid</RequestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
-            "Content-Type": "text/xml"
+            "Content-Type": "text/xml;charset=UTF-8"
         },
         params: {
             normal: 1398796238
         }
     },
     {
-        id: "QueryXmlTimestampsWithDateTimeFormat",
+        id: "Ec2XmlTimestampsWithDateTimeFormat",
         description: "Ensures that the timestampFormat of date-time works like normal timestamps",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
-                  <QueryXmlTimestampsResult>
-                      <dateTime>2014-04-29T18:30:38Z</dateTime>
-                  </QueryXmlTimestampsResult>
+                  <dateTime>2014-04-29T18:30:38Z</dateTime>
+                  <RequestId>requestid</RequestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
-            "Content-Type": "text/xml"
+            "Content-Type": "text/xml;charset=UTF-8"
         },
         params: {
             dateTime: 1398796238
         }
     },
     {
-        id: "QueryXmlTimestampsWithEpochSecondsFormat",
+        id: "Ec2XmlTimestampsWithEpochSecondsFormat",
         description: "Ensures that the timestampFormat of epoch-seconds works",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
-                  <QueryXmlTimestampsResult>
-                      <epochSeconds>1398796238</epochSeconds>
-                  </QueryXmlTimestampsResult>
+                  <epochSeconds>1398796238</epochSeconds>
+                  <RequestId>requestid</RequestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
-            "Content-Type": "text/xml"
+            "Content-Type": "text/xml;charset=UTF-8"
         },
         params: {
             epochSeconds: 1398796238
         }
     },
     {
-        id: "QueryXmlTimestampsWithHttpDateFormat",
+        id: "Ec2XmlTimestampsWithHttpDateFormat",
         description: "Ensures that the timestampFormat of http-date works",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
-                  <QueryXmlTimestampsResult>
-                      <httpDate>Tue, 29 Apr 2014 18:30:38 GMT</httpDate>
-                  </QueryXmlTimestampsResult>
+                  <httpDate>Tue, 29 Apr 2014 18:30:38 GMT</httpDate>
+                  <RequestId>requestid</RequestId>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
-            "Content-Type": "text/xml"
+            "Content-Type": "text/xml;charset=UTF-8"
         },
         params: {
             httpDate: 1398796238
@@ -202,44 +206,45 @@ structure XmlTimestampsOutput {
 }
 
 /// This example serializes enums as top level properties, in lists, sets, and maps.
-operation XmlEnums() -> XmlEnumsOutput
+operation XmlEnums {
+    output: XmlEnumsOutput
+}
 
 apply XmlEnums @httpResponseTests([
     {
-        id: "QueryXmlEnums",
+        id: "Ec2XmlEnums",
         description: "Serializes simple scalar properties",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         code: 200,
         body: """
               <XmlEnumsResponse xmlns="https://example.com/">
-                  <XmlEnumsResult>
-                      <fooEnum1>Foo</fooEnum1>
-                      <fooEnum2>0</fooEnum2>
-                      <fooEnum3>1</fooEnum3>
-                      <fooEnumList>
-                          <member>Foo</member>
-                          <member>0</member>
-                      </fooEnumList>
-                      <fooEnumSet>
-                          <member>Foo</member>
-                          <member>0</member>
-                      </fooEnumSet>
-                      <fooEnumMap>
-                          <entry>
-                              <key>hi</key>
-                              <value>Foo</value>
-                          </entry>
-                          <entry>
-                              <key>zero</key>
-                              <value>0</value>
-                          </entry>
-                      </fooEnumMap>
-                  </XmlEnumsResult>
+                  <fooEnum1>Foo</fooEnum1>
+                  <fooEnum2>0</fooEnum2>
+                  <fooEnum3>1</fooEnum3>
+                  <fooEnumList>
+                      <member>Foo</member>
+                      <member>0</member>
+                  </fooEnumList>
+                  <fooEnumSet>
+                      <member>Foo</member>
+                      <member>0</member>
+                  </fooEnumSet>
+                  <fooEnumMap>
+                      <entry>
+                          <key>hi</key>
+                          <value>Foo</value>
+                      </entry>
+                      <entry>
+                          <key>zero</key>
+                          <value>0</value>
+                      </entry>
+                  </fooEnumMap>
+                  <RequestId>requestid</RequestId>
               </XmlEnumsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
-            "Content-Type": "text/xml"
+            "Content-Type": "text/xml;charset=UTF-8"
         },
         params: {
             fooEnum1: "Foo",
@@ -265,35 +270,36 @@ structure XmlEnumsOutput {
 }
 
 /// Recursive shapes
-operation RecursiveXmlShapes() -> RecursiveXmlShapesOutput
+operation RecursiveXmlShapes {
+    output: RecursiveXmlShapesOutput
+}
 
 apply RecursiveXmlShapes @httpResponseTests([
     {
-        id: "QueryRecursiveShapes",
+        id: "Ec2RecursiveShapes",
         description: "Serializes recursive structures",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         code: 200,
         body: """
               <RecursiveXmlShapesResponse xmlns="https://example.com/">
-                  <RecursiveXmlShapesResult>
+                  <nested>
+                      <foo>Foo1</foo>
                       <nested>
-                          <foo>Foo1</foo>
-                          <nested>
-                              <bar>Bar1</bar>
-                              <recursiveMember>
-                                  <foo>Foo2</foo>
-                                  <nested>
-                                      <bar>Bar2</bar>
-                                  </nested>
-                              </recursiveMember>
-                          </nested>
+                          <bar>Bar1</bar>
+                          <recursiveMember>
+                              <foo>Foo2</foo>
+                              <nested>
+                                  <bar>Bar2</bar>
+                              </nested>
+                          </recursiveMember>
                       </nested>
-                  </RecursiveXmlShapesResult>
+                  </nested>
+                  <RequestId>requestid</RequestId>
               </RecursiveXmlShapesResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
-            "Content-Type": "text/xml"
+            "Content-Type": "text/xml;charset=UTF-8"
         },
         params: {
             nested: {
@@ -327,30 +333,31 @@ structure RecursiveXmlShapesOutputNested2 {
 }
 
 // XML namespace
-operation XmlNamespaces() -> XmlNamespacesOutput
+operation XmlNamespaces {
+    output: XmlNamespacesOutput
+}
 
 apply XmlNamespaces @httpResponseTests([
     {
-        id: "QueryXmlNamespaces",
+        id: "Ec2XmlNamespaces",
         description: "Serializes XML namespaces",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         code: 200,
         body: """
               <XmlNamespacesResponse xmlns="http://foo.com" xmlns="https://example.com/">
-                  <XmlNamespacesResult>
-                      <nested>
-                          <foo xmlns:baz="http://baz.com">Foo</foo>
-                          <values xmlns="http://qux.com">
-                              <member xmlns="http://bux.com">Bar</member>
-                              <member xmlns="http://bux.com">Baz</member>
-                          </values>
-                      </nested>
-                  </XmlNamespacesResult>
+                  <nested>
+                      <foo xmlns:baz="http://baz.com">Foo</foo>
+                      <values xmlns="http://qux.com">
+                          <member xmlns="http://bux.com">Bar</member>
+                          <member xmlns="http://bux.com">Baz</member>
+                      </values>
+                  </nested>
+                  <RequestId>requestid</RequestId>
               </XmlNamespacesResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
-            "Content-Type": "text/xml"
+            "Content-Type": "text/xml;charset=UTF-8"
         },
         params: {
             nested: {
@@ -388,26 +395,26 @@ list XmlNamespacedList {
 
 /// The xmlName trait on the output structure is ignored in AWS Query.
 ///
-/// The wrapping element is always operation name + "Response", and
-/// inside of that wrapper is another wrapper named operation name + "Result".
-operation IgnoresWrappingXmlName() -> IgnoresWrappingXmlNameOutput
+/// The wrapping element is always operation name + "Response".
+operation IgnoresWrappingXmlName {
+    output: IgnoresWrappingXmlNameOutput
+}
 
 apply IgnoresWrappingXmlName @httpResponseTests([
     {
-        id: "QueryIgnoresWrappingXmlName",
-        description: "The xmlName trait on the output structure is ignored in AWS Query",
-        protocol: "aws.query",
+        id: "Ec2IgnoresWrappingXmlName",
+        description: "The xmlName trait on the output structure is ignored in the ec2 protocol",
+        protocol: "aws.ec2",
         code: 200,
         body: """
               <IgnoresWrappingXmlNameResponse xmlns="http://foo.com" xmlns="https://example.com/">
-                  <IgnoresWrappingXmlNameResult>
-                      <foo>bar</foo>
-                  </IgnoresWrappingXmlNameResult>
+                  <foo>bar</foo>
+                  <RequestId>requestid</RequestId>
               </IgnoresWrappingXmlNameResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
-            "Content-Type": "text/xml"
+            "Content-Type": "text/xml;charset=UTF-8"
         },
         params: {
             foo: "bar"

@@ -1,3 +1,10 @@
+ec2-query/empty-input-output.smithy
+ec2-query/input.smithy
+ec2-query/input-lists.smithy
+ec2-query/main.smithy
+ec2-query/xml-errors.smithy
+ec2-query/xml-lists.smithy
+ec2-query/xml-structs.smithy
 json-rpc-1-1/main.json
 query/empty-input-output.smithy
 query/input.smithy
