@@ -2,7 +2,7 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocols.tests.ec2
 
 use aws.protocols.tests.shared#EpochSeconds
 use aws.protocols.tests.shared#FooEnum
@@ -11,13 +11,15 @@ use aws.protocols.tests.shared#StringList
 use smithy.test#httpRequestTests
 
 /// This test serializes simple and complex lists.
-operation QueryLists(QueryListsInput)
+operation QueryLists {
+    input: QueryListsInput
+}
 
 apply QueryLists @httpRequestTests([
     {
-        id: "QueryLists",
-        description: "Serializes query lists",
-        protocol: "aws.query",
+        id: "Ec2Lists",
+        description: "Serializes query lists. All EC2 lists are flattened.",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -26,11 +28,11 @@ apply QueryLists @httpRequestTests([
         body: """
               Action=QueryLists
               &Version=2020-01-08
-              &ListArg.member.1=foo
-              &ListArg.member.2=bar
-              &ListArg.member.3=baz
-              &ComplexListArg.member.1.hi=hello
-              &ComplexListArg.member.2.hi=hola""",
+              &ListArg.1=foo
+              &ListArg.2=bar
+              &ListArg.3=baz
+              &ComplexListArg.1.hi=hello
+              &ComplexListArg.2.hi=hola""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArg: ["foo", "bar", "baz"],
@@ -45,9 +47,9 @@ apply QueryLists @httpRequestTests([
         }
     },
     {
-        id: "EmptyQueryLists",
+        id: "Ec2EmptyQueryLists",
         description: "Does not serialize empty query lists",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -62,9 +64,9 @@ apply QueryLists @httpRequestTests([
         }
     },
     {
-        id: "FlattenedQueryLists",
-        description: "Flattens query lists by repeating the member name and removing the member element",
-        protocol: "aws.query",
+        id: "Ec2ListArgWithXmlNameMember",
+        description: "An xmlName trait in the member of a list has no effect on the list serialization.",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -73,36 +75,17 @@ apply QueryLists @httpRequestTests([
         body: """
               Action=QueryLists
               &Version=2020-01-08
-              &FlattenedListArg.1=A
-              &FlattenedListArg.2=B""",
-        bodyMediaType: "application/x-www-form-urlencoded",
-        params: {
-            FlattenedListArg: ["A", "B"]
-        }
-    },
-    {
-        id: "QueryListArgWithXmlNameMember",
-        description: "Changes the member of lists using xmlName trait",
-        protocol: "aws.query",
-        method: "POST",
-        uri: "/",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &ListArgWithXmlNameMember.item.1=A
-              &ListArgWithXmlNameMember.item.2=B""",
+              &ListArgWithXmlNameMember.1=A
+              &ListArgWithXmlNameMember.2=B""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArgWithXmlNameMember: ["A", "B"]
         }
     },
     {
-        id: "QueryFlattenedListArgWithXmlName",
-        description: "Changes the name of flattened lists using xmlName trait on the structure member",
-        protocol: "aws.query",
+        id: "Ec2ListMemberWithXmlName",
+        description: "Changes the name of the list using the xmlName trait",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -115,7 +98,7 @@ apply QueryLists @httpRequestTests([
               &Hi.2=B""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
-            FlattenedListArgWithXmlName: ["A", "B"]
+            ListArgWithXmlName: ["A", "B"]
         }
     },
 ])
@@ -124,15 +107,11 @@ structure QueryListsInput {
     ListArg: StringList,
     ComplexListArg: GreetingList,
 
-    @xmlFlattened
-    FlattenedListArg: StringList,
-
+    // Notice that the xmlName on the targeted list member is ignored.
     ListArgWithXmlNameMember: ListWithXmlName,
 
-    // Notice that the xmlName on the targeted list member is ignored.
-    @xmlFlattened
     @xmlName("Hi")
-    FlattenedListArgWithXmlName: ListWithXmlName,
+    ListArgWithXmlName: ListWithXmlName,
 }
 
 list ListWithXmlName {

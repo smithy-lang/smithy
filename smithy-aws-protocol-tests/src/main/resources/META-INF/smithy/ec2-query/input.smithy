@@ -2,20 +2,23 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocols.tests.ec2
 
+use aws.api#ec2QueryName
 use aws.protocols.tests.shared#EpochSeconds
 use aws.protocols.tests.shared#FooEnum
 use smithy.test#httpRequestTests
 
 /// This test serializes strings, numbers, and boolean values.
-operation SimpleInputParams(SimpleInputParamsInput)
+operation SimpleInputParams {
+    input: SimpleInputParamsInput
+}
 
 apply SimpleInputParams @httpRequestTests([
     {
-        id: "QuerySimpleInputParamsStrings",
+        id: "Ec2SimpleInputParamsStrings",
         description: "Serializes strings",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -33,9 +36,9 @@ apply SimpleInputParams @httpRequestTests([
         }
     },
     {
-        id: "QuerySimpleInputParamsStringAndBooleanTrue",
+        id: "Ec2SimpleInputParamsStringAndBooleanTrue",
         description: "Serializes booleans that are true",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -53,9 +56,9 @@ apply SimpleInputParams @httpRequestTests([
         }
     },
     {
-        id: "QuerySimpleInputParamsStringsAndBooleanFalse",
+        id: "Ec2SimpleInputParamsStringsAndBooleanFalse",
         description: "Serializes booleans that are false",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -71,9 +74,9 @@ apply SimpleInputParams @httpRequestTests([
         }
     },
     {
-        id: "QuerySimpleInputParamsInteger",
+        id: "Ec2SimpleInputParamsInteger",
         description: "Serializes integers",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -89,9 +92,9 @@ apply SimpleInputParams @httpRequestTests([
         }
     },
     {
-        id: "QuerySimpleInputParamsFloat",
+        id: "Ec2SimpleInputParamsFloat",
         description: "Serializes floats",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -107,9 +110,9 @@ apply SimpleInputParams @httpRequestTests([
         }
     },
     {
-        id: "QuerySimpleInputParamsBlob",
+        id: "Ec2SimpleInputParamsBlob",
         description: "Blobs are base64 encoded in the query string",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -125,9 +128,9 @@ apply SimpleInputParams @httpRequestTests([
         }
     },
     {
-        id: "QueryEnums",
+        id: "Ec2Enums",
         description: "Serializes enums in the query string",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -141,7 +144,61 @@ apply SimpleInputParams @httpRequestTests([
         params: {
             FooEnum: "Foo",
         }
-    }
+    },
+    {
+        id: "Ec2Query",
+        description: "Serializes query using ec2QueryName trait.",
+        protocol: "aws.ec2",
+        method: "POST",
+        uri: "/",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: """
+              Action=SimpleInputParams
+              &Version=2020-01-08
+              &A=Hi""",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        params: {
+            HasQueryName: "Hi",
+        }
+    },
+    {
+        id: "Ec2QueryIsPreferred",
+        description: "ec2QueryName trait is preferred over xmlName.",
+        protocol: "aws.ec2",
+        method: "POST",
+        uri: "/",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: """
+              Action=SimpleInputParams
+              &Version=2020-01-08
+              &B=Hi""",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        params: {
+            HasQueryAndXmlName: "Hi",
+        }
+    },
+    {
+        id: "Ec2XmlNameIsUppercased",
+        description: "xmlName is used with the ec2 protocol, but the first character is uppercased",
+        protocol: "aws.ec2",
+        method: "POST",
+        uri: "/",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: """
+              Action=SimpleInputParams
+              &Version=2020-01-08
+              &C=Hi""",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        params: {
+            UsesXmlName: "Hi",
+        }
+    },
 ])
 
 structure SimpleInputParamsInput {
@@ -152,6 +209,16 @@ structure SimpleInputParamsInput {
     Boo: Double,
     Qux: Blob,
     FooEnum: FooEnum,
+
+    @ec2QueryName("A")
+    HasQueryName: String,
+
+    @ec2QueryName("B")
+    @xmlName("IgnoreMe")
+    HasQueryAndXmlName: String,
+
+    @xmlName("c")
+    UsesXmlName: String,
 }
 
 /// This test serializes timestamps.
@@ -159,13 +226,15 @@ structure SimpleInputParamsInput {
 /// 1. Timestamps are serialized as RFC 3339 date-time values by default.
 /// 2. A timestampFormat trait on a member changes the format.
 /// 3. A timestampFormat trait on the shape targeted by the member changes the format.
-operation QueryTimestamps(QueryTimestampsInput)
+operation QueryTimestamps {
+    input: QueryTimestampsInput
+}
 
 apply QueryTimestamps @httpRequestTests([
     {
-        id: "QueryTimestampsInput",
+        id: "Ec2TimestampsInput",
         description: "Serializes timestamps",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -201,13 +270,15 @@ structure QueryTimestampsInput {
 }
 
 /// This test serializes nested and recursive structure members.
-operation NestedStructures(NestedStructuresInput)
+operation NestedStructures {
+    input: NestedStructuresInput
+}
 
 apply NestedStructures @httpRequestTests([
     {
-        id: "NestedStructures",
+        id: "Ec2NestedStructures",
         description: "Serializes nested structures using dots",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -244,13 +315,15 @@ structure StructArg {
 
 /// Automatically adds idempotency tokens.
 @tags(["client-only"])
-operation QueryIdempotencyTokenAutoFill(QueryIdempotencyTokenAutoFillInput)
+operation QueryIdempotencyTokenAutoFill {
+    input: QueryIdempotencyTokenAutoFillInput
+}
 
 apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
-        id: "QueryProtocolIdempotencyTokenAutoFill",
+        id: "Ec2ProtocolIdempotencyTokenAutoFill",
         description: "Automatically adds idempotency token when not set",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
@@ -263,9 +336,9 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
         bodyMediaType: "application/x-www-form-urlencoded",
     },
     {
-        id: "QueryProtocolIdempotencyTokenAutoFillIsSet",
+        id: "Ec2ProtocolIdempotencyTokenAutoFillIsSet",
         description: "Uses the given idempotency token as-is",
-        protocol: "aws.query",
+        protocol: "aws.ec2",
         method: "POST",
         uri: "/",
         headers: {
