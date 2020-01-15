@@ -12,7 +12,7 @@ use smithy.test#httpResponseTests
 /// no request or response payload because the operation has no input or output.
 ///
 /// While this should be rare, code generators must support this.
-operation NoInputAndNoOutput()
+operation NoInputAndNoOutput {}
 
 apply NoInputAndNoOutput @httpRequestTests([
     {
@@ -44,7 +44,9 @@ apply NoInputAndNoOutput @httpResponseTests([
 /// no request payload or response members.
 ///
 /// While this should be rare, code generators must support this.
-operation NoInputAndOutput() -> NoInputAndOutputOutput
+operation NoInputAndOutput {
+    input: NoInputAndOutputOutput
+}
 
 apply NoInputAndOutput @httpRequestTests([
     {
@@ -78,7 +80,10 @@ structure NoInputAndOutputOutput {}
 /// no request or response members.
 ///
 /// While this should be rare, code generators must support this.
-operation EmptyInputAndEmptyOutput(EmptyInputAndEmptyOutputInput) -> EmptyInputAndEmptyOutputOutput
+operation EmptyInputAndEmptyOutput {
+    input: EmptyInputAndEmptyOutputInput,
+    output: EmptyInputAndEmptyOutputOutput
+}
 
 apply EmptyInputAndEmptyOutput @httpRequestTests([
     {

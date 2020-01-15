@@ -25,7 +25,10 @@ use smithy.test#httpResponseTests
 /// 4. Lists of structures.
 @idempotent
 @http(uri: "/JsonLists", method: "PUT")
-operation JsonLists(JsonListsInputOutput) -> JsonListsInputOutput
+operation JsonLists {
+    input: JsonListsInputOutput,
+    output: JsonListsInputOutput
+}
 
 apply JsonLists @httpRequestTests([
     {

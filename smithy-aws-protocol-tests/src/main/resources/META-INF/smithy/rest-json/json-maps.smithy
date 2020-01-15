@@ -11,7 +11,10 @@ use smithy.test#httpResponseTests
 
 /// The example tests basic map serialization.
 @http(uri: "/JsonMaps", method: "POST")
-operation JsonMaps(JsonMapsInputOutput) -> JsonMapsInputOutput
+operation JsonMaps {
+    input: JsonMapsInputOutput,
+    output: JsonMapsInputOutput
+}
 
 apply JsonMaps @httpRequestTests([
     {

@@ -2,6 +2,7 @@ package software.amazon.smithy.aws.protocoltests;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.validation.ValidatedResult;
 
 /**
  * TODO: fix gradle plugin and remove this code.
@@ -9,9 +10,10 @@ import software.amazon.smithy.model.Model;
 public class ModelTest {
     @Test
     public void loadsModel() {
-        Model.assembler()
+        ValidatedResult<Model> r = Model.assembler()
                 .discoverModels()
-                .assemble()
-                .unwrap();
+                .assemble();
+        System.out.println(r.getValidationEvents());
+        r.unwrap();
     }
 }

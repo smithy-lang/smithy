@@ -11,7 +11,9 @@ use aws.protocols.tests.shared#StringList
 use smithy.test#httpRequestTests
 
 /// This test serializes simple and complex lists.
-operation QueryLists(QueryListsInput)
+operation QueryLists {
+    input: QueryListsInput
+}
 
 apply QueryLists @httpRequestTests([
     {

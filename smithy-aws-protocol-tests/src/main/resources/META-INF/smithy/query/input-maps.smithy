@@ -10,7 +10,9 @@ use aws.protocols.tests.shared#StringMap
 use smithy.test#httpRequestTests
 
 /// This test serializes simple and complex maps.
-operation QueryMaps(QueryMapsInput)
+operation QueryMaps {
+    input: QueryMapsInput
+}
 
 apply QueryMaps @httpRequestTests([
     {

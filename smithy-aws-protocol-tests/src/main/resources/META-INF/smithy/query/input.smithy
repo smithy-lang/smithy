@@ -9,7 +9,9 @@ use aws.protocols.tests.shared#FooEnum
 use smithy.test#httpRequestTests
 
 /// This test serializes strings, numbers, and boolean values.
-operation SimpleInputParams(SimpleInputParamsInput)
+operation SimpleInputParams {
+    input: SimpleInputParamsInput
+}
 
 apply SimpleInputParams @httpRequestTests([
     {
@@ -159,7 +161,9 @@ structure SimpleInputParamsInput {
 /// 1. Timestamps are serialized as RFC 3339 date-time values by default.
 /// 2. A timestampFormat trait on a member changes the format.
 /// 3. A timestampFormat trait on the shape targeted by the member changes the format.
-operation QueryTimestamps(QueryTimestampsInput)
+operation QueryTimestamps {
+    input: QueryTimestampsInput
+}
 
 apply QueryTimestamps @httpRequestTests([
     {
@@ -201,7 +205,9 @@ structure QueryTimestampsInput {
 }
 
 /// This test serializes nested and recursive structure members.
-operation NestedStructures(NestedStructuresInput)
+operation NestedStructures {
+    input: NestedStructuresInput
+}
 
 apply NestedStructures @httpRequestTests([
     {
@@ -244,7 +250,9 @@ structure StructArg {
 
 /// Automatically adds idempotency tokens.
 @tags(["client-only"])
-operation QueryIdempotencyTokenAutoFill(QueryIdempotencyTokenAutoFillInput)
+operation QueryIdempotencyTokenAutoFill {
+    input: QueryIdempotencyTokenAutoFillInput
+}
 
 apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
