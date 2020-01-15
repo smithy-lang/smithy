@@ -16,7 +16,10 @@ use smithy.test#httpResponseTests
 // Note that headers are not serialized in the payload.
 @idempotent
 @http(uri: "/SimpleScalarProperties", method: "PUT")
-operation SimpleScalarProperties(SimpleScalarPropertiesInputOutput) -> SimpleScalarPropertiesInputOutput
+operation SimpleScalarProperties {
+    input: SimpleScalarPropertiesInputOutput,
+    output: SimpleScalarPropertiesInputOutput
+}
 
 apply SimpleScalarProperties @httpRequestTests([
     {
@@ -116,7 +119,10 @@ structure SimpleScalarPropertiesInputOutput {
 
 /// Blobs are base64 encoded
 @http(uri: "/JsonBlobs", method: "POST")
-operation JsonBlobs(JsonBlobsInputOutput) -> JsonBlobsInputOutput
+operation JsonBlobs {
+    input: JsonBlobsInputOutput,
+    output: JsonBlobsInputOutput
+}
 
 apply JsonBlobs @httpRequestTests([
     {
@@ -167,7 +173,10 @@ structure JsonBlobsInputOutput {
 /// default format of date-time and various @timestampFormat trait
 /// values.
 @http(uri: "/JsonTimestamps", method: "POST")
-operation JsonTimestamps(JsonTimestampsInputOutput) -> JsonTimestampsInputOutput
+operation JsonTimestamps {
+    input: JsonTimestampsInputOutput,
+    output: JsonTimestampsInputOutput
+}
 
 apply JsonTimestamps @httpRequestTests([
     {
@@ -331,7 +340,10 @@ structure JsonTimestampsInputOutput {
 /// This example serializes enums as top level properties, in lists, sets, and maps.
 @idempotent
 @http(uri: "/JsonEnums", method: "PUT")
-operation JsonEnums(JsonEnumsInputOutput) -> JsonEnumsInputOutput
+operation JsonEnums {
+    input: JsonEnumsInputOutput,
+    output: JsonEnumsInputOutput
+}
 
 apply JsonEnums @httpRequestTests([
     {
@@ -430,7 +442,10 @@ structure JsonEnumsInputOutput {
 /// Recursive shapes
 @idempotent
 @http(uri: "/RecursiveShapes", method: "PUT")
-operation RecursiveShapes(RecursiveShapesInputOutput) -> RecursiveShapesInputOutput
+operation RecursiveShapes {
+    input: RecursiveShapesInputOutput,
+    output: RecursiveShapesInputOutput
+}
 
 apply RecursiveShapes @httpRequestTests([
     {

@@ -20,7 +20,10 @@ use smithy.test#httpResponseTests
 /// The example tests how requests and responses are serialized when there is
 /// no input or output payload but there are HTTP header bindings.
 @http(uri: "/InputAndOutputWithHeaders", method: "POST")
-operation InputAndOutputWithHeaders(InputAndOutputWithHeadersIO) -> InputAndOutputWithHeadersIO
+operation InputAndOutputWithHeaders {
+    input: InputAndOutputWithHeadersIO,
+    output: InputAndOutputWithHeadersIO
+}
 
 apply InputAndOutputWithHeaders @httpRequestTests([
     {
@@ -260,7 +263,10 @@ structure InputAndOutputWithHeadersIO {
 /// Null and empty headers are not sent over the wire.
 @readonly
 @http(uri: "/NullAndEmptyHeaders", method: "GET")
-operation NullAndEmptyHeaders(NullAndEmptyHeadersIO) -> NullAndEmptyHeadersIO
+operation NullAndEmptyHeaders {
+    input: NullAndEmptyHeadersIO,
+    output: NullAndEmptyHeadersIO
+}
 
 apply NullAndEmptyHeaders @httpRequestTests([
     {
@@ -308,7 +314,10 @@ structure NullAndEmptyHeadersIO {
 
 /// The example tests how timestamp request and response headers are serialized.
 @http(uri: "/TimestampFormatHeaders", method: "POST")
-operation TimestampFormatHeaders(TimestampFormatHeadersIO) -> TimestampFormatHeadersIO
+operation TimestampFormatHeaders {
+    input: TimestampFormatHeadersIO,
+    output: TimestampFormatHeadersIO
+}
 
 apply TimestampFormatHeaders @httpRequestTests([
     {

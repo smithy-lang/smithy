@@ -10,7 +10,10 @@ use smithy.test#httpResponseTests
 /// This example serializes an XML attributes on synthesized document.
 @idempotent
 @http(uri: "/XmlAttributes", method: "PUT")
-operation XmlAttributes(XmlAttributesInputOutput) -> XmlAttributesInputOutput
+operation XmlAttributes {
+    input: XmlAttributesInputOutput,
+    output: XmlAttributesInputOutput
+}
 
 apply XmlAttributes @httpRequestTests([
     {
@@ -68,7 +71,10 @@ structure XmlAttributesInputOutput {
 /// This example serializes an XML attributes on a document targeted by httpPayload.
 @idempotent
 @http(uri: "/XmlAttributesOnPayload", method: "PUT")
-operation XmlAttributesOnPayload(XmlAttributesOnPayloadInputOutput) -> XmlAttributesOnPayloadInputOutput
+operation XmlAttributesOnPayload {
+    input: XmlAttributesOnPayloadInputOutput,
+    output: XmlAttributesOnPayloadInputOutput
+}
 
 apply XmlAttributesOnPayload @httpRequestTests([
     {

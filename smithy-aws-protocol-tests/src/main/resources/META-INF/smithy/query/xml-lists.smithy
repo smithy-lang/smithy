@@ -23,7 +23,9 @@ use smithy.test#httpResponseTests
 /// 5. Flattened XML lists.
 /// 6. Flattened XML lists with @xmlName.
 /// 7. Lists of structures.
-operation XmlLists() -> XmlListsOutput
+operation XmlLists {
+    output: XmlListsOutput
+}
 
 apply XmlLists @httpResponseTests([
     {

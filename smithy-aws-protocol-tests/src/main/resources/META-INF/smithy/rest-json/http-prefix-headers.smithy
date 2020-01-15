@@ -12,7 +12,10 @@ use smithy.test#httpResponseTests
 @readonly
 @http(uri: "/HttpPrefixHeaders", method: "GET")
 @externalDocumentation("https://awslabs.github.io/smithy/spec/http.html#httpprefixheaders-trait")
-operation HttpPrefixHeaders(HttpPrefixHeadersInputOutput) -> HttpPrefixHeadersInputOutput
+operation HttpPrefixHeaders  {
+    input: HttpPrefixHeadersInputOutput,
+    output: HttpPrefixHeadersInputOutput
+}
 
 apply HttpPrefixHeaders @httpRequestTests([
     {

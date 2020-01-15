@@ -20,7 +20,9 @@ use smithy.test#httpResponseTests
 /// This example uses all query string types.
 @readonly
 @http(uri: "/AllQueryStringTypesInput", method: "GET")
-operation AllQueryStringTypes(AllQueryStringTypesInput)
+operation AllQueryStringTypes {
+    input: AllQueryStringTypesInput
+}
 
 apply AllQueryStringTypes @httpRequestTests([
     {
@@ -168,7 +170,9 @@ structure AllQueryStringTypesInput {
         }
     },
 ])
-operation ConstantQueryString(ConstantQueryStringInput)
+operation ConstantQueryString {
+    input: ConstantQueryStringInput
+}
 
 structure ConstantQueryStringInput {
     @httpLabel
@@ -181,7 +185,9 @@ structure ConstantQueryStringInput {
 /// serialized (implementations may need to merge them together).
 @readonly
 @http(uri: "/ConstantAndVariableQueryString?foo=bar", method: "GET")
-operation ConstantAndVariableQueryString(ConstantAndVariableQueryStringInput)
+operation ConstantAndVariableQueryString {
+    input: ConstantAndVariableQueryStringInput
+}
 
 apply ConstantAndVariableQueryString @httpRequestTests([
     {
@@ -232,7 +238,9 @@ structure ConstantAndVariableQueryStringInput {
 /// the request and response.
 @readonly
 @http(uri: "/IgnoreQueryParamsInResponse", method: "GET")
-operation IgnoreQueryParamsInResponse() -> IgnoreQueryParamsInResponseOutput
+operation IgnoreQueryParamsInResponse {
+    output: IgnoreQueryParamsInResponseOutput
+}
 
 apply IgnoreQueryParamsInResponse @httpResponseTests([
     {
@@ -259,7 +267,9 @@ structure IgnoreQueryParamsInResponseOutput {
 /// Omits null, but serializes empty string value.
 @readonly
 @http(uri: "/OmitsNullSerializesEmptyString", method: "GET")
-operation OmitsNullSerializesEmptyString(OmitsNullSerializesEmptyStringInput)
+operation OmitsNullSerializesEmptyString {
+    input: OmitsNullSerializesEmptyStringInput
+}
 
 apply OmitsNullSerializesEmptyString @httpRequestTests([
     {
@@ -290,7 +300,9 @@ structure OmitsNullSerializesEmptyStringInput {
 /// Automatically adds idempotency tokens.
 @http(uri: "/QueryIdempotencyTokenAutoFill", method: "POST")
 @tags(["client-only"])
-operation QueryIdempotencyTokenAutoFill(QueryIdempotencyTokenAutoFillInput)
+operation QueryIdempotencyTokenAutoFill {
+    input: QueryIdempotencyTokenAutoFillInput
+}
 
 apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {

@@ -28,7 +28,10 @@ use smithy.test#httpResponseTests
 /// 7. Lists of structures.
 @idempotent
 @http(uri: "/XmlLists", method: "PUT")
-operation XmlLists(XmlListsInputOutput) -> XmlListsInputOutput
+operation XmlLists {
+    input: XmlListsInputOutput,
+    output: XmlListsInputOutput,
+}
 
 apply XmlLists @httpRequestTests([
     {

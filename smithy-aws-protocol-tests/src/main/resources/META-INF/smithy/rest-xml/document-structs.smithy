@@ -16,7 +16,10 @@ use smithy.test#httpResponseTests
 // Note that headers are not serialized in the payload.
 @idempotent
 @http(uri: "/SimpleScalarProperties", method: "PUT")
-operation SimpleScalarProperties(SimpleScalarPropertiesInputOutput) -> SimpleScalarPropertiesInputOutput
+operation SimpleScalarProperties {
+    input: SimpleScalarPropertiesInputOutput,
+    output: SimpleScalarPropertiesInputOutput
+}
 
 apply SimpleScalarProperties @httpRequestTests([
     {
@@ -116,7 +119,10 @@ structure SimpleScalarPropertiesInputOutput {
 
 /// Blobs are base64 encoded
 @http(uri: "/XmlBlobs", method: "POST")
-operation XmlBlobs(XmlBlobsInputOutput) -> XmlBlobsInputOutput
+operation XmlBlobs {
+    input: XmlBlobsInputOutput,
+    output: XmlBlobsInputOutput
+}
 
 apply XmlBlobs @httpRequestTests([
     {
@@ -169,7 +175,10 @@ structure XmlBlobsInputOutput {
 /// default format of date-time and various @timestampFormat trait
 /// values.
 @http(uri: "/XmlTimestamps", method: "POST")
-operation XmlTimestamps(XmlTimestampsInputOutput) -> XmlTimestampsInputOutput
+operation XmlTimestamps {
+    input: XmlTimestampsInputOutput,
+    output: XmlTimestampsInputOutput
+}
 
 apply XmlTimestamps @httpRequestTests([
     {
@@ -341,7 +350,10 @@ structure XmlTimestampsInputOutput {
 /// This example serializes enums as top level properties, in lists, sets, and maps.
 @idempotent
 @http(uri: "/XmlEnums", method: "PUT")
-operation XmlEnums(XmlEnumsInputOutput) -> XmlEnumsInputOutput
+operation XmlEnums {
+    input: XmlEnumsInputOutput,
+    output: XmlEnumsInputOutput
+}
 
 apply XmlEnums @httpRequestTests([
     {
@@ -454,7 +466,10 @@ structure XmlEnumsInputOutput {
 /// Recursive shapes
 @idempotent
 @http(uri: "/RecursiveShapes", method: "PUT")
-operation RecursiveShapes(RecursiveShapesInputOutput) -> RecursiveShapesInputOutput
+operation RecursiveShapes {
+    input: RecursiveShapesInputOutput,
+    output: RecursiveShapesInputOutput
+}
 
 apply RecursiveShapes @httpRequestTests([
     {
@@ -559,7 +574,10 @@ structure RecursiveShapesInputOutputNested2 {
 
 // XML namespace
 @http(uri: "/XmlNamespaces", method: "POST")
-operation XmlNamespaces(XmlNamespacesInputOutput) -> XmlNamespacesInputOutput
+operation XmlNamespaces {
+    input: XmlNamespacesInputOutput,
+    output: XmlNamespacesInputOutput
+}
 
 apply XmlNamespaces @httpRequestTests([
     {

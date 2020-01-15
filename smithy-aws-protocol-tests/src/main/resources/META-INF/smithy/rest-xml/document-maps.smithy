@@ -11,7 +11,10 @@ use smithy.test#httpResponseTests
 
 /// The example tests basic map serialization.
 @http(uri: "/XmlMaps", method: "POST")
-operation XmlMaps(XmlMapsInputOutput) -> XmlMapsInputOutput
+operation XmlMaps {
+    input: XmlMapsInputOutput,
+    output: XmlMapsInputOutput
+}
 
 apply XmlMaps @httpRequestTests([
     {
@@ -107,7 +110,10 @@ map XmlMapsInputOutputMap {
 
 // This example tests maps with @xmlName on members.
 @http(uri: "/XmlMapsXmlName", method: "POST")
-operation XmlMapsXmlName(XmlMapsXmlNameInputOutput) -> XmlMapsXmlNameInputOutput
+operation XmlMapsXmlName {
+    input: XmlMapsXmlNameInputOutput,
+    output: XmlMapsXmlNameInputOutput
+}
 
 apply XmlMapsXmlName @httpRequestTests([
     {
@@ -206,7 +212,10 @@ map XmlMapsXmlNameInputOutputMap {
 
 /// Flattened maps
 @http(uri: "/FlattenedXmlMap", method: "POST")
-operation FlattenedXmlMap(FlattenedXmlMapInputOutput) -> FlattenedXmlMapInputOutput
+operation FlattenedXmlMap {
+    input: FlattenedXmlMapInputOutput,
+    output: FlattenedXmlMapInputOutput
+}
 
 apply FlattenedXmlMap @httpRequestTests([
     {
@@ -276,7 +285,10 @@ structure FlattenedXmlMapInputOutput {
 
 /// Flattened maps with @xmlName
 @http(uri: "/FlattenedXmlMapWithXmlName", method: "POST")
-operation FlattenedXmlMapWithXmlName(FlattenedXmlMapWithXmlNameInputOutput) -> FlattenedXmlMapWithXmlNameInputOutput
+operation FlattenedXmlMapWithXmlName {
+    input: FlattenedXmlMapWithXmlNameInputOutput,
+    output: FlattenedXmlMapWithXmlNameInputOutput
+}
 
 apply FlattenedXmlMapWithXmlName @httpRequestTests([
     {

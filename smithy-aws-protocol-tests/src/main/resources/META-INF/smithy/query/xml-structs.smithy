@@ -12,7 +12,9 @@ use smithy.test#httpResponseTests
 
 // This example serializes simple scalar types in the top level XML document.
 // Note that headers are not serialized in the payload.
-operation SimpleScalarXmlProperties() -> SimpleScalarXmlPropertiesOutput
+operation SimpleScalarXmlProperties {
+    output: SimpleScalarXmlPropertiesOutput
+}
 
 apply SimpleScalarXmlProperties @httpResponseTests([
     {
@@ -71,7 +73,9 @@ structure SimpleScalarXmlPropertiesOutput {
 }
 
 /// Blobs are base64 encoded
-operation XmlBlobs() -> XmlBlobsOutput
+operation XmlBlobs {
+    output: XmlBlobsOutput
+}
 
 apply XmlBlobs @httpResponseTests([
     {
@@ -103,7 +107,9 @@ structure XmlBlobsOutput {
 /// This tests how timestamps are serialized, including using the
 /// default format of date-time and various @timestampFormat trait
 /// values.
-operation XmlTimestamps() -> XmlTimestampsOutput
+operation XmlTimestamps {
+    output: XmlTimestampsOutput
+}
 
 apply XmlTimestamps @httpResponseTests([
     {
@@ -202,7 +208,9 @@ structure XmlTimestampsOutput {
 }
 
 /// This example serializes enums as top level properties, in lists, sets, and maps.
-operation XmlEnums() -> XmlEnumsOutput
+operation XmlEnums {
+    output: XmlEnumsOutput
+}
 
 apply XmlEnums @httpResponseTests([
     {
@@ -265,7 +273,9 @@ structure XmlEnumsOutput {
 }
 
 /// Recursive shapes
-operation RecursiveXmlShapes() -> RecursiveXmlShapesOutput
+operation RecursiveXmlShapes {
+    output: RecursiveXmlShapesOutput
+}
 
 apply RecursiveXmlShapes @httpResponseTests([
     {
@@ -327,7 +337,9 @@ structure RecursiveXmlShapesOutputNested2 {
 }
 
 // XML namespace
-operation XmlNamespaces() -> XmlNamespacesOutput
+operation XmlNamespaces {
+    output: XmlNamespacesOutput
+}
 
 apply XmlNamespaces @httpResponseTests([
     {
@@ -390,7 +402,9 @@ list XmlNamespacedList {
 ///
 /// The wrapping element is always operation name + "Response", and
 /// inside of that wrapper is another wrapper named operation name + "Result".
-operation IgnoresWrappingXmlName() -> IgnoresWrappingXmlNameOutput
+operation IgnoresWrappingXmlName {
+    output: IgnoresWrappingXmlNameOutput
+}
 
 apply IgnoresWrappingXmlName @httpResponseTests([
     {

@@ -9,7 +9,9 @@ use aws.protocols.tests.shared#GreetingStruct
 use smithy.test#httpResponseTests
 
 /// The example tests basic map serialization.
-operation XmlMaps() -> XmlMapsOutput
+operation XmlMaps {
+    output: XmlMapsOutput
+}
 
 apply XmlMaps @httpResponseTests([
     {
@@ -64,7 +66,9 @@ map XmlMapsOutputMap {
 }
 
 // This example tests maps with @xmlName on members.
-operation XmlMapsXmlName() -> XmlMapsXmlNameOutput
+operation XmlMapsXmlName {
+    output: XmlMapsXmlNameOutput
+}
 
 apply XmlMapsXmlName @httpResponseTests([
     {
@@ -122,7 +126,9 @@ map XmlMapsXmlNameOutputMap {
 }
 
 /// Flattened maps
-operation FlattenedXmlMap() -> FlattenedXmlMapOutput
+operation FlattenedXmlMap {
+    output: FlattenedXmlMapOutput
+}
 
 apply FlattenedXmlMap @httpResponseTests([
     {
@@ -162,7 +168,9 @@ structure FlattenedXmlMapOutput {
 }
 
 /// Flattened maps with @xmlName
-operation FlattenedXmlMapWithXmlName() -> FlattenedXmlMapWithXmlNameOutput
+operation FlattenedXmlMapWithXmlName {
+    output: FlattenedXmlMapWithXmlNameOutput
+}
 
 apply FlattenedXmlMapWithXmlName @httpResponseTests([
     {

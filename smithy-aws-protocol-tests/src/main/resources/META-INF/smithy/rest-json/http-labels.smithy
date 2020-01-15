@@ -14,7 +14,9 @@ use smithy.test#httpResponseTests
 /// payload but there are HTTP labels.
 @readonly
 @http(method: "GET", uri: "/HttpRequestWithLabels/{string}/{short}/{integer}/{long}/{float}/{double}/{boolean}/{timestamp}")
-operation HttpRequestWithLabels(HttpRequestWithLabelsInput)
+operation HttpRequestWithLabels {
+    input: HttpRequestWithLabelsInput
+}
 
 apply HttpRequestWithLabels @httpRequestTests([
     {
@@ -77,7 +79,9 @@ structure HttpRequestWithLabelsInput {
 /// URI path.
 @readonly
 @http(method: "GET", uri: "/HttpRequestWithLabelsAndTimestampFormat/{memberEpochSeconds}/{memberHttpDate}/{memberDateTime}/{defaultFormat}/{targetEpochSeconds}/{targetHttpDate}/{targetDateTime}")
-operation HttpRequestWithLabelsAndTimestampFormat(HttpRequestWithLabelsAndTimestampFormatInput)
+operation HttpRequestWithLabelsAndTimestampFormat {
+    input: HttpRequestWithLabelsAndTimestampFormatInput
+}
 
 apply HttpRequestWithLabelsAndTimestampFormat @httpRequestTests([
     {
@@ -143,7 +147,9 @@ structure HttpRequestWithLabelsAndTimestampFormatInput {
 // This example uses a greedy label and a normal label.
 @readonly
 @http(method: "GET", uri: "/HttpRequestWithGreedyLabelInPath/foo/{foo}/baz/{baz+}")
-operation HttpRequestWithGreedyLabelInPath(HttpRequestWithGreedyLabelInPathInput)
+operation HttpRequestWithGreedyLabelInPath {
+    input: HttpRequestWithGreedyLabelInPathInput
+}
 
 apply HttpRequestWithGreedyLabelInPath @httpRequestTests([
     {

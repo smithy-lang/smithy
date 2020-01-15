@@ -14,7 +14,10 @@ use smithy.test#httpResponseTests
 /// In this example, no JSON document is synthesized because the payload is
 /// not a structure or a union type.
 @http(uri: "/HttpPayloadTraits", method: "POST")
-operation HttpPayloadTraits(HttpPayloadTraitsInputOutput) -> HttpPayloadTraitsInputOutput
+operation HttpPayloadTraits {
+    input: HttpPayloadTraitsInputOutput,
+    output: HttpPayloadTraitsInputOutput
+}
 
 apply HttpPayloadTraits @httpRequestTests([
     {
@@ -89,7 +92,10 @@ structure HttpPayloadTraitsInputOutput {
 /// This examples uses a `@mediaType` trait on the payload to force a custom
 /// content-type to be serialized.
 @http(uri: "/HttpPayloadTraitsWithMediaType", method: "POST")
-operation HttpPayloadTraitsWithMediaType(HttpPayloadTraitsWithMediaTypeInputOutput) -> HttpPayloadTraitsWithMediaTypeInputOutput
+operation HttpPayloadTraitsWithMediaType {
+    input: HttpPayloadTraitsWithMediaTypeInputOutput,
+    output: HttpPayloadTraitsWithMediaTypeInputOutput
+}
 
 apply HttpPayloadTraitsWithMediaType @httpRequestTests([
     {
@@ -142,7 +148,10 @@ structure HttpPayloadTraitsWithMediaTypeInputOutput {
 /// to match the targeted structure.
 @idempotent
 @http(uri: "/HttpPayloadWithStructure", method: "PUT")
-operation HttpPayloadWithStructure(HttpPayloadWithStructureInputOutput) -> HttpPayloadWithStructureInputOutput
+operation HttpPayloadWithStructure {
+    input: HttpPayloadWithStructureInputOutput,
+    output: HttpPayloadWithStructureInputOutput
+}
 
 apply HttpPayloadWithStructure @httpRequestTests([
     {

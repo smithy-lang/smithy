@@ -34,7 +34,10 @@ use smithy.test#httpResponseTests
 /// 1. A successful response in the form of GreetingWithErrorsOutput
 /// 2. An InvalidGreeting error.
 /// 3. A BadRequest error.
-operation GreetingWithErrors() -> GreetingWithErrorsOutput errors [InvalidGreeting, ComplexError]
+operation GreetingWithErrors {
+    output: GreetingWithErrorsOutput,
+    errors: [InvalidGreeting, ComplexError]
+}
 
 apply GreetingWithErrors @httpResponseTests([
     {

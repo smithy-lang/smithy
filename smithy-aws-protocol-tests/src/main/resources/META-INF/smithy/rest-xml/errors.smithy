@@ -18,7 +18,10 @@ use smithy.test#httpResponseTests
 /// the presence of the
 @idempotent
 @http(uri: "/GreetingWithErrors", method: "PUT")
-operation GreetingWithErrors() -> GreetingWithErrorsOutput errors [InvalidGreeting, ComplexError]
+operation GreetingWithErrors {
+    output: GreetingWithErrorsOutput,
+    errors: [InvalidGreeting, ComplexError]
+}
 
 apply GreetingWithErrors @httpResponseTests([
     {
