@@ -6,14 +6,14 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Event stream specification &#8212; Smithy 0.4.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    <title>Event stream specification &#8212; Smithy 0.5.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -163,7 +164,9 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
+<span class="kd">operation</span><span class="nc"> PublishMessages</span> {
+    <span class="nl">input:</span> <span class="vc">PublishMessagesInput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
     <span class="nl">room:</span> <span class="vc">String</span>,
@@ -180,31 +183,33 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Message&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;Message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
-                    <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Message&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -230,7 +235,9 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="kd">operation</span><span class="nc"> SubscribeToMovements</span>() <span class="nd">-&gt;</span> <span class="vc">SubscribeToMovementsOutput</span>
+<span class="kd">operation</span><span class="nc"> SubscribeToMovements</span> {
+    <span class="nl">output:</span> <span class="vc">SubscribeToMovementsOutput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> SubscribeToMovementsOutput</span> {
     <span class="nd">@eventStream</span>
@@ -246,31 +253,33 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;SubscribeToMovements&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;SubscribeToMovementsOutput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;SubscribeToMovementsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;movements&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Movement&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#SubscribeToMovements&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SubscribeToMovementsOutput&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#SubscribeToMovementsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;movements&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;Movement&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;angle&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Float&quot;</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;velocity&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Float&quot;</span>
-                    <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Movement&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;angle&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Float&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;velocity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Float&quot;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -317,7 +326,9 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
+<span class="kd">operation</span><span class="nc"> PublishMessages</span> {
+    <span class="nl">input:</span> <span class="vc">PublishMessagesInput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
     <span class="nl">room:</span> <span class="vc">String</span>,
@@ -341,38 +352,44 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishEvents&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishEvents&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;PublishEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;leave&quot;</span><span class="p">:</span> <span class="s2">&quot;LeaveEvent&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#PublishEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Message&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;leave&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#LeaveEvent&quot;</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;Message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
-                    <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Message&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -398,7 +415,9 @@ JSON</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="kd">operation</span><span class="nc"> SubscribeToMovements</span>() <span class="nd">-&gt;</span> <span class="vc">SubscribeToMovementsOutput</span>
+<span class="kd">operation</span><span class="nc"> SubscribeToMovements</span> {
+    <span class="nl">output:</span> <span class="vc">SubscribeToMovementsOutput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> SubscribeToMovementsOutput</span> {
     <span class="nd">@eventStream</span>
@@ -420,45 +439,47 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;SubscribeToMovements&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;SubscribeToMovementsOutput&quot;</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;SubscribeToMovementsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;movements&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#SubscribeToMovements&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SubscribeToMovementsOutput&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#SubscribeToMovementsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;movements&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Message&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;MovementEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Movement&quot;</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;down&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Movement&quot;</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;left&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Movement&quot;</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;right&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Movement&quot;</span>
-                    <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MovementEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;down&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;left&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;right&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;Movement&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;velocity&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Float&quot;</span>
-                    <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Movement&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;velocity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Float&quot;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -481,7 +502,9 @@ event stream when necessary.</p>
 on the name of an event. For example, given the following event stream,</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
-<span class="kd">operation</span><span class="nc"> SubscribeToEvents</span>() <span class="nd">-&gt;</span> <span class="vc">SubscribeToEventsOutput</span>
+<span class="kd">operation</span><span class="nc"> SubscribeToEvents</span> {
+    <span class="nl">output:</span> <span class="vc">SubscribeToEventsOutput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> SubscribeToEventsOutput</span> {
     <span class="nd">@eventStream</span>
@@ -545,7 +568,9 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages/{room}&quot;</span>)
-<span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
+<span class="kd">operation</span><span class="nc"> PublishMessages</span> {
+    <span class="nl">input:</span> <span class="vc">PublishMessagesInput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
     <span class="nd">@httpLabel</span>
@@ -564,37 +589,43 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;http&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/messages/{room}&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;httpLabel:&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;httpPayload&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpLabel:&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Message&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpPayload&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;smithy.api#eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;Message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
-                    <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Message&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -634,7 +665,10 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages/{room}&quot;</span>)
-<span class="kd">operation</span><span class="nc"> SubscribeToMessages</span>(<span class="vc">SubscribeToMessagesInput</span>) <span class="nd">-&gt;</span> <span class="vc">SubscribeToMessagesOutput</span>
+<span class="kd">operation</span><span class="nc"> SubscribeToMessages</span> {
+    <span class="nl">input:</span> <span class="vc">SubscribeToMessagesInput</span>,
+    <span class="nl">output:</span> <span class="vc">SubscribeToMessagesOutput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> SubscribeToMessagesInput</span> {
     <span class="nd">@httpLabel</span>
@@ -654,37 +688,45 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;http&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/messages/{room}&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;SubscribeToMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;httpLabel:&quot;</span><span class="p">:</span> <span class="kc">true</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#SubscribeToMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpLabel:&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;SubscribeToMessagesOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;connectionLifetime&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Integer&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;httpHeader:&quot;</span><span class="p">:</span> <span class="s2">&quot;X-Connection-Lifetime&quot;</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;httpPayload&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#SubscribeToMessagesOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;connectionLifetime&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpHeader:&quot;</span><span class="p">:</span> <span class="s2">&quot;X-Connection-Lifetime&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Message&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpPayload&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;smithy.api#eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -747,23 +789,27 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventPayload&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventPayload&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;c&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Blob&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventPayload&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventPayload&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventPayload&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;c&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Blob&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventPayload&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -799,15 +845,19 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">},</span>
-                    <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">},</span>
-                    <span class="nt">&quot;c&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Blob&quot;</span><span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;c&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Blob&quot;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -896,19 +946,21 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventHeader&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventHeader&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventHeader&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventHeader&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -977,19 +1029,21 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventPayload&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;eventHeader&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventPayload&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventHeader&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>

@@ -6,14 +6,14 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AWS IAM traits &#8212; Smithy 0.4.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    <title>AWS IAM traits &#8212; Smithy 0.5.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -154,22 +155,22 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="kd">use</span><span class="nc"> aws.iam#actionPermissionDescription</span>
 
 <span class="nd">@actionPermissionDescription</span>(<span class="s2">&quot;This will allow the user to Foo.&quot;</span>)
-<span class="kd">operation</span><span class="nc"> FooOperation</span>()
+<span class="kd">operation</span><span class="nc"> FooOperation</span> {}
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;FooOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#FooOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;aws.iam#actionPermissionDescription&quot;</span><span class="p">:</span> <span class="s2">&quot;This will allow the user to Foo.&quot;</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -208,7 +209,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="kd">use</span><span class="nc"> aws.api#service</span>
 <span class="kd">use</span><span class="nc"> aws.iam#definedContextKeys</span>
@@ -228,18 +229,23 @@ JSON</div>
 }
 
 <span class="nd">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
-<span class="kd">operation</span><span class="nc"> MyOperation</span>
+<span class="kd">operation</span><span class="nc"> MyOperation</span> {}
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;sdkId&quot;</span><span class="p">:</span> <span class="s2">&quot;My Value&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span> <span class="s2">&quot;myservice&quot;</span>
@@ -248,20 +254,33 @@ JSON</div>
                     <span class="nt">&quot;otherservice:Bar&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
                     <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyResource&quot;</span><span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;aws.iam#conditionKeys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">],</span>
-                <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyOperation&quot;</span><span class="p">]</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;MyOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;aws.iam#conditionKeys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;aws:region&quot;</span><span class="p">]</span>
+            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyOperation&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.iam#conditionKeys&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;otherservice:Bar&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.iam#conditionKeys&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;aws:region&quot;</span>
+                <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -336,7 +355,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="kd">use</span><span class="nc"> aws.api#service</span>
 <span class="kd">use</span><span class="nc"> aws.iam#defineConditionKeys</span>
@@ -357,12 +376,17 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;sdkId&quot;</span><span class="p">:</span> <span class="s2">&quot;My Value&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span> <span class="s2">&quot;myservice&quot;</span>
@@ -373,8 +397,7 @@ JSON</div>
                         <span class="nt">&quot;documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;The Bar string&quot;</span><span class="p">,</span>
                         <span class="nt">&quot;externalDocumentation&quot;</span><span class="p">:</span> <span class="s2">&quot;http://example.com&quot;</span>
                     <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyResource&quot;</span><span class="p">]</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -476,7 +499,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="kd">use</span><span class="nc"> aws.api#service</span>
 <span class="kd">use</span><span class="nc"> aws.iam#disableConditionKeyInference</span>
@@ -499,24 +522,34 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;sdkId&quot;</span><span class="p">:</span> <span class="s2">&quot;My Value&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span> <span class="s2">&quot;myservice&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
                 <span class="p">},</span>
-                <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyResource&quot;</span><span class="p">]</span>
+                <span class="nt">&quot;bar&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
-                <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;aws.iam#disableConditionKeyInference&quot;</span><span class="p">:</span> <span class="kc">true</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -556,7 +589,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="kd">use</span><span class="nc"> aws.api#service</span>
 <span class="kd">use</span><span class="nc"> aws.iam#requiredActions</span>
@@ -573,34 +606,48 @@ JSON</div>
 }
 
 <span class="nd">@requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])
-<span class="kd">operation</span><span class="nc"> MyOperation</span>
+<span class="kd">operation</span><span class="nc"> MyOperation</span> {}
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;sdkId&quot;</span><span class="p">:</span> <span class="s2">&quot;My Value&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span> <span class="s2">&quot;myservice&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyResource&quot;</span><span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
             <span class="p">},</span>
-            <span class="nt">&quot;MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyOperation&quot;</span><span class="p">]</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;MyOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;aws.iam#requiredActions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;otherservice:OtherOperation&quot;</span><span class="p">]</span>
+            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyOperation&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.iam#requiredActions&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;otherservice:OtherOperation&quot;</span>
+                <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -635,7 +682,7 @@ JSON</div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="kd">use</span><span class="nc"> aws.api#service</span>
 <span class="kd">use</span><span class="nc"> aws.iam#defineConditionKeys</span>
@@ -660,18 +707,23 @@ JSON</div>
 }
 
 <span class="nd">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
-<span class="kd">operation</span><span class="nc"> MyOperation</span>
+<span class="kd">operation</span><span class="nc"> MyOperation</span> {}
 </pre></div>
 </div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;ns.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="nt">&quot;sdkId&quot;</span><span class="p">:</span> <span class="s2">&quot;My Value&quot;</span><span class="p">,</span>
                     <span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span> <span class="s2">&quot;myservice&quot;</span>
@@ -680,27 +732,23 @@ JSON</div>
                     <span class="nt">&quot;otherservice:Bar&quot;</span><span class="p">:</span> <span class="p">{</span>
                         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
                     <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyResource&quot;</span><span class="p">]</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;aws.iam#conditionKeys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">],</span>
-                <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyOperation&quot;</span><span class="p">],</span>
-                <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyInnerResource&quot;</span><span class="p">]</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;yum&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;MyOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;aws.iam#conditionKeys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;aws:region&quot;</span><span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;yum&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.iam#conditionKeys&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;aws:region&quot;</span>
+                <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>

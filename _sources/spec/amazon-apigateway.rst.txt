@@ -50,7 +50,6 @@ The following example sets the ``X-API-Key`` header as the API key source.
 
     .. code-tab:: smithy
 
-        $version: "0.4.0"
         namespace smithy.example
 
         use aws.apigateway#apiKeySource
@@ -63,12 +62,12 @@ The following example sets the ``X-API-Key`` header as the API key source.
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "Weather": {
-                        "type": "service",
-                        "version": "2018-03-17",
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#Weather": {
+                    "type": "service",
+                    "version": "2018-03-17",
+                    "traits": {
                         "aws.apigateway#apiKeySource": "HEADER"
                     }
                 }
@@ -189,16 +188,18 @@ An *authorizer* definition is an object that supports the following properties:
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "ns.foo": {
-            "shapes": {
-                "Weather": {
-                    "type": "service",
-                    "version": "2018-03-17",
-                    "protocols": [
+        "smithy": "0.5.0",
+        "shapes": {
+            "ns.foo#Weather": {
+                "type": "service",
+                "version": "2018-03-17",
+                "traits": {
+                    "smithy.api#protocols": [
                         {
                             "name": "aws.rest-json",
-                            "auth": ["aws.v4"]
+                            "auth": [
+                                "aws.v4"
+                            ]
                         }
                     ],
                     "aws.apigateway#authorizer": "arbitrary-name",
@@ -210,7 +211,7 @@ An *authorizer* definition is an object that supports the following properties:
                             "credentials": "arn:foo:bar",
                             "identitySource": "mapping.expression",
                             "identityValidationExpression": "[A-Z]+",
-                            "resultTtlInSeconds":100
+                            "resultTtlInSeconds": 100
                         }
                     }
                 }
@@ -288,7 +289,6 @@ Then following example enables request validation on a service:
 
     .. code-tab:: smithy
 
-        $version: "0.4.0"
         namespace smithy.example
 
         use aws.apigateway#requestValidator
@@ -301,12 +301,12 @@ Then following example enables request validation on a service:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "Weather": {
-                        "type": "service",
-                        "version": "2018-03-17",
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#Weather": {
+                    "type": "service",
+                    "version": "2018-03-17",
+                    "traits": {
                         "aws.apigateway#requestValidator": "full"
                     }
                 }
@@ -428,49 +428,56 @@ operation within the service.
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "Weather": {
-                    "type": "service",
-                    "version": "2018-03-17",
-                    "protocols": [{"name": "aws.rest-json", "auth": ["aws.v4"]}],
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#Weather": {
+                "type": "service",
+                "version": "2018-03-17",
+                "traits": {
+                    "smithy.api#protocols": [
+                        {
+                            "name": "aws.rest-json",
+                            "auth": [
+                                "aws.v4"
+                            ]
+                        }
+                    ],
                     "aws.apigateway#integration": {
                         "type": "aws",
-                        "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:012345678901:function:HelloWorld/invocations",
-                        "httpMethod" : "POST",
-                        "credentials" : "arn:aws:iam::012345678901:role/apigateway-invoke-lambda-exec-role",
-                        "requestTemplates" : {
-                            "application/json" : "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
-                            "application/xml" : "#set ($root=$input.path('$')) <stage>$root.name</stage> "
+                        "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:012345678901:function:HelloWorld/invocations",
+                        "httpMethod": "POST",
+                        "credentials": "arn:aws:iam::012345678901:role/apigateway-invoke-lambda-exec-role",
+                        "requestTemplates": {
+                            "application/json": "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
+                            "application/xml": "#set ($root=$input.path('$')) <stage>$root.name</stage> "
                         },
-                        "requestParameters" : {
-                            "integration.request.path.stage" : "method.request.querystring.version",
-                            "integration.request.querystring.provider" : "method.request.querystring.vendor"
+                        "requestParameters": {
+                            "integration.request.path.stage": "method.request.querystring.version",
+                            "integration.request.querystring.provider": "method.request.querystring.vendor"
                         },
-                        "cacheNamespace" : "cache namespace",
-                        "cacheKeyParameters" : [],
-                        "responses" : {
-                            "2\\d{2}" : {
-                                "statusCode" : "200",
-                                "responseParameters" : {
-                                    "method.response.header.requestId" : "integration.response.header.cid"
+                        "cacheNamespace": "cache namespace",
+                        "cacheKeyParameters": [],
+                        "responses": {
+                            "2\\d{2}": {
+                                "statusCode": "200",
+                                "responseParameters": {
+                                    "method.response.header.requestId": "integration.response.header.cid"
                                 },
-                                "responseTemplates" : {
-                                    "application/json" : "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
-                                    "application/xml" : "#set ($root=$input.path('$')) <stage>$root.name</stage> "
+                                "responseTemplates": {
+                                    "application/json": "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
+                                    "application/xml": "#set ($root=$input.path('$')) <stage>$root.name</stage> "
                                 }
                             },
-                            "302" : {
-                                "statusCode" : "302",
-                                "responseParameters" : {
-                                    "method.response.header.Location" : "integration.response.body.redirect.url"
+                            "302": {
+                                "statusCode": "302",
+                                "responseParameters": {
+                                    "method.response.header.Location": "integration.response.body.redirect.url"
                                 }
                             },
-                            "default" : {
-                                "statusCode" : "400",
-                                "responseParameters" : {
-                                    "method.response.header.test-method-response-header" : "'static value'"
+                            "default": {
+                                "statusCode": "400",
+                                "responseParameters": {
+                                    "method.response.header.test-method-response-header": "'static value'"
                                 }
                             }
                         }
@@ -533,42 +540,45 @@ The following example defines an operation that uses a mock integration.
 .. code-block:: json
 
     {
-        "smithy": "0.4.0",
-        "smithy.example": {
-            "shapes": {
-                "MyOperation": {
-                    "type": "operation",
-                    "http": {"method": "POST", "uri": "/2"},
+        "smithy": "0.5.0",
+        "shapes": {
+            "smithy.example#MyOperation": {
+                "type": "operation",
+                "traits": {
+                    "smithy.api#http": {
+                        "method": "POST",
+                        "uri": "/2"
+                    },
                     "aws.apigateway#mockIntegration": {
-                        "requestTemplates" : {
-                            "application/json" : "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
-                            "application/xml" : "#set ($root=$input.path('$')) <stage>$root.name</stage> "
+                        "requestTemplates": {
+                            "application/json": "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
+                            "application/xml": "#set ($root=$input.path('$')) <stage>$root.name</stage> "
                         },
-                        "requestParameters" : {
-                            "integration.request.path.stage" : "method.request.querystring.version",
-                            "integration.request.querystring.provider" : "method.request.querystring.vendor"
+                        "requestParameters": {
+                            "integration.request.path.stage": "method.request.querystring.version",
+                            "integration.request.querystring.provider": "method.request.querystring.vendor"
                         },
-                        "responses" : {
-                            "2\\d{2}" : {
-                                "statusCode" : "200",
-                                "responseParameters" : {
-                                    "method.response.header.requestId" : "integration.response.header.cid"
+                        "responses": {
+                            "2\\d{2}": {
+                                "statusCode": "200",
+                                "responseParameters": {
+                                    "method.response.header.requestId": "integration.response.header.cid"
                                 },
-                                "responseTemplates" : {
-                                    "application/json" : "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
-                                    "application/xml" : "#set ($root=$input.path('$')) <stage>$root.name</stage> "
+                                "responseTemplates": {
+                                    "application/json": "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
+                                    "application/xml": "#set ($root=$input.path('$')) <stage>$root.name</stage> "
                                 }
                             },
-                            "302" : {
-                                "statusCode" : "302",
-                                "responseParameters" : {
-                                    "method.response.header.Location" : "integration.response.body.redirect.url"
+                            "302": {
+                                "statusCode": "302",
+                                "responseParameters": {
+                                    "method.response.header.Location": "integration.response.body.redirect.url"
                                 }
                             },
-                            "default" : {
-                                "statusCode" : "400",
-                                "responseParameters" : {
-                                    "method.response.header.test-method-response-header" : "'static value'"
+                            "default": {
+                                "statusCode": "400",
+                                "responseParameters": {
+                                    "method.response.header.test-method-response-header": "'static value'"
                                 }
                             }
                         }

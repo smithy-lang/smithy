@@ -62,7 +62,9 @@ The following example defines an operation that uses HTTP bindings:
 
         @idempotent
         @http(method: "PUT", uri: "/{bucketName}/{key}", code: 200)
-        operation PutObject(PutObjectInput)
+        operation PutObject {
+            input: PutObjectInput
+        }
 
         structure PutObjectInput {
             // Sent in the URI label named "key".
@@ -138,7 +140,9 @@ constraints:
 
     @readonly
     @http(method: "GET", uri: "/foo/{baz}")
-    operation GetService() -> GetServiceOutput
+    operation GetService {
+        output: GetServiceOutput
+    }
 
 
 Literal character sequences
@@ -419,12 +423,13 @@ following rules are in place:
    - Pattern ``/foo/{bar}`` and ``/foo/{baz}`` conflict regardless of any
      constraint traits on the label members.
 
-#. A label and a literal cannot both occupy the same segment in patterns which
-   are equivalent to that point.
+#. A label and a literal SHOULD NOT both occupy the same segment in patterns
+   which are equivalent to that point.
 
    - ``/foo/bar/{baz}`` and ``/foo/baz/bam`` can coexist.
-   - ``/foo/bar`` and ``/foo/{baz}/bam`` cannot coexist because a label occupies
-     the same segment of another pattern with the same prefix.
+   - ``/foo/bar`` and ``/foo/{baz}/bam`` cannot coexist unless pattern
+     traits prevent ``{baz}`` from evaluating to ``bar`` because the label
+     occupies the same segment of another pattern with the same prefix.
 
 #. A query string literal with no value and a query string literal with an
    empty value are considered equivalent. For example, ``/foo?baz`` and
@@ -620,7 +625,10 @@ Serialization rules:
 
         @readonly
         @http(method: "GET", uri: "/{foo}")
-        operation GetStatus(GetStatusInput) -> GetStatusOutput
+        operation GetStatus {
+            input: GetStatusInput,
+            output: GetStatusOutput
+        }
 
         structure GetStatusInput {
             @required
@@ -722,7 +730,9 @@ Given the following Smithy model:
 
         @readonly
         @http(method: "GET", uri: "/myOperation")
-        operation MyOperation(MyOperationInput)
+        operation MyOperation {
+            input: MyOperationInput
+        }
 
         structure MyOperationInput {
             @httpPrefixHeaders("X-Foo-")
@@ -933,7 +943,9 @@ and HTTP bindings:
         namespace smithy.example
 
         @http(method: "POST", uri: "/messages")
-        operation PublishMessages(PublishMessagesInput)
+        operation PublishMessages {
+            input: PublishMessagesInput
+        }
 
         structure PublishMessagesInput {
             @httpPayload
@@ -948,28 +960,37 @@ and HTTP bindings:
     .. code-tab:: json
 
         {
-            "smithy": "0.4.0",
-            "smithy.example": {
-                "shapes": {
-                    "PublishMessages": {
-                        "type": "operation",
-                        "input": "PublishMessagesInput",
-                        "http": { "uri": "/messages", "method": "POST" }
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PublishMessages": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PublishMessagesInput"
                     },
-                    "PublishMessagesInput": {
-                        "type": "structure",
-                        "members": {
-                            "messages": {
-                                "target": "Message",
-                                "httpPayload": true,
-                                "eventStream": true
+                    "traits": {
+                        "smithy.api#http": {
+                            "uri": "/messages",
+                            "method": "POST"
+                        }
+                    }
+                },
+                "smithy.example#PublishMessagesInput": {
+                    "type": "structure",
+                    "members": {
+                        "messages": {
+                            "target": "smithy.example#Message",
+                            "traits": {
+                                "smithy.api#httpPayload": true,
+                                "smithy.api#eventStream": true
                             }
                         }
-                    },
-                    "Message": {
-                        "type": "structure",
-                        "members": {
-                            "message": { "target": "String" }
+                    }
+                },
+                "smithy.example#Message": {
+                    "type": "structure",
+                    "members": {
+                        "message": {
+                            "target": "smithy.api#String"
                         }
                     }
                 }
@@ -985,7 +1006,9 @@ marked with the ``httpPayload`` trait:
     namespace smithy.example
 
     @http(method: "POST", uri: "/messages")
-    operation InvalidOperation(InvalidOperationInput)
+    operation InvalidOperation {
+        input: InvalidOperationInput
+    }
 
     structure InvalidOperationInput {
         @eventStream

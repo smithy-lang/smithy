@@ -38,4 +38,5 @@ software.amazon.smithy.openapi.fromsmithy.mappers
 software.amazon.smithy.openapi.fromsmithy.protocols
 software.amazon.smithy.openapi.fromsmithy.security
 software.amazon.smithy.openapi.model
+software.amazon.smithy.protocoltests.traits
 software.amazon.smithy.utils

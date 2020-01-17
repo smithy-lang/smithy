@@ -6,14 +6,14 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>HTTP protocol bindings &#8212; Smithy 0.4.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
+    <title>HTTP protocol bindings &#8212; Smithy 0.5.0 documentation</title><link rel="stylesheet" href="../_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -73,7 +74,7 @@
     </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="XML traits" href="xml.html" />
+    <link rel="next" title="XML bindings" href="xml.html" />
     <link rel="prev" title="Event stream specification" href="event-streams.html" /> 
   </head><body>
     <header>
@@ -181,7 +182,9 @@ Smithy</div>
 
 <span class="nd">@idempotent</span>
 <span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;PUT&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/{bucketName}/{key}&quot;</span>, <span class="nl">code:</span> <span class="m">200</span>)
-<span class="kd">operation</span><span class="nc"> PutObject</span>(<span class="vc">PutObjectInput</span>)
+<span class="kd">operation</span><span class="nc"> PutObject</span> {
+    <span class="nl">input:</span> <span class="vc">PutObjectInput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> PutObjectInput</span> {
     <span class="c">// Sent in the URI label named &quot;key&quot;.</span>
@@ -248,7 +251,9 @@ properties.</li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
 <span class="nd">@http</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="s2">&quot;/foo/</span><span class="si">{baz}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">operation</span> <span class="n">GetService</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">GetServiceOutput</span>
+<span class="n">operation</span> <span class="n">GetService</span> <span class="p">{</span>
+    <span class="n">output</span><span class="p">:</span> <span class="n">GetServiceOutput</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <div class="section" id="literal-character-sequences">
@@ -591,11 +596,12 @@ following rules are in place:</p>
 constraint traits on the label members.</li>
 </ul>
 </li>
-<li>A label and a literal cannot both occupy the same segment in patterns which
-are equivalent to that point.<ul>
+<li>A label and a literal SHOULD NOT both occupy the same segment in patterns
+which are equivalent to that point.<ul>
 <li><code class="docutils literal notranslate"><span class="pre">/foo/bar/{baz}</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/baz/bam</span></code> can coexist.</li>
-<li><code class="docutils literal notranslate"><span class="pre">/foo/bar</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/{baz}/bam</span></code> cannot coexist because a label occupies
-the same segment of another pattern with the same prefix.</li>
+<li><code class="docutils literal notranslate"><span class="pre">/foo/bar</span></code> and <code class="docutils literal notranslate"><span class="pre">/foo/{baz}/bam</span></code> cannot coexist unless pattern
+traits prevent <code class="docutils literal notranslate"><span class="pre">{baz}</span></code> from evaluating to <code class="docutils literal notranslate"><span class="pre">bar</span></code> because the label
+occupies the same segment of another pattern with the same prefix.</li>
 </ul>
 </li>
 <li>A query string literal with no value and a query string literal with an
@@ -808,7 +814,10 @@ Smithy</div>
 
 <span class="nd">@readonly</span>
 <span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/{foo}&quot;</span>)
-<span class="kd">operation</span><span class="nc"> GetStatus</span>(<span class="vc">GetStatusInput</span>) <span class="nd">-&gt;</span> <span class="vc">GetStatusOutput</span>
+<span class="kd">operation</span><span class="nc"> GetStatus</span> {
+    <span class="nl">input:</span> <span class="vc">GetStatusInput</span>,
+    <span class="nl">output:</span> <span class="vc">GetStatusOutput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> GetStatusInput</span> {
     <span class="nd">@required</span>
@@ -906,7 +915,9 @@ Smithy</div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
 <span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/myOperation&quot;</span>)
-<span class="kd">operation</span><span class="nc"> MyOperation</span>(<span class="vc">MyOperationInput</span>)
+<span class="kd">operation</span><span class="nc"> MyOperation</span> {
+    <span class="nl">input:</span> <span class="vc">MyOperationInput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> MyOperationInput</span> {
     <span class="nd">@httpPrefixHeaders</span>(<span class="s2">&quot;X-Foo-&quot;</span>)
@@ -1126,7 +1137,9 @@ JSON</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages&quot;</span>)
-<span class="kd">operation</span><span class="nc"> PublishMessages</span>(<span class="vc">PublishMessagesInput</span>)
+<span class="kd">operation</span><span class="nc"> PublishMessages</span> {
+    <span class="nl">input:</span> <span class="vc">PublishMessagesInput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
     <span class="nd">@httpPayload</span>
@@ -1142,28 +1155,37 @@ JSON</div>
 </div>
 <div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;smithy.example&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;PublishMessagesInput&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;http&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/messages&quot;</span><span class="p">,</span> <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span> <span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;0.5.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
             <span class="p">},</span>
-            <span class="nt">&quot;PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;httpPayload&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                        <span class="nt">&quot;eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/messages&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Message&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpPayload&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="nt">&quot;smithy.api#eventStream&quot;</span><span class="p">:</span> <span class="kc">true</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;Message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span> <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Message&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1179,7 +1201,9 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
 
 <span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages&quot;</span>)
-<span class="kd">operation</span><span class="nc"> InvalidOperation</span>(<span class="vc">InvalidOperationInput</span>)
+<span class="kd">operation</span><span class="nc"> InvalidOperation</span> {
+    <span class="nl">input:</span> <span class="vc">InvalidOperationInput</span>
+}
 
 <span class="kd">structure</span><span class="nc"> InvalidOperationInput</span> {
     <span class="nd">@eventStream</span>
@@ -1197,7 +1221,7 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
                         
                         <a href="event-streams.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Event stream specification</a>
                         
-                        <a href="xml.html" title="next chapter" class="next-page clearfix">XML traits →</a>
+                        <a href="xml.html" title="next chapter" class="next-page clearfix">XML bindings →</a>
                     </section>
                     
                 </article><aside id="right-column" class="side-column hidden-sm">
