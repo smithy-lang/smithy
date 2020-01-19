@@ -73,60 +73,58 @@ subprojects {
      */
     apply(plugin = "java-library")
 
-    if (plugins.hasPlugin("java")) {
-        java {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
-        }
-
-        tasks.withType<JavaCompile> {
-            options.encoding = "UTF-8"
-        }
-
-        // Use Junit5's test runner.
-        tasks.withType<Test> {
-            useJUnitPlatform()
-        }
-
-        // Apply junit 5 and hamcrest test dependencies to all java projects.
-        dependencies {
-            testCompile("org.junit.jupiter:junit-jupiter-api:5.4.0")
-            testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.0")
-            testCompile("org.junit.jupiter:junit-jupiter-params:5.4.0")
-            testCompile("org.hamcrest:hamcrest:2.1")
-        }
-
-        // Reusable license copySpec
-        val licenseSpec = copySpec {
-            from("${project.rootDir}/LICENSE")
-            from("${project.rootDir}/NOTICE")
-        }
-
-        // Set up tasks that build source and javadoc jars.
-        tasks.register<Jar>("sourcesJar") {
-            metaInf.with(licenseSpec)
-            from(sourceSets.main.get().allJava)
-            archiveClassifier.set("sources")
-        }
-
-        tasks.register<Jar>("javadocJar") {
-            metaInf.with(licenseSpec)
-            from(tasks.javadoc)
-            archiveClassifier.set("javadoc")
-        }
-
-        // Configure jars to include license related info
-        tasks.jar {
-            metaInf.with(licenseSpec)
-            inputs.property("moduleName", subproject.extra["moduleName"])
-            manifest {
-                attributes["Automatic-Module-Name"] = subproject.extra["moduleName"]
-            }
-        }
-
-        // Always run javadoc after build.
-        tasks["build"].finalizedBy(tasks["javadoc"])
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    // Use Junit5's test runner.
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
+
+    // Apply junit 5 and hamcrest test dependencies to all java projects.
+    dependencies {
+        testCompile("org.junit.jupiter:junit-jupiter-api:5.4.0")
+        testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.0")
+        testCompile("org.junit.jupiter:junit-jupiter-params:5.4.0")
+        testCompile("org.hamcrest:hamcrest:2.1")
+    }
+
+    // Reusable license copySpec
+    val licenseSpec = copySpec {
+        from("${project.rootDir}/LICENSE")
+        from("${project.rootDir}/NOTICE")
+    }
+
+    // Set up tasks that build source and javadoc jars.
+    tasks.register<Jar>("sourcesJar") {
+        metaInf.with(licenseSpec)
+        from(sourceSets.main.get().allJava)
+        archiveClassifier.set("sources")
+    }
+
+    tasks.register<Jar>("javadocJar") {
+        metaInf.with(licenseSpec)
+        from(tasks.javadoc)
+        archiveClassifier.set("javadoc")
+    }
+
+    tasks.jar {
+        metaInf.with(licenseSpec)
+        inputs.property("moduleName", subproject.extra["moduleName"])
+        manifest {
+            attributes["Automatic-Module-Name"] = subproject.extra["moduleName"]
+        }
+    }
+
+    // Always run javadoc after build.
+    tasks["build"].dependsOn(tasks["javadoc"])
 
     /*
      * Maven
@@ -134,61 +132,52 @@ subprojects {
      *
      * Publish to Maven central.
      */
-    if (plugins.hasPlugin("java")) {
-        apply(plugin = "maven-publish")
-        apply(plugin = "signing")
+    apply(plugin = "maven-publish")
+    apply(plugin = "signing")
 
+    publishing {
         repositories {
-            mavenLocal()
-            maven {
-                url = uri("https://repo.maven.apache.org/maven2")
+            mavenCentral {
+                url = uri("https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = sonatypeUser
+                    password = sonatypePassword
+                }
             }
         }
 
-        publishing {
-            repositories {
-                mavenCentral {
-                    url = uri("https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                    credentials {
-                        username = sonatypeUser
-                        password = sonatypePassword
-                    }
-                }
-            }
+        publications {
+            create<MavenPublication>("mavenJava") {
+                from(components["java"])
 
-            publications {
-                create<MavenPublication>("mavenJava") {
-                    from(components["java"])
+                // Ship the source and javadoc jars.
+                artifact(tasks["sourcesJar"])
+                artifact(tasks["javadocJar"])
 
-                    // Ship the source and javadoc jars.
-                    artifact(tasks["sourcesJar"])
-                    artifact(tasks["javadocJar"])
-
-                    // Include extra information in the POMs.
-                    afterEvaluate {
-                        pom {
-                            name.set(subproject.extra["displayName"].toString())
-                            description.set(subproject.description)
-                            url.set("https://github.com/awslabs/smithy")
-                            licenses {
-                                license {
-                                    name.set("Apache License 2.0")
-                                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                                    distribution.set("repo")
-                                }
+                // Include extra information in the POMs.
+                afterEvaluate {
+                    pom {
+                        name.set(subproject.extra["displayName"].toString())
+                        description.set(subproject.description)
+                        url.set("https://github.com/awslabs/smithy")
+                        licenses {
+                            license {
+                                name.set("Apache License 2.0")
+                                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                                distribution.set("repo")
                             }
-                            developers {
-                                developer {
-                                    id.set("smithy")
-                                    name.set("Smithy")
-                                    organization.set("Amazon Web Services")
-                                    organizationUrl.set("https://aws.amazon.com")
-                                    roles.add("developer")
-                                }
+                        }
+                        developers {
+                            developer {
+                                id.set("smithy")
+                                name.set("Smithy")
+                                organization.set("Amazon Web Services")
+                                organizationUrl.set("https://aws.amazon.com")
+                                roles.add("developer")
                             }
-                            scm {
-                                url.set("https://github.com/awslabs/smithy.git")
-                            }
+                        }
+                        scm {
+                            url.set("https://github.com/awslabs/smithy.git")
                         }
                     }
                 }
@@ -212,11 +201,9 @@ subprojects {
      *
      * Apply CheckStyle to source files but not tests.
      */
-    if (plugins.hasPlugin("java")) {
-        apply(plugin = "checkstyle")
+    apply(plugin = "checkstyle")
 
-        tasks["checkstyleTest"].enabled = false
-    }
+    tasks["checkstyleTest"].enabled = false
 
     /*
      * Code coverage
@@ -224,19 +211,17 @@ subprojects {
      *
      * Create code coverage reports after running tests.
      */
-    if (plugins.hasPlugin("java")) {
-        apply(plugin = "jacoco")
+    apply(plugin = "jacoco")
 
-        // Always run the jacoco test report after testing.
-        tasks["test"].finalizedBy(tasks["jacocoTestReport"])
+    // Always run the jacoco test report after testing.
+    tasks["build"].dependsOn(tasks["jacocoTestReport"])
 
-        // Configure jacoco to generate an HTML report.
-        tasks.jacocoTestReport {
-            reports {
-                xml.isEnabled = false
-                csv.isEnabled = false
-                html.destination = file("$buildDir/reports/jacoco")
-            }
+    // Configure jacoco to generate an HTML report.
+    tasks.jacocoTestReport {
+        reports {
+            xml.isEnabled = false
+            csv.isEnabled = false
+            html.destination = file("$buildDir/reports/jacoco")
         }
     }
 
@@ -246,12 +231,10 @@ subprojects {
      *
      * Configure the running of tests.
      */
-    if (plugins.hasPlugin("java")) {
-        // Log on passed, skipped, and failed test events if the `-Plog-tests` property is set.
-        if (project.hasProperty("log-tests")) {
-            tasks.test {
-                testLogging.events("passed", "skipped", "failed")
-            }
+    // Log on passed, skipped, and failed test events if the `-Plog-tests` property is set.
+    if (project.hasProperty("log-tests")) {
+        tasks.test {
+            testLogging.events("passed", "skipped", "failed")
         }
     }
 
@@ -261,17 +244,15 @@ subprojects {
      *
      * Run spotbugs against source files and configure suppressions.
      */
-    if (plugins.hasPlugin("java")) {
-        apply(plugin = "com.github.spotbugs")
+    apply(plugin = "com.github.spotbugs")
 
-        // We don't need to lint tests.
-        tasks["spotbugsTest"].enabled = false
+    // We don't need to lint tests.
+    tasks["spotbugsTest"].enabled = false
 
-        // Configure the bug filter for spotbugs.
-        tasks.withType<com.github.spotbugs.SpotBugsTask> {
-            effort = "max"
-            excludeFilterConfig = project.resources.text.fromFile("${project.rootDir}/config/spotbugs/filter.xml")
-        }
+    // Configure the bug filter for spotbugs.
+    tasks.withType<com.github.spotbugs.SpotBugsTask> {
+        effort = "max"
+        excludeFilterConfig = project.resources.text.fromFile("${project.rootDir}/config/spotbugs/filter.xml")
     }
 }
 
@@ -286,6 +267,10 @@ subprojects {
 tasks.javadoc {
     title = "Smithy API $version"
     setDestinationDir(file("$buildDir/docs/javadoc/latest"))
-    source(project.subprojects.map { project(it.name).sourceSets.main.get().allJava })
-    classpath = files(project.subprojects.map { project(it.name).sourceSets.main.get().compileClasspath })
+    source(project.subprojects.map {
+        project(it.name).sourceSets.main.get().allJava
+    })
+    classpath = files(project.subprojects.map {
+        project(it.name).sourceSets.main.get().compileClasspath
+    })
 }
