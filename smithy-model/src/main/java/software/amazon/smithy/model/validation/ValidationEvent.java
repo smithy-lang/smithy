@@ -38,14 +38,15 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Events with a severity less than ERROR can be suppressed. All events contain
  * a message, severity, and eventId.
  */
-public final class ValidationEvent implements ToNode, ToSmithyBuilder<ValidationEvent> {
+public final class ValidationEvent implements Comparable<ValidationEvent>, ToNode, ToSmithyBuilder<ValidationEvent> {
+    private static final ValidationEventFormatter DEFAULT_FORMATTER = new LineValidationEventFormatter();
     private final SourceLocation sourceLocation;
     private final String message;
     private final String eventId;
     private final Severity severity;
     private final ShapeId shapeId;
     private final String suppressionReason;
-    private final String asString;
+    private int hash;
 
     private ValidationEvent(Builder builder) {
         if (builder.suppressionReason != null && builder.severity != Severity.SUPPRESSED) {
@@ -58,9 +59,6 @@ public final class ValidationEvent implements ToNode, ToSmithyBuilder<Validation
         this.eventId = SmithyBuilder.requiredState("eventId", builder.eventId);
         this.shapeId = builder.shapeId;
         this.suppressionReason = builder.suppressionReason;
-        this.asString = String.format("[%s] %s: %s | %s %s:%s:%s",
-                severity, shapeId != null ? shapeId : "-", message, eventId,
-                sourceLocation.getFilename(), sourceLocation.getLine(), sourceLocation.getColumn());
     }
 
     public static Builder builder() {
@@ -95,6 +93,27 @@ public final class ValidationEvent implements ToNode, ToSmithyBuilder<Validation
     }
 
     @Override
+    public int compareTo(ValidationEvent other) {
+        int comparison = getSourceLocation().getFilename().compareTo(other.getSourceLocation().getFilename());
+        if (comparison != 0) {
+            return comparison;
+        }
+
+        comparison = Integer.compare(getSourceLocation().getLine(), other.getSourceLocation().getLine());
+        if (comparison != 0) {
+            return comparison;
+        }
+
+        comparison = Integer.compare(getSourceLocation().getColumn(), other.getSourceLocation().getColumn());
+        if (comparison != 0) {
+            return comparison;
+        }
+
+        // Fall back to a comparison that favors by severity, followed, by shape ID, etc...
+        return toString().compareTo(other.toString());
+    }
+
+    @Override
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.sourceLocation = sourceLocation;
@@ -125,12 +144,17 @@ public final class ValidationEvent implements ToNode, ToSmithyBuilder<Validation
 
     @Override
     public int hashCode() {
-        return asString.hashCode() + getSuppressionReason().hashCode();
+        int result = hash;
+        if (result == 0) {
+            result = Objects.hash(eventId, shapeId, severity, sourceLocation, message, suppressionReason);
+            hash = result;
+        }
+        return result;
     }
 
     @Override
     public String toString() {
-        return asString;
+        return DEFAULT_FORMATTER.format(this);
     }
 
     @Override

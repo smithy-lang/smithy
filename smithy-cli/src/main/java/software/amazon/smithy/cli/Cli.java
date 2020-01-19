@@ -22,10 +22,11 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -44,7 +45,7 @@ import java.util.logging.SimpleFormatter;
  *     <li>--no-color: Explicitly disables ANSI colors.</li>
  *     <li>--force-color: Explicitly enables ANSI colors.</li>
  *     <li>--stacktrace: Prints the stacktrace of any CLI exception that is thrown.</li>
- *     <li>--quiet-logs: Disables writing log messages to STDOUT.</li>
+ *     <li>--logging: Sets the log level to one of OFF, SEVERE, WARNING, INFO, FINE, ALL.</li>
  * </ul>
  *
  * <p>Why are we not using a library for this? Because parsing command line
@@ -59,12 +60,19 @@ public final class Cli {
     public static final String FORCE_COLOR = "--force-color";
     public static final String DEBUG = "--debug";
     public static final String STACKTRACE = "--stacktrace";
-    public static final String QUIET_LOGS = "--quiet-logs";
+    public static final String LOGGING = "--logging";
+
+    /** Configures whether or not to use ANSI colors. */
+    static boolean useAnsiColors = isAnsiColorSupported();
+
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("HH:mm:ss.SSS");
+
+    // Note that we don't use a method reference here in case System.out or System.err are changed.
+    private static Consumer<String> stdout = s -> System.out.println(s);
+    private static Consumer<String> stderr = s -> System.err.println(s);
 
     private final String applicationName;
     private final ClassLoader classLoader;
-    private boolean configureLogging;
     private Map<String, Command> commands = new TreeMap<>();
 
     /**
@@ -97,15 +105,6 @@ public final class Cli {
     }
 
     /**
-     * Calling this method ensures that logging is configured for the CLI.
-     *
-     * @param configureLogging Set to true to configure log formats and levels.
-     */
-    public void configureLogging(boolean configureLogging) {
-        this.configureLogging = configureLogging;
-    }
-
-    /**
      * Execute the command line using the given arguments.
      *
      * @param args Arguments to parse.
@@ -126,17 +125,19 @@ public final class Cli {
                 Command command = commands.get(argument);
                 Parser parser = command.getParser();
                 Arguments parsedArguments = parser.parse(args, 1);
+
                 // Use the --no-color argument to globally disable ANSI colors.
                 if (parsedArguments.has(NO_COLOR)) {
-                    Colors.setUseAnsiColors(false);
+                    setUseAnsiColors(false);
                 } else if (parsedArguments.has(FORCE_COLOR)) {
-                    Colors.setUseAnsiColors(true);
+                    setUseAnsiColors(true);
                 }
+
                 // Automatically handle --help output for subcommands.
                 if (parsedArguments.has(HELP)) {
                     printHelp(command, parser);
                 } else {
-                    configureLogging(args);
+                    configureLogging(parsedArguments);
                     command.execute(parsedArguments, classLoader);
                 }
             } else {
@@ -148,37 +149,96 @@ public final class Cli {
         }
     }
 
-    private void configureLogging(String[] args) {
-        if (configureLogging && !hasArgument(args, QUIET_LOGS)) {
-            Handler handler = getConsoleHandler();
-            if (hasArgument(args, DEBUG)) {
-                handler.setFormatter(new DebugFormatter());
-                handler.setLevel(Level.ALL);
-                // Configure logging level of all loggers.
-                Logger rootLogger = LogManager.getLogManager().getLogger("");
-                rootLogger.setLevel(Level.ALL);
-                for (Handler h : rootLogger.getHandlers()) {
-                    h.setLevel(Level.ALL);
-                }
-            } else {
-                handler.setFormatter(new BasicFormatter());
-                handler.setLevel(Level.WARNING);
+    /**
+     * Configures a custom STDOUT printer.
+     *
+     * @param printer Consumer responsible for writing to STDOUT.
+     */
+    public static void setStdout(Consumer<String> printer) {
+        stdout = printer;
+    }
+
+    /**
+     * Configures a custom STDERR printer.
+     *
+     * @param printer Consumer responsible for writing to STDERR.
+     */
+    public static void setStderr(Consumer<String> printer) {
+        stderr = printer;
+    }
+
+    /**
+     * Write a line of text to the configured STDOUT.
+     *
+     * @param message Message to write.
+     */
+    public static void stdout(Object message) {
+        stdout.accept(String.valueOf(message));
+    }
+
+    /**
+     * Write a line of text to the configured STDERR.
+     *
+     * @param message Message to write.
+     */
+    public static void stderr(Object message) {
+        stderr.accept(String.valueOf(message));
+    }
+
+    /**
+     * Explicitly configures whether or not to use ANSI colors.
+     *
+     * @param useAnsiColors Set to true or false to enable/disable.
+     */
+    public static void setUseAnsiColors(boolean useAnsiColors) {
+        Cli.useAnsiColors = useAnsiColors;
+    }
+
+    /**
+     * Does a really simple check to see if ANSI colors are supported.
+     *
+     * @return Returns true if ANSI probably works.
+     */
+    private static boolean isAnsiColorSupported() {
+        return System.console() != null && System.getenv().get("TERM") != null;
+    }
+
+    private void configureLogging(Arguments parsedArgs) {
+        boolean configureLogging = parsedArgs.has(DEBUG) || parsedArgs.has(LOGGING);
+
+        if (!configureLogging) {
+            return;
+        }
+
+        Level level = Level.parse(parsedArgs.parameter(LOGGING, Level.ALL.getName()));
+
+        // Remove any currently present console loggers.
+        Logger rootLogger = Logger.getLogger("");
+        removeConsoleHandler(rootLogger);
+
+        if (parsedArgs.has(DEBUG)) {
+            // Debug ignores the given logging level and just logs everything.
+            CliLogHandler handler = new CliLogHandler(new DebugFormatter());
+            handler.setLevel(Level.ALL);
+            rootLogger.addHandler(handler);
+            rootLogger.setLevel(Level.ALL);
+            for (Handler h : rootLogger.getHandlers()) {
+                h.setLevel(Level.ALL);
             }
+        } else if (level != Level.OFF) {
+            CliLogHandler handler = new CliLogHandler(new BasicFormatter());
+            handler.setLevel(level);
+            rootLogger.addHandler(handler);
         }
     }
 
-    private static Handler getConsoleHandler() {
-        Logger rootLogger = Logger.getLogger("");
-
+    private static void removeConsoleHandler(Logger rootLogger) {
         for (Handler handler : rootLogger.getHandlers()) {
             if (handler instanceof ConsoleHandler) {
-                return handler;
+                // Remove any console log handlers.
+                rootLogger.removeHandler(handler);
             }
         }
-
-        Handler consoleHandler = new ConsoleHandler();
-        rootLogger.addHandler(consoleHandler);
-        return consoleHandler;
     }
 
     private boolean hasArgument(String[] args, String name) {
@@ -193,27 +253,26 @@ public final class Cli {
 
     private void printException(String[] args, Throwable throwable) {
         if (hasArgument(args, NO_COLOR)) {
-            Colors.setUseAnsiColors(false);
+            setUseAnsiColors(false);
         }
 
-        Colors.out(Colors.BOLD_RED, throwable.getMessage());
+        Colors.BOLD_RED.out(throwable.getMessage());
         if (hasArgument(args, STACKTRACE)) {
             StringWriter sw = new StringWriter();
             throwable.printStackTrace(new PrintWriter(sw));
             String trace = sw.toString();
-            Colors.out(Colors.RED, trace);
+            Colors.RED.out(trace);
         }
     }
 
     private void printMainHelp() {
-        Colors.out(Colors.BRIGHT_WHITE,
-                   String.format("Usage: %s [-h | --help] <command> [<args>]%n", applicationName));
-        System.out.println("commands:");
+        Colors.BRIGHT_WHITE.out(String.format("Usage: %s [-h | --help] <command> [<args>]%n", applicationName));
+        stdout("commands:");
         Map<String, String> table = new LinkedHashMap<>();
         for (Map.Entry<String, Command> entry : commands.entrySet()) {
             table.put("  " + entry.getKey(), entry.getValue().getSummary());
         }
-        System.out.println(createTable(table).trim());
+        stdout(createTable(table).trim());
     }
 
     private String createTable(Map<String, String> table) {
@@ -255,7 +314,7 @@ public final class Cli {
 
         // Print the options name if present.
         parser.getPositionalName().ifPresent(name -> example.append(" ").append(name));
-        Colors.out(Colors.BRIGHT_WHITE, example.append("\n").toString());
+        Colors.BRIGHT_WHITE.out(example.append("\n").toString());
 
         // Print the summary of the command.
         StringBuilder body = new StringBuilder();
@@ -288,7 +347,7 @@ public final class Cli {
             body.append("\n\n").append(command.getHelp().trim());
         }
 
-        System.out.println(body);
+        stdout(body.toString());
     }
 
     private static final class BasicFormatter extends SimpleFormatter {
@@ -308,5 +367,29 @@ public final class Cli {
                    + r.getLoggerName() + "] "
                    + r.getMessage() + System.lineSeparator();
         }
+    }
+
+    /**
+     * Logs messages to the CLI's redirect stderr.
+     */
+    private static final class CliLogHandler extends Handler {
+        private final Formatter formatter;
+
+        CliLogHandler(Formatter formatter) {
+            this.formatter = formatter;
+        }
+
+        @Override
+        public void publish(LogRecord record) {
+            if (isLoggable(record)) {
+                Cli.stderr(formatter.format(record));
+            }
+        }
+
+        @Override
+        public void flush() {}
+
+        @Override
+        public void close() {}
     }
 }

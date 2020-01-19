@@ -48,7 +48,7 @@ public class BuildCommandTest {
 
         CliError e = Assertions.assertThrows(CliError.class, () -> {
             String model = getClass().getResource("unknown-trait.smithy").getPath();
-            SmithyCli.create().configureLogging(true).run("build", model);
+            SmithyCli.create().run("build", model);
         });
 
         System.setOut(out);
@@ -67,7 +67,7 @@ public class BuildCommandTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
         System.setOut(printStream);
-        SmithyCli.create().configureLogging(true).run("build", model);
+        SmithyCli.create().run("build", model);
         System.setOut(out);
         String output = outputStream.toString("UTF-8");
 
@@ -85,7 +85,7 @@ public class BuildCommandTest {
         CliError e = Assertions.assertThrows(CliError.class, () -> {
             String model = getClass().getResource("valid-model.smithy").getPath();
             String config = getClass().getResource("projection-build-failure.json").getPath();
-            SmithyCli.create().configureLogging(true).run("build", "--debug", "--config", config, model);
+            SmithyCli.create().run("build", "--debug", "--config", config, model);
         });
 
         System.setOut(out);

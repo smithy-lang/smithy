@@ -32,6 +32,7 @@ import software.amazon.smithy.build.ProjectionResult;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
+import software.amazon.smithy.cli.Cli;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
@@ -76,7 +77,7 @@ public final class BuildCommand implements Command {
         String output = arguments.parameter("--output", null);
         List<String> models = arguments.positionalArguments();
 
-        LOGGER.info(String.format("Building Smithy model sources: %s", models));
+        Cli.stdout(String.format("Building Smithy model sources: %s", models));
         SmithyBuildConfig.Builder configBuilder = SmithyBuildConfig.builder();
 
         // Try to find a smithy-build.json file.
@@ -85,7 +86,7 @@ public final class BuildCommand implements Command {
         }
 
         if (config != null) {
-            LOGGER.info(String.format("Loading Smithy configs: [%s]", String.join(" ", config)));
+            Cli.stdout(String.format("Loading Smithy configs: [%s]", String.join(" ", config)));
             config.forEach(file -> configBuilder.load(Paths.get(file)));
         }
 
@@ -93,7 +94,7 @@ public final class BuildCommand implements Command {
             configBuilder.outputDirectory(output);
             try {
                 Files.createDirectories(Paths.get(output));
-                LOGGER.fine(String.format("Output directory set to: %s", output));
+                LOGGER.info(String.format("Output directory set to: %s", output));
             } catch (IOException e) {
                 throw new CliError("Unable to create Smithy output directory: " + e.getMessage());
             }
@@ -102,8 +103,8 @@ public final class BuildCommand implements Command {
         SmithyBuildConfig smithyBuildConfig = configBuilder.build();
 
         // Build the model and fail if there are errors.
-        ValidatedResult<Model> sourceResult = buildModel(classLoader, models, arguments);
-        Model model = sourceResult.unwrap();
+        Model model = buildModel(classLoader, models, arguments);
+
         SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
                 .config(smithyBuildConfig)
                 .model(model);
@@ -126,7 +127,7 @@ public final class BuildCommand implements Command {
         Colors color = resultConsumer.failedProjections.isEmpty()
                 ? Colors.BRIGHT_BOLD_GREEN
                 : Colors.BRIGHT_BOLD_YELLOW;
-        Colors.out(color, String.format(
+        color.out(String.format(
                 "Smithy built %s projection(s), %s plugin(s), and %s artifacts",
                 resultConsumer.projectionCount,
                 resultConsumer.pluginCount,
@@ -142,14 +143,14 @@ public final class BuildCommand implements Command {
         }
     }
 
-    private ValidatedResult<Model> buildModel(ClassLoader classLoader, List<String> models, Arguments arguments) {
+    private Model buildModel(ClassLoader classLoader, List<String> models, Arguments arguments) {
         ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
         CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
         CommandUtils.handleUnknownTraitsOption(arguments, assembler);
         models.forEach(assembler::addImport);
         ValidatedResult<Model> result = assembler.assemble();
-        Validator.validate(result, true);
-        return result;
+        Validator.validate(result);
+        return result.getResult().orElseThrow(() -> new RuntimeException("No result; expected Validator to throw"));
     }
 
     private static final class ResultConsumer implements Consumer<ProjectionResult>, BiConsumer<String, Throwable> {
@@ -168,7 +169,7 @@ public final class BuildCommand implements Command {
                 message.append(element).append(System.lineSeparator());
             }
 
-            System.out.println(message);
+            Cli.stdout(message);
         }
 
         @Override
@@ -185,7 +186,7 @@ public final class BuildCommand implements Command {
                         message.append(event).append(System.lineSeparator());
                     }
                 });
-                Colors.out(Colors.RED, message.toString());
+                Colors.RED.out(message.toString());
             } else {
                 // Only increment the projection count if it succeeded.
                 projectionCount.incrementAndGet();
@@ -196,7 +197,9 @@ public final class BuildCommand implements Command {
             // Get the base directory of the projection.
             Iterator<FileManifest> manifestIterator = result.getPluginManifests().values().iterator();
             Path root = manifestIterator.hasNext() ? manifestIterator.next().getBaseDir().getParent() : null;
-            Colors.out(Colors.GREEN, String.format("Completed projection %s: %s", result.getProjectionName(), root));
+            Colors.GREEN.out(String.format(
+                    "Completed projection %s (%d shapes): %s",
+                    result.getProjectionName(), result.getModel().toSet().size(), root));
 
             // Increment the total number of artifacts written.
             for (FileManifest manifest : result.getPluginManifests().values()) {

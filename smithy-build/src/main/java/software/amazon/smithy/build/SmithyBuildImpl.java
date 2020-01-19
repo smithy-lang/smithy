@@ -189,14 +189,25 @@ final class SmithyBuildImpl {
             } else {
                 parallelProjectionNameOrder.add(name);
                 parallelProjections.add(() -> {
-                    ProjectionResult projectionResult = applyProjection(name, config, resolvedModel);
-                    projectionResultConsumer.accept(projectionResult);
+                    executeSerialProjection(resolvedModel, name, config,
+                                            projectionResultConsumer, projectionExceptionConsumer);
                     return null;
                 });
             }
         }
 
-        if (!parallelProjections.isEmpty()) {
+        // Common case of only executing a single plugin per/projection.
+        if (parallelProjections.size() == 1) {
+            try {
+                parallelProjections.get(0).call();
+            } catch (Throwable e) {
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                } else {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else if (!parallelProjections.isEmpty()) {
             executeParallelProjections(parallelProjections, parallelProjectionNameOrder, projectionExceptionConsumer);
         }
     }

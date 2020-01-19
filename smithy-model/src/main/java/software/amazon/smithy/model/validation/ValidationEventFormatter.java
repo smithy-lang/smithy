@@ -13,16 +13,17 @@
  * permissions and limitations under the License.
  */
 
-description = "Defines protocol tests for AWS HTTP protocols."
-extra["displayName"] = "Smithy :: AWS :: Protocol Tests"
-extra["moduleName"] = "software.amazon.smithy.aws.protocoltests"
+package software.amazon.smithy.model.validation;
 
-plugins {
-    id("software.amazon.smithy").version("0.4.3")
-}
-
-dependencies {
-    compile(project(":smithy-cli"))
-    implementation(project(":smithy-protocol-test-traits"))
-    implementation(project(":smithy-aws-traits"))
+/**
+ * Formats {@code ValidationEvent}s.
+ */
+public interface ValidationEventFormatter {
+    /**
+     * Converts the event to a string.
+     *
+     * @param event Event to write as a string.
+     * @return Returns the event as a formatted string.
+     */
+    String format(ValidationEvent event);
 }
