@@ -17,7 +17,7 @@ operation NoInputAndNoOutput {}
 apply NoInputAndNoOutput @httpRequestTests([
     {
         id: "QueryNoInputAndNoOutput",
-        description: "No input serializes no additional query params",
+        documentation: "No input serializes no additional query params",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -34,7 +34,7 @@ apply NoInputAndNoOutput @httpRequestTests([
 apply NoInputAndNoOutput @httpResponseTests([
    {
        id: "QueryNoInputAndNoOutput",
-       description: "Empty output. Note that no assertion is made on the output body itself.",
+       documentation: "Empty output. Note that no assertion is made on the output body itself.",
        protocol: "aws.query",
        code: 200,
    }
@@ -51,7 +51,7 @@ operation NoInputAndOutput {
 apply NoInputAndOutput @httpRequestTests([
     {
         id: "QueryNoInputAndOutput",
-        description: "No input serializes no payload",
+        documentation: "No input serializes no payload",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -68,7 +68,7 @@ apply NoInputAndOutput @httpRequestTests([
 apply NoInputAndOutput @httpResponseTests([
     {
         id: "QueryNoInputAndOutput",
-        description: "Empty output",
+        documentation: "Empty output",
         protocol: "aws.query",
         code: 200,
     }
@@ -88,7 +88,7 @@ operation EmptyInputAndEmptyOutput {
 apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
         id: "QueryEmptyInputAndEmptyOutput",
-        description: "Empty input serializes no extra query params",
+        documentation: "Empty input serializes no extra query params",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -105,7 +105,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
 apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
         id: "QueryEmptyInputAndEmptyOutput",
-        description: "Empty output",
+        documentation: "Empty output",
         protocol: "aws.query",
         code: 200,
     },

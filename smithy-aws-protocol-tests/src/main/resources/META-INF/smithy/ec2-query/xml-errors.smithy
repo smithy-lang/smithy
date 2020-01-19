@@ -37,7 +37,7 @@ operation GreetingWithErrors {
 apply GreetingWithErrors @httpResponseTests([
     {
         id: "Ec2GreetingWithErrors",
-        description: "Ensures that operations with errors successfully know how to deserialize the successful response",
+        documentation: "Ensures that operations with errors successfully know how to deserialize the successful response",
         protocol: "aws.ec2",
         code: 200,
         headers: {
@@ -69,7 +69,7 @@ structure InvalidGreeting {
 apply InvalidGreeting @httpResponseTests([
     {
         id: "Ec2InvalidGreetingError",
-        description: "Parses simple XML errors",
+        documentation: "Parses simple XML errors",
         protocol: "aws.ec2",
         code: 400,
         headers: {

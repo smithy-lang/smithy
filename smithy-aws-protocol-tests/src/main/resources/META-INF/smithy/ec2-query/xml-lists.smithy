@@ -30,7 +30,7 @@ operation XmlLists {
 apply XmlLists @httpResponseTests([
     {
         id: "Ec2XmlLists",
-        description: "Serializes XML lists",
+        documentation: "Serializes XML lists",
         protocol: "aws.ec2",
         code: 200,
         body: """

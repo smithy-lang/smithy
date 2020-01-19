@@ -17,7 +17,7 @@ operation NoInputAndNoOutput {}
 apply NoInputAndNoOutput @httpRequestTests([
     {
         id: "NoInputAndNoOutput",
-        description: "No input serializes no payload",
+        documentation: "No input serializes no payload",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/NoInputAndOutput",
@@ -28,7 +28,7 @@ apply NoInputAndNoOutput @httpRequestTests([
 apply NoInputAndNoOutput @httpResponseTests([
    {
        id: "NoInputAndNoOutput",
-       description: "No output serializes no payload",
+       documentation: "No output serializes no payload",
        protocol: "aws.rest-xml",
        code: 200,
        body: ""
@@ -47,7 +47,7 @@ operation NoInputAndOutput {
 apply NoInputAndOutput @httpRequestTests([
     {
         id: "NoInputAndOutput",
-        description: "No input serializes no payload",
+        documentation: "No input serializes no payload",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/NoInputAndOutput",
@@ -58,7 +58,7 @@ apply NoInputAndOutput @httpRequestTests([
 apply NoInputAndOutput @httpResponseTests([
     {
         id: "NoInputAndOutput",
-        description: "Empty output serializes no payload",
+        documentation: "Empty output serializes no payload",
         protocol: "aws.rest-xml",
         code: 200,
         body: ""
@@ -80,7 +80,7 @@ operation EmptyInputAndEmptyOutput {
 apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
         id: "EmptyInputAndEmptyOutput",
-        description: "Empty input serializes no payload",
+        documentation: "Empty input serializes no payload",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/EmptyInputAndEmptyOutput",
@@ -91,7 +91,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
 apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
         id: "EmptyInputAndEmptyOutput",
-        description: "Empty output serializes no payload",
+        documentation: "Empty output serializes no payload",
         protocol: "aws.rest-xml",
         code: 200,
         body: ""

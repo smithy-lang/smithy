@@ -24,7 +24,7 @@ operation SimpleScalarProperties {
 apply SimpleScalarProperties @httpRequestTests([
     {
         id: "SimpleScalarProperties",
-        description: "Serializes simple scalar properties",
+        documentation: "Serializes simple scalar properties",
         protocol: "aws.rest-xml",
         method: "PUT",
         uri: "/SimpleScalarProperties",
@@ -64,7 +64,7 @@ apply SimpleScalarProperties @httpRequestTests([
 apply SimpleScalarProperties @httpResponseTests([
     {
         id: "SimpleScalarProperties",
-        description: "Serializes simple scalar properties",
+        documentation: "Serializes simple scalar properties",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -127,7 +127,7 @@ operation XmlBlobs {
 apply XmlBlobs @httpRequestTests([
     {
         id: "XmlBlobs",
-        description: "Blobs are base64 encoded",
+        documentation: "Blobs are base64 encoded",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/XmlBlobs",
@@ -149,7 +149,7 @@ apply XmlBlobs @httpRequestTests([
 apply XmlBlobs @httpResponseTests([
     {
         id: "XmlBlobs",
-        description: "Blobs are base64 encoded",
+        documentation: "Blobs are base64 encoded",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -183,7 +183,7 @@ operation XmlTimestamps {
 apply XmlTimestamps @httpRequestTests([
     {
         id: "XmlTimestamps",
-        description: "Tests how normal timestamps are serialized",
+        documentation: "Tests how normal timestamps are serialized",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/XmlTimestamps",
@@ -202,7 +202,7 @@ apply XmlTimestamps @httpRequestTests([
     },
     {
         id: "XmlTimestampsWithDateTimeFormat",
-        description: "Ensures that the timestampFormat of date-time works like normal timestamps",
+        documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/XmlTimestamps",
@@ -221,7 +221,7 @@ apply XmlTimestamps @httpRequestTests([
     },
     {
         id: "XmlTimestampsWithEpochSecondsFormat",
-        description: "Ensures that the timestampFormat of epoch-seconds works",
+        documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/XmlTimestamps",
@@ -240,7 +240,7 @@ apply XmlTimestamps @httpRequestTests([
     },
     {
         id: "XmlTimestampsWithHttpDateFormat",
-        description: "Ensures that the timestampFormat of http-date works",
+        documentation: "Ensures that the timestampFormat of http-date works",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/XmlTimestamps",
@@ -262,7 +262,7 @@ apply XmlTimestamps @httpRequestTests([
 apply XmlTimestamps @httpResponseTests([
     {
         id: "XmlTimestamps",
-        description: "Tests how normal timestamps are serialized",
+        documentation: "Tests how normal timestamps are serialized",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -280,7 +280,7 @@ apply XmlTimestamps @httpResponseTests([
     },
     {
         id: "XmlTimestampsWithDateTimeFormat",
-        description: "Ensures that the timestampFormat of date-time works like normal timestamps",
+        documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -298,7 +298,7 @@ apply XmlTimestamps @httpResponseTests([
     },
     {
         id: "XmlTimestampsWithEpochSecondsFormat",
-        description: "Ensures that the timestampFormat of epoch-seconds works",
+        documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -316,7 +316,7 @@ apply XmlTimestamps @httpResponseTests([
     },
     {
         id: "XmlTimestampsWithHttpDateFormat",
-        description: "Ensures that the timestampFormat of http-date works",
+        documentation: "Ensures that the timestampFormat of http-date works",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -358,7 +358,7 @@ operation XmlEnums {
 apply XmlEnums @httpRequestTests([
     {
         id: "XmlEnums",
-        description: "Serializes simple scalar properties",
+        documentation: "Serializes simple scalar properties",
         protocol: "aws.rest-xml",
         method: "PUT",
         uri: "/XmlEnums",
@@ -408,7 +408,7 @@ apply XmlEnums @httpRequestTests([
 apply XmlEnums @httpResponseTests([
     {
         id: "XmlEnums",
-        description: "Serializes simple scalar properties",
+        documentation: "Serializes simple scalar properties",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -474,7 +474,7 @@ operation RecursiveShapes {
 apply RecursiveShapes @httpRequestTests([
     {
         id: "RecursiveShapes",
-        description: "Serializes recursive structures",
+        documentation: "Serializes recursive structures",
         protocol: "aws.rest-xml",
         method: "PUT",
         uri: "/XmlEnums",
@@ -518,7 +518,7 @@ apply RecursiveShapes @httpRequestTests([
 apply RecursiveShapes @httpResponseTests([
     {
         id: "RecursiveShapes",
-        description: "Serializes recursive structures",
+        documentation: "Serializes recursive structures",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -582,7 +582,7 @@ operation XmlNamespaces {
 apply XmlNamespaces @httpRequestTests([
     {
         id: "XmlNamespaces",
-        description: "Serializes XML namespaces",
+        documentation: "Serializes XML namespaces",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/XmlNamespaces",
@@ -616,7 +616,7 @@ apply XmlNamespaces @httpRequestTests([
 apply XmlNamespaces @httpResponseTests([
     {
         id: "XmlNamespaces",
-        description: "Serializes XML namespaces",
+        documentation: "Serializes XML namespaces",
         protocol: "aws.rest-xml",
         code: 200,
         body: """

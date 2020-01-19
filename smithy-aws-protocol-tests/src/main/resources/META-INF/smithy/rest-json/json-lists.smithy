@@ -33,7 +33,7 @@ operation JsonLists {
 apply JsonLists @httpRequestTests([
     {
         id: "RestJsonLists",
-        description: "Serializes JSON lists",
+        documentation: "Serializes JSON lists",
         protocol: "aws.rest-json-1.1",
         method: "PUT",
         uri: "/JsonLists",
@@ -135,7 +135,7 @@ apply JsonLists @httpRequestTests([
     },
     {
         id: "RestJsonListsEmpty",
-        description: "Serializes empty JSON lists",
+        documentation: "Serializes empty JSON lists",
         protocol: "aws.rest-json-1.1",
         method: "PUT",
         uri: "/JsonLists",
@@ -151,7 +151,7 @@ apply JsonLists @httpRequestTests([
     },
     {
           id: "RestJsonListsSerializeNull",
-          description: "Serializes null values in lists",
+          documentation: "Serializes null values in lists",
           protocol: "aws.rest-json-1.1",
           method: "PUT",
           uri: "/JsonLists",
@@ -172,7 +172,7 @@ apply JsonLists @httpRequestTests([
 apply JsonLists @httpResponseTests([
     {
         id: "RestJsonLists",
-        description: "Serializes JSON lists",
+        documentation: "Serializes JSON lists",
         protocol: "aws.rest-json-1.1",
         code: 200,
         body: """
@@ -273,7 +273,7 @@ apply JsonLists @httpResponseTests([
     },
     {
         id: "RestJsonListsEmpty",
-        description: "Serializes empty JSON lists",
+        documentation: "Serializes empty JSON lists",
         protocol: "aws.rest-json-1.1",
         code: 200,
         body: """
@@ -288,7 +288,7 @@ apply JsonLists @httpResponseTests([
     },
     {
           id: "RestJsonListsSerializeNull",
-          description: "Serializes null values in lists",
+          documentation: "Serializes null values in lists",
           protocol: "aws.rest-json-1.1",
           code: 200,
           body: """

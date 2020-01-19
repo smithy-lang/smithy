@@ -20,7 +20,7 @@ operation SimpleScalarXmlProperties {
 apply SimpleScalarXmlProperties @httpResponseTests([
     {
         id: "Ec2SimpleScalarProperties",
-        description: "Serializes simple scalar properties",
+        documentation: "Serializes simple scalar properties",
         protocol: "aws.ec2",
         code: 200,
         body: """
@@ -83,7 +83,7 @@ operation XmlBlobs {
 apply XmlBlobs @httpResponseTests([
     {
         id: "Ec2XmlBlobs",
-        description: "Blobs are base64 encoded",
+        documentation: "Blobs are base64 encoded",
         protocol: "aws.ec2",
         code: 200,
         body: """
@@ -116,7 +116,7 @@ operation XmlTimestamps {
 apply XmlTimestamps @httpResponseTests([
     {
         id: "Ec2XmlTimestamps",
-        description: "Tests how normal timestamps are serialized",
+        documentation: "Tests how normal timestamps are serialized",
         protocol: "aws.ec2",
         code: 200,
         body: """
@@ -135,7 +135,7 @@ apply XmlTimestamps @httpResponseTests([
     },
     {
         id: "Ec2XmlTimestampsWithDateTimeFormat",
-        description: "Ensures that the timestampFormat of date-time works like normal timestamps",
+        documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
         protocol: "aws.ec2",
         code: 200,
         body: """
@@ -154,7 +154,7 @@ apply XmlTimestamps @httpResponseTests([
     },
     {
         id: "Ec2XmlTimestampsWithEpochSecondsFormat",
-        description: "Ensures that the timestampFormat of epoch-seconds works",
+        documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: "aws.ec2",
         code: 200,
         body: """
@@ -173,7 +173,7 @@ apply XmlTimestamps @httpResponseTests([
     },
     {
         id: "Ec2XmlTimestampsWithHttpDateFormat",
-        description: "Ensures that the timestampFormat of http-date works",
+        documentation: "Ensures that the timestampFormat of http-date works",
         protocol: "aws.ec2",
         code: 200,
         body: """
@@ -213,7 +213,7 @@ operation XmlEnums {
 apply XmlEnums @httpResponseTests([
     {
         id: "Ec2XmlEnums",
-        description: "Serializes simple scalar properties",
+        documentation: "Serializes simple scalar properties",
         protocol: "aws.ec2",
         code: 200,
         body: """
@@ -277,7 +277,7 @@ operation RecursiveXmlShapes {
 apply RecursiveXmlShapes @httpResponseTests([
     {
         id: "Ec2RecursiveShapes",
-        description: "Serializes recursive structures",
+        documentation: "Serializes recursive structures",
         protocol: "aws.ec2",
         code: 200,
         body: """
@@ -340,7 +340,7 @@ operation XmlNamespaces {
 apply XmlNamespaces @httpResponseTests([
     {
         id: "Ec2XmlNamespaces",
-        description: "Serializes XML namespaces",
+        documentation: "Serializes XML namespaces",
         protocol: "aws.ec2",
         code: 200,
         body: """
@@ -403,7 +403,7 @@ operation IgnoresWrappingXmlName {
 apply IgnoresWrappingXmlName @httpResponseTests([
     {
         id: "Ec2IgnoresWrappingXmlName",
-        description: "The xmlName trait on the output structure is ignored in the ec2 protocol",
+        documentation: "The xmlName trait on the output structure is ignored in the ec2 protocol",
         protocol: "aws.ec2",
         code: 200,
         body: """

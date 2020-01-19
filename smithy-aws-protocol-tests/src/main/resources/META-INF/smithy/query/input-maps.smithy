@@ -17,7 +17,7 @@ operation QueryMaps {
 apply QueryMaps @httpRequestTests([
     {
         id: "QuerySimpleQueryMaps",
-        description: "Serializes query maps",
+        documentation: "Serializes query maps",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -41,7 +41,7 @@ apply QueryMaps @httpRequestTests([
     },
     {
         id: "QuerySimpleQueryMapsWithXmlName",
-        description: "Serializes query maps and uses xmlName",
+        documentation: "Serializes query maps and uses xmlName",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -62,7 +62,7 @@ apply QueryMaps @httpRequestTests([
     },
     {
         id: "QueryComplexQueryMaps",
-        description: "Serializes complex query maps",
+        documentation: "Serializes complex query maps",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -90,7 +90,7 @@ apply QueryMaps @httpRequestTests([
     },
     {
         id: "QueryEmptyQueryMaps",
-        description: "Does not serialize empty query maps",
+        documentation: "Does not serialize empty query maps",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -107,7 +107,7 @@ apply QueryMaps @httpRequestTests([
     },
     {
         id: "QueryQueryMapWithMemberXmlName",
-        description: "Serializes query maps where the member has an xmlName trait",
+        documentation: "Serializes query maps where the member has an xmlName trait",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -131,7 +131,7 @@ apply QueryMaps @httpRequestTests([
     },
     {
         id: "QueryFlattenedQueryMaps",
-        description: "Serializes flattened query maps",
+        documentation: "Serializes flattened query maps",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -155,7 +155,7 @@ apply QueryMaps @httpRequestTests([
     },
     {
         id: "QueryFlattenedQueryMapsWithXmlName",
-        description: "Serializes flattened query maps that use an xmlName",
+        documentation: "Serializes flattened query maps that use an xmlName",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -179,7 +179,7 @@ apply QueryMaps @httpRequestTests([
     },
     {
         id: "QueryQueryMapOfLists",
-        description: "Serializes query map of lists",
+        documentation: "Serializes query map of lists",
         protocol: "aws.query",
         method: "POST",
         uri: "/",

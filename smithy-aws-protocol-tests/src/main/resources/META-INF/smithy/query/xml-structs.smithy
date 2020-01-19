@@ -19,7 +19,7 @@ operation SimpleScalarXmlProperties {
 apply SimpleScalarXmlProperties @httpResponseTests([
     {
         id: "QuerySimpleScalarProperties",
-        description: "Serializes simple scalar properties",
+        documentation: "Serializes simple scalar properties",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -80,7 +80,7 @@ operation XmlBlobs {
 apply XmlBlobs @httpResponseTests([
     {
         id: "QueryXmlBlobs",
-        description: "Blobs are base64 encoded",
+        documentation: "Blobs are base64 encoded",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -114,7 +114,7 @@ operation XmlTimestamps {
 apply XmlTimestamps @httpResponseTests([
     {
         id: "QueryXmlTimestamps",
-        description: "Tests how normal timestamps are serialized",
+        documentation: "Tests how normal timestamps are serialized",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -134,7 +134,7 @@ apply XmlTimestamps @httpResponseTests([
     },
     {
         id: "QueryXmlTimestampsWithDateTimeFormat",
-        description: "Ensures that the timestampFormat of date-time works like normal timestamps",
+        documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -154,7 +154,7 @@ apply XmlTimestamps @httpResponseTests([
     },
     {
         id: "QueryXmlTimestampsWithEpochSecondsFormat",
-        description: "Ensures that the timestampFormat of epoch-seconds works",
+        documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -174,7 +174,7 @@ apply XmlTimestamps @httpResponseTests([
     },
     {
         id: "QueryXmlTimestampsWithHttpDateFormat",
-        description: "Ensures that the timestampFormat of http-date works",
+        documentation: "Ensures that the timestampFormat of http-date works",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -215,7 +215,7 @@ operation XmlEnums {
 apply XmlEnums @httpResponseTests([
     {
         id: "QueryXmlEnums",
-        description: "Serializes simple scalar properties",
+        documentation: "Serializes simple scalar properties",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -280,7 +280,7 @@ operation RecursiveXmlShapes {
 apply RecursiveXmlShapes @httpResponseTests([
     {
         id: "QueryRecursiveShapes",
-        description: "Serializes recursive structures",
+        documentation: "Serializes recursive structures",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -344,7 +344,7 @@ operation XmlNamespaces {
 apply XmlNamespaces @httpResponseTests([
     {
         id: "QueryXmlNamespaces",
-        description: "Serializes XML namespaces",
+        documentation: "Serializes XML namespaces",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -409,7 +409,7 @@ operation IgnoresWrappingXmlName {
 apply IgnoresWrappingXmlName @httpResponseTests([
     {
         id: "QueryIgnoresWrappingXmlName",
-        description: "The xmlName trait on the output structure is ignored in AWS Query",
+        documentation: "The xmlName trait on the output structure is ignored in AWS Query",
         protocol: "aws.query",
         code: 200,
         body: """

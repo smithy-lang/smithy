@@ -42,7 +42,7 @@ operation GreetingWithErrors {
 apply GreetingWithErrors @httpResponseTests([
     {
         id: "QueryGreetingWithErrors",
-        description: "Ensures that operations with errors successfully know how to deserialize the successful response",
+        documentation: "Ensures that operations with errors successfully know how to deserialize the successful response",
         protocol: "aws.query",
         code: 200,
         headers: {
@@ -75,7 +75,7 @@ structure InvalidGreeting {
 apply InvalidGreeting @httpResponseTests([
     {
         id: "QueryInvalidGreetingError",
-        description: "Parses simple XML errors",
+        documentation: "Parses simple XML errors",
         protocol: "aws.query",
         params: {
             Message: "Hi"

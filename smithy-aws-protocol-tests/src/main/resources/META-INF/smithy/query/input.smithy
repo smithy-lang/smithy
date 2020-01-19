@@ -16,7 +16,7 @@ operation SimpleInputParams {
 apply SimpleInputParams @httpRequestTests([
     {
         id: "QuerySimpleInputParamsStrings",
-        description: "Serializes strings",
+        documentation: "Serializes strings",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -36,7 +36,7 @@ apply SimpleInputParams @httpRequestTests([
     },
     {
         id: "QuerySimpleInputParamsStringAndBooleanTrue",
-        description: "Serializes booleans that are true",
+        documentation: "Serializes booleans that are true",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -56,7 +56,7 @@ apply SimpleInputParams @httpRequestTests([
     },
     {
         id: "QuerySimpleInputParamsStringsAndBooleanFalse",
-        description: "Serializes booleans that are false",
+        documentation: "Serializes booleans that are false",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -74,7 +74,7 @@ apply SimpleInputParams @httpRequestTests([
     },
     {
         id: "QuerySimpleInputParamsInteger",
-        description: "Serializes integers",
+        documentation: "Serializes integers",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -92,7 +92,7 @@ apply SimpleInputParams @httpRequestTests([
     },
     {
         id: "QuerySimpleInputParamsFloat",
-        description: "Serializes floats",
+        documentation: "Serializes floats",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -110,7 +110,7 @@ apply SimpleInputParams @httpRequestTests([
     },
     {
         id: "QuerySimpleInputParamsBlob",
-        description: "Blobs are base64 encoded in the query string",
+        documentation: "Blobs are base64 encoded in the query string",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -128,7 +128,7 @@ apply SimpleInputParams @httpRequestTests([
     },
     {
         id: "QueryEnums",
-        description: "Serializes enums in the query string",
+        documentation: "Serializes enums in the query string",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -168,7 +168,7 @@ operation QueryTimestamps {
 apply QueryTimestamps @httpRequestTests([
     {
         id: "QueryTimestampsInput",
-        description: "Serializes timestamps",
+        documentation: "Serializes timestamps",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -212,7 +212,7 @@ operation NestedStructures {
 apply NestedStructures @httpRequestTests([
     {
         id: "NestedStructures",
-        description: "Serializes nested structures using dots",
+        documentation: "Serializes nested structures using dots",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -257,7 +257,7 @@ operation QueryIdempotencyTokenAutoFill {
 apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
         id: "QueryProtocolIdempotencyTokenAutoFill",
-        description: "Automatically adds idempotency token when not set",
+        documentation: "Automatically adds idempotency token when not set",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -272,7 +272,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     },
     {
         id: "QueryProtocolIdempotencyTokenAutoFillIsSet",
-        description: "Uses the given idempotency token as-is",
+        documentation: "Uses the given idempotency token as-is",
         protocol: "aws.query",
         method: "POST",
         uri: "/",

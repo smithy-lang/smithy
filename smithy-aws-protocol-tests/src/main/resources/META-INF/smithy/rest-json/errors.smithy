@@ -27,7 +27,7 @@ operation GreetingWithErrors {
 apply GreetingWithErrors @httpResponseTests([
     {
         id: "RestJsonGreetingWithErrors",
-        description: "Ensures that operations with errors successfully know how to deserialize the successful response",
+        documentation: "Ensures that operations with errors successfully know how to deserialize the successful response",
         protocol: "aws.rest-json-1.1",
         code: 200,
         body: """
@@ -60,7 +60,7 @@ structure InvalidGreeting {
 apply InvalidGreeting @httpResponseTests([
     {
         id: "RestJsonInvalidGreetingError",
-        description: "Parses simple JSON errors",
+        documentation: "Parses simple JSON errors",
         protocol: "aws.rest-json-1.1",
         params: {
             Message: "Hi"
@@ -95,7 +95,7 @@ structure ComplexError {
 apply ComplexError @httpResponseTests([
     {
         id: "RestJsonComplexErrorWithNoMessage",
-        description: "Serializes a complex error with no message member",
+        documentation: "Serializes a complex error with no message member",
         protocol: "aws.rest-json-1.1",
         params: {
             Header: "Header",
@@ -147,7 +147,7 @@ structure FooError {}
 apply FooError @httpResponseTests([
     {
         id: "RestJsonFooErrorUsingXAmznErrorType",
-        description: "Serializes the X-Amzn-ErrorType header. For an example service, see Amazon EKS.",
+        documentation: "Serializes the X-Amzn-ErrorType header. For an example service, see Amazon EKS.",
         protocol: "aws.rest-json-1.1",
         code: 500,
         headers: {
@@ -156,7 +156,7 @@ apply FooError @httpResponseTests([
     },
     {
         id: "RestJsonFooErrorUsingXAmznErrorTypeWithUri",
-        description: """
+        documentation: """
             Some X-Amzn-Errortype headers contain URLs. Clients need to split the URL on ':' and take \
             only the first half of the string. For example, 'ValidationException:http://internal.amazon.com/coral/com.amazon.coral.validate/'
             is to be interpreted as 'ValidationException'.
@@ -170,7 +170,7 @@ apply FooError @httpResponseTests([
     },
     {
         id: "RestJsonFooErrorUsingXAmznErrorTypeWithUriAndNamespace",
-        description: """
+        documentation: """
                      X-Amzn-Errortype might contain a URL and a namespace. Client should extract only the shape \
                      name. This is a pathalogical case that might not actually happen in any deployed AWS service.""",
         protocol: "aws.rest-json-1.1",
@@ -181,7 +181,7 @@ apply FooError @httpResponseTests([
     },
     {
         id: "RestJsonFooErrorUsingCode",
-        description: """
+        documentation: """
                      This example uses the 'code' property in the output rather than X-Amzn-Errortype. Some \
                      services do this though it's preferable to send the X-Amzn-Errortype. Client implementations \
                      must first check for the X-Amzn-Errortype and then check for a top-level 'code' property.
@@ -200,7 +200,7 @@ apply FooError @httpResponseTests([
     },
     {
         id: "RestJsonFooErrorUsingCodeAndNamespace",
-        description: """
+        documentation: """
                      Some services serialize errors using code, and it might contain a namespace. \
                      Clients should just take the last part of the string after '#'.""",
         protocol: "aws.rest-json-1.1",
@@ -216,7 +216,7 @@ apply FooError @httpResponseTests([
     },
     {
         id: "RestJsonFooErrorUsingCodeUriAndNamespace",
-        description: """
+        documentation: """
                      Some services serialize errors using code, and it might contain a namespace. It also might \
                      contain a URI. Clients should just take the last part of the string after '#' and before ":". \
                      This is a pathalogical case that might not occur in any deployed AWS service.""",
@@ -233,7 +233,7 @@ apply FooError @httpResponseTests([
     },
     {
         id: "RestJsonFooErrorWithDunderType",
-        description: "Some services serialize errors using __type.",
+        documentation: "Some services serialize errors using __type.",
         protocol: "aws.rest-json-1.1",
         code: 500,
         headers: {
@@ -247,7 +247,7 @@ apply FooError @httpResponseTests([
     },
     {
         id: "RestJsonFooErrorWithDunderTypeAndNamespace",
-        description: """
+        documentation: """
                      Some services serialize errors using __type, and it might contain a namespace. \
                      Clients should just take the last part of the string after '#'.""",
         protocol: "aws.rest-json-1.1",
@@ -263,7 +263,7 @@ apply FooError @httpResponseTests([
     },
     {
         id: "RestJsonFooErrorWithDunderTypeUriAndNamespace",
-        description: """
+        documentation: """
                      Some services serialize errors using __type, and it might contain a namespace. It also might \
                      contain a URI. Clients should just take the last part of the string after '#' and before ":". \
                      This is a pathalogical case that might not occur in any deployed AWS service.""",

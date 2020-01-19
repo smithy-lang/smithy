@@ -30,7 +30,7 @@ operation XmlLists {
 apply XmlLists @httpResponseTests([
     {
         id: "QueryXmlLists",
-        description: "Serializes XML lists",
+        documentation: "Serializes XML lists",
         protocol: "aws.query",
         code: 200,
         body: """

@@ -18,7 +18,7 @@ operation QueryLists {
 apply QueryLists @httpRequestTests([
     {
         id: "Ec2Lists",
-        description: "Serializes query lists. All EC2 lists are flattened.",
+        documentation: "Serializes query lists. All EC2 lists are flattened.",
         protocol: "aws.ec2",
         method: "POST",
         uri: "/",
@@ -48,7 +48,7 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "Ec2EmptyQueryLists",
-        description: "Does not serialize empty query lists",
+        documentation: "Does not serialize empty query lists",
         protocol: "aws.ec2",
         method: "POST",
         uri: "/",
@@ -65,7 +65,7 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "Ec2ListArgWithXmlNameMember",
-        description: "An xmlName trait in the member of a list has no effect on the list serialization.",
+        documentation: "An xmlName trait in the member of a list has no effect on the list serialization.",
         protocol: "aws.ec2",
         method: "POST",
         uri: "/",
@@ -84,7 +84,7 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "Ec2ListMemberWithXmlName",
-        description: "Changes the name of the list using the xmlName trait",
+        documentation: "Changes the name of the list using the xmlName trait",
         protocol: "aws.ec2",
         method: "POST",
         uri: "/",

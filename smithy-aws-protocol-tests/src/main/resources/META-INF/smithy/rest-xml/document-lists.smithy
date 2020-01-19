@@ -36,7 +36,7 @@ operation XmlLists {
 apply XmlLists @httpRequestTests([
     {
         id: "XmlLists",
-        description: "Serializes XML lists",
+        documentation: "Serializes XML lists",
         protocol: "aws.rest-xml",
         method: "PUT",
         uri: "/XmlLists",
@@ -128,7 +128,7 @@ apply XmlLists @httpRequestTests([
 apply XmlLists @httpResponseTests([
     {
         id: "XmlLists",
-        description: "Serializes XML lists",
+        documentation: "Serializes XML lists",
         protocol: "aws.rest-xml",
         code: 200,
         body: """

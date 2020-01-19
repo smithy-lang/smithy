@@ -19,7 +19,7 @@ operation NoInputAndNoOutput {}
 apply NoInputAndNoOutput @httpRequestTests([
     {
         id: "RestJsonNoInputAndNoOutput",
-        description: "No input serializes no payload",
+        documentation: "No input serializes no payload",
         protocol: "aws.rest-json-1.1",
         method: "POST",
         uri: "/NoInputAndOutput"
@@ -29,7 +29,7 @@ apply NoInputAndNoOutput @httpRequestTests([
 apply NoInputAndNoOutput @httpResponseTests([
    {
        id: "RestJsonNoInputAndNoOutput",
-       description: "No output serializes no payload",
+       documentation: "No output serializes no payload",
        protocol: "aws.rest-json-1.1",
        code: 200
    }
@@ -47,7 +47,7 @@ operation NoInputAndOutput {
 apply NoInputAndOutput @httpRequestTests([
     {
         id: "RestJsonNoInputAndOutput",
-        description: "No input serializes no payload",
+        documentation: "No input serializes no payload",
         protocol: "aws.rest-json-1.1",
         method: "POST",
         uri: "/NoInputAndOutput"
@@ -57,7 +57,7 @@ apply NoInputAndOutput @httpRequestTests([
 apply NoInputAndOutput @httpResponseTests([
     {
         id: "RestJsonNoInputAndOutput",
-        description: "Empty output serializes no payload",
+        documentation: "Empty output serializes no payload",
         protocol: "aws.rest-json-1.1",
         code: 200
     }
@@ -78,7 +78,7 @@ operation EmptyInputAndEmptyOutput {
 apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
         id: "RestJsonEmptyInputAndEmptyOutput",
-        description: "Empty input serializes no payload",
+        documentation: "Empty input serializes no payload",
         protocol: "aws.rest-json-1.1",
         method: "POST",
         uri: "/EmptyInputAndEmptyOutput",
@@ -90,7 +90,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
 apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
         id: "RestJsonEmptyInputAndEmptyOutput",
-        description: "Empty output serializes no payload",
+        documentation: "Empty output serializes no payload",
         protocol: "aws.rest-json-1.1",
         code: 200,
         body: "{}",

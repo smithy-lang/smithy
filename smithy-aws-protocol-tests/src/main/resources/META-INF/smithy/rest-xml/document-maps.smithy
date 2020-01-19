@@ -19,7 +19,7 @@ operation XmlMaps {
 apply XmlMaps @httpRequestTests([
     {
         id: "XmlMaps",
-        description: "Serializes XML maps",
+        documentation: "Serializes XML maps",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/XmlMaps",
@@ -61,7 +61,7 @@ apply XmlMaps @httpRequestTests([
 apply XmlMaps @httpResponseTests([
     {
         id: "XmlMaps",
-        description: "Serializes XML maps",
+        documentation: "Serializes XML maps",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -118,7 +118,7 @@ operation XmlMapsXmlName {
 apply XmlMapsXmlName @httpRequestTests([
     {
         id: "XmlMapsXmlName",
-        description: "Serializes XML maps that have xmlName on members",
+        documentation: "Serializes XML maps that have xmlName on members",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/XmlMapsXmlName",
@@ -160,7 +160,7 @@ apply XmlMapsXmlName @httpRequestTests([
 apply XmlMapsXmlName @httpResponseTests([
     {
         id: "XmlMapsXmlName",
-        description: "Serializes XML lists",
+        documentation: "Serializes XML lists",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -220,7 +220,7 @@ operation FlattenedXmlMap {
 apply FlattenedXmlMap @httpRequestTests([
     {
         id: "FlattenedXmlMap",
-        description: "Serializes flattened XML maps in requests",
+        documentation: "Serializes flattened XML maps in requests",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/FlattenedXmlMap",
@@ -251,7 +251,7 @@ apply FlattenedXmlMap @httpRequestTests([
 apply FlattenedXmlMap @httpResponseTests([
     {
         id: "FlattenedXmlMap",
-        description: "Serializes flattened XML maps in responses",
+        documentation: "Serializes flattened XML maps in responses",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -293,7 +293,7 @@ operation FlattenedXmlMapWithXmlName {
 apply FlattenedXmlMapWithXmlName @httpRequestTests([
     {
         id: "FlattenedXmlMapWithXmlName",
-        description: "Serializes flattened XML maps in requests that have xmlName on members",
+        documentation: "Serializes flattened XML maps in requests that have xmlName on members",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/FlattenedXmlMapWithXmlName",
@@ -324,7 +324,7 @@ apply FlattenedXmlMapWithXmlName @httpRequestTests([
 apply FlattenedXmlMapWithXmlName @httpResponseTests([
     {
         id: "FlattenedXmlMapWithXmlName",
-        description: "Serializes flattened XML maps in responses that have xmlName on members",
+        documentation: "Serializes flattened XML maps in responses that have xmlName on members",
         protocol: "aws.rest-xml",
         code: 200,
         body: """

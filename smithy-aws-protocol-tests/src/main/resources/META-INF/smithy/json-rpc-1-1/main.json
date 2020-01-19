@@ -44,7 +44,7 @@
                 "smithy.test#httpRequestTests": [
                     {
                         "id": "sends_requests_to_slash",
-                        "description": "Sends requests to /",
+                        "documentation": "Sends requests to /",
                         "protocol": "aws.json-1.1",
                         "method": "POST",
                         "uri": "/",
@@ -52,7 +52,7 @@
                     },
                     {
                         "id": "includes_x_amz_target_and_content_type",
-                        "description": "Includes X-Amz-Target header and Content-Type",
+                        "documentation": "Includes X-Amz-Target header and Content-Type",
                         "protocol": "aws.json-1.1",
                         "method": "POST",
                         "uri": "/",
@@ -66,7 +66,7 @@
                 "smithy.test#httpResponseTests": [
                     {
                         "id": "handles_empty_output_shape",
-                        "description": "Handles empty output shapes",
+                        "documentation": "Handles empty output shapes",
                         "protocol": "aws.json-1.1",
                         "code": 200,
                         "headers": {
@@ -1095,7 +1095,7 @@
                 "smithy.test#httpRequestTests": [
                     {
                         "id": "can_call_operation_with_no_input_or_output",
-                        "description": "Can call operations with no input or output",
+                        "documentation": "Can call operations with no input or output",
                         "protocol": "aws.json-1.1",
                         "method": "POST",
                         "uri": "/",
@@ -1108,7 +1108,7 @@
                     },
                     {
                         "id": "can_call_operation_with_optional_input",
-                        "description": "Can invoke operations with optional input",
+                        "documentation": "Can invoke operations with optional input",
                         "protocol": "aws.json-1.1",
                         "method": "POST",
                         "uri": "/",

@@ -20,7 +20,7 @@ operation HttpPrefixHeaders  {
 apply HttpPrefixHeaders @httpRequestTests([
     {
         id: "RestJsonHttpPrefixHeadersArePresent",
-        description: "Adds headers by prefix",
+        documentation: "Adds headers by prefix",
         protocol: "aws.rest-json-1.1",
         method: "GET",
         uri: "/HttpPrefixHeaders",
@@ -40,7 +40,7 @@ apply HttpPrefixHeaders @httpRequestTests([
     },
     {
         id: "RestJsonHttpPrefixHeadersAreNotPresent",
-        description: "No prefix headers are serialized because the value is empty",
+        documentation: "No prefix headers are serialized because the value is empty",
         protocol: "aws.rest-json-1.1",
         method: "GET",
         uri: "/HttpPrefixHeaders",
@@ -58,7 +58,7 @@ apply HttpPrefixHeaders @httpRequestTests([
 apply HttpPrefixHeaders @httpResponseTests([
     {
         id: "RestJsonHttpPrefixHeadersArePresent",
-        description: "Adds headers by prefix",
+        documentation: "Adds headers by prefix",
         protocol: "aws.rest-json-1.1",
         code: 200,
         body: "",
@@ -77,7 +77,7 @@ apply HttpPrefixHeaders @httpResponseTests([
     },
     {
         id: "RestJsonHttpPrefixHeadersAreNotPresent",
-        description: "No prefix headers are serialized because the value is empty",
+        documentation: "No prefix headers are serialized because the value is empty",
         protocol: "aws.rest-json-1.1",
         code: 200,
         body: "",

@@ -16,7 +16,7 @@ operation XmlMaps {
 apply XmlMaps @httpResponseTests([
     {
         id: "QueryXmlMaps",
-        description: "Serializes XML maps",
+        documentation: "Serializes XML maps",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -73,7 +73,7 @@ operation XmlMapsXmlName {
 apply XmlMapsXmlName @httpResponseTests([
     {
         id: "QueryQueryXmlMapsXmlName",
-        description: "Serializes XML lists",
+        documentation: "Serializes XML lists",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -133,7 +133,7 @@ operation FlattenedXmlMap {
 apply FlattenedXmlMap @httpResponseTests([
     {
         id: "QueryQueryFlattenedXmlMap",
-        description: "Serializes flattened XML maps in responses",
+        documentation: "Serializes flattened XML maps in responses",
         protocol: "aws.query",
         code: 200,
         body: """
@@ -175,7 +175,7 @@ operation FlattenedXmlMapWithXmlName {
 apply FlattenedXmlMapWithXmlName @httpResponseTests([
     {
         id: "QueryQueryFlattenedXmlMapWithXmlName",
-        description: "Serializes flattened XML maps in responses that have xmlName on members",
+        documentation: "Serializes flattened XML maps in responses that have xmlName on members",
         protocol: "aws.query",
         code: 200,
         body: """

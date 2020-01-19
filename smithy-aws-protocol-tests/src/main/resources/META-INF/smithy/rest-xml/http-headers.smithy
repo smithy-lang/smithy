@@ -28,7 +28,7 @@ operation InputAndOutputWithHeaders {
 apply InputAndOutputWithHeaders @httpRequestTests([
     {
         id: "InputAndOutputWithStringHeaders",
-        description: "Tests requests with string header bindings",
+        documentation: "Tests requests with string header bindings",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
@@ -46,7 +46,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     },
     {
         id: "InputAndOutputWithNumericHeaders",
-        description: "Tests requests with numeric header bindings",
+        documentation: "Tests requests with numeric header bindings",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
@@ -72,7 +72,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     },
     {
         id: "InputAndOutputWithBooleanHeaders",
-        description: "Tests requests with boolean header bindings",
+        documentation: "Tests requests with boolean header bindings",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
@@ -90,7 +90,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     },
     {
         id: "InputAndOutputWithTimestampHeaders",
-        description: "Tests requests with timestamp header bindings",
+        documentation: "Tests requests with timestamp header bindings",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
@@ -104,7 +104,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     },
     {
         id: "InputAndOutputWithEnumHeaders",
-        description: "Tests requests with enum header bindings",
+        documentation: "Tests requests with enum header bindings",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
@@ -123,7 +123,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
 apply InputAndOutputWithHeaders @httpResponseTests([
     {
         id: "InputAndOutputWithStringHeaders",
-        description: "Tests responses with string header bindings",
+        documentation: "Tests responses with string header bindings",
         protocol: "aws.rest-xml",
         code: 200,
         headers: {
@@ -140,7 +140,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
     },
     {
         id: "InputAndOutputWithNumericHeaders",
-        description: "Tests responses with numeric header bindings",
+        documentation: "Tests responses with numeric header bindings",
         protocol: "aws.rest-xml",
         code: 200,
         headers: {
@@ -165,7 +165,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
     },
     {
         id: "InputAndOutputWithBooleanHeaders",
-        description: "Tests responses with boolean header bindings",
+        documentation: "Tests responses with boolean header bindings",
         protocol: "aws.rest-xml",
         code: 200,
         headers: {
@@ -182,7 +182,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
     },
     {
         id: "InputAndOutputWithTimestampHeaders",
-        description: "Tests responses with timestamp header bindings",
+        documentation: "Tests responses with timestamp header bindings",
         protocol: "aws.rest-xml",
         code: 200,
         headers: {
@@ -195,7 +195,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
     },
     {
         id: "InputAndOutputWithEnumHeaders",
-        description: "Tests responses with enum header bindings",
+        documentation: "Tests responses with enum header bindings",
         protocol: "aws.rest-xml",
         code: 200,
         headers: {
@@ -271,7 +271,7 @@ operation NullAndEmptyHeaders {
 apply NullAndEmptyHeaders @httpRequestTests([
     {
         id: "NullAndEmptyHeaders",
-        description: "Do not send null values, empty strings, or empty lists over the wire in headers",
+        documentation: "Do not send null values, empty strings, or empty lists over the wire in headers",
         protocol: "aws.rest-xml",
         method: "GET",
         uri: "/NullAndEmptyHeaders",
@@ -288,7 +288,7 @@ apply NullAndEmptyHeaders @httpRequestTests([
 apply NullAndEmptyHeaders @httpResponseTests([
     {
         id: "NullAndEmptyHeaders",
-        description: "Do not send null or empty headers",
+        documentation: "Do not send null or empty headers",
         protocol: "aws.rest-xml",
         code: 200,
         forbidHeaders: ["X-A", "X-B", "X-C"],
@@ -322,7 +322,7 @@ operation TimestampFormatHeaders {
 apply TimestampFormatHeaders @httpRequestTests([
     {
         id: "TimestampFormatHeaders",
-        description: "Tests how timestamp request headers are serialized",
+        documentation: "Tests how timestamp request headers are serialized",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/TimestampFormatHeaders",
@@ -351,7 +351,7 @@ apply TimestampFormatHeaders @httpRequestTests([
 apply TimestampFormatHeaders @httpResponseTests([
     {
         id: "TimestampFormatHeaders",
-        description: "Tests how timestamp response headers are serialized",
+        documentation: "Tests how timestamp response headers are serialized",
         protocol: "aws.rest-xml",
         code: 200,
         headers: {

@@ -19,7 +19,7 @@ operation JsonMaps {
 apply JsonMaps @httpRequestTests([
     {
         id: "RestJsonJsonMaps",
-        description: "Serializes JSON maps",
+        documentation: "Serializes JSON maps",
         protocol: "aws.rest-json-1.1",
         method: "POST",
         uri: "/JsonMaps",
@@ -54,7 +54,7 @@ apply JsonMaps @httpRequestTests([
 apply JsonMaps @httpResponseTests([
     {
         id: "RestJsonJsonMaps",
-        description: "Serializes JSON maps",
+        documentation: "Serializes JSON maps",
         protocol: "aws.rest-json-1.1",
         code: 200,
         body: """

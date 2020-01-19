@@ -27,7 +27,7 @@ operation AllQueryStringTypes {
 apply AllQueryStringTypes @httpRequestTests([
     {
         id: "AllQueryStringTypes",
-        description: "Serializes query string parameters with all supported types",
+        documentation: "Serializes query string parameters with all supported types",
         protocol: "aws.rest-xml",
         method: "GET",
         uri: "/AllQueryStringTypes",
@@ -156,7 +156,7 @@ structure AllQueryStringTypesInput {
 @httpRequestTests([
     {
         id: "ConstantQueryString",
-        description: "Includes constant query string parameters",
+        documentation: "Includes constant query string parameters",
         protocol: "aws.rest-xml",
         method: "GET",
         uri: "/ConstantQueryString/hi",
@@ -192,7 +192,7 @@ operation ConstantAndVariableQueryString {
 apply ConstantAndVariableQueryString @httpRequestTests([
     {
         id: "ConstantAndVariableQueryStringMissingOneValue",
-        description: "Mixes constant and variable query string parameters",
+        documentation: "Mixes constant and variable query string parameters",
         protocol: "aws.rest-xml",
         method: "GET",
         uri: "/ConstantAndVariableQueryString",
@@ -208,7 +208,7 @@ apply ConstantAndVariableQueryString @httpRequestTests([
     },
     {
         id: "ConstantAndVariableQueryStringAllValues",
-        description: "Mixes constant and variable query string parameters",
+        documentation: "Mixes constant and variable query string parameters",
         protocol: "aws.rest-xml",
         method: "GET",
         uri: "/ConstantAndVariableQueryString",
@@ -245,7 +245,7 @@ operation IgnoreQueryParamsInResponse {
 apply IgnoreQueryParamsInResponse @httpResponseTests([
     {
         id: "IgnoreQueryParamsInResponse",
-        description: "Query parameters must be ignored when serializing the output of an operation",
+        documentation: "Query parameters must be ignored when serializing the output of an operation",
         protocol: "aws.rest-xml",
         code: 200,
         headers: {
@@ -274,7 +274,7 @@ operation OmitsNullSerializesEmptyString {
 apply OmitsNullSerializesEmptyString @httpRequestTests([
     {
         id: "OmitsNullSerializesEmptyString",
-        description: "Serializes empty query strings but omits null",
+        documentation: "Serializes empty query strings but omits null",
         protocol: "aws.rest-xml",
         method: "GET",
         uri: "/OmitsNullSerializesEmptyString",
@@ -307,7 +307,7 @@ operation QueryIdempotencyTokenAutoFill {
 apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
         id: "QueryIdempotencyTokenAutoFill",
-        description: "Automatically adds idempotency token when not set",
+        documentation: "Automatically adds idempotency token when not set",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/QueryIdempotencyTokenAutoFill",
@@ -318,7 +318,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     },
     {
         id: "QueryIdempotencyTokenAutoFillIsSet",
-        description: "Uses the given idempotency token as-is",
+        documentation: "Uses the given idempotency token as-is",
         protocol: "aws.rest-xml",
         method: "POST",
         uri: "/QueryIdempotencyTokenAutoFill",

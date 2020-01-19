@@ -21,7 +21,7 @@ operation HttpRequestWithLabels {
 apply HttpRequestWithLabels @httpRequestTests([
     {
         id: "RestJsonInputWithHeadersAndAllParams",
-        description: "Sends a GET request that uses URI label bindings",
+        documentation: "Sends a GET request that uses URI label bindings",
         protocol: "aws.rest-json-1.1",
         method: "GET",
         uri: "/HttpRequestWithLabels/string/1/2/3/4.0/5.0/true/2019-12-16T23%3A48%3A18Z",
@@ -86,7 +86,7 @@ operation HttpRequestWithLabelsAndTimestampFormat {
 apply HttpRequestWithLabelsAndTimestampFormat @httpRequestTests([
     {
         id: "RestJsonHttpRequestWithLabelsAndTimestampFormat",
-        description: "Serializes different timestamp formats in URI labels",
+        documentation: "Serializes different timestamp formats in URI labels",
         protocol: "aws.rest-json-1.1",
         method: "GET",
         uri: """
@@ -154,7 +154,7 @@ operation HttpRequestWithGreedyLabelInPath {
 apply HttpRequestWithGreedyLabelInPath @httpRequestTests([
     {
         id: "RestJsonHttpRequestWithGreedyLabelInPath",
-        description: "Serializes greedy labels and normal labels",
+        documentation: "Serializes greedy labels and normal labels",
         protocol: "aws.rest-json-1.1",
         method: "GET",
         uri: "/HttpRequestWithGreedyLabelInPath/foo/hello/baz/there/guy",

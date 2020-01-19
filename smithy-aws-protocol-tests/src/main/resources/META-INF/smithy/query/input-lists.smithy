@@ -18,7 +18,7 @@ operation QueryLists {
 apply QueryLists @httpRequestTests([
     {
         id: "QueryLists",
-        description: "Serializes query lists",
+        documentation: "Serializes query lists",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -48,7 +48,7 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "EmptyQueryLists",
-        description: "Does not serialize empty query lists",
+        documentation: "Does not serialize empty query lists",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -65,7 +65,7 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "FlattenedQueryLists",
-        description: "Flattens query lists by repeating the member name and removing the member element",
+        documentation: "Flattens query lists by repeating the member name and removing the member element",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -84,7 +84,7 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "QueryListArgWithXmlNameMember",
-        description: "Changes the member of lists using xmlName trait",
+        documentation: "Changes the member of lists using xmlName trait",
         protocol: "aws.query",
         method: "POST",
         uri: "/",
@@ -103,7 +103,7 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "QueryFlattenedListArgWithXmlName",
-        description: "Changes the name of flattened lists using xmlName trait on the structure member",
+        documentation: "Changes the name of flattened lists using xmlName trait on the structure member",
         protocol: "aws.query",
         method: "POST",
         uri: "/",

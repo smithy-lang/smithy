@@ -18,7 +18,7 @@ operation XmlAttributes {
 apply XmlAttributes @httpRequestTests([
     {
         id: "XmlAttributes",
-        description: "Serializes XML attributes on the synthesized document",
+        documentation: "Serializes XML attributes on the synthesized document",
         protocol: "aws.rest-xml",
         method: "PUT",
         uri: "/XmlAttributes",
@@ -41,7 +41,7 @@ apply XmlAttributes @httpRequestTests([
 apply XmlAttributes @httpResponseTests([
     {
         id: "XmlAttributes",
-        description: "Serializes simple scalar properties",
+        documentation: "Serializes simple scalar properties",
         protocol: "aws.rest-xml",
         code: 200,
         body: """
@@ -79,7 +79,7 @@ operation XmlAttributesOnPayload {
 apply XmlAttributesOnPayload @httpRequestTests([
     {
         id: "XmlAttributesOnPayload",
-        description: "Serializes XML attributes on the synthesized document",
+        documentation: "Serializes XML attributes on the synthesized document",
         protocol: "aws.rest-xml",
         method: "PUT",
         uri: "/XmlAttributesOnPayload",
@@ -104,7 +104,7 @@ apply XmlAttributesOnPayload @httpRequestTests([
 apply XmlAttributesOnPayload @httpResponseTests([
     {
         id: "XmlAttributesOnPayload",
-        description: "Serializes simple scalar properties",
+        documentation: "Serializes simple scalar properties",
         protocol: "aws.rest-xml",
         code: 200,
         body: """

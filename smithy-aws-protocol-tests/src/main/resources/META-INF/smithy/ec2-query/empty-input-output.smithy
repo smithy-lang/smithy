@@ -19,7 +19,7 @@ operation NoInputAndOutput {
 apply NoInputAndOutput @httpRequestTests([
     {
         id: "Ec2QueryNoInputAndOutput",
-        description: "No input serializes no payload",
+        documentation: "No input serializes no payload",
         protocol: "aws.ec2",
         method: "POST",
         uri: "/",
@@ -36,7 +36,7 @@ apply NoInputAndOutput @httpRequestTests([
 apply NoInputAndOutput @httpResponseTests([
     {
         id: "Ec2QueryNoInputAndOutput",
-        description: "Empty output",
+        documentation: "Empty output",
         protocol: "aws.ec2",
         code: 200,
         headers: {
@@ -65,7 +65,7 @@ operation EmptyInputAndEmptyOutput {
 apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
         id: "Ec2QueryEmptyInputAndEmptyOutput",
-        description: "Empty input serializes no extra query params",
+        documentation: "Empty input serializes no extra query params",
         protocol: "aws.ec2",
         method: "POST",
         uri: "/",
@@ -82,7 +82,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
 apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
         id: "Ec2QueryEmptyInputAndEmptyOutput",
-        description: "Empty output",
+        documentation: "Empty output",
         protocol: "aws.ec2",
         code: 200,
         headers: {
