@@ -42,14 +42,14 @@ public class ValidateCommandTest {
     @Test
     public void usesModelDiscoveryWithCustomValidClasspath() {
         String dir = getClass().getResource("valid.jar").getPath();
-        SmithyCli.create().configureLogging(true).run("validate", "--debug", "--discover-classpath", dir);
+        SmithyCli.create().run("validate", "--debug", "--discover-classpath", dir);
     }
 
     @Test
     public void usesModelDiscoveryWithCustomInvalidClasspath() {
         CliError e = Assertions.assertThrows(CliError.class, () -> {
             String dir = getClass().getResource("invalid.jar").getPath();
-            SmithyCli.create().configureLogging(true).run("validate", "--debug", "--discover-classpath", dir);
+            SmithyCli.create().run("validate", "--debug", "--discover-classpath", dir);
         });
 
         assertThat(e.getMessage(), containsString("1 ERROR(s)"));
@@ -59,7 +59,7 @@ public class ValidateCommandTest {
     public void failsOnUnknownTrait() {
         CliError e = Assertions.assertThrows(CliError.class, () -> {
             String model = getClass().getResource("unknown-trait.smithy").getPath();
-            SmithyCli.create().configureLogging(true).run("validate", model);
+            SmithyCli.create().run("validate", model);
         });
 
         assertThat(e.getMessage(), containsString("1 ERROR(s)"));
@@ -68,6 +68,6 @@ public class ValidateCommandTest {
     @Test
     public void allowsUnknownTrait() {
         String model = getClass().getResource("unknown-trait.smithy").getPath();
-        SmithyCli.create().configureLogging(true).run("validate", "--allow-unknown-traits", model);
+        SmithyCli.create().run("validate", "--allow-unknown-traits", model);
     }
 }

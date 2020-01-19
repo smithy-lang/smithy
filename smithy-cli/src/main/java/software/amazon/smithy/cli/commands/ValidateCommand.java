@@ -16,7 +16,6 @@
 package software.amazon.smithy.cli.commands;
 
 import java.util.List;
-import java.util.logging.Logger;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
@@ -27,8 +26,6 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.ValidatedResult;
 
 public final class ValidateCommand implements Command {
-    private static final Logger LOGGER = Logger.getLogger(ValidateCommand.class.getName());
-
     @Override
     public String getName() {
         return "validate";
@@ -52,7 +49,7 @@ public final class ValidateCommand implements Command {
     @Override
     public void execute(Arguments arguments, ClassLoader classLoader) {
         List<String> models = arguments.positionalArguments();
-        LOGGER.info(String.format("Validating Smithy model sources: %s", models));
+        Colors.BRIGHT_WHITE.out(String.format("Validating Smithy model sources: %s", models));
 
         ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
         CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
@@ -61,6 +58,6 @@ public final class ValidateCommand implements Command {
         models.forEach(assembler::addImport);
         ValidatedResult<Model> modelResult = assembler.assemble();
         Validator.validate(modelResult);
-        Colors.out(Colors.BRIGHT_BOLD_GREEN, "Smithy validation complete");
+        Colors.BRIGHT_BOLD_GREEN.out("Smithy validation complete");
     }
 }

@@ -41,9 +41,6 @@ public enum Colors {
     BRIGHT_CYAN(96),
     BRIGHT_WHITE(97);
 
-    /** Configures whether or not to use ANSI colors. */
-    private static boolean useAnsiColors = useAnsi();
-
     private int escape;
     private boolean bold;
 
@@ -57,53 +54,33 @@ public enum Colors {
     }
 
     /**
-     * Explicitly configures whether or not to use ANSI colors.
+     * Prints to stdout using the Color if ANSI colors are enabled.
      *
-     * @param useAnsiColors Set to true or false to enable/disable.
-     */
-    public static void setUseAnsiColors(boolean useAnsiColors) {
-        Colors.useAnsiColors = useAnsiColors;
-    }
-
-    /**
-     * Does a really simple check to see if ANSI colors are supported.
-     *
-     * @return Returns true if ANSI probably works.
-     */
-    private static boolean useAnsi() {
-        return System.console() != null && System.getenv().get("TERM") != null;
-    }
-
-    /**
-     * Prints to stdout using the provided color if ANSI colors are enabled.
-     *
-     * @param color ANSI color to print with.
      * @param message Message to print.
      */
-    public static void out(Colors color, String message) {
-        if (useAnsiColors) {
-            System.out.println(format(color, message));
+    public void out(String message) {
+        if (Cli.useAnsiColors) {
+            Cli.stdout(format(message));
         } else {
-            System.out.println(message);
+            Cli.stdout(message);
         }
     }
 
     /**
-     * Prints to stderr using the provided color if ANSI colors are enabled.
+     * Prints to stderr using the Color if ANSI colors are enabled.
      *
-     * @param color ANSI color to print with.
      * @param message Message to print.
      */
-    public static void err(Colors color, String message) {
-        if (useAnsiColors) {
-            System.err.println(format(color, message));
+    public void err(String message) {
+        if (Cli.useAnsiColors) {
+            Cli.stderr(format(message));
         } else {
-            System.err.println(message);
+            Cli.stderr(message);
         }
     }
 
-    private static String format(Colors color, String message) {
-        String colored = String.format("\u001b[%dm%s\u001b[0m", color.escape, message);
-        return color.bold ? String.format("\033[1m%s\033[0m", colored) : colored;
+    private String format(String message) {
+        String colored = String.format("\u001b[%dm%s\u001b[0m", escape, message);
+        return bold ? String.format("\033[1m%s\033[0m", colored) : colored;
     }
 }

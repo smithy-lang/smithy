@@ -245,13 +245,13 @@ public final class Parser {
         private List<Argument> arguments = new ArrayList<>();
 
         private Builder() {
-            // Always include --help, --debug, --stacktrace, and --no-color options.
+            // Always include --help, --debug, --stacktrace, and --no-color options; and --logging X.
             option(Cli.HELP, "-h", "Print this help");
             option(Cli.DEBUG, "Display debug information");
             option(Cli.STACKTRACE, "Display a stacktrace on error");
             option(Cli.NO_COLOR, "Explicitly disable ANSI colors");
             option(Cli.FORCE_COLOR, "Explicitly enables ANSI colors");
-            option(Cli.QUIET_LOGS, "Disables writing log messages to STDOUT");
+            parameter(Cli.LOGGING, "Sets the log level to one of OFF, SEVERE, WARNING, INFO, FINE, ALL");
         }
 
         @Override

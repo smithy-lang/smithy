@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.cli.Arguments;
+import software.amazon.smithy.cli.Cli;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
@@ -74,15 +75,15 @@ public final class DiffCommand implements Command {
         }
 
         if (!result.isEmpty()) {
-            System.out.println(result);
+            Cli.stdout(result);
         }
 
         if (hasDanger) {
-            Colors.out(Colors.BRIGHT_BOLD_RED, "Smithy diff detected danger");
+            Colors.BRIGHT_BOLD_RED.out("Smithy diff detected danger");
         } else if (hasWarning) {
-            Colors.out(Colors.BRIGHT_BOLD_YELLOW, "Smithy diff complete with warnings");
+            Colors.BRIGHT_BOLD_YELLOW.out("Smithy diff complete with warnings");
         } else {
-            Colors.out(Colors.BRIGHT_BOLD_GREEN, "Smithy diff complete");
+            Colors.BRIGHT_BOLD_GREEN.out("Smithy diff complete");
         }
     }
 

@@ -29,7 +29,6 @@ public final class SmithyCli {
     public static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
 
     private ClassLoader classLoader = getClass().getClassLoader();
-    private boolean configureLogging;
 
     private SmithyCli() {}
 
@@ -49,7 +48,7 @@ public final class SmithyCli {
      */
     public static void main(String... args) {
         try {
-            SmithyCli.create().configureLogging(true).run(args);
+            SmithyCli.create().run(args);
         } catch (CliError e) {
             System.exit(e.code);
         } catch (Exception e) {
@@ -69,17 +68,6 @@ public final class SmithyCli {
     }
 
     /**
-     * Configures the CLI to modify the JUL log level and format.
-     *
-     * @param configureLogging Set to true to modify log formats and levels.
-     * @return Returns the CLI.
-     */
-    public SmithyCli configureLogging(boolean configureLogging) {
-        this.configureLogging = configureLogging;
-        return this;
-    }
-
-    /**
      * Runs the CLI using a list of arguments.
      *
      * @param args Arguments to parse and execute.
@@ -95,7 +83,6 @@ public final class SmithyCli {
      */
     public void run(String... args) {
         Cli cli = new Cli("smithy", classLoader);
-        cli.configureLogging(configureLogging);
         cli.addCommand(new ValidateCommand());
         cli.addCommand(new BuildCommand());
         cli.addCommand(new DiffCommand());
