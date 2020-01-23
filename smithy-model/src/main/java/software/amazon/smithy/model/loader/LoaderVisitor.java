@@ -60,9 +60,6 @@ final class LoaderVisitor {
     private static final Logger LOGGER = Logger.getLogger(LoaderVisitor.class.getName());
     private static final TraitDefinition.Provider TRAIT_DEF_PROVIDER = new TraitDefinition.Provider();
 
-    /** Whether or not a call to {@link #onEnd()} has been made. */
-    private boolean calledOnEnd;
-
     /** Factory used to create traits. */
     private final TraitFactory traitFactory;
 
@@ -95,6 +92,9 @@ final class LoaderVisitor {
 
     /** Map of shape aliases to their alias. */
     private final Map<String, ShapeId> useShapes = new HashMap<>();
+
+    /** The result that is populated when onEnd is called. */
+    private ValidatedResult<Model> result;
 
     private static final class PendingTrait {
         final ShapeId id;
@@ -278,7 +278,7 @@ final class LoaderVisitor {
     }
 
     private void validateState(FromSourceLocation sourceLocation) {
-        if (calledOnEnd) {
+        if (result != null) {
             throw new IllegalStateException("Cannot call visitor method because visitor has called onEnd");
         }
     }
@@ -502,8 +502,10 @@ final class LoaderVisitor {
      * @return Returns the validated model result.
      */
     public ValidatedResult<Model> onEnd() {
-        validateState(SourceLocation.NONE);
-        calledOnEnd = true;
+        if (result != null) {
+            return result;
+        }
+
         Model.Builder modelBuilder = Model.builder().metadata(metadata);
 
         finalizeShapeTargets();
@@ -551,7 +553,9 @@ final class LoaderVisitor {
 
         // Add any remaining built shapes.
         modelBuilder.addShapes(builtShapes.values());
-        return new ValidatedResult<>(modelBuilder.build(), events);
+        result = new ValidatedResult<>(modelBuilder.build(), events);
+
+        return result;
     }
 
     private void finalizeShapeTargets() {

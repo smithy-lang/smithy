@@ -45,7 +45,6 @@ import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Assembles and validates a {@link Model} from documents, files, shapes, and
@@ -448,31 +447,27 @@ public final class ModelAssembler {
      *  and validation events.
      */
     public ValidatedResult<Model> assemble() {
+        LoaderVisitor visitor = createLoaderVisitor();
+
         try {
-            return doAssemble();
+            return doAssemble(visitor);
         } catch (SourceException e) {
-            return ValidatedResult.fromErrors(ListUtils.of(ValidationEvent.fromSourceException(e)));
+            visitor.onError(ValidationEvent.fromSourceException(e));
+            return visitor.onEnd();
         }
     }
 
-    private ValidatedResult<Model> doAssemble() {
+    private LoaderVisitor createLoaderVisitor() {
         if (traitFactory == null) {
             traitFactory = LazyTraitFactoryHolder.INSTANCE;
         }
 
-        LoaderVisitor visitor = new LoaderVisitor(traitFactory, properties);
+        return new LoaderVisitor(traitFactory, properties);
+    }
 
-        // Load models first to ensure a version is set.
-        for (Map.Entry<String, Supplier<InputStream>> modelEntry : inputStreamModels.entrySet()) {
-            if (!ModelLoader.load(modelEntry.getKey(), modelEntry.getValue(), visitor)) {
-                LOGGER.warning(() -> "No ModelLoader was able to load " + modelEntry.getKey());
-            }
-        }
-
-        if (!documentNodes.isEmpty()) {
-            for (Node node : documentNodes) {
-                ModelLoader.loadParsedNode(node, visitor);
-            }
+    private ValidatedResult<Model> doAssemble(LoaderVisitor visitor) {
+        if (!disablePrelude) {
+            mergeModelIntoVisitor(Prelude.getPreludeModel(), visitor);
         }
 
         shapes.forEach(visitor::onShape);
@@ -482,8 +477,14 @@ public final class ModelAssembler {
             mergeModelIntoVisitor(model, visitor);
         }
 
-        if (!disablePrelude) {
-            mergeModelIntoVisitor(Prelude.getPreludeModel(), visitor);
+        for (Node node : documentNodes) {
+            ModelLoader.loadParsedNode(node, visitor);
+        }
+
+        for (Map.Entry<String, Supplier<InputStream>> modelEntry : inputStreamModels.entrySet()) {
+            if (!ModelLoader.load(modelEntry.getKey(), modelEntry.getValue(), visitor)) {
+                LOGGER.warning(() -> "No ModelLoader was able to load " + modelEntry.getKey());
+            }
         }
 
         ValidatedResult<Model> modelResult = visitor.onEnd();
