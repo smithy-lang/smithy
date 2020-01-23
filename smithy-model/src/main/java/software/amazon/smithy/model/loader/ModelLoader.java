@@ -68,6 +68,11 @@ final class ModelLoader {
             } else {
                 return false;
             }
+        } catch (ModelSyntaxException e) {
+            // A syntax error in any model is going to really mess up the loading
+            // process. While we *could* tolerate syntax errors and move on, to the
+            // next model, doing so would likely emit many unintelligible errors.
+            throw e;
         } catch (SourceException e) {
             visitor.onError(ValidationEvent.fromSourceException(e));
             return true;

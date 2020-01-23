@@ -483,10 +483,14 @@ public class ModelAssemblerTest {
 
     @Test
     public void gracefullyParsesPartialDocuments() {
-        String document = "namespace foo.baz\nstring MyString\nstr";
+        String document = "namespace foo.baz\n"
+                          + "@required\n" // < this trait is invalid, but that's not validated due to the syntax error
+                          + "string MyString\n"
+                          + "str"; // < syntax error here
         ValidatedResult<Model> result = new ModelAssembler().addUnparsedModel("foo.smithy", document).assemble();
 
         assertTrue(result.isBroken());
+        assertThat(result.getValidationEvents(Severity.ERROR), hasSize(1));
         assertTrue(result.getResult().isPresent());
         assertTrue(result.getResult().get().getShape(ShapeId.from("foo.baz#MyString")).isPresent());
     }

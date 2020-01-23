@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -61,12 +62,10 @@ public class LoaderVisitorTest {
     }
 
     @Test
-    public void cannotCallOnEndTwice() {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
-            LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-            visitor.onEnd();
-            visitor.onEnd();
-        });
+    public void callingOnEndTwiceIsIdempotent() {
+        LoaderVisitor visitor = new LoaderVisitor(FACTORY);
+
+        assertThat(visitor.onEnd(), is(visitor.onEnd()));
     }
 
     @Test
