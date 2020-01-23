@@ -39,29 +39,20 @@ import software.amazon.smithy.utils.MapUtils;
  *
  * <p>Uses Jackson internally, but that is free to change in the
  * future if needed.
- *
- * <p>Using this class directly is deprecated and it will be made
- * package-private in 0.10.0. Use {@link Node#parse} instead.
  */
-@Deprecated
-public final class DefaultNodeFactory implements NodeFactory {
+final class DefaultNodeFactory {
     private final JsonFactory jsonFactory;
-
-    public DefaultNodeFactory() {
-        this(new JsonFactory());
-    }
 
     DefaultNodeFactory(JsonFactory jsonFactory) {
         this.jsonFactory = jsonFactory;
     }
 
-    @Override
-    public Node createNode(String filename, String text) {
+    Node createNode(String filename, String text) {
         InputStream targetStream = new ByteArrayInputStream(text.getBytes(Charset.forName("UTF-8")));
         return createNode(filename, targetStream);
     }
 
-    public Node createNode(String filename, InputStream input) {
+    Node createNode(String filename, InputStream input) {
         JsonParser parser = createParser(filename, input);
 
         try {
