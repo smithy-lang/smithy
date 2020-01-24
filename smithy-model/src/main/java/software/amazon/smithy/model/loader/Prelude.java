@@ -34,7 +34,6 @@ import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
@@ -225,15 +224,6 @@ public final class Prelude {
         return PUBLIC_PRELUDE_SHAPE_IDS.contains(toId) || PRELUDE_TRAITS.contains(toId);
     }
 
-    @Deprecated
-    public static Optional<Shape> resolveShapeId(ShapeIndex index, String fromNamespace, String target) {
-        // First check shapes in the same namespace.
-        return OptionalUtils.or(index.getShape(ShapeId.fromOptionalNamespace(fromNamespace, target)),
-                // Then check shapes in the prelude that are public.
-                () -> index.getShape(ShapeId.fromParts(NAMESPACE, target))
-                        .filter(Prelude::isPublicPreludeShape));
-    }
-
     /**
      * Returns the resolved shape of a shape target by first checking if a
      * shape in the namespace relative to the target matches the given name,
@@ -246,7 +236,12 @@ public final class Prelude {
      * @throws ShapeIdSyntaxException if the target or namespace is invalid.
      */
     public static Optional<Shape> resolveShapeId(Model model, String fromNamespace, String target) {
-        return resolveShapeId(model.getShapeIndex(), fromNamespace, target);
+        // First check shapes in the same namespace.
+        return OptionalUtils.or(
+                model.getShape(ShapeId.fromOptionalNamespace(fromNamespace, target)),
+                // Then check shapes in the prelude that are public.
+                () -> model.getShape(ShapeId.fromParts(NAMESPACE, target)).filter(Prelude::isPublicPreludeShape)
+        );
     }
 
     // Used by the ModelAssembler to load the prelude into another visitor.

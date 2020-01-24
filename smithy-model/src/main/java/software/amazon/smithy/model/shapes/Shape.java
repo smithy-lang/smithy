@@ -230,11 +230,6 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         return traits;
     }
 
-    @Deprecated
-    public <T extends Trait> Optional<T> getMemberTrait(ShapeIndex index, Class<T> trait) {
-        return getTrait(trait);
-    }
-
     /**
      * Gets a trait from the member shape or from the shape targeted by the
      * member.
@@ -250,11 +245,6 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      */
     public <T extends Trait> Optional<T> getMemberTrait(Model model, Class<T> trait) {
         return getTrait(trait);
-    }
-
-    @Deprecated
-    public Optional<Trait> findMemberTrait(ShapeIndex index, String traitName) {
-        return findTrait(traitName);
     }
 
     /**

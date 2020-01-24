@@ -17,8 +17,8 @@ package software.amazon.smithy.model.validation.node;
 
 import java.util.ArrayList;
 import java.util.List;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -32,7 +32,7 @@ public final class StringEnumPlugin extends FilteredPlugin<StringShape, StringNo
     }
 
     @Override
-    protected List<String> check(StringShape shape, StringNode node, ShapeIndex index) {
+    protected List<String> check(StringShape shape, StringNode node, Model model) {
         List<String> messages = new ArrayList<>();
         // Validate the enum trait.
         shape.getTrait(EnumTrait.class).ifPresent(trait -> {

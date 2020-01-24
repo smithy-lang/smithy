@@ -19,7 +19,6 @@ import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 
 /**
  * Applies pluggable validation when validating {@link Node} values against
@@ -27,18 +26,13 @@ import software.amazon.smithy.model.shapes.ShapeIndex;
  * provided for a trait in the model are valid for the shape of the trait).
  */
 public interface NodeValidatorPlugin {
-    @Deprecated
-    List<String> apply(Shape shape, Node value, ShapeIndex index);
-
     /**
-     * Applies the plugin to the given shape, node value, and shape index.
+     * Applies the plugin to the given shape, node value, and model.
      *
      * @param shape Shape being checked.
      * @param value Value being evaluated.
      * @param model Model to traverse.
      * @return Returns any validation messages that were encountered.
      */
-    default List<String> apply(Shape shape, Node value, Model model) {
-        return apply(shape, value, model.getShapeIndex());
-    }
+    List<String> apply(Shape shape, Node value, Model model);
 }

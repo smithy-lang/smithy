@@ -36,7 +36,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.ListUtils;
@@ -63,14 +62,14 @@ import software.amazon.smithy.utils.ListUtils;
 public final class PathFinder {
     private static final Logger LOGGER = Logger.getLogger(PathFinder.class.getName());
 
-    private final ShapeIndex index;
+    private final Model model;
     private final NeighborProvider neighborProvider;
     private final NeighborProvider reverseProvider;
 
-    private PathFinder(ShapeIndex index, NeighborProvider neighborProvider) {
-        this.index = index;
+    private PathFinder(Model model, NeighborProvider neighborProvider) {
+        this.model = model;
         this.neighborProvider = neighborProvider;
-        this.reverseProvider = NeighborProvider.reverse(index, neighborProvider);
+        this.reverseProvider = NeighborProvider.reverse(model, neighborProvider);
     }
 
     /**
@@ -80,12 +79,7 @@ public final class PathFinder {
      * @return Returns the crated {@code PathFinder}.
      */
     public static PathFinder create(Model model) {
-        return new PathFinder(model.getShapeIndex(), model.getKnowledge(NeighborProviderIndex.class).getProvider());
-    }
-
-    @Deprecated
-    public static PathFinder create(ShapeIndex index) {
-        return new PathFinder(index, NeighborProvider.of(index));
+        return new PathFinder(model, model.getKnowledge(NeighborProviderIndex.class).getProvider());
     }
 
     /**
@@ -109,14 +103,14 @@ public final class PathFinder {
      * @return Returns the list of matching paths.
      */
     public List<Path> search(ToShapeId startingShape, Selector targetSelector) {
-        Shape shape = index.getShape(startingShape.toShapeId()).orElse(null);
+        Shape shape = model.getShape(startingShape.toShapeId()).orElse(null);
 
         if (shape == null) {
             return ListUtils.of();
         }
 
         // Find all shapes that match the selector then work backwards from there.
-        Set<Shape> candidates = targetSelector.select(neighborProvider, index);
+        Set<Shape> candidates = targetSelector.select(neighborProvider, model);
         if (candidates.isEmpty()) {
             LOGGER.info(() -> "No shapes matched the PathFinder selector of `" + targetSelector + "`");
             return ListUtils.of();
@@ -149,7 +143,7 @@ public final class PathFinder {
     }
 
     private Optional<Path> createPathTo(ToShapeId operationId, String memberName, RelationshipType rel) {
-        OperationShape operation = index.getShape(operationId.toShapeId())
+        OperationShape operation = model.getShape(operationId.toShapeId())
                 .flatMap(Shape::asOperationShape)
                 .orElse(null);
 
@@ -159,7 +153,7 @@ public final class PathFinder {
 
         Optional<ShapeId> structId = rel == RelationshipType.INPUT ? operation.getInput() : operation.getOutput();
         StructureShape struct = structId
-                .flatMap(index::getShape)
+                .flatMap(model::getShape)
                 .flatMap(Shape::asStructureShape)
                 .orElse(null);
 
@@ -173,7 +167,7 @@ public final class PathFinder {
             return Optional.empty();
         }
 
-        Shape target = index.getShape(member.getTarget()).orElse(null);
+        Shape target = model.getShape(member.getTarget()).orElse(null);
 
         if (target == null) {
             return Optional.empty();
