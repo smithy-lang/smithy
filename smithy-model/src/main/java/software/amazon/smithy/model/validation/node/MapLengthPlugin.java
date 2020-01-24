@@ -17,10 +17,10 @@ package software.amazon.smithy.model.validation.node;
 
 import java.util.ArrayList;
 import java.util.List;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.LengthTrait;
 
 /**
@@ -32,7 +32,7 @@ public final class MapLengthPlugin extends MemberAndShapeTraitPlugin<MapShape, O
     }
 
     @Override
-    protected List<String> check(Shape shape, LengthTrait trait, ObjectNode node, ShapeIndex index) {
+    protected List<String> check(Shape shape, LengthTrait trait, ObjectNode node, Model model) {
         List<String> messages = new ArrayList<>();
         trait.getMin().ifPresent(min -> {
             if (node.size() < min) {

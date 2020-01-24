@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
@@ -37,7 +38,6 @@ import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -59,20 +59,20 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
     private static final String UNION_STRATEGY_OBJECT = "object";
     private static final String UNION_STRATEGY_STRUCTURE = "structure";
 
-    private final ShapeIndex index;
+    private final Model model;
     private final ObjectNode config;
     private final RefStrategy refStrategy;
     private final PropertyNamingStrategy propertyNamingStrategy;
     private final List<JsonSchemaMapper> mappers;
 
     JsonSchemaShapeVisitor(
-            ShapeIndex index,
+            Model model,
             ObjectNode config,
             RefStrategy refStrategy,
             PropertyNamingStrategy propertyNamingStrategy,
             List<JsonSchemaMapper> mappers
     ) {
-        this.index = index;
+        this.model = model;
         this.config = config;
         this.refStrategy = refStrategy;
         this.propertyNamingStrategy = propertyNamingStrategy;
@@ -234,7 +234,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
     }
 
     private Shape getTarget(MemberShape member) {
-        return index.getShape(member.getTarget())
+        return model.getShape(member.getTarget())
                 .orElseThrow(() -> new RuntimeException("Unable to find the shape targeted by " + member));
     }
 

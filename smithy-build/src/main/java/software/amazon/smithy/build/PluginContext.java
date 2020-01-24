@@ -28,7 +28,6 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -146,11 +145,6 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
      */
     public Optional<ClassLoader> getPluginClassLoader() {
         return Optional.ofNullable(pluginClassLoader);
-    }
-
-    @Deprecated
-    public synchronized ShapeIndex getNonTraitShapes() {
-        return getModelWithoutTraitShapes().getShapeIndex();
     }
 
     /**

@@ -81,7 +81,7 @@ public final class JsonSchemaConstants {
 
     /**
      * Adds custom key-value pairs to the JSON Schema document generated from
-     * a Smithy model index.
+     * a Smithy model.
      *
      * <p>The value provided for this configuration setting is required to be
      * a {@link ObjectNode}.

@@ -100,7 +100,7 @@ public final class Relationship {
 
     /**
      * Gets the optional neighbor shape; the neighbor shape may be empty
-     * when the neighbor shape id was not in the shape index.
+     * when the neighbor shape id was not in the model.
      *
      * @return Returns the optional neighbor shape.
      */
