@@ -16,9 +16,9 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.util.List;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -36,17 +36,17 @@ abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T exte
     }
 
     @SuppressWarnings("unchecked")
-    public final List<String> apply(Shape shape, Node value, ShapeIndex index) {
+    public final List<String> apply(Shape shape, Node value, Model model) {
         if (nodeClass.isInstance(value)
                 && shape.getTrait(traitClass).isPresent()
-                && isMatchingShape(shape, index)) {
-            return check(shape, shape.getTrait(traitClass).get(), (N) value, index);
+                && isMatchingShape(shape, model)) {
+            return check(shape, shape.getTrait(traitClass).get(), (N) value, model);
         }
 
         return ListUtils.of();
     }
 
-    private boolean isMatchingShape(Shape shape, ShapeIndex index) {
+    private boolean isMatchingShape(Shape shape, Model model) {
         // Is the shape the expected shape type?
         if (targetShapeClass.isInstance(shape)) {
             return true;
@@ -54,10 +54,10 @@ abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T exte
 
         // Is the targeted member an instance of the expected shape?
         return shape.asMemberShape()
-                .flatMap(member -> index.getShape(member.getTarget()))
+                .flatMap(member -> model.getShape(member.getTarget()))
                 .filter(targetShapeClass::isInstance)
                 .isPresent();
     }
 
-    protected abstract List<String> check(Shape shape, T trait, N value, ShapeIndex index);
+    protected abstract List<String> check(Shape shape, T trait, N value, Model model);
 }

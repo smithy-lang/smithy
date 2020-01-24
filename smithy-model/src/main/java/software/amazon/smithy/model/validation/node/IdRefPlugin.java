@@ -17,12 +17,12 @@ package software.amazon.smithy.model.validation.node;
 
 import java.util.List;
 import java.util.logging.Logger;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.utils.ListUtils;
@@ -44,7 +44,7 @@ public final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, St
     }
 
     @Override
-    protected List<String> check(Shape shape, IdRefTrait trait, StringNode node, ShapeIndex index) {
+    protected List<String> check(Shape shape, IdRefTrait trait, StringNode node, Model model) {
         try {
             String target = node.getValue();
 
@@ -53,12 +53,12 @@ public final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, St
                                + "support for relative shape IDs.");
             }
 
-            Shape resolved = Prelude.resolveShapeId(index, shape.getId().getNamespace(), target).orElse(null);
+            Shape resolved = Prelude.resolveShapeId(model, shape.getId().getNamespace(), target).orElse(null);
             if (resolved == null) {
                 return trait.failWhenMissing()
                        ? failWhenNoMatch(trait, String.format("Shape ID `%s` was not found in the model", target))
                        : ListUtils.of();
-            } else if (matchesSelector(trait, resolved.getId(), index)) {
+            } else if (matchesSelector(trait, resolved.getId(), model)) {
                 return ListUtils.of();
             }
 
@@ -69,7 +69,7 @@ public final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, St
         }
     }
 
-    private boolean matchesSelector(IdRefTrait trait, ShapeId needle, ShapeIndex haystack) {
+    private boolean matchesSelector(IdRefTrait trait, ShapeId needle, Model haystack) {
         return trait.getSelector().select(haystack).stream()
                 .map(Shape::getId)
                 .anyMatch(shapeId -> shapeId.equals(needle));

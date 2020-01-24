@@ -18,10 +18,10 @@ package software.amazon.smithy.model.validation.node;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.RangeTrait;
 
 /**
@@ -33,7 +33,7 @@ public final class RangeTraitPlugin extends MemberAndShapeTraitPlugin<NumberShap
     }
 
     @Override
-    protected List<String> check(Shape shape, RangeTrait trait, NumberNode node, ShapeIndex index) {
+    protected List<String> check(Shape shape, RangeTrait trait, NumberNode node, Model model) {
         List<String> messages = new ArrayList<>();
         Number number = node.getValue();
         BigDecimal decimal = new BigDecimal(number.toString());
