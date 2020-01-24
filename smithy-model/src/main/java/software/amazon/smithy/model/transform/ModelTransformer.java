@@ -29,7 +29,6 @@ import software.amazon.smithy.model.neighbor.UnreferencedShapes;
 import software.amazon.smithy.model.neighbor.UnreferencedTraitDefinitions;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.FunctionalUtils;
@@ -338,27 +337,6 @@ public final class ModelTransformer {
         return new ScrubTraitDefinitions().transform(this, model);
     }
 
-    @Deprecated
-    public ShapeIndex getNonTraitShapes(Model model) {
-        // TODO: remove once ShapeIndex is removed.
-        ShapeIndex currentIndex = model.getShapeIndex();
-        ShapeIndex.Builder indexBuilder = ShapeIndex.builder();
-
-        // ScrubTraitDefinitions is used to removed traits and trait shapes.
-        // However, the returned model can't be returned directly because
-        // as traits are removed, uses of that trait are removed. Instead,
-        // a ShapeIndex is created by getting all shape IDs from the modified
-        // model, grabbing shapes from the original model, and building a new
-        // ShapeIndex.
-        scrubTraitDefinitions(model).shapes()
-                .map(Shape::getId)
-                .map(currentIndex::getShape)
-                .map(Optional::get)
-                .forEach(indexBuilder::addShape);
-
-        return indexBuilder.build();
-    }
-
     /**
      * Gets all shapes from a model where shapes that define traits or shapes
      * that are only used as part of a trait definition have been removed.
@@ -367,7 +345,20 @@ public final class ModelTransformer {
      * @return Returns a model that contains matching shapes.
      */
     public Model getModelWithoutTraitShapes(Model model) {
-        ShapeIndex updatedIndex = getNonTraitShapes(model);
-        return model.toBuilder().shapeIndex(updatedIndex).build();
+        Model.Builder builder = Model.builder();
+
+        // ScrubTraitDefinitions is used to removed traits and trait shapes.
+        // However, the returned model can't be returned directly because
+        // as traits are removed, uses of that trait are removed. Instead,
+        // a model is created by getting all shape IDs from the modified
+        // model, grabbing shapes from the original model, and building a new
+        // Model.
+        scrubTraitDefinitions(model).shapes()
+                .map(Shape::getId)
+                .map(model::getShape)
+                .map(Optional::get)
+                .forEach(builder::addShape);
+
+        return builder.build();
     }
 }

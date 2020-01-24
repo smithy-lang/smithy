@@ -18,10 +18,10 @@ package software.amazon.smithy.model.validation.node;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.LengthTrait;
 
 /**
@@ -33,7 +33,7 @@ public final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape,
     }
 
     @Override
-    protected List<String> check(Shape shape, LengthTrait trait, StringNode node, ShapeIndex index) {
+    protected List<String> check(Shape shape, LengthTrait trait, StringNode node, Model model) {
         String value = node.getValue();
         List<String> messages = new ArrayList<>();
         int size = value.getBytes(Charset.forName("UTF-8")).length;

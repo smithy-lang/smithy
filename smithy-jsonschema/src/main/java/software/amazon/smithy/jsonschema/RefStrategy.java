@@ -18,9 +18,9 @@ package software.amazon.smithy.jsonschema;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
@@ -46,14 +46,14 @@ public interface RefStrategy {
      * pointers by appending an incrementing number to conflicting
      * IDs.
      *
-     * @param index Shape index to use to deconflict shapes.
+     * @param model Model to use to deconflict shapes.
      * @param config JSON schema configuration to use.
      * @return Returns the created strategy.
      * @see #createDefaultStrategy()
-     * @see #createDeconflictingStrategy(ShapeIndex, ObjectNode, RefStrategy)
+     * @see #createDeconflictingStrategy(Model, ObjectNode, RefStrategy)
      */
-    static RefStrategy createDefaultDeconflictingStrategy(ShapeIndex index, ObjectNode config) {
-        return createDeconflictingStrategy(index, config, createDefaultStrategy());
+    static RefStrategy createDefaultDeconflictingStrategy(Model model, ObjectNode config) {
+        return createDeconflictingStrategy(model, config, createDefaultStrategy());
     }
 
     /**
@@ -119,16 +119,16 @@ public interface RefStrategy {
      * <p>To make the generated IDs deterministic, shapes are sorted by shape
      * ID when performing comparisons.
      *
-     * @param index Shape index to use to de-conflict shapes.
+     * @param model Model to use to de-conflict shapes.
      * @param config JSON schema configuration to use.
      * @param delegate Ref strategy to call to and then de-conflict.
      * @return Returns the created strategy.
      */
-    static RefStrategy createDeconflictingStrategy(ShapeIndex index, ObjectNode config, RefStrategy delegate) {
+    static RefStrategy createDeconflictingStrategy(Model model, ObjectNode config, RefStrategy delegate) {
         Map<ShapeId, String> pointers = new HashMap<>();
         Map<String, ShapeId> reversePointers = new HashMap<>();
 
-        index.shapes().sorted().forEach(shape -> {
+        model.shapes().sorted().forEach(shape -> {
             String pointer = delegate.toPointer(shape.getId(), config);
 
             if (!reversePointers.containsKey(pointer)) {

@@ -16,9 +16,9 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.util.List;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.PatternTrait;
 import software.amazon.smithy.utils.ListUtils;
@@ -32,7 +32,7 @@ public final class PatternTraitPlugin extends MemberAndShapeTraitPlugin<StringSh
     }
 
     @Override
-    protected List<String> check(Shape shape, PatternTrait trait, StringNode node, ShapeIndex index) {
+    protected List<String> check(Shape shape, PatternTrait trait, StringNode node, Model model) {
         if (!trait.getPattern().matcher(node.getValue()).find()) {
             return ListUtils.of(String.format(
                     "String value provided for `%s` must match regular expression: %s",

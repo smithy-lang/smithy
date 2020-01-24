@@ -17,9 +17,9 @@ package software.amazon.smithy.model.validation.node;
 
 import java.util.ArrayList;
 import java.util.List;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.LengthTrait;
 
@@ -32,7 +32,7 @@ public final class StringLengthPlugin extends MemberAndShapeTraitPlugin<StringSh
     }
 
     @Override
-    protected List<String> check(Shape shape, LengthTrait trait, StringNode node, ShapeIndex index) {
+    protected List<String> check(Shape shape, LengthTrait trait, StringNode node, Model model) {
         List<String> messages = new ArrayList<>();
         trait.getMin().ifPresent(min -> {
             if (node.getValue().length() < min) {

@@ -29,7 +29,6 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -39,22 +38,17 @@ import software.amazon.smithy.utils.ListUtils;
  * Finds all neighbors of a shape, returning them as a list of
  * {@link Relationship} objects.
  *
- * <p>Each neighbor shape that is not in the provided shape index will
+ * <p>Each neighbor shape that is not in the provided model will
  * result in a relationship where the optional
  * {@link Relationship#getNeighborShape() neighbor shape} is empty.
  *
  * @see NeighborProvider#of
  */
 final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> implements NeighborProvider {
-    private final ShapeIndex shapeIndex;
-
-    @Deprecated
-    NeighborVisitor(ShapeIndex shapeIndex) {
-        this.shapeIndex = shapeIndex;
-    }
+    private final Model model;
 
     NeighborVisitor(Model model) {
-        this(model.getShapeIndex());
+        this.model = model;
     }
 
     @Override
@@ -83,7 +77,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     }
 
     private void addBound(List<Relationship> result, Shape container, ShapeId bindingTarget) {
-        shapeIndex.getShape(bindingTarget)
+        model.getShape(bindingTarget)
                 .ifPresent(op -> result.add(relationship(op, RelationshipType.BOUND, container.getId())));
     }
 
@@ -130,7 +124,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
         shape.getOperations().forEach(id -> result.add(
                 relationship(shape, RelationshipType.INSTANCE_OPERATION, id)));
         // Find shapes that bind this resource to it.
-        Stream.concat(shapeIndex.shapes(ResourceShape.class), shapeIndex.shapes(ServiceShape.class))
+        Stream.concat(model.shapes(ResourceShape.class), model.shapes(ServiceShape.class))
                 .filter(parent -> parent.getResources().contains(shape.getId()))
                 .forEach(parent -> addBinding(result, parent, shape.getId(), RelationshipType.RESOURCE));
         return result;
@@ -192,7 +186,7 @@ final class NeighborVisitor extends ShapeVisitor.Default<List<Relationship>> imp
     }
 
     private Relationship relationship(Shape shape, RelationshipType type, ShapeId neighborShapeId) {
-        return shapeIndex.getShape(neighborShapeId)
+        return model.getShape(neighborShapeId)
                 .map(target -> Relationship.create(shape, type, target))
                 .orElseGet(() -> Relationship.createInvalid(shape, type, neighborShapeId));
     }

@@ -46,7 +46,6 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -398,12 +397,6 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         private boolean allowBoxedNull;
 
         Builder() {}
-
-        @Deprecated
-        public Builder index(ShapeIndex index) {
-            this.model = Model.builder().shapeIndex(index).build();
-            return this;
-        }
 
         /**
          * Sets the <strong>required</strong> model to use when traversing

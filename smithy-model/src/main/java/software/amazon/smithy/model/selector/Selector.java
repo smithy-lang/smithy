@@ -19,7 +19,6 @@ import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 
 /**
  * Matches a set of shapes using a selector expression.
@@ -38,14 +37,8 @@ public interface Selector {
      */
     Set<Shape> select(NeighborProvider neighborProvider, Set<Shape> shapes);
 
-    @Deprecated
-    default Set<Shape> select(NeighborProvider neighborProvider, ShapeIndex index) {
-        return select(neighborProvider, index.toSet());
-    }
-
     /**
-     * Matches a selector against a shape index using a custom
-     * neighbor visitor.
+     * Matches a selector against a model using a custom neighbor visitor.
      *
      * @param neighborProvider Provides neighbors for shapes
      * @param model Model to query.
@@ -53,11 +46,6 @@ public interface Selector {
      */
     default Set<Shape> select(NeighborProvider neighborProvider, Model model) {
         return select(neighborProvider, model.toSet());
-    }
-
-    @Deprecated
-    default Set<Shape> select(ShapeIndex index) {
-        return select(NeighborProvider.of(index), index);
     }
 
     /**

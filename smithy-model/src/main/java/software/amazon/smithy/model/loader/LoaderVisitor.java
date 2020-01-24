@@ -367,7 +367,7 @@ final class LoaderVisitor {
             return true;
         } else if (Prelude.isPreludeShape(id)) {
             // Ignore prelude shape conflicts since it's such a common case of
-            // passing an already built shape index into a ModelAssembler.
+            // passing an already built model into a ModelAssembler.
         } else {
             // The shape has been duplicated, so get the previously defined pending shape or built shape.
             SourceLocation previous = Optional.<FromSourceLocation>ofNullable(pendingShapes.get(id))
