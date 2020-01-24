@@ -24,7 +24,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
 
 /**
- * Adds a validation note event for each shape in the shape index that is not
+ * Adds a validation note event for each shape in the model that is not
  * connected to a service shape.
  */
 public final class UnreferencedShapeValidator extends AbstractValidator {

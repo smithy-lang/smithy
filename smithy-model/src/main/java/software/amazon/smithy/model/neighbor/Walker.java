@@ -27,11 +27,10 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.utils.OptionalUtils;
 
 /**
- * Walks connected shapes within a shape index.
+ * Walks connected shapes within a Model.
  *
  * <p>Any shape that is connected to another shape is "walked". A single
  * shape can have multiple relationships to the same shape. For example,
@@ -54,13 +53,8 @@ public final class Walker {
         this.provider = provider;
     }
 
-    @Deprecated
-    public Walker(ShapeIndex shapeIndex) {
-        this(NeighborProvider.of(shapeIndex));
-    }
-
     /**
-     * Walks connected shapes in the shape index, returning them in a set.
+     * Walks connected shapes in the model, returning them in a set.
      *
      * @param shape The shape to start the traversal from.
      * @return Returns a set of connected shapes.
@@ -70,7 +64,7 @@ public final class Walker {
     }
 
     /**
-     * Walks connected shapes in the shape index, returning them in a set.
+     * Walks connected shapes in the model, returning them in a set.
      *
      * @param shape The shape to start the traversal from.
      * @param predicate Predicate used to prevent traversing relationships.

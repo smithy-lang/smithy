@@ -45,8 +45,7 @@ final class ModelUtils {
      * @return Returns the optionally found trait on the shape or member.
      */
     static <T extends Trait> Optional<T> getMemberTrait(Context context, Shape shape, Class<T> trait) {
-        return shape.asMemberShape()
-                .flatMap(member -> member.getMemberTrait(context.getModel().getShapeIndex(), trait));
+        return shape.asMemberShape().flatMap(member -> member.getMemberTrait(context.getModel(), trait));
     }
 
     /**

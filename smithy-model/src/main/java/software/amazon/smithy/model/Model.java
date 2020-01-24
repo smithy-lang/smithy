@@ -15,9 +15,11 @@
 
 package software.amazon.smithy.model;
 
+import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,7 +35,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -60,18 +61,20 @@ public final class Model implements ToSmithyBuilder<Model> {
     public static final String MODEL_VERSION = "0.5.0";
 
     private final Map<String, Node> metadata;
-    private final ShapeIndex shapeIndex;
 
     private volatile Map<Shape, TraitDefinition> traitDefinitions;
 
     /** Cache of computed {@link KnowledgeIndex} instances. */
     private final Map<Class<? extends KnowledgeIndex>, KnowledgeIndex> blackboard = new ConcurrentHashMap<>();
 
+    /** A map of shape ID to shapes that backs the shape map. */
+    private final Map<ShapeId, Shape> shapeMap;
+
     /** Lazily computed hashcode. */
     private int hash;
 
     private Model(Builder builder) {
-        shapeIndex = builder.shapeIndex != null ? builder.shapeIndex : ShapeIndex.builder().build();
+        shapeMap = MapUtils.copyOf(builder.shapeMap);
         metadata = builder.metadata.isEmpty() ? MapUtils.of() : MapUtils.copyOf(builder.metadata);
     }
 
@@ -113,11 +116,6 @@ public final class Model implements ToSmithyBuilder<Model> {
                 .validatorFactory(ValidatorFactory.createServiceFactory(classLoader));
     }
 
-    @Deprecated
-    public ShapeIndex getShapeIndex() {
-        return shapeIndex;
-    }
-
     /**
      * Gets a metadata property by namespace and name.
      *
@@ -144,7 +142,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     public Map<Shape, TraitDefinition> getTraitDefinitions() {
         if (traitDefinitions == null) {
-            traitDefinitions = Collections.unmodifiableMap(shapeIndex.shapes()
+            traitDefinitions = Collections.unmodifiableMap(shapes()
                     .flatMap(shape -> Trait.flatMapStream(shape, TraitDefinition.class))
                     .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
         }
@@ -159,7 +157,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      * @return Returns the optionally found trait definition.
      */
     public Optional<TraitDefinition> getTraitDefinition(ToShapeId traitId) {
-        return shapeIndex.getShape(traitId.toShapeId()).flatMap(shape -> shape.getTrait(TraitDefinition.class));
+        return getShape(traitId.toShapeId()).flatMap(shape -> shape.getTrait(TraitDefinition.class));
     }
 
     /**
@@ -186,7 +184,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      * @return Returns the optional shape.
      */
     public Optional<Shape> getShape(ShapeId id) {
-        return shapeIndex.getShape(id);
+        return Optional.ofNullable(shapeMap.get(id));
     }
 
     /**
@@ -230,14 +228,14 @@ public final class Model implements ToSmithyBuilder<Model> {
      * @return Returns a stream of shapes.
      */
     public Stream<Shape> shapes() {
-        return shapeIndex.shapes();
+        return shapeMap.values().stream();
     }
 
     /**
      * Gets a stream of shapes in the index of a specific type {@code T}.
      *
      * <p>The provided shapeType class must exactly match the class of a
-     * shape in the shape index in order to be returned from this method;
+     * shape in the model in order to be returned from this method;
      * that is, the provided class must be a concrete subclass of
      * {@link Shape} and not an abstract class like {@link NumberShape}.
      *
@@ -245,8 +243,9 @@ public final class Model implements ToSmithyBuilder<Model> {
      * @param <T> Shape type to stream from the index.
      * @return A stream of shapes of {@code T} matching {@code shapeType}.
      */
+    @SuppressWarnings("unchecked")
     public <T extends Shape> Stream<T> shapes(Class<T> shapeType) {
-        return shapeIndex.shapes(shapeType);
+        return (Stream<T>) shapeMap.values().stream().filter(value -> value.getClass() == shapeType);
     }
 
     /**
@@ -255,7 +254,22 @@ public final class Model implements ToSmithyBuilder<Model> {
      * @return Returns an unmodifiable set of Shapes in the index.
      */
     public Set<Shape> toSet() {
-        return shapeIndex.toSet();
+        return new AbstractSet<Shape>() {
+            @Override
+            public int size() {
+                return shapeMap.size();
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return o instanceof Shape && shapeMap.containsKey(((Shape) o).getId());
+            }
+
+            @Override
+            public Iterator<Shape> iterator() {
+                return shapeMap.values().iterator();
+            }
+        };
     }
 
     @Override
@@ -267,14 +281,14 @@ public final class Model implements ToSmithyBuilder<Model> {
         }
 
         Model otherModel = (Model) other;
-        return getMetadata().equals(otherModel.getMetadata()) && getShapeIndex().equals(otherModel.getShapeIndex());
+        return getMetadata().equals(otherModel.getMetadata()) && shapeMap.equals(otherModel.shapeMap);
     }
 
     @Override
     public int hashCode() {
         int result = hash;
         if (result == 0) {
-            result = Objects.hash(getMetadata(), shapeIndex);
+            result = Objects.hash(getMetadata(), shapeMap.keySet());
             hash = result;
         }
         return result;
@@ -284,7 +298,7 @@ public final class Model implements ToSmithyBuilder<Model> {
     public Builder toBuilder() {
         return builder()
                 .metadata(getMetadata())
-                .shapeIndex(getShapeIndex());
+                .addShapes(this);
     }
 
     /**
@@ -329,8 +343,7 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     public static final class Builder implements SmithyBuilder<Model> {
         private Map<String, Node> metadata = new HashMap<>();
-        private ShapeIndex shapeIndex;
-        private ShapeIndex.Builder shapeIndexBuilder;
+        private final Map<ShapeId, Shape> shapeMap = new HashMap<>();
 
         private Builder() {}
 
@@ -350,13 +363,6 @@ public final class Model implements ToSmithyBuilder<Model> {
             return this;
         }
 
-        @Deprecated
-        public Builder shapeIndex(ShapeIndex shapeIndex) {
-            this.shapeIndex = Objects.requireNonNull(shapeIndex);
-            shapeIndexBuilder = null;
-            return this;
-        }
-
         /**
          * Add a shape to the builder.
          *
@@ -364,27 +370,22 @@ public final class Model implements ToSmithyBuilder<Model> {
          * They must be added by adding their containing shapes (e.g., to add a
          * list member, you must add the list shape that contains it). Any member
          * shape provided to any of the methods used to add shapes to the
-         * shape index are ignored.
+         * model are ignored.
          *
          * @param shape Shape to add.
          * @return Returns the builder.
          */
         public Builder addShape(Shape shape) {
-            getShapeIndexBuilder().addShape(shape);
-            return this;
-        }
-
-        private ShapeIndex.Builder getShapeIndexBuilder() {
-            if (shapeIndexBuilder == null) {
-                if (shapeIndex != null) {
-                    shapeIndexBuilder = shapeIndex.toBuilder();
-                    shapeIndex = null;
-                } else {
-                    shapeIndexBuilder = ShapeIndex.builder();
+            // Members must be added by their containing shapes.
+            if (!shape.isMemberShape()) {
+                shapeMap.put(shape.getId(), shape);
+                // Automatically add members of the shape.
+                for (MemberShape memberShape : shape.members()) {
+                    shapeMap.put(memberShape.getId(), memberShape);
                 }
             }
 
-            return shapeIndexBuilder;
+            return this;
         }
 
         /**
@@ -394,7 +395,7 @@ public final class Model implements ToSmithyBuilder<Model> {
          * @return Returns the builder.
          */
         public Builder addShapes(Model model) {
-            getShapeIndexBuilder().addShapes(model.shapeIndex);
+            shapeMap.putAll(model.shapeMap);
             return this;
         }
 
@@ -435,16 +436,21 @@ public final class Model implements ToSmithyBuilder<Model> {
          * @return Returns the builder.
          */
         public Builder removeShape(ShapeId shapeId) {
-            getShapeIndexBuilder().removeShape(shapeId);
+            if (shapeMap.containsKey(shapeId)) {
+                Shape previous = shapeMap.get(shapeId);
+                shapeMap.remove(shapeId);
+
+                // Automatically remove any members contained in the shape.
+                for (MemberShape memberShape : previous.members()) {
+                    shapeMap.remove(memberShape.getId());
+                }
+            }
+
             return this;
         }
 
         @Override
         public Model build() {
-            if (shapeIndexBuilder != null) {
-                shapeIndex = shapeIndexBuilder.build();
-            }
-
             return new Model(this);
         }
     }

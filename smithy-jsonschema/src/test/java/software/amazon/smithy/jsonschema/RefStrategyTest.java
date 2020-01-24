@@ -19,12 +19,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 
@@ -100,11 +100,11 @@ public class RefStrategyTest {
                 .addMember(pageScriptsMember)
                 .build();
 
-        ShapeIndex index = ShapeIndex.builder()
+        Model model = Model.builder()
                 .addShapes(page, pageScriptsMember, pageScripts, pageScriptsListMember, stringShape)
                 .build();
 
-        RefStrategy strategy = RefStrategy.createDefaultDeconflictingStrategy(index, config);
+        RefStrategy strategy = RefStrategy.createDefaultDeconflictingStrategy(model, config);
         assertThat(strategy.toPointer(pageScriptsMember.getId(), config),
                    equalTo("#/definitions/ComFooPageScriptsMember"));
         assertThat(strategy.toPointer(pageScriptsListMember.getId(), config),
@@ -114,8 +114,8 @@ public class RefStrategyTest {
     @Test
     public void deconflictingStrategyPassesThroughToDelegate() {
         ObjectNode config = Node.objectNode();
-        ShapeIndex index = ShapeIndex.builder().build();
-        RefStrategy strategy = RefStrategy.createDefaultDeconflictingStrategy(index, config);
+        Model model = Model.builder().build();
+        RefStrategy strategy = RefStrategy.createDefaultDeconflictingStrategy(model, config);
 
         assertThat(strategy.toPointer(ShapeId.from("com.foo#Nope"), config), equalTo("#/definitions/ComFooNope"));
     }

@@ -24,7 +24,6 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.openapi.OpenApiConstants;
@@ -82,8 +81,7 @@ public final class AwsRestJsonProtocol extends AbstractRestProtocol {
         }
 
         StructureShape tempShape = tempShapeBuilder.build();
-        ShapeIndex index = context.getModel().getShapeIndex();
 
-        return context.getJsonSchemaConverter().convert(index, tempShape).getRootSchema();
+        return context.getJsonSchemaConverter().convert(context.getModel(), tempShape).getRootSchema();
     }
 }

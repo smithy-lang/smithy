@@ -17,10 +17,10 @@ package software.amazon.smithy.model.validation.node;
 
 import java.util.Collections;
 import java.util.List;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -35,8 +35,8 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
      */
     FORMAT {
         @Override
-        public List<String> apply(Shape shape, Node value, ShapeIndex index) {
-            return new TimestampFormatPlugin().apply(shape, value, index);
+        public List<String> apply(Shape shape, Node value, Model model) {
+            return new TimestampFormatPlugin().apply(shape, value, model);
         }
     },
 
@@ -46,8 +46,8 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
      */
     EPOCH_SECONDS {
         @Override
-        public List<String> apply(Shape shape, Node value, ShapeIndex index) {
-            if (isTimestampMember(index, shape) && !value.isNumberNode()) {
+        public List<String> apply(Shape shape, Node value, Model model) {
+            if (isTimestampMember(model, shape) && !value.isNumberNode()) {
                 return ListUtils.of("Invalid " + value.getType() + " value provided for timestamp, `"
                                     + shape.getId() + "`. Expected a number that contains epoch seconds "
                                     + "with optional millisecond precision");
@@ -57,7 +57,7 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
         }
     };
 
-    private static boolean isTimestampMember(ShapeIndex model, Shape shape) {
+    private static boolean isTimestampMember(Model model, Shape shape) {
         return shape.asMemberShape()
                 .map(MemberShape::getTarget)
                 .flatMap(model::getShape)

@@ -19,10 +19,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.logging.Logger;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.utils.ListUtils;
@@ -38,7 +38,7 @@ public final class TimestampFormatPlugin implements NodeValidatorPlugin {
     private static final Logger LOGGER = Logger.getLogger(TimestampFormatPlugin.class.getName());
 
     @Override
-    public List<String> apply(Shape shape, Node value, ShapeIndex index) {
+    public List<String> apply(Shape shape, Node value, Model model) {
         if (shape instanceof TimestampShape) {
             return validate(shape, shape.getTrait(TimestampFormatTrait.class).orElse(null), value);
         } else if (shape instanceof MemberShape && shape.getTrait(TimestampFormatTrait.class).isPresent()) {
