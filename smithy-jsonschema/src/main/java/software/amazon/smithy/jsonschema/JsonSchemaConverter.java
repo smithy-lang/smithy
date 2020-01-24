@@ -27,14 +27,13 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.EffectiveTraitQuery;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.Pair;
 
 /**
- * Converts a Smithy model index to a JSON schema document.
+ * Converts a Smithy model to a JSON schema document.
  */
 public final class JsonSchemaConverter {
 
@@ -171,33 +170,14 @@ public final class JsonSchemaConverter {
         return this;
     }
 
-    @Deprecated
-    public SchemaDocument convert(ShapeIndex shapeIndex) {
-        return doConversion(shapeIndex, null);
-    }
-
     /**
-     * Perform the conversion of the entire shape Index.
+     * Perform the conversion of the entire model.
      *
      * @param model Model to convert.
      * @return Returns the created SchemaDocument.
      */
     public SchemaDocument convert(Model model) {
-        return convert(model.getShapeIndex());
-    }
-
-    /**
-     * Perform the conversion of a single shape.
-     *
-     * <p>The root shape of the created document is set to the given shape,
-     * and only shapes connected to the given shape are added as a definition.
-     *
-     * @param shapeIndex Shape index to convert.
-     * @param shape Shape to convert.
-     * @return Returns the created SchemaDocument.
-     */
-    public SchemaDocument convert(ShapeIndex shapeIndex, Shape shape) {
-        return doConversion(shapeIndex, shape);
+        return doConversion(model, null);
     }
 
     /**
@@ -211,10 +191,10 @@ public final class JsonSchemaConverter {
      * @return Returns the created SchemaDocument.
      */
     public SchemaDocument convert(Model model, Shape shape) {
-        return convert(model.getShapeIndex(), shape);
+        return doConversion(model, shape);
     }
 
-    private SchemaDocument doConversion(ShapeIndex shapeIndex, Shape rootShape) {
+    private SchemaDocument doConversion(Model model, Shape rootShape) {
         // TODO: break this API to make this work more reliably.
         //
         // Temporarily set a de-conflicting ref strategy. This is the
@@ -232,15 +212,15 @@ public final class JsonSchemaConverter {
         // If we only rely on the RefStrategy#createDefaultStrategy, then
         // we would actually generate the same JSON schema shape name for
         // both of the above member shapes: FooBazPageScriptsMember. To
-        // avoid this, we need to know the shape index being converted and
+        // avoid this, we need to know the model being converted and
         // automatically handle conflicts. However, because this class is
         // mutable, we have to do some funky stuff with state to "do the
         // right thing" by lazily creating a RefStrategy#createDefaultDeconflictingStrategy
-        // in this method once a ShapeIndex is available
+        // in this method once a model is available
         // (given as an argument).
         //
         // A better API would use a builder that builds a JsonSchemaConverter
-        // that has a fixed shape index, ref strategy, etc. This would allow
+        // that has a fixed model, ref strategy, etc. This would allow
         // ref strategies to do more up-front computations, and allow them to
         // even become implementation details of JsonSchemaConverter by exposing
         // a similar API that delegates from a converter into the strategy.
@@ -251,7 +231,7 @@ public final class JsonSchemaConverter {
         // be to not even allow the injection of a custom JsonSchemaConverter at all.
         if (softRefStrategy || refStrategy == null) {
             softRefStrategy = true;
-            refStrategy = RefStrategy.createDefaultDeconflictingStrategy(shapeIndex, getConfig());
+            refStrategy = RefStrategy.createDefaultDeconflictingStrategy(model, getConfig());
         }
 
         // Combine custom mappers with the discovered mappers and sort them.
@@ -259,18 +239,18 @@ public final class JsonSchemaConverter {
 
         SchemaDocument.Builder builder = SchemaDocument.builder();
         JsonSchemaShapeVisitor visitor = new JsonSchemaShapeVisitor(
-                shapeIndex, getConfig(), getRefStrategy(), getPropertyNamingStrategy(), mappers);
+                model, getConfig(), getRefStrategy(), getPropertyNamingStrategy(), mappers);
 
         if (rootShape != null && !(rootShape instanceof ServiceShape)) {
             builder.rootSchema(rootShape.accept(visitor));
         }
 
         addExtensions(builder);
-        Predicate<Shape> predicate = composePredicate(shapeIndex, rootShape);
-        shapeIndex.shapes()
+        Predicate<Shape> predicate = composePredicate(model, rootShape);
+        model.shapes()
                 .filter(predicate)
                 // Don't include members if their container was excluded.
-                .filter(shape -> memberDefinitionPredicate(shapeIndex, shape, predicate))
+                .filter(shape -> memberDefinitionPredicate(model, shape, predicate))
                 // Create the pointer to the shape and schema object.
                 .map(shape -> Pair.of(
                         getRefStrategy().toPointer(shape.getId(), getConfig()),
@@ -280,7 +260,7 @@ public final class JsonSchemaConverter {
         return builder.build();
     }
 
-    private Predicate<Shape> composePredicate(ShapeIndex shapeIndex, Shape rootShape) {
+    private Predicate<Shape> composePredicate(Model model, Shape rootShape) {
         // Don't write the root shape to the definitions.
         Predicate<Shape> predicate = (shape -> rootShape == null || !shape.getId().equals(rootShape.getId()));
         // Ignore any shape defined by the prelude.
@@ -288,14 +268,14 @@ public final class JsonSchemaConverter {
         // Don't convert unsupported shapes.
         predicate = predicate.and(FunctionalUtils.not(this::isUnsupportedShapeType));
         // Don't convert excluded private shapes.
-        predicate = predicate.and(shape -> !isExcludedPrivateShape(shapeIndex, shape));
+        predicate = predicate.and(shape -> !isExcludedPrivateShape(model, shape));
         // Filter by the custom predicate.
         predicate = predicate.and(shapePredicate);
 
         // When a root shape is provided, only include shapes that are connected to it.
         // We *could* add a configuration option to not do this later if needed.
         if (rootShape != null) {
-            Walker walker = new Walker(shapeIndex);
+            Walker walker = new Walker(model);
             Set<Shape> connected = walker.walkShapes(rootShape);
             predicate = predicate.and(connected::contains);
         }
@@ -309,7 +289,7 @@ public final class JsonSchemaConverter {
     }
 
     // Only include members if not using INLINE_MEMBERS.
-    private boolean memberDefinitionPredicate(ShapeIndex shapeIndex, Shape shape, Predicate<Shape> predicate) {
+    private boolean memberDefinitionPredicate(Model model, Shape shape, Predicate<Shape> predicate) {
         if (!shape.isMemberShape()) {
             return true;
         } else if (getConfig().getBooleanMemberOrDefault(JsonSchemaConstants.INLINE_MEMBERS)) {
@@ -318,20 +298,20 @@ public final class JsonSchemaConverter {
 
         // Don't include broken members or members of excluded shapes.
         return shape.asMemberShape()
-                .flatMap(member -> shapeIndex.getShape(member.getContainer()))
+                .flatMap(member -> model.getShape(member.getContainer()))
                 .filter(parent -> parent.equals(shape) || predicate.test(shape))
                 .isPresent();
     }
 
     // Don't generate schemas for private shapes or members of private shapes.
-    private boolean isExcludedPrivateShape(ShapeIndex shapeIndex, Shape shape) {
+    private boolean isExcludedPrivateShape(Model model, Shape shape) {
         // We can explicitly enable the generation of private shapes if desired.
         if (getConfig().getBooleanMemberOrDefault(JsonSchemaConstants.SMITHY_INCLUDE_PRIVATE_SHAPES)) {
             return false;
         }
 
         return EffectiveTraitQuery.builder()
-                .shapeIndex(shapeIndex)
+                .model(model)
                 .traitClass(PrivateTrait.class)
                 .inheritFromContainer(true)
                 .build()

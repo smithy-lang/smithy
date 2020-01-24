@@ -18,22 +18,21 @@ package software.amazon.smithy.model.traits;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * Queries a shape index for effective traits bound to shapes and members.
+ * Queries a model for effective traits bound to shapes and members.
  */
 public final class EffectiveTraitQuery implements ToSmithyBuilder<EffectiveTraitQuery> {
 
-    private final ShapeIndex shapeIndex;
+    private final Model model;
     private final Class<? extends Trait> traitClass;
     private final boolean inheritFromContainer;
 
     private EffectiveTraitQuery(Builder builder) {
-        this.shapeIndex = SmithyBuilder.requiredState("shapeIndex", builder.shapeIndex);
+        this.model = SmithyBuilder.requiredState("model", builder.model);
         this.traitClass = SmithyBuilder.requiredState("traitClass", builder.traitClass);
         this.inheritFromContainer = builder.inheritFromContainer;
     }
@@ -45,13 +44,13 @@ public final class EffectiveTraitQuery implements ToSmithyBuilder<EffectiveTrait
      * @return Returns true if the trait is effectively applied to the shape.
      */
     public boolean isTraitApplied(ToShapeId shapeId) {
-        Shape shape = shapeIndex.getShape(shapeId.toShapeId()).orElse(null);
+        Shape shape = model.getShape(shapeId.toShapeId()).orElse(null);
 
         if (shape == null) {
             return false;
         }
 
-        if (shape.getMemberTrait(shapeIndex, traitClass).isPresent()) {
+        if (shape.getMemberTrait(model, traitClass).isPresent()) {
             return true;
         }
 
@@ -61,7 +60,7 @@ public final class EffectiveTraitQuery implements ToSmithyBuilder<EffectiveTrait
 
         // Check if the parent of the member is marked with the trait.
         MemberShape memberShape = shape.asMemberShape().get();
-        Shape parent = shapeIndex.getShape(memberShape.getContainer()).orElse(null);
+        Shape parent = model.getShape(memberShape.getContainer()).orElse(null);
         return parent != null && parent.hasTrait(traitClass);
     }
 
@@ -77,7 +76,7 @@ public final class EffectiveTraitQuery implements ToSmithyBuilder<EffectiveTrait
     @Override
     public Builder toBuilder() {
         return builder()
-                .shapeIndex(shapeIndex)
+                .model(model)
                 .traitClass(traitClass)
                 .inheritFromContainer(inheritFromContainer);
     }
@@ -87,19 +86,13 @@ public final class EffectiveTraitQuery implements ToSmithyBuilder<EffectiveTrait
      */
     public static final class Builder implements SmithyBuilder<EffectiveTraitQuery> {
 
-        private ShapeIndex shapeIndex;
+        private Model model;
         private Class<? extends Trait> traitClass;
         private boolean inheritFromContainer;
 
         @Override
         public EffectiveTraitQuery build() {
             return new EffectiveTraitQuery(this);
-        }
-
-        @Deprecated
-        public Builder shapeIndex(ShapeIndex shapeIndex) {
-            this.shapeIndex = shapeIndex;
-            return this;
         }
 
         /**
@@ -109,7 +102,8 @@ public final class EffectiveTraitQuery implements ToSmithyBuilder<EffectiveTrait
          * @return Returns the query object builder.
          */
         public Builder model(Model model) {
-            return shapeIndex(model.getShapeIndex());
+            this.model = model;
+            return this;
         }
 
         /**

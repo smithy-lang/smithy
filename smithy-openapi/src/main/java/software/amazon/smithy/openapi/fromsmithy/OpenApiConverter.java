@@ -238,7 +238,7 @@ public final class OpenApiConverter {
         // Find the service shape.
         ServiceShape service = model.getShape(serviceShapeId)
                 .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        "Shape `%s` not found in shape index", serviceShapeId)))
+                        "Shape `%s` not found in model", serviceShapeId)))
                 .asServiceShape()
                 .orElseThrow(() -> new IllegalArgumentException(String.format(
                         "Shape `%s` is not a service shape", serviceShapeId)));

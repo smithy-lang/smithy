@@ -29,7 +29,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
  * interesting computed information. For example, in order to resolve the
  * input/output/error structures referenced by an {@link OperationShape},
  * you need a {@link Model}, to ensure that the reference from the
- * operation to the structure is resolvable in the shape index, that the
+ * operation to the structure is resolvable in the model, that the
  * shape it references is a structure, and then to cast the shape to a
  * {@link StructureShape}. Because this process is error prone, verbose,
  * and is required by a large number of validators and tools, Smithy
