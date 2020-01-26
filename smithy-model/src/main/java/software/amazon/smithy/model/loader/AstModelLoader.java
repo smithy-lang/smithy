@@ -85,7 +85,7 @@ enum AstModelLoader {
     private static final Set<String> SERVICE_PROPERTIES = SetUtils.of(
             TYPE, "version", "operations", "resources", TRAITS);
 
-    void load(ObjectNode model, StringNode version, LoaderVisitor visitor) {
+    void load(ObjectNode model, LoaderVisitor visitor) {
         model.expectNoAdditionalProperties(TOP_LEVEL_PROPERTIES);
         visitor.onOpenFile(model.getSourceLocation().getFilename());
         loadMetadata(model, visitor);

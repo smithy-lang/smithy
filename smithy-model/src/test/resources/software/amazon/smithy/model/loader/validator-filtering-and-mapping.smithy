@@ -1,5 +1,3 @@
-namespace smithy.example
-
 metadata validators = [
   { // Picks up two shapes
     name: "hello",
@@ -15,6 +13,8 @@ metadata validators = [
     message: "Test {super}"
   },
 ]
+
+namespace smithy.example
 
 string MyString
 

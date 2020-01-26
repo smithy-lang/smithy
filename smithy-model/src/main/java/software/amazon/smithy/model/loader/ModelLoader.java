@@ -56,7 +56,7 @@ final class ModelLoader {
     static boolean load(String filename, Supplier<InputStream> contentSupplier, LoaderVisitor visitor) {
         try {
             if (filename.endsWith(".json")) {
-                return loadJsonModel(filename, contentSupplier, visitor);
+                return loadParsedNode(Node.parse(contentSupplier.get(), filename), visitor);
             } else if (filename.endsWith(".smithy")) {
                 IdlModelLoader.load(filename, contentSupplier, visitor);
                 return true;
@@ -64,7 +64,7 @@ final class ModelLoader {
                 return loadJar(filename, visitor);
             } else if (filename.equals(SourceLocation.NONE.getFilename())) {
                 // Assume it's JSON if there's a N/A filename.
-                return loadJsonModel(filename, contentSupplier, visitor);
+                return loadParsedNode(Node.parse(contentSupplier.get(), filename), visitor);
             } else {
                 return false;
             }
@@ -79,29 +79,22 @@ final class ModelLoader {
         }
     }
 
-    // Loads all JSON formats. Each JSON format is expected to have a
-    // top-level version property that contains a string. This version
+    // Loads all supported JSON formats. Each JSON format is expected to have
+    // a top-level version property that contains a string. This version
     // is then used to delegate loading to different versions of the
     // Smithy JSON AST format.
     //
-    // This loader supports version 0.4.0 and 0.5.0.
-    private static boolean loadJsonModel(
-            String filename, Supplier<InputStream> contentSupplier, LoaderVisitor visitor) {
-        return loadParsedNode(Node.parse(contentSupplier.get(), filename), visitor);
-    }
-
+    // This loader supports version 0.5.0. 0.4.0 support was removed in 0.10.
     static boolean loadParsedNode(Node node, LoaderVisitor visitor) {
         ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
         StringNode version = model.expectStringMember(SMITHY);
 
-        if (version.getValue().equals(SmithyVersion.VERSION_0_4_0.value)) {
-            DeprecatedAstModelLoader.INSTANCE.load(model, version, visitor);
-            return true;
-        } else if (version.getValue().equals(SmithyVersion.VERSION_0_5_0.value)) {
-            AstModelLoader.INSTANCE.load(model, version, visitor);
+        if (version.getValue().equals(SmithyVersion.VERSION_0_5_0.value)) {
+            AstModelLoader.INSTANCE.load(model, visitor);
             return true;
         } else {
-            return false;
+            String message = String.format("Smithy model AST version %s is not supported", version.getValue());
+            throw new ModelSyntaxException(message, version);
         }
     }
 

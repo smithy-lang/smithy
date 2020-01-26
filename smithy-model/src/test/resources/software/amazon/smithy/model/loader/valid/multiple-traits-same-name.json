@@ -1,97 +1,25 @@
 {
     "smithy": "0.5.0",
     "shapes": {
-        "foo.beta#MyString1": {
+        "foo.alpha#DeprecatedString1": {
             "type": "string",
             "traits": {
-                "foo.beta#hello": {}
+                "foo.alpha#deprecated": {}
             }
         },
-        "foo.gamma#MyString1": {
+        "foo.alpha#DeprecatedString2": {
             "type": "string",
             "traits": {
-                "foo.gamma#hello": {}
+                "smithy.api#deprecated": {}
             }
         },
-        "foo.alpha#MyString1": {
+        "foo.alpha#DeprecatedString3": {
             "type": "string",
             "traits": {
-                "foo.alpha#hello": {}
+                "foo.alpha#deprecated": {}
             }
         },
-        "foo.gamma#MyString2": {
-            "type": "string",
-            "traits": {
-                "foo.alpha#hello": {}
-            }
-        },
-        "foo.beta#MyString2": {
-            "type": "string",
-            "traits": {
-                "foo.alpha#hello": {}
-            }
-        },
-        "foo.alpha#MyString2": {
-            "type": "string",
-            "traits": {
-                "foo.alpha#hello": {}
-            }
-        },
-        "foo.beta#MyString3": {
-            "type": "string",
-            "traits": {
-                "foo.beta#hello": {}
-            }
-        },
-        "foo.gamma#MyString3": {
-            "type": "string",
-            "traits": {
-                "foo.beta#hello": {}
-            }
-        },
-        "foo.alpha#MyString3": {
-            "type": "string",
-            "traits": {
-                "foo.beta#hello": {}
-            }
-        },
-        "foo.alpha#MyString4": {
-            "type": "string",
-            "traits": {
-                "foo.gamma#hello": {}
-            }
-        },
-        "foo.beta#MyString4": {
-            "type": "string",
-            "traits": {
-                "foo.gamma#hello": {}
-            }
-        },
-        "foo.gamma#MyString4": {
-            "type": "string",
-            "traits": {
-                "foo.gamma#hello": {}
-            }
-        },
-        "foo.gamma#hello": {
-            "type": "structure",
-            "members": {},
-            "traits": {
-                "smithy.api#trait": {
-                    "selector": "*"
-                }
-            }
-        },
-        "foo.beta#hello": {
-            "type": "structure",
-            "members": {},
-            "traits": {
-                "smithy.api#trait": {
-                    "selector": "*"
-                }
-            }
-        },
-        "foo.alpha#hello": {
+        "foo.alpha#deprecated": {
             "type": "structure",
             "members": {},
             "traits": {
