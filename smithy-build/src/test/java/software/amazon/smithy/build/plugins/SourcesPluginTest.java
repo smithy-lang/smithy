@@ -68,7 +68,7 @@ public class SourcesPluginTest {
         assertThat(manifestString, not(containsString("jar-import/d.json")));
         assertThat(manifest.getFileString("jar-import/a.smithy").get(), containsString("string A"));
         assertThat(manifest.getFileString("jar-import/b/b.smithy").get(), containsString("string B"));
-        assertThat(manifest.getFileString("jar-import/b/c/c.json").get(), containsString("\"C\""));
+        assertThat(manifest.getFileString("jar-import/b/c/c.json").get(), containsString("\"foo.baz#C\""));
     }
 
     @Test
