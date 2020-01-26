@@ -1,5 +1,3 @@
-namespace smithy.example
-
 metadata validators = [
   {
     name: "MyValidator",
@@ -8,3 +6,5 @@ metadata validators = [
     }
   }
 ]
+
+namespace smithy.example
