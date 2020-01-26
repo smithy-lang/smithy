@@ -1,8 +1,0 @@
-{
-    "smithy": "0.5.0",
-    "shapes": {
-        "com.baz#MyString": {
-            "type": "string"
-        }
-    }
-}

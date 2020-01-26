@@ -72,6 +72,6 @@
             "a",
             "b"
         ],
-        "shape_id": "foo.baz#Bam"
+        "shape_id": "smithy.api#String"
     }
 }

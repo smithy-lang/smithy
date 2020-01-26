@@ -220,14 +220,21 @@ final class LoaderVisitor {
      */
     public void onShapeTarget(String target, FromSourceLocation sourceLocation, Consumer<ShapeId> resolver) {
         try {
-            ShapeId expectedId = ShapeId.fromOptionalNamespace(namespace, target);
-            if (namespace.equals(Prelude.NAMESPACE) || hasDefinedShape(expectedId) || target.contains("#")) {
+            // Account for aliased shapes.
+            if (useShapes.containsKey(target)) {
+                resolver.accept(useShapes.get(target));
+                return;
+            }
+
+            // A namespace is not set when parsing metadata.
+            ShapeId expectedId = namespace == null
+                    ? ShapeId.from(target)
+                    : ShapeId.fromOptionalNamespace(namespace, target);
+
+            if (Objects.equals(namespace, Prelude.NAMESPACE) || hasDefinedShape(expectedId) || target.contains("#")) {
                 // Account for previously seen shapes in this namespace, absolute shapes, and prelude namespaces
                 // always resolve to prelude shapes.
                 resolver.accept(expectedId);
-            } else if (useShapes.containsKey(target)) {
-                // Account for aliased shapes.
-                resolver.accept(useShapes.get(target));
             } else {
                 forwardReferenceResolvers.add(new ForwardReferenceResolver(expectedId, resolver));
             }

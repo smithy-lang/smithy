@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,6 +51,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -96,6 +98,25 @@ import software.amazon.smithy.utils.SetUtils;
 
 final class IdlModelLoader {
 
+    private static final String PUT_KEY = "put";
+    private static final String CREATE_KEY = "create";
+    private static final String READ_KEY = "read";
+    private static final String UPDATE_KEY = "update";
+    private static final String DELETE_KEY = "delete";
+    private static final String LIST_KEY = "list";
+    private static final String RESOURCES_KEY = "resources";
+    private static final String OPERATIONS_KEY = "operations";
+    private static final String COLLECTION_OPERATIONS_KEY = "collectionOperations";
+    private static final String IDENTIFIERS_KEY = "identifiers";
+    private static final String VERSION_KEY = "version";
+    private static final String TYPE_KEY = "type";
+
+    static final Collection<String> RESOURCE_PROPERTY_NAMES = ListUtils.of(
+            TYPE_KEY, CREATE_KEY, READ_KEY, UPDATE_KEY, DELETE_KEY, LIST_KEY,
+            IDENTIFIERS_KEY, RESOURCES_KEY, OPERATIONS_KEY, PUT_KEY, COLLECTION_OPERATIONS_KEY);
+    static final List<String> SERVICE_PROPERTY_NAMES = ListUtils.of(
+            TYPE_KEY, VERSION_KEY, OPERATIONS_KEY, RESOURCES_KEY);
+
     // Top-level statements
     private static final Set<String> STATEMENTS = SetUtils.of(
             "namespace", "use", "service", "operation", "resource", "structure", "union",
@@ -119,7 +140,6 @@ final class IdlModelLoader {
     private final SmithyModelLexer lexer;
     private final LoaderVisitor visitor;
     private final List<Pair<String, Node>> pendingTraits = new ArrayList<>();
-    private final Set<VersionFeature> features = new HashSet<>();
 
     private Token current;
     private DocComment pendingDocComment;
@@ -145,64 +165,6 @@ final class IdlModelLoader {
             } else if (token.type == DOC) {
                 parseDocComment(token, false);
             }
-        }
-    }
-
-    enum VersionFeature {
-        ALLOW_USE_BEFORE_NAMESPACE {
-            @Override
-            void validate(IdlModelLoader loader) {
-                if (loader.namespace == null && !loader.features.contains(this)) {
-                    raise(loader, "Use statements must appear after a namespace is defined");
-                }
-            }
-        },
-
-        ALLOW_MULTIPLE_NAMESPACES {
-            @Override
-            void validate(IdlModelLoader loader) {
-                if (loader.namespace != null && !loader.features.contains(this)) {
-                    raise(loader, format(
-                            "Only a single namespace can be declared per/file. The previous namespace was "
-                            + "set to `%s`.", loader.namespace));
-                }
-            }
-        },
-
-        ALLOW_METADATA_AFTER_NAMESPACE {
-            @Override
-            void validate(IdlModelLoader loader) {
-                if (loader.namespace != null && !loader.features.contains(this)) {
-                    raise(loader, "Metadata statements must appear before a namespace statement");
-                }
-            }
-        },
-
-        ALLOW_MULTIPLE_VERSIONS {
-            @Override
-            void validate(IdlModelLoader loader) {
-                if (loader.definedVersion != null && !loader.features.contains(this)) {
-                    raise(loader, "Cannot define multiple versions in the same file");
-                }
-            }
-        };
-
-        abstract void validate(IdlModelLoader loader);
-
-        // Halts parsing if a version has been explicitly set, otherwise
-        // adds a WARNING event.
-        void raise(IdlModelLoader loader, String message) {
-            if (loader.definedVersion != null) {
-                throw loader.syntax(message);
-            }
-
-            loader.visitor.onError(ValidationEvent.builder()
-                    .eventId(Validator.MODEL_ERROR)
-                    .severity(Severity.WARNING)
-                    .sourceLocation(loader.current)
-                    .message("Detected deprecated IDL features that will break in future versions "
-                             + "of Smithy: " + message)
-                    .build());
         }
     }
 
@@ -312,7 +274,11 @@ final class IdlModelLoader {
     }
 
     private void parseNamespace() {
-        VersionFeature.ALLOW_MULTIPLE_NAMESPACES.validate(this);
+        if (namespace != null) {
+            throw syntax("Only a single namespace can be declared per/file. The previous namespace was set to "
+                         + "`" + namespace + "`.");
+        }
+
         String parsedNamespace = expect(UNQUOTED).lexeme;
 
         if (!ShapeId.isValidNamespace(parsedNamespace)) {
@@ -324,7 +290,9 @@ final class IdlModelLoader {
     }
 
     private void parseUseStatement() {
-        VersionFeature.ALLOW_USE_BEFORE_NAMESPACE.validate(this);
+        if (namespace == null) {
+            throw syntax("Use statements must appear after a namespace is defined");
+        }
 
         if (definedShapes) {
             throw syntax("A use statement must come before any shape definition");
@@ -367,25 +335,23 @@ final class IdlModelLoader {
         }
 
         String parsedVersion = value.expectStringNode().getValue();
-        VersionFeature.ALLOW_MULTIPLE_VERSIONS.validate(this);
+
+        if (definedVersion != null) {
+            throw syntax("Cannot define multiple versions in the same file");
+        }
 
         if (!SmithyVersion.isSupported(parsedVersion)) {
             throw syntax(format("Invalid Smithy version number: %s", parsedVersion));
         }
 
         definedVersion = parsedVersion;
-
-        // Enable old Smithy 0.4.0 features that were removed in 0.5.0.
-        if (definedVersion.equals(SmithyVersion.VERSION_0_4_0.value)) {
-            features.add(VersionFeature.ALLOW_USE_BEFORE_NAMESPACE);
-            features.add(VersionFeature.ALLOW_MULTIPLE_NAMESPACES);
-            features.add(VersionFeature.ALLOW_METADATA_AFTER_NAMESPACE);
-            features.add(VersionFeature.ALLOW_MULTIPLE_VERSIONS);
-        }
     }
 
     private void parseMetadata() {
-        VersionFeature.ALLOW_METADATA_AFTER_NAMESPACE.validate(this);
+        if (namespace != null) {
+            throw syntax("Metadata statements must appear before a namespace statement");
+        }
+
         definedMetadata = true;
 
         // metadata key = value\n
@@ -822,10 +788,25 @@ final class IdlModelLoader {
                 .source(sourceLocation);
 
         ObjectNode shapeNode = parseObjectNode(expect(LBRACE).getSourceLocation(), RBRACE);
-        shapeNode.warnIfAdditionalProperties(LoaderUtils.SERVICE_PROPERTY_NAMES);
-        LoaderUtils.loadServiceObject(builder, shapeId, shapeNode);
+        shapeNode.warnIfAdditionalProperties(SERVICE_PROPERTY_NAMES);
+        builder.version(shapeNode.expectStringMember(VERSION_KEY).getValue());
+        optionalIdList(shapeNode, shapeId.getNamespace(), OPERATIONS_KEY).forEach(builder::addOperation);
+        optionalIdList(shapeNode, shapeId.getNamespace(), RESOURCES_KEY).forEach(builder::addResource);
         visitor.onShape(builder);
         expectNewline();
+    }
+
+    static Optional<ShapeId> optionalId(ObjectNode node, String namespace, String name) {
+        return node.getStringMember(name).map(stringNode -> stringNode.expectShapeId(namespace));
+    }
+
+    static List<ShapeId> optionalIdList(ObjectNode node, String namespace, String name) {
+        return node.getArrayMember(name)
+                .map(array -> array.getElements().stream()
+                        .map(Node::expectStringNode)
+                        .map(s -> s.expectShapeId(namespace))
+                        .collect(Collectors.toList()))
+                .orElseGet(Collections::emptyList);
     }
 
     private void parseResource() {
@@ -834,8 +815,28 @@ final class IdlModelLoader {
         ResourceShape.Builder builder = ResourceShape.builder().id(shapeId).source(sourceLocation);
         visitor.onShape(builder);
         ObjectNode shapeNode = parseObjectNode(expect(LBRACE).getSourceLocation(), RBRACE);
-        shapeNode.warnIfAdditionalProperties(LoaderUtils.RESOURCE_PROPERTY_NAMES);
-        LoaderUtils.loadResourceObject(builder, shapeId, shapeNode, visitor);
+
+        shapeNode.warnIfAdditionalProperties(RESOURCE_PROPERTY_NAMES);
+        optionalId(shapeNode, shapeId.getNamespace(), PUT_KEY).ifPresent(builder::put);
+        optionalId(shapeNode, shapeId.getNamespace(), CREATE_KEY).ifPresent(builder::create);
+        optionalId(shapeNode, shapeId.getNamespace(), READ_KEY).ifPresent(builder::read);
+        optionalId(shapeNode, shapeId.getNamespace(), UPDATE_KEY).ifPresent(builder::update);
+        optionalId(shapeNode, shapeId.getNamespace(), DELETE_KEY).ifPresent(builder::delete);
+        optionalId(shapeNode, shapeId.getNamespace(), LIST_KEY).ifPresent(builder::list);
+        optionalIdList(shapeNode, shapeId.getNamespace(), OPERATIONS_KEY).forEach(builder::addOperation);
+        optionalIdList(shapeNode, shapeId.getNamespace(), RESOURCES_KEY).forEach(builder::addResource);
+        optionalIdList(shapeNode, shapeId.getNamespace(), COLLECTION_OPERATIONS_KEY)
+                .forEach(builder::addCollectionOperation);
+
+        // Load identifiers and resolve forward references.
+        shapeNode.getObjectMember(IDENTIFIERS_KEY).ifPresent(ids -> {
+            for (Map.Entry<StringNode, Node> entry : ids.getMembers().entrySet()) {
+                String name = entry.getKey().getValue();
+                StringNode target = entry.getValue().expectStringNode();
+                visitor.onShapeTarget(target.getValue(), target, id -> builder.addIdentifier(name, id));
+            }
+        });
+
         expectNewline();
     }
 
