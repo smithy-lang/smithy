@@ -100,20 +100,6 @@ public class ModelAssemblerTest {
     }
 
     @Test
-    public void addsExplicitDocumentNode_0_4_0() {
-        ObjectNode node = Node.objectNode()
-                .withMember("smithy", "0.4.0")
-                .withMember("ns.foo", Node.objectNode()
-                        .withMember("shapes", Node.objectNode()
-                                .withMember("String", Node.objectNode()
-                                        .withMember("type", Node.from("string")))));
-        ValidatedResult<Model> result = new ModelAssembler().addDocumentNode(node).assemble();
-
-        assertThat(result.getValidationEvents(), empty());
-        assertTrue(result.unwrap().getShape(ShapeId.from("ns.foo#String")).isPresent());
-    }
-
-    @Test
     public void addsExplicitDocumentNode_0_5_0() {
         ObjectNode node = Node.objectNode()
                 .withMember("smithy", "0.5.0")

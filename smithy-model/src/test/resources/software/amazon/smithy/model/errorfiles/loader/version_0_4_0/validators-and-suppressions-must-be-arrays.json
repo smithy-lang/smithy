@@ -1,9 +1,0 @@
-{
-    "smithy": "0.4.0",
-    "metadata": {
-        "validators": {
-        },
-        "suppressions": {
-        }
-    }
-}
