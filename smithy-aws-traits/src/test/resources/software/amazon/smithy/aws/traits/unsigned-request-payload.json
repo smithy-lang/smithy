@@ -4,15 +4,7 @@
         "ns.foo#Unsigned1": {
             "type": "operation",
             "traits": {
-                "aws.api#unsignedPayload": []
-            }
-        },
-        "ns.foo#Unsigned2": {
-            "type": "operation",
-            "traits": {
-                "aws.api#unsignedPayload": [
-                    "aws.v4"
-                ]
+                "aws.api#unsignedPayload": true
             }
         }
     }
