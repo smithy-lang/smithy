@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -179,8 +180,39 @@ public final class SmithyTestCase {
                 Collection<ValidationEvent> extraEvents
         ) {
             this.modelLocation = modelLocation;
-            this.unmatchedEvents = Collections.unmodifiableCollection(unmatchedEvents);
-            this.extraEvents = Collections.unmodifiableCollection(extraEvents);
+            this.unmatchedEvents = Collections.unmodifiableCollection(new TreeSet<>(unmatchedEvents));
+            this.extraEvents = Collections.unmodifiableCollection(new TreeSet<>(extraEvents));
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+
+            builder.append("\n=======================\n"
+                           + "Model Validation Result\n"
+                           + "=======================\n")
+                    .append(getModelLocation())
+                    .append("\n");
+
+            if (!getUnmatchedEvents().isEmpty()) {
+                builder.append("\nDid not match the following events\n"
+                               + "----------------------------------\n");
+                for (ValidationEvent event : getUnmatchedEvents()) {
+                    builder.append(event.toString().replace("\n", "\\n"));
+                }
+                builder.append("\n");
+            }
+
+            if (!getExtraEvents().isEmpty()) {
+                builder.append("\nEncountered unexpected events\n"
+                               + "-----------------------------\n");
+                for (ValidationEvent event : getExtraEvents()) {
+                    builder.append(event.toString().replace("\n", "\\n"));
+                }
+                builder.append("\n");
+            }
+
+            return builder.toString();
         }
 
         /**
@@ -211,6 +243,32 @@ public final class SmithyTestCase {
          */
         public Collection<ValidationEvent> getExtraEvents() {
             return extraEvents;
+        }
+
+        /**
+         * Throws an exception if the result is invalid, otherwise returns the result.
+         *
+         * @return Returns the result if it is ok.
+         * @throws Error if the result contains invalid events.
+         */
+        public Result unwrap() {
+            if (isInvalid()) {
+                throw new Error(this);
+            }
+
+            return this;
+        }
+    }
+
+    /**
+     * Thrown when errors are encountered while unwrapping a test case.
+     */
+    public static final class Error extends RuntimeException {
+        public final Result result;
+
+        Error(Result result) {
+            super(result.toString());
+            this.result = result;
         }
     }
 }

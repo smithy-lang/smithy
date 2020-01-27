@@ -15,20 +15,21 @@
 
 package software.amazon.smithy.mqtt.traits;
 
-import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.ModelAssembler;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import software.amazon.smithy.model.validation.testrunner.SmithyTestCase;
 import software.amazon.smithy.model.validation.testrunner.SmithyTestSuite;
 
 public class RunnerTest {
-    @Test
-    public void runTests() {
-        ModelAssembler assembler = Model.assembler(getClass().getClassLoader())
-                .discoverModels(getClass().getClassLoader());
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("source")
+    public void testRunner(String filename, Callable<SmithyTestCase.Result> callable) throws Exception {
+        callable.call();
+    }
 
-        System.out.println(SmithyTestSuite.runner()
-                .setModelAssemblerFactory(assembler::copy)
-                .addTestCasesFromUrl(getClass().getResource("testsuite"))
-                .run());
+    public static Stream<?> source() {
+        return SmithyTestSuite.defaultParameterizedTestSource(RunnerTest.class);
     }
 }
