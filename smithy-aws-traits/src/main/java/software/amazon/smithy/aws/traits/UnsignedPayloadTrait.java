@@ -15,56 +15,28 @@
 
 package software.amazon.smithy.aws.traits;
 
-import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.StringListTrait;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.ToSmithyBuilder;
+import software.amazon.smithy.model.traits.BooleanTrait;
 
 /**
  * Indicates that the payload of an operation is not to be signed.
- *
- * <p>Providing a list of strings will limit the effect of this trait to
- * only specific authentication schemes by name.
  */
-public final class UnsignedPayloadTrait extends StringListTrait implements ToSmithyBuilder<UnsignedPayloadTrait> {
+public final class UnsignedPayloadTrait extends BooleanTrait {
     public static final ShapeId ID = ShapeId.from("aws.api#unsignedPayload");
 
-    public UnsignedPayloadTrait(List<String> values, FromSourceLocation sourceLocation) {
-        super(ID, values, sourceLocation);
-    }
-
     public UnsignedPayloadTrait(FromSourceLocation sourceLocation) {
-        this(ListUtils.of(), sourceLocation);
+        super(ID, sourceLocation.getSourceLocation());
     }
 
     public UnsignedPayloadTrait() {
-        this(ListUtils.of(), SourceLocation.NONE);
+        this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends StringListTrait.Provider<UnsignedPayloadTrait> {
+    public static final class Provider extends BooleanTrait.Provider<UnsignedPayloadTrait> {
         public Provider() {
             super(ID, UnsignedPayloadTrait::new);
-        }
-    }
-
-    @Override
-    public Builder toBuilder() {
-        return builder().values(getValues());
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static final class Builder extends StringListTrait.Builder<UnsignedPayloadTrait, Builder> {
-        private Builder() {}
-
-        @Override
-        public UnsignedPayloadTrait build() {
-            return new UnsignedPayloadTrait(getValues(), getSourceLocation());
         }
     }
 }

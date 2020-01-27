@@ -840,15 +840,10 @@ plane unless an operation or resource is marked with the
 Summary
     Indicates that the payload of an operation is not to be part of the
     signature computed for the request of an operation.
-
-    Providing a list of strings will limit the effect of this trait to
-    only specific authentication schemes by name. An empty list of strings
-    causes this trait to apply to all authentication schemes used with the
-    the operation.
 Trait selector
     ``operation``
 Value type
-    List of authentication scheme strings
+    Annotation trait
 
 Most requests sent to AWS services require that the payload of the request is
 signed. However, in some cases, a service that streams large amounts of data
@@ -884,48 +879,12 @@ operation MUST NOT be used as part of the request signature calculation:
                         "target": "smithy.example#PutThingsOutput"
                     },
                     "traits": {
-                        "aws.api#unsignedPayload": []
+                        "aws.api#unsignedPayload": true
                     }
                 }
             }
         }
 
-The following example defines an operation that requires an unsigned payload
-only when using the "aws.v4" authentication scheme:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        use aws.api#unsignedPayload
-
-        @unsignedPayload(["aws.v4"])
-        operation PutThings {
-            input: PutThingsInput,
-            output: PutThingsOutput
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "0.5.0",
-            "shapes": {
-                "smithy.example#PutThings": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PutThingsInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#PutThingsOutput"
-                    },
-                    "traits": {
-                        "aws.api#unsignedPayload": [
-                            "aws.v4"
-                        ]
-                    }
-                }
-            }
-        }
 
 Unsigned Payloads and signature version 4
 =========================================

@@ -74,15 +74,12 @@
             }
         },
         "aws.api#unsignedPayload": {
-            "type": "list",
-            "member": {
-                "target": "smithy.api#String"
-            },
+            "type": "structure",
             "traits": {
                 "smithy.api#trait": {
                     "selector": "operation"
                 },
-                "smithy.api#documentation": "Indicates that the request payload of a signed request is not to be used as part of the signature. Providing a list of strings will limit the effect of this trait to only specific authentication schemes by name."
+                "smithy.api#documentation": "Indicates that the request payload of a signed request is not to be used as part of the signature."
             }
         },
         "aws.api#data": {
