@@ -32,16 +32,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 
 /**
  * Runs test cases against a directory of models and error files.
  */
 public final class SmithyTestSuite {
-    private List<Callable<Void>> testCaseCallables = new ArrayList<>();
+    private static final String DEFAULT_TEST_CASE_LOCATION = "errorfiles";
+
+    private List<SmithyTestCase> cases = new ArrayList<>();
     private Supplier<ModelAssembler> modelAssemblerFactory = ModelAssembler::new;
-    private final List<SmithyTestCase.Result> failedResults = Collections.synchronizedList(new ArrayList<>());
-    private ExecutorService executorService;
 
     private SmithyTestSuite() {}
 
@@ -55,26 +57,73 @@ public final class SmithyTestSuite {
     }
 
     /**
+     * Factory method used to easily created a JUnit 5 {@code ParameterizedTest}
+     * {@code MethodSource} based on the given {@code Class}.
+     *
+     * <p>This method assumes that there is a resource named {@code errorfiles}
+     * relative to the given class that contains test cases. It also assumes
+     * validators and traits should be loaded using the {@code ClassLoader}
+     * of the given {@code contextClass}, and that model discovery should be
+     * used using the given {@code contextClass}.
+     *
+     * <p>Each returns {@code Object[]} contains the filename of the test as
+     * the first argument, followed by a {@code Callable<SmithyTestCase.Result>}
+     * as the second argument. All a parameterized test needs to do is call
+     * {@code call} on the provided {@code Callable} to execute the test and
+     * fail if the test case is invalid.
+     *
+     * <p>For example, the following can used as a unit test:
+     *
+     * <pre>{@code
+     * import java.util.concurrent.Callable;
+     * import java.util.stream.Stream;
+     * import org.junit.jupiter.params.ParameterizedTest;
+     * import org.junit.jupiter.params.provider.MethodSource;
+     * import software.amazon.smithy.model.validation.testrunner.SmithyTestCase;
+     * import software.amazon.smithy.model.validation.testrunner.SmithyTestSuite;
+     *
+     * public class TestRunnerTest {
+     *     \@ParameterizedTest(name = "\{0\}")
+     *     \@MethodSource("source")
+     *     public void testRunner(String filename, Callable&lt;SmithyTestCase.Result&gt; callable) throws Exception {
+     *         callable.call();
+     *     }
+     *
+     *     public static Stream&lt;?&gt; source() {
+     *         return SmithyTestSuite.defaultParameterizedTestSource(TestRunnerTest.class);
+     *     }
+     * }
+     * }</pre>
+     *
+     * @param contextClass The class to use for loading errorfiles and model discovery.
+     * @return Returns the Stream that should be used as a JUnit 5 {@code MethodSource} return value.
+     */
+    public static Stream<Object[]> defaultParameterizedTestSource(Class<?> contextClass) {
+        ClassLoader classLoader = contextClass.getClassLoader();
+        ModelAssembler assembler = Model.assembler(classLoader).discoverModels(classLoader);
+        return SmithyTestSuite.runner()
+                .setModelAssemblerFactory(assembler::copy)
+                .addTestCasesFromUrl(contextClass.getResource(DEFAULT_TEST_CASE_LOCATION))
+                .parameterizedTestSource();
+    }
+
+    private Stream<Object[]> parameterizedTestSource() {
+        return cases.stream().map(testCase -> {
+            Callable<SmithyTestCase.Result> callable = createTestCaseCallable(testCase);
+            Callable<SmithyTestCase.Result> wrappedCallable = () -> callable.call().unwrap();
+            return new Object[] {testCase.getModelLocation(), wrappedCallable};
+        });
+    }
+
+    /**
      * Adds a test case to the test suite.
      *
      * @param testCase Test case to add.
      * @return Returns the test suite.
      */
     public SmithyTestSuite addTestCase(SmithyTestCase testCase) {
-        addTestCaseCallable(testCase);
+        cases.add(testCase);
         return this;
-    }
-
-    private void addTestCaseCallable(SmithyTestCase testCase) {
-        testCaseCallables.add(() -> {
-            ModelAssembler assembler = modelAssemblerFactory.get();
-            assembler.addImport(testCase.getModelLocation());
-            SmithyTestCase.Result result = testCase.createResult(assembler.assemble());
-            if (result.isInvalid()) {
-                failedResults.add(result);
-            }
-            return null;
-        });
     }
 
     /**
@@ -142,14 +191,25 @@ public final class SmithyTestSuite {
     }
 
     /**
-     * Sets a custom {@code ExecutorService} to use for executing test cases.
+     * Creates a {@code Stream} of {@code Callable} objects that can be used
+     * to execute each test case.
      *
-     * @param executorService ExecutorService to use.
-     * @return Returns the test suite.
+     * <p>The {@link SmithyTestCase.Result#unwrap()} method must be called on
+     * the result of each callable in order to actually assert that the test
+     * case result is OK.
+     *
+     * @return Returns a stream of test case callables.
      */
-    public SmithyTestSuite setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-        return this;
+    public Stream<Callable<SmithyTestCase.Result>> testCaseCallables() {
+        return cases.stream().map(this::createTestCaseCallable);
+    }
+
+    private Callable<SmithyTestCase.Result> createTestCaseCallable(SmithyTestCase testCase) {
+        return () -> {
+            ModelAssembler assembler = modelAssemblerFactory.get();
+            assembler.addImport(testCase.getModelLocation());
+            return testCase.createResult(assembler.assemble());
+        };
     }
 
     /**
@@ -159,38 +219,55 @@ public final class SmithyTestSuite {
      * @throws Error if the validation events do not match expectations.
      */
     public Result run() {
-        failedResults.clear();
+        // Tests are mostly CPU bound. But rather than use all available
+        // cores, use cores - 1 since test suites are usually run along
+        // with other unit tests which are probably running in multiple
+        // threads.
+        int numberOfCores = Runtime.getRuntime().availableProcessors();
+        return run(Executors.newFixedThreadPool(numberOfCores - 1));
+    }
 
-        if (executorService == null) {
-            // Tests are mostly CPU bound. But rather than use all available
-            // cores, use cores - 1 since test suites are usually run along
-            // with other unit tests which are probably running in multiple
-            // threads.
-            int numberOfCores = Runtime.getRuntime().availableProcessors();
-            executorService = Executors.newFixedThreadPool(numberOfCores - 1);
-        }
+    /**
+     * Executes the test runner with a specific {@code ExecutorService}.
+     *
+     * <p>Tests ideally should use JUnit 5's ParameterizedTest as described
+     * in {@link #parameterizedTestSource()}. However, this method can be
+     * used to run tests in parallel in other scenarios (like if you aren't
+     * using JUnit, or not running tests cases during unit tests).
+     *
+     * @param executorService Executor service to execute tests with.
+     * @return Returns the test case result object on success.
+     * @throws Error if the validation events do not match expectations.
+     */
+    public Result run(ExecutorService executorService) {
+        List<SmithyTestCase.Result> failedResults = Collections.synchronizedList(new ArrayList<>());
+        List<Callable<SmithyTestCase.Result>> callables = testCaseCallables().collect(Collectors.toList());
 
         try {
-            for (Future<Void> future : executorService.invokeAll(testCaseCallables)) {
-                waitOnFuture(future);
+            for (Future<SmithyTestCase.Result> future : executorService.invokeAll(callables)) {
+                SmithyTestCase.Result testCaseResult = waitOnFuture(future);
+                if (testCaseResult.isInvalid()) {
+                    failedResults.add(testCaseResult);
+                }
             }
-            Result result = new Result(testCaseCallables.size() - failedResults.size(), failedResults);
+
+            Result result = new Result(callables.size() - failedResults.size(), failedResults);
             if (failedResults.isEmpty()) {
                 return result;
             }
+
             throw new Error(result);
         } catch (InterruptedException e) {
             executorService.shutdownNow();
             throw new Error("Error executing test suite: " + e.getMessage(), e);
         } finally {
             executorService.shutdown();
-            testCaseCallables.clear();
         }
     }
 
-    private void waitOnFuture(Future<Void> future) throws InterruptedException {
+    private SmithyTestCase.Result waitOnFuture(Future<SmithyTestCase.Result> future) throws InterruptedException {
         try {
-            future.get();
+            return future.get();
         } catch (ExecutionException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             // Try to throw the original exception as-is if possible.
@@ -232,39 +309,9 @@ public final class SmithyTestSuite {
             StringBuilder builder = new StringBuilder(String.format(
                     "Smithy validation test runner encountered %d successful result(s), and %d failed result(s)",
                     getSuccessCount(), getFailedResults().size()));
-            getFailedResults().forEach(failed -> appendResult(failed, builder));
+            getFailedResults().forEach(failed -> builder.append("\n").append(failed.toString()));
             return builder.toString();
         }
-
-        private static void appendResult(SmithyTestCase.Result result, StringBuilder builder) {
-            builder.append("\n\n============= Model Validation Result =============\n")
-                    .append(result.getModelLocation())
-                    .append("\n");
-
-            if (!result.getUnmatchedEvents().isEmpty()) {
-                builder.append("\n* Did not match the following events: \n");
-                builder.append(result.getUnmatchedEvents().stream()
-                                       .map(Object::toString)
-                                       .map(SmithyTestSuite::formatString)
-                                       .sorted()
-                                       .collect(Collectors.joining("\n")));
-                builder.append("\n");
-            }
-
-            if (!result.getExtraEvents().isEmpty()) {
-                builder.append("\n* Encountered unexpected events: \n");
-                builder.append(result.getExtraEvents().stream()
-                                       .map(Object::toString)
-                                       .map(SmithyTestSuite::formatString)
-                                       .sorted()
-                                       .collect(Collectors.joining("\n")));
-                builder.append("\n");
-            }
-        }
-    }
-
-    private static String formatString(String value) {
-        return value.replace("\n", "\\n");
     }
 
     /**
