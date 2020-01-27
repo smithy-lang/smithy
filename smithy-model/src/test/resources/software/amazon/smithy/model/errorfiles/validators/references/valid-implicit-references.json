@@ -20,13 +20,13 @@
             "traits": {
                 "smithy.api#references": [
                     {
-                        "resource": "MyResource"
+                        "resource": "ns.foo#MyResource"
                     },
                     {
-                        "resource": "MyResource"
+                        "resource": "ns.foo#MyResource"
                     },
                     {
-                        "resource": "MyResource2"
+                        "resource": "ns.foo#MyResource2"
                     }
                 ]
             }
@@ -47,7 +47,7 @@
             "traits": {
                 "smithy.api#references": [
                     {
-                        "resource": "MyResource"
+                        "resource": "ns.foo#MyResource"
                     }
                 ]
             }
@@ -57,7 +57,7 @@
             "traits": {
                 "smithy.api#references": [
                     {
-                        "resource": "MyResource2"
+                        "resource": "ns.foo#MyResource2"
                     }
                 ]
             }
