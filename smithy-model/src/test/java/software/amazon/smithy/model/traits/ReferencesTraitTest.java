@@ -35,7 +35,7 @@ public class ReferencesTraitTest {
         TraitFactory provider = TraitFactory.createServiceFactory();
         ArrayNode values = Node.arrayNode()
                 .withValue(Node.objectNode()
-                        .withMember("resource", Node.from("SomeShape"))
+                        .withMember("resource", Node.from("ns.qux#SomeShape"))
                         .withMember("ids", Node.parse("{\"a\": \"a\", \"b\": \"b\"}")))
                 .withValue(Node.objectNode()
                         .withMember("resource", Node.from("ns.foo#OtherShape"))
