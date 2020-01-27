@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.ListUtils;
 
 public class UnsignedPayloadTraitTest {
     @Test
@@ -34,12 +33,6 @@ public class UnsignedPayloadTraitTest {
         assertTrue(result
                 .getShape(ShapeId.from("ns.foo#Unsigned1"))
                 .flatMap(shape -> shape.getTrait(UnsignedPayloadTrait.class))
-                .isPresent());
-
-        assertTrue(result
-                .getShape(ShapeId.from("ns.foo#Unsigned2"))
-                .flatMap(shape -> shape.getTrait(UnsignedPayloadTrait.class))
-                .filter(trait -> trait.getValues().equals(ListUtils.of("aws.v4")))
                 .isPresent());
     }
 }
