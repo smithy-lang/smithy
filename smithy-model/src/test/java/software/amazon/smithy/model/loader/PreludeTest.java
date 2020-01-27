@@ -17,18 +17,15 @@ package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyCollectionOf;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
@@ -61,24 +58,5 @@ public class PreludeTest {
                 .collect(Collectors.toSet());
 
         assertThat(unreferencedPrivateShapes, emptyCollectionOf(ShapeId.class));
-    }
-
-    @Test
-    public void resolvesToTargetInNamespace() {
-        Shape stringShape = StringShape.builder().id("foo.baz#Bar").build();
-        Model model = Model.builder().addShape(stringShape).build();
-
-        assertThat(Prelude.resolveShapeId(model, "foo.baz", "Bar"), equalTo(Optional.of(stringShape)));
-        assertThat(Prelude.resolveShapeId(model, "foo.baz", "Bam"), equalTo(Optional.empty()));
-    }
-
-    @Test
-    public void resolvesToTargetInPrelude() {
-        Shape customStringShape = StringShape.builder().id("foo.baz#String").build();
-        Shape preludeStringShape = StringShape.builder().id("smithy.api#String").build();
-        Model model = Model.builder().addShapes(customStringShape, preludeStringShape).build();
-
-        assertThat(Prelude.resolveShapeId(model, "foo.baz", "String"), equalTo(Optional.of(customStringShape)));
-        assertThat(Prelude.resolveShapeId(model, "other.ns", "String"), equalTo(Optional.of(preludeStringShape)));
     }
 }

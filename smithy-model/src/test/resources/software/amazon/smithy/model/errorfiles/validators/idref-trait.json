@@ -4,55 +4,55 @@
         "ns.foo#Invalid1": {
             "type": "string",
             "traits": {
-                "ns.foo#usesIdRef": "invalid-shape-id!"
+                "ns.foo#usesIdRef": "invalidshapeid"
             }
         },
         "ns.foo#Invalid2": {
             "type": "string",
             "traits": {
-                "ns.foo#usesIdRef": "SomeNumber"
+                "ns.foo#usesIdRef": "ns.foo#SomeNumber"
             }
         },
         "ns.foo#Invalid3": {
             "type": "string",
             "traits": {
-                "ns.foo#usesIdRef": "NotFound"
+                "ns.foo#usesIdRef": "ns.foo#NotFound"
             }
         },
         "ns.foo#Invalid4": {
             "type": "string",
             "traits": {
-                "ns.foo#grammarOnly": "invalid-shape-id!"
+                "ns.foo#grammarOnly": "ns.foo#invalid-shape-id!"
             }
         },
         "ns.foo#ValidGrammarOnly1": {
             "type": "string",
             "traits": {
-                "ns.foo#grammarOnly": "NotFound"
+                "ns.foo#grammarOnly": "ns.foo#NotFound"
             }
         },
         "ns.foo#ValidGrammarOnly2": {
             "type": "string",
             "traits": {
-                "ns.foo#grammarOnly": "OtherString"
+                "ns.foo#grammarOnly": "ns.foo#OtherString"
             }
         },
         "ns.foo#InvalidAllowsMissing1": {
             "type": "string",
             "traits": {
-                "ns.foo#allowsMissing": "OtherString"
+                "ns.foo#allowsMissing": "ns.foo#OtherString"
             }
         },
         "ns.foo#ValidAllowsMissing1": {
             "type": "string",
             "traits": {
-                "ns.foo#allowsMissing": "NotFound"
+                "ns.foo#allowsMissing": "ns.foo#NotFound"
             }
         },
         "ns.foo#InvalidCustomErrorMessage1": {
             "type": "string",
             "traits": {
-                "ns.foo#customErrorMessage": "OtherString"
+                "ns.foo#customErrorMessage": "ns.foo#OtherString"
             }
         },
         "ns.foo#OtherString": {

@@ -11,13 +11,13 @@
             "traits": {
                 "smithy.api#references": [
                     {
-                        "resource": "MyResource",
+                        "resource": "ns.foo#MyResource",
                         "ids": {
                             "abc": "abc"
                         }
                     },
                     {
-                        "resource": "MyResource"
+                        "resource": "ns.foo#MyResource"
                     }
                 ]
             }

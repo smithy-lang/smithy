@@ -59,7 +59,7 @@
             "traits": {
                 "smithy.api#references": [
                     {
-                        "resource": "MyResource",
+                        "resource": "ns.foo#MyResource",
                         "ids": {
                             "id": "id"
                         }
