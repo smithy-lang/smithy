@@ -18,7 +18,6 @@ package software.amazon.smithy.aws.traits;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -27,7 +26,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -37,7 +35,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder<ServiceTrait> {
     public static final ShapeId ID = ShapeId.from("aws.api#service");
-    private static final Logger LOGGER = Logger.getLogger(ServiceTrait.class.getName());
 
     private final String abbreviation;
     private final String cloudFormationName;
@@ -67,14 +64,17 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                     "sdkId", "arnNamespace", "cloudFormationName", "cloudTrailEventSource", "abbreviation"));
 
             Builder builder = builder();
-            String sdkId = getOneStringValue(objectNode, "sdkId", "sdkServiceId")
+            String sdkId = objectNode.getStringMember("sdkId")
+                    .map(StringNode::getValue)
                     .orElseThrow(() -> new SourceException(String.format(
                             "No sdkId was provided. Perhaps you could set this to %s?",
                             target.getName()), value));
             builder.sdkId(sdkId);
-            getOneStringValue(objectNode, "arnNamespace", "arnService")
+            objectNode.getStringMember("arnNamespace")
+                    .map(StringNode::getValue)
                     .ifPresent(builder::arnNamespace);
-            getOneStringValue(objectNode, "cloudFormationName", "productName")
+            objectNode.getStringMember("cloudFormationName")
+                    .map(StringNode::getValue)
                     .ifPresent(builder::cloudFormationName);
             objectNode.getStringMember("cloudTrailEventSource").map(StringNode::getValue)
                     .ifPresent(builder::cloudTrailEventSource);
@@ -82,17 +82,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                     .ifPresent(builder::abbreviation);
             return builder.build(target);
         }
-    }
-
-    private static Optional<String> getOneStringValue(ObjectNode object, String key1, String key2) {
-        return OptionalUtils.or(object.getStringMember(key1), () -> {
-            Optional<StringNode> result = object.getStringMember(key2);
-            if (result.isPresent()) {
-                LOGGER.warning(() -> "The `" + ID + "` property `" + key2 + "` is deprecated. Use `"
-                                     + key1 + "` instead.");
-            }
-            return result;
-        }).map(StringNode::getValue);
     }
 
     /**

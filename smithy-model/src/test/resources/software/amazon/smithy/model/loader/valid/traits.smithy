@@ -54,7 +54,7 @@ resource Foo {
 
 // Quoted string array
 
-@references([{ "resource": "Foo" }, { "resource": "Foo", "rel": "baz" }])
+@references([{ "resource": "com.example#Foo" }, { "resource": "com.example#Foo", "rel": "baz" }])
 string J
 
 // Empty object

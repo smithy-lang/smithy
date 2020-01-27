@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -40,7 +39,6 @@ import software.amazon.smithy.utils.ListUtils;
  * validators; smithy.suppressions and suppressions.
  */
 final class ValidationLoader {
-    private static final Logger LOGGER = Logger.getLogger(ValidationLoader.class.getName());
     private static final List<String> SEVERITIES = ListUtils.of("DANGER", "WARNING", "NOTE");
     private static final List<String> SUPPRESSION_PROPERTIES = ListUtils.of("ids", "shapes", "reason");
     private static final List<String> VALIDATOR_PROPERTIES = ListUtils.of(
@@ -49,35 +47,11 @@ final class ValidationLoader {
     private ValidationLoader() {}
 
     static ValidatedResult<List<ValidatorDefinition>> loadValidators(Map<String, Node> metadata) {
-        return loadMultiple(metadata, "validators", "smithy.validators", ValidationLoader::loadSingleValidator);
+        return load(metadata, "validators", ValidationLoader::loadSingleValidator);
     }
 
     static ValidatedResult<List<Suppression>> loadSuppressions(Map<String, Node> metadata) {
-        return loadMultiple(metadata, "suppressions", "smithy.suppressions", ValidationLoader::loadSingleSuppression);
-    }
-
-    private static <T> ValidatedResult<List<T>> loadMultiple(
-            Map<String, Node> metadata,
-            String newKey,
-            String oldKey,
-            Function<ObjectNode, T> f
-    ) {
-        if (!metadata.containsKey(oldKey)) {
-            return load(metadata, newKey, f);
-        }
-
-        LOGGER.warning(String.format("`%s` is deprecated. Use `%s` instead", oldKey, newKey));
-        if (!metadata.containsKey(newKey)) {
-            return load(metadata, oldKey, f);
-        }
-
-        ValidatedResult<List<T>> result1 = load(metadata, newKey, f);
-        ValidatedResult<List<T>> result2 = load(metadata, oldKey, f);
-        List<T> merged = new ArrayList<>(result1.getResult().orElse(ListUtils.of()));
-        merged.addAll(result2.getResult().orElse(ListUtils.of()));
-        List<ValidationEvent> events = new ArrayList<>(result1.getValidationEvents());
-        events.addAll(result2.getValidationEvents());
-        return new ValidatedResult<>(merged, events);
+        return load(metadata, "suppressions", ValidationLoader::loadSingleSuppression);
     }
 
     private static <T> ValidatedResult<List<T>> load(

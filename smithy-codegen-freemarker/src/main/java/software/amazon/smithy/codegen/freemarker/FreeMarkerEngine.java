@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import software.amazon.smithy.codegen.core.CodegenException;
-import software.amazon.smithy.codegen.core.TemplateEngine;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
@@ -49,7 +48,7 @@ import software.amazon.smithy.utils.StringUtils;
  *
  * @see <a href="https://freemarker.apache.org/">FreeMarker</a>
  */
-public final class FreeMarkerEngine implements TemplateEngine {
+public final class FreeMarkerEngine {
 
     private final Configuration freeMarkerConfig;
     private final Map<String, Object> defaultContext;

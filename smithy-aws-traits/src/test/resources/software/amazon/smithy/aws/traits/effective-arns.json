@@ -11,7 +11,7 @@
             ],
             "traits": {
                 "aws.api#service": {
-                    "sdkServiceId": "Some Value"
+                    "sdkId": "Some Value"
                 }
             }
         },

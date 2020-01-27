@@ -34,7 +34,7 @@ public class ServiceTraitTest {
 
     @Test
     public void loadsTraitWithString() {
-        Node node = Node.parse("{\"sdkServiceId\": \"Foo\"}");
+        Node node = Node.parse("{\"sdkId\": \"Foo\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(ServiceTrait.ID, ShapeId.from("ns.foo#Foo"), node);
 
@@ -50,7 +50,7 @@ public class ServiceTraitTest {
 
     @Test
     public void loadsTraitWithOptionalValues() {
-        Node node = Node.parse("{\"sdkServiceId\": \"Foo\", \"arnService\": \"service\", \"productName\": \"Baz\"}");
+        Node node = Node.parse("{\"sdkId\": \"Foo\", \"arnNamespace\": \"service\", \"cloudFormationName\": \"Baz\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(ServiceTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
@@ -64,7 +64,7 @@ public class ServiceTraitTest {
 
     @Test
     public void loadsEventSource() {
-        Node node = Node.parse("{\"sdkServiceId\": \"Foo\", \"cloudTrailEventSource\": \"foo.amazonaws.com\"}");
+        Node node = Node.parse("{\"sdkId\": \"Foo\", \"cloudTrailEventSource\": \"foo.amazonaws.com\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(ServiceTrait.ID, ShapeId.from("ns.foo#foo"), node);
 

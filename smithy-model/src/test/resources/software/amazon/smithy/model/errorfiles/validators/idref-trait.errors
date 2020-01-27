@@ -1,6 +1,6 @@
-[ERROR] ns.foo#Invalid1: Error validating trait `ns.foo#usesIdRef`: Invalid shape ID: ns.foo#invalid-shape-id! | TraitValue
+[ERROR] ns.foo#Invalid1: Error validating trait `ns.foo#usesIdRef`: Invalid shape ID: invalidshapeid | TraitValue
 [ERROR] ns.foo#Invalid2: Error validating trait `ns.foo#usesIdRef`: Shape ID `ns.foo#SomeNumber` does not match selector `string` | TraitValue
-[ERROR] ns.foo#Invalid3: Error validating trait `ns.foo#usesIdRef`: Shape ID `NotFound` was not found in the model | TraitValue
+[ERROR] ns.foo#Invalid3: Error validating trait `ns.foo#usesIdRef`: Shape ID `ns.foo#NotFound` was not found in the model | TraitValue
 [ERROR] ns.foo#Invalid4: Error validating trait `ns.foo#grammarOnly`: Invalid shape ID: ns.foo#invalid-shape-id! | TraitValue
 [ERROR] ns.foo#InvalidAllowsMissing1: Error validating trait `ns.foo#allowsMissing`: Shape ID `ns.foo#OtherString` does not match selector `number` | TraitValue
 [ERROR] ns.foo#InvalidCustomErrorMessage1: Error validating trait `ns.foo#customErrorMessage`: Custom error message | TraitValue
