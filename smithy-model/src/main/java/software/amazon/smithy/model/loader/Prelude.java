@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.loader;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -33,7 +32,6 @@ import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
@@ -88,7 +86,6 @@ import software.amazon.smithy.model.traits.XmlFlattenedTrait;
 import software.amazon.smithy.model.traits.XmlNameTrait;
 import software.amazon.smithy.model.traits.XmlNamespaceTrait;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
@@ -222,26 +219,6 @@ public final class Prelude {
     public static boolean isPublicPreludeShape(ToShapeId id) {
         ShapeId toId = id.toShapeId();
         return PUBLIC_PRELUDE_SHAPE_IDS.contains(toId) || PRELUDE_TRAITS.contains(toId);
-    }
-
-    /**
-     * Returns the resolved shape of a shape target by first checking if a
-     * shape in the namespace relative to the target matches the given name,
-     * and then by checking if a public prelude shape matches the given name.
-     *
-     * @param model Model to resolve against.
-     * @param fromNamespace Namespace the target was defined in.
-     * @param target The shape target (e.g., "foo", "smithy.api#String", etc.).
-     * @return Returns the optionally resolved shape.
-     * @throws ShapeIdSyntaxException if the target or namespace is invalid.
-     */
-    public static Optional<Shape> resolveShapeId(Model model, String fromNamespace, String target) {
-        // First check shapes in the same namespace.
-        return OptionalUtils.or(
-                model.getShape(ShapeId.fromOptionalNamespace(fromNamespace, target)),
-                // Then check shapes in the prelude that are public.
-                () -> model.getShape(ShapeId.fromParts(NAMESPACE, target)).filter(Prelude::isPublicPreludeShape)
-        );
     }
 
     // Used by the ModelAssembler to load the prelude into another visitor.

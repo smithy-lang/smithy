@@ -23,21 +23,21 @@
             "traits": {
                 "smithy.api#references": [
                     {
-                        "resource": "MyResource",
+                        "resource": "ns.foo#MyResource",
                         "ids": {
                             "notId": "abc",
                             "def": "def"
                         }
                     },
                     {
-                        "resource": "MyResource",
+                        "resource": "ns.foo#MyResource",
                         "ids": {
                             "abc": "notMember",
                             "def": "def"
                         }
                     },
                     {
-                        "resource": "MyResource",
+                        "resource": "ns.foo#MyResource",
                         "ids": {
                             "abc": "abc",
                             "def": "hij"
