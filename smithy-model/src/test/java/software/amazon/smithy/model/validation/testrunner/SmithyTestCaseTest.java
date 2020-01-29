@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.validation.testrunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.util.Collections;
@@ -26,6 +27,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 
 public class SmithyTestCaseTest {
     @Test
@@ -104,5 +106,42 @@ public class SmithyTestCaseTest {
         SmithyTestCase.Result result = testCase.createResult(validated);
 
         assertThat(result.isInvalid(), is(true));
+    }
+
+    @Test
+    public void newlinesAreBetweenEventsWhenFormatting() {
+        ValidationEvent e1 = ValidationEvent.builder()
+                .eventId("FooBar")
+                .severity(Severity.DANGER)
+                .message("a")
+                .shapeId(ShapeId.from("foo.baz#Bar"))
+                .build();
+        ValidationEvent e2 = ValidationEvent.builder()
+                .eventId("FooBar")
+                .severity(Severity.DANGER)
+                .message("b")
+                .shapeId(ShapeId.from("foo.baz#Bar"))
+                .build();
+
+        SmithyTestCase.Result result = new SmithyTestCase.Result(
+                "/foo/bar.json",
+                ListUtils.of(e1, e2),
+                ListUtils.of(e1, e2));
+
+        assertThat(result.toString(), equalTo("=======================\n"
+                                              + "Model Validation Result\n"
+                                              + "=======================\n"
+                                              + "/foo/bar.json\n"
+                                              + "\n"
+                                              + "Did not match the following events\n"
+                                              + "----------------------------------\n"
+                                              + "[DANGER] foo.baz#Bar: a | FooBar N/A:0:0\n"
+                                              + "[DANGER] foo.baz#Bar: b | FooBar N/A:0:0\n"
+                                              + "\n"
+                                              + "\n"
+                                              + "Encountered unexpected events\n"
+                                              + "-----------------------------\n"
+                                              + "[DANGER] foo.baz#Bar: a | FooBar N/A:0:0\n"
+                                              + "[DANGER] foo.baz#Bar: b | FooBar N/A:0:0\n\n"));
     }
 }
