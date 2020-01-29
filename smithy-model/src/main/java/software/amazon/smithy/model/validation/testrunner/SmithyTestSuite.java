@@ -305,11 +305,12 @@ public final class SmithyTestSuite {
             return failedResults;
         }
 
+        @Override
         public String toString() {
             StringBuilder builder = new StringBuilder(String.format(
                     "Smithy validation test runner encountered %d successful result(s), and %d failed result(s)",
                     getSuccessCount(), getFailedResults().size()));
-            getFailedResults().forEach(failed -> builder.append("\n").append(failed.toString()));
+            getFailedResults().forEach(failed -> builder.append('\n').append(failed.toString()).append('\n'));
             return builder.toString();
         }
     }

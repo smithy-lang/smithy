@@ -188,28 +188,28 @@ public final class SmithyTestCase {
         public String toString() {
             StringBuilder builder = new StringBuilder();
 
-            builder.append("\n=======================\n"
+            builder.append("=======================\n"
                            + "Model Validation Result\n"
                            + "=======================\n")
                     .append(getModelLocation())
-                    .append("\n");
+                    .append('\n');
 
             if (!getUnmatchedEvents().isEmpty()) {
                 builder.append("\nDid not match the following events\n"
                                + "----------------------------------\n");
                 for (ValidationEvent event : getUnmatchedEvents()) {
-                    builder.append(event.toString().replace("\n", "\\n"));
+                    builder.append(event.toString().replace("\n", "\\n")).append('\n');
                 }
-                builder.append("\n");
+                builder.append('\n');
             }
 
             if (!getExtraEvents().isEmpty()) {
                 builder.append("\nEncountered unexpected events\n"
                                + "-----------------------------\n");
                 for (ValidationEvent event : getExtraEvents()) {
-                    builder.append(event.toString().replace("\n", "\\n"));
+                    builder.append(event.toString().replace("\n", "\\n")).append("\n");
                 }
-                builder.append("\n");
+                builder.append('\n');
             }
 
             return builder.toString();
