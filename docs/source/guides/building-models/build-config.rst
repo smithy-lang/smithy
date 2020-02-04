@@ -437,54 +437,6 @@ orphaned shapes.
     This transformer does not remove shapes from the prelude.
 
 
-.. _includeAuth-transform:
-
-includeAuth
------------
-
-Removes authentication schemes from shapes that do not match one of the
-given arguments (a list of authentication schemes).
-
-.. tabs::
-
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {"name": "includeAuth", "args": ["aws.v4", "http-basic"]}
-                    ]
-                }
-            }
-        }
-
-
-.. _includeProtocols-transform:
-
-includeProtocols
-----------------
-
-Removes protocols from service shapes that do not match one of the given
-arguments (a list of protocol names).
-
-.. tabs::
-
-    .. code-tab:: json
-
-        {
-            "version": "1.0",
-            "projections": {
-                "exampleProjection": {
-                    "transforms": [
-                        {"name": "includeProtocols", "args": ["aws.rest-json"]}
-                    ]
-                }
-            }
-        }
-
-
 .. _includeTags-transform:
 
 includeTags

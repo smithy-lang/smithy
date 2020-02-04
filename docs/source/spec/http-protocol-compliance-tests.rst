@@ -91,10 +91,11 @@ that support the following properties:
         ``id`` MUST match Smithy's :token:`identifier` ABNF. No two
         ``httpRequestTests`` test cases can share the same ID.
     * - protocol
-      - ``string``
-      - **Required**. The name of the :ref:`protocol <protocols-trait>` to
-        test. Because Smithy services can support multiple protocols, each
-        test MUST specify which protocol is under test.
+      - shape ID
+      - **Required**. A shape ID that targets a shape marked with the
+        ``protocolDefinition`` trait. Because Smithy services can support
+        multiple protocols, each test MUST specify which protocol is under
+        test.
     * - method
       - ``string``
       - **Required**. The expected serialized HTTP request method.
@@ -103,10 +104,11 @@ that support the following properties:
       - **Required**. The request-target of the HTTP request, not including
         the query string (for example, "/foo/bar").
     * - authScheme
-      - ``string``
-      - The optional :ref:`authentication scheme <auth-trait>` to assume.
-        It's possible that specific authentication schemes might influence
-        the serialization logic of an HTTP request.
+      - shape ID
+      - A shape ID that specifies the optional authentication scheme to
+        assume. It's possible that specific authentication schemes might
+        influence the serialization logic of an HTTP request. The targeted
+        shape MUST be marked with the ``authDefinition`` trait.
     * - queryParams
       - ``[string]``
       - A list of the expected serialized query string parameters.
@@ -212,7 +214,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
         @httpRequestTests([
             {
                 id: "say_hello",
-                protocol: "example",
+                protocol: exampleProtocol,
                 params: {
                     "greeting": "Hi",
                     "name": "Teddy",
@@ -263,7 +265,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                         "smithy.test#httpRequestTests": [
                             {
                                 "id": "say_hello",
-                                "protocol": "example",
+                                "protocol": "smithy.example#exampleProtocol",
                                 "method": "POST",
                                 "uri": "/",
                                 "headers": {
@@ -337,17 +339,19 @@ that support the following properties:
         ``httpResponseTests`` test cases can share the same ID.
     * - protocol
       - ``string``
-      - **Required**. The name of the :ref:`protocol <protocols-trait>` to
-        test. Because Smithy services can support multiple protocols, each
-        test MUST specify which protocol is under test.
+      - **Required**. A shape ID that targets a shape marked with the
+        ``protocolDefinition`` trait. Because Smithy services can support
+        multiple protocols, each test MUST specify which protocol is under
+        test.
     * - code
       - ``integer``
       - **Required**. The expected HTTP response status code.
     * - authScheme
-      - ``string``
-      - The optional :ref:`authentication scheme <auth-trait>` to assume.
-        It's possible that specific authentication schemes might influence
-        the serialization logic of an HTTP response.
+      - shape ID
+      - A shape ID that specifies the optional authentication scheme to
+        assume. It's possible that specific authentication schemes might
+        influence the serialization logic of an HTTP response. The targeted
+        shape MUST be marked with the ``authDefinition`` trait.
     * - headers
       - ``Map<String, String>``
       - A map of expected HTTP headers. Each key represents a header field
@@ -411,7 +415,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
         @httpResponseTests([
             {
                 id: "say_goodbye",
-                protocol: "example",
+                protocol: exampleProtocol,
                 params: {farewell: "Bye"},
                 code: 200,
                 headers: {
@@ -448,7 +452,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                         "smithy.test#httpResponseTests": [
                             {
                                 "id": "say_goodbye",
-                                "protocol": "example",
+                                "protocol": "smithy.example#exampleProtocol",
                                 "headers": {
                                     "Content-Length": "0",
                                     "X-Farewell": "Bye"
@@ -500,7 +504,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
         @httpResponseTests([
             {
                 id: "invalid_greeting",
-                protocol: "example",
+                protocol: exampleProtocol,
                 params: {foo: "baz", message: "Hi"},
                 code: 400,
                 headers: {"X-Foo": "baz"},
@@ -539,7 +543,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
                         "smithy.test#httpResponseTests": [
                             {
                                 "id": "invalid_greeting",
-                                "protocol": "example",
+                                "protocol": "smithy.example#exampleProtocol",
                                 "body": "{\"message\": \"Hi\"}",
                                 "bodyMediaType": "application/json",
                                 "headers": {
