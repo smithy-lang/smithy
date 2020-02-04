@@ -40,47 +40,83 @@ structure deprecated {
 @trait
 string documentation
 
-/// Defines the protocols supported by a service in priority order.
-@trait(selector: "service")
-list protocols {
-    member: Protocol,
-}
-
-@private
-structure Protocol {
-    /// The name that identifies the protocol.
-    ///
-    /// This name must be unique across the entire list.
-    @required
-    name: ProtocolOrAuthName,
-
-    /// Attaches a list of tags that allow protocols to be categorized and grouped.
-    tags: NonEmptyStringList,
-
-    /// A priority ordered list of authentication schemes used with this protocol.
-    auth: AuthenticationSchemes,
-}
-
-@private
-@uniqueItems
-list AuthenticationSchemes {
-    member: ProtocolOrAuthName
-}
-
-@pattern("^[a-z][a-z0-9\\-.+]*$")
-@private
-string ProtocolOrAuthName
-
-/// Defines the authentication schemes supported by a service or operation.
-@trait(selector: ":test(service, operation)")
-@uniqueItems
-list auth {
-    member: ProtocolOrAuthName
-}
-
 /// Provides a link to additional documentation.
 @trait
 string externalDocumentation
+
+/// Defines the list of authentication schemes supported by a service or operation.
+@trait(selector: ":test(service, operation)")
+@uniqueItems
+list auth {
+    member: AuthTraitReference
+}
+
+/// A string that must target an auth trait.
+@idRef(selector: "[trait|authDefinition]")
+@private
+string AuthTraitReference
+
+/// Marks a trait as a protocol defining trait.
+///
+/// The targeted trait must only be applied to service shapes, must be a
+/// structure, and must have the `trait` trait.
+@trait(selector: "structure[trait|trait]")
+@tags(["diff.error.add", "diff.error.remove"])
+structure protocolDefinition {}
+
+/// Marks a trait as an auth scheme defining trait.
+///
+/// The targeted trait must only be applied to service shapes or operation
+/// shapes, must be a structure, and must have the `trait` trait.
+@trait(selector: "structure[trait|trait]")
+@tags(["diff.error.add", "diff.error.remove"])
+structure authDefinition {}
+
+/// Enables HTTP Basic Authentication as defined in RFC 2617
+/// on a service or operation.
+@trait(selector: ":test(service, operation)")
+@authDefinition
+@externalDocumentation("https://tools.ietf.org/html/rfc2617.html")
+structure httpBasicAuth {}
+
+/// Enables HTTP Digest Authentication as defined in RFC 2617
+/// on a service or operation.
+@trait(selector: ":test(service, operation)")
+@authDefinition
+@externalDocumentation("https://tools.ietf.org/html/rfc2617.html")
+structure httpDigestAuth {}
+
+/// Enables HTTP Bearer Authentication as defined in RFC 6750
+/// on a service or operation.
+@trait(selector: ":test(service, operation)")
+@authDefinition
+@externalDocumentation("https://tools.ietf.org/html/rfc6750.html")
+structure httpBearerAuth {}
+
+/// An HTTP-specific authentication scheme that sends an arbitrary
+/// API key in the `X-Api-Key` HTTP header. The "header" property
+/// can be used to use a custom header name for the API key.
+@trait(selector: ":test(service, operation)")
+@authDefinition
+structure httpApiKeyAuth {
+    /// Defines the name of the HTTP header, query string parameter,
+    /// or cookie to set that contains the API key.
+    @required
+    name: NonEmptyString,
+
+    /// Defines the location of where the key is serialized. This value
+    /// can be set to `"cookie"`, `"header"`, or `"query"`.
+    @required
+    in: HttpApiKeyLocations,
+}
+
+@private
+@enum(header: {}, cookie: {}, query: {})
+string HttpApiKeyLocations
+
+/// Indicates that an operation can be called without authentication.
+@trait(selector: "operation")
+structure optionalAuth {}
 
 /// Provides example inputs and outputs for operations.
 @trait(selector: "operation")

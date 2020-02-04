@@ -25,14 +25,7 @@
                 {
                     "target": "ns.foo#OC"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#RA": {
             "type": "resource",
