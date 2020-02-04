@@ -2,6 +2,10 @@ $version: "0.5.0"
 
 namespace smithy.mqtt
 
+@trait(selector: "service")
+@protocolDefinition
+structure mqttJson {}
+
 @trait(selector: "operation:not(-[output]->)",
        conflicts: ["smithy.mqtt#subscribe"])
 @tags(["diff.error.const"])
