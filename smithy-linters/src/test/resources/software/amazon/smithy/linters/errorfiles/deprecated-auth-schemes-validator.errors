@@ -1,3 +1,0 @@
-[WARNING] ns.foo#MyService: The bar auth scheme is deprecated. Because it's not a good idea. | Flawed Schemes
-[WARNING] ns.foo#MyService: The baz auth scheme is deprecated. Because it's not a good idea. | Flawed Schemes
-[WARNING] ns.foo#MyService: The qux auth scheme is deprecated. Because we said so. | Slow Schemes
