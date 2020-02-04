@@ -11,14 +11,7 @@
                 {
                     "target": "ns.foo#ResourceB"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#ResourceA": {
             "type": "resource",

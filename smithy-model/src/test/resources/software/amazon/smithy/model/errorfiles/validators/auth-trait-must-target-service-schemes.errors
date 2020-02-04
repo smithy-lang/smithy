@@ -1,0 +1,1 @@
+[DANGER] ns.foo#InvalidOperation: auth trait applies authentication that is not configured on the service shape, `ns.foo#Service`: [smithy.api#httpApiKeyAuth, smithy.api#httpBearerAuth] | AuthTrait

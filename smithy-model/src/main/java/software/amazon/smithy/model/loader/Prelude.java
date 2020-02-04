@@ -36,6 +36,7 @@ import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.traits.AuthDefinitionTrait;
 import software.amazon.smithy.model.traits.AuthTrait;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.CorsTrait;
@@ -50,6 +51,10 @@ import software.amazon.smithy.model.traits.EventStreamTrait;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.HostLabelTrait;
+import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
+import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
+import software.amazon.smithy.model.traits.HttpBearerAuthTrait;
+import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
 import software.amazon.smithy.model.traits.HttpErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
@@ -63,10 +68,11 @@ import software.amazon.smithy.model.traits.IdempotentTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.OptionalAuthTrait;
 import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.model.traits.PatternTrait;
 import software.amazon.smithy.model.traits.PrivateTrait;
-import software.amazon.smithy.model.traits.ProtocolsTrait;
+import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
 import software.amazon.smithy.model.traits.RangeTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
 import software.amazon.smithy.model.traits.ReferencesTrait;
@@ -166,7 +172,13 @@ public final class Prelude {
             PaginatedTrait.ID,
             PatternTrait.ID,
             PrivateTrait.ID,
-            ProtocolsTrait.ID,
+            ProtocolDefinitionTrait.ID,
+            AuthDefinitionTrait.ID,
+            HttpApiKeyAuthTrait.ID,
+            HttpBasicAuthTrait.ID,
+            HttpDigestAuthTrait.ID,
+            HttpBearerAuthTrait.ID,
+            OptionalAuthTrait.ID,
             RangeTrait.ID,
             ReadonlyTrait.ID,
             ReferencesTrait.ID,

@@ -15,46 +15,61 @@
 
 package software.amazon.smithy.model.traits;
 
+import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.ToSmithyBuilder;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
- * Represents the Smithy {@code auth} trait, used to specify the auth
- * schemes supported by default for operations bound to a service.
+ * Specifies the auth schemes supported by default for operations
+ * bound to a service.
  */
-public final class AuthTrait extends StringListTrait implements ToSmithyBuilder<AuthTrait> {
+public final class AuthTrait extends AbstractTrait {
+
     public static final ShapeId ID = ShapeId.from("smithy.api#auth");
 
-    private AuthTrait(List<String> values, FromSourceLocation sourceLocation) {
-        super(ID, values, sourceLocation);
+    private final List<ShapeId> values;
+
+    public AuthTrait(List<ShapeId> values, FromSourceLocation sourceLocation) {
+        super(ID, sourceLocation);
+        this.values = ListUtils.copyOf(values);
     }
 
-    public static final class Provider extends StringListTrait.Provider<AuthTrait> {
+    public AuthTrait(List<ShapeId> values) {
+        this(values, SourceLocation.NONE);
+    }
+
+    /**
+     * Gets the auth scheme trait values.
+     *
+     * @return Returns the supported auth schemes.
+     */
+    public List<ShapeId> getValues() {
+        return values;
+    }
+
+    public static final class Provider extends AbstractTrait.Provider {
         public Provider() {
-            super(ID, AuthTrait::new);
+            super(ID);
+        }
+
+        @Override
+        public Trait createTrait(ShapeId target, Node value) {
+            List<ShapeId> values = new ArrayList<>();
+            for (StringNode node : value.expectArrayNode().getElementsAs(StringNode.class)) {
+                values.add(node.expectShapeId());
+            }
+            return new AuthTrait(values, value.getSourceLocation());
         }
     }
 
     @Override
-    public Builder toBuilder() {
-        return builder().values(getValues());
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Builds an {@link AuthTrait}.
-     */
-    public static final class Builder extends StringListTrait.Builder<AuthTrait, Builder> {
-        private Builder() {}
-
-        @Override
-        public AuthTrait build() {
-            return new AuthTrait(getValues(), getSourceLocation());
-        }
+    protected Node createNode() {
+        return getValues().stream().map(ShapeId::toString).map(Node::from).collect(ArrayNode.collect());
     }
 }

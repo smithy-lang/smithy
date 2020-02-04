@@ -13,18 +13,7 @@
                 {
                     "target": "ns.foo#MyResource"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo",
-                        "auth": [
-                            "foo.baz",
-                            "foo.bar"
-                        ]
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#MyOperation": {
             "type": "operation",
