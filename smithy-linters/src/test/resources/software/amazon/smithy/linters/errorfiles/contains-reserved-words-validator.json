@@ -51,14 +51,7 @@
                 {
                     "target": "ns.foo#OperationA"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#MyResource": {
             "type": "resource",
