@@ -86,4 +86,10 @@
         <Class name="software.amazon.smithy.utils.IoUtils"/>
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
     </Match>
+
+    <!-- This is a false positive. The value is guarded behind an Objects.requireNonNull -->
+    <Match>
+        <Class name="software.amazon.smithy.model.knowledge.ServiceIndex"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
 </FindBugsFilter>
