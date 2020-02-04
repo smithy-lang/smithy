@@ -1,1 +1,0 @@
-[WARNING] ns.foo#InvalidOperation1: The `auth` trait resolved for this operation, [x], is not compatible with the `baz` protocol of the `ns.foo#ValidService` service: [y] | AuthProtocols

@@ -28,7 +28,6 @@ software.amazon.smithy.model.traits.MediaTypeTrait$Provider
 software.amazon.smithy.model.traits.PaginatedTrait$Provider
 software.amazon.smithy.model.traits.PatternTrait$Provider
 software.amazon.smithy.model.traits.PrivateTrait$Provider
-software.amazon.smithy.model.traits.ProtocolsTrait$Provider
 software.amazon.smithy.model.traits.RangeTrait$Provider
 software.amazon.smithy.model.traits.ReadonlyTrait$Provider
 software.amazon.smithy.model.traits.ReferencesTrait$Provider
@@ -47,3 +46,9 @@ software.amazon.smithy.model.traits.XmlAttributeTrait$Provider
 software.amazon.smithy.model.traits.XmlFlattenedTrait$Provider
 software.amazon.smithy.model.traits.XmlNamespaceTrait$Provider
 software.amazon.smithy.model.traits.XmlNameTrait$Provider
+software.amazon.smithy.model.traits.ProtocolDefinitionTrait$Provider
+software.amazon.smithy.model.traits.AuthDefinitionTrait$Provider
+software.amazon.smithy.model.traits.HttpBasicAuthTrait$Provider
+software.amazon.smithy.model.traits.HttpBearerAuthTrait$Provider
+software.amazon.smithy.model.traits.HttpDigestAuthTrait$Provider
+software.amazon.smithy.model.traits.OptionalAuthTrait$Provider

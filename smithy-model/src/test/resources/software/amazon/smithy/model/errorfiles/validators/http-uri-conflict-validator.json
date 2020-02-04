@@ -56,14 +56,7 @@
                 {
                     "target": "ns.foo#ConflictsWithoutPattern2"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "example"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#A": {
             "type": "operation",
