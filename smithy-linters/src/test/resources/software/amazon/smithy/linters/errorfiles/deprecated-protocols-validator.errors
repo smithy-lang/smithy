@@ -1,3 +1,0 @@
-[WARNING] ns.foo#MyService: The bar protocol is deprecated. Because it's not a good idea. | Flawed Protocols
-[WARNING] ns.foo#MyService: The baz protocol is deprecated. Because it's not a good idea. | Flawed Protocols
-[WARNING] ns.foo#MyService: The foo protocol is deprecated. Because we said so. | Old Protocols
