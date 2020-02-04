@@ -8,17 +8,7 @@
                 {
                     "target": "ns.foo#MyResource"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo"
-                    },
-                    {
-                        "name": "baz"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#MyResource": {
             "type": "resource",

@@ -3,14 +3,7 @@
     "shapes": {
         "ns.foo#MyService": {
             "type": "service",
-            "version": "2017-01-19",
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo"
-                    }
-                ]
-            }
+            "version": "2017-01-19"
         },
         "ns.foo#Exclude1": {
             "type": "string"
