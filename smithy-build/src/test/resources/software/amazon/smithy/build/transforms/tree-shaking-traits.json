@@ -38,14 +38,7 @@
                 {
                     "target": "ns.foo#MyOperation"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#MyOperation": {
             "type": "operation",
