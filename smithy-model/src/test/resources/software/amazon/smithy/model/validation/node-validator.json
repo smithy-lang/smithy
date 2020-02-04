@@ -300,14 +300,7 @@
                 {
                     "target": "ns.foo#Resource"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#Operation": {
             "type": "operation",

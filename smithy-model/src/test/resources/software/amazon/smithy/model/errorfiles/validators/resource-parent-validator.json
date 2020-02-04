@@ -14,14 +14,7 @@
                 {
                     "target": "ns.foo#InvalidResourceBindingType"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#ValidResource": {
             "type": "resource"

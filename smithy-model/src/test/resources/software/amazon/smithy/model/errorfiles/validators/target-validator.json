@@ -41,14 +41,7 @@
                 {
                     "target": "ns.foo#InvalidResourceLifecycle"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#MyResource": {
             "type": "resource",

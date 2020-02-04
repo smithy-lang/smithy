@@ -20,14 +20,7 @@
                 {
                     "target": "ns.foo#WithLabels"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "example"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#ServiceOperationNoInputOutput": {
             "type": "operation",

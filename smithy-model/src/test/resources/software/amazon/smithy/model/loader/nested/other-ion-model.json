@@ -11,14 +11,7 @@
                 {
                     "target": "example.namespace#Resource"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "test-protocol"
-                    }
-                ]
-            }
+            ]
         },
         "example.namespace#Resource": {
             "type": "resource",

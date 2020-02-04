@@ -14,14 +14,7 @@
                 {
                     "target": "ns.foo#MissingBindings2"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo"
-                    }
-                ]
-            }
+            ]
         },
         "ns.foo#HasBindings": {
             "type": "operation",

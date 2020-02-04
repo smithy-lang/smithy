@@ -1,0 +1,29 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Valid1": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#auth": ["smithy.api#httpBasicAuth", "smithy.api#httpBearerAuth"]
+            }
+        },
+        "ns.foo#Valid2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#auth": []
+            }
+        },
+        "ns.foo#Invalid1": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#auth": ["not a shape ID"]
+            }
+        },
+        "ns.foo#Invalid2": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#auth": ["smithy.api#String"]
+            }
+        }
+    }
+}
