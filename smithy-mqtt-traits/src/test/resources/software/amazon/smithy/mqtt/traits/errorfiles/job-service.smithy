@@ -2,7 +2,9 @@ metadata suppressions = [{"ids": ["UnstableFeature"], "shapes": ["aws.iotjobs#Jo
 
 namespace aws.iotjobs
 
-@protocols([{name: "aws.mqtt-json"}])
+use smithy.mqtt#mqttJson
+
+@mqttJson
 service IotJobs {
   version: "2018-08-14",
   operations: [
