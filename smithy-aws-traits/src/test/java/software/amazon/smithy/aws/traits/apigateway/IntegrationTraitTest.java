@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.aws.traits.TestRunnerTest;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -46,7 +47,7 @@ public class IntegrationTraitTest {
     public void loadsTraitFromModel() {
         Model model = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
-                .addImport(getClass().getResource("errorfiles/valid-integration.json"))
+                .addImport(TestRunnerTest.class.getResource("errorfiles/apigateway/valid-integration.json"))
                 .assemble()
                 .unwrap();
 

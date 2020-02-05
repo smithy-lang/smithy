@@ -1,0 +1,63 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "aws.auth#sigv4": {
+            "type": "structure",
+            "members": {
+                "name": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": true,
+                        "smithy.api#documentation": "Defines the service name to use in the credential scope.",
+                        "smithy.api#externalDocumentation": "https://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html"
+                    }
+                },
+                "singleEncodeCanonicalPath": {
+                    "target": "smithy.api#PrimitiveBoolean",
+                    "traits": {
+                        "smithy.api#documentation": "Set to true to only encode the canonical path once. For example, Amazon S3 does not double-encode the path component in the canonical request.",
+                        "smithy.api#externalDocumentation": "https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-auth-using-authorization-header.html"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": ":test(service, operation)"
+                },
+                "smithy.api#authDefinition": true,
+                "smithy.api#documentation": "Signature Version 4 is the process to add authentication information to AWS requests sent by HTTP. For security, most requests to AWS must be signed with an access key, which consists of an access key ID and secret access key. These two keys are commonly referred to as your security credentials.",
+                "smithy.api#externalDocumentation": "https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html"
+            }
+        },
+        "aws.auth#cognitoUserPools": {
+            "type": "structure",
+            "members": {
+                "providerArns": {
+                    "target": "aws.auth#StringList",
+                    "traits": {
+                        "smithy.api#required": true
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#authDefinition": true,
+                "smithy.api#documentation": "Configures an Amazon Cognito User Pools auth scheme.",
+                "smithy.api#tags": [
+                    "internal"
+                ]
+            }
+        },
+        "aws.auth#StringList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#private": true
+            }
+        }
+    }
+}

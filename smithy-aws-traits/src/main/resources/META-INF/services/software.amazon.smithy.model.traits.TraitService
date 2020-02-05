@@ -1,6 +1,6 @@
 software.amazon.smithy.aws.traits.ArnTrait$Provider
 software.amazon.smithy.aws.traits.ArnReferenceTrait$Provider
-software.amazon.smithy.aws.traits.CognitoUserPoolsSettingsTrait$Provider
+software.amazon.smithy.aws.traits.auth.CognitoUserPoolsTrait$Provider
 software.amazon.smithy.aws.traits.ControlPlaneTrait$Provider
 software.amazon.smithy.aws.traits.DataPlaneTrait$Provider
 software.amazon.smithy.aws.traits.DataTrait$Provider
@@ -21,3 +21,10 @@ software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscover
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryIdTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientDiscoveredEndpointTrait$Provider
 software.amazon.smithy.aws.traits.Ec2QueryNameTrait$Provider
+software.amazon.smithy.aws.traits.protocols.AwsQueryTrait$Provider
+software.amazon.smithy.aws.traits.protocols.Ec2QueryTrait$Provider
+software.amazon.smithy.aws.traits.protocols.RestJson1Trait$Provider
+software.amazon.smithy.aws.traits.protocols.RestXmlTrait$Provider
+software.amazon.smithy.aws.traits.protocols.AwsJson1_0Trait$Provider
+software.amazon.smithy.aws.traits.protocols.AwsJson1_1Trait$Provider
+software.amazon.smithy.aws.traits.auth.SigV4Trait$Provider
