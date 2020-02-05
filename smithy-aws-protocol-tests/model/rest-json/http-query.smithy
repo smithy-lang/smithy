@@ -3,17 +3,18 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
-use aws.protocols.tests.shared#BooleanList
-use aws.protocols.tests.shared#DoubleList
-use aws.protocols.tests.shared#FooEnum
-use aws.protocols.tests.shared#FooEnumList
-use aws.protocols.tests.shared#IntegerList
-use aws.protocols.tests.shared#IntegerSet
-use aws.protocols.tests.shared#StringList
-use aws.protocols.tests.shared#StringSet
-use aws.protocols.tests.shared#TimestampList
+use aws.protocols#restJson1
+use aws.protocoltests.shared#BooleanList
+use aws.protocoltests.shared#DoubleList
+use aws.protocoltests.shared#FooEnum
+use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#IntegerList
+use aws.protocoltests.shared#IntegerSet
+use aws.protocoltests.shared#StringList
+use aws.protocoltests.shared#StringSet
+use aws.protocoltests.shared#TimestampList
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -28,7 +29,7 @@ apply AllQueryStringTypes @httpRequestTests([
     {
         id: "RestJsonAllQueryStringTypes",
         documentation: "Serializes query string parameters with all supported types",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "GET",
         uri: "/AllQueryStringTypes",
         body: "",
@@ -157,7 +158,7 @@ structure AllQueryStringTypesInput {
     {
         id: "RestJsonConstantQueryString",
         documentation: "Includes constant query string parameters",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "GET",
         uri: "/ConstantQueryString/hi",
         queryParams: [
@@ -193,7 +194,7 @@ apply ConstantAndVariableQueryString @httpRequestTests([
     {
         id: "RestJsonConstantAndVariableQueryStringMissingOneValue",
         documentation: "Mixes constant and variable query string parameters",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "GET",
         uri: "/ConstantAndVariableQueryString",
         queryParams: [
@@ -209,7 +210,7 @@ apply ConstantAndVariableQueryString @httpRequestTests([
     {
         id: "RestJsonConstantAndVariableQueryStringAllValues",
         documentation: "Mixes constant and variable query string parameters",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "GET",
         uri: "/ConstantAndVariableQueryString",
         queryParams: [
@@ -246,7 +247,7 @@ apply IgnoreQueryParamsInResponse @httpResponseTests([
     {
         id: "RestJsonIgnoreQueryParamsInResponse",
         documentation: "Query parameters must be ignored when serializing the output of an operation",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         headers: {
             "Content-Type": "application/json"
@@ -275,7 +276,7 @@ apply OmitsNullSerializesEmptyString @httpRequestTests([
     {
         id: "RestJsonOmitsNullSerializesEmptyString",
         documentation: "Serializes empty query strings but omits null",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "GET",
         uri: "/OmitsNullSerializesEmptyString",
         body: "",
@@ -308,7 +309,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
         id: "RestJsonQueryIdempotencyTokenAutoFill",
         documentation: "Automatically adds idempotency token when not set",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/QueryIdempotencyTokenAutoFill",
         body: "",
@@ -319,7 +320,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
         id: "RestJsonQueryIdempotencyTokenAutoFillIsSet",
         documentation: "Uses the given idempotency token as-is",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/QueryIdempotencyTokenAutoFill",
         body: "",

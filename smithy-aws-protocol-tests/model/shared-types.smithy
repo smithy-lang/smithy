@@ -7,7 +7,7 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.shared
+namespace aws.protocoltests.shared
 
 list StringList {
     member: String,

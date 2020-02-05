@@ -20,8 +20,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.ec2
+namespace aws.protocoltests.ec2
 
+use aws.protocols#ec2Query
 use smithy.test#httpResponseTests
 
 /// This operation has three possible return values:
@@ -38,7 +39,7 @@ apply GreetingWithErrors @httpResponseTests([
     {
         id: "Ec2GreetingWithErrors",
         documentation: "Ensures that operations with errors successfully know how to deserialize the successful response",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         headers: {
             "Content-Type": "text/xml;charset=UTF-8"
@@ -70,7 +71,7 @@ apply InvalidGreeting @httpResponseTests([
     {
         id: "Ec2InvalidGreetingError",
         documentation: "Parses simple XML errors",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 400,
         headers: {
             "Content-Type": "text/xml;charset=UTF-8"
@@ -104,7 +105,7 @@ structure ComplexError {
 apply ComplexError @httpResponseTests([
     {
         id: "Ec2ComplexError",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         params: {
             TopLevel: "Top level",
             Nested: {

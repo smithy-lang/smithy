@@ -2,13 +2,14 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.ec2
+namespace aws.protocoltests.ec2
 
 use aws.api#ec2QueryName
-use aws.protocols.tests.shared#FooEnum
-use aws.protocols.tests.shared#FooEnumList
-use aws.protocols.tests.shared#FooEnumSet
-use aws.protocols.tests.shared#FooEnumMap
+use aws.protocols#ec2Query
+use aws.protocoltests.shared#FooEnum
+use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#FooEnumSet
+use aws.protocoltests.shared#FooEnumMap
 use smithy.test#httpResponseTests
 
 // This example serializes simple scalar types in the top level XML document.
@@ -21,7 +22,7 @@ apply SimpleScalarXmlProperties @httpResponseTests([
     {
         id: "Ec2SimpleScalarProperties",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         body: """
               <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
@@ -84,7 +85,7 @@ apply XmlBlobs @httpResponseTests([
     {
         id: "Ec2XmlBlobs",
         documentation: "Blobs are base64 encoded",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         body: """
               <XmlBlobsResponse xmlns="https://example.com/">
@@ -117,7 +118,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "Ec2XmlTimestamps",
         documentation: "Tests how normal timestamps are serialized",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
@@ -136,7 +137,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "Ec2XmlTimestampsWithDateTimeFormat",
         documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
@@ -155,7 +156,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "Ec2XmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
@@ -174,7 +175,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "Ec2XmlTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
@@ -214,7 +215,7 @@ apply XmlEnums @httpResponseTests([
     {
         id: "Ec2XmlEnums",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         body: """
               <XmlEnumsResponse xmlns="https://example.com/">
@@ -278,7 +279,7 @@ apply RecursiveXmlShapes @httpResponseTests([
     {
         id: "Ec2RecursiveShapes",
         documentation: "Serializes recursive structures",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         body: """
               <RecursiveXmlShapesResponse xmlns="https://example.com/">
@@ -341,7 +342,7 @@ apply XmlNamespaces @httpResponseTests([
     {
         id: "Ec2XmlNamespaces",
         documentation: "Serializes XML namespaces",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         body: """
               <XmlNamespacesResponse xmlns="http://foo.com" xmlns="https://example.com/">
@@ -404,7 +405,7 @@ apply IgnoresWrappingXmlName @httpResponseTests([
     {
         id: "Ec2IgnoresWrappingXmlName",
         documentation: "The xmlName trait on the output structure is ignored in the ec2 protocol",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         body: """
               <IgnoresWrappingXmlNameResponse xmlns="http://foo.com" xmlns="https://example.com/">

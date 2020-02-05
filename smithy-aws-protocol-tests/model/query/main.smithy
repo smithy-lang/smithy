@@ -1,12 +1,13 @@
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocoltests.query
 
+use aws.protocols#awsQuery
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// A query service that sends query requests and XML responses.
-@protocols([{"name": "aws.query"}])
+@awsQuery
 @xmlNamespace(uri: "https://example.com/")
 service AwsQuery {
     version: "2020-01-08",

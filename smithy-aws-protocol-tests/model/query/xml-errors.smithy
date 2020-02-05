@@ -25,8 +25,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocoltests.query
 
+use aws.protocols#awsQuery
 use smithy.test#httpResponseTests
 
 /// This operation has three possible return values:
@@ -43,7 +44,7 @@ apply GreetingWithErrors @httpResponseTests([
     {
         id: "QueryGreetingWithErrors",
         documentation: "Ensures that operations with errors successfully know how to deserialize the successful response",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         headers: {
             "Content-Type": "text/xml"
@@ -76,7 +77,7 @@ apply InvalidGreeting @httpResponseTests([
     {
         id: "QueryInvalidGreetingError",
         documentation: "Parses simple XML errors",
-        protocol: "aws.query",
+        protocol: awsQuery,
         params: {
             Message: "Hi"
         },
@@ -109,7 +110,7 @@ structure ComplexError {
 apply ComplexError @httpResponseTests([
     {
         id: "QueryComplexError",
-        protocol: "aws.query",
+        protocol: awsQuery,
         params: {
             TopLevel: "Top level",
             Nested: {

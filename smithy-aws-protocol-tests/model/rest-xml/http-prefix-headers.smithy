@@ -3,8 +3,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocoltests.restxml
 
+use aws.protocols#restXml
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -21,7 +22,7 @@ apply HttpPrefixHeaders @httpRequestTests([
     {
         id: "HttpPrefixHeadersArePresent",
         documentation: "Adds headers by prefix",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "GET",
         uri: "/HttpPrefixHeaders",
         body: "",
@@ -41,7 +42,7 @@ apply HttpPrefixHeaders @httpRequestTests([
     {
         id: "HttpPrefixHeadersAreNotPresent",
         documentation: "No prefix headers are serialized because the value is empty",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "GET",
         uri: "/HttpPrefixHeaders",
         body: "",
@@ -59,7 +60,7 @@ apply HttpPrefixHeaders @httpResponseTests([
     {
         id: "HttpPrefixHeadersArePresent",
         documentation: "Adds headers by prefix",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: "",
         headers: {
@@ -78,7 +79,7 @@ apply HttpPrefixHeaders @httpResponseTests([
     {
         id: "HttpPrefixHeadersAreNotPresent",
         documentation: "No prefix headers are serialized because the value is empty",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: "",
         headers: {
