@@ -17,6 +17,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.logging.Logger;
 import software.amazon.smithy.aws.traits.apigateway.ApiKeySourceTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
@@ -26,7 +27,7 @@ final class AddApiKeySource implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(AddApiKeySource.class.getName());
 
     @Override
-    public OpenApi after(Context context, OpenApi openApi) {
+    public OpenApi after(Context<? extends Trait> context, OpenApi openApi) {
         return context.getService().getTrait(ApiKeySourceTrait.class)
                 .map(trait -> {
                     LOGGER.fine(() -> String.format(

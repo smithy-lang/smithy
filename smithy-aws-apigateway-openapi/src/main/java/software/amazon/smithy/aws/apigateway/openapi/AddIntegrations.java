@@ -54,7 +54,11 @@ final class AddIntegrations implements OpenApiMapper {
     private static final String RESPONSE_PARAMETERS_KEY = "responseParameters";
 
     @Override
-    public OperationObject updateOperation(Context context, OperationShape shape, OperationObject operation) {
+    public OperationObject updateOperation(
+            Context<? extends Trait> context,
+            OperationShape shape,
+            OperationObject operation
+    ) {
         IntegrationTraitIndex index = context.getModel().getKnowledge(IntegrationTraitIndex.class);
         return index.getIntegrationTrait(context.getService(), shape)
                 .map(trait -> operation.toBuilder()
@@ -66,7 +70,11 @@ final class AddIntegrations implements OpenApiMapper {
                 });
     }
 
-    private ObjectNode createIntegration(Context context, OperationShape shape, Trait integration) {
+    private ObjectNode createIntegration(
+            Context<? extends Trait> context,
+            OperationShape shape,
+            Trait integration
+    ) {
         ObjectNode integrationObject = getIntegrationAsObject(context, shape, integration);
         return context.getService().getTrait(CorsTrait.class)
                 .map(cors -> {
@@ -76,7 +84,11 @@ final class AddIntegrations implements OpenApiMapper {
                 .orElse(integrationObject);
     }
 
-    private static ObjectNode getIntegrationAsObject(Context context, OperationShape shape, Trait integration) {
+    private static ObjectNode getIntegrationAsObject(
+            Context<? extends Trait> context,
+            OperationShape shape,
+            Trait integration
+    ) {
         if (integration instanceof MockIntegrationTrait) {
             return integration.toNode().expectObjectNode().withMember("type", Node.from("mock"));
         } else if (integration instanceof IntegrationTrait) {
@@ -87,7 +99,11 @@ final class AddIntegrations implements OpenApiMapper {
     }
 
     private ObjectNode updateIntegrationWithCors(
-            Context context, OperationShape shape, ObjectNode integrationNode, CorsTrait cors) {
+            Context<? extends Trait> context,
+            OperationShape shape,
+            ObjectNode integrationNode,
+            CorsTrait cors
+    ) {
         ObjectNode responses = integrationNode.getObjectMember(RESPONSES_KEY).orElse(Node.objectNode());
 
         // Always include a "default" response that has the same HTTP response code.
@@ -119,7 +135,11 @@ final class AddIntegrations implements OpenApiMapper {
     }
 
     private ObjectNode updateIntegrationResponse(
-            OperationShape shape, Map<CorsHeader, String> corsHeaders, Set<String> deduced, ObjectNode response) {
+            OperationShape shape,
+            Map<CorsHeader, String> corsHeaders,
+            Set<String> deduced,
+            ObjectNode response
+    ) {
         Map<CorsHeader, String> responseHeaders = new HashMap<>(corsHeaders);
         ObjectNode responseParams = response.getObjectMember(RESPONSE_PARAMETERS_KEY).orElseGet(Node::objectNode);
 

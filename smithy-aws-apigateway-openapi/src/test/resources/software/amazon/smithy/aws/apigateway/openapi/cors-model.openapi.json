@@ -384,14 +384,14 @@
       }
     },
     "securitySchemes": {
-      "aws.v4": {
+      "aws.auth#sigv4": {
         "type": "apiKey",
         "description": "AWS Signature Version 4 authentication",
         "name": "Authorization",
         "in": "header",
         "x-amazon-apigateway-authtype": "awsSigv4"
       },
-      "http-basic": {
+      "smithy.api#httpBasicAuth": {
         "type": "http",
         "description": "HTTP Basic authentication",
         "scheme": "Basic"
@@ -400,10 +400,10 @@
   },
   "security": [
     {
-      "aws.v4": [ ]
+      "smithy.api#httpBasicAuth": [ ]
     },
     {
-      "http-basic": [ ]
+      "aws.auth#sigv4": [ ]
     }
   ],
   "x-amazon-apigateway-gateway-responses": {

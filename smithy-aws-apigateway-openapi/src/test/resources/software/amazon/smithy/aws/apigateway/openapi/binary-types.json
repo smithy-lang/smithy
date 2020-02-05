@@ -13,11 +13,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "aws.rest-json"
-                    }
-                ]
+                "aws.protocols#restJson1": {}
             }
         },
         "example.smithy#MyOperation": {
