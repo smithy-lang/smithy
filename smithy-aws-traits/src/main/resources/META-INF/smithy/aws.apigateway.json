@@ -39,7 +39,12 @@
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true,
-                        "smithy.api#documentation": "The Smithy authentication scheme used by the client (e.g, aws.v4)."
+                        "smithy.api#documentation": "The Smithy authentication scheme used by the client (e.g, aws.v4).",
+                        "smithy.api#idRef": {
+                            "selector": "[trait|authDefinition]",
+                            "failWhenMissing": true,
+                            "errorMessage": "The scheme of an authorizer definition must reference an auth trait"
+                        }
                     }
                 },
                 "type": {
