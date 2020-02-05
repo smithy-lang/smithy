@@ -28,6 +28,7 @@ import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
@@ -46,7 +47,7 @@ final class AddBinaryTypes implements OpenApiMapper {
     private static final String DEFAULT_BINARY_TYPE = "application/octet-stream";
 
     @Override
-    public OpenApi after(Context context, OpenApi openApi) {
+    public OpenApi after(Context<? extends Trait> context, OpenApi openApi) {
         List<String> binaryTypes = supportedMediaTypes(context).sorted().collect(Collectors.toList());
 
         if (!binaryTypes.isEmpty()) {
@@ -62,7 +63,7 @@ final class AddBinaryTypes implements OpenApiMapper {
         return openApi;
     }
 
-    private Stream<String> supportedMediaTypes(Context context) {
+    private Stream<String> supportedMediaTypes(Context<? extends Trait> context) {
         Model model = context.getModel();
         HttpBindingIndex httpBindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
         TopDownIndex topDownIndex = context.getModel().getKnowledge(TopDownIndex.class);

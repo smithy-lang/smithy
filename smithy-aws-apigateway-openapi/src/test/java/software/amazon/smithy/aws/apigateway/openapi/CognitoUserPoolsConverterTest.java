@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.openapi.OpenApiException;
+import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
@@ -27,7 +27,7 @@ public class CognitoUserPoolsConverterTest {
 
     @Test
     public void requiresProviderArns() {
-        Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
+        Assertions.assertThrows(ValidatedResultException.class, () -> {
             Model model = Model.assembler(getClass().getClassLoader())
                     .discoverModels(getClass().getClassLoader())
                     .addImport(getClass().getResource("invalid-cognito-user-pools-security.json"))
@@ -35,7 +35,5 @@ public class CognitoUserPoolsConverterTest {
                     .unwrap();
             OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
         });
-
-        Assertions.assertTrue(thrown.getMessage().contains("Missing required"));
     }
 }
