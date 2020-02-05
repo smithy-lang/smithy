@@ -18,11 +18,13 @@ package software.amazon.smithy.aws.traits.apigateway;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import software.amazon.smithy.aws.traits.auth.SigV4Trait;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -47,7 +49,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
             SCHEME_KEY, TYPE_KEY, AUTH_TYPE_KEY, URI_KEY, CREDENTIALS_KEY, IDENTITY_SOURCE_KEY,
             IDENTITY_VALIDATION_EXPRESSION_KEY, RESULT_TTL_IN_SECONDS);
 
-    private final String scheme;
+    private final ShapeId scheme;
     private final String type;
     private final String authType;
     private final String uri;
@@ -81,7 +83,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
      *
      * @return Returns the defined client authentication type.
      */
-    public String getScheme() {
+    public ShapeId getScheme() {
         return scheme;
     }
 
@@ -115,14 +117,14 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
      *
      * <p>This value is not used directly by APIGateway but will be used for
      * OpenAPI exports. This will default to "awsSigV4" if your scheme is
-     * "aws.v4", or "custom" otherwise.</p>
+     * {@code aws.auth#sigv4}, and if not, falls back to "custom".</p>
      *
      * @return Returns the authType.
      */
     public String getAuthType() {
         if (authType != null) {
             return authType;
-        } else if (scheme.equals("aws.v4")) {
+        } else if (scheme.equals(SigV4Trait.ID)) {
             return SIGV4_AUTH_TYPE;
         } else {
             return DEFAULT_AUTH_TYPE;
@@ -190,7 +192,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     @Override
     public Node toNode() {
         return Node.objectNodeBuilder()
-                .withMember(SCHEME_KEY, Node.from(getScheme()))
+                .withMember(SCHEME_KEY, Node.from(getScheme().toString()))
                 .withOptionalMember(TYPE_KEY, getType().map(Node::from))
                 .withOptionalMember(AUTH_TYPE_KEY, Optional.ofNullable(authType).map(Node::from))
                 .withOptionalMember(URI_KEY, getUri().map(Node::from))
@@ -229,7 +231,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     static AuthorizerDefinition fromNode(ObjectNode node) {
         node.warnIfAdditionalProperties(PROPERTIES);
         Builder builder = builder();
-        builder.scheme(node.expectStringMember(SCHEME_KEY).getValue());
+        builder.scheme(node.expectStringMember(SCHEME_KEY).expectShapeId());
         node.getStringMember(TYPE_KEY)
                 .map(StringNode::getValue)
                 .ifPresent(builder::type);
@@ -259,7 +261,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
      * Builder used to create an {@link AuthorizerDefinition}.
      */
     public static final class Builder implements SmithyBuilder<AuthorizerDefinition> {
-        private String scheme;
+        private ShapeId scheme;
         private String type;
         private String authType;
         private String uri;
@@ -276,10 +278,10 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         /**
          * Sets the client authentication scheme name.
          *
-         * @param scheme Client authentication scheme (e.g., aws.v4).
+         * @param scheme Client authentication scheme.
          * @return Returns the builder.
          */
-        public Builder scheme(String scheme) {
+        public Builder scheme(ShapeId scheme) {
             this.scheme = scheme;
             return this;
         }

@@ -113,26 +113,6 @@
                 "smithy.api#documentation": "Designates the target as containing data of a known classification level."
             }
         },
-        "aws.api#cognitoUserPoolsSettings": {
-            "type": "structure",
-            "members": {
-                "providerArns": {
-                    "target": "aws.api#StringList",
-                    "traits": {
-                        "smithy.api#required": true
-                    }
-                }
-            },
-            "traits": {
-                "smithy.api#trait": {
-                    "selector": "service"
-                },
-                "smithy.api#documentation": "Configures an Amazon Cognito User Pools auth scheme.",
-                "smithy.api#tags": [
-                    "internal"
-                ]
-            }
-        },
         "aws.api#controlPlane": {
             "type": "structure",
             "traits": {
@@ -175,6 +155,9 @@
             "type": "list",
             "member": {
                 "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#private": true
             }
         },
         "aws.api#clientDiscoveredEndpoint": {

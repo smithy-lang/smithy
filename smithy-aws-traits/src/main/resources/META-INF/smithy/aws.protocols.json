@@ -1,0 +1,109 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "aws.protocols#restJson1": {
+            "type": "structure",
+            "members": {
+                "http": {
+                    "target": "aws.protocols#StringList"
+                },
+                "eventStreamHttp": {
+                    "target": "aws.protocols#StringList"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#protocolDefinition": true,
+                "smithy.api#documentation": "A RESTful protocol that sends JSON in structured payloads."
+            }
+        },
+        "aws.protocols#restXml": {
+            "type": "structure",
+            "members": {
+                "http": {
+                    "target": "aws.protocols#StringList"
+                },
+                "eventStreamHttp": {
+                    "target": "aws.protocols#StringList"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#protocolDefinition": true,
+                "smithy.api#documentation": "A RESTful protocol that sends XML in structured payloads.",
+                "smithy.api#deprecated": true
+            }
+        },
+        "aws.protocols#awsJson1_0": {
+            "type": "structure",
+            "members": {
+                "http": {
+                    "target": "aws.protocols#StringList"
+                },
+                "eventStreamHttp": {
+                    "target": "aws.protocols#StringList"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#protocolDefinition": true,
+                "smithy.api#documentation": "An RPC-based protocol that sends JSON payloads. This protocol does not use HTTP binding traits."
+            }
+        },
+        "aws.protocols#awsJson1_1": {
+            "type": "structure",
+            "members": {
+                "http": {
+                    "target": "aws.protocols#StringList"
+                },
+                "eventStreamHttp": {
+                    "target": "aws.protocols#StringList"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#protocolDefinition": true,
+                "smithy.api#documentation": "An RPC-based protocol that sends JSON payloads. This protocol does not use HTTP binding traits."
+            }
+        },
+        "aws.protocols#awsQuery": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#protocolDefinition": true,
+                "smithy.api#documentation": "An RPC-based protocol that sends query string requests and XML responses. This protocol does not use HTTP binding traits.",
+                "smithy.api#deprecated": true
+            }
+        },
+        "aws.protocols#ec2Query": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#protocolDefinition": true,
+                "smithy.api#documentation": "An RPC-based protocol that sends Amazon EC2 formatted query string requests and XML responses. This protocol does not use HTTP binding traits.",
+                "smithy.api#deprecated": true
+            }
+        },
+        "aws.protocols#StringList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#private": true
+            }
+        }
+    }
+}

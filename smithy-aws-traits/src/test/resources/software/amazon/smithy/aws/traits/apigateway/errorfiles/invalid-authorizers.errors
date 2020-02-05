@@ -1,1 +1,0 @@
-[ERROR] ns.foo#SomeService: Each `scheme` of the `aws.apigateway#authorizers` trait must target one of the auth schemes defined in the `protocols` trait of a service (i.e., [`aws.v4`]). The following mappings of authorizer names to schemes are invalid: another -> another, invalid -> invalid | AuthorizersTrait

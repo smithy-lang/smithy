@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.aws.traits;
+package software.amazon.smithy.aws.traits.auth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +32,14 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 /**
  * Configures an Amazon Cognito User Pools auth scheme.
  */
-public final class CognitoUserPoolsSettingsTrait
-        extends AbstractTrait implements ToSmithyBuilder<CognitoUserPoolsSettingsTrait> {
+public final class CognitoUserPoolsTrait extends AbstractTrait implements ToSmithyBuilder<CognitoUserPoolsTrait> {
 
-    public static final ShapeId ID = ShapeId.from("aws.api#cognitoUserPoolsSettings");
+    public static final ShapeId ID = ShapeId.from("aws.auth#cognitoUserPools");
     private static final String PROVIDER_ARNS = "providerArns";
 
     private final List<String> providerArns;
 
-    private CognitoUserPoolsSettingsTrait(Builder builder) {
+    private CognitoUserPoolsTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         this.providerArns = ListUtils.copyOf(SmithyBuilder.requiredState("providerArns", builder.providerArns));
     }
@@ -60,7 +59,7 @@ public final class CognitoUserPoolsSettingsTrait
     }
 
     /**
-     * @return Creates a builder used to build a {@link CognitoUserPoolsSettingsTrait}.
+     * @return Creates a builder used to build a {@link CognitoUserPoolsTrait}.
      */
     public static Builder builder() {
         return new Builder();
@@ -86,15 +85,15 @@ public final class CognitoUserPoolsSettingsTrait
                 .withMember(PROVIDER_ARNS, providerArns.stream().map(Node::from).collect(ArrayNode.collect()));
     }
 
-    /** Builder for {@link CognitoUserPoolsSettingsTrait}. */
-    public static final class Builder extends AbstractTraitBuilder<CognitoUserPoolsSettingsTrait, Builder> {
+    /** Builder for {@link CognitoUserPoolsTrait}. */
+    public static final class Builder extends AbstractTraitBuilder<CognitoUserPoolsTrait, Builder> {
         private final List<String> providerArns = new ArrayList<>();
 
         private Builder() {}
 
         @Override
-        public CognitoUserPoolsSettingsTrait build() {
-            return new CognitoUserPoolsSettingsTrait(this);
+        public CognitoUserPoolsTrait build() {
+            return new CognitoUserPoolsTrait(this);
         }
 
         /**
