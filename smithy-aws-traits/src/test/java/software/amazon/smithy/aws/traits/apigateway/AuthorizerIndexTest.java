@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.aws.traits.auth.SigV4Trait;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -31,7 +32,8 @@ public class AuthorizerIndexTest {
 
         // Resolves service value.
         assertThat(index.getAuthorizer(serviceA).get(), equalTo("foo"));
-        assertThat(index.getAuthorizerValue(serviceA).map(AuthorizerDefinition::getScheme), equalTo(Optional.of("aws.v4")));
+        assertThat(index.getAuthorizerValue(serviceA).map(AuthorizerDefinition::getScheme),
+                   equalTo(Optional.of(SigV4Trait.ID)));
         assertThat(index.getAuthorizer(serviceB), equalTo(Optional.empty()));
         assertThat(index.getAuthorizerValue(serviceB), equalTo(Optional.empty()));
 
