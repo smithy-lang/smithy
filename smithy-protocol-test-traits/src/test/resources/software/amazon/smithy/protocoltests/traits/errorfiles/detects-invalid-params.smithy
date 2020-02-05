@@ -3,11 +3,15 @@ namespace smithy.example
 use smithy.test#httpResponseTests
 use smithy.test#httpRequestTests
 
+@trait
+@protocolDefinition
+structure testProtocol {}
+
 @http(method: "POST", uri: "/")
 @httpResponseTests([
     {
         id: "foo1",
-        protocol: "example",
+        protocol: testProtocol,
         code: 200,
         params: {
             invalid: true
@@ -23,7 +27,7 @@ structure SayGoodbyeOutput {}
 @httpResponseTests([
     {
         id: "foo2",
-        protocol: "example",
+        protocol: testProtocol,
         code: 200,
         params: {
             foo: "Hi"
@@ -39,7 +43,7 @@ structure MyError {
 @httpRequestTests([
     {
         id: "foo3",
-        protocol: "example",
+        protocol: testProtocol,
         method: "POST",
         uri: "/",
         params: {
