@@ -22,6 +22,7 @@ import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
@@ -46,7 +47,7 @@ public class CheckForPrefixHeaders implements OpenApiMapper {
     }
 
     @Override
-    public void before(Context context, OpenApi.Builder builder) {
+    public void before(Context<? extends Trait> context, OpenApi.Builder builder) {
         HttpBindingIndex httpBindings = context.getModel().getKnowledge(HttpBindingIndex.class);
         context.getModel().shapes(OperationShape.class).forEach(operation -> {
             check(context, httpBindings.getRequestBindings(operation, HttpBinding.Location.PREFIX_HEADERS));
@@ -55,11 +56,15 @@ public class CheckForPrefixHeaders implements OpenApiMapper {
         });
     }
 
-    private void checkForResponseHeaders(Context context, HttpBindingIndex bindingIndex, ToShapeId shapeId) {
+    private void checkForResponseHeaders(
+            Context<? extends Trait> context,
+            HttpBindingIndex bindingIndex,
+            ToShapeId shapeId
+    ) {
         check(context, bindingIndex.getResponseBindings(shapeId, HttpBinding.Location.PREFIX_HEADERS));
     }
 
-    private void check(Context context, List<HttpBinding> bindings) {
+    private void check(Context<? extends Trait> context, List<HttpBinding> bindings) {
         String setting = context.getConfig().getStringMemberOrDefault(
                 OpenApiConstants.ON_HTTP_PREFIX_HEADERS, OpenApiConstants.ON_HTTP_PREFIX_HEADERS_FAIL);
 

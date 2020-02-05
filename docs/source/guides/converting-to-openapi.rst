@@ -114,7 +114,7 @@ The Smithy Gradle plugin relies on a ``smithy-build.json`` file found at the
 root of a project to define the actual process of building the OpenAPI
 specification. The following example defines a ``smithy-build.json`` file
 that builds an OpenAPI specification from a service for the
-``smithy.example#Weather`` service using the ``aws.rest-json-1.1`` protocol:
+``smithy.example#Weather`` service using the ``aws.protocols#restJson1`` protocol:
 
 .. code-block:: json
     :caption: smithy-build.json
@@ -125,7 +125,7 @@ that builds an OpenAPI specification from a service for the
         "plugins": {
             "openapi": {
                 "service": "smithy.example#Weather",
-                "protocol": "aws.rest-json-1.1"
+                "protocol": "aws.protocols#restJson1"
             }
         }
     }
@@ -155,13 +155,17 @@ service (string)
     **Required**. The Smithy service :ref:`shape ID <shape-id>` to convert.
 
 protocol (string)
-    The protocol name to use when converting Smithy to OpenAPI (for example,
-    ``aws.rest-json-1.1``.
+    The protocol shape ID to use when converting Smithy to OpenAPI (for
+    example, ``aws.protocols#restJson1``).
 
     Smithy will try to match the provided protocol name with an implementation
     of ``software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol``
     registered with a service provider implementation of
     ``software.amazon.smithy.openapi.fromsmithy.CoreExtension``.
+
+    .. important::
+
+        This property is required if a service supports multiple protocols.
 
 openapi.tags (boolean)
     Whether or not to include Smithy :ref:`tags <tags-trait>` in the result.
@@ -197,8 +201,8 @@ openapi.keepUnusedComponents (boolean)
     created specification.
 
 openapi.aws.jsonContentType (string)
-    Sets the media-type to associate with the JSON payload of ``aws.json-*``
-    and ``aws.rest-json-*`` protocols
+    Sets a custom media-type to associate with the JSON payload of
+    JSON-based protocols.
 
 openapi.forbidGreedyLabels (boolean)
     Set to true to forbid greedy URI labels. By default, greedy labels will
@@ -532,7 +536,7 @@ Next, you need to create and configure an ``OpenApiConverter``:
     OpenApiConverter converter = OpenApiConverter.create();
 
     // Add any necessary settings...
-    converter.putSetting(OpenApiConstants.PROTOCOL, "aws.rest-json-1.1");
+    converter.putSetting(OpenApiConstants.PROTOCOL, "aws.protocols#restJson1");
 
     // Create a shape ID that points to the service.
     ShapeId serviceShapeId = ShapeId.from("smithy.example#Weather");

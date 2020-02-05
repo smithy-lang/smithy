@@ -18,7 +18,7 @@
   },
   "components": {
     "securitySchemes": {
-      "http-basic": {
+      "smithy.api#httpBasicAuth": {
         "type": "http",
         "description": "HTTP Basic authentication",
         "scheme": "Basic"
@@ -27,7 +27,7 @@
   },
   "security": [
     {
-      "http-basic": [ ]
+      "smithy.api#httpBasicAuth": [ ]
     }
   ]
 }

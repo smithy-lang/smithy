@@ -17,6 +17,7 @@ public class CheckForGreedyLabelsTest {
     public static void before() {
         model = Model.assembler()
                 .addImport(RemoveUnusedComponentsTest.class.getResource("greedy-labels.smithy"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
     }

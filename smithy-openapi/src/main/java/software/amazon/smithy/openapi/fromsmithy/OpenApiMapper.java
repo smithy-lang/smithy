@@ -22,6 +22,7 @@ import java.util.Map;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.openapi.model.ParameterObject;
@@ -62,7 +63,11 @@ public interface OpenApiMapper {
      * @param operation OperationObject being built.
      * @return Returns the updated operation object.
      */
-    default OperationObject updateOperation(Context context, OperationShape shape, OperationObject operation) {
+    default OperationObject updateOperation(
+            Context<? extends Trait> context,
+            OperationShape shape,
+            OperationObject operation
+    ) {
         return operation;
     }
 
@@ -74,7 +79,7 @@ public interface OpenApiMapper {
      * @param pathItem Path item being converted.
      * @return Returns the updated path item.
      */
-    default PathItem updatePathItem(Context context, String path, PathItem pathItem) {
+    default PathItem updatePathItem(Context<? extends Trait> context, String path, PathItem pathItem) {
         return pathItem;
     }
 
@@ -87,7 +92,7 @@ public interface OpenApiMapper {
      * @return Returns the updated parameter.
      */
     default ParameterObject updateParameter(
-            Context context,
+            Context<? extends Trait> context,
             OperationShape operation,
             ParameterObject parameterObject
     ) {
@@ -103,7 +108,7 @@ public interface OpenApiMapper {
      * @return Returns the updated request body.
      */
     default RequestBodyObject updateRequestBody(
-            Context context,
+            Context<? extends Trait> context,
             OperationShape shape,
             RequestBodyObject requestBody
     ) {
@@ -120,7 +125,7 @@ public interface OpenApiMapper {
      * @return Returns the updated response object.
      */
     default ResponseObject updateResponse(
-            Context context,
+            Context<? extends Trait> context,
             String status,
             OperationShape shape,
             ResponseObject response
@@ -134,17 +139,21 @@ public interface OpenApiMapper {
      * @param context Conversion context.
      * @param builder OpenAPI builder to modify.
      */
-    default void before(Context context, OpenApi.Builder builder) {}
+    default void before(Context<? extends Trait> context, OpenApi.Builder builder) {}
 
     /**
      * Updates a security scheme object.
      *
      * @param context Conversion context.
-     * @param authName Smithy authentication scheme name.
+     * @param authTrait Smithy authentication scheme trait.
      * @param securityScheme Security scheme object to update.
      * @return Returns the updated security scheme object. Return null to remove the scheme.
      */
-    default SecurityScheme updateSecurityScheme(Context context, String authName, SecurityScheme securityScheme) {
+    default SecurityScheme updateSecurityScheme(
+            Context<? extends Trait> context,
+            Trait authTrait,
+            SecurityScheme securityScheme
+    ) {
         return securityScheme;
     }
 
@@ -163,9 +172,9 @@ public interface OpenApiMapper {
      * @return Returns the updated security requirement, a mapping of scheme to requirements.
      */
     default Map<String, List<String>> updateSecurity(
-            Context context,
+            Context<? extends Trait> context,
             Shape shape,
-            SecuritySchemeConverter converter,
+            SecuritySchemeConverter<? extends Trait> converter,
             Map<String, List<String>> requirement
     ) {
         return requirement;
@@ -178,7 +187,7 @@ public interface OpenApiMapper {
      * @param openapi OpenAPI object to modify.
      * @return Returns the updated OpenApi object.
      */
-    default OpenApi after(Context context, OpenApi openapi) {
+    default OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
         return openapi;
     }
 
@@ -190,7 +199,7 @@ public interface OpenApiMapper {
      * @param node OpenAPI object node.
      * @return Returns the updated ObjectNode.
      */
-    default ObjectNode updateNode(Context context, OpenApi openapi, ObjectNode node) {
+    default ObjectNode updateNode(Context<? extends Trait> context, OpenApi openapi, ObjectNode node) {
         return node;
     }
 
@@ -206,7 +215,11 @@ public interface OpenApiMapper {
 
         return new OpenApiMapper() {
             @Override
-            public OperationObject updateOperation(Context context, OperationShape shape, OperationObject operation) {
+            public OperationObject updateOperation(
+                    Context<? extends Trait> context,
+                    OperationShape shape,
+                    OperationObject operation
+            ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (operation == null) {
                         return null;
@@ -217,7 +230,7 @@ public interface OpenApiMapper {
             }
 
             @Override
-            public PathItem updatePathItem(Context context, String path, PathItem pathItem) {
+            public PathItem updatePathItem(Context<? extends Trait> context, String path, PathItem pathItem) {
                 for (OpenApiMapper plugin : sorted) {
                     if (pathItem == null) {
                         return null;
@@ -229,7 +242,7 @@ public interface OpenApiMapper {
 
             @Override
             public ParameterObject updateParameter(
-                    Context context,
+                    Context<? extends Trait> context,
                     OperationShape operation,
                     ParameterObject parameterObject
             ) {
@@ -244,7 +257,7 @@ public interface OpenApiMapper {
 
             @Override
             public RequestBodyObject updateRequestBody(
-                    Context context,
+                    Context<? extends Trait> context,
                     OperationShape shape,
                     RequestBodyObject requestBody
             ) {
@@ -259,7 +272,7 @@ public interface OpenApiMapper {
 
             @Override
             public ResponseObject updateResponse(
-                    Context context,
+                    Context<? extends Trait> context,
                     String status,
                     OperationShape shape,
                     ResponseObject response
@@ -274,21 +287,25 @@ public interface OpenApiMapper {
             }
 
             @Override
-            public SecurityScheme updateSecurityScheme(Context context, String name, SecurityScheme securityScheme) {
+            public SecurityScheme updateSecurityScheme(
+                    Context<? extends Trait> context,
+                    Trait authTrait,
+                    SecurityScheme securityScheme
+            ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (securityScheme == null) {
                         return null;
                     }
-                    securityScheme = plugin.updateSecurityScheme(context, name, securityScheme);
+                    securityScheme = plugin.updateSecurityScheme(context, authTrait, securityScheme);
                 }
                 return securityScheme;
             }
 
             @Override
             public Map<String, List<String>> updateSecurity(
-                    Context context,
+                    Context<? extends Trait> context,
                     Shape shape,
-                    SecuritySchemeConverter converter,
+                    SecuritySchemeConverter<? extends Trait> converter,
                     Map<String, List<String>> requirement
             ) {
                 for (OpenApiMapper plugin : sorted) {
@@ -302,14 +319,14 @@ public interface OpenApiMapper {
             }
 
             @Override
-            public void before(Context context, OpenApi.Builder builder) {
+            public void before(Context<? extends Trait> context, OpenApi.Builder builder) {
                 for (OpenApiMapper plugin : sorted) {
                     plugin.before(context, builder);
                 }
             }
 
             @Override
-            public OpenApi after(Context context, OpenApi openapi) {
+            public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
                 for (OpenApiMapper plugin : sorted) {
                     openapi = plugin.after(context, openapi);
                 }
@@ -317,7 +334,7 @@ public interface OpenApiMapper {
             }
 
             @Override
-            public ObjectNode updateNode(Context context, OpenApi openapi, ObjectNode node) {
+            public ObjectNode updateNode(Context<? extends Trait> context, OpenApi openapi, ObjectNode node) {
                 for (OpenApiMapper plugin : sorted) {
                     node = plugin.updateNode(context, openapi, node);
                 }
