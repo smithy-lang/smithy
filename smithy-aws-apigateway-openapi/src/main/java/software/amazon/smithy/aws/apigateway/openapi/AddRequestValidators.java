@@ -22,6 +22,7 @@ import software.amazon.smithy.aws.traits.apigateway.RequestValidatorTrait;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
@@ -56,7 +57,11 @@ final class AddRequestValidators implements OpenApiMapper {
     );
 
     @Override
-    public OperationObject updateOperation(Context context, OperationShape shape, OperationObject operation) {
+    public OperationObject updateOperation(
+            Context<? extends Trait> context,
+            OperationShape shape,
+            OperationObject operation
+    ) {
         return shape.getTrait(RequestValidatorTrait.class)
                 .map(RequestValidatorTrait::getValue)
                 .map(value -> operation.toBuilder().putExtension(REQUEST_VALIDATOR, value).build())
@@ -64,7 +69,7 @@ final class AddRequestValidators implements OpenApiMapper {
     }
 
     @Override
-    public OpenApi after(Context context, OpenApi openapi) {
+    public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
         // Find each known request validator on operation shapes.
         Set<String> validators = context.getModel().shapes(OperationShape.class)
                 .flatMap(shape -> OptionalUtils.stream(shape.getTrait(RequestValidatorTrait.class)))

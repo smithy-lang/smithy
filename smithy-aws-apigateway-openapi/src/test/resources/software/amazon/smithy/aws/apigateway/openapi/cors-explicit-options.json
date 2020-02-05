@@ -13,14 +13,8 @@
                 }
             ],
             "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "aws.rest-json-1.1",
-                        "auth": [
-                            "http-basic"
-                        ]
-                    }
-                ],
+                "aws.protocols#restJson1": {},
+                "smithy.api#httpBasicAuth": {},
                 "smithy.api#cors": {
                     "origin": "https://foo.com"
                 }
