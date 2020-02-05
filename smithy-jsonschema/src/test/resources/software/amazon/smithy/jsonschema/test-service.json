@@ -11,14 +11,7 @@
                 {
                     "target": "example.rest#PutPayload"
                 }
-            ],
-            "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "smithy.example"
-                    }
-                ]
-            }
+            ]
         },
         "example.rest#PutPayload": {
             "type": "operation",
