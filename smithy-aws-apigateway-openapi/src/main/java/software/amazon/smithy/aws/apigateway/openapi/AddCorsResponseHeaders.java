@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.traits.CorsTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.ParameterObject;
@@ -42,14 +43,22 @@ final class AddCorsResponseHeaders implements OpenApiMapper {
 
     @Override
     public ResponseObject updateResponse(
-            Context context, String status, OperationShape shape, ResponseObject response) {
+            Context<? extends Trait> context,
+            String status,
+            OperationShape shape,
+            ResponseObject response
+    ) {
         return context.getService().getTrait(CorsTrait.class)
                 .map(corsTrait -> addCorsHeadersToResponse(context, shape, response, corsTrait))
                 .orElse(response);
     }
 
     private ResponseObject addCorsHeadersToResponse(
-            Context context, OperationShape operation, ResponseObject response, CorsTrait corsTrait) {
+            Context<? extends Trait> context,
+            OperationShape operation,
+            ResponseObject response,
+            CorsTrait corsTrait
+    ) {
         // Determine which headers have been added to the response.
         List<String> headers = new ArrayList<>();
         headers.add(CorsHeader.ALLOW_ORIGIN.toString());

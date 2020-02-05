@@ -10,15 +10,11 @@
                 }
             ],
             "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "aws.rest-json-1.1",
-                        "auth": [
-                            "aws.v4",
-                            "http-basic"
-                        ]
-                    }
-                ],
+                "aws.protocols#restJson1": {},
+                "smithy.api#httpBasicAuth": {},
+                "aws.auth#sigv4": {
+                    "name": "myservice"
+                },
                 "smithy.api#cors": {
                     "origin": "https://www.example.com",
                     "maxAge": 86400,

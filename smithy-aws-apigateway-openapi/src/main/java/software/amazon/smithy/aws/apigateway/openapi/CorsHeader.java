@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.traits.CorsTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 
@@ -42,13 +43,17 @@ enum CorsHeader {
         return headerName;
     }
 
-    static Set<String> deduceOperationHeaders(Context context, OperationShape shape, CorsTrait cors) {
+    static <T extends Trait> Set<String> deduceOperationHeaders(
+            Context<T> context,
+            OperationShape shape,
+            CorsTrait cors
+    ) {
         // The deduced response headers of an operation consist of any headers
         // returned by security schemes, any headers returned by the protocol,
         // and any headers explicitly modeled on the operation.
         Set<String> result = new TreeSet<>(cors.getAdditionalExposedHeaders());
         result.addAll(context.getOpenApiProtocol().getProtocolResponseHeaders(context, shape));
-        for (SecuritySchemeConverter converter : context.getSecuritySchemeConverters()) {
+        for (SecuritySchemeConverter<? extends Trait> converter : context.getSecuritySchemeConverters()) {
             result.addAll(converter.getAuthResponseHeaders());
         }
 

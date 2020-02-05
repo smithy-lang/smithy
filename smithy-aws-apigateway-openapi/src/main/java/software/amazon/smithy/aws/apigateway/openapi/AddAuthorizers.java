@@ -28,6 +28,8 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
@@ -62,14 +64,14 @@ final class AddAuthorizers implements OpenApiMapper {
 
     @Override
     public Map<String, List<String>> updateSecurity(
-            Context context,
+            Context<? extends Trait> context,
             Shape shape,
-            SecuritySchemeConverter converter,
+            SecuritySchemeConverter<? extends Trait> converter,
             Map<String, List<String>> requirement
     ) {
         // Only modify requirements that exactly match the updated scheme.
         if (requirement.size() != 1
-                || !requirement.keySet().iterator().next().equals(converter.getAuthSchemeName())) {
+                || !requirement.keySet().iterator().next().equals(converter.getAuthSchemeId().toString())) {
             return requirement;
         }
 
@@ -103,41 +105,29 @@ final class AddAuthorizers implements OpenApiMapper {
     }
 
     @Override
-    public OpenApi after(Context context, OpenApi openapi) {
+    public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
         return context.getService().getTrait(AuthorizersTrait.class)
                 .map(authorizers -> addComputedAuthorizers(context, openapi, authorizers))
                 .orElse(openapi);
     }
 
-    private OpenApi addComputedAuthorizers(Context context, OpenApi openApi, AuthorizersTrait trait) {
+    private OpenApi addComputedAuthorizers(
+            Context<? extends Trait> context,
+            OpenApi openApi,
+            AuthorizersTrait trait
+    ) {
         OpenApi.Builder builder = openApi.toBuilder();
         ComponentsObject.Builder components = openApi.getComponents().toBuilder();
 
         for (Map.Entry<String, AuthorizerDefinition> entry : trait.getAllAuthorizers().entrySet()) {
-            String scheme = entry.getValue().getScheme();
-            for (SecuritySchemeConverter converter : context.getSecuritySchemeConverters()) {
-                AuthorizerDefinition authorizer = entry.getValue();
-                if (converter.getAuthSchemeName().equals(scheme)) {
-                    SecurityScheme createdScheme = converter.createSecurityScheme(context);
-                    SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();
-                    schemeBuilder.putExtension(CLIENT_EXTENSION_NAME, authorizer.getAuthType());
+            String authorizerName = entry.getKey();
+            AuthorizerDefinition authorizer = entry.getValue();
+            ShapeId scheme = entry.getValue().getScheme();
 
-                    ObjectNode authorizerNode = Node.objectNodeBuilder()
-                            .withOptionalMember("type", authorizer.getType().map(Node::from))
-                            .withOptionalMember("authorizerUri", authorizer.getUri().map(Node::from))
-                            .withOptionalMember("authorizerCredentials", authorizer.getCredentials().map(Node::from))
-                            .withOptionalMember("identityValidationExpression",
-                                                authorizer.getIdentityValidationExpression().map(Node::from))
-                            .withOptionalMember("identitySource", authorizer.getIdentitySource().map(Node::from))
-                            .withOptionalMember("authorizerResultTtlInSeconds",
-                                                authorizer.getResultTtlInSeconds().map(Node::from))
-                            .build();
-                    if (authorizerNode.size() != 0) {
-                        schemeBuilder.putExtension(EXTENSION_NAME, authorizerNode);
-                    }
-
-                    LOGGER.fine(() -> String.format("Adding the `%s` OpenAPI security scheme", entry.getKey()));
-                    components.putSecurityScheme(entry.getKey(), schemeBuilder.build());
+            for (SecuritySchemeConverter<? extends Trait> converter : context.getSecuritySchemeConverters()) {
+                if (isAuthConverterMatched(context, converter, scheme)) {
+                    SecurityScheme updatedScheme = convertAuthScheme(context, converter, authorizer, authorizerName);
+                    components.putSecurityScheme(authorizerName, updatedScheme);
                     break;
                 }
             }
@@ -145,5 +135,43 @@ final class AddAuthorizers implements OpenApiMapper {
 
         builder.components(components.build());
         return builder.build();
+    }
+
+    private boolean isAuthConverterMatched(
+            Context<? extends Trait> context,
+            SecuritySchemeConverter<? extends Trait> converter,
+            ShapeId scheme
+    ) {
+        return converter.getAuthSchemeId().equals(scheme)
+               && context.getService().hasTrait(converter.getAuthSchemeType());
+    }
+
+    private <T extends Trait> SecurityScheme convertAuthScheme(
+            Context<? extends Trait> context,
+            SecuritySchemeConverter<T> converter,
+            AuthorizerDefinition authorizer,
+            String authorizerName
+    ) {
+        T authTrait = context.getService().expectTrait(converter.getAuthSchemeType());
+        SecurityScheme createdScheme = converter.createSecurityScheme(context, authTrait);
+        SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();
+        schemeBuilder.putExtension(CLIENT_EXTENSION_NAME, authorizer.getAuthType());
+
+        ObjectNode authorizerNode = Node.objectNodeBuilder()
+                .withOptionalMember("type", authorizer.getType().map(Node::from))
+                .withOptionalMember("authorizerUri", authorizer.getUri().map(Node::from))
+                .withOptionalMember("authorizerCredentials", authorizer.getCredentials().map(Node::from))
+                .withOptionalMember("identityValidationExpression",
+                                    authorizer.getIdentityValidationExpression().map(Node::from))
+                .withOptionalMember("identitySource", authorizer.getIdentitySource().map(Node::from))
+                .withOptionalMember("authorizerResultTtlInSeconds",
+                                    authorizer.getResultTtlInSeconds().map(Node::from))
+                .build();
+        if (authorizerNode.size() != 0) {
+            schemeBuilder.putExtension(EXTENSION_NAME, authorizerNode);
+        }
+
+        LOGGER.fine(() -> String.format("Adding the `%s` OpenAPI security scheme", authorizerName));
+        return schemeBuilder.build();
     }
 }

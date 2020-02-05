@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.List;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.fromsmithy.Smithy2OpenApiExtension;
@@ -38,7 +39,9 @@ public final class ApiGatewayExtension implements Smithy2OpenApiExtension {
     }
 
     @Override
-    public List<SecuritySchemeConverter> getSecuritySchemeConverters() {
-        return ListUtils.of(new CognitoUserPoolsConverter());
+    public List<SecuritySchemeConverter<? extends Trait>> getSecuritySchemeConverters() {
+        return ListUtils.of(
+                new CognitoUserPoolsConverter()
+        );
     }
 }
