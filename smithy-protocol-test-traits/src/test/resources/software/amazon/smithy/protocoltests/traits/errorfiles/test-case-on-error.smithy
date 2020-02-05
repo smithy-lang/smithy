@@ -2,12 +2,16 @@ namespace smithy.example
 
 use smithy.test#httpResponseTests
 
+@trait
+@protocolDefinition
+structure testProtocol {}
+
 @error("client")
 @httpError(400)
 @httpResponseTests([
     {
         id: "invalid_greeting",
-        protocol: "example",
+        protocol: testProtocol,
         params: {foo: "baz", message: "Hi"},
         code: 400,
         headers: {"X-Foo": "baz"},
