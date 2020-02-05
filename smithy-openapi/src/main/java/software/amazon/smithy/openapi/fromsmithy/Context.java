@@ -23,34 +23,33 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.model.traits.Protocol;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiException;
 
 /**
  * Smithy to OpenAPI conversion context object.
  */
-public final class Context {
+public final class Context<T extends Trait> {
     private final Model model;
     private final ServiceShape service;
     private final JsonSchemaConverter jsonSchemaConverter;
-    private final Protocol protocol;
-    private final OpenApiProtocol openApiProtocol;
+    private final T protocolTrait;
+    private final OpenApiProtocol<T> openApiProtocol;
     private final SchemaDocument schemas;
-    private final List<SecuritySchemeConverter> securitySchemeConverters;
+    private final List<SecuritySchemeConverter<? extends Trait>> securitySchemeConverters;
 
     public Context(
             Model model,
             ServiceShape service,
             JsonSchemaConverter jsonSchemaConverter,
-            Protocol protocol,
-            OpenApiProtocol openApiProtocol,
+            OpenApiProtocol<T> openApiProtocol,
             SchemaDocument schemas,
-            List<SecuritySchemeConverter> securitySchemeConverters
+            List<SecuritySchemeConverter<? extends Trait>> securitySchemeConverters
     ) {
         this.model = model;
         this.service = service;
         this.jsonSchemaConverter = jsonSchemaConverter;
-        this.protocol = protocol;
+        this.protocolTrait = service.expectTrait(openApiProtocol.getProtocolType());
         this.openApiProtocol = openApiProtocol;
         this.schemas = schemas;
         this.securitySchemeConverters = securitySchemeConverters;
@@ -95,21 +94,12 @@ public final class Context {
     }
 
     /**
-     * Gets the name of the protocol that is used in the conversion.
+     * Gets the protocol trait that is being converted.
      *
-     * @return Returns the protocol name.
+     * @return Returns the protocol ID.
      */
-    public String getProtocolName() {
-        return protocol.getName();
-    }
-
-    /**
-     * Gets the protocols trait protocol being used for the conversion.
-     *
-     * @return Returns the protocol being used.
-     */
-    public Protocol getProtocol() {
-        return protocol;
+    public T getProtocolTrait() {
+        return protocolTrait;
     }
 
     /**
@@ -117,7 +107,7 @@ public final class Context {
      *
      * @return Returns the OpenAPI protocol.
      */
-    public OpenApiProtocol getOpenApiProtocol() {
+    public OpenApiProtocol<T> getOpenApiProtocol() {
         return openApiProtocol;
     }
 
@@ -160,7 +150,7 @@ public final class Context {
      *
      * @return Returns the security scheme converters.
      */
-    public List<SecuritySchemeConverter> getSecuritySchemeConverters() {
+    public List<SecuritySchemeConverter<? extends Trait>> getSecuritySchemeConverters() {
         return securitySchemeConverters;
     }
 

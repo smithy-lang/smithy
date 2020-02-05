@@ -1,6 +1,6 @@
 namespace smithy.example
 
-@protocols([{"name": "aws.rest-json"}])
+@aws.protocols#restJson1
 service Greedy {
   version: "2018-01-01",
   operations: [GreedyOperation]

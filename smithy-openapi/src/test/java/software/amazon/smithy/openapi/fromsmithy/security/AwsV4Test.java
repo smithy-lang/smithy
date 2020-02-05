@@ -13,6 +13,7 @@ public class AwsV4Test {
     public void addsAwsV4() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("awsv4-security.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));

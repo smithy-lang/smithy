@@ -33,6 +33,7 @@ public class AwsRestJsonProtocolTest {
     public void testProtocolResult(String smithy) {
         Model model = Model.assembler()
                 .addImport(getClass().getResource(smithy))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         ObjectNode result = OpenApiConverter.create()
@@ -66,6 +67,7 @@ public class AwsRestJsonProtocolTest {
     public void canUseCustomMediaType() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("adds-json-document-bodies.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create()

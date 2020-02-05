@@ -18,6 +18,8 @@ package software.amazon.smithy.openapi.fromsmithy;
 import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.model.SecurityScheme;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
@@ -27,24 +29,46 @@ import software.amazon.smithy.utils.SetUtils;
  * scheme and applies security requirements to operations.
  *
  * <p>Implementations of this interface are discovered using Java SPI.
+ *
+ * @param <T> the auth scheme trait to convert.
  */
-public interface SecuritySchemeConverter {
+public interface SecuritySchemeConverter<T extends Trait> {
     /**
-     * Get the name of the Smithy auth scheme that matches this converter.
+     * Get the U that matches this converter.
      *
-     * @return The Smithy security auth scheme name.
+     * @return The Smithy security auth scheme ID.
      */
-    String getAuthSchemeName();
+    Class<T> getAuthSchemeType();
+
+    /**
+     * Gets the shape ID of the auth scheme type.
+     *
+     * <p>By default, this operation uses reflection to get the value of
+     * a static property of the auth scheme class named "ID". If that is
+     * not how a specific auth scheme class is implemented, then this
+     * method must be overridden.
+     *
+     * @return Returns the auth scheme's shape ID.
+     */
+    default ShapeId getAuthSchemeId() {
+        try {
+            Class<T> type = getAuthSchemeType();
+            return (ShapeId) type.getField("ID").get(null);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Unable to find an ID property on " + getAuthSchemeType().getName());
+        }
+    }
 
     /**
      * Creates an OpenAPI security scheme.
      *
      * @param context Conversion context.
+     * @param authTrait Authentication trait to convert.
      * @return The generated security scheme
      *
      * @see <a href="https://swagger.io/specification/#securitySchemeObject">Security Scheme Object</a>
      */
-    SecurityScheme createSecurityScheme(Context context);
+    SecurityScheme createSecurityScheme(Context<? extends Trait> context, T authTrait);
 
     /**
      * Creates a "security" requirements property to apply to an operation
@@ -53,10 +77,11 @@ public interface SecuritySchemeConverter {
      * <p>The default implementation will return an empty list.
      *
      * @param context OpenAPI context
+     * @param authTrait Authentication trait to convert.
      * @param shape Service or operation shape.
      * @return The security requirements value.
      */
-    default List<String> createSecurityRequirements(Context context, Shape shape) {
+    default List<String> createSecurityRequirements(Context<? extends Trait> context, T authTrait, Shape shape) {
         return ListUtils.of();
     }
 

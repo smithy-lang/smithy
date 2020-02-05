@@ -17,6 +17,7 @@ public class CheckForPrefixHeadersTest {
     public static void before() {
         model = Model.assembler()
                 .addImport(RemoveUnusedComponentsTest.class.getResource("prefix-headers.smithy"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
     }

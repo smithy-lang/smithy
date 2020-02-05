@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.openapi.fromsmithy.security;
 
+import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
@@ -22,14 +24,14 @@ import software.amazon.smithy.openapi.model.SecurityScheme;
 /**
  * Applies Digest HTTP auth.
  */
-public final class HttpDigest implements SecuritySchemeConverter {
+public final class HttpDigest implements SecuritySchemeConverter<HttpDigestAuthTrait> {
     @Override
-    public String getAuthSchemeName() {
-        return "http-digest";
+    public Class<HttpDigestAuthTrait> getAuthSchemeType() {
+        return HttpDigestAuthTrait.class;
     }
 
     @Override
-    public SecurityScheme createSecurityScheme(Context context) {
+    public SecurityScheme createSecurityScheme(Context<? extends Trait> context, HttpDigestAuthTrait trait) {
         return SecurityScheme.builder()
                 .type("http")
                 .scheme("Digest")

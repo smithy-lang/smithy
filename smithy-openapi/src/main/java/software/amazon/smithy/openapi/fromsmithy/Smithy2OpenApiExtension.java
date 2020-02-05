@@ -17,6 +17,7 @@ package software.amazon.smithy.openapi.fromsmithy;
 
 import java.util.List;
 import software.amazon.smithy.jsonschema.JsonSchemaMapper;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -31,7 +32,7 @@ public interface Smithy2OpenApiExtension {
      *
      * @return Returns the converters to register.
      */
-    default List<SecuritySchemeConverter> getSecuritySchemeConverters() {
+    default List<SecuritySchemeConverter<? extends Trait>> getSecuritySchemeConverters() {
         return ListUtils.of();
     }
 
@@ -41,7 +42,7 @@ public interface Smithy2OpenApiExtension {
      *
      * @return Returns the protocols to register.
      */
-    default List<OpenApiProtocol> getProtocols() {
+    default List<OpenApiProtocol<? extends Trait>> getProtocols() {
         return ListUtils.of();
     }
 

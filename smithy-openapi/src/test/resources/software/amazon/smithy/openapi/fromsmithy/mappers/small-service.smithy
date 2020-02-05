@@ -1,6 +1,7 @@
 namespace smithy.example
 
-@protocols([{"name": "aws.rest-json", auth: ["aws.v4"]}])
+@aws.auth#sigv4(name: "small")
+@aws.protocols#restJson1
 service Small {
   version: "2018-01-01",
   operations: [SmallOperation]

@@ -20,6 +20,7 @@ public class RemoveUnusedComponentsTest {
     public static void before() {
         model = Model.assembler()
                 .addImport(RemoveUnusedComponentsTest.class.getResource("small-service.smithy"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
     }

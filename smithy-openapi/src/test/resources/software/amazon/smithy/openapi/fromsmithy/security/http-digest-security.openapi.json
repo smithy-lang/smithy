@@ -18,7 +18,7 @@
   },
   "components": {
     "securitySchemes": {
-      "http-digest": {
+      "smithy.api#httpDigestAuth": {
         "type": "http",
         "scheme": "Digest",
         "description": "HTTP Digest authentication"
@@ -27,7 +27,7 @@
   },
   "security": [
     {
-      "http-digest": [ ]
+      "smithy.api#httpDigestAuth": [ ]
     }
   ]
 }

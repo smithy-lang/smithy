@@ -10,14 +10,8 @@
                 }
             ],
             "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "aws.rest-json",
-                        "auth": [
-                            "http-digest"
-                        ]
-                    }
-                ]
+                "aws.protocols#restJson1": true,
+                "smithy.api#httpDigestAuth": true
             }
         },
         "smithy.example#Operation1": {
