@@ -18,7 +18,7 @@ public class AuthorizersTraitTest {
         ShapeId id = ShapeId.from("smithy.example#Foo");
         ObjectNode node = Node.objectNodeBuilder()
                 .withMember("aws.v4", Node.objectNodeBuilder()
-                        .withMember("scheme", "aws.v4")
+                        .withMember("scheme", "aws.auth#sigv4")
                         .withMember("type", "request")
                         .withMember("uri", "arn:foo:baz")
                         .withMember("credentials", "arn:foo:bar")
