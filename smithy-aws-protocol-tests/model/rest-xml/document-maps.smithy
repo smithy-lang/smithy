@@ -2,10 +2,11 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocoltests.restxml
 
-use aws.protocols.tests.shared#FooEnumMap
-use aws.protocols.tests.shared#GreetingStruct
+use aws.protocols#restXml
+use aws.protocoltests.shared#FooEnumMap
+use aws.protocoltests.shared#GreetingStruct
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -20,7 +21,7 @@ apply XmlMaps @httpRequestTests([
     {
         id: "XmlMaps",
         documentation: "Serializes XML maps",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/XmlMaps",
         body: """
@@ -62,7 +63,7 @@ apply XmlMaps @httpResponseTests([
     {
         id: "XmlMaps",
         documentation: "Serializes XML maps",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlMapsInputOutput>
@@ -119,7 +120,7 @@ apply XmlMapsXmlName @httpRequestTests([
     {
         id: "XmlMapsXmlName",
         documentation: "Serializes XML maps that have xmlName on members",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/XmlMapsXmlName",
         body: """
@@ -161,7 +162,7 @@ apply XmlMapsXmlName @httpResponseTests([
     {
         id: "XmlMapsXmlName",
         documentation: "Serializes XML lists",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlMapsXmlNameInputOutput>
@@ -221,7 +222,7 @@ apply FlattenedXmlMap @httpRequestTests([
     {
         id: "FlattenedXmlMap",
         documentation: "Serializes flattened XML maps in requests",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/FlattenedXmlMap",
         body: """
@@ -252,7 +253,7 @@ apply FlattenedXmlMap @httpResponseTests([
     {
         id: "FlattenedXmlMap",
         documentation: "Serializes flattened XML maps in responses",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <FlattenedXmlMapInputOutput>
@@ -294,7 +295,7 @@ apply FlattenedXmlMapWithXmlName @httpRequestTests([
     {
         id: "FlattenedXmlMapWithXmlName",
         documentation: "Serializes flattened XML maps in requests that have xmlName on members",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/FlattenedXmlMapWithXmlName",
         body: """
@@ -325,7 +326,7 @@ apply FlattenedXmlMapWithXmlName @httpResponseTests([
     {
         id: "FlattenedXmlMapWithXmlName",
         documentation: "Serializes flattened XML maps in responses that have xmlName on members",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <FlattenedXmlMapWithXmlNameInputOutput>

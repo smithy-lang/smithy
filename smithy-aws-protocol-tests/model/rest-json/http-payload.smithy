@@ -3,9 +3,10 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
-use aws.protocols.tests.shared#TextPlainBlob
+use aws.protocols#restJson1
+use aws.protocoltests.shared#TextPlainBlob
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -23,7 +24,7 @@ apply HttpPayloadTraits @httpRequestTests([
     {
         id: "RestJsonHttpPayloadTraitsWithBlob",
         documentation: "Serializes a blob in the HTTP payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/HttpPayloadTraits",
         body: "blobby blob blob",
@@ -38,7 +39,7 @@ apply HttpPayloadTraits @httpRequestTests([
     {
         id: "RestJsonHttpPayloadTraitsWithNoBlobBody",
         documentation: "Serializes an empty blob in the HTTP payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/HttpPayloadTraits",
         body: "",
@@ -55,7 +56,7 @@ apply HttpPayloadTraits @httpResponseTests([
     {
         id: "RestJsonHttpPayloadTraitsWithBlob",
         documentation: "Serializes a blob in the HTTP payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: "blobby blob blob",
         headers: {
@@ -69,7 +70,7 @@ apply HttpPayloadTraits @httpResponseTests([
     {
         id: "RestJsonHttpPayloadTraitsWithNoBlobBody",
         documentation: "Serializes an empty blob in the HTTP payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: "",
         headers: {
@@ -101,7 +102,7 @@ apply HttpPayloadTraitsWithMediaType @httpRequestTests([
     {
         id: "RestJsonHttpPayloadTraitsWithMediaTypeWithBlob",
         documentation: "Serializes a blob in the HTTP payload with a content-type",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/HttpPayloadTraitsWithMediaType",
         body: "blobby blob blob",
@@ -120,7 +121,7 @@ apply HttpPayloadTraitsWithMediaType @httpResponseTests([
     {
         id: "RestJsonHttpPayloadTraitsWithMediaTypeWithBlob",
         documentation: "Serializes a blob in the HTTP payload with a content-type",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: "blobby blob blob",
         headers: {
@@ -157,7 +158,7 @@ apply HttpPayloadWithStructure @httpRequestTests([
     {
         id: "RestJsonHttpPayloadWithStructure",
         documentation: "Serializes a structure in the payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "PUT",
         uri: "/HttpPayloadWithStructure",
         body: """
@@ -182,7 +183,7 @@ apply HttpPayloadWithStructure @httpResponseTests([
     {
         id: "RestJsonHttpPayloadWithStructure",
         documentation: "Serializes a structure in the payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {

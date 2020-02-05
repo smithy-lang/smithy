@@ -2,17 +2,18 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocoltests.restxml
 
-use aws.protocols.tests.shared#BooleanList
-use aws.protocols.tests.shared#EpochSeconds
-use aws.protocols.tests.shared#FooEnumList
-use aws.protocols.tests.shared#GreetingList
-use aws.protocols.tests.shared#IntegerList
-use aws.protocols.tests.shared#NestedStringList
-use aws.protocols.tests.shared#StringList
-use aws.protocols.tests.shared#StringSet
-use aws.protocols.tests.shared#TimestampList
+use aws.protocols#restXml
+use aws.protocoltests.shared#BooleanList
+use aws.protocoltests.shared#EpochSeconds
+use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#GreetingList
+use aws.protocoltests.shared#IntegerList
+use aws.protocoltests.shared#NestedStringList
+use aws.protocoltests.shared#StringList
+use aws.protocoltests.shared#StringSet
+use aws.protocoltests.shared#TimestampList
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -37,7 +38,7 @@ apply XmlLists @httpRequestTests([
     {
         id: "XmlLists",
         documentation: "Serializes XML lists",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "PUT",
         uri: "/XmlLists",
         body: """
@@ -129,7 +130,7 @@ apply XmlLists @httpResponseTests([
     {
         id: "XmlLists",
         documentation: "Serializes XML lists",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlListsInputOutput>
