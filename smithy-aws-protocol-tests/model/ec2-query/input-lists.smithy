@@ -2,12 +2,13 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.ec2
+namespace aws.protocoltests.ec2
 
-use aws.protocols.tests.shared#EpochSeconds
-use aws.protocols.tests.shared#FooEnum
-use aws.protocols.tests.shared#GreetingList
-use aws.protocols.tests.shared#StringList
+use aws.protocols#ec2Query
+use aws.protocoltests.shared#EpochSeconds
+use aws.protocoltests.shared#FooEnum
+use aws.protocoltests.shared#GreetingList
+use aws.protocoltests.shared#StringList
 use smithy.test#httpRequestTests
 
 /// This test serializes simple and complex lists.
@@ -19,7 +20,7 @@ apply QueryLists @httpRequestTests([
     {
         id: "Ec2Lists",
         documentation: "Serializes query lists. All EC2 lists are flattened.",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -49,7 +50,7 @@ apply QueryLists @httpRequestTests([
     {
         id: "Ec2EmptyQueryLists",
         documentation: "Does not serialize empty query lists",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -66,7 +67,7 @@ apply QueryLists @httpRequestTests([
     {
         id: "Ec2ListArgWithXmlNameMember",
         documentation: "An xmlName trait in the member of a list has no effect on the list serialization.",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -85,7 +86,7 @@ apply QueryLists @httpRequestTests([
     {
         id: "Ec2ListMemberWithXmlName",
         documentation: "Changes the name of the list using the xmlName trait",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {

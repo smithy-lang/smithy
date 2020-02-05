@@ -3,8 +3,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocoltests.restxml
 
+use aws.protocols#restXml
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -18,7 +19,7 @@ apply NoInputAndNoOutput @httpRequestTests([
     {
         id: "NoInputAndNoOutput",
         documentation: "No input serializes no payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/NoInputAndOutput",
         body: ""
@@ -29,7 +30,7 @@ apply NoInputAndNoOutput @httpResponseTests([
    {
        id: "NoInputAndNoOutput",
        documentation: "No output serializes no payload",
-       protocol: "aws.rest-xml",
+       protocol: restXml,
        code: 200,
        body: ""
    }
@@ -48,7 +49,7 @@ apply NoInputAndOutput @httpRequestTests([
     {
         id: "NoInputAndOutput",
         documentation: "No input serializes no payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/NoInputAndOutput",
         body: ""
@@ -59,7 +60,7 @@ apply NoInputAndOutput @httpResponseTests([
     {
         id: "NoInputAndOutput",
         documentation: "Empty output serializes no payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: ""
     }
@@ -81,7 +82,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
         id: "EmptyInputAndEmptyOutput",
         documentation: "Empty input serializes no payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/EmptyInputAndEmptyOutput",
         body: ""
@@ -92,7 +93,7 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
         id: "EmptyInputAndEmptyOutput",
         documentation: "Empty output serializes no payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: ""
     },
