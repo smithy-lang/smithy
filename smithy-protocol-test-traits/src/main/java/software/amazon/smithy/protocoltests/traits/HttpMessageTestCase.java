@@ -26,6 +26,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -45,8 +46,8 @@ public abstract class HttpMessageTestCase implements ToNode {
 
     private final String id;
     private final String documentation;
-    private final String protocol;
-    private final String authScheme;
+    private final ShapeId protocol;
+    private final ShapeId authScheme;
     private final String body;
     private final String bodyMediaType;
     private final ObjectNode params;
@@ -77,11 +78,11 @@ public abstract class HttpMessageTestCase implements ToNode {
         return Optional.ofNullable(documentation);
     }
 
-    public String getProtocol() {
+    public ShapeId getProtocol() {
         return protocol;
     }
 
-    public Optional<String> getAuthScheme() {
+    public Optional<ShapeId> getAuthScheme() {
         return Optional.ofNullable(authScheme);
     }
 
@@ -116,9 +117,9 @@ public abstract class HttpMessageTestCase implements ToNode {
     static void updateBuilderFromNode(Builder<?, ?> builder, Node node) {
         ObjectNode o = node.expectObjectNode();
         builder.id(o.expectStringMember(ID).getValue());
-        builder.protocol(o.expectStringMember(PROTOCOL).getValue());
+        builder.protocol(o.expectStringMember(PROTOCOL).expectShapeId());
         o.getStringMember(DOCUMENTATION).map(StringNode::getValue).ifPresent(builder::documentation);
-        o.getStringMember(AUTH_SCHEME).map(StringNode::getValue).ifPresent(builder::authScheme);
+        o.getStringMember(AUTH_SCHEME).map(StringNode::expectShapeId).ifPresent(builder::authScheme);
         o.getStringMember(BODY).map(StringNode::getValue).ifPresent(builder::body);
         o.getStringMember(BODY_MEDIA_TYPE).map(StringNode::getValue).ifPresent(builder::bodyMediaType);
         o.getObjectMember(PARAMS).ifPresent(builder::params);
@@ -143,9 +144,9 @@ public abstract class HttpMessageTestCase implements ToNode {
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder()
                 .withMember(ID, getId())
-                .withMember(PROTOCOL, getProtocol())
+                .withMember(PROTOCOL, getProtocol().toString())
                 .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
-                .withOptionalMember(AUTH_SCHEME, getAuthScheme().map(Node::from))
+                .withOptionalMember(AUTH_SCHEME, getAuthScheme().map(ShapeId::toString).map(Node::from))
                 .withOptionalMember(BODY, getBody().map(Node::from))
                 .withOptionalMember(BODY_MEDIA_TYPE, getBodyMediaType().map(Node::from));
 
@@ -207,8 +208,8 @@ public abstract class HttpMessageTestCase implements ToNode {
 
         private String id;
         private String documentation;
-        private String protocol;
-        private String authScheme;
+        private ShapeId protocol;
+        private ShapeId authScheme;
         private String body;
         private String bodyMediaType;
         private ObjectNode params = Node.objectNode();
@@ -230,13 +231,13 @@ public abstract class HttpMessageTestCase implements ToNode {
         }
 
         @SuppressWarnings("unchecked")
-        public B protocol(String protocol) {
+        public B protocol(ShapeId protocol) {
             this.protocol = protocol;
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B authScheme(String authScheme) {
+        public B authScheme(ShapeId authScheme) {
             this.authScheme = authScheme;
             return (B) this;
         }

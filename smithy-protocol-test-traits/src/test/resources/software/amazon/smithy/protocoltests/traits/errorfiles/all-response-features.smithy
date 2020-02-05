@@ -2,13 +2,21 @@ namespace smithy.example
 
 use smithy.test#httpResponseTests
 
+@trait
+@protocolDefinition
+structure testProtocol {}
+
+@trait
+@authDefinition
+structure testScheme {}
+
 @readonly
 @http(method: "GET", uri: "/")
 @httpResponseTests([
     {
         id: "foo2",
-        protocol: "example",
-        authScheme: "test",
+        protocol: testProtocol,
+        authScheme: testScheme,
         code: 200,
         headers: {
             "X-Blah": "Blarg"

@@ -3,16 +3,20 @@ namespace smithy.example
 use smithy.test#httpResponseTests
 use smithy.test#httpRequestTests
 
+@trait
+@protocolDefinition
+structure testProtocol {}
+
 @http(method: "POST", uri: "/")
 @httpResponseTests([
     {
         id: "foo", // conflict with self and MyError
-        protocol: "example",
+        protocol: testProtocol,
         code: 200,
     },
     {
         id: "foo", // conflict with self and MyError
-        protocol: "example",
+        protocol: testProtocol,
         code: 200,
     }
 ])
@@ -24,12 +28,12 @@ structure SayGoodbyeOutput {}
 @httpResponseTests([
     {
         id: "foo", // conflict with self and SayGoodbye
-        protocol: "example",
+        protocol: testProtocol,
         code: 200,
     },
     {
         id: "baz", // no conflict
-        protocol: "example",
+        protocol: testProtocol,
         code: 200,
     },
 ])
@@ -40,13 +44,13 @@ structure MyError {}
 @httpRequestTests([
     {
         id: "foo", // conflict with self and SayHello2
-        protocol: "example",
+        protocol: testProtocol,
         method: "POST",
         uri: "/",
     },
     {
         id: "foo", // conflict with self and SayHello2
-        protocol: "example",
+        protocol: testProtocol,
         method: "POST",
         uri: "/",
     },
@@ -60,13 +64,13 @@ structure SayHelloInput {}
 @httpRequestTests([
     {
         id: "foo", // conflict
-        protocol: "example",
+        protocol: testProtocol,
         method: "POST",
         uri: "/",
     },
     {
         id: "baz", // no conflict
-        protocol: "example",
+        protocol: testProtocol,
         method: "POST",
         uri: "/",
     }
