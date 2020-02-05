@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
@@ -43,7 +44,7 @@ public final class UnsupportedTraits implements OpenApiMapper {
     }
 
     @Override
-    public void before(Context context, OpenApi.Builder builder) {
+    public void before(Context<? extends Trait> context, OpenApi.Builder builder) {
         List<Pair<ShapeId, List<String>>> violations = context.getModel().shapes()
                 .map(shape -> Pair.of(shape.getId(), TRAITS.stream()
                         .filter(trait -> shape.findTrait(trait).isPresent())

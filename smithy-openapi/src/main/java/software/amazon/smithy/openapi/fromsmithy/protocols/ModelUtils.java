@@ -15,12 +15,9 @@
 
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
-import java.util.Optional;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.model.ParameterObject;
 
@@ -33,20 +30,6 @@ import software.amazon.smithy.openapi.model.ParameterObject;
 final class ModelUtils {
 
     private ModelUtils() {}
-
-    /**
-     * Gets a trait from a shape or the shape targeted by the shape if the
-     * shape is a member.
-     *
-     * @param context Conversion context.
-     * @param shape Shape or member shape to get the trait from.
-     * @param trait Trait type to get.
-     * @param <T> Trait type to get.
-     * @return Returns the optionally found trait on the shape or member.
-     */
-    static <T extends Trait> Optional<T> getMemberTrait(Context context, Shape shape, Class<T> trait) {
-        return shape.asMemberShape().flatMap(member -> member.getMemberTrait(context.getModel(), trait));
-    }
 
     /**
      * Creates a request parameter from a member using some default settings.
@@ -65,7 +48,8 @@ final class ModelUtils {
         ParameterObject.Builder builder = ParameterObject.builder();
         builder.required(member.isRequired());
         builder.name(member.getMemberName());
-        getMemberTrait(context, member, DocumentationTrait.class).map(DocumentationTrait::getValue)
+        member.getMemberTrait(context.getModel(), DocumentationTrait.class)
+                .map(DocumentationTrait::getValue)
                 .ifPresent(builder::description);
         return builder;
     }

@@ -29,6 +29,7 @@ public class OpenApiJsonSubstitutionsPluginTest {
     public void removesBySubstitution() {
         Model model = Model.assembler()
                 .addImport(RemoveUnusedComponentsTest.class.getResource("substitutions.smithy"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
 

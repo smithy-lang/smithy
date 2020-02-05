@@ -8,11 +8,14 @@
                 "smithy.api#tags": [
                     "foo"
                 ],
-                "smithy.api#protocols": [
-                    {
-                        "name": "foo.baz.bar.bam.qux.lorem.ipsum"
-                    }
-                ]
+                "smithy.example#cannotResolveMe": true
+            }
+        },
+        "smithy.example#cannotResolveMe": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {"selector":  "service"},
+                "smithy.api#protocolDefinition": true
             }
         }
     }

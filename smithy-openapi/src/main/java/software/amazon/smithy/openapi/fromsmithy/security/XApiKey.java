@@ -16,6 +16,8 @@
 package software.amazon.smithy.openapi.fromsmithy.security;
 
 import java.util.Set;
+import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
@@ -27,15 +29,16 @@ import software.amazon.smithy.utils.SetUtils;
  * <p>This is compatible with Amazon API Gateway API key authorization.
  *
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-key-source.html">API Gateway documentation</a>
+ * TODO: Implement and rename
  */
-public final class XApiKey implements SecuritySchemeConverter {
+public final class XApiKey implements SecuritySchemeConverter<HttpApiKeyAuthTrait> {
     @Override
-    public String getAuthSchemeName() {
-        return "http-x-api-key";
+    public Class<HttpApiKeyAuthTrait> getAuthSchemeType() {
+        return HttpApiKeyAuthTrait.class;
     }
 
     @Override
-    public SecurityScheme createSecurityScheme(Context context) {
+    public SecurityScheme createSecurityScheme(Context<? extends Trait> context, HttpApiKeyAuthTrait trait) {
         return SecurityScheme.builder()
                 .type("apiKey")
                 .in("header")

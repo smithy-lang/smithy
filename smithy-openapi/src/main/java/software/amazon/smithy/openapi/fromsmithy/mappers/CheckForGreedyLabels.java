@@ -16,6 +16,7 @@
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.util.logging.Logger;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
@@ -37,7 +38,7 @@ public class CheckForGreedyLabels implements OpenApiMapper {
     }
 
     @Override
-    public OpenApi after(Context context, OpenApi openApi) {
+    public OpenApi after(Context<? extends Trait> context, OpenApi openApi) {
         boolean forbid = context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.FORBID_GREEDY_LABELS);
 
         for (String path : openApi.getPaths().keySet()) {

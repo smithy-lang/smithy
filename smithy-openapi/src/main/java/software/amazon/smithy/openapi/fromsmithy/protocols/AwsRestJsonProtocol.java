@@ -16,7 +16,7 @@
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
 import java.util.List;
-import java.util.Set;
+import software.amazon.smithy.aws.traits.protocols.RestJson1Trait;
 import software.amazon.smithy.jsonschema.JsonSchemaConstants;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.knowledge.HttpBinding;
@@ -28,16 +28,15 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Provides the conversion from Smithy aws.rest-json-1.0 and
  * aws.rest-json-1.1 to OpenAPI operations.
  */
-public final class AwsRestJsonProtocol extends AbstractRestProtocol {
+public final class AwsRestJsonProtocol extends AbstractRestProtocol<RestJson1Trait> {
     @Override
-    public Set<String> getProtocolNames() {
-        return SetUtils.of("aws.rest-json", "aws.rest-json-1.0", "aws.rest-json-1.1");
+    public Class<RestJson1Trait> getProtocolType() {
+        return RestJson1Trait.class;
     }
 
     @Override
@@ -55,7 +54,7 @@ public final class AwsRestJsonProtocol extends AbstractRestProtocol {
 
     @Override
     Schema createDocumentSchema(
-            Context context,
+            Context<RestJson1Trait> context,
             Shape operationOrError,
             List<HttpBinding> bindings,
             MessageType message

@@ -28,6 +28,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeVisitor;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -55,7 +56,7 @@ public class RemoveUnusedComponents implements OpenApiMapper {
     }
 
     @Override
-    public OpenApi after(Context context, OpenApi openapi) {
+    public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
         if (context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.OPENAPI_KEEP_UNUSED_COMPONENTS)) {
             return openapi;
         }
