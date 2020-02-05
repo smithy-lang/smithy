@@ -2,11 +2,15 @@ namespace smithy.example
 
 use smithy.test#httpRequestTests
 
+@trait
+@protocolDefinition
+structure testProtocol {}
+
 @http(method: "POST", uri: "/")
 @httpRequestTests([
     {
         id: "foo3",
-        protocol: "example",
+        protocol: testProtocol,
         method: "POST",
         uri: "/",
         params: {
