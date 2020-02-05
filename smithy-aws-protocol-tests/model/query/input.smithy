@@ -2,10 +2,11 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocoltests.query
 
-use aws.protocols.tests.shared#EpochSeconds
-use aws.protocols.tests.shared#FooEnum
+use aws.protocols#awsQuery
+use aws.protocoltests.shared#EpochSeconds
+use aws.protocoltests.shared#FooEnum
 use smithy.test#httpRequestTests
 
 /// This test serializes strings, numbers, and boolean values.
@@ -17,7 +18,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "QuerySimpleInputParamsStrings",
         documentation: "Serializes strings",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -37,7 +38,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "QuerySimpleInputParamsStringAndBooleanTrue",
         documentation: "Serializes booleans that are true",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -57,7 +58,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "QuerySimpleInputParamsStringsAndBooleanFalse",
         documentation: "Serializes booleans that are false",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -75,7 +76,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "QuerySimpleInputParamsInteger",
         documentation: "Serializes integers",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -93,7 +94,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "QuerySimpleInputParamsFloat",
         documentation: "Serializes floats",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -111,7 +112,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "QuerySimpleInputParamsBlob",
         documentation: "Blobs are base64 encoded in the query string",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -129,7 +130,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "QueryEnums",
         documentation: "Serializes enums in the query string",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -169,7 +170,7 @@ apply QueryTimestamps @httpRequestTests([
     {
         id: "QueryTimestampsInput",
         documentation: "Serializes timestamps",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -213,7 +214,7 @@ apply NestedStructures @httpRequestTests([
     {
         id: "NestedStructures",
         documentation: "Serializes nested structures using dots",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -258,7 +259,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
         id: "QueryProtocolIdempotencyTokenAutoFill",
         documentation: "Automatically adds idempotency token when not set",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -273,7 +274,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
         id: "QueryProtocolIdempotencyTokenAutoFillIsSet",
         documentation: "Uses the given idempotency token as-is",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {

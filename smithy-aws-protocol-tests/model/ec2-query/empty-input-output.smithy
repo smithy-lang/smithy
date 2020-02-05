@@ -3,8 +3,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.ec2
+namespace aws.protocoltests.ec2
 
+use aws.protocols#ec2Query
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -20,7 +21,7 @@ apply NoInputAndOutput @httpRequestTests([
     {
         id: "Ec2QueryNoInputAndOutput",
         documentation: "No input serializes no payload",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -37,7 +38,7 @@ apply NoInputAndOutput @httpResponseTests([
     {
         id: "Ec2QueryNoInputAndOutput",
         documentation: "Empty output",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         headers: {
             "Content-Type": "text/xml;charset=UTF-8"
@@ -66,7 +67,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
         id: "Ec2QueryEmptyInputAndEmptyOutput",
         documentation: "Empty input serializes no extra query params",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -83,7 +84,7 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
         id: "Ec2QueryEmptyInputAndEmptyOutput",
         documentation: "Empty output",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         code: 200,
         headers: {
             "Content-Type": "text/xml;charset=UTF-8"

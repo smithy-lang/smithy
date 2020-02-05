@@ -2,8 +2,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocoltests.restxml
 
+use aws.protocols#restXml
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -19,7 +20,7 @@ apply XmlAttributes @httpRequestTests([
     {
         id: "XmlAttributes",
         documentation: "Serializes XML attributes on the synthesized document",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "PUT",
         uri: "/XmlAttributes",
         body: """
@@ -42,7 +43,7 @@ apply XmlAttributes @httpResponseTests([
     {
         id: "XmlAttributes",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlAttributesInputOutput test="test">
@@ -80,7 +81,7 @@ apply XmlAttributesOnPayload @httpRequestTests([
     {
         id: "XmlAttributesOnPayload",
         documentation: "Serializes XML attributes on the synthesized document",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "PUT",
         uri: "/XmlAttributesOnPayload",
         body: """
@@ -105,7 +106,7 @@ apply XmlAttributesOnPayload @httpResponseTests([
     {
         id: "XmlAttributesOnPayload",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlAttributesInputOutput test="test">

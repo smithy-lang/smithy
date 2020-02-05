@@ -2,8 +2,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
+use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -28,7 +29,7 @@ apply GreetingWithErrors @httpResponseTests([
     {
         id: "RestJsonGreetingWithErrors",
         documentation: "Ensures that operations with errors successfully know how to deserialize the successful response",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {
@@ -61,7 +62,7 @@ apply InvalidGreeting @httpResponseTests([
     {
         id: "RestJsonInvalidGreetingError",
         documentation: "Parses simple JSON errors",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         params: {
             Message: "Hi"
         },
@@ -96,7 +97,7 @@ apply ComplexError @httpResponseTests([
     {
         id: "RestJsonComplexErrorWithNoMessage",
         documentation: "Serializes a complex error with no message member",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         params: {
             Header: "Header",
             TopLevel: "Top level",
@@ -121,7 +122,7 @@ apply ComplexError @httpResponseTests([
     },
     {
         id: "RestJsonEmptyComplexErrorWithNoMessage",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         params: {},
         code: 403,
         headers: {
@@ -149,7 +150,7 @@ apply FooError @httpResponseTests([
     {
         id: "RestJsonFooErrorUsingXAmznErrorType",
         documentation: "Serializes the X-Amzn-ErrorType header. For an example service, see Amazon EKS.",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 500,
         headers: {
             "X-Amzn-Errortype": "FooError",
@@ -163,7 +164,7 @@ apply FooError @httpResponseTests([
             is to be interpreted as 'ValidationException'.
 
             For an example service see Amazon Polly.""",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 500,
         headers: {
             "X-Amzn-Errortype": "FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
@@ -174,10 +175,10 @@ apply FooError @httpResponseTests([
         documentation: """
                      X-Amzn-Errortype might contain a URL and a namespace. Client should extract only the shape \
                      name. This is a pathalogical case that might not actually happen in any deployed AWS service.""",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 500,
         headers: {
-            "X-Amzn-Errortype": "aws.protocols.tests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
+            "X-Amzn-Errortype": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
         },
     },
     {
@@ -188,7 +189,7 @@ apply FooError @httpResponseTests([
                      must first check for the X-Amzn-Errortype and then check for a top-level 'code' property.
 
                      For example service see Amazon S3 Glacier.""",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 500,
         headers: {
             "Content-Type": "application/json"
@@ -204,14 +205,14 @@ apply FooError @httpResponseTests([
         documentation: """
                      Some services serialize errors using code, and it might contain a namespace. \
                      Clients should just take the last part of the string after '#'.""",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 500,
         headers: {
             "Content-Type": "application/json"
         },
         body: """
               {
-                  "code": "aws.protocols.tests.restjson#FooError"
+                  "code": "aws.protocoltests.restjson#FooError"
               }""",
         bodyMediaType: "application/json",
     },
@@ -221,21 +222,21 @@ apply FooError @httpResponseTests([
                      Some services serialize errors using code, and it might contain a namespace. It also might \
                      contain a URI. Clients should just take the last part of the string after '#' and before ":". \
                      This is a pathalogical case that might not occur in any deployed AWS service.""",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 500,
         headers: {
             "Content-Type": "application/json"
         },
         body: """
               {
-                  "code": "aws.protocols.tests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
+                  "code": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
               }""",
         bodyMediaType: "application/json",
     },
     {
         id: "RestJsonFooErrorWithDunderType",
         documentation: "Some services serialize errors using __type.",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 500,
         headers: {
             "Content-Type": "application/json"
@@ -251,14 +252,14 @@ apply FooError @httpResponseTests([
         documentation: """
                      Some services serialize errors using __type, and it might contain a namespace. \
                      Clients should just take the last part of the string after '#'.""",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 500,
         headers: {
             "Content-Type": "application/json"
         },
         body: """
               {
-                  "__type": "aws.protocols.tests.restjson#FooError"
+                  "__type": "aws.protocoltests.restjson#FooError"
               }""",
         bodyMediaType: "application/json",
     },
@@ -268,14 +269,14 @@ apply FooError @httpResponseTests([
                      Some services serialize errors using __type, and it might contain a namespace. It also might \
                      contain a URI. Clients should just take the last part of the string after '#' and before ":". \
                      This is a pathalogical case that might not occur in any deployed AWS service.""",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 500,
         headers: {
             "Content-Type": "application/json"
         },
         body: """
               {
-                  "__type": "aws.protocols.tests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
+                  "__type": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
               }""",
         bodyMediaType: "application/json",
     }

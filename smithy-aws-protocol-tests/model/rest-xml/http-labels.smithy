@@ -3,11 +3,12 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocoltests.restxml
 
-use aws.protocols.tests.shared#DateTime
-use aws.protocols.tests.shared#EpochSeconds
-use aws.protocols.tests.shared#HttpDate
+use aws.protocols#restXml
+use aws.protocoltests.shared#DateTime
+use aws.protocoltests.shared#EpochSeconds
+use aws.protocoltests.shared#HttpDate
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -23,7 +24,7 @@ apply HttpRequestWithLabels @httpRequestTests([
     {
         id: "InputWithHeadersAndAllParams",
         documentation: "Sends a GET request that uses URI label bindings",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "GET",
         uri: "/HttpRequestWithLabels/string/1/2/3/4.0/5.0/true/2019-12-16T23%3A48%3A18Z",
         body: "",
@@ -88,7 +89,7 @@ apply HttpRequestWithLabelsAndTimestampFormat @httpRequestTests([
     {
         id: "HttpRequestWithLabelsAndTimestampFormat",
         documentation: "Serializes different timestamp formats in URI labels",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "GET",
         uri: """
              /HttpRequestWithLabelsAndTimestampFormat\
@@ -156,7 +157,7 @@ apply HttpRequestWithGreedyLabelInPath @httpRequestTests([
     {
         id: "HttpRequestWithGreedyLabelInPath",
         documentation: "Serializes greedy labels and normal labels",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "GET",
         uri: "/HttpRequestWithGreedyLabelInPath/foo/hello/baz/there/guy",
         body: "",

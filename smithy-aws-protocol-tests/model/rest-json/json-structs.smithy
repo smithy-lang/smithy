@@ -3,12 +3,13 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
-use aws.protocols.tests.shared#FooEnum
-use aws.protocols.tests.shared#FooEnumList
-use aws.protocols.tests.shared#FooEnumSet
-use aws.protocols.tests.shared#FooEnumMap
+use aws.protocols#restJson1
+use aws.protocoltests.shared#FooEnum
+use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#FooEnumSet
+use aws.protocoltests.shared#FooEnumMap
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -25,7 +26,7 @@ apply SimpleScalarProperties @httpRequestTests([
     {
         id: "RestJsonSimpleScalarProperties",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "PUT",
         uri: "/SimpleScalarProperties",
         body: """
@@ -64,7 +65,7 @@ apply SimpleScalarProperties @httpResponseTests([
     {
         id: "RestJsonSimpleScalarProperties",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {
@@ -126,7 +127,7 @@ apply JsonBlobs @httpRequestTests([
     {
         id: "RestJsonJsonBlobs",
         documentation: "Blobs are base64 encoded",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/JsonBlobs",
         body: """
@@ -147,7 +148,7 @@ apply JsonBlobs @httpResponseTests([
     {
         id: "RestJsonJsonBlobs",
         documentation: "Blobs are base64 encoded",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {
@@ -180,7 +181,7 @@ apply JsonTimestamps @httpRequestTests([
     {
         id: "RestJsonJsonTimestamps",
         documentation: "Tests how normal timestamps are serialized",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/JsonTimestamps",
         body: """
@@ -198,7 +199,7 @@ apply JsonTimestamps @httpRequestTests([
     {
         id: "RestJsonJsonTimestampsWithDateTimeFormat",
         documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/JsonTimestamps",
         body: """
@@ -216,7 +217,7 @@ apply JsonTimestamps @httpRequestTests([
     {
         id: "RestJsonJsonTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/JsonTimestamps",
         body: """
@@ -234,7 +235,7 @@ apply JsonTimestamps @httpRequestTests([
     {
         id: "RestJsonJsonTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/JsonTimestamps",
         body: """
@@ -255,7 +256,7 @@ apply JsonTimestamps @httpResponseTests([
     {
         id: "RestJsonJsonTimestamps",
         documentation: "Tests how normal timestamps are serialized",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {
@@ -272,7 +273,7 @@ apply JsonTimestamps @httpResponseTests([
     {
         id: "RestJsonJsonTimestampsWithDateTimeFormat",
         documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {
@@ -289,7 +290,7 @@ apply JsonTimestamps @httpResponseTests([
     {
         id: "RestJsonJsonTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {
@@ -306,7 +307,7 @@ apply JsonTimestamps @httpResponseTests([
     {
         id: "RestJsonJsonTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {
@@ -347,7 +348,7 @@ apply JsonEnums @httpRequestTests([
     {
         id: "RestJsonJsonEnums",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "PUT",
         uri: "/JsonEnums",
         body: """
@@ -390,7 +391,7 @@ apply JsonEnums @httpResponseTests([
     {
         id: "RestJsonJsonEnums",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {
@@ -449,7 +450,7 @@ apply RecursiveShapes @httpRequestTests([
     {
         id: "RestJsonRecursiveShapes",
         documentation: "Serializes recursive structures",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "PUT",
         uri: "/RecursiveShapes",
         body: """
@@ -492,7 +493,7 @@ apply RecursiveShapes @httpResponseTests([
     {
         id: "RestJsonRecursiveShapes",
         documentation: "Serializes recursive structures",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {

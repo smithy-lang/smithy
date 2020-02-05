@@ -1,14 +1,15 @@
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocoltests.restxml
 
+use aws.protocols#restXml
 use aws.api#service
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// A REST XML service that sends XML requests and responses.
 @service(sdkId: "Rest Xml Protocol")
-@protocols([{"name": "aws.rest-xml"}])
+@restXml
 service RestXml {
     version: "2019-12-16",
     operations: [

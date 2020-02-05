@@ -2,10 +2,11 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocoltests.query
 
-use aws.protocols.tests.shared#FooEnumMap
-use aws.protocols.tests.shared#GreetingStruct
+use aws.protocols#awsQuery
+use aws.protocoltests.shared#FooEnumMap
+use aws.protocoltests.shared#GreetingStruct
 use smithy.test#httpResponseTests
 
 /// The example tests basic map serialization.
@@ -17,7 +18,7 @@ apply XmlMaps @httpResponseTests([
     {
         id: "QueryXmlMaps",
         documentation: "Serializes XML maps",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <XmlMapsResponse xmlns="https://example.com/">
@@ -74,7 +75,7 @@ apply XmlMapsXmlName @httpResponseTests([
     {
         id: "QueryQueryXmlMapsXmlName",
         documentation: "Serializes XML lists",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <XmlMapsXmlNameResponse xmlns="https://example.com/">
@@ -134,7 +135,7 @@ apply FlattenedXmlMap @httpResponseTests([
     {
         id: "QueryQueryFlattenedXmlMap",
         documentation: "Serializes flattened XML maps in responses",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <FlattenedXmlMapResponse xmlns="https://example.com/">
@@ -176,7 +177,7 @@ apply FlattenedXmlMapWithXmlName @httpResponseTests([
     {
         id: "QueryQueryFlattenedXmlMapWithXmlName",
         documentation: "Serializes flattened XML maps in responses that have xmlName on members",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <FlattenedXmlMapWithXmlNameResponse xmlns="https://example.com/">

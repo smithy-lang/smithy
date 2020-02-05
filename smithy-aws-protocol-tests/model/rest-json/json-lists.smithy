@@ -2,17 +2,18 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
-use aws.protocols.tests.shared#BooleanList
-use aws.protocols.tests.shared#EpochSeconds
-use aws.protocols.tests.shared#FooEnumList
-use aws.protocols.tests.shared#GreetingList
-use aws.protocols.tests.shared#IntegerList
-use aws.protocols.tests.shared#NestedStringList
-use aws.protocols.tests.shared#StringList
-use aws.protocols.tests.shared#StringSet
-use aws.protocols.tests.shared#TimestampList
+use aws.protocols#restJson1
+use aws.protocoltests.shared#BooleanList
+use aws.protocoltests.shared#EpochSeconds
+use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#GreetingList
+use aws.protocoltests.shared#IntegerList
+use aws.protocoltests.shared#NestedStringList
+use aws.protocoltests.shared#StringList
+use aws.protocoltests.shared#StringSet
+use aws.protocoltests.shared#TimestampList
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -34,7 +35,7 @@ apply JsonLists @httpRequestTests([
     {
         id: "RestJsonLists",
         documentation: "Serializes JSON lists",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "PUT",
         uri: "/JsonLists",
         body: """
@@ -136,7 +137,7 @@ apply JsonLists @httpRequestTests([
     {
         id: "RestJsonListsEmpty",
         documentation: "Serializes empty JSON lists",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "PUT",
         uri: "/JsonLists",
         body: """
@@ -152,7 +153,7 @@ apply JsonLists @httpRequestTests([
     {
           id: "RestJsonListsSerializeNull",
           documentation: "Serializes null values in lists",
-          protocol: "aws.rest-json-1.1",
+          protocol: restJson1,
           method: "PUT",
           uri: "/JsonLists",
           body: """
@@ -173,7 +174,7 @@ apply JsonLists @httpResponseTests([
     {
         id: "RestJsonLists",
         documentation: "Serializes JSON lists",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {
@@ -274,7 +275,7 @@ apply JsonLists @httpResponseTests([
     {
         id: "RestJsonListsEmpty",
         documentation: "Serializes empty JSON lists",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {
@@ -289,7 +290,7 @@ apply JsonLists @httpResponseTests([
     {
           id: "RestJsonListsSerializeNull",
           documentation: "Serializes null values in lists",
-          protocol: "aws.rest-json-1.1",
+          protocol: restJson1,
           code: 200,
           body: """
                 {

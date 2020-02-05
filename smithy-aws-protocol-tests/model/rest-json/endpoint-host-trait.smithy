@@ -3,8 +3,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
+use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 

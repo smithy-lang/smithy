@@ -2,12 +2,13 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocoltests.query
 
-use aws.protocols.tests.shared#EpochSeconds
-use aws.protocols.tests.shared#FooEnum
-use aws.protocols.tests.shared#GreetingList
-use aws.protocols.tests.shared#StringList
+use aws.protocols#awsQuery
+use aws.protocoltests.shared#EpochSeconds
+use aws.protocoltests.shared#FooEnum
+use aws.protocoltests.shared#GreetingList
+use aws.protocoltests.shared#StringList
 use smithy.test#httpRequestTests
 
 /// This test serializes simple and complex lists.
@@ -19,7 +20,7 @@ apply QueryLists @httpRequestTests([
     {
         id: "QueryLists",
         documentation: "Serializes query lists",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -49,7 +50,7 @@ apply QueryLists @httpRequestTests([
     {
         id: "EmptyQueryLists",
         documentation: "Does not serialize empty query lists",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -66,7 +67,7 @@ apply QueryLists @httpRequestTests([
     {
         id: "FlattenedQueryLists",
         documentation: "Flattens query lists by repeating the member name and removing the member element",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -85,7 +86,7 @@ apply QueryLists @httpRequestTests([
     {
         id: "QueryListArgWithXmlNameMember",
         documentation: "Changes the member of lists using xmlName trait",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -104,7 +105,7 @@ apply QueryLists @httpRequestTests([
     {
         id: "QueryFlattenedListArgWithXmlName",
         documentation: "Changes the name of flattened lists using xmlName trait on the structure member",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {

@@ -3,18 +3,19 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
-use aws.protocols.tests.shared#BooleanList
-use aws.protocols.tests.shared#DateTime
-use aws.protocols.tests.shared#EpochSeconds
-use aws.protocols.tests.shared#FooEnum
-use aws.protocols.tests.shared#FooEnumList
-use aws.protocols.tests.shared#HttpDate
-use aws.protocols.tests.shared#IntegerList
-use aws.protocols.tests.shared#StringList
-use aws.protocols.tests.shared#StringSet
-use aws.protocols.tests.shared#TimestampList
+use aws.protocols#restJson1
+use aws.protocoltests.shared#BooleanList
+use aws.protocoltests.shared#DateTime
+use aws.protocoltests.shared#EpochSeconds
+use aws.protocoltests.shared#FooEnum
+use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#HttpDate
+use aws.protocoltests.shared#IntegerList
+use aws.protocoltests.shared#StringList
+use aws.protocoltests.shared#StringSet
+use aws.protocoltests.shared#TimestampList
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -30,7 +31,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     {
         id: "RestJsonInputAndOutputWithStringHeaders",
         documentation: "Tests requests with string header bindings",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
@@ -48,7 +49,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     {
         id: "RestJsonInputAndOutputWithNumericHeaders",
         documentation: "Tests requests with numeric header bindings",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
@@ -74,7 +75,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     {
         id: "RestJsonInputAndOutputWithBooleanHeaders",
         documentation: "Tests requests with boolean header bindings",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
@@ -92,7 +93,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     {
         id: "RestJsonInputAndOutputWithTimestampHeaders",
         documentation: "Tests requests with timestamp header bindings",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
@@ -106,7 +107,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     {
         id: "RestJsonInputAndOutputWithEnumHeaders",
         documentation: "Tests requests with enum header bindings",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
@@ -125,7 +126,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
     {
         id: "RestJsonInputAndOutputWithStringHeaders",
         documentation: "Tests responses with string header bindings",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         headers: {
             "X-String": "Hello",
@@ -142,7 +143,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
     {
         id: "RestJsonInputAndOutputWithNumericHeaders",
         documentation: "Tests responses with numeric header bindings",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         headers: {
             "X-Byte": "1",
@@ -167,7 +168,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
     {
         id: "RestJsonInputAndOutputWithBooleanHeaders",
         documentation: "Tests responses with boolean header bindings",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         headers: {
             "X-Boolean1": "true",
@@ -184,7 +185,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
     {
         id: "RestJsonInputAndOutputWithTimestampHeaders",
         documentation: "Tests responses with timestamp header bindings",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         headers: {
             "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
@@ -197,7 +198,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
     {
         id: "RestJsonInputAndOutputWithEnumHeaders",
         documentation: "Tests responses with enum header bindings",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         headers: {
             "X-Enum": "Foo",
@@ -274,7 +275,7 @@ apply NullAndEmptyHeadersClient @httpRequestTests([
     {
         id: "RestJsonNullAndEmptyHeaders",
         documentation: "Do not send null values, empty strings, or empty lists over the wire in headers",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "GET",
         uri: "/NullAndEmptyHeadersClient",
         forbidHeaders: ["X-A", "X-B", "X-C"],
@@ -300,7 +301,7 @@ apply NullAndEmptyHeadersServer @httpResponseTests([
     {
         id: "RestJsonNullAndEmptyHeaders",
         documentation: "Do not send null or empty headers",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         forbidHeaders: ["X-A", "X-B", "X-C"],
         body: "",
@@ -334,7 +335,7 @@ apply TimestampFormatHeaders @httpRequestTests([
     {
         id: "RestJsonTimestampFormatHeaders",
         documentation: "Tests how timestamp request headers are serialized",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/TimestampFormatHeaders",
         headers: {
@@ -363,7 +364,7 @@ apply TimestampFormatHeaders @httpResponseTests([
     {
         id: "RestJsonTimestampFormatHeaders",
         documentation: "Tests how timestamp response headers are serialized",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         headers: {
             "X-memberEpochSeconds": "1576540098",

@@ -3,12 +3,13 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocoltests.restxml
 
-use aws.protocols.tests.shared#FooEnum
-use aws.protocols.tests.shared#FooEnumList
-use aws.protocols.tests.shared#FooEnumSet
-use aws.protocols.tests.shared#FooEnumMap
+use aws.protocols#restXml
+use aws.protocoltests.shared#FooEnum
+use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#FooEnumSet
+use aws.protocoltests.shared#FooEnumMap
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -25,7 +26,7 @@ apply SimpleScalarProperties @httpRequestTests([
     {
         id: "SimpleScalarProperties",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "PUT",
         uri: "/SimpleScalarProperties",
         body: """
@@ -65,7 +66,7 @@ apply SimpleScalarProperties @httpResponseTests([
     {
         id: "SimpleScalarProperties",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <SimpleScalarPropertiesInputOutput>
@@ -128,7 +129,7 @@ apply XmlBlobs @httpRequestTests([
     {
         id: "XmlBlobs",
         documentation: "Blobs are base64 encoded",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/XmlBlobs",
         body: """
@@ -150,7 +151,7 @@ apply XmlBlobs @httpResponseTests([
     {
         id: "XmlBlobs",
         documentation: "Blobs are base64 encoded",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlBlobsInputOutput>
@@ -184,7 +185,7 @@ apply XmlTimestamps @httpRequestTests([
     {
         id: "XmlTimestamps",
         documentation: "Tests how normal timestamps are serialized",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/XmlTimestamps",
         body: """
@@ -203,7 +204,7 @@ apply XmlTimestamps @httpRequestTests([
     {
         id: "XmlTimestampsWithDateTimeFormat",
         documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/XmlTimestamps",
         body: """
@@ -222,7 +223,7 @@ apply XmlTimestamps @httpRequestTests([
     {
         id: "XmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/XmlTimestamps",
         body: """
@@ -241,7 +242,7 @@ apply XmlTimestamps @httpRequestTests([
     {
         id: "XmlTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/XmlTimestamps",
         body: """
@@ -263,7 +264,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "XmlTimestamps",
         documentation: "Tests how normal timestamps are serialized",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlTimestampsInputOutput>
@@ -281,7 +282,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "XmlTimestampsWithDateTimeFormat",
         documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlTimestampsInputOutput>
@@ -299,7 +300,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "XmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlTimestampsInputOutput>
@@ -317,7 +318,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "XmlTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlTimestampsInputOutput>
@@ -359,7 +360,7 @@ apply XmlEnums @httpRequestTests([
     {
         id: "XmlEnums",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "PUT",
         uri: "/XmlEnums",
         body: """
@@ -409,7 +410,7 @@ apply XmlEnums @httpResponseTests([
     {
         id: "XmlEnums",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlEnumsInputOutput>
@@ -475,7 +476,7 @@ apply RecursiveShapes @httpRequestTests([
     {
         id: "RecursiveShapes",
         documentation: "Serializes recursive structures",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "PUT",
         uri: "/RecursiveShapes",
         body: """
@@ -519,7 +520,7 @@ apply RecursiveShapes @httpResponseTests([
     {
         id: "RecursiveShapes",
         documentation: "Serializes recursive structures",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <RecursiveShapesInputOutput>
@@ -583,7 +584,7 @@ apply XmlNamespaces @httpRequestTests([
     {
         id: "XmlNamespaces",
         documentation: "Serializes XML namespaces",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/XmlNamespaces",
         body: """
@@ -617,7 +618,7 @@ apply XmlNamespaces @httpResponseTests([
     {
         id: "XmlNamespaces",
         documentation: "Serializes XML namespaces",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <XmlNamespacesInputOutput xmlns="http://foo.com">

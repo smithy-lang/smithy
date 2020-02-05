@@ -2,8 +2,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocoltests.restxml
 
+use aws.protocols#restXml
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -27,7 +28,7 @@ apply GreetingWithErrors @httpResponseTests([
     {
         id: "GreetingWithErrors",
         documentation: "Ensures that operations with errors successfully know how to deserialize the successful response",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: "",
         headers: {
@@ -55,7 +56,7 @@ apply InvalidGreeting @httpResponseTests([
     {
         id: "InvalidGreetingError",
         documentation: "Parses simple XML errors",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         params: {
             Message: "Hi"
         },
@@ -94,7 +95,7 @@ structure ComplexError {
 apply ComplexError @httpResponseTests([
     {
         id: "ComplexError",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         params: {
             Header: "Header",
             TopLevel: "Top level",

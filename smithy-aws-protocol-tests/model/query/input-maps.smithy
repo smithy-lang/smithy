@@ -2,11 +2,12 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocoltests.query
 
-use aws.protocols.tests.shared#GreetingStruct
-use aws.protocols.tests.shared#StringList
-use aws.protocols.tests.shared#StringMap
+use aws.protocols#awsQuery
+use aws.protocoltests.shared#GreetingStruct
+use aws.protocoltests.shared#StringList
+use aws.protocoltests.shared#StringMap
 use smithy.test#httpRequestTests
 
 /// This test serializes simple and complex maps.
@@ -18,7 +19,7 @@ apply QueryMaps @httpRequestTests([
     {
         id: "QuerySimpleQueryMaps",
         documentation: "Serializes query maps",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -42,7 +43,7 @@ apply QueryMaps @httpRequestTests([
     {
         id: "QuerySimpleQueryMapsWithXmlName",
         documentation: "Serializes query maps and uses xmlName",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -63,7 +64,7 @@ apply QueryMaps @httpRequestTests([
     {
         id: "QueryComplexQueryMaps",
         documentation: "Serializes complex query maps",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -91,7 +92,7 @@ apply QueryMaps @httpRequestTests([
     {
         id: "QueryEmptyQueryMaps",
         documentation: "Does not serialize empty query maps",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -108,7 +109,7 @@ apply QueryMaps @httpRequestTests([
     {
         id: "QueryQueryMapWithMemberXmlName",
         documentation: "Serializes query maps where the member has an xmlName trait",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -132,7 +133,7 @@ apply QueryMaps @httpRequestTests([
     {
         id: "QueryFlattenedQueryMaps",
         documentation: "Serializes flattened query maps",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -156,7 +157,7 @@ apply QueryMaps @httpRequestTests([
     {
         id: "QueryFlattenedQueryMapsWithXmlName",
         documentation: "Serializes flattened query maps that use an xmlName",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -180,7 +181,7 @@ apply QueryMaps @httpRequestTests([
     {
         id: "QueryQueryMapOfLists",
         documentation: "Serializes query map of lists",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {

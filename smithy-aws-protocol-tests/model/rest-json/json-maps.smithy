@@ -2,10 +2,11 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
-use aws.protocols.tests.shared#FooEnumMap
-use aws.protocols.tests.shared#GreetingStruct
+use aws.protocols#restJson1
+use aws.protocoltests.shared#FooEnumMap
+use aws.protocoltests.shared#GreetingStruct
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -20,7 +21,7 @@ apply JsonMaps @httpRequestTests([
     {
         id: "RestJsonJsonMaps",
         documentation: "Serializes JSON maps",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/JsonMaps",
         body: """
@@ -55,7 +56,7 @@ apply JsonMaps @httpResponseTests([
     {
         id: "RestJsonJsonMaps",
         documentation: "Serializes JSON maps",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: """
               {

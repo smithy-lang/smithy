@@ -2,15 +2,16 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocoltests.query
 
-use aws.protocols.tests.shared#BooleanList
-use aws.protocols.tests.shared#FooEnumList
-use aws.protocols.tests.shared#IntegerList
-use aws.protocols.tests.shared#NestedStringList
-use aws.protocols.tests.shared#StringList
-use aws.protocols.tests.shared#StringSet
-use aws.protocols.tests.shared#TimestampList
+use aws.protocols#awsQuery
+use aws.protocoltests.shared#BooleanList
+use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#IntegerList
+use aws.protocoltests.shared#NestedStringList
+use aws.protocoltests.shared#StringList
+use aws.protocoltests.shared#StringSet
+use aws.protocoltests.shared#TimestampList
 use smithy.test#httpResponseTests
 
 /// This test case serializes XML lists for the following cases for both
@@ -31,7 +32,7 @@ apply XmlLists @httpResponseTests([
     {
         id: "QueryXmlLists",
         documentation: "Serializes XML lists",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <XmlListsResponse xmlns="https://example.com/">

@@ -2,12 +2,13 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocoltests.query
 
-use aws.protocols.tests.shared#FooEnum
-use aws.protocols.tests.shared#FooEnumList
-use aws.protocols.tests.shared#FooEnumSet
-use aws.protocols.tests.shared#FooEnumMap
+use aws.protocols#awsQuery
+use aws.protocoltests.shared#FooEnum
+use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#FooEnumSet
+use aws.protocoltests.shared#FooEnumMap
 use smithy.test#httpResponseTests
 
 // This example serializes simple scalar types in the top level XML document.
@@ -20,7 +21,7 @@ apply SimpleScalarXmlProperties @httpResponseTests([
     {
         id: "QuerySimpleScalarProperties",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <SimpleScalarXmlPropertiesResponse xmlns="https://example.com/">
@@ -81,7 +82,7 @@ apply XmlBlobs @httpResponseTests([
     {
         id: "QueryXmlBlobs",
         documentation: "Blobs are base64 encoded",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <XmlBlobsResponse xmlns="https://example.com/">
@@ -115,7 +116,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "QueryXmlTimestamps",
         documentation: "Tests how normal timestamps are serialized",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
@@ -135,7 +136,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "QueryXmlTimestampsWithDateTimeFormat",
         documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
@@ -155,7 +156,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "QueryXmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
@@ -175,7 +176,7 @@ apply XmlTimestamps @httpResponseTests([
     {
         id: "QueryXmlTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
@@ -216,7 +217,7 @@ apply XmlEnums @httpResponseTests([
     {
         id: "QueryXmlEnums",
         documentation: "Serializes simple scalar properties",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <XmlEnumsResponse xmlns="https://example.com/">
@@ -281,7 +282,7 @@ apply RecursiveXmlShapes @httpResponseTests([
     {
         id: "QueryRecursiveShapes",
         documentation: "Serializes recursive structures",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <RecursiveXmlShapesResponse xmlns="https://example.com/">
@@ -345,7 +346,7 @@ apply XmlNamespaces @httpResponseTests([
     {
         id: "QueryXmlNamespaces",
         documentation: "Serializes XML namespaces",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <XmlNamespacesResponse xmlns="http://foo.com" xmlns="https://example.com/">
@@ -410,7 +411,7 @@ apply IgnoresWrappingXmlName @httpResponseTests([
     {
         id: "QueryIgnoresWrappingXmlName",
         documentation: "The xmlName trait on the output structure is ignored in AWS Query",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
         body: """
               <IgnoresWrappingXmlNameResponse xmlns="http://foo.com" xmlns="https://example.com/">

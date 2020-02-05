@@ -3,9 +3,10 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restxml
+namespace aws.protocoltests.restxml
 
-use aws.protocols.tests.shared#TextPlainBlob
+use aws.protocols#restXml
+use aws.protocoltests.shared#TextPlainBlob
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -23,7 +24,7 @@ apply HttpPayloadTraits @httpRequestTests([
     {
         id: "HttpPayloadTraitsWithBlob",
         documentation: "Serializes a blob in the HTTP payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/HttpPayloadTraits",
         body: "blobby blob blob",
@@ -38,7 +39,7 @@ apply HttpPayloadTraits @httpRequestTests([
     {
         id: "HttpPayloadTraitsWithNoBlobBody",
         documentation: "Serializes an empty blob in the HTTP payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/HttpPayloadTraits",
         body: "",
@@ -55,7 +56,7 @@ apply HttpPayloadTraits @httpResponseTests([
     {
         id: "HttpPayloadTraitsWithBlob",
         documentation: "Serializes a blob in the HTTP payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: "blobby blob blob",
         headers: {
@@ -69,7 +70,7 @@ apply HttpPayloadTraits @httpResponseTests([
     {
         id: "HttpPayloadTraitsWithNoBlobBody",
         documentation: "Serializes an empty blob in the HTTP payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: "",
         headers: {
@@ -101,7 +102,7 @@ apply HttpPayloadTraitsWithMediaType @httpRequestTests([
     {
         id: "HttpPayloadTraitsWithMediaTypeWithBlob",
         documentation: "Serializes a blob in the HTTP payload with a content-type",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "POST",
         uri: "/HttpPayloadTraitsWithMediaType",
         body: "blobby blob blob",
@@ -120,7 +121,7 @@ apply HttpPayloadTraitsWithMediaType @httpResponseTests([
     {
         id: "HttpPayloadTraitsWithMediaTypeWithBlob",
         documentation: "Serializes a blob in the HTTP payload with a content-type",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: "blobby blob blob",
         headers: {
@@ -157,7 +158,7 @@ apply HttpPayloadWithStructure @httpRequestTests([
     {
         id: "HttpPayloadWithStructure",
         documentation: "Serializes a structure in the payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "PUT",
         uri: "/HttpPayloadWithStructure",
         body: """
@@ -183,7 +184,7 @@ apply HttpPayloadWithStructure @httpResponseTests([
     {
         id: "HttpPayloadWithStructure",
         documentation: "Serializes a structure in the payload",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
             <NestedPayload>
@@ -227,7 +228,7 @@ apply HttpPayloadWithXmlName @httpRequestTests([
     {
         id: "HttpPayloadWithXmlName",
         documentation: "Serializes a structure in the payload using a wrapper name based on xmlName",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "PUT",
         uri: "/HttpPayloadWithXmlName",
         body: "<Hello><name>Phreddy</name></Hello>",
@@ -247,7 +248,7 @@ apply HttpPayloadWithXmlName @httpResponseTests([
     {
         id: "HttpPayloadWithXmlName",
         documentation: "Serializes a structure in the payload using a wrapper name based on xmlName",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: "<Hello><name>Phreddy</name></Hello>",
         bodyMediaType: "application/xml",
@@ -284,7 +285,7 @@ apply HttpPayloadWithXmlNamespace @httpRequestTests([
     {
         id: "HttpPayloadWithXmlNamespace",
         documentation: "Serializes a structure in the payload using a wrapper with an XML namespace",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "PUT",
         uri: "/HttpPayloadWithXmlNamespace",
         body: """
@@ -307,7 +308,7 @@ apply HttpPayloadWithXmlNamespace @httpResponseTests([
     {
         id: "HttpPayloadWithXmlNamespace",
         documentation: "Serializes a structure in the payload using a wrapper with an XML namespace",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <PayloadWithXmlNamespace xmlns="http://foo.com">
@@ -347,7 +348,7 @@ apply HttpPayloadWithXmlNamespaceAndPrefix @httpRequestTests([
     {
         id: "HttpPayloadWithXmlNamespaceAndPrefix",
         documentation: "Serializes a structure in the payload using a wrapper with an XML namespace",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         method: "PUT",
         uri: "/HttpPayloadWithXmlNamespaceAndPrefix",
         body: """
@@ -370,7 +371,7 @@ apply HttpPayloadWithXmlNamespaceAndPrefix @httpResponseTests([
     {
         id: "HttpPayloadWithXmlNamespaceAndPrefix",
         documentation: "Serializes a structure in the payload using a wrapper with an XML namespace",
-        protocol: "aws.rest-xml",
+        protocol: restXml,
         code: 200,
         body: """
               <PayloadWithXmlNamespaceAndPrefix xmlns:baz="http://foo.com">
