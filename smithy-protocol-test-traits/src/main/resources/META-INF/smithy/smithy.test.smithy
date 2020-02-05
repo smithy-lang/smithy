@@ -23,6 +23,7 @@ structure HttpRequestTestCase {
 
     /// The name of the protocol to test.
     @required
+    @idRef(selector: "[trait|protocolDefinition]", failWhenMissing: true)
     protocol: String,
 
     /// The expected serialized HTTP request method.
@@ -36,9 +37,10 @@ structure HttpRequestTestCase {
     @length(min: 1)
     uri: String,
 
-    /// The optional authentication scheme to assume. It's possible that
-    /// specific authentication schemes might influence the serialization
-    /// logic of an HTTP request.
+    /// The optional authentication scheme shape ID to assume. It's
+    /// possible that specific authentication schemes might influence
+    /// the serialization logic of an HTTP request.
+    @idRef(selector: "[trait|authDefinition]", failWhenMissing: true)
     authScheme: String,
 
     /// A list of the expected serialized query string parameters.
@@ -149,8 +151,9 @@ structure HttpResponseTestCase {
     @pattern("[A-Za-z_][A-Za-z0-9_]+")
     id: String,
 
-    /// The name of the protocol to test.
+    /// The shape ID of the protocol to test.
     @required
+    @idRef(selector: "[trait|protocolDefinition]", failWhenMissing: true)
     protocol: String,
 
     /// Defines the HTTP response code.
@@ -158,9 +161,10 @@ structure HttpResponseTestCase {
     @range(min: 100, max: 599)
     code: Integer,
 
-    /// The optional authentication scheme to assume. It's possible that
-    /// specific authentication schemes might influence the serialization
+    /// The optional authentication scheme shape ID to assume. It's possible
+    /// that specific authentication schemes might influence the serialization
     /// logic of an HTTP response.
+    @idRef(selector: "[trait|authDefinition]", failWhenMissing: true)
     authScheme: String,
 
     /// A map of expected HTTP headers. Each key represents a header field
