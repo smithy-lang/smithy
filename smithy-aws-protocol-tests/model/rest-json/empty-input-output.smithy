@@ -5,8 +5,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
+use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -20,7 +21,7 @@ apply NoInputAndNoOutput @httpRequestTests([
     {
         id: "RestJsonNoInputAndNoOutput",
         documentation: "No input serializes no payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/NoInputAndOutput"
     }
@@ -30,7 +31,7 @@ apply NoInputAndNoOutput @httpResponseTests([
    {
        id: "RestJsonNoInputAndNoOutput",
        documentation: "No output serializes no payload",
-       protocol: "aws.rest-json-1.1",
+       protocol: restJson1,
        code: 200
    }
 ])
@@ -48,7 +49,7 @@ apply NoInputAndOutput @httpRequestTests([
     {
         id: "RestJsonNoInputAndOutput",
         documentation: "No input serializes no payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/NoInputAndOutput"
     }
@@ -58,7 +59,7 @@ apply NoInputAndOutput @httpResponseTests([
     {
         id: "RestJsonNoInputAndOutput",
         documentation: "Empty output serializes no payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200
     }
 ])
@@ -79,7 +80,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
         id: "RestJsonEmptyInputAndEmptyOutput",
         documentation: "Empty input serializes no payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "POST",
         uri: "/EmptyInputAndEmptyOutput",
         body: "{}",
@@ -91,7 +92,7 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
         id: "RestJsonEmptyInputAndEmptyOutput",
         documentation: "Empty output serializes no payload",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: "{}",
         bodyMediaType: "application/json"

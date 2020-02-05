@@ -2,11 +2,12 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.ec2
+namespace aws.protocoltests.ec2
 
 use aws.api#ec2QueryName
-use aws.protocols.tests.shared#EpochSeconds
-use aws.protocols.tests.shared#FooEnum
+use aws.protocols#ec2Query
+use aws.protocoltests.shared#EpochSeconds
+use aws.protocoltests.shared#FooEnum
 use smithy.test#httpRequestTests
 
 /// This test serializes strings, numbers, and boolean values.
@@ -18,7 +19,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "Ec2SimpleInputParamsStrings",
         documentation: "Serializes strings",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -38,7 +39,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "Ec2SimpleInputParamsStringAndBooleanTrue",
         documentation: "Serializes booleans that are true",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -58,7 +59,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "Ec2SimpleInputParamsStringsAndBooleanFalse",
         documentation: "Serializes booleans that are false",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -76,7 +77,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "Ec2SimpleInputParamsInteger",
         documentation: "Serializes integers",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -94,7 +95,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "Ec2SimpleInputParamsFloat",
         documentation: "Serializes floats",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -112,7 +113,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "Ec2SimpleInputParamsBlob",
         documentation: "Blobs are base64 encoded in the query string",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -130,7 +131,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "Ec2Enums",
         documentation: "Serializes enums in the query string",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -148,7 +149,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "Ec2Query",
         documentation: "Serializes query using ec2QueryName trait.",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -166,7 +167,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "Ec2QueryIsPreferred",
         documentation: "ec2QueryName trait is preferred over xmlName.",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -184,7 +185,7 @@ apply SimpleInputParams @httpRequestTests([
     {
         id: "Ec2XmlNameIsUppercased",
         documentation: "xmlName is used with the ec2 protocol, but the first character is uppercased",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -234,7 +235,7 @@ apply QueryTimestamps @httpRequestTests([
     {
         id: "Ec2TimestampsInput",
         documentation: "Serializes timestamps",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -278,7 +279,7 @@ apply NestedStructures @httpRequestTests([
     {
         id: "Ec2NestedStructures",
         documentation: "Serializes nested structures using dots",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -323,7 +324,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
         id: "Ec2ProtocolIdempotencyTokenAutoFill",
         documentation: "Automatically adds idempotency token when not set",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
@@ -338,7 +339,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
     {
         id: "Ec2ProtocolIdempotencyTokenAutoFillIsSet",
         documentation: "Uses the given idempotency token as-is",
-        protocol: "aws.ec2",
+        protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {

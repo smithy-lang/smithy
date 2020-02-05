@@ -3,8 +3,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.query
+namespace aws.protocoltests.query
 
+use aws.protocols#awsQuery
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -18,7 +19,7 @@ apply NoInputAndNoOutput @httpRequestTests([
     {
         id: "QueryNoInputAndNoOutput",
         documentation: "No input serializes no additional query params",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -35,7 +36,7 @@ apply NoInputAndNoOutput @httpResponseTests([
    {
        id: "QueryNoInputAndNoOutput",
        documentation: "Empty output. Note that no assertion is made on the output body itself.",
-       protocol: "aws.query",
+       protocol: awsQuery,
        code: 200,
    }
 ])
@@ -52,7 +53,7 @@ apply NoInputAndOutput @httpRequestTests([
     {
         id: "QueryNoInputAndOutput",
         documentation: "No input serializes no payload",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -69,7 +70,7 @@ apply NoInputAndOutput @httpResponseTests([
     {
         id: "QueryNoInputAndOutput",
         documentation: "Empty output",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
     }
 ])
@@ -89,7 +90,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
     {
         id: "QueryEmptyInputAndEmptyOutput",
         documentation: "Empty input serializes no extra query params",
-        protocol: "aws.query",
+        protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
@@ -106,7 +107,7 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
     {
         id: "QueryEmptyInputAndEmptyOutput",
         documentation: "Empty output",
-        protocol: "aws.query",
+        protocol: awsQuery,
         code: 200,
     },
 ])

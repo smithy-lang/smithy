@@ -1,12 +1,13 @@
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
+use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// A REST JSON service that sends JSON requests and responses.
-@protocols([{"name": "aws.rest-json-1.1"}])
+@restJson1
 service RestJson {
     version: "2019-12-16",
     operations: [

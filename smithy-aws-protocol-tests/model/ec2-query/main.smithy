@@ -26,13 +26,14 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.ec2
+namespace aws.protocoltests.ec2
 
+use aws.protocols#ec2Query
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// An EC2 query service that sends query requests and XML responses.
-@protocols([{"name": "aws.ec2"}])
+@ec2Query
 @xmlNamespace(uri: "https://example.com/")
 service AwsEc2 {
     version: "2020-01-08",

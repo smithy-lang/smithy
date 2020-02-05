@@ -3,8 +3,9 @@
 
 $version: "0.5.0"
 
-namespace aws.protocols.tests.restjson
+namespace aws.protocoltests.restjson
 
+use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -21,7 +22,7 @@ apply HttpPrefixHeaders @httpRequestTests([
     {
         id: "RestJsonHttpPrefixHeadersArePresent",
         documentation: "Adds headers by prefix",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "GET",
         uri: "/HttpPrefixHeaders",
         body: "",
@@ -41,7 +42,7 @@ apply HttpPrefixHeaders @httpRequestTests([
     {
         id: "RestJsonHttpPrefixHeadersAreNotPresent",
         documentation: "No prefix headers are serialized because the value is empty",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         method: "GET",
         uri: "/HttpPrefixHeaders",
         body: "",
@@ -59,7 +60,7 @@ apply HttpPrefixHeaders @httpResponseTests([
     {
         id: "RestJsonHttpPrefixHeadersArePresent",
         documentation: "Adds headers by prefix",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: "",
         headers: {
@@ -78,7 +79,7 @@ apply HttpPrefixHeaders @httpResponseTests([
     {
         id: "RestJsonHttpPrefixHeadersAreNotPresent",
         documentation: "No prefix headers are serialized because the value is empty",
-        protocol: "aws.rest-json-1.1",
+        protocol: restJson1,
         code: 200,
         body: "",
         headers: {
