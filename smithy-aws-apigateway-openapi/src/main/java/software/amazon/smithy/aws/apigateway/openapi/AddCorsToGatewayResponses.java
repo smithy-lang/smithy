@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.CorsTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
@@ -64,13 +65,13 @@ final class AddCorsToGatewayResponses implements OpenApiMapper {
     private static final String RESPONSE_PARAMETERS_KEY = "responseParameters";
 
     @Override
-    public OpenApi after(Context context, OpenApi openapi) {
+    public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
         return context.getService().getTrait(CorsTrait.class)
                 .map(corsTrait -> updateModel(context, openapi, corsTrait))
                 .orElse(openapi);
     }
 
-    private OpenApi updateModel(Context context, OpenApi openapi, CorsTrait corsTrait) {
+    private OpenApi updateModel(Context<? extends Trait> context, OpenApi openapi, CorsTrait corsTrait) {
         // Update the existing gateway responses if present, or inject a default one if not.
         Node extension = openapi.getExtension(GATEWAY_RESPONSES_EXTENSION)
                 .map(node -> node.expectObjectNode(GATEWAY_RESPONSES_EXTENSION + " must be an object"))
@@ -82,12 +83,16 @@ final class AddCorsToGatewayResponses implements OpenApiMapper {
                 .build();
     }
 
-    private Node updateGatewayResponses(Context context, CorsTrait trait) {
+    private Node updateGatewayResponses(Context<? extends Trait> context, CorsTrait trait) {
         LOGGER.fine(() -> "Injecting default API Gateway responses for " + context.getService().getId());
         return updateGatewayResponses(context, trait, DEFAULT_GATEWAY_RESPONSES);
     }
 
-    private Node updateGatewayResponses(Context context, CorsTrait trait, ObjectNode gatewayResponses) {
+    private Node updateGatewayResponses(
+            Context<? extends Trait> context,
+            CorsTrait trait,
+            ObjectNode gatewayResponses
+    ) {
         Map<CorsHeader, String> corsHeaders = new HashMap<>();
         corsHeaders.put(CorsHeader.ALLOW_ORIGIN, trait.getOrigin());
 
