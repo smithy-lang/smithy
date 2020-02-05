@@ -27,7 +27,7 @@ public final class OpenApiConstants {
     /** The Smithy service Shape ID to convert. */
     public static final String SERVICE = "service";
 
-    /** The protocol name to use when converting Smithy to OpenAPI. */
+    /** The protocol trait shape ID to use when converting Smithy to OpenAPI. */
     public static final String PROTOCOL = "protocol";
 
     /** Whether or not to include tags in the result. */

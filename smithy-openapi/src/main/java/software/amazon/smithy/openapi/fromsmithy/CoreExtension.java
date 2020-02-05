@@ -17,6 +17,7 @@ package software.amazon.smithy.openapi.fromsmithy;
 
 import java.util.List;
 import software.amazon.smithy.jsonschema.JsonSchemaMapper;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.mappers.CheckForGreedyLabels;
 import software.amazon.smithy.openapi.fromsmithy.mappers.CheckForPrefixHeaders;
 import software.amazon.smithy.openapi.fromsmithy.mappers.InlineReferencesToPrimitiveTypes;
@@ -37,18 +38,18 @@ import software.amazon.smithy.utils.ListUtils;
  */
 public final class CoreExtension implements Smithy2OpenApiExtension {
     @Override
-    public List<SecuritySchemeConverter> getSecuritySchemeConverters() {
+    public List<SecuritySchemeConverter<? extends Trait>> getSecuritySchemeConverters() {
         return ListUtils.of(
-            new AwsV4(),
             new HttpBasic(),
             new HttpBearer(),
             new HttpDigest(),
+            new AwsV4(),
             new XApiKey()
         );
     }
 
     @Override
-    public List<OpenApiProtocol> getProtocols() {
+    public List<OpenApiProtocol<? extends Trait>> getProtocols() {
         return ListUtils.of(new AwsRestJsonProtocol());
     }
 

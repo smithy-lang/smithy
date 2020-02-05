@@ -17,6 +17,7 @@ package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import software.amazon.smithy.build.JsonSubstitutions;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -33,7 +34,7 @@ public final class OpenApiJsonSubstitutions implements OpenApiMapper {
     }
 
     @Override
-    public ObjectNode updateNode(Context context, OpenApi openapi, ObjectNode node) {
+    public ObjectNode updateNode(Context<? extends Trait> context, OpenApi openapi, ObjectNode node) {
         return context.getConfig().getObjectMember(OpenApiConstants.SUBSTITUTIONS)
                 .map(substitutions -> JsonSubstitutions.create(substitutions).apply(node).expectObjectNode())
                 .orElse(node);

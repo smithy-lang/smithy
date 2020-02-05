@@ -24,6 +24,7 @@ import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.HttpTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
@@ -35,15 +36,17 @@ import software.amazon.smithy.utils.SetUtils;
  *
  * <p>Instances of {@code OpenApiProtocol} are discovered using SPI and
  * matched with configuration settings based on the result of matching
- * a protocol against {@link #getProtocolNames()}.
+ * a protocol against {@link #getProtocolType()}.
+ *
+ * @param <T> Type of Smithy protocol to convert.
  */
-public interface OpenApiProtocol {
+public interface OpenApiProtocol<T extends Trait> {
     /**
-     * Gets the names of the protocol that this implementation supports.
+     * Gets the protocol type that this converter handles.
      *
-     * @return Returns the supported protocol names.
+     * @return Returns the shape ID.
      */
-    Set<String> getProtocolNames();
+    Class<T> getProtocolType();
 
     /**
      * Configures protocol-specific default values when they are not present
@@ -69,7 +72,7 @@ public interface OpenApiProtocol {
      * @param operation The operation shape to create.
      * @return Returns the optionally created operation entry.
      */
-    Optional<Operation> createOperation(Context context, OperationShape operation);
+    Optional<Operation> createOperation(Context<T> context, OperationShape operation);
 
     /**
      * Gets the URI of an operation.
@@ -82,7 +85,7 @@ public interface OpenApiProtocol {
      * @param operation The operation to get the URI of.
      * @return Returns the operation URI.
      */
-    default String getOperationUri(Context context, OperationShape operation) {
+    default String getOperationUri(Context<T> context, OperationShape operation) {
         return operation.getTrait(HttpTrait.class)
                 .map(HttpTrait::getUri)
                 .map(UriPattern::toString)
@@ -102,7 +105,7 @@ public interface OpenApiProtocol {
      * @param operation The operation to get the method of.
      * @return Returns the method.
      */
-    default String getOperationMethod(Context context, OperationShape operation) {
+    default String getOperationMethod(Context<T> context, OperationShape operation) {
         return operation.getTrait(HttpTrait.class)
                 .map(HttpTrait::getMethod)
                 .orElseThrow(() -> new OpenApiException(
@@ -120,7 +123,7 @@ public interface OpenApiProtocol {
      * @param operationOrError Operation or error shape ID.
      * @return Returns the status code as a string.
      */
-    default String getOperationResponseStatusCode(Context context, ToShapeId operationOrError) {
+    default String getOperationResponseStatusCode(Context<T> context, ToShapeId operationOrError) {
         return String.valueOf(context.getModel()
                 .getKnowledge(HttpBindingIndex.class)
                 .getResponseCode(operationOrError));
@@ -137,7 +140,7 @@ public interface OpenApiProtocol {
      * @param operationShape Smithy operation
      * @return Returns a set of header names.
      */
-    default Set<String> getProtocolRequestHeaders(Context context, OperationShape operationShape) {
+    default Set<String> getProtocolRequestHeaders(Context<T> context, OperationShape operationShape) {
         return SetUtils.of();
     }
 
@@ -152,7 +155,7 @@ public interface OpenApiProtocol {
      * @param operationShape Smithy operation
      * @return Returns a set of header names.
      */
-    default Set<String> getProtocolResponseHeaders(Context context, OperationShape operationShape) {
+    default Set<String> getProtocolResponseHeaders(Context<T> context, OperationShape operationShape) {
         return SetUtils.of();
     }
 

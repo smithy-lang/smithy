@@ -13,6 +13,7 @@ public class HttpDigestTest {
     public void addsHttpDigestAuth() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("http-digest-security.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));

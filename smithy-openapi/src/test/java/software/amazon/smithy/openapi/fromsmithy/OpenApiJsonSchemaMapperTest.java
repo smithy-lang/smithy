@@ -46,6 +46,7 @@ public class OpenApiJsonSchemaMapperTest {
     public void convertsModels() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("test-service.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         SchemaDocument document = JsonSchemaConverter.create()
