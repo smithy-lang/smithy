@@ -13,6 +13,7 @@ public class HttpBasicTest {
     public void addsHttpBasicAuth() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("http-basic-security.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));

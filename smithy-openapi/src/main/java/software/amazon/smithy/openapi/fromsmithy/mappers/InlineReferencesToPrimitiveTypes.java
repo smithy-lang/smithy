@@ -24,6 +24,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeVisitor;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -63,7 +64,7 @@ public class InlineReferencesToPrimitiveTypes implements OpenApiMapper {
     }
 
     @Override
-    public ObjectNode updateNode(Context context, OpenApi openapi, ObjectNode node) {
+    public ObjectNode updateNode(Context<? extends Trait> context, OpenApi openapi, ObjectNode node) {
 
         if (context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.DISABLE_PRIMITIVE_INLINING)) {
             return node;

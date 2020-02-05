@@ -16,17 +16,13 @@
                 }
             ],
             "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "aws.rest-json",
-                        "auth": [
-                            "http-basic",
-                            "aws.v4"
-                        ]
-                    }
-                ],
+                "aws.protocols#restJson1": true,
+                "aws.auth#sigv4": {
+                    "name": "example"
+                },
+                "smithy.api#httpBasicAuth": {},
                 "smithy.api#auth": [
-                    "aws.v4"
+                    "aws.auth#sigv4"
                 ]
             }
         },
@@ -47,7 +43,7 @@
                     "method": "GET"
                 },
                 "smithy.api#auth": [
-                    "http-basic"
+                    "smithy.api#httpBasicAuth"
                 ]
             }
         },
@@ -59,8 +55,8 @@
                     "method": "GET"
                 },
                 "smithy.api#auth": [
-                    "http-basic",
-                    "aws.v4"
+                    "smithy.api#httpBasicAuth",
+                    "aws.auth#sigv4"
                 ]
             }
         }

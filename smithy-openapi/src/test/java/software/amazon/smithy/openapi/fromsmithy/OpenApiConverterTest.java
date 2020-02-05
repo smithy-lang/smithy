@@ -31,6 +31,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.model.OpenApi;
@@ -44,6 +45,7 @@ public class OpenApiConverterTest {
     public void convertsModelsToOpenApi() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("test-service.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         ObjectNode result = OpenApiConverter.create().convertToNode(model, ShapeId.from("example.rest#RestService"));
@@ -57,6 +59,7 @@ public class OpenApiConverterTest {
     public void convertsModelsToOpenApiAndDisablesInlining() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("test-service.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         ObjectNode result = OpenApiConverter.create()
@@ -72,6 +75,7 @@ public class OpenApiConverterTest {
     public void passesThroughTags() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("tagged-service.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create()
@@ -89,13 +93,14 @@ public class OpenApiConverterTest {
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             Model model = Model.assembler()
                     .addImport(getClass().getResource("missing-protocols-trait.json"))
+                    .discoverModels()
                     .assemble()
                     .unwrap();
             OpenApiConverter.create()
                     .convert(model, ShapeId.from("smithy.example#Service"));
         });
 
-        assertThat(thrown.getMessage(), containsString("`protocols` trait"));
+        assertThat(thrown.getMessage(), containsString("does not define any protocols"));
     }
 
     @Test
@@ -103,34 +108,21 @@ public class OpenApiConverterTest {
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             Model model = Model.assembler()
                     .addImport(getClass().getResource("unable-to-resolve-protocol.json"))
+                    .discoverModels()
                     .assemble()
                     .unwrap();
             OpenApiConverter.create()
                     .convert(model, ShapeId.from("smithy.example#Service"));
         });
 
-        assertThat(thrown.getMessage(), containsString("Unable to resolve"));
-    }
-
-    @Test
-    public void mustBeAbleToResolveExplicitProtocol() {
-        Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
-            Model model = Model.assembler()
-                    .addImport(getClass().getResource("unable-to-resolve-protocol.json"))
-                    .assemble()
-                    .unwrap();
-            OpenApiConverter.create()
-                    .protocolName("not-found")
-                    .convert(model, ShapeId.from("smithy.example#Service"));
-        });
-
-        assertThat(thrown.getMessage(), containsString("Unable to resolve"));
+        assertThat(thrown.getMessage(), containsString("Unable to find an OpenAPI service provider"));
     }
 
     @Test
     public void omitsUnsupportedHttpMethods() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("unsupported-http-method.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
@@ -144,6 +136,7 @@ public class OpenApiConverterTest {
     public void protocolsCanOmitOperations() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("missing-http-bindings.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create()
@@ -165,6 +158,7 @@ public class OpenApiConverterTest {
     public void addsEmptyResponseByDefault() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("adds-empty-response.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
@@ -176,6 +170,7 @@ public class OpenApiConverterTest {
     public void addsMixedSecurityService() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("mixed-security-service.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
@@ -188,8 +183,8 @@ public class OpenApiConverterTest {
     private static final class NullSecurity implements OpenApiMapper {
         @Override
         public Map<String, List<String>> updateSecurity(
-                Context context, Shape shape,
-                SecuritySchemeConverter converter,
+                Context<? extends Trait> context, Shape shape,
+                SecuritySchemeConverter<? extends Trait> converter,
                 Map<String, List<String>> requirement
         ) {
             return null;
@@ -200,6 +195,7 @@ public class OpenApiConverterTest {
     public void canOmitSecurityRequirements() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("mixed-security-service.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create()
@@ -213,8 +209,8 @@ public class OpenApiConverterTest {
     private static final class ConstantSecurity implements OpenApiMapper {
         @Override
         public Map<String, List<String>> updateSecurity(
-                Context context, Shape shape,
-                SecuritySchemeConverter converter,
+                Context<? extends Trait> context, Shape shape,
+                SecuritySchemeConverter<? extends Trait> converter,
                 Map<String, List<String>> requirement
         ) {
             return MapUtils.of("foo_baz", ListUtils.of());
@@ -225,6 +221,7 @@ public class OpenApiConverterTest {
     public void canChangeSecurityRequirementName() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("mixed-security-service.json"))
+                .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create()

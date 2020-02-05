@@ -41,6 +41,7 @@ import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol;
 import software.amazon.smithy.openapi.model.MediaTypeObject;
@@ -67,7 +68,7 @@ import software.amazon.smithy.utils.Pair;
  * <p>This class is currently package-private, but may be made public in the
  * future when we're sure about its API.
  */
-abstract class AbstractRestProtocol implements OpenApiProtocol {
+abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<T> {
 
     /** The type of message being created. */
     enum MessageType { REQUEST, RESPONSE, ERROR }
@@ -84,7 +85,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
      * @param messageType The type of message being created (request, response, or error).
      * @return Returns the media type of the document payload.
      */
-    abstract String getDocumentMediaType(Context context, Shape operationOrError, MessageType messageType);
+    abstract String getDocumentMediaType(Context<T> context, Shape operationOrError, MessageType messageType);
 
     /**
      * Creates a schema to send a document payload in the request,
@@ -97,13 +98,14 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
      * @return Returns the created document schema.
      */
     abstract Schema createDocumentSchema(
-            Context context,
+            Context<T> context,
             Shape operationOrError,
             List<HttpBinding> bindings,
-            MessageType messageType);
+            MessageType messageType
+    );
 
     @Override
-    public Optional<Operation> createOperation(Context context, OperationShape operation) {
+    public Optional<Operation> createOperation(Context<T> context, OperationShape operation) {
         return operation.getTrait(HttpTrait.class).map(httpTrait -> {
             String method = context.getOpenApiProtocol().getOperationMethod(context, operation);
             String uri = context.getOpenApiProtocol().getOperationUri(context, operation);
@@ -118,7 +120,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         });
     }
 
-    private List<ParameterObject> createPathParameters(Context context, OperationShape operation) {
+    private List<ParameterObject> createPathParameters(Context<T> context, OperationShape operation) {
         return context.getModel().getKnowledge(HttpBindingIndex.class)
                 .getRequestBindings(operation, HttpBinding.Location.LABEL).stream()
                 .map(binding -> {
@@ -127,11 +129,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                     ParameterObject.Builder paramBuilder = ModelUtils.createParameterMember(
                             context, member).in("path");
                     // Timestamps sent in the URI are serialized as a date-time string by default.
-                    boolean needsInlineSchema = context.getModel().getShape(member.getTarget())
-                            .filter(Shape::isTimestampShape)
-                            .isPresent()
-                            && !ModelUtils.getMemberTrait(context, member, TimestampFormatTrait.class).isPresent();
-                    if (needsInlineSchema) {
+                    if (needsInlineSchema(context, member)) {
                         // Create a copy of the targeted schema and remove any possible numeric keywords.
                         Schema.Builder copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
                                 context.getSchema(context.getPointer(member)));
@@ -142,7 +140,18 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                 .collect(Collectors.toList());
     }
 
-    private List<ParameterObject> createQueryParameters(Context context, OperationShape operation) {
+    private boolean needsInlineSchema(Context<? extends Trait> context, MemberShape member) {
+        if (member.getMemberTrait(context.getModel(), TimestampFormatTrait.class).isPresent()) {
+            return false;
+        }
+
+        return context.getModel()
+                .getShape(member.getTarget())
+                .filter(Shape::isTimestampShape)
+                .isPresent();
+    }
+
+    private List<ParameterObject> createQueryParameters(Context<T> context, OperationShape operation) {
         return context.getModel().getKnowledge(HttpBindingIndex.class)
                 .getRequestBindings(operation, HttpBinding.Location.QUERY).stream()
                 .map(binding -> {
@@ -157,20 +166,20 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                     }
 
                     Schema refSchema = context.createRef(binding.getMember());
-                    param.schema(target.accept(new QuerySchemaVisitor(context, refSchema, binding.getMember())));
+                    param.schema(target.accept(new QuerySchemaVisitor<>(context, refSchema, binding.getMember())));
                     return param.build();
                 })
                 .collect(Collectors.toList());
     }
 
-    private Collection<ParameterObject> createRequestHeaderParameters(Context context, OperationShape operation) {
+    private Collection<ParameterObject> createRequestHeaderParameters(Context<T> context, OperationShape operation) {
         List<HttpBinding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
                 .getRequestBindings(operation, HttpBinding.Location.HEADER);
         return createHeaderParameters(context, bindings, MessageType.REQUEST).values();
     }
 
     private Map<String, ParameterObject> createHeaderParameters(
-            Context context,
+            Context<T> context,
             List<HttpBinding> bindings,
             MessageType messageType
     ) {
@@ -185,14 +194,14 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
                     }
                     Shape target = context.getModel().expectShape(binding.getMember().getTarget());
                     Schema refSchema = context.createRef(binding.getMember());
-                    param.schema(target.accept(new HeaderSchemaVisitor(context, refSchema, binding.getMember())));
+                    param.schema(target.accept(new HeaderSchemaVisitor<>(context, refSchema, binding.getMember())));
                     return Pair.of(binding.getLocationName(), param.build());
                 })
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
     private Optional<RequestBodyObject> createRequestBody(
-            Context context,
+            Context<T> context,
             HttpBindingIndex bindingIndex,
             OperationShape operation
     ) {
@@ -206,7 +215,10 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     }
 
     private Optional<RequestBodyObject> createRequestPayload(
-            String mediaTypeRange, Context context, HttpBinding binding) {
+            String mediaTypeRange,
+            Context<T> context,
+            HttpBinding binding
+    ) {
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(context.createRef(binding.getMember()))
                 .build();
@@ -218,7 +230,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
 
     private Optional<RequestBodyObject> createRequestDocument(
             String mediaType,
-            Context context,
+            Context<T> context,
             HttpBindingIndex bindingIndex,
             OperationShape operation
     ) {
@@ -235,13 +247,13 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     }
 
     private Map<String, ResponseObject> createResponses(
-            Context context,
+            Context<T> context,
             HttpBindingIndex bindingIndex,
             OperationShape operation
     ) {
         OperationIndex operationIndex = context.getModel().getKnowledge(OperationIndex.class);
 
-        // Add the successful response and errors. TODO: What about synthetic errors?
+        // Add the successful response and errors.
         return Stream.concat(
                 OptionalUtils.stream(operationIndex.getOutput(operation)),
                 operationIndex.getErrors(operation).stream()
@@ -254,7 +266,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     }
 
     private ResponseObject createResponse(
-            Context context,
+            Context<T> context,
             HttpBindingIndex bindingIndex,
             String statusCode,
             OperationShape operationShape,
@@ -269,7 +281,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     }
 
     private Map<String, ParameterObject> createResponseHeaderParameters(
-            Context context,
+            Context<T> context,
             OperationShape operation
     ) {
         List<HttpBinding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
@@ -278,7 +290,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
     }
 
     private void addResponseContent(
-            Context context,
+            Context<T> context,
             HttpBindingIndex bindingIndex,
             ResponseObject.Builder responseBuilder,
             Shape operationOrError
@@ -296,7 +308,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
 
     private void createResponsePayload(
             String mediaType,
-            Context context,
+            Context<T> context,
             HttpBinding binding,
             ResponseObject.Builder responseBuilder
     ) {
@@ -308,7 +320,7 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
 
     private void createResponseDocument(
             String mediaType,
-            Context context,
+            Context<T> context,
             HttpBindingIndex bindingIndex,
             ResponseObject.Builder responseBuilder,
             Shape operationOrError
@@ -324,12 +336,12 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         }
     }
 
-    private static final class QuerySchemaVisitor extends ShapeVisitor.Default<Schema> {
-        private Context context;
+    private static final class QuerySchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Schema> {
+        private Context<T> context;
         private Schema schema;
         private MemberShape member;
 
-        private QuerySchemaVisitor(Context context, Schema schema, MemberShape member) {
+        private QuerySchemaVisitor(Context<T> context, Schema schema, MemberShape member) {
             this.context = context;
             this.schema = schema;
             this.member = member;
@@ -351,11 +363,12 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         }
 
         private Schema collection(CollectionShape collection) {
-            Shape memberTarget = context.getModel().getShape(collection.getMember().getTarget()).get();
+            Shape memberTarget = context.getModel().expectShape(collection.getMember().getTarget());
             String memberPointer = context.getPointer(collection.getMember());
             Schema currentMemberSchema = context.getSchema(memberPointer);
-            Schema newMemberSchema = memberTarget.accept(
-                    new QuerySchemaVisitor(context, currentMemberSchema, collection.getMember()));
+            QuerySchemaVisitor<T> visitor = new QuerySchemaVisitor<>(
+                    context, currentMemberSchema, collection.getMember());
+            Schema newMemberSchema = memberTarget.accept(visitor);
             return schema.toBuilder().ref(null).type("array").items(newMemberSchema).build();
         }
 
@@ -383,12 +396,12 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
         }
     }
 
-    private static final class HeaderSchemaVisitor extends ShapeVisitor.Default<Schema> {
-        private Context context;
+    private static final class HeaderSchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Schema> {
+        private Context<T> context;
         private Schema schema;
         private MemberShape member;
 
-        private HeaderSchemaVisitor(Context context, Schema schema, MemberShape member) {
+        private HeaderSchemaVisitor(Context<T> context, Schema schema, MemberShape member) {
             this.context = context;
             this.schema = schema;
             this.member = member;
@@ -413,8 +426,9 @@ abstract class AbstractRestProtocol implements OpenApiProtocol {
             Shape memberTarget = context.getModel().expectShape(collection.getMember().getTarget());
             String memberPointer = context.getPointer(collection.getMember());
             Schema currentMemberSchema = context.getSchema(memberPointer);
-            Schema newMemberSchema = memberTarget.accept(
-                    new HeaderSchemaVisitor(context, currentMemberSchema, collection.getMember()));
+            HeaderSchemaVisitor<T> visitor = new HeaderSchemaVisitor<>(
+                    context, currentMemberSchema, collection.getMember());
+            Schema newMemberSchema = memberTarget.accept(visitor);
             return schema.toBuilder().ref(null).type("array").items(newMemberSchema).build();
         }
 

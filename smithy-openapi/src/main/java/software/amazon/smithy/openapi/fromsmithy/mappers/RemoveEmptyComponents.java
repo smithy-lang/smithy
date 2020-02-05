@@ -18,6 +18,7 @@ package software.amazon.smithy.openapi.fromsmithy.mappers;
 import java.util.Map;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
@@ -35,7 +36,7 @@ public class RemoveEmptyComponents implements OpenApiMapper {
     }
 
     @Override
-    public ObjectNode updateNode(Context context, OpenApi openapi, ObjectNode node) {
+    public ObjectNode updateNode(Context<? extends Trait> context, OpenApi openapi, ObjectNode node) {
         ObjectNode components = node.getObjectMember(COMPONENTS).orElse(null);
 
         if (components == null) {
