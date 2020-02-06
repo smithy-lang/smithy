@@ -7,8 +7,8 @@ Event stream specification
 An event stream is an abstraction that allows multiple messages to be sent
 asynchronously between a client and server. Event streams support both duplex
 and simplex streaming. The serialization format and framing of messages sent
-over event streams is defined by the :ref:`protocol <protocols-trait>` of a
-service.
+over event streams is defined by the :ref:`protocol <protocolDefinition-trait>`
+of a service.
 
 An operation can send an event stream as part of its input or output. An
 event stream is formed when an input or output member of an operation is

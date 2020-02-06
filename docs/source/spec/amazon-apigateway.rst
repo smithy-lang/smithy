@@ -108,9 +108,10 @@ An *authorizer* definition is a structure that supports the following members:
       - Description
     * - scheme
       - ``string``
-      - **Required**. A Smithy authentication scheme name that identifies how
-        a client authenticates. This value MUST reference one of the ``auth``
-        schemes of the :ref:`protocols-trait` attached to the service.
+      - **Required**. A Smithy authentication scheme shape ID that identifies
+        how a client authenticates. This value MUST reference one of the
+        :ref:`authentication schemes <authDefinition-trait>` attached to the
+        service.
     * - type
       - ``string``
       - The type of the authorizer. If specifying information beyond the
@@ -122,7 +123,8 @@ An *authorizer* definition is a structure that supports the following members:
       - ``string``
       - The ``authType`` of the authorizer. This value is used in APIGateway
         exports as ``x-amazon-apigateway-authtype``. This value is set to
-        ``custom`` by default, or ``awsSigv4`` if your scheme is ``aws.v4``.
+        ``custom`` by default, or ``awsSigv4`` if your scheme is
+        :ref:`aws.auth#sigv4 <aws.auth#sigv4-trait>`.
     * - uri
       - ``string``
       - Specifies the authorizer's Uniform Resource Identifier
@@ -182,42 +184,33 @@ An *authorizer* definition is a structure that supports the following members:
         API Gateway will cache authorizer responses. If this field is not set,
         the default value is 300. The maximum value is 3600, or 1 hour.
 
-..
-    TODO: Add IDL example
+.. tabs::
 
-.. code-block:: json
+    .. code-tab:: smithy
 
-    {
-        "smithy": "0.5.0",
-        "shapes": {
-            "ns.foo#Weather": {
-                "type": "service",
-                "version": "2018-03-17",
-                "traits": {
-                    "smithy.api#protocols": [
-                        {
-                            "name": "aws.rest-json",
-                            "auth": [
-                                "aws.v4"
-                            ]
-                        }
-                    ],
-                    "aws.apigateway#authorizer": "arbitrary-name",
-                    "aws.apigateway#authorizers": {
-                        "arbitrary-name": {
-                            "scheme": "aws.v4",
-                            "type": "request",
-                            "uri": "arn:foo:baz",
-                            "credentials": "arn:foo:bar",
-                            "identitySource": "mapping.expression",
-                            "identityValidationExpression": "[A-Z]+",
-                            "resultTtlInSeconds": 100
-                        }
-                    }
-                }
-            }
+        namespace ns.foo
+
+        use aws.apigateway#authorizer
+        use aws.apigateway#authorizers
+        use aws.auth#sigv4
+        use aws.protocols#restJson1
+
+        @restJson1
+        @sigv4(name: "weather")
+        @authorizer("arbitrary-name")
+        @authorizers(
+            "arbitrary-name": {
+                scheme: sigv4,
+                type: "request",
+                uri: "arn:foo:baz",
+                credentials: "arn:foo:bar",
+                identitySource: "mapping.expression",
+                identityValidationExpression: "[A-Z]+",
+                resultTtlInSeconds: 100
+            })
+        service Weather {
+            version: "2018-03-17"
         }
-    }
 
 .. note::
 
@@ -434,14 +427,10 @@ operation within the service.
                 "type": "service",
                 "version": "2018-03-17",
                 "traits": {
-                    "smithy.api#protocols": [
-                        {
-                            "name": "aws.rest-json",
-                            "auth": [
-                                "aws.v4"
-                            ]
-                        }
-                    ],
+                    "aws.protocols#restJson1": true,
+                    "aws.auth#sigv4": {
+                        "name": "weather"
+                    },
                     "aws.apigateway#integration": {
                         "type": "aws",
                         "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:012345678901:function:HelloWorld/invocations",
