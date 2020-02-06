@@ -67,7 +67,7 @@ Smithy supports the following types:
     * - timestamp
       - An instant in time with no UTC offset or timezone. The
         serialization of a timestamp is determined by a
-        :ref:`protocol <protocols-trait>`.
+        :ref:`protocol <protocolDefinition-trait>`.
     * - :ref:`document <document-type>`
       - An untyped JSON-like value.
     * - :ref:`list`
@@ -137,9 +137,9 @@ weather service.
     tools to make them easier to use by other tooling.
 
 Smithy is a *protocol agnostic* IDL, meaning the model defines the interface of
-the API but not its serialization. A :ref:`protocol <protocols-trait>` defines
-how clients and servers communicate and how messages are passed back and forth.
-:ref:`Traits <traits>` can be used to influence how a protocol serializes
+the API but not its serialization. A :ref:`protocol <protocolDefinition-trait>`
+defines how clients and servers communicate and how messages are passed back and
+forth. :ref:`Traits <traits>` can be used to influence how a protocol serializes
 shapes.
 
 

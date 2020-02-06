@@ -534,8 +534,8 @@ Various HTTP headers are highly discouraged for the ``httpHeader`` and
     * - Header
       - Reason
     * - Authorization
-      - This header is controlled by the :ref:`protocols-trait` and
-        :ref:`auth-trait`.
+      - This header should be populated by
+        :ref:`authentication traits <authDefinition-trait>`.
     * - Connection
       - This is controlled at a lower level by the HTTP client or server.
     * - Content-Length
@@ -548,7 +548,8 @@ Various HTTP headers are highly discouraged for the ``httpHeader`` and
     * - Max-Forwards
       - This is controlled at a lower level by the HTTP client.
     * - Proxy-Authenticate
-      - Use the :ref:`protocols-trait` of a service.
+      - This header should be populated by
+        :ref:`authentication traits <authDefinition-trait>`.
     * - Server
       - The Server header is controlled by the HTTP server, not the model.
     * - TE
@@ -562,7 +563,8 @@ Various HTTP headers are highly discouraged for the ``httpHeader`` and
     * - User-Agent
       - Setting a User-Agent is the responsibility of an HTTP client.
     * - WWW-Authenticate
-      - Use the :ref:`protocols-trait` of a service.
+      - This header should be populated by
+        :ref:`authentication traits <authDefinition-trait>`.
     * - X-Forwarded-For
       - X-Forwarded-For is an implementation detail of HTTP that does not
         need to be modeled.
@@ -682,8 +684,8 @@ Serialization rules:
 #. When a string or blob member is referenced, the raw value is serialized
    as the body of the message.
 #. When a :ref:`structure` or :ref:`union` is targeted, the shape value
-   is serialized as a :ref:`protocol-specific <protocols-trait>` document that
-   is sent as the body of the message.
+   is serialized as a :ref:`protocol-specific <protocolDefinition-trait>`
+   document that is sent as the body of the message.
 
 
 .. _httpPrefixHeaders-trait:

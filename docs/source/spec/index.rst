@@ -83,8 +83,13 @@ AWS specifications
     :maxdepth: 1
 
     aws-core
+    aws-auth
     aws-iam
     amazon-apigateway
+    aws-restjson1-protocol
+    aws-json-protocols
+    aws-restxml-protocol
+    aws-query-protocol
 
 AWS-specific specifications are defined below.
 
@@ -93,7 +98,17 @@ AWS-specific specifications are defined below.
 
     * - :doc:`aws-core`
       - Defines core traits used to integrate Smithy models with AWS.
+    * - :doc:`aws-auth`
+      - defines AWS authentication schemes.
     * - :doc:`aws-iam`
       - Defines AWS IAM traits.
     * - :doc:`amazon-apigateway`
       - Defines Amazon API Gateway integrations.
+    * - :doc:`aws-restjson1-protocol`
+      - Defines the AWS restJson1 protocol.
+    * - :doc:`aws-json-protocols`
+      - Defines the AWS JSON 1.0 and 1.1 protocols.
+    * - :doc:`aws-restxml-protocol`
+      - Defines the AWS restXml protocol.
+    * - :doc:`aws-query-protocol`
+      - Defines the AWS query protocol.
