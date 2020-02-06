@@ -23,7 +23,7 @@ Summary
     Adds support for an HTTP protocol that sends POST requests and
     responses with JSON documents.
 Trait selector
-    ``operation``
+    ``service``
 Value type
     Annotation trait.
 
@@ -68,7 +68,7 @@ Summary
     Adds support for an HTTP protocol that sends POST requests and
     responses with JSON documents.
 Trait selector
-    ``operation``
+    ``service``
 Value type
     Annotation trait.
 

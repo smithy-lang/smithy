@@ -22,7 +22,7 @@ Summary
     Adds support for an HTTP-based protocol that sends XML requests and
     responses.
 Trait selector
-    ``operation``
+    ``service``
 Value type
     Annotation trait.
 
