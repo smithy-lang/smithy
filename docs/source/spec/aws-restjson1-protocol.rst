@@ -22,7 +22,7 @@ Summary
     Adds support for an HTTP-based protocol that sends JSON requests and
     responses with configurable HTTP bindings.
 Trait selector
-    ``operation``
+    ``service``
 Value type
     Annotation trait.
 

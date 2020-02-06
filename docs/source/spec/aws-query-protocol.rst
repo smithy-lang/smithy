@@ -22,7 +22,7 @@ Summary
     Adds support for an HTTP protocol that sends requests in the query
     string and responses in XML documents.
 Trait selector
-    ``operation``
+    ``service``
 Value type
     Annotation trait.
 
@@ -68,7 +68,7 @@ Summary
     string and responses in XML documents. This protocol is an
     Amazon EC2-specific extension of the ``awsQuery`` protocol.
 Trait selector
-    ``operation``
+    ``service``
 Value type
     Annotation trait.
 

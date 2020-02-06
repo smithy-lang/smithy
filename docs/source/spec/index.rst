@@ -99,7 +99,7 @@ AWS-specific specifications are defined below.
     * - :doc:`aws-core`
       - Defines core traits used to integrate Smithy models with AWS.
     * - :doc:`aws-auth`
-      - defines AWS authentication schemes.
+      - Defines AWS authentication schemes.
     * - :doc:`aws-iam`
       - Defines AWS IAM traits.
     * - :doc:`amazon-apigateway`
