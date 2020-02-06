@@ -489,9 +489,6 @@ Other traits that influence API Gateway
 ``aws.api#service``
     TODO
 
-``protocols``
-    TODO
-
 ``aws.apigateway#apiKeySource``
     Specifies the source of the caller identifier that will be used to
     throttle API methods that require a key. This trait is converted into

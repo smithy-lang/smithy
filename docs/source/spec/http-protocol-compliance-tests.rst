@@ -93,7 +93,7 @@ that support the following members:
     * - protocol
       - shape ID
       - **Required**. A shape ID that targets a shape marked with the
-        ``protocolDefinition`` trait. Because Smithy services can support
+        :ref:`protocolDefinition-trait`. Because Smithy services can support
         multiple protocols, each test MUST specify which protocol is under
         test.
     * - method
@@ -108,7 +108,7 @@ that support the following members:
       - A shape ID that specifies the optional authentication scheme to
         assume. It's possible that specific authentication schemes might
         influence the serialization logic of an HTTP request. The targeted
-        shape MUST be marked with the ``authDefinition`` trait.
+        shape MUST be marked with the :ref:`authDefinition-trait` trait.
     * - queryParams
       - ``list<string>``
       - A list of the expected serialized query string parameters.
@@ -340,9 +340,9 @@ structures that support the following members:
     * - protocol
       - ``string``
       - **Required**. A shape ID that targets a shape marked with the
-        ``protocolDefinition`` trait. Because Smithy services can support
-        multiple protocols, each test MUST specify which protocol is under
-        test.
+        :ref:`protocolDefinition-trait` trait. Because Smithy services can
+        support multiple protocols, each test MUST specify which protocol is
+        under test.
     * - code
       - ``integer``
       - **Required**. The expected HTTP response status code.
@@ -351,7 +351,7 @@ structures that support the following members:
       - A shape ID that specifies the optional authentication scheme to
         assume. It's possible that specific authentication schemes might
         influence the serialization logic of an HTTP response. The targeted
-        shape MUST be marked with the ``authDefinition`` trait.
+        shape MUST be marked with the :ref:`authDefinition-trait` trait.
     * - headers
       - ``map<string, string>``
       - A map of expected HTTP headers. Each key represents a header field
