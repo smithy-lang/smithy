@@ -24,7 +24,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * An HTTP-specific authentication scheme that sends an arbitrary
- * API key in a header, cookie, or query string parameter.
+ * API key in a header or query string parameter.
  */
 public final class HttpApiKeyAuthTrait extends BooleanTrait implements ToSmithyBuilder<HttpApiKeyAuthTrait> {
 
@@ -60,7 +60,7 @@ public final class HttpApiKeyAuthTrait extends BooleanTrait implements ToSmithyB
     }
 
     public enum Location {
-        HEADER, COOKIE, QUERY;
+        HEADER, QUERY;
 
         @Override
         public String toString() {
@@ -78,7 +78,7 @@ public final class HttpApiKeyAuthTrait extends BooleanTrait implements ToSmithyB
             ObjectNode objectNode = value.expectObjectNode();
             Builder builder = builder().sourceLocation(value.getSourceLocation());
             builder.name(objectNode.expectStringMember("name").getValue());
-            builder.in(Location.valueOf(objectNode.expectStringMember("in").expectOneOf("header", "cookie", "query")));
+            builder.in(Location.valueOf(objectNode.expectStringMember("in").expectOneOf("header", "query")));
             return builder.build();
         }
     }
