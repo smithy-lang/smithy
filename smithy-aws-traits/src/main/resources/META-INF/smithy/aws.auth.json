@@ -8,15 +8,8 @@
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#required": true,
-                        "smithy.api#documentation": "Defines the service name to use in the credential scope.",
+                        "smithy.api#documentation": "The signature version 4 service signing name to use in the credential scope when signing requests. This value SHOULD match the `arnNamespace` property of the `aws.api#service-trait`.",
                         "smithy.api#externalDocumentation": "https://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html"
-                    }
-                },
-                "singleEncodeCanonicalPath": {
-                    "target": "smithy.api#PrimitiveBoolean",
-                    "traits": {
-                        "smithy.api#documentation": "Set to true to only encode the canonical path once. For example, Amazon S3 does not double-encode the path component in the canonical request.",
-                        "smithy.api#externalDocumentation": "https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-auth-using-authorization-header.html"
                     }
                 }
             },
