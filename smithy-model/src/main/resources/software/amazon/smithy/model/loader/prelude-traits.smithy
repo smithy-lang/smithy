@@ -74,44 +74,43 @@ structure authDefinition {}
 
 /// Enables HTTP Basic Authentication as defined in RFC 2617
 /// on a service or operation.
-@trait(selector: ":test(service, operation)")
+@trait(selector: "service")
 @authDefinition
 @externalDocumentation("https://tools.ietf.org/html/rfc2617.html")
 structure httpBasicAuth {}
 
 /// Enables HTTP Digest Authentication as defined in RFC 2617
 /// on a service or operation.
-@trait(selector: ":test(service, operation)")
+@trait(selector: "service")
 @authDefinition
 @externalDocumentation("https://tools.ietf.org/html/rfc2617.html")
 structure httpDigestAuth {}
 
 /// Enables HTTP Bearer Authentication as defined in RFC 6750
 /// on a service or operation.
-@trait(selector: ":test(service, operation)")
+@trait(selector: "service")
 @authDefinition
 @externalDocumentation("https://tools.ietf.org/html/rfc6750.html")
 structure httpBearerAuth {}
 
 /// An HTTP-specific authentication scheme that sends an arbitrary
-/// API key in the `X-Api-Key` HTTP header. The "header" property
-/// can be used to use a custom header name for the API key.
-@trait(selector: ":test(service, operation)")
+/// API key in a header or query string parameter.
+@trait(selector: "service")
 @authDefinition
 structure httpApiKeyAuth {
-    /// Defines the name of the HTTP header, query string parameter,
-    /// or cookie to set that contains the API key.
+    /// Defines the name of the HTTP header or query string parameter
+    /// that contains the API key.
     @required
     name: NonEmptyString,
 
     /// Defines the location of where the key is serialized. This value
-    /// can be set to `"cookie"`, `"header"`, or `"query"`.
+    /// can be set to `"header"` or `"query"`.
     @required
     in: HttpApiKeyLocations,
 }
 
 @private
-@enum(header: {}, cookie: {}, query: {})
+@enum(header: {},  query: {})
 string HttpApiKeyLocations
 
 /// Indicates that an operation can be called without authentication.
