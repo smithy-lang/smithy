@@ -33,16 +33,13 @@ public final class SigV4Trait extends AbstractTrait implements ToSmithyBuilder<S
 
     public static final ShapeId ID = ShapeId.from("aws.auth#sigv4");
     private static final String NAME = "name";
-    private static final String SINGLE_ENCODE_CANONICAL_PATH = "singleEncodeCanonicalPath";
-    private static final Set<String> PROPERTIES = SetUtils.of(NAME, SINGLE_ENCODE_CANONICAL_PATH);
+    private static final Set<String> PROPERTIES = SetUtils.of(NAME);
 
     private final String name;
-    private final boolean singleEncodeCanonicalPath;
 
     private SigV4Trait(Builder builder) {
         super(ID, builder.getSourceLocation());
         this.name = SmithyBuilder.requiredState(NAME, builder.name);
-        this.singleEncodeCanonicalPath = builder.singleEncodeCanonicalPath;
     }
 
     /**
@@ -50,13 +47,6 @@ public final class SigV4Trait extends AbstractTrait implements ToSmithyBuilder<S
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * @return Returns true if the canonical path is encoded only once.
-     */
-    public boolean isSingleEncodeCanonicalPath() {
-        return singleEncodeCanonicalPath;
     }
 
     public static Builder builder() {
@@ -67,35 +57,21 @@ public final class SigV4Trait extends AbstractTrait implements ToSmithyBuilder<S
     public Builder toBuilder() {
         return builder()
                 .name(getName())
-                .singleEncodeCanonicalPath(isSingleEncodeCanonicalPath())
                 .sourceLocation(getSourceLocation());
     }
 
     @Override
     protected Node createNode() {
-        ObjectNode.Builder builder = Node.objectNodeBuilder();
-        builder.withMember(NAME, getName());
-
-        if (singleEncodeCanonicalPath) {
-            builder.withMember(SINGLE_ENCODE_CANONICAL_PATH, true);
-        }
-
-        return builder.build();
+        return Node.objectNode().withMember(NAME, getName());
     }
 
     public static final class Builder extends AbstractTraitBuilder<SigV4Trait, Builder> {
         private String name;
-        private boolean singleEncodeCanonicalPath;
 
         private Builder() {}
 
         public Builder name(String name) {
             this.name = name;
-            return this;
-        }
-
-        public Builder singleEncodeCanonicalPath(boolean singleEncodeCanonicalPath) {
-            this.singleEncodeCanonicalPath = singleEncodeCanonicalPath;
             return this;
         }
 
@@ -116,7 +92,6 @@ public final class SigV4Trait extends AbstractTrait implements ToSmithyBuilder<S
             ObjectNode objectNode = value.expectObjectNode();
             objectNode.warnIfAdditionalProperties(PROPERTIES);
             builder.name(objectNode.expectStringMember(NAME).getValue());
-            builder.singleEncodeCanonicalPath(objectNode.getBooleanMemberOrDefault(SINGLE_ENCODE_CANONICAL_PATH));
             return builder.build();
         }
     }
