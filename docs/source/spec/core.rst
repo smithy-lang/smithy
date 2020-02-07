@@ -4927,7 +4927,7 @@ Summary
     that are marked with this trait are applied to service shapes to
     indicate how a client can authenticate with the service.
 Trait selector
-    ``service``
+    ``[trait|trait]``
 Value type
     Annotation trait.
 
@@ -5163,7 +5163,7 @@ Trait selector
 
     *Service or operation shapes*
 Value type
-    This trait contains a priority ordered list of string values that
+    This trait contains a priority ordered list of unique string values that
     reference authentication scheme shape IDs defined on a service
     shape.
 
