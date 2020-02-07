@@ -25,6 +25,8 @@ Trait selector
     ``service``
 Value type
     Annotation trait.
+See
+    `Protocol tests <https://github.com/awslabs/smithy/tree/meta-protocol-and-auth/smithy-aws-protocol-tests/model>`_
 
 .. tabs::
 
