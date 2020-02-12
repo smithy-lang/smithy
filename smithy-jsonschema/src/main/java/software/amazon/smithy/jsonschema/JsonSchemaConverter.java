@@ -18,86 +18,128 @@ package software.amazon.smithy.jsonschema;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.EffectiveTraitQuery;
-import software.amazon.smithy.model.traits.PrivateTrait;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * Converts a Smithy model to a JSON schema document.
+ * Converts a Smithy model index to a JSON schema document.
  */
-public final class JsonSchemaConverter {
+public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConverter> {
 
-    private static final RefStrategy DEFAULT_REF_STRATEGY = RefStrategy.createDefaultStrategy();
+    private static final Logger LOGGER = Logger.getLogger(JsonSchemaConverter.class.getName());
+
+    private static final PropertyNamingStrategy DEFAULT_PROPERTY_STRATEGY = PropertyNamingStrategy
+            .createDefaultStrategy();
 
     /** All converters use the built-in mappers. */
     private final List<JsonSchemaMapper> mappers = new ArrayList<>();
 
-    private PropertyNamingStrategy propertyNamingStrategy;
-    private ObjectNode config = Node.objectNode();
-    private RefStrategy refStrategy;
-    private Predicate<Shape> shapePredicate = shape -> true;
-    private boolean softRefStrategy = false;
+    private final Model model;
+    private final PropertyNamingStrategy propertyNamingStrategy;
+    private final ObjectNode config;
+    private final Predicate<Shape> shapePredicate;
+    private final RefStrategy refStrategy;
+    private final List<JsonSchemaMapper> realizedMappers;
+    private final JsonSchemaShapeVisitor visitor;
+    private final Shape rootShape;
+    private final String rootDefinitionPointer;
+    private final int rootDefinitionSegments;
 
-    private JsonSchemaConverter() {
-        mappers.add(new DisableMapper());
-        mappers.add(new TimestampMapper());
+    private JsonSchemaConverter(Builder builder) {
+        mappers.addAll(builder.mappers);
+        config = SmithyBuilder.requiredState("config", builder.config);
+        propertyNamingStrategy = SmithyBuilder.requiredState("propertyNamingStrategy", builder.propertyNamingStrategy);
+        model = SmithyBuilder.requiredState("model", builder.model);
+        shapePredicate = builder.shapePredicate;
+
+        LOGGER.fine("Building filtered JSON schema shape index");
+
+        if (builder.rootShape == null) {
+            rootShape = null;
+        } else {
+            rootShape = builder.model.getShape(builder.rootShape)
+                    .orElseThrow(() -> new SmithyJsonSchemaException(
+                            "Invalid root shape (shape not found): " + builder.rootShape));
+        }
+
+        LOGGER.fine("Creating JSON ref strategy");
+        refStrategy = RefStrategy.createDefaultStrategy(model, config, propertyNamingStrategy);
+
+        // Combine custom mappers with the discovered mappers and sort them.
+        realizedMappers = new ArrayList<>(mappers);
+        realizedMappers.add(new DisableMapper());
+        realizedMappers.add(new TimestampMapper());
+        realizedMappers.sort(Comparator.comparing(JsonSchemaMapper::getOrder));
+        LOGGER.fine(() -> "Adding the following JSON schema mappers: " + realizedMappers.stream()
+                .map(Object::getClass)
+                .map(Class::getCanonicalName)
+                .collect(Collectors.joining(", ")));
+        visitor = new JsonSchemaShapeVisitor(model, this, realizedMappers);
+
+        // Compute the number of segments in the root definition section.
+        rootDefinitionPointer = config.getStringMemberOrDefault(
+                JsonSchemaConstants.DEFINITION_POINTER, RefStrategy.DEFAULT_POINTER);
+        rootDefinitionSegments = countSegments(rootDefinitionPointer);
+        LOGGER.fine(() -> "Using the following root JSON schema pointer: " + rootDefinitionPointer
+                          + " (" + rootDefinitionSegments + " segments)");
     }
 
-    /**
-     * Creates a new JsonSchemaConverter.
-     *
-     * @return Returns the created JsonSchemaConverter.
-     */
-    public static JsonSchemaConverter create() {
-        return new JsonSchemaConverter();
+    private static Model createUpdatedModel(
+            Model model,
+            Shape rootShape,
+            Predicate<Shape> predicate
+    ) {
+        ModelTransformer transformer = ModelTransformer.create();
+
+        if (rootShape != null) {
+            LOGGER.fine(() -> "Filtering out shapes that are not connected to " + rootShape);
+            Set<Shape> connected = new Walker(model).walkShapes(rootShape);
+            LOGGER.fine(() -> "Only generating the following JSON schema shapes: " + connected.stream()
+                    .map(Shape::getId)
+                    .map(ShapeId::toString)
+                    .collect(Collectors.joining(", ")));
+            model = transformer.filterShapes(model, connected::contains);
+        }
+
+        model = transformer.filterShapes(model, predicate);
+
+        // Traits and their shapes are not generated into the OpenAPI schema.
+        model = transformer.scrubTraitDefinitions(model);
+
+        return model;
     }
 
-    /**
-     * Copies the JsonSchemaConverter to a new converter.
-     *
-     * @return Returns the copied converter.
-     */
-    public JsonSchemaConverter copy() {
-        JsonSchemaConverter copy = create();
-        copy.config = config;
-        copy.mappers.addAll(mappers);
-        copy.propertyNamingStrategy = propertyNamingStrategy;
-        copy.refStrategy = refStrategy;
-        copy.shapePredicate = shapePredicate;
-        return copy;
+    private static int countSegments(String pointer) {
+        int totalSegments = 0;
+        for (int i = 0; i < pointer.length(); i++) {
+            if (pointer.charAt(i) == '/') {
+                totalSegments++;
+            }
+        }
+
+        return totalSegments;
     }
 
-    /**
-     * Sets a predicate used to filter Smithy shapes from being converted
-     * to JSON Schema.
-     *
-     * @param shapePredicate Predicate that returns true if a shape is to be converted.
-     * @return Returns the converter.
-     */
-    public JsonSchemaConverter shapePredicate(Predicate<Shape> shapePredicate) {
-        this.shapePredicate = shapePredicate;
-        return this;
-    }
-
-    /**
-     * Sets the configuration object.
-     *
-     * @param config Config to use.
-     * @return Returns the converter.
-     */
-    public JsonSchemaConverter config(ObjectNode config) {
-        this.config = config;
-        return this;
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -110,177 +152,120 @@ public final class JsonSchemaConverter {
     }
 
     /**
-     * Sets a custom property naming strategy.
-     *
-     * <p>This method overrides an configuration values specified by
-     * the configuration object.
-     *
-     * @param propertyNamingStrategy Property name strategy to use.
-     * @return Returns the converter.
-     */
-    public JsonSchemaConverter propertyNamingStrategy(PropertyNamingStrategy propertyNamingStrategy) {
-        this.propertyNamingStrategy = propertyNamingStrategy;
-        return this;
-    }
-
-    /**
      * Gets the property naming strategy of the converter.
      *
+     * @param member Member to convert to a property name.
      * @return Returns the PropertyNamingStrategy.
      */
-    public PropertyNamingStrategy getPropertyNamingStrategy() {
-        if (propertyNamingStrategy == null) {
-            propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
-        }
-        return propertyNamingStrategy;
+    public String toPropertyName(MemberShape member) {
+        Shape containingShape = model.getShape(member.getContainer())
+                .orElseThrow(() -> new SmithyJsonSchemaException("Invalid member: " + member));
+        return propertyNamingStrategy.toPropertyName(containingShape, member, config);
     }
 
     /**
-     * Sets a custom reference naming strategy.
+     * Given a shape ID, returns the value used in a $ref to refer to it.
      *
-     * <p>This method overrides an configuration values specified by
-     * the settings object.
+     * <p>The return value is expected to be a JSON pointer.
      *
-     * @param refStrategy Reference naming strategy to use.
-     * @return Returns the converter.
+     * @param id Shape ID to convert to a $ref string.
+     * @return Returns the $ref string (e.g., "#/responses/MyShape").
      */
-    public JsonSchemaConverter refStrategy(RefStrategy refStrategy) {
-        softRefStrategy = false;
-        this.refStrategy = refStrategy;
-        return this;
+    public String toPointer(ToShapeId id) {
+        return refStrategy.toPointer(id.toShapeId());
     }
 
     /**
-     * Gets the RefStrategy used by the converter.
+     * Checks if the given JSON pointer points to a top-level definition.
      *
-     * @return Reference naming strategy to use.
+     * <p>Note that this expects the pointer to exactly start with the same
+     * string that is configured as {@link JsonSchemaConstants#DEFINITION_POINTER},
+     * or the default value of "#/definitions". If the number of segments
+     * in the provided pointer is also equal to the number of segments
+     * in the default pointer + 1, then it is considered a top-level pointer.
+     *
+     * @param pointer Pointer to check.
+     * @return Returns true if this is a top-level definition pointer.
      */
-    public RefStrategy getRefStrategy() {
-        return refStrategy != null ? refStrategy : DEFAULT_REF_STRATEGY;
+    public boolean isTopLevelPointer(String pointer) {
+        return pointer.startsWith(rootDefinitionPointer)
+               && countSegments(pointer) == rootDefinitionSegments + 1;
     }
 
     /**
-     * Adds a mapper used to update schema builders.
+     * Checks if the given shape is inlined into its container when targeted
+     * by a member.
      *
-     * @param jsonSchemaMapper Mapper to add.
-     * @return Returns the converter.
+     * @param shape Shape to check.
+     * @return Returns true if this shape is inlined into its containing shape.
      */
-    public JsonSchemaConverter addMapper(JsonSchemaMapper jsonSchemaMapper) {
-        mappers.add(jsonSchemaMapper);
-        return this;
+    public boolean isInlined(Shape shape) {
+        return refStrategy.isInlined(shape);
     }
 
     /**
-     * Perform the conversion of the entire model.
+     * Perform the conversion of the entire shape index.
      *
-     * @param model Model to convert.
      * @return Returns the created SchemaDocument.
      */
-    public SchemaDocument convert(Model model) {
-        return doConversion(model, null);
+    public SchemaDocument convert() {
+        LOGGER.fine("Converting to JSON schema");
+        SchemaDocument.Builder builder = SchemaDocument.builder();
+
+        if (rootShape != null && !(rootShape instanceof ServiceShape)) {
+            LOGGER.fine(() -> "Setting root schema to " + rootShape);
+            builder.rootSchema(rootShape.accept(visitor));
+        }
+
+        addExtensions(builder);
+
+        // Create a model that strips out traits and disconnected shapes.
+        Model updatedModel = createUpdatedModel(model, rootShape, shapePredicate);
+
+        model.shapes()
+                // Only generate shapes that passed through each predicate.
+                .filter(shape -> updatedModel.getShape(shape.getId()).isPresent())
+                // Don't generate members.
+                .filter(FunctionalUtils.not(Shape::isMemberShape))
+                // Don't write the root shape to the definitions.
+                .filter((shape -> rootShape == null || !shape.getId().equals(rootShape.getId())))
+                // Don't convert unsupported shapes.
+                .filter(FunctionalUtils.not(this::isUnsupportedShapeType))
+                // Ignore prelude shapes.
+                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
+                // Do not generate inlined shapes in the definitions map.
+                .filter(FunctionalUtils.not(refStrategy::isInlined))
+                // Create a pair of pointer and shape.
+                .map(shape -> Pair.of(toPointer(shape), shape))
+                // Only add definitions if they are at the top-level and not inlined.
+                .filter(pair -> isTopLevelPointer(pair.getLeft()))
+                // Create the pointer to the shape and schema object.
+                .map(pair -> {
+                    LOGGER.fine(() -> "Converting " + pair.getRight() + " to JSON schema at " + pair.getLeft());
+                    return Pair.of(pair.getLeft(), pair.getRight().accept(visitor));
+                })
+                .forEach(pair -> builder.putDefinition(pair.getLeft(), pair.getRight()));
+
+        LOGGER.fine(() -> "Completed JSON schema document conversion (root shape: " + rootShape + ")");
+
+        return builder.build();
     }
 
     /**
      * Perform the conversion of a single shape.
      *
-     * <p>The root shape of the created document is set to the given shape,
-     * and only shapes connected to the given shape are added as a definition.
+     * <p>The root shape of the created document is set to the given shape.
+     * No schema extensions are added to the converted schema. This
+     * conversion also doesn't take the shape predicate or private
+     * controls into account.
      *
-     * @param model Model to convert.
      * @param shape Shape to convert.
      * @return Returns the created SchemaDocument.
      */
-    public SchemaDocument convert(Model model, Shape shape) {
-        return doConversion(model, shape);
-    }
-
-    private SchemaDocument doConversion(Model model, Shape rootShape) {
-        // TODO: break this API to make this work more reliably.
-        //
-        // Temporarily set a de-conflicting ref strategy. This is the
-        // minimal change needed to fix a reported bug, but it is a hack
-        // and we should break this API before GA.
-        //
-        // We want to do the right thing by default. However, the default
-        // that was previously chosen didn't account for the possibility
-        // of shape name conflicts when converting members to JSON schema
-        // pointers. For example, consider the following shapes:
-        //
-        // - A member of a list, foo.baz#PageScripts$member
-        // - A member of a structure, foo.baz#Page$scripts
-        //
-        // If we only rely on the RefStrategy#createDefaultStrategy, then
-        // we would actually generate the same JSON schema shape name for
-        // both of the above member shapes: FooBazPageScriptsMember. To
-        // avoid this, we need to know the model being converted and
-        // automatically handle conflicts. However, because this class is
-        // mutable, we have to do some funky stuff with state to "do the
-        // right thing" by lazily creating a RefStrategy#createDefaultDeconflictingStrategy
-        // in this method once a model is available
-        // (given as an argument).
-        //
-        // A better API would use a builder that builds a JsonSchemaConverter
-        // that has a fixed model, ref strategy, etc. This would allow
-        // ref strategies to do more up-front computations, and allow them to
-        // even become implementation details of JsonSchemaConverter by exposing
-        // a similar API that delegates from a converter into the strategy.
-        //
-        // There's also quite a bit of awkward code in the OpenAPI conversion code
-        // base that tries to deal with merging configuration values and deriving
-        // a default JsonSchemaConverter if one isn't set. A better API there would
-        // be to not even allow the injection of a custom JsonSchemaConverter at all.
-        if (softRefStrategy || refStrategy == null) {
-            softRefStrategy = true;
-            refStrategy = RefStrategy.createDefaultDeconflictingStrategy(model, getConfig());
-        }
-
-        // Combine custom mappers with the discovered mappers and sort them.
-        mappers.sort(Comparator.comparing(JsonSchemaMapper::getOrder));
-
+    public SchemaDocument convertShape(Shape shape) {
         SchemaDocument.Builder builder = SchemaDocument.builder();
-        JsonSchemaShapeVisitor visitor = new JsonSchemaShapeVisitor(
-                model, getConfig(), getRefStrategy(), getPropertyNamingStrategy(), mappers);
-
-        if (rootShape != null && !(rootShape instanceof ServiceShape)) {
-            builder.rootSchema(rootShape.accept(visitor));
-        }
-
-        addExtensions(builder);
-        Predicate<Shape> predicate = composePredicate(model, rootShape);
-        model.shapes()
-                .filter(predicate)
-                // Don't include members if their container was excluded.
-                .filter(shape -> memberDefinitionPredicate(model, shape, predicate))
-                // Create the pointer to the shape and schema object.
-                .map(shape -> Pair.of(
-                        getRefStrategy().toPointer(shape.getId(), getConfig()),
-                        shape.accept(visitor)))
-                .forEach(pair -> builder.putDefinition(pair.getLeft(), pair.getRight()));
-
+        builder.rootSchema(shape.accept(visitor));
         return builder.build();
-    }
-
-    private Predicate<Shape> composePredicate(Model model, Shape rootShape) {
-        // Don't write the root shape to the definitions.
-        Predicate<Shape> predicate = (shape -> rootShape == null || !shape.getId().equals(rootShape.getId()));
-        // Ignore any shape defined by the prelude.
-        predicate = predicate.and(FunctionalUtils.not(Prelude::isPreludeShape));
-        // Don't convert unsupported shapes.
-        predicate = predicate.and(FunctionalUtils.not(this::isUnsupportedShapeType));
-        // Don't convert excluded private shapes.
-        predicate = predicate.and(shape -> !isExcludedPrivateShape(model, shape));
-        // Filter by the custom predicate.
-        predicate = predicate.and(shapePredicate);
-
-        // When a root shape is provided, only include shapes that are connected to it.
-        // We *could* add a configuration option to not do this later if needed.
-        if (rootShape != null) {
-            Walker walker = new Walker(model);
-            Set<Shape> connected = walker.walkShapes(rootShape);
-            predicate = predicate.and(connected::contains);
-        }
-
-        return predicate;
     }
 
     // We can't generate service, resource, or operation schemas.
@@ -288,37 +273,145 @@ public final class JsonSchemaConverter {
         return shape.isServiceShape() || shape.isResourceShape() || shape.isOperationShape();
     }
 
-    // Only include members if not using INLINE_MEMBERS.
-    private boolean memberDefinitionPredicate(Model model, Shape shape, Predicate<Shape> predicate) {
-        if (!shape.isMemberShape()) {
-            return true;
-        } else if (getConfig().getBooleanMemberOrDefault(JsonSchemaConstants.INLINE_MEMBERS)) {
-            return false;
-        }
-
-        // Don't include broken members or members of excluded shapes.
-        return shape.asMemberShape()
-                .flatMap(member -> model.getShape(member.getContainer()))
-                .filter(parent -> parent.equals(shape) || predicate.test(shape))
-                .isPresent();
-    }
-
-    // Don't generate schemas for private shapes or members of private shapes.
-    private boolean isExcludedPrivateShape(Model model, Shape shape) {
-        // We can explicitly enable the generation of private shapes if desired.
-        if (getConfig().getBooleanMemberOrDefault(JsonSchemaConstants.SMITHY_INCLUDE_PRIVATE_SHAPES)) {
-            return false;
-        }
-
-        return EffectiveTraitQuery.builder()
-                .model(model)
-                .traitClass(PrivateTrait.class)
-                .inheritFromContainer(true)
-                .build()
-                .isTraitApplied(shape);
-    }
-
     private void addExtensions(SchemaDocument.Builder builder) {
-        getConfig().getObjectMember(JsonSchemaConstants.SCHEMA_DOCUMENT_EXTENSIONS).ifPresent(builder::extensions);
+        getConfig().getObjectMember(JsonSchemaConstants.SCHEMA_DOCUMENT_EXTENSIONS).ifPresent(extensions -> {
+            LOGGER.fine(() -> "Adding JSON schema extensions: " + Node.prettyPrintJson(extensions));
+            builder.extensions(extensions);
+        });
+    }
+
+    @Override
+    public Builder toBuilder() {
+        return builder()
+                .model(model)
+                .propertyNamingStrategy(propertyNamingStrategy)
+                .config(config)
+                .rootShape(rootShape == null ? null : rootShape.getId())
+                .shapePredicate(shapePredicate)
+                .mappers(mappers);
+    }
+
+    public static final class Builder implements SmithyBuilder<JsonSchemaConverter> {
+
+        private Model model;
+        private ShapeId rootShape;
+        private PropertyNamingStrategy propertyNamingStrategy = DEFAULT_PROPERTY_STRATEGY;
+        private ObjectNode config = Node.objectNode();
+        private Predicate<Shape> shapePredicate = shape -> true;
+        private final List<JsonSchemaMapper> mappers = new ArrayList<>();
+
+        private Builder() {}
+
+        @Override
+        public JsonSchemaConverter build() {
+            return new JsonSchemaConverter(this);
+        }
+
+        /**
+         * Sets the shape index to convert.
+         *
+         * @param model Shape index to convert.
+         * @return Returns the builder.
+         */
+        public Builder model(Model model) {
+            this.model = model;
+            return this;
+        }
+
+        /**
+         * Only generates shapes connected to the given shape and set the
+         * given shape as the root of the created schema document.
+         *
+         * @param rootShape ID of the shape that is used to limit
+         *   the closure of the generated document.
+         * @return Returns the builder.
+         */
+        public Builder rootShape(ToShapeId rootShape) {
+            this.rootShape = rootShape == null ? null : rootShape.toShapeId();
+            return this;
+        }
+
+        /**
+         * Sets a predicate used to filter Smithy shapes from being converted
+         * to JSON Schema.
+         *
+         * @param shapePredicate Predicate that returns true if a shape is to be converted.
+         * @return Returns the converter.
+         */
+        public Builder shapePredicate(Predicate<Shape> shapePredicate) {
+            this.shapePredicate = Objects.requireNonNull(shapePredicate);
+            return this;
+        }
+
+        /**
+         * Sets the configuration object.
+         *
+         * @param config Config to use.
+         * @return Returns the converter.
+         */
+        public Builder config(ObjectNode config) {
+            this.config = Objects.requireNonNull(config);
+            return this;
+        }
+
+        /**
+         * Merges the current config object with the given config object.
+         *
+         * @param config Config to merge with.
+         * @return Returns the converter.
+         */
+        public Builder mergeConfig(ObjectNode config) {
+            this.config = this.config.merge(Objects.requireNonNull(config));
+            return this;
+        }
+
+        /**
+         * Sets a configuration setting.
+         *
+         * @param key Key to set.
+         * @param value Value to set.
+         * @return Returns the converter.
+         */
+        public Builder putConfig(String key, Node value) {
+            this.config = this.config.withMember(key, value);
+            return this;
+        }
+
+        /**
+         * Sets a custom property naming strategy.
+         *
+         * <p>This method overrides an configuration values specified by
+         * the configuration object.
+         *
+         * @param propertyNamingStrategy Property name strategy to use.
+         * @return Returns the converter.
+         */
+        public Builder propertyNamingStrategy(PropertyNamingStrategy propertyNamingStrategy) {
+            this.propertyNamingStrategy = Objects.requireNonNull(propertyNamingStrategy);
+            return this;
+        }
+
+        /**
+         * Adds a mapper used to update schema builders.
+         *
+         * @param jsonSchemaMapper Mapper to add.
+         * @return Returns the converter.
+         */
+        public Builder addMapper(JsonSchemaMapper jsonSchemaMapper) {
+            mappers.add(Objects.requireNonNull(jsonSchemaMapper));
+            return this;
+        }
+
+        /**
+         * Replaces the mappers of the builder with the given mappers.
+         *
+         * @param jsonSchemaMappers Mappers to replace with.
+         * @return Returns the converter.
+         */
+        public Builder mappers(List<JsonSchemaMapper> jsonSchemaMappers) {
+            mappers.clear();
+            mappers.addAll(jsonSchemaMappers);
+            return this;
+        }
     }
 }

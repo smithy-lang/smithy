@@ -21,7 +21,7 @@ import software.amazon.smithy.model.traits.TimestampFormatTrait;
 
 /**
  * Updates builders based on timestamp shapes, timestampFormat traits, and
- * the value of {@link JsonSchemaConstants#SMITHY_DEFAULT_TIMESTAMP_FORMAT}.
+ * the value of {@link JsonSchemaConstants#DEFAULT_TIMESTAMP_FORMAT}.
  */
 final class TimestampMapper implements JsonSchemaMapper {
     private static final String DEFAULT_TIMESTAMP_FORMAT = TimestampFormatTrait.DATE_TIME;
@@ -57,7 +57,7 @@ final class TimestampMapper implements JsonSchemaMapper {
             return shape.getTrait(TimestampFormatTrait.class)
                     .map(TimestampFormatTrait::getValue)
                     .orElseGet(() -> config.getStringMemberOrDefault(
-                            JsonSchemaConstants.SMITHY_DEFAULT_TIMESTAMP_FORMAT,
+                            JsonSchemaConstants.DEFAULT_TIMESTAMP_FORMAT,
                             DEFAULT_TIMESTAMP_FORMAT));
         }
 
