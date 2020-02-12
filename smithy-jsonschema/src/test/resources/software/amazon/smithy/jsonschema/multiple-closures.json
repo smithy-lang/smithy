@@ -1,0 +1,27 @@
+{
+  "smithy": "0.5.0",
+  "shapes": {
+    "com.foo#StructureA": {
+      "type": "structure",
+      "members": {
+        "a": {
+          "target": "com.foo#ReferencedA"
+        }
+      }
+    },
+    "com.foo#ReferencedA": {
+      "type": "structure"
+    },
+    "com.foo#StructureB": {
+      "type": "structure",
+      "members": {
+        "a": {
+          "target": "com.foo#ReferencedB"
+        }
+      }
+    },
+    "com.foo#ReferencedB": {
+      "type": "structure"
+    }
+  }
+}

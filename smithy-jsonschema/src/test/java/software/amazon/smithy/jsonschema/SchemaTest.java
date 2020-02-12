@@ -19,7 +19,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.utils.SetUtils;
 
@@ -85,5 +88,96 @@ public class SchemaTest {
         assertThat(a, equalTo(a));
         assertThat(b, equalTo(a));
         assertThat(c, not(equalTo(a)));
+    }
+
+    @Test
+    public void getsAllOfSelector() {
+        Schema subschema = Schema.builder().type("string").build();
+        Schema schema = Schema.builder().allOf(Collections.singletonList(subschema)).build();
+
+        assertThat(schema.selectSchema("allOf", "0"), equalTo(Optional.of(subschema)));
+        assertThat(schema.selectSchema("allOf"), equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void getsOneOfSelector() {
+        Schema subschema = Schema.builder().type("string").build();
+        Schema schema = Schema.builder().oneOf(Collections.singletonList(subschema)).build();
+
+        assertThat(schema.selectSchema("oneOf", "0"), equalTo(Optional.of(subschema)));
+        assertThat(schema.selectSchema("oneOf"), equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void getsAnyOfSelector() {
+        Schema subschema = Schema.builder().type("string").build();
+        Schema schema = Schema.builder().anyOf(Collections.singletonList(subschema)).build();
+
+        assertThat(schema.selectSchema("anyOf", "0"), equalTo(Optional.of(subschema)));
+        assertThat(schema.selectSchema("anyOf"), equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void throwsWhenInvalidPositionGiven() {
+        Schema subschema = Schema.builder().type("string").build();
+        Schema schema = Schema.builder().anyOf(Collections.singletonList(subschema)).build();
+
+        Assertions.assertThrows(SmithyJsonSchemaException.class, () -> {
+            schema.selectSchema("anyOf", "foo");
+        });
+    }
+
+    @Test
+    public void getsPropertyNamesSelector() {
+        Schema propertyNames = Schema.builder().type("string").build();
+        Schema schema = Schema.builder().propertyNames(propertyNames).build();
+
+        assertThat(schema.selectSchema("propertyNames"), equalTo(Optional.of(propertyNames)));
+    }
+
+    @Test
+    public void getsItemsSelector() {
+        Schema items = Schema.builder().type("string").build();
+        Schema schema = Schema.builder().items(items).build();
+
+        assertThat(schema.selectSchema("items"), equalTo(Optional.of(items)));
+    }
+
+    @Test
+    public void doesNotThrowOnInvalidPropertySelector() {
+        Schema schema = Schema.builder().putProperty("foo", Schema.builder().type("string").build()).build();
+
+        assertThat(schema.selectSchema("properties"), equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void getsAdditionalPropertiesSelector() {
+        Schema items = Schema.builder().type("string").build();
+        Schema schema = Schema.builder().not(items).build();
+
+        assertThat(schema.selectSchema("not"), equalTo(Optional.of(items)));
+    }
+
+    @Test
+    public void getsNotSelector() {
+        Schema items = Schema.builder().type("string").build();
+        Schema schema = Schema.builder().additionalProperties(items).build();
+
+        assertThat(schema.selectSchema("additionalProperties"), equalTo(Optional.of(items)));
+    }
+
+    @Test
+    public void ignoresUnsupportedProperties() {
+        Schema schema = Schema.builder().build();
+
+        assertThat(schema.selectSchema("foof", "doof"), equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void ignoresNegativeNumericPositions() {
+        Schema subschema = Schema.builder().type("string").build();
+        Schema schema = Schema.builder().allOf(Collections.singletonList(subschema)).build();
+
+        assertThat(schema.selectSchema("allOf", "-1"), equalTo(Optional.empty()));
     }
 }

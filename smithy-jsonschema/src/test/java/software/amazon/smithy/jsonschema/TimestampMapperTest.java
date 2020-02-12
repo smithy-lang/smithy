@@ -20,9 +20,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.jsonschema.JsonSchemaConstants;
-import software.amazon.smithy.jsonschema.Schema;
-import software.amazon.smithy.jsonschema.TimestampMapper;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.TimestampShape;
@@ -81,7 +78,7 @@ public class TimestampMapperTest {
     public void supportsDefaultTimestampFormat() {
         TimestampShape shape = TimestampShape.builder().id("smithy.example#Timestamp").build();
         ObjectNode config = Node.objectNodeBuilder()
-                .withMember(JsonSchemaConstants.SMITHY_DEFAULT_TIMESTAMP_FORMAT, TimestampFormatTrait.DATE_TIME)
+                .withMember(JsonSchemaConstants.DEFAULT_TIMESTAMP_FORMAT, TimestampFormatTrait.DATE_TIME)
                 .build();
         Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), config).build();
 
