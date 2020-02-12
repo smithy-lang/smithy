@@ -19,16 +19,21 @@ import software.amazon.smithy.model.node.ObjectNode;
 
 public final class JsonSchemaConstants {
     /**
-     * Strips Smithy namespaces from the converted shape ID that is generated
+     * Keeps Smithy namespaces in the converted shape ID that is generated
      * in the definitions map of a JSON Schema document for a shape.
      *
      * <p>This property has no effect if a {@link RefStrategy} is
      * manually configured on a {@link JsonSchemaConverter}.
      */
-    public static final String SMITHY_STRIP_NAMESPACES = "stripNamespaces";
+    public static final String KEEP_NAMESPACES = "keepNamespaces";
 
-    /** Includes shapes marked with the {@code private} trait. */
-    public static final String SMITHY_INCLUDE_PRIVATE_SHAPES = "includePrivateShapes";
+    /**
+     * Creates shape name pointers that strip out non-alphanumeric characters.
+     *
+     * <p>This is necessary for compatibility with some vendors like
+     * Amazon API Gateway that only allow alphanumeric shape names.
+     */
+    public static final String ALPHANUMERIC_ONLY_REFS = "alphanumericOnlyRefs";
 
     /**
      * Uses the value of the jsonName trait when creating JSON schema
@@ -37,7 +42,7 @@ public final class JsonSchemaConstants {
      * <p>This property has no effect if a {@link PropertyNamingStrategy} is
      * manually configured on a {@link JsonSchemaConverter}.
      */
-    public static final String SMITHY_USE_JSON_NAME = "useJsonName";
+    public static final String USE_JSON_NAME = "useJsonName";
 
     /**
      * Sets the assumed timestampFormat trait for timestamps with no
@@ -46,7 +51,7 @@ public final class JsonSchemaConstants {
      * <p>Defaults to "date-time" if not set. Can be set to "date-time",
      * "epoch-seconds", or "http-date".
      */
-    public static final String SMITHY_DEFAULT_TIMESTAMP_FORMAT = "defaultTimestampFormat";
+    public static final String DEFAULT_TIMESTAMP_FORMAT = "defaultTimestampFormat";
 
     /**
      * Configures how Smithy union shapes are converted to JSON Schema.
@@ -65,7 +70,7 @@ public final class JsonSchemaConstants {
      * <p>Any other value will raise an {@link UnsupportedOperationException}
      * when the first union shape is encountered.
      */
-    public static final String SMITHY_UNION_STRATEGY = "unionStrategy";
+    public static final String UNION_STRATEGY = "unionStrategy";
 
     /**
      * Configures location of where definitions are written using JSON Pointer.
@@ -87,9 +92,6 @@ public final class JsonSchemaConstants {
      * a {@link ObjectNode}.
      */
     public static final String SCHEMA_DOCUMENT_EXTENSIONS = "schemaDocumentExtensions";
-
-    /** Inlines member definitions when possible. TODO: Not currently supported. */
-    public static final String INLINE_MEMBERS = "inlineMembers";
 
     /** Strips any instances of "const" from schemas. */
     public static final String DISABLE_CONST = "disable.const";

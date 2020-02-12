@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.jsonschema;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -398,6 +399,74 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
 
         asNode = result.build();
         return asNode;
+    }
+
+    /**
+     * Selects a nested schema using a variadic list of property names
+     * to descend into.
+     *
+     * <p>For example, this method can be used to get the items schema nested
+     * inside of an array inside of an object:
+     *
+     * <pre>{@code
+     * Schema itemsSchema = schema.selectSchema("properties", "foo", "items").get();
+     * }</pre>
+     *
+     * @param segments The properties names to retrieve.
+     * @return Returns the selected Schema.
+     */
+    public Optional<Schema> selectSchema(String... segments) {
+        if (segments.length == 0) {
+            return Optional.of(this);
+        }
+
+        String name = segments[0];
+        switch (name) {
+            case "properties":
+                // Grab the property name if present, and skip 2 segments.
+                return segments.length == 1
+                       ? Optional.empty()
+                       : getRecursiveSchema(getProperty(segments[1]), segments, 2);
+            case "allOf":
+                return getSchemaFromArray(allOf, segments);
+            case "anyOf":
+                return getSchemaFromArray(anyOf, segments);
+            case "oneOf":
+                return getSchemaFromArray(oneOf, segments);
+            case "propertyNames":
+                return getRecursiveSchema(getPropertyNames(), segments, 1);
+            case "items":
+                return getRecursiveSchema(getItems(), segments, 1);
+            case "additionalProperties":
+                return getAdditionalProperties();
+            case "not":
+                return getRecursiveSchema(getNot(), segments, 1);
+            default:
+                LOGGER.warning(() -> "Unsupported JSONPointer Schema segment: " + name);
+                return Optional.empty();
+        }
+    }
+
+    private Optional<Schema> getRecursiveSchema(Optional<Schema> schema, String[] segments, int skipOffset) {
+        return schema.flatMap(s -> {
+            String[] remainingSegments = Arrays.copyOfRange(segments, skipOffset, segments.length);
+            return s.selectSchema(remainingSegments);
+        });
+    }
+
+    private Optional<Schema> getSchemaFromArray(List<Schema> schemaArray, String[] segments) {
+        if (segments.length == 1) {
+            return Optional.empty();
+        }
+
+        try {
+            int position = Integer.parseInt(segments[1]);
+            return position > -1 && position < schemaArray.size()
+                   ? getRecursiveSchema(Optional.of(schemaArray.get(position)), segments, 2)
+                   : Optional.empty();
+        } catch (NumberFormatException e) {
+            throw new SmithyJsonSchemaException("Invalid JSON pointer number: " + e.getMessage());
+        }
     }
 
     @Override
