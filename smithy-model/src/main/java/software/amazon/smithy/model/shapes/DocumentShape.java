@@ -21,10 +21,10 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 /**
  * Represents a {@code document} shape.
  */
-public final class DocumentShape extends Shape implements ToSmithyBuilder<DocumentShape> {
+public final class DocumentShape extends SimpleShape implements ToSmithyBuilder<DocumentShape> {
 
     private DocumentShape(Builder builder) {
-        super(builder, false);
+        super(builder);
     }
 
     public static Builder builder() {

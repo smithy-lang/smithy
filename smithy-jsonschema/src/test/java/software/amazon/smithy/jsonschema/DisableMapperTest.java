@@ -20,9 +20,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.jsonschema.DisableMapper;
-import software.amazon.smithy.jsonschema.JsonSchemaConstants;
-import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.StringShape;

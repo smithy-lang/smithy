@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.jsonschema;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -92,7 +93,7 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
         // Skip "#/" and split by "/".
         String[] paths = key.substring(2).split("/");
         if (paths.length <= 1) {
-            throw new RuntimeException("Invalid definition JSON pointer. Expected more segments: " + key);
+            throw new SmithyJsonSchemaException("Invalid definition JSON pointer. Expected more segments: " + key);
         }
 
         // Iterate up to the second to last path segment to find the parent.
@@ -106,7 +107,7 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
             } else if (!(current.get(pathNode) instanceof Map)) {
                 // This could happen when two keys collide. We don't support things
                 // like opening up one schema and inlining another inside of it.
-                throw new RuntimeException("Conflicting JSON pointer definition found at " + key);
+                throw new SmithyJsonSchemaException("Conflicting JSON pointer definition found at " + key);
             } else {
                 current = (Map<StringNode, Object>) current.get(pathNode);
             }
@@ -173,13 +174,52 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
     }
 
     /**
-     * Gets a specific top-level schema definition from the "definitions" map.
+     * Gets a schema definition from the "definitions" map using a JSON pointer.
      *
-     * @param ref Top-level ref name to retrieve.
+     * <p>The "root" schema is returned if {@code pointer} is an empty string.
+     *
+     * @param pointer JSON Schema pointer to retrieve.
      * @return Returns the optionally found schema definition.
      */
-    public Optional<Schema> getDefinition(String ref) {
-        return Optional.ofNullable(definitions.get(ref));
+    public Optional<Schema> getDefinition(String pointer) {
+        pointer = unescapeJsonSchema(pointer);
+
+        if (definitions.containsKey(pointer)) {
+            return Optional.ofNullable(definitions.get(pointer));
+        } else if (pointer.isEmpty()) {
+            return Optional.of(getRootSchema());
+        }
+
+        String prefix = "";
+        String[] refs = pointer.split("/");
+
+        for (int position = 0; position < refs.length; position++) {
+            if (position > 0) {
+                prefix += "/" + refs[position];
+            } else {
+                prefix += refs[position];
+            }
+            if (definitions.containsKey(prefix)) {
+                String[] suffix = Arrays.copyOfRange(refs, position + 1, refs.length);
+                return definitions.get(prefix).selectSchema(suffix);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private static String unescapeJsonSchema(String pointer) {
+        // Unescape "~" special cases.
+        String result = pointer.replace("~1", "/").replace("~0", "~");
+        // Normalize pointer references to the root document.
+        switch (result) {
+            case "":
+            case "#":
+            case "#/":
+                return "";
+            default:
+                return result;
+        }
     }
 
     /**

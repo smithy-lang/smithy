@@ -35,7 +35,7 @@ public class PropertyNamingStrategyTest {
                 .addTrait(new JsonNameTrait("FOO"))
                 .build();
         StructureShape struct = StructureShape.builder().id("smithy.example#Structure").addMember(member).build();
-        ObjectNode config = Node.objectNodeBuilder().withMember(JsonSchemaConstants.SMITHY_USE_JSON_NAME, true).build();
+        ObjectNode config = Node.objectNodeBuilder().withMember(JsonSchemaConstants.USE_JSON_NAME, true).build();
         String memberName = strategy.toPropertyName(struct, member, config);
 
         assertThat(memberName, equalTo("FOO"));

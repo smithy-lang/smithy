@@ -92,4 +92,10 @@
         <Class name="software.amazon.smithy.model.knowledge.ServiceIndex"/>
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
+
+    <!-- Using a buffer here would actually allocate more, not less -->
+    <Match>
+        <Class name="software.amazon.smithy.jsonschema.SchemaDocument"/>
+        <Bug pattern="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
+    </Match>
 </FindBugsFilter>

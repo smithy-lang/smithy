@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
@@ -123,5 +124,41 @@ public class SchemaDocumentTest {
                     .build();
             document.toNode().expectObjectNode();
         });
+    }
+
+    @Test
+    public void unescapesJsonPointers() {
+        Schema schema = Schema.builder().type("string").build();
+        SchemaDocument document = SchemaDocument.builder()
+                .putDefinition("#/definitions/~foo", schema)
+                .build();
+
+        assertThat(document.getDefinition("#/definitions/~0foo"), equalTo(Optional.of(schema)));
+    }
+
+    @Test
+    public void retrievesNestedSchemas() {
+        Schema string = Schema.builder().type("string").build();
+        Schema array = Schema.builder().items(string).build();
+        Schema complex = Schema.builder().putProperty("foo", array).build();
+        SchemaDocument document = SchemaDocument.builder()
+                .putDefinition("#/definitions/complex", complex)
+                .build();
+
+        assertThat(document.getDefinition("#/definitions/complex"), equalTo(Optional.of(complex)));
+        assertThat(document.getDefinition("#/definitions/complex/properties/foo"), equalTo(Optional.of(array)));
+        assertThat(document.getDefinition("#/definitions/complex/properties/foo/items"), equalTo(Optional.of(string)));
+    }
+
+    @Test
+    public void emptyPointerReturnsRootSchema() {
+        Schema string = Schema.builder().type("string").build();
+        SchemaDocument document = SchemaDocument.builder()
+                .rootSchema(string)
+                .build();
+
+        assertThat(document.getDefinition(""), equalTo(Optional.of(string)));
+        assertThat(document.getDefinition("#"), equalTo(Optional.of(string)));
+        assertThat(document.getDefinition("#/"), equalTo(Optional.of(string)));
     }
 }
