@@ -1,0 +1,115 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Service",
+        "version": "2006-03-01"
+    },
+    "paths": {
+        "/document": {
+            "post": {
+                "operationId": "CreateDocument",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateDocumentRequestContent"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "ABC",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Hij1",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CreateDocument 200 response",
+                        "headers": {
+                            "X-Hij1": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateDocumentResponseContent"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "CreateDocumentError 400 response",
+                        "headers": {
+                            "X-Hij2": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateDocumentErrorResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CreateDocumentErrorResponseContent": {
+                "type": "object",
+                "properties": {
+                    "abc": {
+                        "type": "string"
+                    },
+                    "def": {
+                        "type": "number",
+                        "format": "int32",
+                        "nullable": true
+                    }
+                }
+            },
+            "CreateDocumentRequestContent": {
+                "type": "object",
+                "properties": {
+                    "def": {
+                        "type": "number",
+                        "format": "int32",
+                        "nullable": true
+                    }
+                }
+            },
+            "CreateDocumentResponseContent": {
+                "type": "object",
+                "properties": {
+                    "abc": {
+                        "type": "string"
+                    },
+                    "def": {
+                        "type": "number",
+                        "format": "int32",
+                        "nullable": true
+                    }
+                }
+            }
+        }
+    }
+}

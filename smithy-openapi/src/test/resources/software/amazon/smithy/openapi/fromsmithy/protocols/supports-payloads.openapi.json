@@ -48,13 +48,6 @@
           },
           "404": {
             "description": "Error 404 response",
-            "headers": {
-              "X-Foo-Header": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
             "content": {
               "text/plain": {
                 "schema": {

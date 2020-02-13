@@ -262,9 +262,13 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         }
 
         // Synthesize a schema for the body of the request.
-        // TODO: Give this a name and make it a referenced type.
         Schema schema = createDocumentSchema(context, operation, bindings, MessageType.REQUEST);
-        MediaTypeObject mediaTypeObject = MediaTypeObject.builder().schema(schema).build();
+        String synthesizedName = operation.getId().getName() + "RequestContent";
+        String pointer = context.putSynthesizedSchema(synthesizedName, schema);
+        MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
+                .schema(Schema.builder().ref(pointer).build())
+                .build();
+
         return Optional.of(RequestBodyObject.builder()
                 .putContent(mediaType, mediaTypeObject)
                 .build());
@@ -295,7 +299,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     ) {
         Shape operationOrError = shape.hasTrait(ErrorTrait.class) ? shape : operation;
         String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, operationOrError);
-        ResponseObject response = createResponse(context, bindingIndex, statusCode, operation, operationOrError);
+        ResponseObject response = createResponse(context, bindingIndex, statusCode, operationOrError);
         responses.put(statusCode, response);
     }
 
@@ -303,12 +307,11 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Context<T> context,
             HttpBindingIndex bindingIndex,
             String statusCode,
-            OperationShape operationShape,
             Shape operationOrError
     ) {
         ResponseObject.Builder responseBuilder = ResponseObject.builder();
         responseBuilder.description(String.format("%s %s response", operationOrError.getId().getName(), statusCode));
-        createResponseHeaderParameters(context, operationShape)
+        createResponseHeaderParameters(context, operationOrError)
                 .forEach((k, v) -> responseBuilder.putHeader(k, Ref.local(v)));
         addResponseContent(context, bindingIndex, responseBuilder, operationOrError);
         return responseBuilder.build();
@@ -316,10 +319,10 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
     private Map<String, ParameterObject> createResponseHeaderParameters(
             Context<T> context,
-            OperationShape operation
+            Shape operationOrError
     ) {
         List<HttpBinding> bindings = context.getModel().getKnowledge(HttpBindingIndex.class)
-                .getResponseBindings(operation, HttpBinding.Location.HEADER);
+                .getResponseBindings(operationOrError, HttpBinding.Location.HEADER);
         return createHeaderParameters(context, bindings, MessageType.RESPONSE);
     }
 
@@ -370,12 +373,39 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
         // Document bindings needs to be synthesized into a new schema that contains
         // just the document bindings separate from other parameters.
-        // TODO: Give these synthesized response documents a name.
         MessageType messageType = operationOrError instanceof OperationShape
                 ? MessageType.RESPONSE
                 : MessageType.ERROR;
+
+        // This "synthesizes" a new schema that just contains the document bindings.
+        // While we *could* just use the referenced output/error shape as-is, that
+        // would be a bad idea; traits applied to shapes in Smithy can contextually
+        // influence what the resulting JSON schema or OpenAPI. Consider the
+        // following examples:
+        //
+        // 1. If the same shape is reused as input and output, then some members
+        //    might be bound to query string parameters, and query string params
+        //    aren't relevant on output. Trying to use the same schema derived
+        //    from the reused input/output shape would result in a broken API.
+        // 2. What if the input/output shape doesn't bind anything to the query
+        //    string, headers, path, etc? Couldn't it then be used as-is with
+        //    the name given in the Smithy model? Yes, technically it could, but
+        //    that's also a bad idea. If/when you want to add a header or query
+        //    string parameter, then you now need to break your generated OpenAPI
+        //    schema, particularly if the shapes was reused throughout your model
+        //    outside of top-level inputs, outputs, and errors.
+        //
+        // The safest thing to do here is to always synthesize a new schema that
+        // just includes the document bindings.
+        //
+        // **NOTE: this same blurb applies to why we do this on input.**
         Schema schema = createDocumentSchema(context, operationOrError, bindings, messageType);
-        MediaTypeObject mediaTypeObject = MediaTypeObject.builder().schema(schema).build();
+        String synthesizedName = operationOrError.getId().getName() + "ResponseContent";
+        String pointer = context.putSynthesizedSchema(synthesizedName, schema);
+        MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
+                .schema(Schema.builder().ref(pointer).build())
+                .build();
+
         responseBuilder.putContent(mediaType, mediaTypeObject);
     }
 }
