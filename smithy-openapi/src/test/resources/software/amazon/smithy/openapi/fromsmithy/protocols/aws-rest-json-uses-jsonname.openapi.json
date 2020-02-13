@@ -12,17 +12,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "Abc": {
-                    "type": "string"
-                  },
-                  "Def": {
-                    "type": "number",
-                    "format": "int32",
-                    "nullable": true
-                  }
-                }
+                "$ref": "#/components/schemas/CreateDocumentRequestContent"
               }
             }
           }
@@ -30,6 +20,23 @@
         "responses": {
           "200": {
             "description": "CreateDocument response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateDocumentRequestContent": {
+        "type": "object",
+        "properties": {
+          "Abc": {
+            "type": "string"
+          },
+          "Def": {
+            "type": "number",
+            "format": "int32",
+            "nullable": true
           }
         }
       }
