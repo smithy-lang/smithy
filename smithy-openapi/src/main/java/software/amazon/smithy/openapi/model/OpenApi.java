@@ -94,7 +94,8 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
                 .info(info)
                 .paths(paths)
                 .components(components)
-                .externalDocs(externalDocs);
+                .externalDocs(externalDocs)
+                .extensions(getExtensions());
         security.forEach(builder::addSecurity);
         servers.forEach(builder::addServer);
         tags.forEach(builder::addTag);
