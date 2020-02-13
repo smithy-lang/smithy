@@ -23,11 +23,7 @@
                     "format": "int32"
                   },
                   "hij": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string",
-                      "format": "password"
-                    }
+                    "$ref": "#/components/schemas/Map"
                   },
                   "stringDateTime": {
                     "type": "string",
@@ -49,7 +45,10 @@
               "items": {
                 "type": "string",
                 "description": "Query list member reference docs!"
-              }
+              },
+              "maxItems": 10,
+              "minItems": 0,
+              "description": "Query list docs!"
             },
             "explode": true
           }
@@ -63,7 +62,7 @@
                   "type": "object",
                   "properties": {
                     "taggedUnion": {
-                      "$ref": "#/components/schemas/ExampleRestCreateDocumentOutputTaggedUnionMember"
+                      "$ref": "#/components/schemas/TaggedUnion"
                     },
                     "foo": {
                       "type": "string"
@@ -132,21 +131,17 @@
             }
           },
           {
+            "name": "X-EnumString",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/EnumString"
+            }
+          },
+          {
             "name": "X-Foo-Header",
             "in": "header",
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "name": "X-EnumString",
-            "in": "header",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "a",
-                "c"
-              ]
             }
           }
         ],
@@ -185,7 +180,21 @@
   },
   "components": {
     "schemas": {
-      "ExampleRestCreateDocumentOutputTaggedUnionMember": {
+      "EnumString": {
+        "type": "string",
+        "enum": [
+          "a",
+          "c"
+        ]
+      },
+      "Map": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string",
+          "format": "password"
+        }
+      },
+      "TaggedUnion": {
         "oneOf": [
           {
             "type": "object",

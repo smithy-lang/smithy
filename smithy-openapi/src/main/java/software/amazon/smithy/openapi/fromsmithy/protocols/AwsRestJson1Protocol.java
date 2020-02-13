@@ -16,6 +16,8 @@
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.aws.traits.protocols.RestJson1Trait;
 import software.amazon.smithy.jsonschema.JsonSchemaConstants;
 import software.amazon.smithy.jsonschema.Schema;
@@ -30,10 +32,9 @@ import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 
 /**
- * Provides the conversion from Smithy aws.rest-json-1.0 and
- * aws.rest-json-1.1 to OpenAPI operations.
+ * Converts the {@code aws.protocols#restJson1} protocol to OpenAPI.
  */
-public final class AwsRestJsonProtocol extends AbstractRestProtocol<RestJson1Trait> {
+public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Trait> {
     @Override
     public Class<RestJson1Trait> getProtocolType() {
         return RestJson1Trait.class;
@@ -42,8 +43,8 @@ public final class AwsRestJsonProtocol extends AbstractRestProtocol<RestJson1Tra
     @Override
     public ObjectNode getDefaultSettings() {
         return Node.objectNode()
-                .withMember(JsonSchemaConstants.SMITHY_USE_JSON_NAME, true)
-                .withMember(JsonSchemaConstants.SMITHY_DEFAULT_TIMESTAMP_FORMAT, TimestampFormatTrait.EPOCH_SECONDS);
+                .withMember(JsonSchemaConstants.USE_JSON_NAME, true)
+                .withMember(JsonSchemaConstants.DEFAULT_TIMESTAMP_FORMAT, TimestampFormatTrait.EPOCH_SECONDS);
     }
 
     @Override
@@ -66,21 +67,25 @@ public final class AwsRestJsonProtocol extends AbstractRestProtocol<RestJson1Tra
         // We create a synthetic structure shape that is passed through the
         // JSON schema converter. This shape only contains members that make
         // up the "document" members of the input/output/error shape.
-        // Creating this kind of synthetic shape takes advantage of generic
-        // things like handling required properties, pattern, length, range,
-        // documentation, jsonName, and passes the synthetic JSON schema
-        // through any registered mappers.
         ShapeId container = bindings.get(0).getMember().getContainer();
-        StructureShape.Builder tempShapeBuilder = StructureShape.builder().id(container);
+        StructureShape containerShape = context.getModel().expectShape(container, StructureShape.class);
 
-        for (HttpBinding binding : bindings) {
-            tempShapeBuilder.addMember(binding.getMember().toBuilder()
-                    .id(container.withMember(binding.getMemberName()))
-                    .build());
+        // Create a schema from the original shape and remove unnecessary members.
+        Schema.Builder schemaBuilder = context.getJsonSchemaConverter()
+                .convertShape(containerShape)
+                .getRootSchema()
+                .toBuilder();
+
+        Set<String> documentMemberNames = bindings.stream()
+                .map(HttpBinding::getMemberName)
+                .collect(Collectors.toSet());
+
+        for (String memberName : containerShape.getAllMembers().keySet()) {
+            if (!documentMemberNames.contains(memberName)) {
+                schemaBuilder.removeProperty(memberName);
+            }
         }
 
-        StructureShape tempShape = tempShapeBuilder.build();
-
-        return context.getJsonSchemaConverter().convert(context.getModel(), tempShape).getRootSchema();
+        return schemaBuilder.build();
     }
 }

@@ -49,13 +49,15 @@ public class OpenApiJsonSchemaMapperTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
-        SchemaDocument document = JsonSchemaConverter.create()
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder()
                         .withMember(OpenApiConstants.OPEN_API_MODE, true)
                         .withMember(JsonSchemaConstants.DEFINITION_POINTER, OpenApiConstants.SCHEMA_COMPONENTS_POINTER)
                         .build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(model);
+                .model(model)
+                .build()
+                .convert();
 
         assertTrue(document.toNode().expectObjectNode().getMember("components").isPresent());
     }
@@ -67,10 +69,12 @@ public class OpenApiJsonSchemaMapperTest {
         MemberShape value = MemberShape.builder().id("smithy.example#Map$value").target("smithy.api#String").build();
         MapShape shape = MapShape.builder().id("smithy.example#Map").key(key).value(value).build();
         Model model = Model.builder().addShapes(string, shape, key, value).build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(model, shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
         Schema schema = document.getRootSchema();
 
         assertFalse(schema.getPropertyNames().isPresent());
@@ -79,14 +83,17 @@ public class OpenApiJsonSchemaMapperTest {
     @Test
     public void supportsExternalDocs() {
         String link = "https://foo.com";
-        StringShape string = StringShape.builder()
+        StringShape shape = StringShape.builder()
                 .id("a.b#C")
                 .addTrait(new ExternalDocumentationTrait(link))
                 .build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(Model.builder().addShape(string).build(), string);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
         Node.assertEquals(document.getRootSchema().getExtension("externalDocs").get(), Node.from(link));
     }
@@ -94,10 +101,13 @@ public class OpenApiJsonSchemaMapperTest {
     @Test
     public void supportsBoxTrait() {
         IntegerShape shape = IntegerShape.builder().id("a.b#C").addTrait(new BoxTrait()).build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(Model.builder().addShape(shape).build(), shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
         assertThat(document.getRootSchema().getExtension("nullable").get(), equalTo(Node.from(true)));
     }
@@ -105,10 +115,13 @@ public class OpenApiJsonSchemaMapperTest {
     @Test
     public void supportsDeprecatedTrait() {
         IntegerShape shape = IntegerShape.builder().id("a.b#C").addTrait(DeprecatedTrait.builder().build()).build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(Model.builder().addShape(shape).build(), shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
         assertThat(document.getRootSchema().getExtension("deprecated").get(), equalTo(Node.from(true)));
     }
@@ -116,10 +129,13 @@ public class OpenApiJsonSchemaMapperTest {
     @Test
     public void supportsInt32() {
         IntegerShape shape = IntegerShape.builder().id("a.b#C").build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(Model.builder().addShape(shape).build(), shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
         assertThat(document.getRootSchema().getFormat().get(), equalTo("int32"));
     }
@@ -127,10 +143,13 @@ public class OpenApiJsonSchemaMapperTest {
     @Test
     public void supportsInt64() {
         LongShape shape = LongShape.builder().id("a.b#C").build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(Model.builder().addShape(shape).build(), shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
         assertThat(document.getRootSchema().getFormat().get(), equalTo("int64"));
     }
@@ -138,10 +157,13 @@ public class OpenApiJsonSchemaMapperTest {
     @Test
     public void supportsFloatFormat() {
         FloatShape shape = FloatShape.builder().id("a.b#C").build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(Model.builder().addShape(shape).build(), shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
         assertThat(document.getRootSchema().getFormat().get(), equalTo("float"));
     }
@@ -149,10 +171,13 @@ public class OpenApiJsonSchemaMapperTest {
     @Test
     public void supportsDoubleFormat() {
         DoubleShape shape = DoubleShape.builder().id("a.b#C").build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(Model.builder().addShape(shape).build(), shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
         assertThat(document.getRootSchema().getFormat().get(), equalTo("double"));
     }
@@ -160,10 +185,13 @@ public class OpenApiJsonSchemaMapperTest {
     @Test
     public void blobFormatDefaultsToByte() {
         BlobShape shape = BlobShape.builder().id("a.b#C").build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(Model.builder().addShape(shape).build(), shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
         assertThat(document.getRootSchema().getFormat().get(), equalTo("byte"));
     }
@@ -171,13 +199,16 @@ public class OpenApiJsonSchemaMapperTest {
     @Test
     public void blobFormatOverriddenToBinary() {
         BlobShape shape = BlobShape.builder().id("a.b#C").build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder()
                                 .withMember(OpenApiConstants.OPEN_API_MODE, true)
                                 .withMember(OpenApiConstants.OPEN_API_DEFAULT_BLOB_FORMAT, "binary")
                                 .build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(Model.builder().addShape(shape).build(), shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
         assertThat(document.getRootSchema().getFormat().get(), equalTo("binary"));
     }
@@ -185,10 +216,13 @@ public class OpenApiJsonSchemaMapperTest {
     @Test
     public void supportsSensitiveTrait() {
         StringShape shape = StringShape.builder().id("a.b#C").addTrait(new SensitiveTrait()).build();
-        SchemaDocument document = JsonSchemaConverter.create()
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
                 .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
-                .convert(Model.builder().addShape(shape).build(), shape);
+                .model(model)
+                .build()
+                .convertShape(shape);
 
         assertThat(document.getRootSchema().getFormat().get(), equalTo("password"));
     }

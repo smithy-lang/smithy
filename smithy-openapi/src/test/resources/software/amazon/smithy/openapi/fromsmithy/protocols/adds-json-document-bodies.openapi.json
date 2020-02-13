@@ -15,10 +15,12 @@
                 "type": "object",
                 "properties": {
                   "abc": {
-                    "$ref": "#/components/schemas/SmithyExampleCreateDocumentInputAbcMember"
+                    "type": "string"
                   },
                   "def": {
-                    "$ref": "#/components/schemas/SmithyExampleCreateDocumentInputDefMember"
+                    "type": "number",
+                    "format": "int32",
+                    "nullable": true
                   }
                 }
               }
@@ -30,7 +32,7 @@
             "name": "query",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/SmithyExampleCreateDocumentInputQueryMember"
+              "type": "string"
             }
           }
         ],
@@ -39,21 +41,6 @@
             "description": "CreateDocument response"
           }
         }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "SmithyExampleCreateDocumentInputQueryMember": {
-        "type": "string"
-      },
-      "SmithyExampleCreateDocumentInputAbcMember": {
-        "type": "string"
-      },
-      "SmithyExampleCreateDocumentInputDefMember": {
-        "type": "number",
-        "format": "int32",
-        "nullable": true
       }
     }
   }

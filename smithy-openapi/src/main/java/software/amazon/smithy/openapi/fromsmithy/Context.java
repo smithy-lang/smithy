@@ -21,6 +21,7 @@ import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.jsonschema.SchemaDocument;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
@@ -131,7 +132,7 @@ public final class Context<T extends Trait> {
      * @return Returns the JSON pointer to this shape as a schema component.
      */
     public String getPointer(ToShapeId shapeId) {
-        return getJsonSchemaConverter().getRefStrategy().toPointer(shapeId.toShapeId(), getConfig());
+        return getJsonSchemaConverter().toPointer(shapeId.toShapeId());
     }
 
     /**
@@ -142,6 +143,22 @@ public final class Context<T extends Trait> {
      */
     public Schema createRef(ToShapeId shapeId) {
         return Schema.builder().ref(getPointer(shapeId)).build();
+    }
+
+    /**
+     * Gets the exiting schema of the shape if it's meant to be inlined,
+     * otherwise creates a $ref to the shape if it is meant to be reused
+     * across the generated schema.
+     *
+     * @param member Member to inline or reference.
+     * @return Returns the schema for the member.
+     */
+    public Schema inlineOrReferenceSchema(MemberShape member) {
+        if (getJsonSchemaConverter().isInlined(member)) {
+            return getJsonSchemaConverter().convertShape(member).getRootSchema();
+        } else {
+            return createRef(member);
+        }
     }
 
     /**
