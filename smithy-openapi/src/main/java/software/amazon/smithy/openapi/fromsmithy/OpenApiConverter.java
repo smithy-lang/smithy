@@ -335,6 +335,11 @@ public final class OpenApiConverter {
         addSecurityComponents(context, openapi, environment.components, mapper);
         openapi.components(environment.components.build());
 
+        // Add arbitrary extensions if they're configured.
+        context.getConfig()
+                .getObjectMember(JsonSchemaConstants.SCHEMA_DOCUMENT_EXTENSIONS)
+                .ifPresent(openapi::extensions);
+
         return mapper.after(context, openapi.build());
     }
 

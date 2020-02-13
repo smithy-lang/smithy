@@ -99,6 +99,10 @@ public abstract class Component implements ToNode {
             return (B) this;
         }
 
+        public B extensions(ObjectNode extensions) {
+            return extensions(extensions.getStringMap());
+        }
+
         @SuppressWarnings("unchecked")
         public B putExtension(String key, Node value) {
             extensions.put(key, value);
