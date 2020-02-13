@@ -1,0 +1,78 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "smithy.example#Service": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "target": "smithy.example#CreateDocument"
+                }
+            ],
+            "traits": {
+                "aws.protocols#restJson1": true
+            }
+        },
+        "smithy.example#CreateDocument": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.example#CreateDocumentInputOutput"
+            },
+            "output": {
+                "target": "smithy.example#CreateDocumentInputOutput"
+            },
+            "errors": [
+                {
+                    "target": "smithy.example#CreateDocumentError"
+                }
+            ],
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/document",
+                    "method": "POST"
+                }
+            }
+        },
+        "smithy.example#CreateDocumentInputOutput": {
+            "type": "structure",
+            "members": {
+                "abc": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpQuery": "ABC"
+                    }
+                },
+                "def": {
+                    "target": "smithy.api#Integer"
+                },
+                "hij": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Hij1"
+                    }
+                }
+            }
+        },
+        "smithy.example#CreateDocumentError": {
+            "type": "structure",
+            "members": {
+                "abc": {
+                    "target": "smithy.api#String"
+                },
+                "def": {
+                    "target": "smithy.api#Integer"
+                },
+                "hij": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Hij2"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client",
+                "smithy.api#httpError": 400
+            }
+        }
+    }
+}

@@ -15,7 +15,11 @@
 
 package software.amazon.smithy.openapi.fromsmithy;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.JsonSchemaConverter;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.jsonschema.SchemaDocument;
@@ -25,6 +29,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 
 /**
@@ -38,6 +43,7 @@ public final class Context<T extends Trait> {
     private final OpenApiProtocol<T> openApiProtocol;
     private final SchemaDocument schemas;
     private final List<SecuritySchemeConverter<? extends Trait>> securitySchemeConverters;
+    private Map<String, Schema> synthesizedSchemas = Collections.synchronizedMap(new TreeMap<>());
 
     public Context(
             Model model,
@@ -183,5 +189,44 @@ public final class Context<T extends Trait> {
      */
     public boolean usesHttpCredentials() {
         return getSecuritySchemeConverters().stream().anyMatch(SecuritySchemeConverter::usesHttpCredentials);
+    }
+
+    /**
+     * Gets all of the synthesized schemas that needed to be created while
+     * generating the OpenAPI artifact.
+     *
+     * @return Returns the "synthesized" schemas as an immutable map.
+     */
+    public Map<String, Schema> getSynthesizedSchemas() {
+        return Collections.unmodifiableMap(synthesizedSchemas);
+    }
+
+    /**
+     * Puts a new synthesized schema that is needed to convert to OpenAPI.
+     *
+     * <p>Synthesized schemas are used when ad-hoc schemas are necessary in
+     * order to materialize some change in OpenAPI while still providing an
+     * explicit name. For example, when generating many of the RESTful
+     * protocols, members from the input of an operation might come together
+     * to form the payload of a request. In Smithy, it's fine to use only
+     * part of the input to derive the payload, whereas in OpenAPI, you need
+     * a schema that's dedicated to the payload.
+     *
+     * <p>The primary alternative to synthesized schemas is inlined schema
+     * definitions. The problem with inline schemas is that they don't
+     * have an explicit or even deterministic name when used with other
+     * platforms (for example, API Gateway will generate a random name for
+     * an object if one is not given).
+     *
+     * <p>This method is thread-safe.
+     *
+     * @param name Name of the schema to put into components/schemas. Nested
+     *   pointers are not supported.
+     * @param schema The schema to put.
+     * @return Returns a JSON pointer to the created schema.
+     */
+    public String putSynthesizedSchema(String name, Schema schema) {
+        synthesizedSchemas.put(Objects.requireNonNull(name), Objects.requireNonNull(schema));
+        return OpenApiConstants.SCHEMA_COMPONENTS_POINTER + "/" + name;
     }
 }
