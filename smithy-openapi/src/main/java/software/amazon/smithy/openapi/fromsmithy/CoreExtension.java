@@ -20,12 +20,11 @@ import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.mappers.CheckForGreedyLabels;
 import software.amazon.smithy.openapi.fromsmithy.mappers.CheckForPrefixHeaders;
-import software.amazon.smithy.openapi.fromsmithy.mappers.InlineReferencesToPrimitiveTypes;
 import software.amazon.smithy.openapi.fromsmithy.mappers.OpenApiJsonSubstitutions;
 import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveEmptyComponents;
 import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveUnusedComponents;
 import software.amazon.smithy.openapi.fromsmithy.mappers.UnsupportedTraits;
-import software.amazon.smithy.openapi.fromsmithy.protocols.AwsRestJsonProtocol;
+import software.amazon.smithy.openapi.fromsmithy.protocols.AwsRestJson1Protocol;
 import software.amazon.smithy.openapi.fromsmithy.security.AwsV4;
 import software.amazon.smithy.openapi.fromsmithy.security.HttpBasic;
 import software.amazon.smithy.openapi.fromsmithy.security.HttpBearer;
@@ -50,7 +49,7 @@ public final class CoreExtension implements Smithy2OpenApiExtension {
 
     @Override
     public List<OpenApiProtocol<? extends Trait>> getProtocols() {
-        return ListUtils.of(new AwsRestJsonProtocol());
+        return ListUtils.of(new AwsRestJson1Protocol());
     }
 
     @Override
@@ -61,7 +60,6 @@ public final class CoreExtension implements Smithy2OpenApiExtension {
                 new OpenApiJsonSubstitutions(),
                 new RemoveUnusedComponents(),
                 new UnsupportedTraits(),
-                new InlineReferencesToPrimitiveTypes(),
                 new RemoveEmptyComponents()
         );
     }

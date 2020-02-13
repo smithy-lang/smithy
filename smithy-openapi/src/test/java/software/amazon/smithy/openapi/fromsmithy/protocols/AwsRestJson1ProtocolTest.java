@@ -15,8 +15,8 @@ import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
 
-public class AwsRestJsonProtocolTest {
-    private static final Logger LOGGER = Logger.getLogger(AwsRestJsonProtocolTest.class.getName());
+public class AwsRestJson1ProtocolTest {
+    private static final Logger LOGGER = Logger.getLogger(AwsRestJson1ProtocolTest.class.getName());
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -37,7 +37,6 @@ public class AwsRestJsonProtocolTest {
                 .assemble()
                 .unwrap();
         ObjectNode result = OpenApiConverter.create()
-                .putSetting(OpenApiConstants.DISABLE_PRIMITIVE_INLINING, true)
                 .convertToNode(model, ShapeId.from("smithy.example#Service"));
         String openApiModel = smithy.replace(".json", ".openapi.json");
         InputStream openApiStream = getClass().getResourceAsStream(openApiModel);
@@ -47,19 +46,6 @@ public class AwsRestJsonProtocolTest {
         } else {
             Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
             Node.assertEquals(result, expectedNode);
-        }
-
-        // Attempt to compare the inlined model variant if available.
-        {
-            String inlinedOpenApiModel = smithy.replace(".json", ".openapi.inlined.json");
-            InputStream inlinedOpenApiStream = getClass().getResourceAsStream(inlinedOpenApiModel);
-            if (inlinedOpenApiStream != null) {
-                ObjectNode inlinedResult = OpenApiConverter.create()
-                        .convertToNode(model, ShapeId.from("smithy.example#Service"));
-                Node.assertEquals(inlinedResult, Node.parse(IoUtils.toUtf8String(inlinedOpenApiStream)));
-            } else {
-                LOGGER.info("No .inlined.json test case found for " + smithy);
-            }
         }
     }
 
