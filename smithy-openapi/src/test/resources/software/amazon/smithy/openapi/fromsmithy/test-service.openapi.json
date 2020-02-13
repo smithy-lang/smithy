@@ -12,24 +12,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "abc": {
-                    "type": "string",
-                    "format": "password"
-                  },
-                  "def": {
-                    "type": "number",
-                    "format": "int32"
-                  },
-                  "hij": {
-                    "$ref": "#/components/schemas/Map"
-                  },
-                  "stringDateTime": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                }
+                "$ref": "#/components/schemas/CreateDocumentRequestContent"
               }
             }
           }
@@ -59,32 +42,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "taggedUnion": {
-                      "$ref": "#/components/schemas/TaggedUnion"
-                    },
-                    "foo": {
-                      "type": "string"
-                    },
-                    "baz": {
-                      "type": "string"
-                    },
-                    "time": {
-                      "type": "number"
-                    },
-                    "list": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "maxItems": 10,
-                      "minItems": 0
-                    }
-                  },
-                  "required": [
-                    "time"
-                  ]
+                  "$ref": "#/components/schemas/CreateDocumentResponseContent"
                 }
               }
             }
@@ -165,14 +123,7 @@
             }
           },
           "404": {
-            "description": "PayloadNotFound 404 response",
-            "headers": {
-              "X-Foo-Header": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "PayloadNotFound 404 response"
           }
         }
       }
@@ -180,6 +131,54 @@
   },
   "components": {
     "schemas": {
+      "CreateDocumentRequestContent": {
+        "type": "object",
+        "properties": {
+          "abc": {
+            "type": "string",
+            "format": "password"
+          },
+          "def": {
+            "type": "number",
+            "format": "int32"
+          },
+          "hij": {
+            "$ref": "#/components/schemas/Map"
+          },
+          "stringDateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateDocumentResponseContent": {
+        "type": "object",
+        "properties": {
+          "taggedUnion": {
+            "$ref": "#/components/schemas/TaggedUnion"
+          },
+          "foo": {
+            "type": "string"
+          },
+          "baz": {
+            "type": "string"
+          },
+          "time": {
+            "type": "number"
+          },
+          "list": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "minItems": 0
+          }
+        },
+        "required": [
+          "time"
+        ]
+      },
       "EnumString": {
         "type": "string",
         "enum": [

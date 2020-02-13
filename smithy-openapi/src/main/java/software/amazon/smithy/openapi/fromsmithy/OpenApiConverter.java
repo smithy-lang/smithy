@@ -361,6 +361,12 @@ public final class OpenApiConverter {
 
         addPaths(context, openapi, openApiProtocol, mapper);
         addSecurityComponents(context, openapi, environment.components, mapper);
+
+        // Merge in any schemas that needed to be created during translation.
+        for (Map.Entry<String, Schema> entry : context.getSynthesizedSchemas().entrySet()) {
+            environment.components.putSchema(entry.getKey(), entry.getValue());
+        }
+
         openapi.components(environment.components.build());
 
         // Add arbitrary extensions if they're configured.
