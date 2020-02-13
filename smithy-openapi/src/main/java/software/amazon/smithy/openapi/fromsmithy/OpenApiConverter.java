@@ -220,6 +220,9 @@ public final class OpenApiConverter {
     }
 
     private ConversionEnvironment<? extends Trait> createConversionEnvironment(Model model, ShapeId serviceShapeId) {
+        JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder();
+        jsonSchemaConverterBuilder.model(model);
+
         // Discover OpenAPI extensions.
         List<Smithy2OpenApiExtension> extensions = new ArrayList<>();
 
@@ -227,15 +230,13 @@ public final class OpenApiConverter {
             extensions.add(extension);
             // Add JSON schema mappers from found extensions.
             for (JsonSchemaMapper mapper : extension.getJsonSchemaMappers()) {
-                getJsonSchemaConverter().addMapper(mapper);
+                jsonSchemaConverterBuilder.addMapper(mapper);
             }
         }
 
         // Update the JSON schema config with the settings from this class and
         // configure it to use OpenAPI settings.
-        ObjectNode.Builder configBuilder = getJsonSchemaConverter()
-                .getConfig()
-                .toBuilder()
+        ObjectNode.Builder configBuilder = Node.objectNodeBuilder()
                 .withMember(OpenApiConstants.OPEN_API_MODE, true)
                 .withMember(JsonSchemaConstants.DEFINITION_POINTER, OpenApiConstants.SCHEMA_COMPONENTS_POINTER);
 
@@ -254,18 +255,27 @@ public final class OpenApiConverter {
 
         // Merge in protocol default values.
         config = openApiProtocol.getDefaultSettings().merge(config);
+        jsonSchemaConverterBuilder.config(config);
 
-        getJsonSchemaConverter().config(config);
+        // Only convert shapes in the closure of the targeted service.
+        jsonSchemaConverterBuilder.rootShape(service);
+        JsonSchemaConverter jsonSchemaConverter = jsonSchemaConverterBuilder.build();
+        SchemaDocument document = jsonSchemaConverter.convert();
         ComponentsObject.Builder components = ComponentsObject.builder();
-        SchemaDocument schemas = addSchemas(components, model, service);
+
+        // Populate component schemas from the built document.
+        for (Map.Entry<String, Schema> entry : document.getDefinitions().entrySet()) {
+            String key = entry.getKey().replace(OpenApiConstants.SCHEMA_COMPONENTS_POINTER + "/", "");
+            components.putSchema(key, entry.getValue());
+        }
 
         // Load security scheme converters.
         List<SecuritySchemeConverter<? extends Trait>> securitySchemeConverters = loadSecuritySchemes(
                 model, service, extensions);
 
         Context<Trait> context = new Context<>(
-                model, service, getJsonSchemaConverter(),
-                openApiProtocol, schemas, securitySchemeConverters);
+                model, service, jsonSchemaConverter,
+                openApiProtocol, document, securitySchemeConverters);
 
         return new ConversionEnvironment<>(context, extensions, components, mappers);
     }
@@ -280,10 +290,14 @@ public final class OpenApiConverter {
     private Trait loadOrDeriveProtocolTrait(Model model, ServiceShape service, ObjectNode config) {
         ServiceIndex serviceIndex = model.getKnowledge(ServiceIndex.class);
         Set<ShapeId> serviceProtocols = serviceIndex.getProtocols(service).keySet();
-        ShapeId protocolTraitId;
 
         if (config.getMember(OpenApiConstants.PROTOCOL).isPresent()) {
-            protocolTraitId = config.expectStringMember(OpenApiConstants.PROTOCOL).expectShapeId();
+            ShapeId protocolTraitId = config.expectStringMember(OpenApiConstants.PROTOCOL).expectShapeId();
+            return service.findTrait(protocolTraitId).orElseThrow(() -> {
+                return new OpenApiException(String.format(
+                        "Unable to find protocol `%s` on service `%s`. This service supports the following "
+                        + "protocols: %s", protocolTraitId, service.getId(), serviceProtocols));
+            });
         } else if (serviceProtocols.isEmpty()) {
             throw new OpenApiException(String.format(
                     "No Smithy protocol was configured and `%s` does not define any protocols.",
@@ -293,14 +307,9 @@ public final class OpenApiConverter {
                     "No Smithy protocol was configured and `%s` defines multiple protocols: %s",
                     service.getId(), serviceProtocols));
         } else {
-            protocolTraitId = serviceProtocols.iterator().next();
+            // Get the first and only service protocol trait.
+            return serviceIndex.getProtocols(service).values().iterator().next();
         }
-
-        return service.findTrait(protocolTraitId).orElseThrow(() -> {
-            return new OpenApiException(String.format(
-                    "Unable to find protocol `%s` on service `%s`. This service supports the following protocols: %s",
-                    protocolTraitId, service.getId(), serviceProtocols));
-        });
     }
 
     private static final class ConversionEnvironment<T extends Trait> {
@@ -345,7 +354,9 @@ public final class OpenApiConverter {
 
         // Include @tags trait tags that are compatible with OpenAPI settings.
         if (environment.context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_TAGS)) {
-            getSupportedTags(service).forEach(tag -> openapi.addTag(TagObject.builder().name(tag).build()));
+            getSupportedTags(context.getConfig(), service).forEach(tag -> {
+                openapi.addTag(TagObject.builder().name(tag).build());
+            });
         }
 
         addPaths(context, openapi, openApiProtocol, mapper);
@@ -353,14 +364,6 @@ public final class OpenApiConverter {
         openapi.components(environment.components.build());
 
         return mapper.after(context, openapi.build());
-    }
-
-    private JsonSchemaConverter getJsonSchemaConverter() {
-        if (jsonSchemaConverter == null) {
-            jsonSchemaConverter = JsonSchemaConverter.create();
-        }
-
-        return jsonSchemaConverter;
     }
 
     // Find the corresponding protocol OpenApiProtocol service provider.
@@ -423,12 +426,14 @@ public final class OpenApiConverter {
     }
 
     // Gets the tags of a shape that are allowed in the OpenAPI model.
-    private Stream<String> getSupportedTags(Tagged tagged) {
-        ObjectNode config = getJsonSchemaConverter().getConfig();
+    private Stream<String> getSupportedTags(ObjectNode config, Tagged tagged) {
         List<String> supported = config.getArrayMember(OpenApiConstants.OPEN_API_SUPPORTED_TAGS)
                 .map(array -> array.getElementsAs(StringNode::getValue))
                 .orElse(null);
-        return tagged.getTags().stream().filter(tag -> supported == null || supported.contains(tag));
+
+        return tagged.getTags()
+                .stream()
+                .filter(tag -> supported == null || supported.contains(tag));
     }
 
     private InfoObject createInfo(ServiceShape service) {
@@ -442,20 +447,6 @@ public final class OpenApiConverter {
                                   .map(TitleTrait::getValue)
                                   .orElse(service.getId().getName()));
         return infoBuilder.build();
-    }
-
-    // Copies the JSON schema schemas over into the OpenAPI object.
-    private SchemaDocument addSchemas(
-            ComponentsObject.Builder components,
-            Model model,
-            ServiceShape service
-    ) {
-        SchemaDocument document = getJsonSchemaConverter().convert(model, service);
-        for (Map.Entry<String, Schema> entry : document.getDefinitions().entrySet()) {
-            String key = entry.getKey().replace(OpenApiConstants.SCHEMA_COMPONENTS_POINTER + "/", "");
-            components.putSchema(key, entry.getValue());
-        }
-        return document;
     }
 
     private <T extends Trait> void addPaths(
@@ -572,10 +563,16 @@ public final class OpenApiConverter {
                 context.getService());
     }
 
-    private OperationObject addOperationTags(Context context, Shape shape, OperationObject operation) {
+    private OperationObject addOperationTags(
+            Context<? extends Trait> context,
+            Shape shape,
+            OperationObject operation
+    ) {
+        ObjectNode config = context.getConfig();
+
         // Include @tags trait tags of the operation that are compatible with OpenAPI settings.
         if (context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_TAGS)) {
-            List<String> tags = getSupportedTags(shape).collect(Collectors.toList());
+            List<String> tags = getSupportedTags(config, shape).collect(Collectors.toList());
             if (!tags.isEmpty()) {
                 return operation.toBuilder().tags(tags).build();
             }

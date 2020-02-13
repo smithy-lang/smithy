@@ -15,31 +15,24 @@
 
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
-import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.CollectionShape;
-import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.StringShape;
-import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
-import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
@@ -50,8 +43,6 @@ import software.amazon.smithy.openapi.model.ParameterObject;
 import software.amazon.smithy.openapi.model.Ref;
 import software.amazon.smithy.openapi.model.RequestBodyObject;
 import software.amazon.smithy.openapi.model.ResponseObject;
-import software.amazon.smithy.utils.OptionalUtils;
-import software.amazon.smithy.utils.Pair;
 
 /**
  * Provides the shared functionality used across protocols that use Smithy's
@@ -121,26 +112,37 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     }
 
     private List<ParameterObject> createPathParameters(Context<T> context, OperationShape operation) {
-        return context.getModel().getKnowledge(HttpBindingIndex.class)
-                .getRequestBindings(operation, HttpBinding.Location.LABEL).stream()
-                .map(binding -> {
-                    MemberShape member = binding.getMember();
-                    Schema schema = context.createRef(binding.getMember());
-                    ParameterObject.Builder paramBuilder = ModelUtils.createParameterMember(
-                            context, member).in("path");
-                    // Timestamps sent in the URI are serialized as a date-time string by default.
-                    if (needsInlineSchema(context, member)) {
-                        // Create a copy of the targeted schema and remove any possible numeric keywords.
-                        Schema.Builder copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
-                                context.getSchema(context.getPointer(member)));
-                        schema = copiedBuilder.format("date-time").build();
-                    }
-                    return paramBuilder.schema(schema).build();
-                })
-                .collect(Collectors.toList());
+        List<ParameterObject> result = new ArrayList<>();
+        HttpBindingIndex bindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
+
+        for (HttpBinding binding : bindingIndex.getRequestBindings(operation, HttpBinding.Location.LABEL)) {
+            Schema schema = createPathParameterSchema(context, binding);
+            result.add(ModelUtils.createParameterMember(context, binding.getMember())
+                    .in("path")
+                    .schema(schema)
+                    .build());
+        }
+
+        return result;
     }
 
-    private boolean needsInlineSchema(Context<? extends Trait> context, MemberShape member) {
+    private Schema createPathParameterSchema(Context<T> context, HttpBinding binding) {
+        MemberShape member = binding.getMember();
+
+        // Timestamps sent in the URI are serialized as a date-time string by default.
+        if (needsInlineTimestampSchema(context, member)) {
+            // Create a copy of the targeted schema and remove any possible numeric keywords.
+            Schema.Builder copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
+                    context.getSchema(context.getPointer(member)));
+            return copiedBuilder.format("date-time").build();
+        } else if (context.getJsonSchemaConverter().isInlined(member)) {
+            return context.getJsonSchemaConverter().convertShape(member).getRootSchema();
+        } else {
+            return context.createRef(binding.getMember());
+        }
+    }
+
+    private boolean needsInlineTimestampSchema(Context<? extends Trait> context, MemberShape member) {
         if (member.getMemberTrait(context.getModel(), TimestampFormatTrait.class).isPresent()) {
             return false;
         }
@@ -151,25 +153,35 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
                 .isPresent();
     }
 
+    // Creates parameters that appear in the query string. Each input member
+    // bound to the QUERY location will generate a new ParameterObject that
+    // has a location of "query".
     private List<ParameterObject> createQueryParameters(Context<T> context, OperationShape operation) {
-        return context.getModel().getKnowledge(HttpBindingIndex.class)
-                .getRequestBindings(operation, HttpBinding.Location.QUERY).stream()
-                .map(binding -> {
-                    ParameterObject.Builder param = ModelUtils.createParameterMember(context, binding.getMember())
-                            .in("query")
-                            .name(binding.getLocationName());
-                    Shape target = context.getModel().expectShape(binding.getMember().getTarget());
+        HttpBindingIndex httpBindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
+        List<ParameterObject> result = new ArrayList<>();
 
-                    // List and set shapes in the query string are repeated, so we need to "explode" them.
-                    if (target instanceof CollectionShape) {
-                        param.style("form").explode(true);
-                    }
+        for (HttpBinding binding : httpBindingIndex.getRequestBindings(operation, HttpBinding.Location.QUERY)) {
+            MemberShape member = binding.getMember();
+            ParameterObject.Builder param = ModelUtils.createParameterMember(context, member)
+                    .in("query")
+                    .name(binding.getLocationName());
+            Shape target = context.getModel().expectShape(member.getTarget());
 
-                    Schema refSchema = context.createRef(binding.getMember());
-                    param.schema(target.accept(new QuerySchemaVisitor<>(context, refSchema, binding.getMember())));
-                    return param.build();
-                })
-                .collect(Collectors.toList());
+            // List and set shapes in the query string are repeated, so we need to "explode" them
+            // using the "form" style (e.g., "foo=bar&foo=baz").
+            // See https://swagger.io/specification/#style-examples
+            if (target instanceof CollectionShape) {
+                param.style("form").explode(true);
+            }
+
+            // Create the appropriate schema based on the shape type.
+            Schema refSchema = context.inlineOrReferenceSchema(member);
+            QuerySchemaVisitor<T> visitor = new QuerySchemaVisitor<>(context, refSchema, member);
+            param.schema(target.accept(visitor));
+            result.add(param.build());
+        }
+
+        return result;
     }
 
     private Collection<ParameterObject> createRequestHeaderParameters(Context<T> context, OperationShape operation) {
@@ -183,21 +195,29 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             List<HttpBinding> bindings,
             MessageType messageType
     ) {
-        return bindings.stream()
-                .map(binding -> {
-                    ParameterObject.Builder param = ModelUtils.createParameterMember(context, binding.getMember());
-                    if (messageType == MessageType.REQUEST) {
-                        param.in("header").name(binding.getLocationName());
-                    } else {
-                        // Response headers don't use "in" or "name".
-                        param.in(null).name(null);
-                    }
-                    Shape target = context.getModel().expectShape(binding.getMember().getTarget());
-                    Schema refSchema = context.createRef(binding.getMember());
-                    param.schema(target.accept(new HeaderSchemaVisitor<>(context, refSchema, binding.getMember())));
-                    return Pair.of(binding.getLocationName(), param.build());
-                })
-                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+        Map<String, ParameterObject> result = new TreeMap<>();
+
+        for (HttpBinding binding : bindings) {
+            MemberShape member = binding.getMember();
+            ParameterObject.Builder param = ModelUtils.createParameterMember(context, member);
+
+            if (messageType == MessageType.REQUEST) {
+                param.in("header").name(binding.getLocationName());
+            } else {
+                // Response headers don't use "in" or "name".
+                param.in(null).name(null);
+            }
+
+            // Create the appropriate schema based on the shape type.
+            Shape target = context.getModel().expectShape(member.getTarget());
+            Schema refSchema = context.inlineOrReferenceSchema(member);
+            HeaderSchemaVisitor<T> visitor = new HeaderSchemaVisitor<>(context, refSchema, member);
+            param.schema(target.accept(visitor));
+
+            result.put(binding.getLocationName(), param.build());
+        }
+
+        return result;
     }
 
     private Optional<RequestBodyObject> createRequestBody(
@@ -220,7 +240,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             HttpBinding binding
     ) {
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
-                .schema(context.createRef(binding.getMember()))
+                .schema(context.inlineOrReferenceSchema(binding.getMember()))
                 .build();
         RequestBodyObject requestBodyObject = RequestBodyObject.builder()
                 .putContent(Objects.requireNonNull(mediaTypeRange), mediaTypeObject)
@@ -234,15 +254,19 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             HttpBindingIndex bindingIndex,
             OperationShape operation
     ) {
-        List<HttpBinding> bindings = bindingIndex.getRequestBindings(
-                operation, HttpBinding.Location.DOCUMENT);
+        List<HttpBinding> bindings = bindingIndex.getRequestBindings(operation, HttpBinding.Location.DOCUMENT);
+
+        // If nothing is bound to the document, then no schema needs to be synthesized.
         if (bindings.isEmpty()) {
             return Optional.empty();
         }
 
+        // Synthesize a schema for the body of the request.
+        // TODO: Give this a name and make it a referenced type.
         Schema schema = createDocumentSchema(context, operation, bindings, MessageType.REQUEST);
+        MediaTypeObject mediaTypeObject = MediaTypeObject.builder().schema(schema).build();
         return Optional.of(RequestBodyObject.builder()
-                .putContent(mediaType, MediaTypeObject.builder().schema(schema).build())
+                .putContent(mediaType, mediaTypeObject)
                 .build());
     }
 
@@ -251,18 +275,28 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             HttpBindingIndex bindingIndex,
             OperationShape operation
     ) {
+        Map<String, ResponseObject> result = new TreeMap<>();
         OperationIndex operationIndex = context.getModel().getKnowledge(OperationIndex.class);
+        operationIndex.getOutput(operation).ifPresent(output -> {
+            updateResponsesMapWithResponseStatusAndObject(context, bindingIndex, operation, output, result);
+        });
+        for (StructureShape error : operationIndex.getErrors(operation)) {
+            updateResponsesMapWithResponseStatusAndObject(context, bindingIndex, operation, error, result);
+        }
+        return result;
+    }
 
-        // Add the successful response and errors.
-        return Stream.concat(
-                OptionalUtils.stream(operationIndex.getOutput(operation)),
-                operationIndex.getErrors(operation).stream()
-        ).map(shape -> {
-            Shape operationOrError = shape.hasTrait(ErrorTrait.class) ? shape : operation;
-            String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, operationOrError);
-            ResponseObject response = createResponse(context, bindingIndex, statusCode, operation, operationOrError);
-            return Pair.of(statusCode, response);
-        }).collect(Collectors.toMap(Pair::getLeft, Pair::getRight, (a, b) -> b, LinkedHashMap::new));
+    private void updateResponsesMapWithResponseStatusAndObject(
+            Context<T> context,
+            HttpBindingIndex bindingIndex,
+            OperationShape operation,
+            StructureShape shape,
+            Map<String, ResponseObject> responses
+    ) {
+        Shape operationOrError = shape.hasTrait(ErrorTrait.class) ? shape : operation;
+        String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, operationOrError);
+        ResponseObject response = createResponse(context, bindingIndex, statusCode, operation, operationOrError);
+        responses.put(statusCode, response);
     }
 
     private ResponseObject createResponse(
@@ -299,10 +333,11 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
                 operationOrError, HttpBinding.Location.PAYLOAD);
         String documentMediaType = getDocumentMediaType(context, operationOrError, MessageType.RESPONSE);
         String mediaType = bindingIndex.determineResponseContentType(operationOrError, documentMediaType).orElse(null);
+
         if (!payloadBindings.isEmpty()) {
             createResponsePayload(mediaType, context, payloadBindings.get(0), responseBuilder);
         } else {
-            createResponseDocument(mediaType, context, bindingIndex, responseBuilder, operationOrError);
+            createResponseDocumentIfNeeded(mediaType, context, bindingIndex, responseBuilder, operationOrError);
         }
     }
 
@@ -312,13 +347,13 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             HttpBinding binding,
             ResponseObject.Builder responseBuilder
     ) {
-        responseBuilder.putContent(mediaType, MediaTypeObject
-                .builder()
-                .schema(context.createRef(binding.getMember()))
-                .build());
+        MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
+                .schema(context.inlineOrReferenceSchema(binding.getMember()))
+                .build();
+        responseBuilder.putContent(mediaType, mediaTypeObject);
     }
 
-    private void createResponseDocument(
+    private void createResponseDocumentIfNeeded(
             String mediaType,
             Context<T> context,
             HttpBindingIndex bindingIndex,
@@ -327,132 +362,20 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     ) {
         List<HttpBinding> bindings = bindingIndex.getResponseBindings(
                 operationOrError, HttpBinding.Location.DOCUMENT);
-        if (!bindings.isEmpty()) {
-            MessageType messageType = operationOrError instanceof OperationShape
-                    ? MessageType.RESPONSE
-                    : MessageType.ERROR;
-            Schema schema = createDocumentSchema(context, operationOrError, bindings, messageType);
-            responseBuilder.putContent(mediaType, MediaTypeObject.builder().schema(schema).build());
-        }
-    }
 
-    private static final class QuerySchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Schema> {
-        private Context<T> context;
-        private Schema schema;
-        private MemberShape member;
-
-        private QuerySchemaVisitor(Context<T> context, Schema schema, MemberShape member) {
-            this.context = context;
-            this.schema = schema;
-            this.member = member;
+        // If the operation doesn't have any document bindings, then do nothing.
+        if (bindings.isEmpty()) {
+            return;
         }
 
-        @Override
-        protected Schema getDefault(Shape shape) {
-            return schema;
-        }
-
-        @Override
-        public Schema listShape(ListShape shape) {
-            return collection(shape);
-        }
-
-        @Override
-        public Schema setShape(SetShape shape) {
-            return collection(shape);
-        }
-
-        private Schema collection(CollectionShape collection) {
-            Shape memberTarget = context.getModel().expectShape(collection.getMember().getTarget());
-            String memberPointer = context.getPointer(collection.getMember());
-            Schema currentMemberSchema = context.getSchema(memberPointer);
-            QuerySchemaVisitor<T> visitor = new QuerySchemaVisitor<>(
-                    context, currentMemberSchema, collection.getMember());
-            Schema newMemberSchema = memberTarget.accept(visitor);
-            return schema.toBuilder().ref(null).type("array").items(newMemberSchema).build();
-        }
-
-        @Override
-        public Schema timestampShape(TimestampShape shape) {
-            // Query string timestamps in Smithy are date-time strings by default
-            // unless overridden by the timestampFormat trait. This code grabs the
-            // referenced shape and creates an inline schema that explicitly defines
-            // the necessary styles.
-            if (member.hasTrait(TimestampFormatTrait.class)) {
-                return schema;
-            }
-
-            Schema.Builder copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
-                    context.getSchema(context.getPointer(member)));
-            return copiedBuilder.format("date-time").build();
-        }
-
-        @Override
-        public Schema blobShape(BlobShape shape) {
-            // Query string blobs in Smithy must be base64 encoded, so this
-            // code grabs the referenced shape and creates an inline schema that
-            // explicitly defines the necessary styles.
-            return schema.toBuilder().ref(null).type("string").format("byte").build();
-        }
-    }
-
-    private static final class HeaderSchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Schema> {
-        private Context<T> context;
-        private Schema schema;
-        private MemberShape member;
-
-        private HeaderSchemaVisitor(Context<T> context, Schema schema, MemberShape member) {
-            this.context = context;
-            this.schema = schema;
-            this.member = member;
-        }
-
-        @Override
-        protected Schema getDefault(Shape shape) {
-            return schema;
-        }
-
-        @Override
-        public Schema listShape(ListShape shape) {
-            return collection(shape);
-        }
-
-        @Override
-        public Schema setShape(SetShape shape) {
-            return collection(shape);
-        }
-
-        private Schema collection(CollectionShape collection) {
-            Shape memberTarget = context.getModel().expectShape(collection.getMember().getTarget());
-            String memberPointer = context.getPointer(collection.getMember());
-            Schema currentMemberSchema = context.getSchema(memberPointer);
-            HeaderSchemaVisitor<T> visitor = new HeaderSchemaVisitor<>(
-                    context, currentMemberSchema, collection.getMember());
-            Schema newMemberSchema = memberTarget.accept(visitor);
-            return schema.toBuilder().ref(null).type("array").items(newMemberSchema).build();
-        }
-
-        @Override
-        public Schema timestampShape(TimestampShape shape) {
-            // Header timestamps in Smithy use the HTTP-Date format if a
-            // timestamp format is not explicitly set. An inline schema is
-            // created if the format was not explicitly set.
-            if (member.hasTrait(TimestampFormatTrait.class)) {
-                return schema;
-            }
-
-            // Uses an HTTP-date format by default.
-            Schema.Builder copiedBuilder = ModelUtils.convertSchemaToStringBuilder(
-                    context.getSchema(context.getPointer(member)));
-            return copiedBuilder.format(null).build();
-        }
-
-        @Override
-        public Schema stringShape(StringShape shape) {
-            // String shapes with the mediaType trait must be base64 encoded.
-            return shape.hasTrait(MediaTypeTrait.class)
-                   ? schema.toBuilder().ref(null).type("string").format("byte").build()
-                   : schema;
-        }
+        // Document bindings needs to be synthesized into a new schema that contains
+        // just the document bindings separate from other parameters.
+        // TODO: Give these synthesized response documents a name.
+        MessageType messageType = operationOrError instanceof OperationShape
+                ? MessageType.RESPONSE
+                : MessageType.ERROR;
+        Schema schema = createDocumentSchema(context, operationOrError, bindings, messageType);
+        MediaTypeObject mediaTypeObject = MediaTypeObject.builder().schema(schema).build();
+        responseBuilder.putContent(mediaType, mediaTypeObject);
     }
 }

@@ -22,7 +22,7 @@
             "name": "timestamp2",
             "in": "path",
             "schema": {
-              "$ref": "#/components/schemas/SmithyExampleOperationInputTimestamp2Member"
+              "type": "number"
             },
             "required": true
           }
@@ -32,13 +32,6 @@
             "description": "Operation response"
           }
         }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "SmithyExampleOperationInputTimestamp2Member": {
-        "type": "number"
       }
     }
   }
