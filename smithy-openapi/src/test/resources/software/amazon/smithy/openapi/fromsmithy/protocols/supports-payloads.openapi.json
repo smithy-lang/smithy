@@ -12,7 +12,8 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "$ref": "#/components/schemas/SmithyExampleOperationInputBodyMember"
+                "type": "string",
+                "format": "byte"
               }
             }
           }
@@ -22,7 +23,7 @@
             "name": "X-Foo-Header",
             "in": "header",
             "schema": {
-              "$ref": "#/components/schemas/SmithyExampleOperationInputHeaderMember"
+              "type": "string"
             }
           }
         ],
@@ -32,14 +33,15 @@
             "headers": {
               "X-Foo-Header": {
                 "schema": {
-                  "$ref": "#/components/schemas/SmithyExampleOperationOutputHeaderMember"
+                  "type": "string"
                 }
               }
             },
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/SmithyExampleOperationOutputBodyMember"
+                  "type": "string",
+                  "format": "byte"
                 }
               }
             }
@@ -49,40 +51,19 @@
             "headers": {
               "X-Foo-Header": {
                 "schema": {
-                  "$ref": "#/components/schemas/SmithyExampleOperationOutputHeaderMember"
+                  "type": "string"
                 }
               }
             },
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/SmithyExampleErrorFooMember"
+                  "type": "string"
                 }
               }
             }
           }
         }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "SmithyExampleOperationInputHeaderMember": {
-        "type": "string"
-      },
-      "SmithyExampleErrorFooMember": {
-        "type": "string"
-      },
-      "SmithyExampleOperationOutputHeaderMember": {
-        "type": "string"
-      },
-      "SmithyExampleOperationInputBodyMember": {
-        "type": "string",
-        "format": "byte"
-      },
-      "SmithyExampleOperationOutputBodyMember": {
-        "type": "string",
-        "format": "byte"
       }
     }
   }

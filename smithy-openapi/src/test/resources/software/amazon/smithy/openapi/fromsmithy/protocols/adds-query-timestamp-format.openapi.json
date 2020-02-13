@@ -21,7 +21,7 @@
             "name": "query2",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/SmithyExampleOperationInputTimestamp2Member"
+              "type": "number"
             }
           },
           {
@@ -43,13 +43,6 @@
             "description": "Operation response"
           }
         }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "SmithyExampleOperationInputTimestamp2Member": {
-        "type": "number"
       }
     }
   }

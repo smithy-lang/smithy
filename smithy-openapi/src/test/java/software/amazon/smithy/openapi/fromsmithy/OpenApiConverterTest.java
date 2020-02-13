@@ -45,6 +45,7 @@ import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 public class OpenApiConverterTest {
+
     private static Model testService;
 
     @BeforeAll
@@ -58,30 +59,10 @@ public class OpenApiConverterTest {
 
     @Test
     public void convertsModelsToOpenApi() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("test-service.json"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
-        ObjectNode result = OpenApiConverter.create().convertToNode(model, ShapeId.from("example.rest#RestService"));
+        ObjectNode result = OpenApiConverter.create()
+                .convertToNode(testService, ShapeId.from("example.rest#RestService"));
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("test-service.openapi.json")));
-
-        Node.assertEquals(result, expectedNode);
-    }
-
-    @Test
-    public void convertsModelsToOpenApiAndDisablesInlining() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("test-service.json"))
-                .discoverModels()
-                .assemble()
-                .unwrap();
-        ObjectNode result = OpenApiConverter.create()
-                .putSetting(OpenApiConstants.DISABLE_PRIMITIVE_INLINING, true)
-                .convertToNode(model, ShapeId.from("example.rest#RestService"));
-        Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("test-service.openapi.not-inlined.json")));
 
         Node.assertEquals(result, expectedNode);
     }
@@ -119,7 +100,7 @@ public class OpenApiConverterTest {
     }
 
     @Test
-    public void mustBeAbleToResolveProtocol() {
+    public void mustBeAbleToResolveProtocolServiceProvider() {
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             Model model = Model.assembler()
                     .addImport(getClass().getResource("unable-to-resolve-protocol.json"))
@@ -131,6 +112,43 @@ public class OpenApiConverterTest {
         });
 
         assertThat(thrown.getMessage(), containsString("Unable to find an OpenAPI service provider"));
+    }
+
+    @Test
+    public void loadsProtocolFromConfiguration() {
+        ObjectNode result = OpenApiConverter.create()
+                .putSetting(OpenApiConstants.PROTOCOL, "aws.protocols#restJson1")
+                .convertToNode(testService, ShapeId.from("example.rest#RestService"));
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("test-service.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void failsToDeriveFromMultipleProtocols() {
+        Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
+            Model model = Model.assembler()
+                    .addImport(getClass().getResource("service-with-multiple-protocols.smithy"))
+                    .discoverModels()
+                    .assemble()
+                    .unwrap();
+            OpenApiConverter.create()
+                    .convert(model, ShapeId.from("smithy.example#Service"));
+        });
+
+        assertThat(thrown.getMessage(), containsString("defines multiple protocols"));
+    }
+
+    @Test
+    public void failsWhenConfiguredProtocolIsNoFound() {
+        Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
+            OpenApiConverter.create()
+                    .putSetting(OpenApiConstants.PROTOCOL, "aws.protocols#restJson99")
+                    .convertToNode(testService, ShapeId.from("example.rest#RestService"));
+        });
+
+        assertThat(thrown.getMessage(), containsString("Unable to find protocol"));
     }
 
     @Test
