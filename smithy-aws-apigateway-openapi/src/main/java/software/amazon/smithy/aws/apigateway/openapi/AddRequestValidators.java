@@ -60,7 +60,9 @@ final class AddRequestValidators implements OpenApiMapper {
     public OperationObject updateOperation(
             Context<? extends Trait> context,
             OperationShape shape,
-            OperationObject operation
+            OperationObject operation,
+            String httpMethod,
+            String path
     ) {
         return shape.getTrait(RequestValidatorTrait.class)
                 .map(RequestValidatorTrait::getValue)

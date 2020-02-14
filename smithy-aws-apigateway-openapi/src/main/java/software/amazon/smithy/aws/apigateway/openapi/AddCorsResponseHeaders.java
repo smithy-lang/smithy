@@ -44,12 +44,14 @@ final class AddCorsResponseHeaders implements OpenApiMapper {
     @Override
     public ResponseObject updateResponse(
             Context<? extends Trait> context,
-            String status,
             OperationShape shape,
+            String status,
+            String method,
+            String path,
             ResponseObject response
     ) {
         return context.getService().getTrait(CorsTrait.class)
-                .map(corsTrait -> addCorsHeadersToResponse(context, shape, response, corsTrait))
+                .map(corsTrait -> addCorsHeadersToResponse(context, shape, response, corsTrait, method))
                 .orElse(response);
     }
 
@@ -57,20 +59,91 @@ final class AddCorsResponseHeaders implements OpenApiMapper {
             Context<? extends Trait> context,
             OperationShape operation,
             ResponseObject response,
-            CorsTrait corsTrait
+            CorsTrait corsTrait,
+            String method
     ) {
         // Determine which headers have been added to the response.
         List<String> headers = new ArrayList<>();
-        headers.add(CorsHeader.ALLOW_ORIGIN.toString());
-        if (!CorsHeader.deduceOperationHeaders(context, operation, corsTrait).isEmpty()) {
-            headers.add(CorsHeader.EXPOSE_HEADERS.toString());
-        }
 
-        // Only add the "Access-Control-Allow-Credentials" header if one of the authentications schemes
-        // of the service uses HTTP credentials such as cookies or browser-managed usernames as specified
-        // in https://fetch.spec.whatwg.org/#credentials.
-        if (context.usesHttpCredentials()) {
-            headers.add(CorsHeader.ALLOW_CREDENTIALS.toString());
+        // Access-Control-Allow-Origin should be sent in response to a
+        // "CORS request", and a CORS request is anything that includes an
+        // Origin header. Even a preflight request could include an Origin
+        // header, so it follows that this header should be sent in response
+        // to preflight requests. The example Mozilla provides also seems to
+        // draw this conclusion:
+        //
+        // > https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+        //
+        // OPTIONS /resources/post-here/ HTTP/1.1
+        // Host: bar.other
+        // User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:71.0) Gecko/20100101 Firefox/71.0
+        // Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        // Accept-Language: en-us,en;q=0.5
+        // Accept-Encoding: gzip,deflate
+        // Connection: keep-alive
+        // Origin: http://foo.example
+        // Access-Control-Request-Method: POST
+        // Access-Control-Request-Headers: X-PINGOTHER, Content-Type
+        //
+        // HTTP/1.1 204 No Content
+        // Date: Mon, 01 Dec 2008 01:15:39 GMT
+        // Server: Apache/2
+        // Access-Control-Allow-Origin: https://foo.example
+        // Access-Control-Allow-Methods: POST, GET, OPTIONS
+        // Access-Control-Allow-Headers: X-PINGOTHER, Content-Type
+        // Access-Control-Max-Age: 86400
+        // Vary: Accept-Encoding, Origin
+        // Keep-Alive: timeout=2, max=100
+        // Connection: Keep-Alive
+        headers.add(CorsHeader.ALLOW_ORIGIN.toString());
+
+        if (!method.equalsIgnoreCase("options")) {
+            // From https://fetch.spec.whatwg.org/#http-responses 3.2.3:
+            // An HTTP response to a CORS request that is *not* a
+            // CORS-preflight request can also include the following header:
+            // `Access-Control-Expose-Headers`
+            if (!CorsHeader.deduceOperationHeaders(context, operation, corsTrait).isEmpty()) {
+                headers.add(CorsHeader.EXPOSE_HEADERS.toString());
+            }
+
+            // Access-Control-Allow-Credentials is only added if one of the
+            // auth schemes of the service uses HTTP credentials such as cookies
+            // or browser-managed usernames as specified in https://fetch.spec.whatwg.org/#credentials.
+            //
+            // Because the "credentials mode" is always "omit" when responding to a
+            // preflight-request the Access-Control-Allow-Credentials header is omitted
+            // for preflight responses. This is also what Mozilla illustrates in their
+            // CORS examples:
+            //
+            // GET /resources/access-control-with-credentials/ HTTP/1.1
+            // Host: bar.other
+            // User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:71.0) Gecko/20100101 Firefox/71.0
+            // Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+            // Accept-Language: en-us,en;q=0.5
+            // Accept-Encoding: gzip,deflate
+            // Connection: keep-alive
+            // Referer: http://foo.example/examples/credential.html
+            // Origin: http://foo.example
+            // Cookie: pageAccess=2
+            //
+            // HTTP/1.1 200 OK
+            // Date: Mon, 01 Dec 2008 01:34:52 GMT
+            // Server: Apache/2
+            // Access-Control-Allow-Origin: https://foo.example
+            // Access-Control-Allow-Credentials: true
+            // Cache-Control: no-cache
+            // Pragma: no-cache
+            // Set-Cookie: pageAccess=3; expires=Wed, 31-Dec-2008 01:34:53 GMT
+            // Vary: Accept-Encoding, Origin
+            // Content-Encoding: gzip
+            // Content-Length: 106
+            // Keep-Alive: timeout=2, max=100
+            // Connection: Keep-Alive
+            // Content-Type: text/plain
+            // ...
+            if (context.usesHttpCredentials()) {
+                headers.add(CorsHeader.ALLOW_CREDENTIALS.toString());
+            }
         }
 
         LOGGER.finer(() -> String.format("Adding CORS headers to `%s` response: %s", operation.getId(), headers));

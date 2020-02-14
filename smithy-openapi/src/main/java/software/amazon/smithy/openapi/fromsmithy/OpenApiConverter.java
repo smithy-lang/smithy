@@ -472,21 +472,24 @@ public final class OpenApiConverter {
         // Add each operation connected to the service shape to the OpenAPI model.
         topDownIndex.getContainedOperations(context.getService()).forEach(shape -> {
             OptionalUtils.ifPresentOrElse(protocolService.createOperation(context, shape), result -> {
+                String method = result.getMethod();
+                String path = result.getUri();
                 PathItem.Builder pathItem = paths.computeIfAbsent(result.getUri(), (uri) -> PathItem.builder());
                 // Add security requirements to the operation.
                 addOperationSecurity(context, result.getOperation(), shape, plugin);
                 // Pass the operation through the plugin system and then build it.
-                OperationObject builtOperation = plugin.updateOperation(context, shape, result.getOperation().build());
+                OperationObject builtOperation = plugin.updateOperation(
+                        context, shape, result.getOperation().build(), method, path);
                 // Add tags that are on the operation.
                 builtOperation = addOperationTags(context, shape, builtOperation);
                 // Update each parameter of the operation and rebuild if necessary.
-                builtOperation = updateParameters(context, shape, builtOperation, plugin);
+                builtOperation = updateParameters(context, shape, builtOperation, method, path, plugin);
                 // Update each response of the operation and rebuild if necessary.
-                builtOperation = updateResponses(context, shape, builtOperation, plugin);
+                builtOperation = updateResponses(context, shape, builtOperation, method, path, plugin);
                 // Update the request body of the operation and rebuild if necessary.
-                builtOperation = updateRequestBody(context, shape, builtOperation, plugin);
+                builtOperation = updateRequestBody(context, shape, builtOperation, method, path, plugin);
 
-                switch (result.getMethod().toLowerCase(Locale.US)) {
+                switch (method.toLowerCase(Locale.ENGLISH)) {
                     case "get":
                         pathItem.get(builtOperation);
                         break;
@@ -597,11 +600,13 @@ public final class OpenApiConverter {
             Context<T> context,
             OperationShape shape,
             OperationObject operation,
+            String method,
+            String path,
             OpenApiMapper plugin
     ) {
         List<ParameterObject> parameters = new ArrayList<>();
         for (ParameterObject parameter : operation.getParameters()) {
-            parameters.add(plugin.updateParameter(context, shape, parameter));
+            parameters.add(plugin.updateParameter(context, shape, method, path, parameter));
         }
 
         return !parameters.equals(operation.getParameters())
@@ -614,11 +619,13 @@ public final class OpenApiConverter {
             Context<T> context,
             OperationShape shape,
             OperationObject operation,
+            String method,
+            String path,
             OpenApiMapper plugin
     ) {
         return operation.getRequestBody()
                 .map(body -> {
-                    RequestBodyObject updatedBody = plugin.updateRequestBody(context, shape, body);
+                    RequestBodyObject updatedBody = plugin.updateRequestBody(context, shape, method, path, body);
                     return body.equals(updatedBody)
                            ? operation
                            : operation.toBuilder().requestBody(updatedBody).build();
@@ -632,6 +639,8 @@ public final class OpenApiConverter {
             Context<T> context,
             OperationShape shape,
             OperationObject operation,
+            String methodName,
+            String path,
             OpenApiMapper plugin
     ) {
         Map<String, ResponseObject> newResponses = new LinkedHashMap<>();
@@ -647,7 +656,8 @@ public final class OpenApiConverter {
 
         for (Map.Entry<String, ResponseObject> entry : originalResponses.entrySet()) {
             String status = entry.getKey();
-            ResponseObject responseObject = plugin.updateResponse(context, status, shape, entry.getValue());
+            ResponseObject responseObject = plugin.updateResponse(
+                    context, shape, status, methodName, path, entry.getValue());
             newResponses.put(status, responseObject);
         }
 
