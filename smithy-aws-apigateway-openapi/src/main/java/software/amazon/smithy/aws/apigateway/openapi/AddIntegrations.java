@@ -57,7 +57,9 @@ final class AddIntegrations implements OpenApiMapper {
     public OperationObject updateOperation(
             Context<? extends Trait> context,
             OperationShape shape,
-            OperationObject operation
+            OperationObject operation,
+            String httpMethod,
+            String path
     ) {
         IntegrationTraitIndex index = context.getModel().getKnowledge(IntegrationTraitIndex.class);
         return index.getIntegrationTrait(context.getService(), shape)
