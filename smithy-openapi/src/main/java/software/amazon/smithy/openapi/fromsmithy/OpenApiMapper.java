@@ -61,12 +61,16 @@ public interface OpenApiMapper {
      * @param context Conversion context.
      * @param shape Operation being converted.
      * @param operation OperationObject being built.
+     * @param httpMethodName The HTTP method of the operation.
+     * @param path The HTTP URI of the operation.
      * @return Returns the updated operation object.
      */
     default OperationObject updateOperation(
             Context<? extends Trait> context,
             OperationShape shape,
-            OperationObject operation
+            OperationObject operation,
+            String httpMethodName,
+            String path
     ) {
         return operation;
     }
@@ -88,12 +92,16 @@ public interface OpenApiMapper {
      *
      * @param context Conversion context.
      * @param operation Smithy operation being converted.
+     * @param httpMethodName The HTTP method that this parameter is bound to.
+     * @param path The HTTP URI this parameter is bound to.
      * @param parameterObject Parameter being updated.
      * @return Returns the updated parameter.
      */
     default ParameterObject updateParameter(
             Context<? extends Trait> context,
             OperationShape operation,
+            String httpMethodName,
+            String path,
             ParameterObject parameterObject
     ) {
         return parameterObject;
@@ -103,13 +111,17 @@ public interface OpenApiMapper {
      * Updates the request body of an operation.
      *
      * @param context Conversion context.
-     * @param shape Operation being converted.
+     * @param operation Operation being converted.
+     * @param httpMethodName The HTTP method that this request is bound to.
+     * @param path The HTTP URI this request is bound to.
      * @param requestBody Request body being updated.
      * @return Returns the updated request body.
      */
     default RequestBodyObject updateRequestBody(
             Context<? extends Trait> context,
-            OperationShape shape,
+            OperationShape operation,
+            String httpMethodName,
+            String path,
             RequestBodyObject requestBody
     ) {
         return requestBody;
@@ -119,15 +131,19 @@ public interface OpenApiMapper {
      * Updates a response object.
      *
      * @param context Conversion context.
+     * @param operation Operation shape being converted.
      * @param status HTTP status of this response.
-     * @param shape Operation shape being converted.
+     * @param httpMethodName The HTTP method that this response responds to.
+     * @param path The HTTP URI this response responds to.
      * @param response Response object being updated.
      * @return Returns the updated response object.
      */
     default ResponseObject updateResponse(
             Context<? extends Trait> context,
+            OperationShape operation,
             String status,
-            OperationShape shape,
+            String httpMethodName,
+            String path,
             ResponseObject response
     ) {
         return response;
@@ -218,13 +234,15 @@ public interface OpenApiMapper {
             public OperationObject updateOperation(
                     Context<? extends Trait> context,
                     OperationShape shape,
-                    OperationObject operation
+                    OperationObject operation,
+                    String httpMethodName,
+                    String path
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (operation == null) {
                         return null;
                     }
-                    operation = plugin.updateOperation(context, shape, operation);
+                    operation = plugin.updateOperation(context, shape, operation, httpMethodName, path);
                 }
                 return operation;
             }
@@ -244,13 +262,16 @@ public interface OpenApiMapper {
             public ParameterObject updateParameter(
                     Context<? extends Trait> context,
                     OperationShape operation,
+                    String httpMethodName,
+                    String path,
                     ParameterObject parameterObject
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (parameterObject == null) {
                         return null;
                     }
-                    parameterObject = plugin.updateParameter(context, operation, parameterObject);
+                    parameterObject = plugin.updateParameter(
+                            context, operation, httpMethodName, path, parameterObject);
                 }
                 return parameterObject;
             }
@@ -259,13 +280,15 @@ public interface OpenApiMapper {
             public RequestBodyObject updateRequestBody(
                     Context<? extends Trait> context,
                     OperationShape shape,
+                    String httpMethodName,
+                    String path,
                     RequestBodyObject requestBody
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (requestBody == null) {
                         return null;
                     }
-                    requestBody = plugin.updateRequestBody(context, shape, requestBody);
+                    requestBody = plugin.updateRequestBody(context, shape, httpMethodName, path, requestBody);
                 }
                 return requestBody;
             }
@@ -273,15 +296,17 @@ public interface OpenApiMapper {
             @Override
             public ResponseObject updateResponse(
                     Context<? extends Trait> context,
-                    String status,
                     OperationShape shape,
+                    String status,
+                    String httpMethodName,
+                    String path,
                     ResponseObject response
             ) {
                 for (OpenApiMapper plugin : sorted) {
                     if (response == null) {
                         return null;
                     }
-                    response = plugin.updateResponse(context, status, shape, response);
+                    response = plugin.updateResponse(context, shape, status, httpMethodName, path, response);
                 }
                 return response;
             }
