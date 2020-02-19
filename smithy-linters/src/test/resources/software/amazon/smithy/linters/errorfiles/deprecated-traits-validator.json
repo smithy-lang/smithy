@@ -1,0 +1,29 @@
+{
+  "smithy": "0.5.0",
+  "shapes": {
+    "ns.foo#MyString": {
+      "type": "string",
+      "traits": {
+        "ns.foo#myTraitName": { }
+      }
+    },
+    "ns.foo#myTraitName": {
+      "type": "structure",
+      "members": { },
+      "traits": {
+        "smithy.api#deprecated": { },
+        "smithy.api#trait": {
+          "selector": "*"
+        }
+      }
+    }
+  },
+  "metadata": {
+    "validators": [
+      {
+        "id": "Deprecated Traits",
+        "name": "DeprecatedTraits"
+      }
+    ]
+  }
+}
