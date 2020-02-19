@@ -17,9 +17,13 @@ package software.amazon.smithy.linters;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -27,7 +31,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
 
 /**
- * Emits a validation event if a model contains a trait that has been marked as deprecated.
+ * Emits a validation event if a model contains shapes that are bound to deprecated traits.
  */
 public final class DeprecatedTraitsValidator extends AbstractValidator {
 
@@ -39,12 +43,24 @@ public final class DeprecatedTraitsValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-
-        return model.shapes()
+        Set<ShapeId> deprecatedTraits = model.shapes()
                 .filter(shape -> shape.hasTrait(TraitDefinition.class))
                 .filter(trait -> trait.getTrait(DeprecatedTrait.class).isPresent())
-                .map(deprecatedTrait -> warning(deprecatedTrait, format("The %s trait is deprecated.",
-                        deprecatedTrait.getId().getName())))
+                .map(Shape::getId)
+                .collect(Collectors.toSet());
+
+        return model.shapes()
+                .filter(shape -> !shape.hasTrait(TraitDefinition.class))
+                .flatMap(nonTraitShape -> validateShape(nonTraitShape, deprecatedTraits).stream())
                 .collect(Collectors.toList());
+    }
+
+    private List<ValidationEvent> validateShape(Shape shape, Set<ShapeId> deprecatedTraits) {
+        List<ValidationEvent> events = new ArrayList<>();
+        shape.getAllTraits().keySet().stream().filter(trait -> deprecatedTraits.contains(trait.toShapeId()))
+                .map(boundDeprecatedTrait -> warning(shape, format("Shape `%s` uses deprecated trait: %s",
+                        shape.getId().getName(), boundDeprecatedTrait.getName())))
+                .forEach(events::add);
+        return events;
     }
 }

@@ -4,14 +4,35 @@
     "ns.foo#MyString": {
       "type": "string",
       "traits": {
-        "ns.foo#myTraitName": { }
+        "ns.foo#fooTrait": { },
+        "ns.foo#barTrait": { },
+        "ns.foo#bazTrait": { }
       }
     },
-    "ns.foo#myTraitName": {
+    "ns.foo#fooTrait": {
       "type": "structure",
       "members": { },
       "traits": {
         "smithy.api#deprecated": { },
+        "smithy.api#trait": {
+          "selector": "*"
+        }
+      }
+    },
+    "ns.foo#barTrait": {
+      "type": "structure",
+      "members": { },
+      "traits": {
+        "smithy.api#deprecated": { },
+        "smithy.api#trait": {
+          "selector": "*"
+        }
+      }
+    },
+    "ns.foo#bazTrait": {
+      "type": "structure",
+      "members": { },
+      "traits": {
         "smithy.api#trait": {
           "selector": "*"
         }
@@ -21,7 +42,6 @@
   "metadata": {
     "validators": [
       {
-        "id": "Deprecated Traits",
         "name": "DeprecatedTraits"
       }
     ]

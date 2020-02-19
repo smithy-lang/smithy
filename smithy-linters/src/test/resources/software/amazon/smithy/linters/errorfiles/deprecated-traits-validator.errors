@@ -1,1 +1,2 @@
-[WARNING] ns.foo#myTraitName: The myTraitName trait is deprecated. | Deprecated Traits
+[WARNING] ns.foo#MyString: Shape `MyString` uses deprecated trait: fooTrait | DeprecatedTraits
+[WARNING] ns.foo#MyString: Shape `MyString` uses deprecated trait: barTrait | DeprecatedTraits
