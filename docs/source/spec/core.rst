@@ -4676,7 +4676,21 @@ Summary
 Trait selector
     ``[trait|trait]``
 Value type
-    Annotation trait.
+    An object with the following properties:
+
+    .. list-table::
+       :header-rows: 1
+       :widths: 10 23 67
+
+       * - Property
+         - Type
+         - Description
+       * - traits
+         - [:ref:`shape-id`]
+         - List of shape IDs that protocol implementations MUST understand
+           in order to successfully use the protocol. Each shape MUST exist
+           and MUST be a trait. Code generators SHOULD ensure that they
+           support each listed trait.
 
 Smithy is protocol agnostic, which means it focuses on the interfaces and
 abstractions that are provided to end-users rather than how the data is sent
