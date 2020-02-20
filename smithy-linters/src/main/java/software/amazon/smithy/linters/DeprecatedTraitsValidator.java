@@ -57,15 +57,16 @@ public final class DeprecatedTraitsValidator extends AbstractValidator {
     private List<ValidationEvent> validateShape(Model model, Shape shape, Set<ShapeId> deprecatedTraits) {
         List<ValidationEvent> events = new ArrayList<>();
         shape.getAllTraits().forEach((shapeId, trait) -> {
-            if (deprecatedTraits.contains(trait.toShapeId())) {
-                DeprecatedTrait deprecatedTrait = model.expectShape(trait.toShapeId()).getTrait(DeprecatedTrait.class)
-                        .get();
-                String traitMessage = trait.toShapeId().toString();
-                if (deprecatedTrait.getMessage().isPresent()) {
-                    traitMessage = traitMessage.concat(", " + deprecatedTrait.getMessage().get());
-                }
-                events.add(warning(shape, format("This shape applies a trait that is deprecated: %s", traitMessage)));
+            if (!deprecatedTraits.contains(trait.toShapeId())) {
+                return;
             }
+            DeprecatedTrait deprecatedTrait = model.expectShape(trait.toShapeId()).expectTrait(DeprecatedTrait.class);
+            String traitMessage = trait.toShapeId().toString();
+            if (deprecatedTrait.getMessage().isPresent()) {
+                traitMessage = traitMessage.concat(", " + deprecatedTrait.getMessage().get());
+            }
+            events.add(warning(shape, trait, format("This shape applies a trait that is deprecated: %s",
+                    traitMessage)));
         });
         return events;
     }
