@@ -62,7 +62,20 @@ string AuthTraitReference
 /// structure, and must have the `trait` trait.
 @trait(selector: "structure[trait|trait]")
 @tags(["diff.error.add", "diff.error.remove"])
-structure protocolDefinition {}
+structure protocolDefinition {
+    /// Defines a list of traits that protocol implementations must
+    /// understand in order to successfully use the protocol.
+    traits: TraitShapeIdList,
+}
+
+@private
+list TraitShapeIdList {
+    member: TraitShapeId,
+}
+
+@private
+@idRef(failWhenMissing: true, selector: "[trait|trait]")
+string TraitShapeId
 
 /// Marks a trait as an auth scheme defining trait.
 ///
