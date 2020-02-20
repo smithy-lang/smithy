@@ -45,22 +45,28 @@ public final class DeprecatedTraitsValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         Set<ShapeId> deprecatedTraits = model.shapes()
                 .filter(shape -> shape.hasTrait(TraitDefinition.class))
-                .filter(trait -> trait.getTrait(DeprecatedTrait.class).isPresent())
+                .filter(trait -> trait.hasTrait(DeprecatedTrait.class))
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
 
         return model.shapes()
-                .filter(shape -> !shape.hasTrait(TraitDefinition.class))
-                .flatMap(nonTraitShape -> validateShape(nonTraitShape, deprecatedTraits).stream())
+                .flatMap(shape -> validateShape(model, shape, deprecatedTraits).stream())
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationEvent> validateShape(Shape shape, Set<ShapeId> deprecatedTraits) {
+    private List<ValidationEvent> validateShape(Model model, Shape shape, Set<ShapeId> deprecatedTraits) {
         List<ValidationEvent> events = new ArrayList<>();
-        shape.getAllTraits().keySet().stream().filter(trait -> deprecatedTraits.contains(trait.toShapeId()))
-                .map(boundDeprecatedTrait -> warning(shape, format("Shape `%s` uses deprecated trait: %s",
-                        shape.getId().getName(), boundDeprecatedTrait.getName())))
-                .forEach(events::add);
+        shape.getAllTraits().forEach((shapeId, trait) -> {
+            if (deprecatedTraits.contains(trait.toShapeId())) {
+                DeprecatedTrait deprecatedTrait = model.expectShape(trait.toShapeId()).getTrait(DeprecatedTrait.class)
+                        .get();
+                String traitMessage = trait.toShapeId().toString();
+                if (deprecatedTrait.getMessage().isPresent()) {
+                    traitMessage = traitMessage.concat(", " + deprecatedTrait.getMessage().get());
+                }
+                events.add(warning(shape, format("This shape applies a trait that is deprecated: %s", traitMessage)));
+            }
+        });
         return events;
     }
 }

@@ -23,7 +23,9 @@
       "type": "structure",
       "members": { },
       "traits": {
-        "smithy.api#deprecated": { },
+        "smithy.api#deprecated": {
+          "message": "This trait is no longer used."
+        },
         "smithy.api#trait": {
           "selector": "*"
         }
