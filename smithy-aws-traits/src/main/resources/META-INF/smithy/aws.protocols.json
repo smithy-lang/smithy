@@ -15,7 +15,17 @@
                 "smithy.api#trait": {
                     "selector": "service"
                 },
-                "smithy.api#protocolDefinition": true,
+                "smithy.api#protocolDefinition": {
+                    "traits": [
+                        "smithy.api#httpError",
+                        "smithy.api#httpHeader",
+                        "smithy.api#httpLabel",
+                        "smithy.api#httpPayload",
+                        "smithy.api#httpPrefixHeaders",
+                        "smithy.api#httpQuery",
+                        "smithy.api#jsonName"
+                    ]
+                },
                 "smithy.api#documentation": "A RESTful protocol that sends JSON in structured payloads."
             }
         },
@@ -33,7 +43,20 @@
                 "smithy.api#trait": {
                     "selector": "service"
                 },
-                "smithy.api#protocolDefinition": true,
+                "smithy.api#protocolDefinition": {
+                    "traits": [
+                        "smithy.api#httpError",
+                        "smithy.api#httpHeader",
+                        "smithy.api#httpLabel",
+                        "smithy.api#httpPayload",
+                        "smithy.api#httpPrefixHeaders",
+                        "smithy.api#httpQuery",
+                        "smithy.api#xmlAttribute",
+                        "smithy.api#xmlFlattened",
+                        "smithy.api#xmlName",
+                        "smithy.api#xmlNamespace"
+                    ]
+                },
                 "smithy.api#documentation": "A RESTful protocol that sends XML in structured payloads.",
                 "smithy.api#deprecated": true
             }
@@ -52,7 +75,11 @@
                 "smithy.api#trait": {
                     "selector": "service"
                 },
-                "smithy.api#protocolDefinition": true,
+                "smithy.api#protocolDefinition": {
+                    "traits": [
+                        "smithy.api#jsonName"
+                    ]
+                },
                 "smithy.api#documentation": "An RPC-based protocol that sends JSON payloads. This protocol does not use HTTP binding traits."
             }
         },
@@ -70,7 +97,11 @@
                 "smithy.api#trait": {
                     "selector": "service"
                 },
-                "smithy.api#protocolDefinition": true,
+                "smithy.api#protocolDefinition": {
+                    "traits": [
+                        "smithy.api#jsonName"
+                    ]
+                },
                 "smithy.api#documentation": "An RPC-based protocol that sends JSON payloads. This protocol does not use HTTP binding traits."
             }
         },
@@ -80,7 +111,14 @@
                 "smithy.api#trait": {
                     "selector": "service"
                 },
-                "smithy.api#protocolDefinition": true,
+                "smithy.api#protocolDefinition": {
+                    "traits": [
+                        "smithy.api#xmlAttribute",
+                        "smithy.api#xmlFlattened",
+                        "smithy.api#xmlName",
+                        "smithy.api#xmlNamespace"
+                    ]
+                },
                 "smithy.api#documentation": "An RPC-based protocol that sends query string requests and XML responses. This protocol does not use HTTP binding traits.",
                 "smithy.api#deprecated": true
             }
@@ -91,7 +129,15 @@
                 "smithy.api#trait": {
                     "selector": "service"
                 },
-                "smithy.api#protocolDefinition": true,
+                "smithy.api#protocolDefinition": {
+                    "traits": [
+                        "aws.api#ec2QueryName",
+                        "smithy.api#xmlAttribute",
+                        "smithy.api#xmlFlattened",
+                        "smithy.api#xmlName",
+                        "smithy.api#xmlNamespace"
+                    ]
+                },
                 "smithy.api#documentation": "An RPC-based protocol that sends Amazon EC2 formatted query string requests and XML responses. This protocol does not use HTTP binding traits.",
                 "smithy.api#deprecated": true
             }
