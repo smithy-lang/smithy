@@ -2,7 +2,6 @@ software.amazon.smithy.linters.AbbreviationNameValidator$Provider
 software.amazon.smithy.linters.CamelCaseValidator$Provider
 software.amazon.smithy.linters.DeprecatedAuthSchemesValidator$Provider
 software.amazon.smithy.linters.DeprecatedProtocolsValidator$Provider
-software.amazon.smithy.linters.DeprecatedTraitsValidator$Provider
 software.amazon.smithy.linters.EmitEachSelectorValidator$Provider
 software.amazon.smithy.linters.EmitNoneSelectorValidator$Provider
 software.amazon.smithy.linters.InputOutputStructureReuseValidator$Provider

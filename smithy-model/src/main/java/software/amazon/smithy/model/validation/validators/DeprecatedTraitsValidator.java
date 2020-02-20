@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.linters;
+package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
 
@@ -25,26 +25,16 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.model.validation.ValidatorService;
 
 /**
  * Emits a validation event if a model contains shapes that are bound to deprecated traits.
  */
 public final class DeprecatedTraitsValidator extends AbstractValidator {
-
-    public static final class Provider extends ValidatorService.Provider {
-        public Provider() {
-            super(DeprecatedTraitsValidator.class, DeprecatedTraitsValidator::new);
-        }
-    }
-
     @Override
     public List<ValidationEvent> validate(Model model) {
-        Set<ShapeId> deprecatedTraits = model.shapes()
-                .filter(shape -> shape.hasTrait(TraitDefinition.class))
+        Set<ShapeId> deprecatedTraits = model.getTraitShapes().stream()
                 .filter(trait -> trait.hasTrait(DeprecatedTrait.class))
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
@@ -63,7 +53,7 @@ public final class DeprecatedTraitsValidator extends AbstractValidator {
             DeprecatedTrait deprecatedTrait = model.expectShape(trait.toShapeId()).expectTrait(DeprecatedTrait.class);
             String traitMessage = trait.toShapeId().toString();
             if (deprecatedTrait.getMessage().isPresent()) {
-                traitMessage = traitMessage.concat(", " + deprecatedTrait.getMessage().get());
+                traitMessage = traitMessage + ", " + deprecatedTrait.getMessage().get();
             }
             events.add(warning(shape, trait, format("This shape applies a trait that is deprecated: %s",
                     traitMessage)));

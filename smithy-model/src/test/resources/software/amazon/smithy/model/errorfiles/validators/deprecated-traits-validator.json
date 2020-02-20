@@ -40,12 +40,5 @@
         }
       }
     }
-  },
-  "metadata": {
-    "validators": [
-      {
-        "name": "DeprecatedTraits"
-      }
-    ]
   }
 }
