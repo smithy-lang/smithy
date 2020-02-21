@@ -87,6 +87,7 @@ import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
+import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.model.traits.XmlAttributeTrait;
 import software.amazon.smithy.model.traits.XmlFlattenedTrait;
 import software.amazon.smithy.model.traits.XmlNameTrait;
@@ -193,6 +194,7 @@ public final class Prelude {
             TitleTrait.ID,
             TraitDefinition.ID,
             UniqueItemsTrait.ID,
+            UnstableTrait.ID,
             XmlAttributeTrait.ID,
             XmlFlattenedTrait.ID,
             XmlNameTrait.ID,
