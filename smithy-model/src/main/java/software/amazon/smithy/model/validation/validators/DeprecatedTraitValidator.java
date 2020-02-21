@@ -31,7 +31,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Emits a validation event if a model contains shapes that are bound to deprecated traits.
  */
-public final class DeprecatedTraitsValidator extends AbstractValidator {
+public final class DeprecatedTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         Set<ShapeId> deprecatedTraits = model.getTraitShapes().stream()

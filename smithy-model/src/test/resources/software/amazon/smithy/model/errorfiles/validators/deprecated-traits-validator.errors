@@ -1,2 +1,0 @@
-[WARNING] ns.foo#MyString: This shape applies a trait that is deprecated: ns.foo#fooTrait | DeprecatedTraits
-[WARNING] ns.foo#MyString: This shape applies a trait that is deprecated: ns.foo#barTrait, This trait is no longer used. | DeprecatedTraits
