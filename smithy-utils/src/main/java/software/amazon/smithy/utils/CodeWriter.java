@@ -17,6 +17,7 @@ package software.amazon.smithy.utils;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
@@ -945,6 +946,43 @@ public class CodeWriter {
     }
 
     /**
+     * Writes text to the CodeWriter without appending a newline or prefixing indentation.
+     *
+     * <p>If newlines are present in the given string, each of those lines will receive proper indentation.
+     *
+     * @param content Content to write.
+     * @param args String arguments to use for formatting.
+     * @return Returns the CodeWriter.
+     */
+    public final CodeWriter writeInline(Object content, Object... args) {
+        String value = formatter.format(content, currentState.indentText, this, args);
+        ArrayList<String> lines = new ArrayList<>(Arrays.asList(value.split(newlineRegexQuoted, -1)));
+
+        // The first line is written directly, with no added indentation or newline
+        currentState.write(lines.remove(0));
+
+        // If there aren't any additional lines, return.
+        if (lines.isEmpty()) {
+            return this;
+        }
+
+        // If there are additional lines, they need to be handled properly. So insert a newline.
+        currentState.write(newline);
+
+        // We don't want to append a newline, so remove the last line for handling later.
+        String lastLine = lines.remove(lines.size() - 1);
+
+        // Write all the intermediate lines as normal.
+        for (String line : lines) {
+            currentState.writeLine(line + newline);
+        }
+
+        // Write the final line with proper indentation, but without an appended newline.
+        currentState.writeLine(lastLine);
+        return this;
+    }
+
+    /**
      * Optionally writes text to the CodeWriter and appends a newline
      * if a value is present.
      *
@@ -1115,6 +1153,14 @@ public class CodeWriter {
             interceptors.computeIfAbsent(section, s -> new ArrayList<>()).add(interceptor);
         }
 
+        void write(String contents) {
+            if (builder == null) {
+                builder = new StringBuilder();
+            }
+            builder.append(contents);
+            trimSpaces(false);
+        }
+
         void writeLine(String line) {
             if (builder == null) {
                 builder = new StringBuilder();
@@ -1125,20 +1171,30 @@ public class CodeWriter {
             builder.append(line);
 
             // Trim all trailing spaces before the trailing (customizable) newline.
-            if (trimTrailingSpaces) {
-                int newlineLength = newline.length();
-                int toRemove = 0;
-                for (int i = builder.length() - 1 - newlineLength; i > 0; i--) {
-                    if (builder.charAt(i) == ' ') {
-                        toRemove++;
-                    } else {
-                        break;
-                    }
+            trimSpaces(true);
+        }
+
+        private void trimSpaces(boolean skipNewline) {
+            if (!trimTrailingSpaces) {
+                return;
+            }
+
+            int skipLength = 0;
+            if (skipNewline) {
+                skipLength = newline.length();
+            }
+
+            int toRemove = 0;
+            for (int i = builder.length() - 1 - skipLength; i > 0; i--) {
+                if (builder.charAt(i) == ' ') {
+                    toRemove++;
+                } else {
+                    break;
                 }
-                // Remove the slice of the string that is made up of whitespace before the newline.
-                if (toRemove > 0) {
-                    builder.delete(builder.length() - newlineLength - toRemove, builder.length() - newlineLength);
-                }
+            }
+            // Remove the slice of the string that is made up of whitespace before the newline.
+            if (toRemove > 0) {
+                builder.delete(builder.length() - skipLength - toRemove, builder.length() - skipLength);
             }
         }
 
