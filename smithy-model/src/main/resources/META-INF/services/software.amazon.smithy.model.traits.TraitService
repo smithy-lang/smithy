@@ -43,6 +43,7 @@ software.amazon.smithy.model.traits.TimestampFormatTrait$Provider
 software.amazon.smithy.model.traits.TitleTrait$Provider
 software.amazon.smithy.model.traits.TraitDefinition$Provider
 software.amazon.smithy.model.traits.UniqueItemsTrait$Provider
+software.amazon.smithy.model.traits.UnstableTrait$Provider
 software.amazon.smithy.model.traits.XmlAttributeTrait$Provider
 software.amazon.smithy.model.traits.XmlFlattenedTrait$Provider
 software.amazon.smithy.model.traits.XmlNamespaceTrait$Provider
