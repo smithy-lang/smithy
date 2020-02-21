@@ -323,7 +323,7 @@ structure required {}
 @trait(selector: "list")
 structure uniqueItems {}
 
-/// unstable
+/// Indicates that the shape is unstable and could change in the future.
 @trait()
 structure unstable {}
 
