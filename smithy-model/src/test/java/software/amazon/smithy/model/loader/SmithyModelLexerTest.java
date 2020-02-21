@@ -65,8 +65,13 @@ public class SmithyModelLexerTest {
                 Arguments.of("\"\\ud83d\\ude00\"", "\uD83D\uDE00"),
 
                 // Text blocks
+                Arguments.of("\"\"\"\nf\"\"\"", "f"),
                 Arguments.of("\"\"\"\nfoo\"\"\"", "foo"),
                 Arguments.of("\"\"\"\nfoo\\\"\"\"\"", "foo\""),
+                Arguments.of("\"\"\"\nf\n    foo\n\"\"\"", "f\n    foo\n"),
+                Arguments.of("\"\"\"\n  f\n    foo\n\"\"\"", "f\n  foo\n"),
+                Arguments.of("\"\"\"\n  foo\nf\n\"\"\"", "  foo\nf\n"),
+                Arguments.of("\"\"\"\n    foo\n  f\n\"\"\"", "  foo\nf\n"),
                 Arguments.of("\"\"\"\n    foo\n    baz\"\"\"", "foo\nbaz"),
                 Arguments.of("\"\"\"\n\n\n\"\"\"", "\n\n"),
                 Arguments.of("\"\"\"\n  foo\n  baz\n  \"\"\"", "foo\nbaz\n"),
