@@ -623,6 +623,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token>, AutoCl
             endPosition--;
         }
 
-        return endPosition > startPosition ? line.substring(startPosition, endPosition + 1) : null;
+        return endPosition >= startPosition ? line.substring(startPosition, endPosition + 1) : null;
     }
 }
