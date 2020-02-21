@@ -1,0 +1,28 @@
+{
+    "smithy": "0.5.0",
+    "metadata": {
+        "shared": true
+    },
+    "shapes": {
+        "ns.structures#Structure": {
+            "type": "structure",
+            "members": {
+                "listMember": {
+                    "target": "ns.primitives#StringList"
+                },
+                "stringMember": {
+                    "target": "ns.primitives#String"
+                }
+            }
+        },
+        "ns.primitives#String": {
+            "type": "string"
+        },
+        "ns.primitives#StringList": {
+            "type": "list",
+            "member": {
+                "target": "ns.primitives#String"
+            }
+        }
+    }
+}
