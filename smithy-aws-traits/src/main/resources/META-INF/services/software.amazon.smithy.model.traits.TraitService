@@ -5,7 +5,7 @@ software.amazon.smithy.aws.traits.ControlPlaneTrait$Provider
 software.amazon.smithy.aws.traits.DataPlaneTrait$Provider
 software.amazon.smithy.aws.traits.DataTrait$Provider
 software.amazon.smithy.aws.traits.ServiceTrait$Provider
-software.amazon.smithy.aws.traits.UnsignedPayloadTrait$Provider
+software.amazon.smithy.aws.traits.auth.UnsignedPayloadTrait$Provider
 software.amazon.smithy.aws.traits.iam.ActionPermissionDescriptionTrait$Provider
 software.amazon.smithy.aws.traits.iam.ConditionKeysTrait$Provider
 software.amazon.smithy.aws.traits.iam.DefineConditionKeysTrait$Provider
@@ -20,7 +20,7 @@ software.amazon.smithy.aws.traits.apigateway.MockIntegrationTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryIdTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientDiscoveredEndpointTrait$Provider
-software.amazon.smithy.aws.traits.Ec2QueryNameTrait$Provider
+software.amazon.smithy.aws.traits.protocols.Ec2QueryNameTrait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsQueryTrait$Provider
 software.amazon.smithy.aws.traits.protocols.Ec2QueryTrait$Provider
 software.amazon.smithy.aws.traits.protocols.RestJson1Trait$Provider

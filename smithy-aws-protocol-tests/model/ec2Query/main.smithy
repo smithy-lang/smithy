@@ -4,10 +4,10 @@
 //
 // 1. EC2 does not support the xmlFlattened trait on input. All lists are flattened.
 // 2. EC2 does not utilize input maps.
-// 3. EC2 uses a trait called aws.api#ec2QueryName that is used when serializing
+// 3. EC2 uses a trait called aws.protocols#ec2QueryName that is used when serializing
 //    query string input parameters. If this trait is found, then it is used.
 //    This trait has no effect on output serialization.
-// 4. EC2 input parameters not marked with aws.api#ec2QueryName fall back to
+// 4. EC2 input parameters not marked with aws.protocols#ec2QueryName fall back to
 //    using xmlName. If xmlName is set, then the first letter is uppercased
 //    and serialized in the query.
 // 5. Because lists are always considered flattened, the member name of a list,
