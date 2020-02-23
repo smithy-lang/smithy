@@ -22,6 +22,15 @@
                 "smithy.api#externalDocumentation": "https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html"
             }
         },
+        "aws.auth#unsignedPayload": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "operation"
+                },
+                "smithy.api#documentation": "Indicates that the request payload of a signed request is not to be used as part of the signature."
+            }
+        },
         "aws.auth#cognitoUserPools": {
             "type": "structure",
             "members": {

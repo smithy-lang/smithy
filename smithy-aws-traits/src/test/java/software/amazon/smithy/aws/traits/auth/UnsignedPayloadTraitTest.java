@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.aws.traits;
+package software.amazon.smithy.aws.traits.auth;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

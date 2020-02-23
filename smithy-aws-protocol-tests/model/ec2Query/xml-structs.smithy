@@ -4,7 +4,7 @@ $version: "0.5.0"
 
 namespace aws.protocoltests.ec2
 
-use aws.api#ec2QueryName
+use aws.protocols#ec2QueryName
 use aws.protocols#ec2Query
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
