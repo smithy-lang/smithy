@@ -831,127 +831,6 @@ plane unless an operation or resource is marked with the
             }
         }
 
-.. _aws.api#unsignedPayload-trait:
-
----------------------------------
-``aws.api#unsignedPayload`` trait
----------------------------------
-
-Summary
-    Indicates that the payload of an operation is not to be part of the
-    signature computed for the request of an operation.
-Trait selector
-    ``operation``
-Value type
-    Annotation trait
-
-Most requests sent to AWS services require that the payload of the request is
-signed. However, in some cases, a service that streams large amounts of data
-with an unknown size at the time a request is initiated might require that the
-payload of a request is not signed.
-
-The following example defines an operation that indicates the payload of the
-operation MUST NOT be used as part of the request signature calculation:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        use aws.api#unsignedPayload
-
-        @unsignedPayload
-        operation PutThings {
-            input: PutThingsInput,
-            output: PutThingsOutput
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "0.5.0",
-            "shapes": {
-                "smithy.example#PutThings": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PutThingsInput"
-                    },
-                    "output": {
-                        "target": "smithy.example#PutThingsOutput"
-                    },
-                    "traits": {
-                        "aws.api#unsignedPayload": true
-                    }
-                }
-            }
-        }
-
-
-Unsigned Payloads and signature version 4
-=========================================
-
-Using an unsigned payload with `AWS signature version 4`_ requires that the
-literal string ``UNSIGNED-PAYLOAD`` is used when constructing a
-`canonical request`_, and the same value is sent in the
-`x-amz-content-sha256`_ header when sending an HTTP request.
-
-.. _aws.api#ec2QueryName-trait:
-
----------------------------------
-``aws.api#ec2QueryName`` trait
----------------------------------
-
-Summary
-    Indicates the serialized name of a structure member when that structure is
-    serialized for the input of an EC2 operation.
-Trait selector
-    ``member:of(structure)``
-Value type
-    ``string``
-
-It is very important to note that the ``aws.api#ec2QueryName`` ONLY applies
-when serializing an INPUT. For example, given the following Smithy model:
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        structure MyStruct {
-            @ec2QueryName("foo")
-            bar: String
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "0.5.0",
-            "shapes": {
-                "smithy.example#MyStruct": {
-                    "type": "structure",
-                    "members": {
-                        "bar": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "aws.api#ec2QueryName": "foo"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-The serialization of this structure as an input is:
-
-::
-
-    MyStruct.bar=baz
-
-The serialization of the structure as an (XML) output is:
-
-.. code-block:: xml
-
-    <MyStruct>
-        <foo>baz</foo>
-    </MyStruct>
 
 .. _endpoint-discovery:
 
@@ -1438,8 +1317,6 @@ existing AWS services.
 .. _AWS CloudFormation service name: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws.template-resource-type-ref.html
 .. _ARN service namespace: http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces
 .. _AWS signature version 4: https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html
-.. _canonical request: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
-.. _x-amz-content-sha256: https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html
 .. _Amazon Resource Name (ARN): https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 .. _AWS Service Namespaces: https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces
 .. _CloudFormation resource type: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
