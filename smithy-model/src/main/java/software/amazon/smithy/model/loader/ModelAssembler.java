@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
@@ -81,7 +82,33 @@ public final class ModelAssembler {
 
     private TraitFactory traitFactory;
     private ValidatorFactory validatorFactory;
-    private final Map<String, Supplier<InputStream>> inputStreamModels = new HashMap<>();
+
+    /**
+     * A map of files ot parse and load into the Model.
+     *
+     * <p>A {@code TreeMap} is used to ensure that JSON models are loaded
+     * before IDL models. This is mostly a performance optimization. JSON
+     * models always use absolute references and require no forward
+     * reference lookups. IDL models often require forward reference lookups.
+     * Loading JSON models first should make many of the forward lookups
+     * when loading IDL models occur immediately rather than needing to be
+     * resolved once all of the shapes are loaded.
+     */
+    private final Map<String, Supplier<InputStream>> inputStreamModels = new TreeMap<>((a, b) -> {
+        boolean isJsonA = a.endsWith(".json");
+        boolean isJsonB = b.endsWith(".json");
+
+        if (isJsonA) {
+            if (!isJsonB) {
+                return -1;
+            }
+        } else if (isJsonB) {
+            return 1;
+        }
+
+        return a.compareTo(b);
+    });
+
     private final List<Validator> validators = new ArrayList<>();
     private final List<Suppression> suppressions = new ArrayList<>();
     private final List<Node> documentNodes = new ArrayList<>();
