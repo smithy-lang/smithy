@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.aws.traits;
+package software.amazon.smithy.aws.traits.auth;
 
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
@@ -24,7 +24,7 @@ import software.amazon.smithy.model.traits.BooleanTrait;
  * Indicates that the payload of an operation is not to be signed.
  */
 public final class UnsignedPayloadTrait extends BooleanTrait {
-    public static final ShapeId ID = ShapeId.from("aws.api#unsignedPayload");
+    public static final ShapeId ID = ShapeId.from("aws.auth#unsignedPayload");
 
     public UnsignedPayloadTrait(FromSourceLocation sourceLocation) {
         super(ID, sourceLocation.getSourceLocation());

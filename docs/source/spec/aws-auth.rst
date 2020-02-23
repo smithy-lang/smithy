@@ -14,8 +14,9 @@ This document defines AWS authentication schemes.
 
 .. _aws.auth#sigv4-trait:
 
+------------------------
 ``aws.auth#sigv4`` trait
-========================
+------------------------
 
 Trait summary
     The ``aws.auth#sigv4`` trait adds support for `AWS signature version 4`_
@@ -78,10 +79,75 @@ Trait value
         }
 
 
+.. _aws.auth#unsignedPayload-trait:
+
+----------------------------------
+``aws.auth#unsignedPayload`` trait
+----------------------------------
+
+Summary
+    Indicates that the payload of an operation is not to be part of the
+    signature computed for the request of an operation.
+Trait selector
+    ``operation``
+Value type
+    Annotation trait
+
+Most requests sent to AWS services require that the payload of the request is
+signed. However, in some cases, a service that streams large amounts of data
+with an unknown size at the time a request is initiated might require that the
+payload of a request is not signed.
+
+The following example defines an operation that indicates the payload of the
+operation MUST NOT be used as part of the request signature calculation:
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        use aws.auth#unsignedPayload
+
+        @unsignedPayload
+        operation PutThings {
+            input: PutThingsInput,
+            output: PutThingsOutput
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#PutThings": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PutThingsInput"
+                    },
+                    "output": {
+                        "target": "smithy.example#PutThingsOutput"
+                    },
+                    "traits": {
+                        "aws.auth#unsignedPayload": true
+                    }
+                }
+            }
+        }
+
+
+Unsigned Payloads and signature version 4
+=========================================
+
+Using an unsigned payload with `AWS signature version 4`_ requires that the
+literal string ``UNSIGNED-PAYLOAD`` is used when constructing a
+`canonical request`_, and the same value is sent in the
+`x-amz-content-sha256`_ header when sending an HTTP request.
+
+
 .. _aws.auth#cognitoUserPools-trait:
 
+-------------------------
 aws.auth#cognitoUserPools
-=========================
+-------------------------
 
 Trait summary
     The ``aws.auth#cognitoUserPools`` trait adds support for
@@ -123,3 +189,5 @@ Trait value
 .. _AWS signature version 4: https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html
 .. _credential scope: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html
 .. _Amazon Cognito User Pools: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html
+.. _canonical request: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
+.. _x-amz-content-sha256: https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html

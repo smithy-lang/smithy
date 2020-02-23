@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.aws.traits;
+package software.amazon.smithy.aws.traits.protocols;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -24,7 +24,7 @@ import software.amazon.smithy.model.traits.StringTrait;
  * serialized for the input of an EC2 operation.
  */
 public class Ec2QueryNameTrait extends StringTrait {
-    public static final ShapeId ID = ShapeId.from("aws.api#ec2QueryName");
+    public static final ShapeId ID = ShapeId.from("aws.protocols#ec2QueryName");
 
     public Ec2QueryNameTrait(String value, SourceLocation sourceLocation) {
         super(ID, value, sourceLocation);
