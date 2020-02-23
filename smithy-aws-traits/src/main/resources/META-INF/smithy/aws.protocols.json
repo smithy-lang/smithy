@@ -96,6 +96,16 @@
                 "smithy.api#deprecated": true
             }
         },
+        "aws.protocols#ec2QueryName": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "member:of(structure)"
+                },
+                "smithy.api#documentation": "Indicates the serialized name of a structure member when that structure is serialized for the input of an EC2 operation.",
+                "smithy.api#pattern": "^[a-zA-Z_][a-zA-Z_0-9-]*$"
+            }
+        },
         "aws.protocols#StringList": {
             "type": "list",
             "member": {
