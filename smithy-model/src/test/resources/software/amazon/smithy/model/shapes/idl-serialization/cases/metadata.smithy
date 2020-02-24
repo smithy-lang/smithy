@@ -1,5 +1,7 @@
 $version: "0.5.0"
 
+metadata CaseSensitive = true
+metadata caseSensitive = true
 metadata example.array = [
     10,
     true,
