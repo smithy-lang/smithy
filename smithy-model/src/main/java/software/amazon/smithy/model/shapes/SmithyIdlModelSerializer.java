@@ -170,8 +170,8 @@ public final class SmithyIdlModelSerializer {
                 ShapeType.SERVICE,
                 ShapeType.RESOURCE,
                 ShapeType.OPERATION,
-                ShapeType.UNION,
                 ShapeType.STRUCTURE,
+                ShapeType.UNION,
                 ShapeType.LIST,
                 ShapeType.SET,
                 ShapeType.MAP
