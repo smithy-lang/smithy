@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -52,9 +53,15 @@ import software.amazon.smithy.utils.StringUtils;
  * Serializes a {@link Model} into a set of Smithy IDL files.
  */
 public final class SmithyIdlModelSerializer {
+    private final Predicate<String> metadataFilter;
+    private final Predicate<Shape> shapeFilter;
+    private final Predicate<Trait> traitFilter;
     private final Function<Shape, Path> shapePlacer;
 
     private SmithyIdlModelSerializer(Builder builder) {
+        metadataFilter = builder.metadataFilter;
+        shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
+        traitFilter = builder.traitFilter;
         shapePlacer = builder.shapePlacer;
     }
 
@@ -67,7 +74,8 @@ public final class SmithyIdlModelSerializer {
      */
     public Map<Path, String> serialize(Model model) {
         return model.shapes()
-                .filter(FunctionalUtils.not(Prelude::isPreludeShape))
+                .filter(FunctionalUtils.not(Shape::isMemberShape))
+                .filter(shapeFilter)
                 .collect(Collectors.groupingBy(shapePlacer)).entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> serialize(model, entry.getValue())));
     }
@@ -85,7 +93,7 @@ public final class SmithyIdlModelSerializer {
         SmithyCodeWriter codeWriter = new SmithyCodeWriter(namespace, fullModel);
         NodeSerializer nodeSerializer = new NodeSerializer(codeWriter, fullModel);
 
-        ShapeSerializer shapeSerializer = new ShapeSerializer(codeWriter, nodeSerializer, fullModel);
+        ShapeSerializer shapeSerializer = new ShapeSerializer(codeWriter, nodeSerializer, traitFilter, fullModel);
         shapes.stream()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .sorted(new ShapeComparator())
@@ -104,6 +112,7 @@ public final class SmithyIdlModelSerializer {
         // but if they're separated out then each file will still have all the context.
         fullModel.getMetadata().entrySet().stream()
                 .sorted(Map.Entry.comparingByKey(String.CASE_INSENSITIVE_ORDER))
+                .filter(entry -> metadataFilter.test(entry.getKey()))
                 .forEach(entry -> {
                     codeWriter.trimTrailingSpaces(false)
                             .writeInline("metadata $M = ", entry.getKey())
@@ -190,9 +199,47 @@ public final class SmithyIdlModelSerializer {
      * Builder used to create {@link SmithyIdlModelSerializer}.
      */
     public static final class Builder implements SmithyBuilder<SmithyIdlModelSerializer> {
+        private Predicate<String> metadataFilter = pair -> true;
+        private Predicate<Shape> shapeFilter = shape -> true;
+        private Predicate<Trait> traitFilter = trait -> true;
         private Function<Shape, Path> shapePlacer = SmithyIdlModelSerializer::placeShapesByNamespace;
 
         public Builder() {}
+
+        /**
+         * Predicate that determines if a metadata is serialized.
+         * @param metadataFilter Predicate that accepts a metadata key.
+         * @return Returns the builder.
+         */
+        public Builder metadataFilter(Predicate<String> metadataFilter) {
+            this.metadataFilter = Objects.requireNonNull(metadataFilter);
+            return this;
+        }
+
+        /**
+         * Predicate that determines if a shape and its traits are serialized.
+         * @param shapeFilter Predicate that accepts a shape.
+         * @return Returns the builder.
+         */
+        public Builder shapeFilter(Predicate<Shape> shapeFilter) {
+            this.shapeFilter = Objects.requireNonNull(shapeFilter);
+            return this;
+        }
+
+        /**
+         * Sets a predicate that can be used to filter trait values from
+         * appearing in the serialized model.
+         *
+         * <p>Note that this does not filter out trait definitions. It only filters
+         * out instances of traits from being serialized on shapes.
+         *
+         * @param traitFilter Predicate that filters out trait definitions.
+         * @return Returns the builder.
+         */
+        public Builder traitFilter(Predicate<Trait> traitFilter) {
+            this.traitFilter = traitFilter;
+            return this;
+        }
 
         /**
          * Function that determines what output file a shape should go in.
@@ -218,11 +265,18 @@ public final class SmithyIdlModelSerializer {
     private static final class ShapeSerializer extends ShapeVisitor.Default<Void> {
         private final SmithyCodeWriter codeWriter;
         private final NodeSerializer nodeSerializer;
+        private final Predicate<Trait> traitFilter;
         private final Model model;
 
-        ShapeSerializer(SmithyCodeWriter codeWriter, NodeSerializer nodeSerializer, Model model) {
+        ShapeSerializer(
+                SmithyCodeWriter codeWriter,
+                NodeSerializer nodeSerializer,
+                Predicate<Trait> traitFilter,
+                Model model
+        ) {
             this.codeWriter = codeWriter;
             this.nodeSerializer = nodeSerializer;
+            this.traitFilter = traitFilter;
             this.model = model;
         }
 
@@ -251,9 +305,10 @@ public final class SmithyIdlModelSerializer {
 
         private void serializeTraits(Shape shape) {
             // The documentation trait always needs to be serialized first since it uses special syntax.
-            shape.getTrait(DocumentationTrait.class).ifPresent(this::serializeDocumentationTrait);
+            shape.getTrait(DocumentationTrait.class).filter(traitFilter).ifPresent(this::serializeDocumentationTrait);
             shape.getAllTraits().values().stream()
                     .filter(trait -> !(trait instanceof DocumentationTrait))
+                    .filter(traitFilter)
                     .sorted(Comparator.comparing(trait -> trait.toShapeId().toString(), String.CASE_INSENSITIVE_ORDER))
                     .forEach(this::serializeTrait);
         }
