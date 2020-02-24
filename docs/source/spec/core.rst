@@ -4740,7 +4740,7 @@ The following example defines a service that supports both the hypothetical
                     "type": "structure",
                     "traits": {
                         "smithy.api#documentation": "An example JSON protocol."
-                        "smithy.api#protocolDefinition": true,
+                        "smithy.api#protocolDefinition": {},
                         "smithy.api#trait": {
                             "selector": "service"
                         }
@@ -4750,7 +4750,7 @@ The following example defines a service that supports both the hypothetical
                     "type": "structure",
                     "traits": {
                         "smithy.api#documentation": "An example JSON protocol."
-                        "smithy.api#protocolDefinition": true,
+                        "smithy.api#protocolDefinition": {},
                         "smithy.api#trait": {
                             "selector": "service"
                         }
@@ -4942,7 +4942,21 @@ Summary
 Trait selector
     ``[trait|trait]``
 Value type
-    Annotation trait.
+    An object with the following properties:
+
+    .. list-table::
+       :header-rows: 1
+       :widths: 10 23 67
+
+       * - Property
+         - Type
+         - Description
+       * - traits
+         - [:ref:`shape-id`]
+         - List of shape IDs that auth scheme implementations MUST
+           understand in order to successfully use the scheme. Each shape
+           MUST exist and MUST be a trait. Code generators SHOULD ensure
+           that they support each listed trait.
 
 Every operation in the closure of a service is expected to support the
 authentication schemes applied to a service unless the service or operation
@@ -4984,7 +4998,7 @@ and the hypothetical ``fooExample`` authentication scheme.
                 "smithy.example#fooExample": {
                     "type": "structure",
                     "traits": {
-                        "smithy.api#authDefinition": true,
+                        "smithy.api#authDefinition": {},
                         "smithy.api#trait": {
                             "selector": "service"
                         }
