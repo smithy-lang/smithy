@@ -36,7 +36,6 @@ import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -86,12 +85,6 @@ final class LoaderVisitor {
 
     /** Built trait definitions. */
     private final Map<ShapeId, TraitDefinition> builtTraitDefinitions = new HashMap<>();
-
-    /** Current namespace being parsed. */
-    private String namespace;
-
-    /** Map of shape aliases to their alias. */
-    private final Map<String, ShapeId> useShapes = new HashMap<>();
 
     /** The result that is populated when onEnd is called. */
     private ValidatedResult<Model> result;
@@ -153,97 +146,6 @@ final class LoaderVisitor {
     }
 
     /**
-     * Invoked each time a new file is loaded, causing any file-specific
-     * caches and metadata to be flushed.
-     *
-     * <p>More specifically, this method clears out the previously used
-     * trait and shape name aliases so that they do not affect the next
-     * file that is loaded.
-     *
-     * @param filename The name of the file being opened.
-     */
-    public void onOpenFile(String filename) {
-        LOGGER.fine(() -> "Beginning to parse " + filename);
-        namespace = null;
-        useShapes.clear();
-    }
-
-    /**
-     * Gets the namespace that is currently being loaded.
-     *
-     * @return Returns the namespace or null if none is set.
-     */
-    public String getNamespace() {
-        return namespace;
-    }
-
-    /**
-     * Sets and validates the current namespace of the visitor.
-     *
-     * <p>Relative shape and trait definitions will use this
-     * namespace by default.
-     *
-     * @param namespace Namespace being entered.
-     * @param source The source location of where the namespace is defined.
-     */
-    public void onNamespace(String namespace, FromSourceLocation source) {
-        if (!ShapeId.isValidNamespace(namespace)) {
-            String msg = String.format("Invalid namespace name `%s`", namespace);
-            throw new ModelSyntaxException(msg, source);
-        }
-
-        this.namespace = namespace;
-    }
-
-    /**
-     * Resolve shape targets and tracks forward references.
-     *
-     * <p>Smithy models allow for forward references to shapes that have not
-     * yet been defined. Only after all shapes are loaded is the entire set
-     * of possible shape IDs known. This normally isn't a concern, but Smithy
-     * allows for public shapes defined in the prelude to be referenced by
-     * targets like members and resource identifiers without an absolute
-     * shape ID (for example, {@code String}). However, a relative prelude
-     * shape ID is only resolved for such a target if a shape of the same
-     * name was not defined in the same namespace in which the target
-     * was defined.
-     *
-     * <p>If a shape in the same namespace as the target has already been
-     * defined or if the target is absolute and cannot resolve to a prelude
-     * shape, the provided {@code resolver} is invoked immediately. Otherwise,
-     * the {@code resolver} is invoked inside of the {@link #onEnd} method
-     * only after all shapes have been declared.
-     *
-     * @param target Shape that is targeted.
-     * @param sourceLocation The location of where the target occurred.
-     * @param resolver The consumer to invoke once the shape ID is resolved.
-     */
-    public void onShapeTarget(String target, FromSourceLocation sourceLocation, Consumer<ShapeId> resolver) {
-        try {
-            // Account for aliased shapes.
-            if (useShapes.containsKey(target)) {
-                resolver.accept(useShapes.get(target));
-                return;
-            }
-
-            // A namespace is not set when parsing metadata.
-            ShapeId expectedId = namespace == null
-                    ? ShapeId.from(target)
-                    : ShapeId.fromOptionalNamespace(namespace, target);
-
-            if (Objects.equals(namespace, Prelude.NAMESPACE) || hasDefinedShape(expectedId) || target.contains("#")) {
-                // Account for previously seen shapes in this namespace, absolute shapes, and prelude namespaces
-                // always resolve to prelude shapes.
-                resolver.accept(expectedId);
-            } else {
-                forwardReferenceResolvers.add(new ForwardReferenceResolver(expectedId, resolver));
-            }
-        } catch (ShapeIdSyntaxException e) {
-            throw new SourceException("Error resolving shape target; " + e.getMessage(), sourceLocation, e);
-        }
-    }
-
-    /**
      * Checks if a specific property is set.
      *
      * @param property Name of the property to check.
@@ -284,12 +186,6 @@ final class LoaderVisitor {
         });
     }
 
-    private void validateState(FromSourceLocation sourceLocation) {
-        if (result != null) {
-            throw new IllegalStateException("Cannot call visitor method because visitor has called onEnd");
-        }
-    }
-
     /**
      * Adds an error to the loader.
      *
@@ -300,49 +196,11 @@ final class LoaderVisitor {
     }
 
     /**
-     * Invoked when a shape definition name is defined, validates the name,
-     * and returns the resolved shape ID of the name.
-     *
-     * <p>This method ensures a namespace has been set, the syntax is valid,
-     * and that the name does not conflict with any previously defined use
-     * statements.
-     *
-     * <p>This method has no side-effects.
-     *
-     * @param name Name being defined.
-     * @param source The location of where it is defined.
-     * @return Returns the parsed and loaded shape ID.
-     */
-    public ShapeId onShapeDefName(String name, FromSourceLocation source) {
-        validateState(source);
-        assertNamespaceIsPresent(source);
-
-        if (useShapes.containsKey(name)) {
-            String msg = String.format("shape name `%s` conflicts with imported shape `%s`",
-                                       name, useShapes.get(name));
-            throw new UseException(msg, source);
-        }
-
-        try {
-            return ShapeId.fromRelative(namespace, name);
-        } catch (ShapeIdSyntaxException e) {
-            throw new ModelSyntaxException("Invalid shape name: " + name, source);
-        }
-    }
-
-    private void assertNamespaceIsPresent(FromSourceLocation source) {
-        if (namespace == null) {
-            throw new ModelSyntaxException("A namespace must be set before shapes or traits can be defined", source);
-        }
-    }
-
-    /**
      * Adds a shape to the loader.
      *
      * @param shapeBuilder Shape builder to add.
      */
     public void onShape(AbstractShapeBuilder shapeBuilder) {
-        validateState(shapeBuilder);
         ShapeId id = SmithyBuilder.requiredState("id", shapeBuilder.getId());
         if (validateOnShape(id, shapeBuilder)) {
             pendingShapes.put(id, shapeBuilder);
@@ -355,7 +213,6 @@ final class LoaderVisitor {
      * @param shape Built shape to add to the loader visitor.
      */
     public void onShape(Shape shape) {
-        validateState(shape);
         if (validateOnShape(shape.getId(), shape)) {
             builtShapes.put(shape.getId(), shape);
         }
@@ -411,21 +268,6 @@ final class LoaderVisitor {
      * if the trait name is not absolute.
      *
      * @param target Shape to add the trait to.
-     * @param traitName Trait name to add.
-     * @param traitValue Trait value as a Node object.
-     */
-    public void onTrait(ShapeId target, String traitName, Node traitValue) {
-        onShapeTarget(traitName, traitValue.getSourceLocation(), id -> onTrait(target, id, traitValue));
-    }
-
-    /**
-     * Adds a trait to a shape.
-     *
-     * <p>Resolving the trait against a trait definition is deferred until
-     * the entire model is loaded. A namespace is required to have been set
-     * if the trait name is not absolute.
-     *
-     * @param target Shape to add the trait to.
      * @param trait SHape ID of the trait to add.
      * @param traitValue Trait value as a Node object.
      */
@@ -456,14 +298,22 @@ final class LoaderVisitor {
     }
 
     /**
+     * Adds a forward reference that is resolved once all shapes have been loaded.
+     *
+     * @param expectedId The shape ID that would be resolved in the current namespace.
+     * @param consumer The consumer that receives the resolved shape ID.
+     */
+    void addForwardReference(ShapeId expectedId, Consumer<ShapeId> consumer) {
+        forwardReferenceResolvers.add(new ForwardReferenceResolver(expectedId, consumer));
+    }
+
+    /**
      * Adds metadata to the loader.
      *
      * @param key Metadata key to add.
      * @param value Metadata value to add.
      */
     public void onMetadata(String key, Node value) {
-        validateState(value);
-
         if (!metadata.containsKey(key)) {
             metadata.put(key, value);
         } else if (metadata.get(key).isArrayNode() && value.isArrayNode()) {
@@ -483,23 +333,6 @@ final class LoaderVisitor {
                     .build());
         } else {
             LOGGER.fine(() -> "Ignoring duplicate metadata definition of " + key);
-        }
-    }
-
-    /**
-     * Registers an absolute shape ID as an alias.
-     *
-     * <p>These aliases are cleared when {@link #onOpenFile} is called.
-     *
-     * @param id Fully-qualified shape ID to register.
-     * @param location The location of where it is registered.
-     */
-    void onUseShape(ShapeId id, FromSourceLocation location) {
-        validateState(location);
-        ShapeId previous = useShapes.put(id.getName(), id);
-        if (previous != null) {
-            throw new UseException(String.format(
-                    "Cannot use name `%s` because it conflicts with `%s`", id, previous), location);
         }
     }
 

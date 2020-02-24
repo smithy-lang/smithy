@@ -19,11 +19,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 public class IdlModelLoaderTest {
@@ -76,5 +78,20 @@ public class IdlModelLoaderTest {
                 .addImport(getClass().getResource("second-namespace.smithy"))
                 .assemble()
                 .unwrap();
+    }
+
+    @Test
+    public void defersApplyTargetAndTrait() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("apply-use-1.smithy"))
+                .addImport(getClass().getResource("apply-use-2.smithy"))
+                .addImport(getClass().getResource("apply-use-3.smithy"))
+                .assemble()
+                .unwrap();
+
+        Shape shape = model.expectShape(ShapeId.from("smithy.example#Foo"));
+
+        assertThat(shape.findTrait(ShapeId.from("smithy.example#bar")), not(Optional.empty()));
+        assertThat(shape.findTrait(ShapeId.from("smithy.example.b#baz")), not(Optional.empty()));
     }
 }
