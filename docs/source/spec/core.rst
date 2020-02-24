@@ -5578,6 +5578,30 @@ Value type
         }
 
 
+.. _unstable-trait:
+
+``_unstable`` trait
+---------------
+
+Summary
+    Indicates a shape is unstable and MAY change in the future. This trait can
+    be applied to trait definitions to indicate that a trait is unstable or
+    experimental. If possible, code generators SHOULD use this trait to warn
+    when code generated from unstable features are used.
+Trait selector
+    ``*``
+
+Value type
+    Annotation trait
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @unstable
+        string MyString
+
+
 .. _endpoint-traits:
 
 Endpoint Traits

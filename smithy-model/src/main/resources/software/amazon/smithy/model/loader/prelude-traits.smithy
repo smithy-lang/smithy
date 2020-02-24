@@ -375,6 +375,10 @@ structure required {}
 @trait(selector: "list")
 structure uniqueItems {}
 
+/// Indicates that the shape is unstable and could change in the future.
+@trait()
+structure unstable {}
+
 /// The paginated trait indicates that an operation intentionally limits the number
 /// of results returned in a single response and that multiple invocations might be
 /// necessary to retrieve all results.
