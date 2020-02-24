@@ -5550,6 +5550,27 @@ Value type
         }
 
 
+.. _unstable-trait:
+
+``_unstable`` trait
+---------------
+
+Summary
+    Indicates a shape is unstable and may change in the future.
+Trait selector
+    ``*``
+
+Value type
+    Annotation trait
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @unstable
+        string MyString
+
+
 .. _endpoint-traits:
 
 Endpoint Traits
