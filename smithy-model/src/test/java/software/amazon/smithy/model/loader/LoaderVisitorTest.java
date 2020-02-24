@@ -30,7 +30,6 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -39,6 +38,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.ReferencesTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
@@ -51,15 +51,6 @@ import software.amazon.smithy.utils.MapUtils;
 
 public class LoaderVisitorTest {
     private static final TraitFactory FACTORY = TraitFactory.createServiceFactory();
-
-    @Test
-    public void cannotMutateAfterOnEnd() {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
-            LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-            visitor.onEnd();
-            visitor.onMetadata("foo", Node.from("bar"));
-        });
-    }
 
     @Test
     public void callingOnEndTwiceIsIdempotent() {
@@ -128,12 +119,10 @@ public class LoaderVisitorTest {
     @Test
     public void cannotDuplicateTraits() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onOpenFile("/foo/baz");
-        visitor.onNamespace("foo.bam", SourceLocation.NONE);
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));
-        visitor.onTrait(id, "documentation", Node.from("abc"));
-        visitor.onTrait(id, "documentation", Node.from("def"));
+        visitor.onTrait(id, DocumentationTrait.ID, Node.from("abc"));
+        visitor.onTrait(id, DocumentationTrait.ID, Node.from("def"));
         List<ValidationEvent> events = visitor.onEnd().getValidationEvents();
 
         assertThat(events, not(empty()));
@@ -142,8 +131,6 @@ public class LoaderVisitorTest {
     @Test
     public void createsDynamicTraitWhenTraitFactoryReturnsEmpty() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onOpenFile("/foo/baz.smithy");
-        visitor.onNamespace("foo.bam", SourceLocation.none());
         Shape def = StructureShape.builder()
                 .id("foo.baz#Bar")
                 .addTrait(TraitDefinition.builder().build())
@@ -151,7 +138,7 @@ public class LoaderVisitorTest {
         visitor.onShape(def);
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));
-        visitor.onTrait(id, "foo.baz#Bar", Node.from(true));
+        visitor.onTrait(id, ShapeId.from("foo.baz#Bar"), Node.from(true));
         Model model = visitor.onEnd().unwrap();
 
         assertThat(model.expectShape(id).findTrait("foo.baz#Bar").get(),
@@ -161,11 +148,9 @@ public class LoaderVisitorTest {
     @Test
     public void failsWhenTraitNotFound() {
         LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        visitor.onOpenFile("/foo/baz.smithy");
-        visitor.onNamespace("foo.bam", SourceLocation.none());
         ShapeId id = ShapeId.from("foo.bam#Boo");
         visitor.onShape(StringShape.builder().id(id));
-        visitor.onTrait(id, "foo.baz#Bar", Node.from(true));
+        visitor.onTrait(id, ShapeId.from("foo.baz#Bar"), Node.from(true));
         List<ValidationEvent> events = visitor.onEnd().getValidationEvents();
 
         assertThat(events, not(empty()));
