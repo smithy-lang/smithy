@@ -2,17 +2,17 @@ $version: "0.5.0"
 
 namespace ns.foo
 
-union Union {
-    byte: Byte,
-    double: Double,
-}
-
 structure StructureWithMembers {
     a: String,
     b: String,
 }
 
 structure StructureWithoutMembers {}
+
+union Union {
+    byte: Byte,
+    double: Double,
+}
 
 list List {
     member: String,
