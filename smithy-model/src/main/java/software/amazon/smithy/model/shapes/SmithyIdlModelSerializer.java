@@ -274,7 +274,7 @@ public final class SmithyIdlModelSerializer {
          * @param shapePlacer Function that accepts a shape and returns file path.
          * @return Returns the builder.
          */
-        Builder shapePlacer(Function<Shape, Path> shapePlacer) {
+        public Builder shapePlacer(Function<Shape, Path> shapePlacer) {
             this.shapePlacer = Objects.requireNonNull(shapePlacer);
             return this;
         }
