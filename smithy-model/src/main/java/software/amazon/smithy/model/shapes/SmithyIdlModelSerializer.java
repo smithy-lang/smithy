@@ -165,7 +165,7 @@ public final class SmithyIdlModelSerializer {
     /**
      * Comparator used to sort shapes.
      */
-    public static final class ShapeComparator implements Comparator<Shape>, Serializable {
+    private static final class ShapeComparator implements Comparator<Shape>, Serializable {
         private static final List<ShapeType> PRIORITY = ListUtils.of(
                 ShapeType.SERVICE,
                 ShapeType.RESOURCE,
