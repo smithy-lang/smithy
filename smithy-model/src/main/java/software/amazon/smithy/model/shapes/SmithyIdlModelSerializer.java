@@ -502,7 +502,7 @@ public final class SmithyIdlModelSerializer {
          *
          * @param node The node to serialize.
          */
-        public void serialize(Node node) {
+        private void serialize(Node node) {
             serialize(node, null);
         }
 
@@ -515,7 +515,7 @@ public final class SmithyIdlModelSerializer {
          * @param node The node to serialize.
          * @param shape The shape of the node.
          */
-        public void serialize(Node node, Shape shape) {
+        private void serialize(Node node, Shape shape) {
             // ShapeIds are represented differently than strings, so if a shape looks like it's
             // representing a shapeId we need to serialize it without quotes.
             if (isShapeId(shape)) {
@@ -621,7 +621,7 @@ public final class SmithyIdlModelSerializer {
          * @param node The node to serialize.
          * @param shape The shape of the node.
          */
-        public void serializeKeyValuePairs(ObjectNode node, Shape shape) {
+        private void serializeKeyValuePairs(ObjectNode node, Shape shape) {
             if (node.isEmpty()) {
                 return;
             }
@@ -682,7 +682,7 @@ public final class SmithyIdlModelSerializer {
         /**
          * Opens a block without writing indentation whitespace or inserting a newline.
          */
-        public SmithyCodeWriter openBlockInline(String content, Object... args) {
+        private SmithyCodeWriter openBlockInline(String content, Object... args) {
             writeInline(content, args).indent();
             return this;
         }
@@ -690,7 +690,7 @@ public final class SmithyIdlModelSerializer {
         /**
          * Closes a block without inserting a newline.
          */
-        public SmithyCodeWriter closeBlockWithoutNewline(String content, Object... args) {
+        private SmithyCodeWriter closeBlockWithoutNewline(String content, Object... args) {
             setNewline("");
             closeBlock(content, args);
             setNewline("\n");
@@ -702,7 +702,7 @@ public final class SmithyIdlModelSerializer {
          *
          * <p> This does not insert a trailing newline.
          */
-        public SmithyCodeWriter writeIndent() {
+        private SmithyCodeWriter writeIndent() {
             setNewline("");
             // We explicitly want the trailing spaces, so disable trimming for this call.
             trimTrailingSpaces(false);
@@ -763,7 +763,7 @@ public final class SmithyIdlModelSerializer {
          *
          * <p>If the list is empty, nothing is written.
          */
-        public SmithyCodeWriter writeOptionalIdList(String textBeforeList, Collection<ShapeId> shapeIds) {
+        private SmithyCodeWriter writeOptionalIdList(String textBeforeList, Collection<ShapeId> shapeIds) {
             if (shapeIds.isEmpty()) {
                 return this;
             }
