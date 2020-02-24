@@ -956,29 +956,26 @@ public class CodeWriter {
      */
     public final CodeWriter writeInline(Object content, Object... args) {
         String value = formatter.format(content, currentState.indentText, this, args);
-        ArrayList<String> lines = new ArrayList<>(Arrays.asList(value.split(newlineRegexQuoted, -1)));
+        String[] lines = value.split(newlineRegexQuoted, -1);
 
         // The first line is written directly, with no added indentation or newline
-        currentState.write(lines.remove(0));
+        currentState.write(lines[0]);
 
         // If there aren't any additional lines, return.
-        if (lines.isEmpty()) {
+        if (lines.length == 1) {
             return this;
         }
 
         // If there are additional lines, they need to be handled properly. So insert a newline.
         currentState.write(newline);
 
-        // We don't want to append a newline, so remove the last line for handling later.
-        String lastLine = lines.remove(lines.size() - 1);
-
         // Write all the intermediate lines as normal.
-        for (String line : lines) {
-            currentState.writeLine(line + newline);
+        for (int i = 1; i <= lines.length - 2; i++) {
+            currentState.writeLine(lines[i] + newline);
         }
 
         // Write the final line with proper indentation, but without an appended newline.
-        currentState.writeLine(lastLine);
+        currentState.writeLine(lines[lines.length - 1]);
         return this;
     }
 
