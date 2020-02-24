@@ -16,7 +16,3 @@ metadata example.object = {
 }
 metadata example.string = "hello there"
 metadata "key must be quoted" = true
-
-namespace ns.foo
-
-string Placeholder
