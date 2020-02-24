@@ -5556,7 +5556,10 @@ Value type
 ---------------
 
 Summary
-    Indicates a shape is unstable and may change in the future.
+    Indicates a shape is unstable and MAY change in the future. This trait can
+    be applied to trait definitions to indicate that a trait is unstable or
+    experimental. If possible, code generators SHOULD use this trait to warn
+    when code generated from unstable features are used.
 Trait selector
     ``*``
 
