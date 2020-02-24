@@ -229,6 +229,7 @@ public final class SmithyIdlModelSerializer {
 
         /**
          * Predicate that determines if a metadata is serialized.
+         *
          * @param metadataFilter Predicate that accepts a metadata key.
          * @return Returns the builder.
          */
@@ -239,6 +240,7 @@ public final class SmithyIdlModelSerializer {
 
         /**
          * Predicate that determines if a shape and its traits are serialized.
+         *
          * @param shapeFilter Predicate that accepts a shape.
          * @return Returns the builder.
          */
@@ -268,6 +270,7 @@ public final class SmithyIdlModelSerializer {
          * <p>The returned paths may be absolute or relative.
          *
          * <p>NOTE: the Smithy IDL only supports one namespace per file.
+         *
          * @param shapePlacer Function that accepts a shape and returns file path.
          * @return Returns the builder.
          */
