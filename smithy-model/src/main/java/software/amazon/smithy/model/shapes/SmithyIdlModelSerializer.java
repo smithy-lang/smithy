@@ -111,7 +111,7 @@ public final class SmithyIdlModelSerializer {
         // Write the full metadata into every output. When loaded back together the conflicts will be ignored,
         // but if they're separated out then each file will still have all the context.
         fullModel.getMetadata().entrySet().stream()
-                .sorted(Map.Entry.comparingByKey(String.CASE_INSENSITIVE_ORDER))
+                .sorted(Map.Entry.comparingByKey())
                 .filter(entry -> metadataFilter.test(entry.getKey()))
                 .forEach(entry -> {
                     codeWriter.trimTrailingSpaces(false)
