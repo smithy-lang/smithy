@@ -73,9 +73,14 @@ public final class SmithyIdlModelSerializer {
      * @return A map of (possibly relative) file paths to Smithy IDL strings.
      */
     public Map<Path, String> serialize(Model model) {
-        return model.shapes()
+        List<Shape> shapes = model.shapes()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(shapeFilter)
+                .collect(Collectors.toList());
+        if (shapes.isEmpty()) {
+            return Collections.singletonMap(Paths.get("metadata.smithy"), serializeHeader(model, null));
+        }
+        return shapes.stream()
                 .collect(Collectors.groupingBy(shapePlacer)).entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> serialize(model, entry.getValue())));
     }
@@ -99,11 +104,11 @@ public final class SmithyIdlModelSerializer {
                 .sorted(new ShapeComparator())
                 .forEach(shape -> shape.accept(shapeSerializer));
 
-        return serializeHeader(namespace, fullModel) + codeWriter.toString();
+        return serializeHeader(fullModel, namespace) + codeWriter.toString();
     }
 
-    private String serializeHeader(String namespace, Model fullModel) {
-        SmithyCodeWriter codeWriter = new SmithyCodeWriter(namespace, fullModel);
+    private String serializeHeader(Model fullModel, String namespace) {
+        SmithyCodeWriter codeWriter = new SmithyCodeWriter(null, fullModel);
         NodeSerializer nodeSerializer = new NodeSerializer(codeWriter, fullModel);
 
         codeWriter.write("$$version: \"$L\"", Model.MODEL_VERSION).write("");
@@ -120,13 +125,18 @@ public final class SmithyIdlModelSerializer {
                     nodeSerializer.serialize(entry.getValue());
                     codeWriter.write("");
                 });
+
         if (!fullModel.getMetadata().isEmpty()) {
             codeWriter.write("");
         }
 
-        codeWriter.write("namespace " + namespace)
-                .trimBlankLines(-1)
-                .write("");
+        if (namespace != null) {
+            codeWriter.write("namespace $L", namespace)
+                    .write("")
+                    // We want the extra blank line to separate the header and the model contents.
+                    .trimBlankLines(-1);
+        }
+
         return codeWriter.toString();
     }
 
