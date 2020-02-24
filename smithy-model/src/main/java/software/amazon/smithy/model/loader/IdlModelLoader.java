@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -52,6 +53,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -141,6 +144,9 @@ final class IdlModelLoader {
     private final LoaderVisitor visitor;
     private final List<Pair<String, Node>> pendingTraits = new ArrayList<>();
 
+    /** Map of shape aliases to their targets. */
+    private final Map<String, ShapeId> useShapes = new HashMap<>();
+
     private Token current;
     private DocComment pendingDocComment;
     private String definedVersion;
@@ -152,7 +158,6 @@ final class IdlModelLoader {
         this.filename = filename;
         this.visitor = visitor;
         this.lexer = lexer;
-        visitor.onOpenFile(filename);
 
         while (!eof()) {
             Token token = expect(UNQUOTED, ANNOTATION, CONTROL, DOC);
@@ -285,8 +290,7 @@ final class IdlModelLoader {
             throw syntax(format("Invalid namespace name `%s`", parsedNamespace));
         }
 
-        visitor.onNamespace(parsedNamespace, current());
-        this.namespace = parsedNamespace;
+        namespace = parsedNamespace;
     }
 
     private void parseUseStatement() {
@@ -300,7 +304,13 @@ final class IdlModelLoader {
 
         try {
             Token namespaceToken = expect(UNQUOTED);
-            visitor.onUseShape(ShapeId.from(namespaceToken.lexeme), namespaceToken);
+            ShapeId target = ShapeId.from(namespaceToken.lexeme);
+            ShapeId previous = useShapes.put(target.getName(), target);
+            if (previous != null) {
+                String message = String.format("Cannot use name `%s` because it conflicts with `%s`",
+                                               target, previous);
+                throw new UseException(message, namespaceToken.getSourceLocation());
+            }
             expectNewline();
         } catch (ShapeIdSyntaxException e) {
             throw syntax(e.getMessage());
@@ -385,7 +395,7 @@ final class IdlModelLoader {
             requireNamespaceOrThrow();
 
             // Resolve the trait name and ensure that the trait forms a syntactically valid value.
-            ShapeId.fromOptionalNamespace(visitor.getNamespace(), token.lexeme);
+            ShapeId.fromOptionalNamespace(namespace, token.lexeme);
             Pair<String, Node> result = Pair.of(token.lexeme, parseTraitValueBody());
 
             // `apply` doesn't require any specific token to follow.
@@ -481,8 +491,56 @@ final class IdlModelLoader {
                 Pair<StringNode, Consumer<String>> pair = StringNode.createLazyString(
                         token.lexeme, token.getSourceLocation());
                 Consumer<String> consumer = pair.right;
-                visitor.onShapeTarget(token.lexeme, token, id -> consumer.accept(id.toString()));
+                onShapeTarget(token.lexeme, token, id -> consumer.accept(id.toString()));
                 return pair.left;
+        }
+    }
+
+    /**
+     * Resolve shape targets and tracks forward references.
+     *
+     * <p>Smithy models allow for forward references to shapes that have not
+     * yet been defined. Only after all shapes are loaded is the entire set
+     * of possible shape IDs known. This normally isn't a concern, but Smithy
+     * allows for public shapes defined in the prelude to be referenced by
+     * targets like members and resource identifiers without an absolute
+     * shape ID (for example, {@code String}). However, a relative prelude
+     * shape ID is only resolved for such a target if a shape of the same
+     * name was not defined in the same namespace in which the target
+     * was defined.
+     *
+     * <p>If a shape in the same namespace as the target has already been
+     * defined or if the target is absolute and cannot resolve to a prelude
+     * shape, the provided {@code resolver} is invoked immediately. Otherwise,
+     * the {@code resolver} is invoked inside of the {@link LoaderVisitor#onEnd}
+     * method only after all shapes have been declared.
+     *
+     * @param target Shape that is targeted.
+     * @param sourceLocation The location of where the target occurred.
+     * @param resolver The consumer to invoke once the shape ID is resolved.
+     */
+    private void onShapeTarget(String target, FromSourceLocation sourceLocation, Consumer<ShapeId> resolver) {
+        // Account for aliased shapes.
+        if (useShapes.containsKey(target)) {
+            resolver.accept(useShapes.get(target));
+            return;
+        }
+
+        try {
+            // A namespace is not set when parsing metadata.
+            ShapeId expectedId = namespace == null
+                                 ? ShapeId.from(target)
+                                 : ShapeId.fromOptionalNamespace(namespace, target);
+
+            if (isRealizedShapeId(expectedId, target)) {
+                // Account for previously seen shapes in this namespace, absolute shapes, and prelude namespaces
+                // always resolve to prelude shapes.
+                resolver.accept(expectedId);
+            } else {
+                visitor.addForwardReference(expectedId, resolver);
+            }
+        } catch (ShapeIdSyntaxException e) {
+            throw new SourceException("Error resolving shape target; " + e.getMessage(), sourceLocation, e);
         }
     }
 
@@ -546,14 +604,49 @@ final class IdlModelLoader {
      * @return Returns the parsed shape ID.
      */
     private ShapeId parseShapeName() {
+        requireNamespaceOrThrow();
         definedShapes = true;
         Token nameToken = expect(UNQUOTED);
         String name = nameToken.lexeme;
-        ShapeId id = visitor.onShapeDefName(name, nameToken);
-        pendingTraits.forEach(pair -> visitor.onTrait(id, pair.getLeft(), pair.getRight()));
-        pendingTraits.clear();
-        collectPendingDocString(id);
-        return id;
+
+        if (useShapes.containsKey(name)) {
+            String msg = String.format("shape name `%s` conflicts with imported shape `%s`",
+                                       name, useShapes.get(name));
+            throw new UseException(msg, nameToken);
+        }
+
+        try {
+            ShapeId id = ShapeId.fromRelative(namespace, name);
+            for (Pair<String, Node> pair : pendingTraits) {
+                onDeferredTrait(id, pair.getLeft(), pair.getRight());
+            }
+            pendingTraits.clear();
+            collectPendingDocString(id);
+            return id;
+        } catch (ShapeIdSyntaxException e) {
+            throw new ModelSyntaxException("Invalid shape name: " + name, nameToken);
+        }
+    }
+
+    /**
+     * Adds a trait to a shape after resolving all shape IDs.
+     *
+     * <p>Resolving the trait against a trait definition is deferred until
+     * the entire model is loaded. A namespace is required to have been set
+     * if the trait name is not absolute.
+     *
+     * @param target Shape to add the trait to.
+     * @param traitName Trait name to add.
+     * @param traitValue Trait value as a Node object.
+     */
+    private void onDeferredTrait(ShapeId target, String traitName, Node traitValue) {
+        onShapeTarget(traitName, traitValue.getSourceLocation(), id -> visitor.onTrait(target, id, traitValue));
+    }
+
+    private boolean isRealizedShapeId(ShapeId expectedId, String target) {
+        return Objects.equals(namespace, Prelude.NAMESPACE)
+               || visitor.hasDefinedShape(expectedId)
+               || target.contains("#");
     }
 
     private void collectPendingDocString(ShapeId id) {
@@ -606,7 +699,7 @@ final class IdlModelLoader {
                 parseMember(memberId);
                 // Add the loaded traits on the member now that the ID is known.
                 for (Pair<String, Node> pair : memberTraits) {
-                    visitor.onTrait(memberId, pair.getLeft(), pair.getRight());
+                    onDeferredTrait(memberId, pair.getLeft(), pair.getRight());
                 }
                 memberTraits.clear();
                 collectPendingDocString(memberId);
@@ -630,7 +723,7 @@ final class IdlModelLoader {
         MemberShape.Builder memberBuilder = MemberShape.builder().id(memberId).source(currentLocation());
         visitor.onShape(memberBuilder);
         Token targetToken = expect(UNQUOTED, QUOTED);
-        visitor.onShapeTarget(targetToken.lexeme, targetToken, memberBuilder::target);
+        onShapeTarget(targetToken.lexeme, targetToken, memberBuilder::target);
     }
 
     private void parseCollection(String shapeType, CollectionShape.Builder builder) {
@@ -658,12 +751,17 @@ final class IdlModelLoader {
     private void parseApply() {
         requireNamespaceOrThrow();
         // apply <ShapeName> @<trait>\n
-        String name = expect(UNQUOTED).lexeme;
-        ShapeId id = ShapeId.fromOptionalNamespace(visitor.getNamespace(), name);
+        Token nextToken = expect(UNQUOTED);
+        String name = nextToken.lexeme;
         Token token = expect(ANNOTATION);
         Pair<String, Node> trait = parseTraitValue(token, TraitValueType.APPLY);
-        visitor.onTrait(id, trait.getLeft(), trait.getRight());
         expectNewline();
+
+        // First, resolve the targeted shape.
+        onShapeTarget(name, nextToken.getSourceLocation(), id -> {
+            // Next, resolve the trait ID.
+            onDeferredTrait(id, trait.getLeft(), trait.getRight());
+        });
     }
 
     /**
@@ -833,7 +931,7 @@ final class IdlModelLoader {
             for (Map.Entry<StringNode, Node> entry : ids.getMembers().entrySet()) {
                 String name = entry.getKey().getValue();
                 StringNode target = entry.getValue().expectStringNode();
-                visitor.onShapeTarget(target.getValue(), target, id -> builder.addIdentifier(name, id));
+                onShapeTarget(target.getValue(), target, id -> builder.addIdentifier(name, id));
             }
         });
 
@@ -853,14 +951,14 @@ final class IdlModelLoader {
             ObjectNode node = parseObjectNode(opening.getSourceLocation(), RBRACE);
             node.expectNoAdditionalProperties(OPERATION_PROPERTY_NAMES);
             node.getStringMember("input").ifPresent(input -> {
-                visitor.onShapeTarget(input.getValue(), input, builder::input);
+                onShapeTarget(input.getValue(), input, builder::input);
             });
             node.getStringMember("output").ifPresent(output -> {
-                visitor.onShapeTarget(output.getValue(), output, builder::output);
+                onShapeTarget(output.getValue(), output, builder::output);
             });
             node.getArrayMember("errors").ifPresent(errors -> {
                 for (StringNode value : errors.getElementsAs(StringNode.class)) {
-                    visitor.onShapeTarget(value.getValue(), value, builder::addError);
+                    onShapeTarget(value.getValue(), value, builder::addError);
                 }
             });
         }
@@ -879,7 +977,7 @@ final class IdlModelLoader {
 
         Token next = expect(RPAREN, UNQUOTED);
         if (next.type == UNQUOTED) {
-            visitor.onShapeTarget(next.lexeme, next, builder::input);
+            onShapeTarget(next.lexeme, next, builder::input);
             expect(RPAREN);
         }
 
@@ -887,7 +985,7 @@ final class IdlModelLoader {
         if (test(RETURN)) {
             expect(RETURN);
             Token returnToken = expect(UNQUOTED);
-            visitor.onShapeTarget(returnToken.lexeme, returnToken, builder::output);
+            onShapeTarget(returnToken.lexeme, returnToken, builder::output);
         }
 
         // Parse the optionally present errors list.
@@ -897,7 +995,7 @@ final class IdlModelLoader {
             if (!test(RBRACKET)) {
                 while (true) {
                     Token errorToken = expect(UNQUOTED);
-                    visitor.onShapeTarget(errorToken.lexeme, errorToken, builder::addError);
+                    onShapeTarget(errorToken.lexeme, errorToken, builder::addError);
                     if (test(RBRACKET)) {
                         break;
                     }
