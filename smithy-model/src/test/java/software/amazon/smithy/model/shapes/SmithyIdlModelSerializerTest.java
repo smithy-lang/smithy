@@ -1,7 +1,11 @@
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +17,8 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.utils.IoUtils;
 
 public class SmithyIdlModelSerializerTest {
@@ -50,5 +56,67 @@ public class SmithyIdlModelSerializerTest {
             Path expectedPath = outputDir.resolve(path);
             assertThat(generated, equalTo(IoUtils.readUtf8File(expectedPath)));
         });
+    }
+
+    @Test
+    public void filtersShapes() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("idl-serialization/test-model.json"))
+                .assemble()
+                .unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder()
+                .shapeFilter(shape -> shape.getId().getNamespace().equals("ns.structures"))
+                .build();
+        Map<Path, String> serialized = serializer.serialize(model);
+
+        assertThat(serialized, aMapWithSize(1));
+        assertThat(serialized, hasKey(Paths.get("ns.structures.smithy")));
+        assertThat(serialized.get(Paths.get("ns.structures.smithy")),
+                containsString("namespace ns.structures"));
+    }
+
+    @Test
+    public void filtersMetadata() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("idl-serialization/test-model.json"))
+                .assemble()
+                .unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder()
+                .metadataFilter(key -> false)
+                .build();
+        Map<Path, String> serialized = serializer.serialize(model);
+        for (String output : serialized.values()) {
+            assertThat(output, not(containsString("metadata")));
+        }
+    }
+
+    @Test
+    public void filtersTraits() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("idl-serialization/test-model.json"))
+                .assemble()
+                .unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder()
+                .traitFilter(trait -> !(trait instanceof RequiredTrait))
+                .build();
+        Map<Path, String> serialized = serializer.serialize(model);
+        for (String output : serialized.values()) {
+            assertThat(output, not(containsString("@required")));
+        }
+    }
+
+    @Test
+    public void filtersDocumentationTrait() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("idl-serialization/test-model.json"))
+                .assemble()
+                .unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder()
+                .traitFilter(trait -> !(trait instanceof DocumentationTrait))
+                .build();
+        Map<Path, String> serialized = serializer.serialize(model);
+        for (String output : serialized.values()) {
+            assertThat(output, not(containsString("/// ")));
+        }
     }
 }
