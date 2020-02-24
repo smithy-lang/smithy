@@ -84,7 +84,7 @@ public final class ModelAssembler {
     private ValidatorFactory validatorFactory;
 
     /**
-     * A map of files ot parse and load into the Model.
+     * A map of files to parse and load into the Model.
      *
      * <p>A {@code TreeMap} is used to ensure that JSON models are loaded
      * before IDL models. This is mostly a performance optimization. JSON
