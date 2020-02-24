@@ -83,7 +83,11 @@ string TraitShapeId
 /// shapes, must be a structure, and must have the `trait` trait.
 @trait(selector: "structure[trait|trait]")
 @tags(["diff.error.add", "diff.error.remove"])
-structure authDefinition {}
+structure authDefinition {
+    /// Defines a list of traits that auth implementations must
+    /// understand in order to successfully use the scheme.
+    traits: TraitShapeIdList,
+}
 
 /// Enables HTTP Basic Authentication as defined in RFC 2617
 /// on a service or operation.

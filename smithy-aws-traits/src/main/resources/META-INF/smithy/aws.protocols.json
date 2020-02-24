@@ -131,7 +131,7 @@
                 },
                 "smithy.api#protocolDefinition": {
                     "traits": [
-                        "aws.api#ec2QueryName",
+                        "aws.protocols#ec2QueryName",
                         "smithy.api#xmlAttribute",
                         "smithy.api#xmlFlattened",
                         "smithy.api#xmlName",
