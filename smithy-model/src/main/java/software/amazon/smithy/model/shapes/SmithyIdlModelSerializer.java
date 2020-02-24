@@ -68,7 +68,15 @@ public final class SmithyIdlModelSerializer {
     /**
      * Serializes a {@link Model} into a set of Smithy IDL files.
      *
-     * <p>This does not write the models to disk.
+     * <p>The output is a mapping
+     *
+     * <p>By default the paths are relative paths where each namespace is given its own file in the form
+     * "namespace.smithy". This is configurable via the shape placer, which can place shapes into absolute
+     * paths.
+     *
+     * <p>If the model contains no shapes, or all shapes are filtered out, then a single path "metadata.smithy"
+     * will be present. This will contain only any defined metadata.
+     *
      * @param model The model to serialize.
      * @return A map of (possibly relative) file paths to Smithy IDL strings.
      */
@@ -147,6 +155,9 @@ public final class SmithyIdlModelSerializer {
         return new Builder();
     }
 
+    /**
+     * Sorts shapes into files based on their namespace, where each file is named {namespace}.smithy.
+     */
     public static Path placeShapesByNamespace(Shape shape) {
         return Paths.get(shape.getId().getNamespace() + ".smithy");
     }
@@ -253,6 +264,8 @@ public final class SmithyIdlModelSerializer {
 
         /**
          * Function that determines what output file a shape should go in.
+         *
+         * <p>The returned paths may be absolute or relative.
          *
          * <p>NOTE: the Smithy IDL only supports one namespace per file.
          * @param shapePlacer Function that accepts a shape and returns file path.
