@@ -8,17 +8,17 @@ import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
 
-public class AwsV4Test {
+public class HttpDigestConverterTest {
     @Test
-    public void addsAwsV4() {
+    public void addsHttpDigestAuth() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("awsv4-security.json"))
+                .addImport(getClass().getResource("http-digest-security.json"))
                 .discoverModels()
                 .assemble()
                 .unwrap();
         OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("awsv4-security.openapi.json")));
+                getClass().getResourceAsStream("http-digest-security.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
     }

@@ -15,27 +15,27 @@
 
 package software.amazon.smithy.openapi.fromsmithy.security;
 
-import software.amazon.smithy.model.traits.HttpBearerAuthTrait;
+import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
 
 /**
- * Uses the Bearer scheme of the Authentication header.
+ * Applies Basic HTTP auth.
  */
-public final class HttpBearer implements SecuritySchemeConverter<HttpBearerAuthTrait> {
+public final class HttpBasicConverter implements SecuritySchemeConverter<HttpBasicAuthTrait> {
     @Override
-    public Class<HttpBearerAuthTrait> getAuthSchemeType() {
-        return HttpBearerAuthTrait.class;
+    public Class<HttpBasicAuthTrait> getAuthSchemeType() {
+        return HttpBasicAuthTrait.class;
     }
 
     @Override
-    public SecurityScheme createSecurityScheme(Context<? extends Trait> context, HttpBearerAuthTrait trait) {
+    public SecurityScheme createSecurityScheme(Context<? extends Trait> context, HttpBasicAuthTrait trait) {
         return SecurityScheme.builder()
                 .type("http")
-                .scheme("Bearer")
-                .description("HTTP Bearer authentication")
+                .scheme("Basic")
+                .description("HTTP Basic authentication")
                 .build();
     }
 }
