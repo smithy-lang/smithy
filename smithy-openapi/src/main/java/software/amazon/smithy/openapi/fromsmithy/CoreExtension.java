@@ -25,11 +25,11 @@ import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveEmptyComponents;
 import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveUnusedComponents;
 import software.amazon.smithy.openapi.fromsmithy.mappers.UnsupportedTraits;
 import software.amazon.smithy.openapi.fromsmithy.protocols.AwsRestJson1Protocol;
-import software.amazon.smithy.openapi.fromsmithy.security.AwsV4;
-import software.amazon.smithy.openapi.fromsmithy.security.HttpBasic;
-import software.amazon.smithy.openapi.fromsmithy.security.HttpBearer;
-import software.amazon.smithy.openapi.fromsmithy.security.HttpDigest;
-import software.amazon.smithy.openapi.fromsmithy.security.XApiKey;
+import software.amazon.smithy.openapi.fromsmithy.security.AwsV4Converter;
+import software.amazon.smithy.openapi.fromsmithy.security.HttpApiKeyAuthConverter;
+import software.amazon.smithy.openapi.fromsmithy.security.HttpBasicConverter;
+import software.amazon.smithy.openapi.fromsmithy.security.HttpBearerConverter;
+import software.amazon.smithy.openapi.fromsmithy.security.HttpDigestConverter;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -39,11 +39,11 @@ public final class CoreExtension implements Smithy2OpenApiExtension {
     @Override
     public List<SecuritySchemeConverter<? extends Trait>> getSecuritySchemeConverters() {
         return ListUtils.of(
-            new HttpBasic(),
-            new HttpBearer(),
-            new HttpDigest(),
-            new AwsV4(),
-            new XApiKey()
+            new HttpBasicConverter(),
+            new HttpBearerConverter(),
+            new HttpDigestConverter(),
+            new AwsV4Converter(),
+            new HttpApiKeyAuthConverter()
         );
     }
 
