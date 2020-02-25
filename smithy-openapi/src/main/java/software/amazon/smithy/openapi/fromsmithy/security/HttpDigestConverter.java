@@ -24,7 +24,7 @@ import software.amazon.smithy.openapi.model.SecurityScheme;
 /**
  * Applies Digest HTTP auth.
  */
-public final class HttpDigest implements SecuritySchemeConverter<HttpDigestAuthTrait> {
+public final class HttpDigestConverter implements SecuritySchemeConverter<HttpDigestAuthTrait> {
     @Override
     public Class<HttpDigestAuthTrait> getAuthSchemeType() {
         return HttpDigestAuthTrait.class;
