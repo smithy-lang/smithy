@@ -70,7 +70,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token>, AutoCl
     }
 
     SmithyModelLexer(String filename, InputStream input) {
-        // TODO: convert this lexer to just using a buffered reader.
         this(filename, IoUtils.toUtf8String(input));
     }
 
@@ -140,7 +139,6 @@ final class SmithyModelLexer implements Iterator<SmithyModelLexer.Token>, AutoCl
 
     @Override
     public void close() throws IOException {
-        // TODO: convert to using the buffered reader directly.
     }
 
     /**
