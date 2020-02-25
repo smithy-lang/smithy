@@ -27,7 +27,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
-// TODO: remove tags from protocols.
 abstract class AbstractTagMapper implements ProjectionTransformer {
     private final boolean exclude;
 
