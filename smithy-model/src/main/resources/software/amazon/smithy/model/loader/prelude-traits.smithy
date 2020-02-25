@@ -290,7 +290,8 @@ string since
 /// Indicates that the the data stored in the shape is very large and should not
 /// be stored in memory, or that the size of the data stored in the shape is
 /// unknown at the start of a request
-@trait(selector: ":each(operation -[input, output]-> structure > :test(member > blob), :test(member:of(structure[trait|error]) > blob))")
+@trait(selector: ":each(operation -[input, output]-> structure > :test(member > blob), :test(member:of(structure[trait|error]) > blob))",
+       structurallyExclusive: true)
 @tags(["diff.error.const"])
 structure streaming {
     /// Indicates that the stream must have a known size.

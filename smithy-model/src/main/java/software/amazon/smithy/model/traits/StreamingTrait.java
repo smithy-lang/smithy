@@ -24,8 +24,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Indicates that the the data stored in the shape is very large and should
  * not be stored in memory, or that the size of the data stored in the
  * shape is unknown at the start of a request.
- *
- * TODO: Ensure that there is only one streaming blob per operation in/out.
  */
 public final class StreamingTrait extends AbstractTrait implements ToSmithyBuilder<StreamingTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#streaming");
