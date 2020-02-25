@@ -91,8 +91,6 @@ public final class OpenApiConstants {
      *     <li>FAIL: The default setting that causes the build to fail.</li>
      *     <li>WARN: The header is omitted from the OpenAPI model and a warning is logged.</li>
      * </ul>
-     *
-     * TODO: Should we add something like "STAR" to append a "*" to the header name and reference an object?
      */
     public static final String ON_HTTP_PREFIX_HEADERS = "openapi.onHttpPrefixHeaders";
     public static final String ON_HTTP_PREFIX_HEADERS_FAIL = "FAIL";
