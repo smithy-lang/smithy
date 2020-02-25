@@ -18,17 +18,16 @@
     },
     "components": {
         "securitySchemes": {
-            "http-x-api-key": {
+            "smithy.api#httpApiKeyAuth": {
                 "type": "apiKey",
-                "description": "X-Api-Key authentication",
-                "name": "x-api-key",
+                "name": "X-Api-Key",
                 "in": "header"
             }
         }
     },
     "security": [
         {
-            "http-x-api-key": []
+            "smithy.api#httpApiKeyAuth": [ ]
         }
     ]
 }

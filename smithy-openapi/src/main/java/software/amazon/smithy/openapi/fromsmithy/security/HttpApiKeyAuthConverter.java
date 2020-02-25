@@ -16,8 +16,7 @@
 package software.amazon.smithy.openapi.fromsmithy.security;
 
 import java.util.Set;
-import software.amazon.smithy.aws.traits.auth.SigV4Trait;
-import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
@@ -25,31 +24,30 @@ import software.amazon.smithy.openapi.model.SecurityScheme;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
- * Adds AWS signature version in a way that"s compatible with AWS API Gateway.
+ * Uses an HTTP header named X-Api-Key that contains an API key.
+ *
+ * <p>This is compatible with Amazon API Gateway API key authorization.
+ *
+ * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-key-source.html">API Gateway documentation</a>
  */
-public final class AwsV4 implements SecuritySchemeConverter<SigV4Trait> {
-    private static final String AUTH_HEADER = "Authorization";
-    private static final Set<String> REQUEST_HEADERS = SetUtils.of(
-            AUTH_HEADER, "Date", "X-Amz-Date", "X-Amz-Target", "X-Amz-Security-Token");
-
+public final class HttpApiKeyAuthConverter implements SecuritySchemeConverter<HttpApiKeyAuthTrait> {
     @Override
-    public Class<SigV4Trait> getAuthSchemeType() {
-        return SigV4Trait.class;
+    public Class<HttpApiKeyAuthTrait> getAuthSchemeType() {
+        return HttpApiKeyAuthTrait.class;
     }
 
     @Override
-    public SecurityScheme createSecurityScheme(Context<? extends Trait> context, SigV4Trait trait) {
+    public SecurityScheme createSecurityScheme(Context<? extends Trait> context, HttpApiKeyAuthTrait trait) {
         return SecurityScheme.builder()
                 .type("apiKey")
-                .description("AWS Signature Version 4 authentication")
-                .name(AUTH_HEADER)
-                .in("header")
-                .putExtension("x-amazon-apigateway-authtype", Node.from("awsSigv4"))
+                .name(trait.getName())
+                .in(trait.getIn().toString())
+                .description("X-Api-Key authentication")
                 .build();
     }
 
     @Override
     public Set<String> getAuthRequestHeaders() {
-        return REQUEST_HEADERS;
+        return SetUtils.of("x-api-key");
     }
 }

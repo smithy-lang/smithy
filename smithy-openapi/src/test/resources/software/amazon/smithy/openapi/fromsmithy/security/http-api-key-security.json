@@ -10,14 +10,11 @@
                 }
             ],
             "traits": {
-                "smithy.api#protocols": [
-                    {
-                        "name": "aws.rest-json",
-                        "auth": [
-                            "http-x-api-key"
-                        ]
-                    }
-                ]
+                "aws.protocols#restJson1": true,
+                "smithy.api#httpApiKeyAuth": {
+                    "name": "X-Api-Key",
+                    "in": "header"
+                }
             }
         },
         "smithy.example#Operation1": {

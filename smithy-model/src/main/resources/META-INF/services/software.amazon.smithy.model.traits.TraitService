@@ -52,4 +52,5 @@ software.amazon.smithy.model.traits.AuthDefinitionTrait$Provider
 software.amazon.smithy.model.traits.HttpBasicAuthTrait$Provider
 software.amazon.smithy.model.traits.HttpBearerAuthTrait$Provider
 software.amazon.smithy.model.traits.HttpDigestAuthTrait$Provider
+software.amazon.smithy.model.traits.HttpApiKeyAuthTrait$Provider
 software.amazon.smithy.model.traits.OptionalAuthTrait$Provider

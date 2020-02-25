@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.Locale;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -26,7 +25,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * An HTTP-specific authentication scheme that sends an arbitrary
  * API key in a header or query string parameter.
  */
-public final class HttpApiKeyAuthTrait extends BooleanTrait implements ToSmithyBuilder<HttpApiKeyAuthTrait> {
+public final class HttpApiKeyAuthTrait extends AbstractTrait implements ToSmithyBuilder<HttpApiKeyAuthTrait> {
 
     public static final ShapeId ID = ShapeId.from("smithy.api#httpApiKeyAuth");
 
@@ -55,16 +54,40 @@ public final class HttpApiKeyAuthTrait extends BooleanTrait implements ToSmithyB
                 .in(getIn());
     }
 
+    @Override
+    protected Node createNode() {
+        return Node.objectNodeBuilder()
+                .withMember("name", getName())
+                .withMember("in", getIn().toString())
+                .build();
+    }
+
     public static Builder builder() {
         return new Builder();
     }
 
     public enum Location {
-        HEADER, QUERY;
+        HEADER("header"),
+        QUERY("query");
+
+        private final String serialized;
+
+        Location(String serialized) {
+            this.serialized = serialized;
+        }
+
+        static Location from(String value) {
+            for (Location location : values()) {
+                if (location.serialized.equals(value)) {
+                    return location;
+                }
+            }
+            throw new IllegalArgumentException("Invalid location type: " + value);
+        }
 
         @Override
         public String toString() {
-            return super.toString().toLowerCase(Locale.ENGLISH);
+            return serialized;
         }
     }
 
@@ -78,7 +101,7 @@ public final class HttpApiKeyAuthTrait extends BooleanTrait implements ToSmithyB
             ObjectNode objectNode = value.expectObjectNode();
             Builder builder = builder().sourceLocation(value.getSourceLocation());
             builder.name(objectNode.expectStringMember("name").getValue());
-            builder.in(Location.valueOf(objectNode.expectStringMember("in").expectOneOf("header", "query")));
+            builder.in(Location.from(objectNode.expectStringMember("in").expectOneOf("header", "query")));
             return builder.build();
         }
     }
