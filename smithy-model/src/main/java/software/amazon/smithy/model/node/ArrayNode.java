@@ -99,7 +99,9 @@ public final class ArrayNode extends Node implements Iterable<Node> {
      * @return Returns an optional node at the given index.
      */
     public Optional<Node> get(int index) {
-        return elements.size() > index ? Optional.of(elements.get(index)) : Optional.empty();
+        return elements.size() > index && index > -1
+               ? Optional.of(elements.get(index))
+               : Optional.empty();
     }
 
     /**
