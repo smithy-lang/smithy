@@ -5581,7 +5581,7 @@ Value type
 .. _unstable-trait:
 
 ``_unstable`` trait
----------------
+-------------------
 
 Summary
     Indicates a shape is unstable and MAY change in the future. This trait can
