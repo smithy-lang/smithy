@@ -261,18 +261,21 @@ openapi.substitutions (``Map<String, any>``)
     Defines a map of strings to any JSON value to find and replace in the
     generated OpenAPI model.
 
-    This allows for placeholders to appear in the value of Smithy traits that
-    can be converted at build-time to an appropriate value.
-
     String values are replaced if the string in its entirety matches
     one of the keys provided in the ``openapi.substitutions`` map. The
-    corresponding value is then substituted for the string-- this could even
-    result in a string changing into an object, array, etc.
+    corresponding value is then substituted for the string; this could
+    even result in a string changing into an object, array, etc.
 
     The following example will find all strings with a value of "REPLACE_ME"
     and replace the string with an array value of
     ``["this is a", " replacement"]`` and replace all strings with a value
     of ``ANOTHER_REPLACEMENT`` with ``Hello!!!``:
+
+    .. warning::
+
+        When possible, prefer ``openapi.jsonAdd`` instead because the update
+        performed on the generated document is more explicit and resilient to
+        change.
 
     .. code-block:: json
 
@@ -284,6 +287,36 @@ openapi.substitutions (``Map<String, any>``)
                     "openapi.substitutions": {
                         "REPLACE_ME": ["this is a", " replacement"],
                         "ANOTHER_REPLACEMENT": "Hello!!!"
+                    }
+                }
+            }
+        }
+
+openapi.jsonAdd (``Map<String, Node>``)
+    Adds or replaces the JSON value in the generated OpenAPI document at the
+    given JSON pointer locations with a different JSON value. The value must
+    be a map where each key is a valid JSON pointer string as defined in
+    :rfc:`6901`. Each value in the map is the JSON value to add or replace
+    at the given target.
+
+    Values are added using similar semantics of the "add" operation of
+    JSON Patch, as specified in :rfc:`6902`, with the exception that adding
+    properties to an undefined object will create nested objects in the
+    result as needed.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "openapi.jsonAdd": {
+                        "/info/title": "Replaced title value",
+                        "/info/nested/foo": {
+                            "hi": "Adding this object created intermediate objects too!"
+                        },
+                        "/info/nested/foo/baz": true
                     }
                 }
             }
