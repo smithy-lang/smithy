@@ -16,7 +16,6 @@
 package software.amazon.smithy.build;
 
 import java.util.Map;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeVisitor;
@@ -32,10 +31,7 @@ import software.amazon.smithy.utils.Pair;
  * <p>Each key represents a string to search for, and each value represents
  * what to replace the string with. A value can be any type of Node, allowing
  * for strings to be changed to objects, arrays, etc. Partial string matches
- * are not currently supported. Each replacement string must match the
- * following regular expression: {@code ^[A-Za-z_][A-Za-z_0-9-]+$} (this
- * constraint could potentially be relaxed in the future to allow for
- * substring replacements from string to string).
+ * are not currently supported.
  *
  * <p>For example, given the following values to replace:
  *
@@ -53,18 +49,9 @@ import software.amazon.smithy.utils.Pair;
  * string did not literally match the string "FOO".
  */
 public final class JsonSubstitutions {
-    private static final Pattern SUBSTITUTIONS_KEY_PATTERN = Pattern.compile("^[A-Za-z_][A-Za-z_0-9-]+$");
     private final Map<String, Node> findAndReplace;
 
     private JsonSubstitutions(Map<String, Node> findAndReplace) {
-        for (String key : findAndReplace.keySet()) {
-            if (!SUBSTITUTIONS_KEY_PATTERN.matcher(key).find()) {
-                throw new SmithyBuildException(String.format(
-                        "JSON substitution key found named `%s`, but each key must match the following regular "
-                        + "expression: %s", key, SUBSTITUTIONS_KEY_PATTERN.pattern()));
-            }
-        }
-
         this.findAndReplace = MapUtils.copyOf(findAndReplace);
     }
 
