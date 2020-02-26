@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
+import java.util.logging.Logger;
 import software.amazon.smithy.build.JsonSubstitutions;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.Trait;
@@ -28,6 +29,8 @@ import software.amazon.smithy.openapi.model.OpenApi;
  * {@code openapi.substitutions}.
  */
 public final class OpenApiJsonSubstitutions implements OpenApiMapper {
+    private static final Logger LOGGER = Logger.getLogger(OpenApiJsonSubstitutions.class.getName());
+
     @Override
     public byte getOrder() {
         return 120;
@@ -36,7 +39,14 @@ public final class OpenApiJsonSubstitutions implements OpenApiMapper {
     @Override
     public ObjectNode updateNode(Context<? extends Trait> context, OpenApi openapi, ObjectNode node) {
         return context.getConfig().getObjectMember(OpenApiConstants.SUBSTITUTIONS)
-                .map(substitutions -> JsonSubstitutions.create(substitutions).apply(node).expectObjectNode())
+                .map(substitutions -> {
+                    LOGGER.warning("Using " + OpenApiConstants.SUBSTITUTIONS + " is discouraged. DO NOT use "
+                                   + "placeholders in your Smithy model for properties that are used by other tools "
+                                   + "like SDKs or service frameworks; placeholders should only ever be used in "
+                                   + "models for metadata that is specific to generating OpenAPI artifacts.\n\n"
+                                   + "Prefer safer alternatives like " + OpenApiConstants.JSON_ADD);
+                    return JsonSubstitutions.create(substitutions).apply(node).expectObjectNode();
+                })
                 .orElse(node);
     }
 }

@@ -20,6 +20,7 @@ import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.mappers.CheckForGreedyLabels;
 import software.amazon.smithy.openapi.fromsmithy.mappers.CheckForPrefixHeaders;
+import software.amazon.smithy.openapi.fromsmithy.mappers.OpenApiJsonAdd;
 import software.amazon.smithy.openapi.fromsmithy.mappers.OpenApiJsonSubstitutions;
 import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveEmptyComponents;
 import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveUnusedComponents;
@@ -58,6 +59,7 @@ public final class CoreExtension implements Smithy2OpenApiExtension {
                 new CheckForGreedyLabels(),
                 new CheckForPrefixHeaders(),
                 new OpenApiJsonSubstitutions(),
+                new OpenApiJsonAdd(),
                 new RemoveUnusedComponents(),
                 new UnsupportedTraits(),
                 new RemoveEmptyComponents()

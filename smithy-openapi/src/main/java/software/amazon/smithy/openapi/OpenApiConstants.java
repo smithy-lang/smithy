@@ -112,5 +112,18 @@ public final class OpenApiConstants {
      */
     public static final String SUBSTITUTIONS = "openapi.substitutions";
 
+    /**
+     * Adds or replaces the JSON value at the given JSON pointer locations with a
+     * different JSON value.
+     *
+     * <p>The value must be a Map of String to Node where each key is a JSON
+     * Pointer, and each value is the value to replace at that location. The
+     * mutation of the model follows the same semantics as the "add" operation
+     * of JSON Patch as specified in RFC 6902, with the exception that missing
+     * intermediate objects are created as necessary. Attempting to modifyproperties
+     * of objects that do not exist will log a warning.
+     */
+    public static final String JSON_ADD = "openapi.jsonAdd";
+
     private OpenApiConstants() {}
 }

@@ -460,7 +460,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         }
 
         try {
-            int position = Integer.parseInt(segments[1]);
+            int position = segments[1].equals("-") ? schemaArray.size() - 1 : Integer.parseInt(segments[1]);
             return position > -1 && position < schemaArray.size()
                    ? getRecursiveSchema(Optional.of(schemaArray.get(position)), segments, 2)
                    : Optional.empty();

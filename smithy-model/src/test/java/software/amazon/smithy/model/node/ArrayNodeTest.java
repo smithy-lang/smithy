@@ -202,4 +202,12 @@ public class ArrayNodeTest {
             Node.fromStrings("a", "b", "c").getElementsAs(BooleanNode::getValue);
         });
     }
+
+    @Test
+    public void checksBoundaries() {
+        ArrayNode array = Node.arrayNode();
+
+        assertFalse(array.get(-1).isPresent());
+        assertFalse(array.get(10).isPresent());
+    }
 }

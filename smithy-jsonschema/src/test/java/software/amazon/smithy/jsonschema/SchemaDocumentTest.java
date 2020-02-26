@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -105,28 +104,6 @@ public class SchemaDocumentTest {
     }
 
     @Test
-    public void requiresSegmentsWithMultipleSlashes() {
-        Assertions.assertThrows(RuntimeException.class, () -> {
-            SchemaDocument document = SchemaDocument.builder()
-                    .putDefinition("#/definitions", Schema.builder().type("string").build())
-                    .build();
-            document.toNode().expectObjectNode();
-        });
-
-    }
-
-    @Test
-    public void detectsConflictingPointers() {
-        Assertions.assertThrows(RuntimeException.class, () -> {
-            SchemaDocument document = SchemaDocument.builder()
-                    .putDefinition("#/definitions/foo", Schema.builder().type("string").build())
-                    .putDefinition("#/definitions/foo/bar", Schema.builder().type("string").build())
-                    .build();
-            document.toNode().expectObjectNode();
-        });
-    }
-
-    @Test
     public void unescapesJsonPointers() {
         Schema schema = Schema.builder().type("string").build();
         SchemaDocument document = SchemaDocument.builder()
@@ -159,6 +136,5 @@ public class SchemaDocumentTest {
 
         assertThat(document.getDefinition(""), equalTo(Optional.of(string)));
         assertThat(document.getDefinition("#"), equalTo(Optional.of(string)));
-        assertThat(document.getDefinition("#/"), equalTo(Optional.of(string)));
     }
 }

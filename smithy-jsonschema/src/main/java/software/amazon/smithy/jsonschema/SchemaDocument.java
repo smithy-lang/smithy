@@ -15,16 +15,15 @@
 
 package software.amazon.smithy.jsonschema;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -65,11 +64,18 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
         ObjectNode definitionNode = Node.objectNode();
 
         if (!definitions.isEmpty()) {
-            Map<StringNode, Object> nodes = new LinkedHashMap<>();
+            // Merge in each definition using a JSON Patch style "add" operation
+            // that creates missing intermediate objects.
             for (Map.Entry<String, Schema> entry : definitions.entrySet()) {
-                updateIn(nodes, entry.getKey(), entry.getValue().toNode());
+                if (entry.getKey().startsWith("http")) {
+                    LOGGER.info(() -> "Skipping the serialization of a remote schema reference: " + entry.getKey());
+                } else {
+                    NodePointer pointer = parseCheckedPointer(entry.getKey());
+                    definitionNode = pointer
+                            .addWithIntermediateValues(definitionNode, entry.getValue().toNode())
+                            .expectObjectNode();
+                }
             }
-            definitionNode = Node.objectNode(convertMap(nodes));
         }
 
         return Node.objectNodeBuilder()
@@ -82,54 +88,12 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
                 .withDeepSortedKeys(new SchemaComparator());
     }
 
-    @SuppressWarnings("unchecked")
-    private void updateIn(Map<StringNode, Object> map, String key, Node value) {
-        if (!key.startsWith("#/")) {
-            LOGGER.warning(() -> "Unable to serialize a node for definition JSON pointer: "
-                                 + key + ". Can only serialize pointers that start with '#/'.");
-            return;
+    private NodePointer parseCheckedPointer(String pointer) {
+        try {
+            return NodePointer.parse(pointer);
+        } catch (IllegalArgumentException e) {
+            throw new SmithyJsonSchemaException("Invalid definition JSON pointer: " + e.getMessage(), e);
         }
-
-        // Skip "#/" and split by "/".
-        String[] paths = key.substring(2).split("/");
-        if (paths.length <= 1) {
-            throw new SmithyJsonSchemaException("Invalid definition JSON pointer. Expected more segments: " + key);
-        }
-
-        // Iterate up to the second to last path segment to find the parent.
-        Map<StringNode, Object> current = map;
-        for (int i = 0; i < paths.length - 1; i++) {
-            StringNode pathNode = Node.from(paths[i]);
-            if (!current.containsKey(pathNode)) {
-                Map<StringNode, Object> newEntry = new LinkedHashMap<>();
-                current.put(pathNode, newEntry);
-                current = newEntry;
-            } else if (!(current.get(pathNode) instanceof Map)) {
-                // This could happen when two keys collide. We don't support things
-                // like opening up one schema and inlining another inside of it.
-                throw new SmithyJsonSchemaException("Conflicting JSON pointer definition found at " + key);
-            } else {
-                current = (Map<StringNode, Object>) current.get(pathNode);
-            }
-        }
-
-        current.put(Node.from(paths[paths.length - 1]), value);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<StringNode, Node> convertMap(Map<StringNode, Object> map) {
-        Map<StringNode, Node> result = new HashMap<>();
-
-        for (Map.Entry<StringNode, Object> entry : map.entrySet()) {
-            if (entry.getValue() instanceof Node) {
-                result.put(entry.getKey(), (Node) entry.getValue());
-            } else if (entry.getValue() instanceof Map) {
-                Map<StringNode, Node> valueResult = convertMap((Map<StringNode, Object>) entry.getValue());
-                result.put(entry.getKey(), Node.objectNode(valueResult));
-            }
-        }
-
-        return result;
     }
 
     @Override
@@ -182,44 +146,35 @@ public final class SchemaDocument implements ToNode, ToSmithyBuilder<SchemaDocum
      * @return Returns the optionally found schema definition.
      */
     public Optional<Schema> getDefinition(String pointer) {
-        pointer = unescapeJsonSchema(pointer);
+        String unescaped = NodePointer.unescape(pointer);
 
-        if (definitions.containsKey(pointer)) {
-            return Optional.ofNullable(definitions.get(pointer));
-        } else if (pointer.isEmpty()) {
+        // Attempt to get the unescaped pointer, as-is.
+        if (definitions.containsKey(unescaped)) {
+            return Optional.ofNullable(definitions.get(unescaped));
+        }
+
+        List<String> pointerParts = NodePointer.parse(pointer).getParts();
+
+        // An empty pointer returns the root schema.
+        if (pointerParts.isEmpty()) {
             return Optional.of(getRootSchema());
         }
 
-        String prefix = "";
-        String[] refs = pointer.split("/");
-
-        for (int position = 0; position < refs.length; position++) {
-            if (position > 0) {
-                prefix += "/" + refs[position];
-            } else {
-                prefix += refs[position];
-            }
+        // Compute the part of the pointer that points at a literal entry in
+        // the map of definitions, and then compute the remaining pointer
+        // segments that need to be used when retrieving a nested schema.
+        String prefix = pointer.startsWith("#") ? "#" : "";
+        for (int position = 0; position < pointerParts.size(); position++) {
+            String part = pointerParts.get(position);
+            prefix += '/' + part;
             if (definitions.containsKey(prefix)) {
-                String[] suffix = Arrays.copyOfRange(refs, position + 1, refs.length);
+                List<String> remaining = pointerParts.subList(position + 1, pointerParts.size());
+                String[] suffix = remaining.toArray(new String[0]);
                 return definitions.get(prefix).selectSchema(suffix);
             }
         }
 
         return Optional.empty();
-    }
-
-    private static String unescapeJsonSchema(String pointer) {
-        // Unescape "~" special cases.
-        String result = pointer.replace("~1", "/").replace("~0", "~");
-        // Normalize pointer references to the root document.
-        switch (result) {
-            case "":
-            case "#":
-            case "#/":
-                return "";
-            default:
-                return result;
-        }
     }
 
     /**
