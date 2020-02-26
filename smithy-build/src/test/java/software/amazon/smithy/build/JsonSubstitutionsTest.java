@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -36,13 +35,5 @@ public class JsonSubstitutionsTest {
 
         assertThat(result.expectMember("a").expectStringNode().getValue(), equalTo("Hi!"));
         assertThat(result.expectMember("b").expectStringNode().getValue(), equalTo("FOO_BAR baz"));
-    }
-
-    @Test
-    public void validatesKeysAdhereToPattern() {
-        Map<String, Node> mappings = new HashMap<>();
-        mappings.put("!FOO_BAR", Node.from("Hi!"));
-
-        Assertions.assertThrows(SmithyBuildException.class, () -> JsonSubstitutions.create(mappings));
     }
 }
