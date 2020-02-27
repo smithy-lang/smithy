@@ -18,6 +18,7 @@ package software.amazon.smithy.model.shapes;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,6 +47,7 @@ import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -81,16 +83,15 @@ public final class SmithyIdlModelSerializer {
      * @return A map of (possibly relative) file paths to Smithy IDL strings.
      */
     public Map<Path, String> serialize(Model model) {
-        List<Shape> shapes = model.shapes()
+        Map<Path, String> result = model.shapes()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(shapeFilter)
-                .collect(Collectors.toList());
-        if (shapes.isEmpty()) {
-            return Collections.singletonMap(Paths.get("metadata.smithy"), serializeHeader(model, null));
-        }
-        return shapes.stream()
                 .collect(Collectors.groupingBy(shapePlacer)).entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> serialize(model, entry.getValue())));
+        if (result.isEmpty()) {
+            return Collections.singletonMap(Paths.get("metadata.smithy"), serializeHeader(model, null));
+        }
+        return result;
     }
 
     private String serialize(Model fullModel, Collection<Shape> shapes) {
@@ -124,8 +125,8 @@ public final class SmithyIdlModelSerializer {
         // Write the full metadata into every output. When loaded back together the conflicts will be ignored,
         // but if they're separated out then each file will still have all the context.
         fullModel.getMetadata().entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
                 .filter(entry -> metadataFilter.test(entry.getKey()))
+                .sorted(Map.Entry.comparingByKey())
                 .forEach(entry -> {
                     codeWriter.trimTrailingSpaces(false)
                             .writeInline("metadata $M = ", entry.getKey())
@@ -166,16 +167,17 @@ public final class SmithyIdlModelSerializer {
      * Comparator used to sort shapes.
      */
     private static final class ShapeComparator implements Comparator<Shape>, Serializable {
-        private static final List<ShapeType> PRIORITY = ListUtils.of(
-                ShapeType.SERVICE,
-                ShapeType.RESOURCE,
-                ShapeType.OPERATION,
-                ShapeType.STRUCTURE,
-                ShapeType.UNION,
-                ShapeType.LIST,
-                ShapeType.SET,
-                ShapeType.MAP
+        private static final Map<ShapeType, Integer> PRIORITY = MapUtils.of(
+                ShapeType.SERVICE, 0,
+                ShapeType.RESOURCE, 1,
+                ShapeType.OPERATION, 2,
+                ShapeType.STRUCTURE, 3,
+                ShapeType.UNION, 4,
+                ShapeType.LIST, 5,
+                ShapeType.SET, 6,
+                ShapeType.MAP, 7
         );
+
 
         @Override
         public int compare(Shape s1, Shape s2) {
@@ -188,31 +190,24 @@ public final class SmithyIdlModelSerializer {
                     return -1;
                 }
                 // The other sorting rules don't matter for traits.
-                return compareCaseInsensitive(s1, s2);
+                return s1.compareTo(s2);
             }
             // If the shapes are the same type, just compare their shape ids.
             if (s1.getType().equals(s2.getType())) {
-                return compareCaseInsensitive(s1, s2);
+                return s1.compareTo(s2);
             }
             // If one shape is prioritized, compare by priority.
-            if (PRIORITY.contains(s1.getType()) || PRIORITY.contains(s2.getType())) {
+            if (PRIORITY.containsKey(s1.getType()) || PRIORITY.containsKey(s2.getType())) {
                 // If only one shape is prioritized, that shape is "greater".
-                if (!PRIORITY.contains(s1.getType())) {
+                if (!PRIORITY.containsKey(s1.getType())) {
                     return 1;
                 }
-                if (!PRIORITY.contains(s2.getType())) {
+                if (!PRIORITY.containsKey(s2.getType())) {
                     return -1;
                 }
-                return PRIORITY.indexOf(s1.getType()) - PRIORITY.indexOf(s2.getType());
+                return PRIORITY.get(s1.getType()) - PRIORITY.get(s2.getType());
             }
-            return compareCaseInsensitive(s1, s2);
-        }
-
-        /**
-         * Compare two shapes by id case-insensitively.
-         */
-        private int compareCaseInsensitive(Shape s1, Shape s2) {
-            return s1.toShapeId().toString().toLowerCase().compareTo(s2.toShapeId().toString().toLowerCase());
+            return s1.compareTo(s2);
         }
     }
 
@@ -335,7 +330,7 @@ public final class SmithyIdlModelSerializer {
             shape.getAllTraits().values().stream()
                     .filter(trait -> !(trait instanceof DocumentationTrait))
                     .filter(traitFilter)
-                    .sorted(Comparator.comparing(trait -> trait.toShapeId().toString(), String.CASE_INSENSITIVE_ORDER))
+                    .sorted(Comparator.comparing(Trait::toShapeId))
                     .forEach(this::serializeTrait);
         }
 
@@ -390,20 +385,14 @@ public final class SmithyIdlModelSerializer {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            shapeWithMembers(shape, sortMembers(shape.getAllMembers().values()));
+            shapeWithMembers(shape, new ArrayList<>(shape.getAllMembers().values()));
             return null;
         }
 
         @Override
         public Void unionShape(UnionShape shape) {
-            shapeWithMembers(shape, sortMembers(shape.getAllMembers().values()));
+            shapeWithMembers(shape, new ArrayList<>(shape.getAllMembers().values()));
             return null;
-        }
-
-        private List<MemberShape> sortMembers(Collection<MemberShape> members) {
-            return members.stream()
-                    .sorted(Comparator.comparing(MemberShape::getMemberName, String.CASE_INSENSITIVE_ORDER))
-                    .collect(Collectors.toList());
         }
 
         @Override
@@ -420,16 +409,11 @@ public final class SmithyIdlModelSerializer {
         @Override
         public Void resourceShape(ResourceShape shape) {
             serializeTraits(shape);
-            if (isEmptyResource(shape)) {
-                codeWriter.write("resource $L {}", shape.getId().getName()).write("");
-                return null;
-            }
-
             codeWriter.openBlock("resource $L {", shape.getId().getName());
             if (!shape.getIdentifiers().isEmpty()) {
                 codeWriter.openBlock("identifiers: {");
                 shape.getIdentifiers().entrySet().stream()
-                        .sorted(Map.Entry.comparingByKey(String.CASE_INSENSITIVE_ORDER))
+                        .sorted(Map.Entry.comparingByKey())
                         .forEach(entry -> codeWriter.write(
                                 "$L: $I,", entry.getKey(), entry.getValue()));
                 codeWriter.closeBlock("},");
@@ -448,19 +432,6 @@ public final class SmithyIdlModelSerializer {
             codeWriter.closeBlock("}");
             codeWriter.write("");
             return null;
-        }
-
-        private boolean isEmptyResource(ResourceShape shape) {
-            return !(!shape.getIdentifiers().isEmpty()
-                    || !shape.getOperations().isEmpty()
-                    || !shape.getCollectionOperations().isEmpty()
-                    || !shape.getResources().isEmpty()
-                    || shape.getPut().isPresent()
-                    || shape.getCreate().isPresent()
-                    || shape.getRead().isPresent()
-                    || shape.getUpdate().isPresent()
-                    || shape.getDelete().isPresent()
-                    || shape.getList().isPresent());
         }
 
         @Override
@@ -546,11 +517,7 @@ public final class SmithyIdlModelSerializer {
             if (shape == null) {
                 return false;
             }
-            if (shape.isMemberShape()) {
-                return shape.asMemberShape()
-                        .flatMap(member -> member.getMemberTrait(model, IdRefTrait.class)).isPresent();
-            }
-            return shape.hasTrait(IdRefTrait.class);
+            return shape.getMemberTrait(model, IdRefTrait.class).isPresent();
         }
 
         private void serializeString(StringNode node) {
@@ -632,7 +599,7 @@ public final class SmithyIdlModelSerializer {
             if (shape == null) {
                 members = Collections.emptyMap();
             } else {
-                members = shape.members().stream().distinct()
+                members = shape.members().stream()
                         .collect(Collectors.toMap(MemberShape::getMemberName, Function.identity()));
             }
 
@@ -769,9 +736,7 @@ public final class SmithyIdlModelSerializer {
             }
 
             openBlock("$L: [", textBeforeList);
-            shapeIds.stream()
-                    .sorted(Comparator.comparing(ShapeId::toString, String.CASE_INSENSITIVE_ORDER))
-                    .forEach(shapeId -> write("$I,", shapeId));
+            shapeIds.stream().sorted().forEach(shapeId -> write("$I,", shapeId));
             closeBlock("],");
 
             return this;
@@ -794,8 +759,7 @@ public final class SmithyIdlModelSerializer {
             if (imports.isEmpty()) {
                 return contents;
             }
-            String importString = imports.stream()
-                    .sorted(Comparator.comparing(ShapeId::toString, String.CASE_INSENSITIVE_ORDER))
+            String importString = imports.stream().sorted()
                     .map(shapeId -> String.format("use %s", shapeId.toString()))
                     .collect(Collectors.joining("\n"));
             return importString + "\n\n" + contents;
