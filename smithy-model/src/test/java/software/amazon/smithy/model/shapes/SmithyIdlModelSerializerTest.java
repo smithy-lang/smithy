@@ -1,6 +1,7 @@
 package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.aMapWithSize;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.utils.IoUtils;
@@ -48,14 +50,12 @@ public class SmithyIdlModelSerializerTest {
                 .addImport(getClass().getResource("idl-serialization/multiple-namespaces/input.json"))
                 .assemble()
                 .unwrap();
-        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder().build();
-        Map<Path, String> serialized = serializer.serialize(model);
-
         Path outputDir = Paths.get(getClass().getResource("idl-serialization/multiple-namespaces/output").getFile());
-        serialized.forEach((path, generated) -> {
-            Path expectedPath = outputDir.resolve(path);
-            assertThat(generated, equalTo(IoUtils.readUtf8File(expectedPath)));
-        });
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder()
+                .basePath(outputDir)
+                .build();
+        Map<Path, String> serialized = serializer.serialize(model);
+        serialized.forEach((path, generated) -> assertThat(generated, equalTo(IoUtils.readUtf8File(path))));
     }
 
     @Test
@@ -118,5 +118,19 @@ public class SmithyIdlModelSerializerTest {
         for (String output : serialized.values()) {
             assertThat(output, not(containsString("/// ")));
         }
+    }
+
+    @Test
+    public void basePathAppliesToMetadataOnlyModel() {
+        Path basePath = Paths.get("/tmp/smithytest");
+        Model model = Model.assembler()
+                .putMetadata("foo", StringNode.from("bar"))
+                .assemble()
+                .unwrap();
+        SmithyIdlModelSerializer serializer = SmithyIdlModelSerializer.builder()
+                .basePath(basePath)
+                .build();
+        Map<Path, String> serialized = serializer.serialize(model);
+        assertThat(serialized.keySet(), contains(basePath.resolve("metadata.smithy")));
     }
 }

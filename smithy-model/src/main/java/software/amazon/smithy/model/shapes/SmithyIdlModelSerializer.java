@@ -59,12 +59,19 @@ public final class SmithyIdlModelSerializer {
     private final Predicate<Shape> shapeFilter;
     private final Predicate<Trait> traitFilter;
     private final Function<Shape, Path> shapePlacer;
+    private final Path basePath;
 
     private SmithyIdlModelSerializer(Builder builder) {
         metadataFilter = builder.metadataFilter;
         shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
         traitFilter = builder.traitFilter;
-        shapePlacer = builder.shapePlacer;
+        basePath = builder.basePath;
+        if (basePath != null) {
+            Function<Shape, Path> shapePlacer = builder.shapePlacer;
+            this.shapePlacer = shape -> this.basePath.resolve(shapePlacer.apply(shape));
+        } else {
+            this.shapePlacer = builder.shapePlacer;
+        }
     }
 
     /**
@@ -89,7 +96,11 @@ public final class SmithyIdlModelSerializer {
                 .collect(Collectors.groupingBy(shapePlacer)).entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> serialize(model, entry.getValue())));
         if (result.isEmpty()) {
-            return Collections.singletonMap(Paths.get("metadata.smithy"), serializeHeader(model, null));
+            Path path = Paths.get("metadata.smithy");
+            if (basePath != null) {
+                path = basePath.resolve(path);
+            }
+            return Collections.singletonMap(path, serializeHeader(model, null));
         }
         return result;
     }
@@ -219,6 +230,7 @@ public final class SmithyIdlModelSerializer {
         private Predicate<Shape> shapeFilter = shape -> true;
         private Predicate<Trait> traitFilter = trait -> true;
         private Function<Shape, Path> shapePlacer = SmithyIdlModelSerializer::placeShapesByNamespace;
+        private Path basePath = null;
 
         public Builder() {}
 
@@ -271,6 +283,17 @@ public final class SmithyIdlModelSerializer {
          */
         public Builder shapePlacer(Function<Shape, Path> shapePlacer) {
             this.shapePlacer = Objects.requireNonNull(shapePlacer);
+            return this;
+        }
+
+        /**
+         * A base path to use for any created models.
+         *
+         * @param basePath The base directory to assign models to.
+         * @return Returns the builder.
+         */
+        public Builder basePath(Path basePath) {
+            this.basePath = basePath;
             return this;
         }
 
