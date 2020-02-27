@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -236,6 +237,34 @@ public class ShapeIdTest {
                 {"name.space", "Name", null, "name.space#Name"},
                 {"name.space", "Name", "member", "name.space#Name$member"},
         });
+    }
+
+    @Test
+    public void compareToTest() {
+        List<ShapeId> given = Arrays.asList(
+                ShapeId.fromParts("ns.foo", "foo"),
+                ShapeId.fromParts("ns.foo", "Foo"),
+                ShapeId.fromParts("ns.foo", "bar"),
+                ShapeId.fromParts("ns.foo", "bar", "member"),
+                ShapeId.fromParts("ns.foo", "bar", "Member"),
+                ShapeId.fromParts("ns.foo", "bar", "AMember"),
+                ShapeId.fromParts("ns.Foo", "foo"),
+                ShapeId.fromParts("ns.baz", "foo")
+        );
+        given.sort(ShapeId::compareTo);
+
+        List<ShapeId> expected = Arrays.asList(
+                ShapeId.fromParts("ns.baz", "foo"),
+                ShapeId.fromParts("ns.foo", "bar"),
+                ShapeId.fromParts("ns.foo", "bar", "AMember"),
+                ShapeId.fromParts("ns.foo", "bar", "Member"),
+                ShapeId.fromParts("ns.foo", "bar", "member"),
+                ShapeId.fromParts("ns.Foo", "foo"),
+                ShapeId.fromParts("ns.foo", "Foo"),
+                ShapeId.fromParts("ns.foo", "foo")
+        );
+
+        assertEquals(expected, given);
     }
 
     @ParameterizedTest
