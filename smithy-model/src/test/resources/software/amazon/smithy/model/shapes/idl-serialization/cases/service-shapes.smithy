@@ -16,7 +16,8 @@ service MyService {
     ],
 }
 
-resource EmptyResource {}
+resource EmptyResource {
+}
 
 resource MyResource {
     identifiers: {
