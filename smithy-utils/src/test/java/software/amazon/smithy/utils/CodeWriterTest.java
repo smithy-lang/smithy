@@ -505,4 +505,46 @@ public class CodeWriterTest {
 
         assertThat(result, equalTo("$Hello\n"));
     }
+
+    @Test
+    public void canWriteInline() {
+        String result = CodeWriter.createDefault()
+                .writeInline("foo")
+                .writeInline(", bar")
+                .toString();
+
+        assertThat(result, equalTo("foo, bar"));
+    }
+
+    @Test
+    public void writeInlineHandlesSingleNewline() {
+        String result = CodeWriter.createDefault()
+                .writeInline("foo").indent()
+                .writeInline(":\nbar")
+                .toString();
+
+        assertThat(result, equalTo("foo:\n    bar"));
+    }
+
+    @Test
+    public void writeInlineHandlesMultipleNewlines() {
+        String result = CodeWriter.createDefault()
+                .writeInline("foo:")
+                .writeInline(" [").indent()
+                .writeInline("\nbar,\nbaz,\nbam,")
+                .dedent().writeInline("\n]")
+                .toString();
+
+        assertThat(result, equalTo("foo: [\n    bar,\n    baz,\n    bam,\n]"));
+    }
+
+    @Test
+    public void writeInlineStripsSpaces() {
+        String result = CodeWriter.createDefault()
+                .trimTrailingSpaces()
+                .writeInline("foo ")
+                .toString();
+
+        assertThat(result, equalTo("foo"));
+    }
 }

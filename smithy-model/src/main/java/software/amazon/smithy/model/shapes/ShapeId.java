@@ -258,7 +258,12 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
 
     @Override
     public int compareTo(ShapeId other) {
-        return toString().compareTo(other.toString());
+        int outcome = toString().compareToIgnoreCase(other.toString());
+        if (outcome == 0) {
+            // If they're case-insensitively equal, use a case-sensitive comparison as a tie-breaker.
+            return toString().compareTo(other.toString());
+        }
+        return outcome;
     }
 
     /**
