@@ -169,6 +169,9 @@ public final class SmithyIdlModelSerializer {
 
     /**
      * Sorts shapes into files based on their namespace, where each file is named {namespace}.smithy.
+     *
+     * @param shape The shape to assign a file to.
+     * @return Returns the file the given shape should be placed in.
      */
     public static Path placeShapesByNamespace(Shape shape) {
         return Paths.get(shape.getId().getNamespace() + ".smithy");
