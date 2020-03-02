@@ -937,11 +937,11 @@ Summary
 Trait selector
     ``*``
 Value type
-    ``object`` value
+    ``structure``
 Conflicts with
     :ref:`xmlAttribute-trait`
 
-The ``xmlNamespace`` trait is an object that contains the following properties:
+The ``xmlNamespace`` trait is a structure that contains the following members:
 
 .. list-table::
     :header-rows: 1

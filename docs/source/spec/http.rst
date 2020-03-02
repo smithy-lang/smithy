@@ -28,9 +28,9 @@ Summary
 Trait selector
     ``operation``
 Value type
-    ``object``
+    ``structure``
 
-The ``http`` trait is an object that supports the following properties:
+The ``http`` trait is a structure that supports the following members:
 
 .. list-table::
     :header-rows: 1
@@ -830,9 +830,9 @@ Summary
 Trait selector
     ``service``
 Value type
-    ``object``
+    ``structure``
 
-The ``cors`` trait is an object that supports the following properties:
+The ``cors`` trait is a structure that supports the following members:
 
 .. list-table::
     :header-rows: 1
@@ -852,7 +852,7 @@ The ``cors`` trait is an object that supports the following properties:
         maximum age permitted by several browsers. Set to ``-1`` to disable
         caching entirely.
     * - additionalAllowedHeaders
-      - ``List<String>``
+      - ``list<string>``
       - The names of headers that should be included in the
         ``Access-Control-Allow-Headers`` header in responses to preflight
         ``OPTIONS`` requests. This list will be used in addition to the names of
@@ -860,7 +860,7 @@ The ``cors`` trait is an object that supports the following properties:
         :ref:`httpHeader-trait`, as well as any headers required by the protocol
         or authentication scheme.
     * - additionalExposedHeaders
-      - ``List<String>``
+      - ``list<string>``
       - The names of headers that should be included in the
         ``Access-Control-Expose-Headers`` header in all responses sent by the
         service. This list will be used in addition to the names of all request
