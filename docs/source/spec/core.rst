@@ -1748,7 +1748,7 @@ Given the following model,
             identifiers: {
                 forecastId: ForecastId,
             },
-            operations: [BatchPutForecasts],
+            collectionOperations: [BatchPutForecasts],
         }
 
         operation BatchPutForecasts {
@@ -1773,7 +1773,7 @@ Given the following model,
                             "target": "smithy.example#ForecastId"
                         }
                     },
-                    "operations": [
+                    "collectionOperations": [
                         {
                             "target": "smithy.example#BatchPutForecasts"
                         }
