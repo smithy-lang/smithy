@@ -73,7 +73,7 @@ Summary
 Trait selector
     ``:test(resource, operation)``
 Value type
-    ``array`` of ``string`` values
+    ``list<string>``
 
 Condition keys derived automatically can be applied to a resource or operation
 explicitly. Condition keys applied this way MUST be either inferred or
@@ -181,13 +181,13 @@ Summary
 Trait selector
     ``service``
 Value type
-    ``map`` of IAM identifiers to condition key ``object``
+    ``map`` of IAM identifiers to condition key ``structure``
 
 The ``aws.iam#defineConditionKeys`` trait defines additional condition keys
 that appear within a service. Keys in the map must be valid IAM identifiers,
 meaning they must adhere to the following regular expression:
 ``"^([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:[^:]+)$"``.
-Each condition key object supports the following key-value pairs:
+Each condition key structure supports the following members:
 
 .. list-table::
     :header-rows: 1
@@ -205,10 +205,10 @@ Each condition key object supports the following key-value pairs:
         ``ArrayOfNumeric``, ``ArrayOfString``. See :ref:`condition-key-types`
         for more information.
     * - documentation
-      - string
+      - ``string``
       - Defines documentation about the condition key.
     * - externalDocumentation
-      - string
+      - ``string``
       - A valid URL that defines more information about the condition key.
 
 .. tabs::
@@ -404,8 +404,8 @@ Summary
 Trait selector
     ``operation``
 Value type
-    This trait contains an unordered list of string values that reference
-    condition keys defined in the closure of the service.
+    ``list<string>`` where each string value references condition keys
+    defined in the closure of the service.
 
 Defines the actions, in addition to the targeted operation, that a user must
 be authorized to execute in order invoke an operation. The following example

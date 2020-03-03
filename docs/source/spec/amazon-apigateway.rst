@@ -93,11 +93,11 @@ Trait selector
 
     *A service shape that has the protocols trait*
 Value type
-    Map of arbitrary names to *authorizer* definitions. These authorizer
+    ``map`` of arbitrary names to *authorizer* definitions. These authorizer
     definitions are applied to a service, resource, or operation using the
     :ref:`aws.apigateway#authorizer-trait`.
 
-An *authorizer* definition is an object that supports the following properties:
+An *authorizer* definition is a structure that supports the following members:
 
 .. list-table::
     :header-rows: 1
@@ -239,7 +239,7 @@ Trait selector
 
     *A service, resource, or operation*
 Value type
-    String value that MUST reference one of the keys in the
+    ``string`` value that MUST reference one of the keys in the
     :ref:`aws.apigateway#authorizers-trait` of the service that contains
     the shape.
 
@@ -268,11 +268,11 @@ Value type
 
         * - Value
           - Description
-        * - full
+        * - ``full``
           - The parameters and body of a request are validated.
-        * - params-only
+        * - ``params-only``
           - Only the parameters of a request are validated.
-        * - body-only
+        * - ``body-only``
           - Only the body of a request is validated.
 See also
     - `Enable Request Validation in API Gateway`_ for more information
@@ -330,7 +330,7 @@ Summary
 Trait selector
     ``:test(service, operation)``
 Value type
-    ``object`` value.
+    ``structure``
 See also
     - :ref:`apigateway-integrations` for information on how this converts
       to OpenAPI
@@ -338,8 +338,8 @@ See also
     - `x-amazon-apigateway-integration`_ for details on how this looks
       to OpenAPI
 
-The ``aws.apigateway#integration`` trait is an object that supports the
-following properties:
+The ``aws.apigateway#integration`` trait is a structure that supports the
+following members:
 
 .. list-table::
     :header-rows: 1
@@ -403,18 +403,18 @@ following properties:
       - ``string``
       - An API-specific tag group of related cached parameters.
     * - cacheKeyParameters
-      - ``[string]``
+      - ``list<string>``
       - A list of request parameter names whose values are to be cached.
     * - requestParameters
-      - ``Map`` of :ref:`apigateway-requestParameters` to request parameters
+      - ``map`` of :ref:`apigateway-requestParameters` to request parameters
       - Specifies mappings from method request parameters to integration
         request parameters. Supported request parameters are querystring,
         path, header, and body.
     * - requestTemplates
-      - ``Map`` of media types to :ref:`apigateway-requestTemplates`
+      - ``map`` of media types to :ref:`apigateway-requestTemplates`
       - Mapping templates for a request payload of specified media types.
     * - responses
-      - ``Map`` of response codes to :ref:`apigateway-responses`
+      - ``map`` of response codes to :ref:`apigateway-responses`
       - Defines the method's responses and specifies desired parameter
         mappings or payload mappings from integration responses to method
         responses.
@@ -503,7 +503,10 @@ Summary
 Trait selector
     ``:test(service, operation)``
 Value type
-    ``object`` value.
+    ``structure``
+
+The ``aws.apigateway#mockIntegration`` trait is a structure that supports the
+following members:
 
 .. list-table::
     :header-rows: 1
@@ -519,15 +522,15 @@ Value type
         values are ``when_no_templates``, ``when_no_match``, and ``never``.
         For more information, see `Integration.passthroughBehavior`_.
     * - requestParameters
-      - ``Map`` of :ref:`apigateway-requestParameters` to request parameters
+      - ``map`` of :ref:`apigateway-requestParameters` to request parameters
       - Specifies mappings from method request parameters to integration
         request parameters. Supported request parameters are querystring,
         path, header, and body.
     * - requestTemplates
-      - ``Map`` of media types to :ref:`apigateway-requestTemplates`
+      - ``map`` of media types to :ref:`apigateway-requestTemplates`
       - Mapping templates for a request payload of specified media types.
     * - responses
-      - ``Map`` of response codes to :ref:`apigateway-responses`
+      - ``map`` of response codes to :ref:`apigateway-responses`
       - Defines the method's responses and specifies desired parameter
         mappings or payload mappings from integration responses to method
         responses.
@@ -620,8 +623,8 @@ Valid values are:
 
 .. _apigateway-requestParameters:
 
-requestParameters object
-------------------------
+requestParameters structure
+---------------------------
 
 Specifies mappings from named method request parameters to integration
 request parameters. The method request parameters must be defined before
@@ -637,7 +640,7 @@ they are referenced.
       - Type
       - Description
     * - ``integration.request.<param-type>.<param-name>``
-      - string
+      - ``string``
       - The value must be a predefined method request parameter of the
         ``method.request.<param-type>.<param-name>`` format, where
         ``<param-type>`` can be querystring, path, header, or body. For
@@ -662,8 +665,8 @@ header (x-userid), and path parameters (op), respectively.
 
 .. _apigateway-requestTemplates:
 
-requestTemplates object
------------------------
+requestTemplates structure
+--------------------------
 
 Specifies mapping templates for a request payload of the specified media types.
 
@@ -677,7 +680,7 @@ Specifies mapping templates for a request payload of the specified media types.
       - Type
       - Description
     * - ``<Media type>``
-      - string
+      - ``string``
       - A `mapping template <mapping templates>`_.
 
 The following example sets mapping templates for a request payload of the
@@ -695,8 +698,8 @@ The following example sets mapping templates for a request payload of the
 
 .. _apigateway-responses:
 
-responses object
-----------------
+responses structure
+-------------------
 
 Defines the method's responses and specifies parameter mappings or payload
 mappings from integration responses to method responses.
@@ -711,7 +714,7 @@ mappings from integration responses to method responses.
       - Type
       - Description
     * - ``<Response status pattern>``
-      - :ref:`Response object <apigateway-response-object>`
+      - :ref:`Response structure <apigateway-response-structure>`
       - Selection regular expression used to match the integration response
         to the method response. For HTTP integrations, this regex applies to
         the integration response status code. For Lambda invocations, the
@@ -755,10 +758,10 @@ property on the integration response's payload.
     }
 
 
-.. _apigateway-response-object:
+.. _apigateway-response-structure:
 
-response object
----------------
+response structure
+------------------
 
 Defines a response and specifies parameter mappings or payload mappings from
 the integration response to the method response.
@@ -773,16 +776,16 @@ the integration response to the method response.
       - Type
       - Description
     * - statusCode
-      - string
+      - ``string``
       - HTTP status code for the method response; for example, "200". This
         must correspond to a matching response in the OpenAPI Operation
         responses field.
     * - responseTemplates
-      - :ref:`Response templates object <apigateway-response-templates-object>`
+      - :ref:`Response templates structure <apigateway-response-templates-structure>`
       - Specifies media type-specific mapping templates for the response's
         payload.
     * - responseParameters
-      - :ref:`Response parameters object <apigateway-response-parameters-object>`
+      - :ref:`Response parameters structure <apigateway-response-parameters-structure>`
       - Specifies parameter mappings for the response. Only the header and
         body parameters of the integration response can be mapped to the header
         parameters of the method.
@@ -809,10 +812,10 @@ redirect URL from the integration response in the method's Location header.
     }
 
 
-.. _apigateway-response-templates-object:
+.. _apigateway-response-templates-structure:
 
-Response templates object
--------------------------
+Response templates structure
+----------------------------
 
 Specifies mapping templates for a response payload of the specified
 media types.
@@ -827,7 +830,7 @@ media types.
       - Type
       - Description
     * - ``<Media type>``
-      - string
+      - ``string``
       - Specifies a mapping template to transform the integration response
         body to the method response body for a given media type. For
         information about creating a mapping template, see
@@ -847,10 +850,10 @@ The following example sets mapping templates for a request payload of the
     }
 
 
-.. _apigateway-response-parameters-object:
+.. _apigateway-response-parameters-structure:
 
-Response parameters object
---------------------------
+Response parameters structure
+-----------------------------
 
 Specifies mappings from integration method response parameters to method
 response parameters. Only the ``header`` and ``body`` types of the integration
@@ -867,7 +870,7 @@ response.
       - Type
       - Description
     * - ``method.response.header.<param-name>``
-      - string
+      - ``string``
       - The named parameter value can be derived from the header and body
         types of the integration response parameters only.
 

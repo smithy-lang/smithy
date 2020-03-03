@@ -24,7 +24,7 @@ Summary
 Trait selector
     ``service``
 Value type
-    ``object`` that contains the following properties:
+    ``structure`` that contains the following members:
 
     * :ref:`service-sdk-id` (required)
     * :ref:`service-cloudformation-name`
@@ -255,10 +255,10 @@ Trait summary
 Trait selector
     ``resource``
 Trait value
-    ``object``
+    ``structure``
 
-The ``aws.api#arn`` trait is an object that supports the following
-properties:
+The ``aws.api#arn`` trait is a structure that supports the following
+members:
 
 .. list-table::
     :header-rows: 1
@@ -491,15 +491,15 @@ Trait summary
 Trait selector
     ``string``
 Trait value
-    ``object``
+    ``structure``
 
 Smithy models can refer to AWS resources using ARNs. The
 ``aws.api#arnReference`` can be applied to a string shape to indicate
 that the string contains an ARN and what resource is targeted by the
 ARN.
 
-The ``aws.api#arnReference`` trait is an object that supports the following
-optional properties:
+The ``aws.api#arnReference`` trait is a structure that supports the following
+optional members:
 
 .. list-table::
     :header-rows: 1
@@ -848,7 +848,7 @@ Summary
 Trait selector
     ``operation``
 Value type
-    List of authentication scheme strings
+    ``list<string>`` of authentication schemes
 
 Most requests sent to AWS services require that the payload of the request is
 signed. However, in some cases, a service that streams large amounts of data
@@ -1018,10 +1018,10 @@ Trait summary
 Trait selector
     ``service``
 Trait value
-    ``object``
+    ``structure``
 
-The ``aws.api#clientEndpointDiscovery`` trait is an object that supports the
-following properties:
+The ``aws.api#clientEndpointDiscovery`` trait is a structure that supports the
+following members:
 
 .. list-table::
     :header-rows: 1
@@ -1065,10 +1065,10 @@ Trait summary
 Trait selector
     ``operation``
 Trait value
-    ``object``
+    ``structure``
 
-The ``aws.api#clientDiscoveredEndpoint`` trait is an object that supports the
-following properties:
+The ``aws.api#clientDiscoveredEndpoint`` trait is a structure that supports the
+following members:
 
 .. list-table::
     :header-rows: 1
