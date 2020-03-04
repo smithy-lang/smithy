@@ -19,6 +19,6 @@ public class ValidatorLoaderTest {
                 .getValidationEvents();
 
         assertThat(events, not(empty()));
-        Assertions.assertTrue(events.stream().anyMatch(e -> e.getMessage().contains("Invalid validator selector")));
+        Assertions.assertTrue(events.stream().anyMatch(e -> e.getMessage().contains("Syntax error")));
     }
 }

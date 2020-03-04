@@ -17,7 +17,9 @@ package software.amazon.smithy.model.selector;
 
 import java.util.Set;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -66,5 +68,20 @@ public interface Selector {
      */
     static Selector parse(String expression) {
         return Parser.parse(expression);
+    }
+
+    /**
+     * Creates a Selector from a {@link Node}.
+     *
+     * @param node Node to parse.
+     * @return Returns the created selector.
+     * @throws SourceException on error.
+     */
+    static Selector fromNode(Node node) {
+        try {
+            return parse(node.expectStringNode().getValue());
+        } catch (SelectorSyntaxException e) {
+            throw new SourceException(e.getMessage(), node, e);
+        }
     }
 }
