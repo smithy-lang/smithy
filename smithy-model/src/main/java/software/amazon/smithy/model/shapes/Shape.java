@@ -45,8 +45,8 @@ import software.amazon.smithy.utils.Tagged;
 public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Comparable<Shape> {
     private final ShapeId id;
     private final Map<ShapeId, Trait> traits;
-    private final SourceLocation source;
-    private final ShapeType type;
+    private final transient SourceLocation source;
+    private final transient ShapeType type;
 
     /**
      * This class is package-private, which means that all subclasses of this

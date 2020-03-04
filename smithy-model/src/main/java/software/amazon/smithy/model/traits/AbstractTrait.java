@@ -33,10 +33,10 @@ import software.amazon.smithy.model.shapes.ShapeId;
  */
 public abstract class AbstractTrait implements Trait {
 
-    private final ShapeId traitId;
-    private final SourceLocation traitSourceLocation;
-    private int cachedHashCode = 0;
-    private Node nodeCache;
+    private final transient ShapeId traitId;
+    private final transient SourceLocation traitSourceLocation;
+    private transient int cachedHashCode = 0;
+    private transient Node nodeCache;
 
     /**
      * @param id ID of the trait.

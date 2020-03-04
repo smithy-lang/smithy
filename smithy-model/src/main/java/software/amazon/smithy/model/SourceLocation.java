@@ -75,7 +75,9 @@ public final class SourceLocation implements FromSourceLocation {
 
     @Override
     public String toString() {
-        return String.format("%s [%d, %d]", filename, line, column);
+        return filename.isEmpty()
+               ? String.format("[%d, %d]", line, column)
+               : String.format("%s [%d, %d]", filename, line, column);
     }
 
     @Override

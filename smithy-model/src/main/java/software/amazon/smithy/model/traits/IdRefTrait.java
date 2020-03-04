@@ -132,8 +132,7 @@ public final class IdRefTrait extends AbstractTrait implements ToSmithyBuilder<I
             Builder builder = builder().sourceLocation(value);
             ObjectNode objectNode = value.expectObjectNode();
             objectNode.getStringMember(SELECTOR_MEMBER_ID)
-                    .map(StringNode::getValue)
-                    .map(Selector::parse)
+                    .map(Selector::fromNode)
                     .ifPresent(builder::selector);
             objectNode.getBooleanMember(FAIL_WHEN_MISSING_MEMBER)
                     .map(BooleanNode::getValue)
