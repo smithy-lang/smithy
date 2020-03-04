@@ -24,38 +24,53 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Emits a validation event if shapes or member names do not use strict
  * camelCasing (e.g., XmlRequest is preferred over XMLRequest).
- *
- * <p>This validator accepts the following optional configuration options:
- *
- * <ul>
- *     <li>allowedAbbreviations: ([string]) A list of abbreviation strings
- *      to permit.
- * </ul>
  */
 public final class AbbreviationNameValidator extends AbstractValidator {
-    private List<String> allowedAbbreviations;
 
-    private AbbreviationNameValidator(List<String> allowedAbbreviations) {
-        this.allowedAbbreviations = allowedAbbreviations;
+    /**
+     * AbbreviationName configuration settings.
+     */
+    public static final class Config {
+        private List<String> allowedAbbreviations = Collections.emptyList();
+
+        /**
+         * A list of abbreviation strings to permit.
+         *
+         * @return Returns the allowed abbreviations.
+         */
+        public List<String> getAllowedAbbreviations() {
+            return allowedAbbreviations;
+        }
+
+        public void setAllowedAbbreviations(List<String> allowedAbbreviations) {
+            this.allowedAbbreviations = ListUtils.copyOf(allowedAbbreviations);
+        }
     }
 
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
-            super(AbbreviationNameValidator.class, configuration -> new AbbreviationNameValidator(
-                    configuration.getArrayMember("allowedAbbreviations")
-                            .map(arr -> arr.getElementsAs(StringNode::getValue))
-                            .orElseGet(Collections::emptyList)));
+            super(AbbreviationNameValidator.class, configuration -> {
+                NodeMapper mapper = new NodeMapper();
+                return new AbbreviationNameValidator(mapper.deserialize(configuration, Config.class));
+            });
         }
+    }
+
+    private Config config;
+
+    private AbbreviationNameValidator(Config config) {
+        this.config = config;
     }
 
     @Override
@@ -85,7 +100,7 @@ public final class AbbreviationNameValidator extends AbstractValidator {
         // Build up the recommended name which will be compared against the actual name.
         StringBuilder recommendedWordBuilder = new StringBuilder();
         for (String word : splitCamelCaseWord(name)) {
-            if (allowedAbbreviations.contains(word)) {
+            if (config.getAllowedAbbreviations().contains(word)) {
                 // Leave allowed abbreviations as-is in the recommended word.
                 recommendedWordBuilder.append(word);
             } else if (!isInvalidWord(word)) {

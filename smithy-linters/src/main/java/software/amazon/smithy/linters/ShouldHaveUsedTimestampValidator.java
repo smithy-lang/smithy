@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.LongShape;
@@ -65,7 +65,34 @@ import software.amazon.smithy.utils.OptionalUtils;
  * lower-then-upper-cased characters, i.e. wordWord.</p>
  */
 public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
-    private static final List<String> ATTRIBUTES = ListUtils.of("additionalPatterns");
+
+    public static final class Config {
+        private List<Pattern> additionalPatterns = new ArrayList<>();
+
+        /**
+         * Sets a list of additional regular expression patterns that indicate a
+         * value carries a timestamp.
+         *
+         * @param additionalPatterns Additional patterns to add.
+         */
+        public void setAdditionalPatterns(List<Pattern> additionalPatterns) {
+            this.additionalPatterns = additionalPatterns;
+        }
+
+        public List<Pattern> getAdditionalPatterns() {
+            return additionalPatterns;
+        }
+    }
+
+    public static final class Provider extends ValidatorService.Provider {
+        public Provider() {
+            super(ShouldHaveUsedTimestampValidator.class, configuration -> {
+                Config config = new NodeMapper().deserialize(configuration, Config.class);
+                return new ShouldHaveUsedTimestampValidator(config);
+            });
+        }
+    }
+
     private static final List<Pattern> DEFAULT_PATTERNS = ListUtils.of(
             Pattern.compile("^.*[Tt]imestamp.*$"), // contains the string "timestamp"
             Pattern.compile("^[Tt]ime([_A-Z].*)?$"), // begins with the word "time"
@@ -76,28 +103,10 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
             Pattern.compile("^.*([a-z]O|_[Oo])n$") // ends with the word "on"
     );
 
-    private final List<Pattern> patterns;
+    private final List<Pattern> patterns = new ArrayList<>(DEFAULT_PATTERNS);
 
-    private ShouldHaveUsedTimestampValidator(List<Pattern> patterns) {
-        this.patterns = patterns;
-    }
-
-    public static final class Provider extends ValidatorService.Provider {
-        public Provider() {
-            super(ShouldHaveUsedTimestampValidator.class, configuration -> {
-                List<Pattern> patterns = new ArrayList<>(DEFAULT_PATTERNS);
-                configuration
-                        .warnIfAdditionalProperties(ATTRIBUTES)
-                        .getMember("additionalPatterns")
-                        .orElse(Node.arrayNode())
-                        .expectArrayNode()
-                        .getElements()
-                        .stream()
-                        .map(node -> Pattern.compile(node.expectStringNode().getValue()))
-                        .forEach(patterns::add);
-                return new ShouldHaveUsedTimestampValidator(patterns);
-            });
-        }
+    private ShouldHaveUsedTimestampValidator(Config config) {
+        patterns.addAll(config.getAdditionalPatterns());
     }
 
     @Override
