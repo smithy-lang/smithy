@@ -17,6 +17,8 @@ package software.amazon.smithy.linters;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -24,12 +26,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.selector.Selector;
-import software.amazon.smithy.model.selector.SelectorSyntaxException;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -60,77 +58,72 @@ import software.amazon.smithy.utils.OptionalUtils;
  * </ul>
  */
 public final class ReservedWordsValidator extends AbstractValidator {
-    private static final Pattern CONTAINS_INNER_WILDCARD = Pattern.compile("^.+\\*.+$");
 
-    private final List<ReservedWords> reservations;
+    /**
+     * ReservedWords validator configuration.
+     */
+    public static final class Config {
+        private List<ReservedWords> reserved = Collections.emptyList();
 
-    private ReservedWordsValidator(List<ReservedWords> reservations) {
-        this.reservations = reservations;
-    }
+        public List<ReservedWords> getReserved() {
+            return reserved;
+        }
 
-    public static final class Provider extends ValidatorService.Provider {
-        public Provider() {
-            super(ReservedWordsValidator.class, node -> new ReservedWordsValidator(
-                    node.expectArrayMember("reserved")
-                        .getElements().stream()
-                        .map(Node::expectObjectNode)
-                        .map(ReservedWordsValidator::createConfiguration)
-                        .collect(Collectors.toList())));
+        /**
+         * Sets the reserved words to validate.
+         *
+         * @param reserved Reserved words to set.
+         */
+        public void setReserved(List<ReservedWords> reserved) {
+            this.reserved = reserved;
         }
     }
 
-    @Override
-    public List<ValidationEvent> validate(Model model) {
-        return reservations.stream().flatMap(reservation -> reservation.validate(model))
-                .collect(Collectors.toList());
-    }
+    /**
+     * A single reserved words configuration.
+     */
+    public static final class ReservedWords {
+        private List<String> words = Collections.emptyList();
+        private Selector selector = Selector.IDENTITY;
+        private String reason = "";
 
-    private static ReservedWords createConfiguration(ObjectNode node) {
-        return new ReservedWords(parseReservedWords(node),
-                node.getStringMember("selector").orElse(Node.from("*")),
-                node.getStringMember("reason").map(StringNode::getValue).orElse(""));
-    }
-
-    private static List<String> parseReservedWords(ObjectNode node) {
-        // Load a list of reserved words, but throw an exception if a full
-        // wildcard or inner wildcard is specified.
-        return node.getArrayMember("words")
-                .map(reservations -> reservations.getElements().stream()
-                        .map(Node::expectStringNode)
-                        .map(ReservedWordsValidator::getValidReservationOrThrow)
-                        .collect(Collectors.toList()))
-                .orElseThrow(() -> new SourceException("A reservation must supply an array of strings "
-                                                       + "under `words`.", node));
-    }
-
-    private static String getValidReservationOrThrow(StringNode string) {
-        String value = string.getValue();
-        if (value.equals("*")) {
-            throw new SourceException("Reservations cannot be made against '*'", string);
-        }
-        if (CONTAINS_INNER_WILDCARD.matcher(value).find()) {
-            throw new SourceException("Only preceding and trailing wildcards ('*') are supported.", string);
-        }
-        return value.toLowerCase(Locale.US);
-    }
-
-    private static final class ReservedWords {
-        private List<String> reservations;
-        private Selector selector;
-        private String reason;
-
-        private ReservedWords(List<String> reservations, StringNode selector, String reason) {
-            this.reservations = reservations;
-            this.selector = parse(selector);
-            this.reason = reason;
-        }
-
-        private Selector parse(StringNode expression) {
-            try {
-                return Selector.parse(expression.getValue().trim());
-            } catch (SelectorSyntaxException e) {
-                throw new SourceException("Invalid selector expression: " + e.getMessage(), expression, e);
+        /**
+         * Sets the list of reserved word definitions.
+         *
+         * <p>Each word must be a valid word. The word cannot equal "*", and if present,
+         * "*", must appear at the start or end of the word.
+         *
+         * @param words Words to set.
+         */
+        public void setWords(List<String> words) {
+            this.words = new ArrayList<>(words.size());
+            for (String word : words) {
+                if (word.equals("*")) {
+                    throw new IllegalArgumentException("Reservations cannot be made against '*'");
+                }
+                if (CONTAINS_INNER_WILDCARD.matcher(word).find()) {
+                    throw new IllegalArgumentException("Only preceding and trailing wildcards ('*') are supported.");
+                }
+                this.words.add(word.toLowerCase(Locale.ENGLISH));
             }
+        }
+
+        /**
+         * Sets the selector to use for determining which shapes to validate.
+         *
+         * @param selector Selector to set.
+         */
+        public void setSelector(Selector selector) {
+            this.selector = selector;
+        }
+
+        /**
+         * Sets the reason for why the words are reserved.
+         *
+         * @param reason Reason to set.
+         */
+        public void setReason(String reason) {
+            this.reason = reason;
         }
 
         private Stream<ValidationEvent> validate(Model model) {
@@ -155,7 +148,7 @@ public final class ReservedWordsValidator extends AbstractValidator {
          */
         private boolean isReservedWord(String word) {
             String compare = word.toLowerCase(Locale.US);
-            return reservations.stream().anyMatch(reservation -> {
+            return words.stream().anyMatch(reservation -> {
                 // Comparisons against '*' have been rejected at configuration load.
                 if (reservation.startsWith("*")) {
                     if (reservation.endsWith("*")) {
@@ -178,5 +171,32 @@ public final class ReservedWordsValidator extends AbstractValidator {
                     .message(format("The word `%s` is reserved. %s", word, reason))
                     .build();
         }
+    }
+
+    public static final class Provider extends ValidatorService.Provider {
+        public Provider() {
+            super(ReservedWordsValidator.class, node -> {
+                NodeMapper mapper = new NodeMapper();
+                return new ReservedWordsValidator(mapper.deserialize(node, Config.class));
+            });
+        }
+    }
+
+    private static final Pattern CONTAINS_INNER_WILDCARD = Pattern.compile("^.+\\*.+$");
+
+    private final Config config;
+
+    private ReservedWordsValidator(Config config) {
+        this.config = config;
+
+        if (config.getReserved().isEmpty()) {
+            throw new IllegalArgumentException("Missing `reserved` words");
+        }
+    }
+
+    @Override
+    public List<ValidationEvent> validate(Model model) {
+        return config.getReserved().stream().flatMap(reservation -> reservation.validate(model))
+                .collect(Collectors.toList());
     }
 }
