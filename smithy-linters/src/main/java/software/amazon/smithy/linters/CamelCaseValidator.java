@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -33,34 +33,79 @@ import software.amazon.smithy.utils.FunctionalUtils;
 /**
  * Emits a validation event if shapes at a specific location do not match the
  * desired camel casing format.
- *
- * <p>This validator accepts the following optional configuration options:
- *
- * <ul>
- *     <li>memberNames: (string) one of "upper" or "lower" (default).</li>
- * </ul>
  */
 public final class CamelCaseValidator extends AbstractValidator {
-    private static final String UPPER = "upper";
-    private static final String LOWER = "lower";
-    private static final Pattern UPPER_CAMEL_CASE = Pattern.compile("^[A-Z]+[A-Za-z0-9]*$");
-    private static final Pattern LOWER_CAMEL_CASE = Pattern.compile("^[a-z]+[A-Za-z0-9]*$");
 
-    private final String memberNames;
+    /**
+     * CamelCase configuration settings.
+     */
+    public static final class Config {
+        private MemberNameHandling memberNames = MemberNameHandling.LOWER;
 
-    private CamelCaseValidator(String memberNames) {
-        this.memberNames = memberNames;
+        /**
+         * Gets how member names are to be cased.
+         *
+         * <p>One of "upper" or "lower" (default).
+         *
+         * @return returns member name casing.
+         */
+        public MemberNameHandling getMemberNames() {
+            return memberNames;
+        }
+
+        public void setMemberNames(MemberNameHandling memberNames) {
+            this.memberNames = memberNames;
+        }
+    }
+
+    public enum MemberNameHandling {
+        /**
+         * Member names are serialized using upper camel case (e.g., FooBar).
+         */
+        UPPER {
+            Pattern getRegex() {
+                return UPPER_CAMEL_CASE;
+            }
+
+            @Override
+            public String toString() {
+                return "upper";
+            }
+        },
+
+        /**
+         * Member names are serialized using lower camel case (e.g., fooBar).
+         */
+        LOWER {
+            Pattern getRegex() {
+                return LOWER_CAMEL_CASE;
+            }
+
+            @Override
+            public String toString() {
+                return "lower";
+            }
+        };
+
+        abstract Pattern getRegex();
     }
 
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
             super(CamelCaseValidator.class, configuration -> {
-                String memberNames = configuration.getStringMember("memberNames")
-                        .orElseGet(() -> Node.from(LOWER))
-                        .expectOneOf("upper", "lower");
-                return new CamelCaseValidator(memberNames);
+                NodeMapper mapper = new NodeMapper();
+                return new CamelCaseValidator(mapper.deserialize(configuration, Config.class));
             });
         }
+    }
+
+    private static final Pattern UPPER_CAMEL_CASE = Pattern.compile("^[A-Z]+[A-Za-z0-9]*$");
+    private static final Pattern LOWER_CAMEL_CASE = Pattern.compile("^[a-z]+[A-Za-z0-9]*$");
+
+    private final Config config;
+
+    private CamelCaseValidator(Config config) {
+        this.config = config;
     }
 
     @Override
@@ -71,30 +116,29 @@ public final class CamelCaseValidator extends AbstractValidator {
         model.shapes()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(shape -> !shape.hasTrait(TraitDefinition.class))
-                .filter(shape -> !getPattern(UPPER).matcher(shape.getId().getName()).find())
-                .map(shape -> danger(shape, format("%s shape name, `%s`, is not %s camel case",
-                                                   shape.getType(), shape.getId().getName(), UPPER)))
+                .filter(shape -> !MemberNameHandling.UPPER.getRegex().matcher(shape.getId().getName()).find())
+                .map(shape -> danger(shape, format(
+                        "%s shape name, `%s`, is not %s camel case",
+                        shape.getType(), shape.getId().getName(), MemberNameHandling.UPPER)))
                 .forEach(events::add);
 
         // Trait shapes are expected to be lower camel.
         model.shapes()
                 .filter(shape -> shape.hasTrait(TraitDefinition.class))
-                .filter(shape -> !getPattern(LOWER).matcher(shape.getId().getName()).find())
-                .map(shape -> danger(shape, format("%s trait definition, `%s`, is not lower camel case",
-                                                   shape.getType(), shape.getId().getName())))
+                .filter(shape -> !MemberNameHandling.LOWER.getRegex().matcher(shape.getId().getName()).find())
+                .map(shape -> danger(shape, format(
+                        "%s trait definition, `%s`, is not lower camel case",
+                        shape.getType(), shape.getId().getName())))
                 .forEach(events::add);
 
-        Pattern isValidMemberName = getPattern(memberNames);
+        Pattern isValidMemberName = config.getMemberNames().getRegex();
         model.shapes(MemberShape.class)
                 .filter(shape -> !isValidMemberName.matcher(shape.getMemberName()).find())
-                .map(shape -> danger(shape, format("Member shape member name, `%s`, is not %s camel case",
-                                                   shape.getMemberName(), memberNames)))
+                .map(shape -> danger(shape, format(
+                        "Member shape member name, `%s`, is not %s camel case",
+                        shape.getMemberName(), config.getMemberNames())))
                 .forEach(events::add);
 
         return events;
-    }
-
-    private static Pattern getPattern(String upperOrLower) {
-        return upperOrLower.equals("upper") ? UPPER_CAMEL_CASE : LOWER_CAMEL_CASE;
     }
 }

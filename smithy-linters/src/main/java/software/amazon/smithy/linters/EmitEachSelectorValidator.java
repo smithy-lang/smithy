@@ -18,10 +18,8 @@ package software.amazon.smithy.linters;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.selector.Selector;
-import software.amazon.smithy.model.selector.SelectorSyntaxException;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
@@ -30,33 +28,48 @@ import software.amazon.smithy.model.validation.ValidatorService;
  * Emits a validation event for each shape that matches a selector.
  */
 public final class EmitEachSelectorValidator extends AbstractValidator {
-    private final Selector selector;
 
-    private EmitEachSelectorValidator(Selector selector) {
-        this.selector = selector;
+    /**
+     * EmitEachSelector configuration settings.
+     */
+    public static final class Config {
+        private Selector selector;
+
+        /**
+         * Each shape that matches the given selector will emit a validation
+         * event.
+         *
+         * @return Selector to match on.
+         */
+        public Selector getSelector() {
+            return selector;
+        }
+
+        public void setSelector(Selector selector) {
+            this.selector = selector;
+        }
     }
 
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
             super(EmitEachSelectorValidator.class, configuration -> {
-                Selector selector = parse(configuration.expectStringMember("selector"));
-                return new EmitEachSelectorValidator(selector);
+                NodeMapper mapper = new NodeMapper();
+                Config config = mapper.deserialize(configuration, Config.class);
+                return new EmitEachSelectorValidator(config);
             });
         }
     }
 
-    private static Selector parse(StringNode expression) {
-        try {
-            return Selector.parse(expression.getValue().trim());
-        } catch (SelectorSyntaxException e) {
-            throw new SourceException("Invalid selector expression: " + e.getMessage(), expression, e);
-        }
+    private final Config config;
+
+    private EmitEachSelectorValidator(Config config) {
+        this.config = config;
     }
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return selector.select(model).stream()
-                .map(shape -> danger(shape, "Selector capture matched selector: " + selector))
+        return config.getSelector().select(model).stream()
+                .map(shape -> danger(shape, "Selector capture matched selector: " + config.getSelector()))
                 .collect(Collectors.toList());
     }
 }
