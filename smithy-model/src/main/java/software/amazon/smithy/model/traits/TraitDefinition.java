@@ -21,14 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.selector.Selector;
-import software.amazon.smithy.model.selector.SelectorSyntaxException;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ToShapeId;
@@ -181,7 +179,7 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
             Builder builder = builder().sourceLocation(value);
 
             members.getMember(TraitDefinition.SELECTOR_KEY)
-                    .map(this::loadSelector)
+                    .map(Selector::fromNode)
                     .ifPresent(builder::selector);
 
             members.getBooleanMember(TraitDefinition.STRUCTURALLY_EXCLUSIVE_KEY)
@@ -193,14 +191,6 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
                             .forEach(builder::addConflict));
 
             return builder.build();
-        }
-
-        private Selector loadSelector(Node node) {
-            try {
-                return Selector.parse(node.expectStringNode().getValue());
-            } catch (SelectorSyntaxException e) {
-                throw new SourceException(e.getMessage(), node, e);
-            }
         }
     }
 }

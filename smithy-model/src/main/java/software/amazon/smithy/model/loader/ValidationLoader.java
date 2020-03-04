@@ -27,7 +27,6 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.selector.Selector;
-import software.amazon.smithy.model.selector.SelectorSyntaxException;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -97,13 +96,7 @@ final class ValidationLoader {
         def.configuration = node.getObjectMember("configuration").orElse(Node.objectNode());
 
         node.getStringMember("selector").ifPresent(selector -> {
-            try {
-                def.selector = Selector.parse(selector.getValue());
-            } catch (SelectorSyntaxException e) {
-                throw new SourceException(
-                        String.format("Invalid validator selector `%s`: %s", selector.getValue(), e.getMessage()),
-                        selector, e);
-            }
+            def.selector = Selector.fromNode(selector);
         });
 
         return def;

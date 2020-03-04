@@ -21,4 +21,8 @@
     <suppress checks="EqualsHashCode" files="shapes/*"/>
     <suppress checks="InnerAssignment" files="StringUtils"/>
     <suppress checks="TypeName" files="AwsJson1_0Trait.java|AwsJson1_1Trait.java"/>
+
+    <!-- This has to be in the given order due to forward references. -->
+    <suppress checks="DeclarationOrder" files="DefaultNodeSerializers.java"/>
+    <suppress checks="DeclarationOrder" files="DefaultNodeDeserializers.java"/>
 </suppressions>
