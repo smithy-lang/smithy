@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -247,7 +248,7 @@ final class DefaultNodeSerializers {
         private static final ConcurrentMap<Class, ClassInfo> CACHE = new ConcurrentHashMap<>();
 
         // Methods aren't returned normally in any particular order, so give them an order.
-        final Map<String, Method> getters = new TreeMap<>(String::compareToIgnoreCase);
+        final Map<String, Method> getters = new HashMap<>();
 
         static ClassInfo fromClass(Class<?> type) {
             return CACHE.computeIfAbsent(type, klass -> {
@@ -327,7 +328,7 @@ final class DefaultNodeSerializers {
 
             // Add the current value to the set.
             serializedObjects.add(value);
-            Map<StringNode, Node> mappings = new HashMap<>();
+            Map<StringNode, Node> mappings = new TreeMap<>(Comparator.comparing(StringNode::getValue));
             ClassInfo info = ClassInfo.fromClass(value.getClass());
 
             for (Map.Entry<String, Method> entry : info.getters.entrySet()) {

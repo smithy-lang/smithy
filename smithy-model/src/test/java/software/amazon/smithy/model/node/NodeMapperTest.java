@@ -61,6 +61,15 @@ public class NodeMapperTest {
     }
 
     @Test
+    public void serializesAlphabetically() {
+        NodeMapper mapper = new NodeMapper();
+        ObjectNode result = mapper.serialize(new Foo()).expectObjectNode();
+        Collection<String> keys = result.getStringMap().keySet();
+
+        assertThat(keys, contains("bar", "baz"));
+    }
+
+    @Test
     public void serializesCollectionsAndArrays() {
         NodeMapper mapper = new NodeMapper();
         List<String> foos = ListUtils.of("a", "b", "c");
