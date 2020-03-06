@@ -22,6 +22,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -289,6 +290,7 @@ final class DefaultNodeDeserializers {
     };
 
     static final class BeanMapper {
+        // Cache of Pair<types, member-name> to a Pair<Method, Parameterized type of input type>
         private static final ConcurrentMap<Pair<Class<?>, String>, Pair<Method, Class>> SETTER_CACHE
                 = new ConcurrentHashMap<>();
 
@@ -326,11 +328,9 @@ final class DefaultNodeDeserializers {
                 }
                 Class target = pair.left;
                 for (Method method : target.getMethods()) {
-                    if (isRightKindOfMethod(method)) {
-                        if (isBeanSetter(method, sanitized) || isBuilderSetter(method, target, sanitized)) {
-                            Class parameterizedType = determineParameterizedType(method);
-                            return Pair.of(method, parameterizedType);
-                        }
+                    if (isBeanOrBuilderSetter(method, target, sanitized)) {
+                        Class parameterizedType = determineParameterizedType(method);
+                        return Pair.of(method, parameterizedType);
                     }
                 }
                 return null;
@@ -360,17 +360,32 @@ final class DefaultNodeDeserializers {
             return result.toString();
         }
 
-        private static boolean isRightKindOfMethod(Method method) {
-            return method.getParameters().length == 1 && !Modifier.isStatic(method.getModifiers());
-        }
+        private static boolean isBeanOrBuilderSetter(Method method, Class<?> type, String propertyName) {
+            if (Modifier.isStatic(method.getModifiers())) {
+                return false;
+            }
 
-        private static boolean isBeanSetter(Method method, String propertyName) {
-            String setterName = "set" + StringUtils.capitalize(propertyName);
-            return method.getName().equals(setterName) && method.getReturnType().equals(void.class);
-        }
+            Parameter[] parameters = method.getParameters();
+            if (parameters.length != 1) {
+                return false;
+            }
 
-        private static boolean isBuilderSetter(Method method, Class<?> type, String propertyName) {
-            return method.getName().equals(propertyName) && type == method.getReturnType();
+            // Must either return the target class itself (like a builder) or void.
+            if (method.getReturnType() != void.class && method.getReturnType() != type) {
+                return false;
+            }
+
+            // x(x)
+            if (method.getName().equals(propertyName)) {
+                return true;
+            }
+
+            // setX(x)
+            if (method.getName().equals("set" + StringUtils.capitalize(propertyName))) {
+                return true;
+            }
+
+            return false;
         }
 
         private static Class<?> determineParameterizedType(Method setter) {
