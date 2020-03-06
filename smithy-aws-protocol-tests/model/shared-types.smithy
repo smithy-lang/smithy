@@ -7,6 +7,15 @@
 
 $version: "0.5.0"
 
+metadata suppressions = [{
+    ids: ["DeprecatedTrait"],
+    reason: """
+        Some of the AWS protocols make use of deprecated traits, and some are
+        themselves deprecated traits. As this package is intended to test those
+        protocols, the warnings should be suppressed.
+        """
+}]
+
 namespace aws.protocoltests.shared
 
 list StringList {
