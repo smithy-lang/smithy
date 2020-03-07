@@ -32,7 +32,7 @@ public class ProjectionConfigTest {
                 .args(ListUtils.of("baz"))
                 .build();
         ProjectionConfig p = ProjectionConfig.builder()
-                .isAbstract(false)
+                .setAbstract(false)
                 .transforms(ListUtils.of(t))
                 .build();
 

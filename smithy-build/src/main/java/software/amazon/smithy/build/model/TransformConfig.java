@@ -17,15 +17,13 @@ package software.amazon.smithy.build.model;
 
 import java.util.Collections;
 import java.util.List;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
  * Transform configuration found in a projection.
  */
-public final class TransformConfig implements ToNode {
+public final class TransformConfig {
     private final String name;
     private final List<String> args;
 
@@ -50,14 +48,6 @@ public final class TransformConfig implements ToNode {
      */
     public List<String> getArgs() {
         return args;
-    }
-
-    @Override
-    public Node toNode() {
-        return Node.objectNodeBuilder()
-                .withMember("name", Node.from(getName()))
-                .withMember("args", Node.fromStrings(args))
-                .build();
     }
 
     public static final class Builder implements SmithyBuilder<TransformConfig> {

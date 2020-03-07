@@ -39,6 +39,9 @@ import software.amazon.smithy.model.transform.ModelTransformer;
  * and writes the artifacts to a {@link FileManifest}.
  */
 public final class SmithyBuild {
+    /** The version of Smithy build. */
+    public static final String VERSION = "1.0";
+
     SmithyBuildConfig config;
     Path importBasePath;
     Path outputDirectory;
