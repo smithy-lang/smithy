@@ -16,15 +16,12 @@
 package software.amazon.smithy.build;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -79,8 +76,8 @@ public class SmithyBuildTest {
     @Test
     public void throwsForUnknownTransform() throws Exception {
         Assertions.assertThrows(UnknownTransformException.class, () -> {
-            SmithyBuildConfig config = SmithyBuildConfig.load(
-                    Paths.get(getClass().getResource("unknown-transform.json").toURI()));
+            SmithyBuildConfig config = SmithyBuildConfig
+                    .load(Paths.get(getClass().getResource("unknown-transform.json").toURI()));
             new SmithyBuild().config(config).build();
         });
     }
@@ -185,6 +182,7 @@ public class SmithyBuildTest {
     public void cannotSetFiltersOrMappersOnSourceProjection() {
         Throwable thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
             SmithyBuildConfig config = SmithyBuildConfig.builder()
+                    .version(SmithyBuild.VERSION)
                     .projections(MapUtils.of("source", ProjectionConfig.builder()
                             .transforms(ListUtils.of(TransformConfig.builder().name("foo").build()))
                             .build()))
@@ -432,6 +430,7 @@ public class SmithyBuildTest {
     public void pluginsMustHaveValidNames() {
         Throwable thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
             SmithyBuildConfig config = SmithyBuildConfig.builder()
+                    .version(SmithyBuild.VERSION)
                     .plugins(MapUtils.of("!invalid", Node.objectNode()))
                     .build();
             new SmithyBuild().config(config).build();

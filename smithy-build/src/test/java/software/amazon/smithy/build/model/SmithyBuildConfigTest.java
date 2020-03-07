@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.build.SmithyBuildTest;
 import software.amazon.smithy.model.SourceException;
@@ -86,7 +87,10 @@ public class SmithyBuildConfigTest {
     @Test
     public void canAddImports() {
         String importPath = getResourcePath("simple-model.json");
-        SmithyBuildConfig config = SmithyBuildConfig.builder().imports(ListUtils.of(importPath)).build();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .imports(ListUtils.of(importPath))
+                .build();
 
         assertThat(config.getImports(), containsInAnyOrder(importPath));
     }
@@ -102,7 +106,9 @@ public class SmithyBuildConfigTest {
 
     @Test
     public void addsBuiltinPlugins() {
-        SmithyBuildConfig config = SmithyBuildConfig.builder().build();
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .version(SmithyBuild.VERSION)
+                .build();
 
         assertThat(config.getPlugins(), hasKey("build-info"));
         assertThat(config.getPlugins(), hasKey("model"));

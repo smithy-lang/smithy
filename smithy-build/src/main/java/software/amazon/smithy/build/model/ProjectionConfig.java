@@ -21,10 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.build.SmithyBuildException;
-import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -32,7 +29,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
 /**
  * ProjectionConfig stored in a {@link SmithyBuildConfig}.
  */
-public final class ProjectionConfig implements ToNode {
+public final class ProjectionConfig {
     private final boolean isAbstract;
     private final List<String> imports;
     private final List<TransformConfig> transforms;
@@ -83,28 +80,6 @@ public final class ProjectionConfig implements ToNode {
         return imports;
     }
 
-    @Override
-    public Node toNode() {
-        ObjectNode.Builder result = Node.objectNodeBuilder();
-        if (isAbstract) {
-            result.withMember("abstract", Node.from(true));
-        }
-
-        if (!imports.isEmpty()) {
-            result.withMember("imports", imports.stream().map(Node::from).collect(ArrayNode.collect()));
-        }
-
-        return result
-                .withMember("transforms", createTransformerNode(getTransforms()))
-                .withMember("plugins", getPlugins().entrySet().stream()
-                        .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue)))
-                .build();
-    }
-
-    private static Node createTransformerNode(List<TransformConfig> values) {
-        return values.stream().map(TransformConfig::toNode).collect(ArrayNode.collect());
-    }
-
     /**
      * Builds a {@link ProjectionConfig}.
      */
@@ -133,7 +108,7 @@ public final class ProjectionConfig implements ToNode {
          * @param isAbstract Set to true to mark as abstract.
          * @return Returns the builder.
          */
-        public Builder isAbstract(boolean isAbstract) {
+        public Builder setAbstract(boolean isAbstract) {
             this.isAbstract = isAbstract;
             return this;
         }
