@@ -40,6 +40,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfig> {
     private static final Set<String> BUILTIN_PLUGINS = SetUtils.of("build-info", "model", "sources");
 
+    private final String version;
     private final List<String> imports;
     private final String outputDirectory;
     private final Map<String, ProjectionConfig> projections;
@@ -47,6 +48,8 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     private final Path importBasePath;
 
     private SmithyBuildConfig(Builder builder) {
+        SmithyBuilder.requiredState("version", builder.version);
+        version = builder.version;
         importBasePath = builder.importBasePath;
         outputDirectory = builder.outputDirectory;
         imports = ListUtils.copyOf(builder.imports);
@@ -108,12 +111,22 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     @Override
     public Builder toBuilder() {
         Builder builder = builder()
+                .version(version)
                 .outputDirectory(outputDirectory)
                 .imports(imports)
                 .projections(projections)
                 .plugins(plugins);
         builder.importBasePath = importBasePath;
         return builder;
+    }
+
+    /**
+     * Gets the version of Smithy-Build.
+     *
+     * @return Returns the version.
+     */
+    public String getVersion() {
+        return version;
     }
 
     /**
@@ -170,6 +183,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         private final List<String> imports = new ArrayList<>();
         private final Map<String, ProjectionConfig> projections = new LinkedHashMap<>();
         private final Map<String, ObjectNode> plugins = new LinkedHashMap<>();
+        private String version;
         private String outputDirectory;
         private Path importBasePath;
 
@@ -178,6 +192,17 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
         @Override
         public SmithyBuildConfig build() {
             return new SmithyBuildConfig(this);
+        }
+
+        /**
+         * Sets the builder config file version.
+         *
+         * @param version Version to set.
+         * @return Returns the builder.
+         */
+        public Builder version(String version) {
+            this.version = version;
+            return this;
         }
 
         /**
@@ -199,6 +224,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
          */
         public Builder merge(SmithyBuildConfig config) {
             config.getOutputDirectory().ifPresent(this::outputDirectory);
+            version(config.getVersion());
             imports.addAll(config.getImports());
             projections.putAll(config.getProjections());
             plugins.putAll(config.getPlugins());
