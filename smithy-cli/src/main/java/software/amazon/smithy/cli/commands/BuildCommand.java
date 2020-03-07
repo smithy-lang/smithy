@@ -88,6 +88,8 @@ public final class BuildCommand implements Command {
         if (config != null) {
             Cli.stdout(String.format("Loading Smithy configs: [%s]", String.join(" ", config)));
             config.forEach(file -> configBuilder.load(Paths.get(file)));
+        } else {
+            configBuilder.version(SmithyBuild.VERSION);
         }
 
         if (output != null) {
