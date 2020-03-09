@@ -19,13 +19,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.util.Collections;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.TagsTrait;
-import software.amazon.smithy.model.transform.ModelTransformer;
 
 public class IncludeTagsTest {
 
@@ -41,9 +41,11 @@ public class IncludeTagsTest {
                 .build();
         Shape shape3 = StringShape.builder().id("ns.foo#shape3").build();
         Model model = Model.builder().addShapes(shape1, shape2, shape3).build();
-        Model result = new IncludeTags()
-                .createTransformer(Collections.singletonList("foo"))
-                .apply(ModelTransformer.create(), model);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode().withMember("tags", Node.fromStrings("foo")))
+                .build();
+        Model result = new IncludeTags().transform(context);
 
         assertThat(result.expectShape(shape1.getId()).getTags(), contains("foo"));
         assertThat(result.expectShape(shape2.getId()), equalTo(shape2));

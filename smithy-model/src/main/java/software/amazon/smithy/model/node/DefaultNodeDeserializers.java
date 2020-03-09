@@ -60,7 +60,7 @@ final class DefaultNodeDeserializers {
 
     // Deserialize an exact type if it matches (i.e., the setter expects a Node value).
     private static final ObjectCreatorFactory EXACT_CREATOR_FACTORY = (nodeType, targetType) -> {
-        return targetType == nodeType.getNodeClass()
+        return Node.class.isAssignableFrom(targetType) && targetType.isAssignableFrom(nodeType.getNodeClass())
                ? (node, target, param, pointer, mapper) -> node
                : null;
     };

@@ -13,26 +13,27 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.build.plugins;
+package software.amazon.smithy.build.transforms;
 
-import software.amazon.smithy.build.PluginContext;
-import software.amazon.smithy.build.SmithyBuildPlugin;
+import software.amazon.smithy.build.ProjectionTransformer;
+import software.amazon.smithy.build.TransformContext;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.NodeMapper;
 
 /**
- * An abstract class used to more easily implement a Smithy build plugin
- * that expects configuration input in a specific type, {@code T}.
+ * An abstract class used to more easily implement a Smithy build projection
+ * transformer that expects configuration input in a specific type, {@code T}.
  *
  * <p>This class will automatically deserialize the given {@code Node}
- * value in the {@code T} and invoke {@link #executeWithConfig(PluginContext, Object)}
+ * value in the {@code T} and invoke {@link #transformWithConfig(TransformContext, Object)}
  * with the deserialized configuration of type {@code T}.
  *
- * <p><strong>If your build plugin requires configuration, then you typically
+ * <p><strong>If your build transformer requires configuration, then you typically
  * should just extend this class.</strong></p>
  *
  * @param <T> The configuration setting type (e.g., a POJO).
  */
-public abstract class ConfigurableSmithyBuildPlugin<T> implements SmithyBuildPlugin {
+public abstract class ConfigurableProjectionTransformer<T> implements ProjectionTransformer {
     /**
      * Gets the configuration class type.
      *
@@ -44,24 +45,26 @@ public abstract class ConfigurableSmithyBuildPlugin<T> implements SmithyBuildPlu
      * on the builder POJO, and finally the result of calling the
      * {@code build} method is used as the configuration type. Finally,
      * the deserializer will attempt to create the type and call setters on
-     * it that correspond to property names.
+     * the instantiated object that correspond to property names (either named
+     * "set" + property name, or just property name).
      *
      * @return Returns the configuration class (a POJO with setters/getters).
      */
     public abstract Class<T> getConfigType();
 
     @Override
-    public void execute(PluginContext context) {
+    public Model transform(TransformContext context) {
         NodeMapper mapper = new NodeMapper();
         T config = mapper.deserialize(context.getSettings(), getConfigType());
-        executeWithConfig(context, config);
+        return transformWithConfig(context, config);
     }
 
     /**
-     * Executes the plugin using the deserialized configuration object.
+     * Executes the transform using the deserialized configuration object.
      *
-     * @param context Plugin context.
+     * @param context Transform context.
      * @param config Deserialized configuration object.
+     * @return Returns the transformed model.
      */
-    protected abstract void executeWithConfig(PluginContext context, T config);
+    protected abstract Model transformWithConfig(TransformContext context, T config);
 }

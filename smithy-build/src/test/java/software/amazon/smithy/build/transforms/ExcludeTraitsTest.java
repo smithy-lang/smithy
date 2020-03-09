@@ -20,16 +20,16 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
-import software.amazon.smithy.model.transform.ModelTransformer;
 
 public class ExcludeTraitsTest {
 
@@ -44,9 +44,11 @@ public class ExcludeTraitsTest {
                 .addShape(stringShape)
                 .assemble()
                 .unwrap();
-        Model result = new ExcludeTraits()
-                .createTransformer(Collections.singletonList("documentation"))
-                .apply(ModelTransformer.create(), model);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode().withMember("traits", Node.fromStrings("documentation")))
+                .build();
+        Model result = new ExcludeTraits().transform(context);
 
         assertThat(result.expectShape(ShapeId.from("ns.foo#baz")).getTrait(DocumentationTrait.class),
                    is(Optional.empty()));

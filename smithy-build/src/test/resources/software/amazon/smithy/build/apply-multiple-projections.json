@@ -3,24 +3,74 @@
   "projections": {
     "a": {
       "transforms": [
-        {"name": "includeByTag", "args": ["foo", "baz"]},
-        {"name": "apply", "args": ["excludeLength"]},
-        {"name": "excludeTraits", "args": ["documentation"]},
+        {
+          "name": "includeByTag",
+          "args": {
+            "projections": [
+              "foo",
+              "baz"
+            ]
+          }
+        },
+        {
+          "name": "apply",
+          "args": {
+            "projections": [
+              "excludeLength"
+            ]
+          }
+        },
+        {
+          "name": "excludeTraits",
+          "args": {
+            "projections": [
+              "documentation"
+            ]
+          }
+        },
         // No issue with applying it multiple times.
-        {"name": "apply", "args": ["excludeLength"]}
+        {
+          "name": "apply",
+          "args": {
+            "projections": [
+              "excludeLength"
+            ]
+          }
+        }
       ]
     },
     "excludeLength": {
       "abstract": true,
       "transforms": [
-        {"name": "excludeTraits", "args": ["length"]},
-        {"name": "apply", "args": ["excludeTags"]}
+        {
+          "name": "excludeTraits",
+          "args": {
+            "projections": [
+              "length"
+            ]
+          }
+        },
+        {
+          "name": "apply",
+          "args": {
+            "projections": [
+              "excludeTags"
+            ]
+          }
+        }
       ]
     },
     "excludeTags": {
       "abstract": true,
       "transforms": [
-        {"name": "excludeTraits", "args": ["tags"]}
+        {
+          "name": "excludeTraits",
+          "args": {
+            "traits": [
+              "tags"
+            ]
+          }
+        }
       ]
     }
   }
