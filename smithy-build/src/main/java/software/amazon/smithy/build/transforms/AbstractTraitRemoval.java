@@ -18,6 +18,7 @@ package software.amazon.smithy.build.transforms;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import software.amazon.smithy.build.ProjectionTransformer;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
@@ -26,6 +27,9 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.Pair;
 
 abstract class AbstractTraitRemoval implements ProjectionTransformer {
+
+    private static final Logger LOGGER = Logger.getLogger(AbstractTraitRemoval.class.getName());
+
     Pair<Set<ShapeId>, Set<String>> parseTraits(List<String> arguments) {
         Set<ShapeId> traitNames = new HashSet<>();
         Set<String> traitNamespaces = new HashSet<>();
@@ -36,6 +40,9 @@ abstract class AbstractTraitRemoval implements ProjectionTransformer {
             } else if (arg.equals(Prelude.NAMESPACE)) {
                 // For backwards compatibility, support "smithy.api" instead
                 // of "smithy.api#".
+                LOGGER.warning("Deprecation warning in " + getName() + ": Support for `smithy.api` as a trait name "
+                               + "is deprecated and will be removed in future releases. Update this value to "
+                               + "`smithy.api#`.");
                 traitNamespaces.add(arg);
             } else {
                 traitNames.add(ShapeId.from(Trait.makeAbsoluteName(arg)));
