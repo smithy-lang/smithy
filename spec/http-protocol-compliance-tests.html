@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -75,7 +74,9 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="AWS Core Specification" href="aws-core.html" />
-    <link rel="prev" title="MQTT Protocol Bindings" href="mqtt.html" /> 
+    <link rel="prev" title="MQTT Protocol Bindings" href="mqtt.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   </head><body>
     <header>
         <div class="header-flex width-wrapper">
@@ -180,10 +181,10 @@ input parameters.</dd>
 </div>
 </dd>
 <dt>Value type</dt>
-<dd>[<code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code>]</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code> structures</dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code> objects
-that support the following properties:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpRequestTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpRequestTestCase</span></code> structures
+that support the following members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -227,7 +228,7 @@ It's possible that specific authentication schemes might influence
 the serialization logic of an HTTP request.</td>
 </tr>
 <tr class="row-odd"><td>queryParams</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
 <td><p class="first">A list of the expected serialized query string parameters.</p>
 <p>Each element in the list is a query string key value pair
 that starts with the query string parameter name optionally
@@ -252,7 +253,7 @@ in the request differs from the expected value.</p>
 </td>
 </tr>
 <tr class="row-even"><td>forbidQueryParams</td>
-<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
 <td><p class="first">A list of query string parameter names that must not appear in the
 serialized HTTP request.</p>
 <p class="last">Each value MUST appear in the format in which it is sent over the
@@ -261,7 +262,7 @@ percent-encoded in this list.</p>
 </td>
 </tr>
 <tr class="row-odd"><td>requireQueryParams</td>
-<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
 <td><p class="first">A list of query string parameter names that MUST appear in the
 serialized request URI, but no assertion is made on the value.</p>
 <p class="last">Each value MUST appear in the format in which it is sent over the
@@ -270,7 +271,7 @@ percent-encoded in this list.</p>
 </td>
 </tr>
 <tr class="row-even"><td>headers</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">String&gt;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">string&gt;</span></code></td>
 <td><p class="first">A map of expected HTTP headers. Each key represents a header field
 name and each value represents the expected header value. An HTTP
 request is not in compliance with the protocol if any listed header
@@ -452,10 +453,10 @@ of output or error parameters.</dd>
 </div>
 </dd>
 <dt>Value type</dt>
-<dd>[<code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code>]</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code> structures</dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code> objects
-that support the following properties:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpResponseTests</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">HttpResponseTestCase</span></code>
+structures that support the following members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -494,7 +495,7 @@ It's possible that specific authentication schemes might influence
 the serialization logic of an HTTP response.</td>
 </tr>
 <tr class="row-even"><td>headers</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">String&gt;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">string&gt;</span></code></td>
 <td><p class="first">A map of expected HTTP headers. Each key represents a header field
 name and each value represents the expected header value. An HTTP
 response is not in compliance with the protocol if any listed header
@@ -504,12 +505,12 @@ value differs from the serialized response value.</p>
 </td>
 </tr>
 <tr class="row-odd"><td>forbidHeaders</td>
-<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
 <td>A list of header field names that must not appear in the serialized
 HTTP response.</td>
 </tr>
 <tr class="row-even"><td>requireHeaders</td>
-<td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
 <td>A list of header field names that must appear in the serialized
 HTTP response, but no assertion is made on the value. Headers listed
 in <code class="docutils literal notranslate"><span class="pre">headers</span></code> do not need to appear in this list.</td>

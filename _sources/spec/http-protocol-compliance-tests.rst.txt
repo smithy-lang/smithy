@@ -71,10 +71,10 @@ Trait selector
 
         operation
 Value type
-    [``HttpRequestTestCase``]
+    ``list`` of ``HttpRequestTestCase`` structures
 
-The ``httpRequestTests`` trait is a list of ``HttpRequestTestCase`` objects
-that support the following properties:
+The ``httpRequestTests`` trait is a list of ``HttpRequestTestCase`` structures
+that support the following members:
 
 .. list-table::
     :header-rows: 1
@@ -108,7 +108,7 @@ that support the following properties:
         It's possible that specific authentication schemes might influence
         the serialization logic of an HTTP request.
     * - queryParams
-      - ``[string]``
+      - ``list<string>``
       - A list of the expected serialized query string parameters.
 
         Each element in the list is a query string key value pair
@@ -135,7 +135,7 @@ that support the following properties:
 
         ``queryParams`` applies no constraints on additional query parameters.
     * - forbidQueryParams
-      - [``string``]
+      - ``list<string>``
       - A list of query string parameter names that must not appear in the
         serialized HTTP request.
 
@@ -143,7 +143,7 @@ that support the following properties:
         wire; if a key needs to be percent-encoded, then it MUST appear
         percent-encoded in this list.
     * - requireQueryParams
-      - [``string``]
+      - ``list<string>``
       - A list of query string parameter names that MUST appear in the
         serialized request URI, but no assertion is made on the value.
 
@@ -151,7 +151,7 @@ that support the following properties:
         wire; if a key needs to be percent-encoded, then it MUST appear
         percent-encoded in this list.
     * - headers
-      - ``Map<String, String>``
+      - ``map<string, string>``
       - A map of expected HTTP headers. Each key represents a header field
         name and each value represents the expected header value. An HTTP
         request is not in compliance with the protocol if any listed header
@@ -316,10 +316,10 @@ Trait selector
 
         :each(operation, structure[trait|error])
 Value type
-    [``HttpResponseTestCase``]
+    ``list`` of ``HttpResponseTestCase`` structures
 
-The ``httpResponseTests`` trait is a list of ``HttpResponseTestCase`` objects
-that support the following properties:
+The ``httpResponseTests`` trait is a list of ``HttpResponseTestCase``
+structures that support the following members:
 
 .. list-table::
     :header-rows: 1
@@ -349,7 +349,7 @@ that support the following properties:
         It's possible that specific authentication schemes might influence
         the serialization logic of an HTTP response.
     * - headers
-      - ``Map<String, String>``
+      - ``map<string, string>``
       - A map of expected HTTP headers. Each key represents a header field
         name and each value represents the expected header value. An HTTP
         response is not in compliance with the protocol if any listed header
@@ -358,11 +358,11 @@ that support the following properties:
 
         ``headers`` applies no constraints on additional headers.
     * - forbidHeaders
-      - [``string``]
+      - ``list<string>``
       - A list of header field names that must not appear in the serialized
         HTTP response.
     * - requireHeaders
-      - [``string``]
+      - ``list<string>``
       - A list of header field names that must appear in the serialized
         HTTP response, but no assertion is made on the value. Headers listed
         in ``headers`` do not need to appear in this list.

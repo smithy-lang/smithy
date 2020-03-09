@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -75,7 +74,9 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Model Validation" href="validation.html" />
-    <link rel="prev" title="HTTP protocol bindings" href="http.html" /> 
+    <link rel="prev" title="HTTP protocol bindings" href="http.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   </head><body>
     <header>
         <div class="header-flex width-wrapper">
@@ -984,12 +985,12 @@ or member.</dd>
 <p class="last"><em>A structure, union, or member</em></p>
 </dd>
 <dt>Value type</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">string</span></code> value that MUST adhere to the <a class="reference internal" href="#grammar-token-xml-name"><code class="xref std std-token docutils literal notranslate"><span class="pre">xml_name</span></code></a> ABNF production:</p>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">string</span></code> value that MUST adhere to the <a class="reference internal" href="#grammar-token-xml_name"><code class="xref std std-token docutils literal notranslate"><span class="pre">xml_name</span></code></a> ABNF production:</p>
 <pre class="last">
-<strong id="grammar-token-xml-name">xml_name</strong> =
+<strong id="grammar-token-xml_name">xml_name</strong> =
     xml_identifier / (xml_identifier &quot;:&quot; xml_identifier)
 
-<strong id="grammar-token-xml-identifier">xml_identifier</strong> =
+<strong id="grammar-token-xml_identifier">xml_identifier</strong> =
     (ALPHA / &quot;_&quot;) *(ALPHA / DIGIT / &quot;-&quot; / &quot;_&quot;)
 </pre>
 </dd>
@@ -1071,11 +1072,11 @@ following</p>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
 <dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">object</span></code> value</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 <dt>Conflicts with</dt>
 <dd><a class="reference internal" href="#xmlattribute-trait"><span class="std std-ref">xmlAttribute trait</span></a></dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">xmlNamespace</span></code> trait is an object that contains the following properties:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">xmlNamespace</span></code> trait is a structure that contains the following members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -1097,7 +1098,7 @@ following</p>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code> value</td>
 <td>The <a class="reference external" href="https://www.w3.org/TR/REC-xml-names/#NT-Prefix">namespace prefix</a> for elements from this namespace. Values
 provides for <code class="docutils literal notranslate"><span class="pre">prefix</span></code> property MUST adhere to the
-<a class="reference internal" href="#grammar-token-xml-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">xml_identifier</span></code></a> production.</td>
+<a class="reference internal" href="#grammar-token-xml_identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">xml_identifier</span></code></a> production.</td>
 </tr>
 </tbody>
 </table>

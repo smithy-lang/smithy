@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -75,7 +74,9 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="AWS IAM traits" href="aws-iam.html" />
-    <link rel="prev" title="HTTP Protocol Compliance Tests" href="http-protocol-compliance-tests.html" /> 
+    <link rel="prev" title="HTTP Protocol Compliance Tests" href="http-protocol-compliance-tests.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   </head><body>
     <header>
         <div class="header-flex width-wrapper">
@@ -167,7 +168,7 @@ generate AWS SDK client classes and the namespace used in ARNs.</dd>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt>
-<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">object</span></code> that contains the following properties:</p>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span></code> that contains the following members:</p>
 <ul class="last simple">
 <li><a class="reference internal" href="#service-sdk-id"><span class="std std-ref">sdkId</span></a> (required)</li>
 <li><a class="reference internal" href="#service-cloudformation-name"><span class="std std-ref">cloudFormationName</span></a></li>
@@ -390,10 +391,10 @@ and their abbreviations.</p>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
 <dt>Trait value</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">object</span></code></dd>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait is an object that supports the following
-properties:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait is a structure that supports the following
+members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -648,14 +649,14 @@ JSON</div>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 <dt>Trait value</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">object</span></code></dd>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>Smithy models can refer to AWS resources using ARNs. The
 <code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> can be applied to a string shape to indicate
 that the string contains an ARN and what resource is targeted by the
 ARN.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait is an object that supports the following
-optional properties:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait is a structure that supports the following
+optional members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -1076,7 +1077,7 @@ the operation.</p>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
 <dt>Value type</dt>
-<dd>List of authentication scheme strings</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> of authentication schemes</dd>
 </dl>
 <p>Most requests sent to AWS services require that the payload of the request is
 signed. However, in some cases, a service that streams large amounts of data
@@ -1264,10 +1265,10 @@ returned when the endpoint being accessed has expired.</dd>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Trait value</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">object</span></code></dd>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait is an object that supports the
-following properties:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait is a structure that supports the
+following members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -1317,10 +1318,10 @@ should use the client's endpoint discovery logic.</dd>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
 <dt>Trait value</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">object</span></code></dd>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait is an object that supports the
-following properties:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait is a structure that supports the
+following members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />

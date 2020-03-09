@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -75,7 +74,9 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Smithy Guides" href="../guides/index.html" />
-    <link rel="prev" title="AWS IAM traits" href="aws-iam.html" /> 
+    <link rel="prev" title="AWS IAM traits" href="aws-iam.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   </head><body>
     <header>
         <div class="header-flex width-wrapper">
@@ -225,11 +226,11 @@ this service.</dd>
 <p class="last"><em>A service shape that has the protocols trait</em></p>
 </dd>
 <dt>Value type</dt>
-<dd>Map of arbitrary names to <em>authorizer</em> definitions. These authorizer
+<dd><code class="docutils literal notranslate"><span class="pre">map</span></code> of arbitrary names to <em>authorizer</em> definitions. These authorizer
 definitions are applied to a service, resource, or operation using the
 <a class="reference internal" href="#aws-apigateway-authorizer-trait"><span class="std std-ref">aws.apigateway#authorizer trait</span></a>.</dd>
 </dl>
-<p>An <em>authorizer</em> definition is an object that supports the following properties:</p>
+<p>An <em>authorizer</em> definition is a structure that supports the following members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -378,7 +379,7 @@ the effective authorizer applied to a parent resource or operation.</dd>
 <p class="last"><em>A service, resource, or operation</em></p>
 </dd>
 <dt>Value type</dt>
-<dd>String value that MUST reference one of the keys in the
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that MUST reference one of the keys in the
 <a class="reference internal" href="#aws-apigateway-authorizers-trait"><span class="std std-ref">aws.apigateway#authorizers trait</span></a> of the service that contains
 the shape.</dd>
 </dl>
@@ -409,13 +410,13 @@ operation.</dd>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>full</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">full</span></code></td>
 <td>The parameters and body of a request are validated.</td>
 </tr>
-<tr class="row-odd"><td>params-only</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">params-only</span></code></td>
 <td>Only the parameters of a request are validated.</td>
 </tr>
-<tr class="row-even"><td>body-only</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">body-only</span></code></td>
 <td>Only the body of a request is validated.</td>
 </tr>
 </tbody>
@@ -489,7 +490,7 @@ backend.</dd>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">operation)</span></code></dd>
 <dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">object</span></code> value.</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 <dt>See also</dt>
 <dd><ul class="first last simple">
 <li><a class="reference internal" href="../guides/converting-to-openapi.html#apigateway-integrations"><span class="std std-ref">Integrations</span></a> for information on how this converts
@@ -500,8 +501,8 @@ to OpenAPI</li>
 </ul>
 </dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait is an object that supports the
-following properties:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait is a structure that supports the
+following members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -582,21 +583,21 @@ value is <code class="docutils literal notranslate"><span class="pre">INTERNET</
 <td>An API-specific tag group of related cached parameters.</td>
 </tr>
 <tr class="row-even"><td>cacheKeyParameters</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
 <td>A list of request parameter names whose values are to be cached.</td>
 </tr>
 <tr class="row-odd"><td>requestParameters</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map</span></code> of <a class="reference internal" href="#apigateway-requestparameters"><span class="std std-ref">requestParameters object</span></a> to request parameters</td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of <a class="reference internal" href="#apigateway-requestparameters"><span class="std std-ref">requestParameters structure</span></a> to request parameters</td>
 <td>Specifies mappings from method request parameters to integration
 request parameters. Supported request parameters are querystring,
 path, header, and body.</td>
 </tr>
 <tr class="row-even"><td>requestTemplates</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map</span></code> of media types to <a class="reference internal" href="#apigateway-requesttemplates"><span class="std std-ref">requestTemplates object</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of media types to <a class="reference internal" href="#apigateway-requesttemplates"><span class="std std-ref">requestTemplates structure</span></a></td>
 <td>Mapping templates for a request payload of specified media types.</td>
 </tr>
 <tr class="row-odd"><td>responses</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map</span></code> of response codes to <a class="reference internal" href="#apigateway-responses"><span class="std std-ref">responses object</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of response codes to <a class="reference internal" href="#apigateway-responses"><span class="std std-ref">responses structure</span></a></td>
 <td>Defines the method's responses and specifies desired parameter
 mappings or payload mappings from integration responses to method
 responses.</td>
@@ -680,8 +681,10 @@ customers.</p>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">operation)</span></code></dd>
 <dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">object</span></code> value.</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait is a structure that supports the
+following members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -703,17 +706,17 @@ values are <code class="docutils literal notranslate"><span class="pre">when_no_
 For more information, see <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/#passthroughBehavior">Integration.passthroughBehavior</a>.</td>
 </tr>
 <tr class="row-odd"><td>requestParameters</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map</span></code> of <a class="reference internal" href="#apigateway-requestparameters"><span class="std std-ref">requestParameters object</span></a> to request parameters</td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of <a class="reference internal" href="#apigateway-requestparameters"><span class="std std-ref">requestParameters structure</span></a> to request parameters</td>
 <td>Specifies mappings from method request parameters to integration
 request parameters. Supported request parameters are querystring,
 path, header, and body.</td>
 </tr>
 <tr class="row-even"><td>requestTemplates</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map</span></code> of media types to <a class="reference internal" href="#apigateway-requesttemplates"><span class="std std-ref">requestTemplates object</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of media types to <a class="reference internal" href="#apigateway-requesttemplates"><span class="std std-ref">requestTemplates structure</span></a></td>
 <td>Mapping templates for a request payload of specified media types.</td>
 </tr>
 <tr class="row-odd"><td>responses</td>
-<td><code class="docutils literal notranslate"><span class="pre">Map</span></code> of response codes to <a class="reference internal" href="#apigateway-responses"><span class="std std-ref">responses object</span></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of response codes to <a class="reference internal" href="#apigateway-responses"><span class="std std-ref">responses structure</span></a></td>
 <td>Defines the method's responses and specifies desired parameter
 mappings or payload mappings from integration responses to method
 responses.</td>
@@ -795,8 +798,8 @@ Base64-decoded blob or passing through a binary payload natively
 without modification.</li>
 </ul>
 </div>
-<div class="section" id="requestparameters-object">
-<span id="apigateway-requestparameters"></span><h4>requestParameters object<a class="headerlink" href="#requestparameters-object" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="requestparameters-structure">
+<span id="apigateway-requestparameters"></span><h4>requestParameters structure<a class="headerlink" href="#requestparameters-structure" title="Permalink to this headline">¶</a></h4>
 <p>Specifies mappings from named method request parameters to integration
 request parameters. The method request parameters must be defined before
 they are referenced.</p>
@@ -815,7 +818,7 @@ they are referenced.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">integration.request.&lt;param-type&gt;.&lt;param-name&gt;</span></code></td>
-<td>string</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>The value must be a predefined method request parameter of the
 <code class="docutils literal notranslate"><span class="pre">method.request.&lt;param-type&gt;.&lt;param-name&gt;</span></code> format, where
 <code class="docutils literal notranslate"><span class="pre">&lt;param-type&gt;</span></code> can be querystring, path, header, or body. For
@@ -838,8 +841,8 @@ header (x-userid), and path parameters (op), respectively.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="requesttemplates-object">
-<span id="apigateway-requesttemplates"></span><h4>requestTemplates object<a class="headerlink" href="#requesttemplates-object" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="requesttemplates-structure">
+<span id="apigateway-requesttemplates"></span><h4>requestTemplates structure<a class="headerlink" href="#requesttemplates-structure" title="Permalink to this headline">¶</a></h4>
 <p>Specifies mapping templates for a request payload of the specified media types.</p>
 <p><strong>Properties</strong></p>
 <table border="1" class="colwidths-given docutils">
@@ -856,7 +859,7 @@ header (x-userid), and path parameters (op), respectively.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&lt;Media</span> <span class="pre">type&gt;</span></code></td>
-<td>string</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>A <a class="reference external" href="mappingtemplates">mapping template</a>.</td>
 </tr>
 </tbody>
@@ -872,8 +875,8 @@ header (x-userid), and path parameters (op), respectively.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="responses-object">
-<span id="apigateway-responses"></span><h4>responses object<a class="headerlink" href="#responses-object" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="responses-structure">
+<span id="apigateway-responses"></span><h4>responses structure<a class="headerlink" href="#responses-structure" title="Permalink to this headline">¶</a></h4>
 <p>Defines the method's responses and specifies parameter mappings or payload
 mappings from integration responses to method responses.</p>
 <p><strong>Properties</strong></p>
@@ -891,7 +894,7 @@ mappings from integration responses to method responses.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&lt;Response</span> <span class="pre">status</span> <span class="pre">pattern&gt;</span></code></td>
-<td><a class="reference internal" href="#apigateway-response-object"><span class="std std-ref">Response object</span></a></td>
+<td><a class="reference internal" href="#apigateway-response-structure"><span class="std std-ref">Response structure</span></a></td>
 <td><p class="first">Selection regular expression used to match the integration response
 to the method response. For HTTP integrations, this regex applies to
 the integration response status code. For Lambda invocations, the
@@ -936,8 +939,8 @@ property on the integration response's payload.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="response-object">
-<span id="apigateway-response-object"></span><h4>response object<a class="headerlink" href="#response-object" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="response-structure">
+<span id="apigateway-response-structure"></span><h4>response structure<a class="headerlink" href="#response-structure" title="Permalink to this headline">¶</a></h4>
 <p>Defines a response and specifies parameter mappings or payload mappings from
 the integration response to the method response.</p>
 <p><strong>Properties</strong></p>
@@ -955,18 +958,18 @@ the integration response to the method response.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>statusCode</td>
-<td>string</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>HTTP status code for the method response; for example, &quot;200&quot;. This
 must correspond to a matching response in the OpenAPI Operation
 responses field.</td>
 </tr>
 <tr class="row-odd"><td>responseTemplates</td>
-<td><a class="reference internal" href="#apigateway-response-templates-object"><span class="std std-ref">Response templates object</span></a></td>
+<td><a class="reference internal" href="#apigateway-response-templates-structure"><span class="std std-ref">Response templates structure</span></a></td>
 <td>Specifies media type-specific mapping templates for the response's
 payload.</td>
 </tr>
 <tr class="row-even"><td>responseParameters</td>
-<td><a class="reference internal" href="#apigateway-response-parameters-object"><span class="std std-ref">Response parameters object</span></a></td>
+<td><a class="reference internal" href="#apigateway-response-parameters-structure"><span class="std std-ref">Response parameters structure</span></a></td>
 <td>Specifies parameter mappings for the response. Only the header and
 body parameters of the integration response can be mapped to the header
 parameters of the method.</td>
@@ -994,8 +997,8 @@ redirect URL from the integration response in the method's Location header.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="response-templates-object">
-<span id="apigateway-response-templates-object"></span><h4>Response templates object<a class="headerlink" href="#response-templates-object" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="response-templates-structure">
+<span id="apigateway-response-templates-structure"></span><h4>Response templates structure<a class="headerlink" href="#response-templates-structure" title="Permalink to this headline">¶</a></h4>
 <p>Specifies mapping templates for a response payload of the specified
 media types.</p>
 <p><strong>Properties</strong></p>
@@ -1013,7 +1016,7 @@ media types.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&lt;Media</span> <span class="pre">type&gt;</span></code></td>
-<td>string</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>Specifies a mapping template to transform the integration response
 body to the method response body for a given media type. For
 information about creating a mapping template, see
@@ -1033,8 +1036,8 @@ information about creating a mapping template, see
 </pre></div>
 </div>
 </div>
-<div class="section" id="response-parameters-object">
-<span id="apigateway-response-parameters-object"></span><h4>Response parameters object<a class="headerlink" href="#response-parameters-object" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="response-parameters-structure">
+<span id="apigateway-response-parameters-structure"></span><h4>Response parameters structure<a class="headerlink" href="#response-parameters-structure" title="Permalink to this headline">¶</a></h4>
 <p>Specifies mappings from integration method response parameters to method
 response parameters. Only the <code class="docutils literal notranslate"><span class="pre">header</span></code> and <code class="docutils literal notranslate"><span class="pre">body</span></code> types of the integration
 response parameters can be mapped to the <code class="docutils literal notranslate"><span class="pre">header</span></code> type of the method
@@ -1054,7 +1057,7 @@ response.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">method.response.header.&lt;param-name&gt;</span></code></td>
-<td>string</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>The named parameter value can be derived from the header and body
 types of the integration response parameters only.</td>
 </tr>
@@ -1099,12 +1102,12 @@ integration response to two <code class="docutils literal notranslate"><span cla
 <li><a class="reference internal" href="#aws-apigateway-mockintegration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait</a></li>
 <li><a class="reference internal" href="#shared-trait-data-types">Shared trait data types</a><ul>
 <li><a class="reference internal" href="#contenthandling-string">ContentHandling string</a></li>
-<li><a class="reference internal" href="#requestparameters-object">requestParameters object</a></li>
-<li><a class="reference internal" href="#requesttemplates-object">requestTemplates object</a></li>
-<li><a class="reference internal" href="#responses-object">responses object</a></li>
-<li><a class="reference internal" href="#response-object">response object</a></li>
-<li><a class="reference internal" href="#response-templates-object">Response templates object</a></li>
-<li><a class="reference internal" href="#response-parameters-object">Response parameters object</a></li>
+<li><a class="reference internal" href="#requestparameters-structure">requestParameters structure</a></li>
+<li><a class="reference internal" href="#requesttemplates-structure">requestTemplates structure</a></li>
+<li><a class="reference internal" href="#responses-structure">responses structure</a></li>
+<li><a class="reference internal" href="#response-structure">response structure</a></li>
+<li><a class="reference internal" href="#response-templates-structure">Response templates structure</a></li>
+<li><a class="reference internal" href="#response-parameters-structure">Response parameters structure</a></li>
 </ul>
 </li>
 </ul>

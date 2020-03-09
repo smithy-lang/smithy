@@ -1748,7 +1748,7 @@ Given the following model,
             identifiers: {
                 forecastId: ForecastId,
             },
-            operations: [BatchPutForecasts],
+            collectionOperations: [BatchPutForecasts],
         }
 
         operation BatchPutForecasts {
@@ -1773,7 +1773,7 @@ Given the following model,
                             "target": "smithy.example#ForecastId"
                         }
                     },
-                    "operations": [
+                    "collectionOperations": [
                         {
                             "target": "smithy.example#BatchPutForecasts"
                         }
@@ -2799,7 +2799,7 @@ a :ref:`list` shape:
     @tags(["foo", "baz", "bar"])
     string MyString
 
-    // This is a valid trait collision on an array trait, tags.
+    // This is a valid trait collision on a list trait, tags.
     // tags becomes ["foo", "baz", "bar", "bar", "qux"]
     apply MyString @tags(["bar", "qux"])
 
@@ -2894,7 +2894,8 @@ automatically available in every Smithy model through relative shape IDs.
 Trait definition properties
 ---------------------------
 
-The trait definition trait is an object that supports the following properties:
+The trait definition trait is a structure that supports the following
+members:
 
 .. list-table::
     :header-rows: 1
@@ -3184,9 +3185,9 @@ Summary
 Trait selector
     ``*``
 Value type
-    ``object``
+    ``structure``
 
-The ``deprecated`` trait is an object that supports the following properties:
+The ``deprecated`` trait is a structure that supports the following members:
 
 .. list-table::
     :header-rows: 1
@@ -3322,18 +3323,18 @@ Summary
 Trait selector
     ``string``
 Value type
-    ``map`` of enum constant values to objects optionally containing a name,
+    ``map`` of enum constant values to structures optionally containing a name,
     documentation, tags, and/or a deprecation flag.
 
 Smithy models SHOULD apply the enum trait when string shapes have a fixed
 set of allowable values.
 
 The enum trait is a map of allowed string values to enum constant definition
-objects. Enum values do not allow aliasing; all enum constant values MUST be
+structures. Enum values do not allow aliasing; all enum constant values MUST be
 unique across the entire set.
 
-An enum definition is an object that supports the following optional
-properties:
+An enum definition is a structure that supports the following optional
+members:
 
 .. list-table::
     :header-rows: 1
@@ -3362,7 +3363,7 @@ properties:
       - string
       - Defines documentation about the enum value in the CommonMark_ format.
     * - tags
-      - ``List<string>``
+      - ``list<string>``
       - Attaches a list of tags that allow the enum value to be categorized and
         grouped.
     * - deprecated
@@ -3463,10 +3464,10 @@ Trait selector
 
     *A string shape or a member that targets a string shape*
 Value type
-    ``object``
+    ``structure``
 
-The ``idRef`` trait is an object that supports the following optional
-properties:
+The ``idRef`` trait is a structure that supports the following optional
+members:
 
 .. list-table::
     :header-rows: 1
@@ -3613,9 +3614,9 @@ Trait selector
 
     *Any list, map, string, or blob; or a member that targets one of these shapes*
 Value type
-    ``object`` value
+    ``structure``
 
-The length trait is an object that contains the following key value pairs:
+The length trait is a structure that contains the following members:
 
 .. list-table::
     :header-rows: 1
@@ -3681,7 +3682,7 @@ Trait selector
 
     *A string or a member that targets a string*
 Value type
-    ``string`` value
+    ``string``
 
 Smithy regular expressions MUST be valid regular expressions according to the
 `ECMA 262 regular expression dialect`_. Patterns SHOULD avoid the use of
@@ -3743,9 +3744,9 @@ Trait selector
 
     *A number or a member that targets a number*
 Value type
-    ``object`` value
+    ``structure``
 
-The length trait is an object that contains the following key value pairs:
+The length trait is a structure that contains the following members:
 
 .. list-table::
     :header-rows: 1
@@ -3755,10 +3756,10 @@ The length trait is an object that contains the following key value pairs:
       - Type
       - Description
     * - min
-      - ``number``
+      - ``bigDecimal``
       - Specifies the allowed inclusive minimum value.
     * - max
-      - ``number``
+      - ``bigDecimal``
       - Specifies the allowed inclusive maximum value.
 
 At least one of ``min`` or ``max`` is required. ``min`` and ``max`` accept both
@@ -3999,9 +4000,9 @@ Trait selector
 
     *A structure shape with the error trait*
 Value type
-    ``object``
+    ``structure``
 
-The retryable trait is an object that contains the following key value pairs:
+The retryable trait is a structure that contains the following members:
 
 .. list-table::
     :header-rows: 1
@@ -4045,13 +4046,13 @@ Trait selector
 
     *An operation or service*
 Value type
-    ``object`` value
+    ``structure``
 
 Pagination is the process of dividing large result sets into discrete
 pages. Smithy provides a built-in pagination mechanism that utilizes a
 cursor.
 
-The ``paginated`` trait is an object that contains the following properties:
+The ``paginated`` trait is a structure that contains the following members:
 
 .. list-table::
     :header-rows: 1
@@ -4503,10 +4504,10 @@ Trait selector
 
     *Any structure or string*
 Value type
-    ``array``
+    ``list`` of ``Reference`` structures
 
-The ``references`` trait is an array of ``Reference`` objects that contain the
-following properties:
+The ``references`` trait is a list of ``Reference`` structures that contain
+the following members:
 
 .. list-table::
     :header-rows: 1
@@ -4530,7 +4531,7 @@ following properties:
         The reference will not be resolvable at build time but MAY be resolvable
         at runtime if the tool has loaded more than one model.
     * - ids
-      - Map<String, String>
+      - ``map<string, string>``
       - Defines a mapping of each resource identifier name to a structure
         member name that provides its value. Each key in the map MUST refer
         to one of the identifier names in the identifiers property of the
@@ -4542,7 +4543,7 @@ following properties:
         - This property MAY be omitted if the identifiers of the resource
           can be :ref:`mapped implicitly <implicit-ids>`.
     * - rel
-      - String
+      - ``string``
       - Defines the semantics of the relationship. The ``rel`` property SHOULD
         contain a link relation as defined in :rfc:`5988#section-4` (i.e.,
         this value SHOULD contain either a `standard link relation`_ or URI).
@@ -4616,7 +4617,7 @@ Trait selector
 
     *Any required member of a structure that targets a string*
 Value type
-    ``string`` value
+    ``string``
 
 The ``resourceIdentifier`` trait may only be used on members of structures that
 serve as input shapes for operations bound to resources. The string value
@@ -4672,7 +4673,7 @@ Summary
 Trait selector
     ``service``
 Value type
-    ``array`` of protocol ``object``
+    ``list`` of protocol ``structure``
 
 Smithy is protocol agnostic, which means it focuses on the interfaces and
 abstractions that are provided to end-users rather than how the data is sent
@@ -4688,8 +4689,8 @@ protocols supported by the service and the authentication schemes that each
 protocol supports. A client MUST understand at least one of the protocols in
 order to successfully communicate with the service.
 
-The value of the ``protocols`` trait is an array of protocol objects. Each
-protocol object supports the following key-value pairs:
+The value of the ``protocols`` trait is a list of protocol structures. Each
+protocol structure supports the following members:
 
 .. list-table::
     :header-rows: 1
@@ -4704,12 +4705,12 @@ protocol object supports the following key-value pairs:
         the entire list and MUST match the following regular expression:
         ``^[a-z][a-z0-9\-.+]*$``.
     * - auth
-      - ``List<string>``
+      - ``list<string>``
       - A priority ordered list of authentication schemes supported by this
         protocol. Each value MUST match the following regular expression:
         ``^[a-z][a-z0-9\-.+]*$``.
     * - tags
-      - ``List<string>``
+      - ``list<string>``
       - Attaches a list of tags that allow the protocol to be categorized and
         grouped.
 
@@ -4810,7 +4811,7 @@ Trait selector
 
     *Service or operation shapes*
 Value type
-    This trait contains a priority ordered list of string values that
+    ``list<string>`` which represents a priority ordered list of values that
     reference authentication schemes defined on a service shape.
 
 The ``auth`` trait is used to explicitly define which authentication schemes
@@ -5007,7 +5008,7 @@ Trait selector
 
     *Any structure member*
 Value type
-    ``string`` value
+    ``string``
 
 Given the following structure definition,
 
@@ -5075,7 +5076,7 @@ Trait selector
 
     *Any blob or string*
 Value type
-    ``string`` value
+    ``string``
 
 The ``mediaType`` can be used in tools for documentation, validation,
 automated conversion or encoding in code, automatically determining an
@@ -5103,7 +5104,7 @@ Trait selector
 
     *timestamp or member that targets a timestamp*
 Value type
-    ``string`` value
+    ``string``
 
 The serialization format of a timestamp shape is normally dictated by the
 :ref:`protocol <protocols-trait>` of a service. In order to interoperate with
@@ -5156,7 +5157,7 @@ Summary
 Trait selector
     ``*``
 Value type
-    ``string`` value
+    ``string``
 
 .. tabs::
 
@@ -5240,15 +5241,15 @@ Summary
 Trait selector
     ``operation``
 Value type
-    ``array`` of :ref:`example objects <example-object>`
+    ``list`` of :ref:`example structures <example-structure>`
 
 
-.. _example-object:
+.. _example-structure:
 
-Example object
-``````````````
+Example structure
+`````````````````
 
-Each ``example`` trait value is an object with the following properties:
+Each ``example`` trait value is a structure with the following members:
 
 .. list-table::
     :header-rows: 1
@@ -5264,17 +5265,17 @@ Each ``example`` trait value is an object with the following properties:
       - ``string``
       - A longer description of the example in the CommonMark_ format.
     * - input
-      - ``object``
+      - ``document``
       - Provides example input parameters for the operation. Each key is
         the name of a top-level input structure member, and each value is the
         value of the member.
     * - output
-      - ``object``
+      - ``document``
       - Provides example output parameters for the operation. Each key is
         the name of a top-level output structure member, and each value is the
         value of the member.
 
-The values provided for the ``input`` and ``output`` properties MUST be
+The values provided for the ``input`` and ``output`` members MUST be
 compatible with the shapes and constraints of the corresponding structure.
 These values use the same semantics and format as
 :ref:`custom trait values <trait-definition-values>`.
@@ -5321,7 +5322,7 @@ Summary
 Trait selector
     ``*``
 Value type
-    ``string`` value containing a valid URL.
+    ``string`` containing a valid URL.
 
 .. tabs::
 
@@ -5371,7 +5372,7 @@ Summary
 Trait selector
     ``*``
 Value type
-    ``string`` value representing the date it was added.
+    ``string`` representing the date it was added.
 
 
 .. _tags-trait:
@@ -5385,7 +5386,7 @@ Summary
 Trait selector
     ``*``
 Value type
-    ``array`` of ``string`` values
+    ``list<string>``
 
 Tools can use these tags to filter shapes that should not be visible for a
 particular consumer of a model. The string values that can be provided to the
@@ -5451,9 +5452,9 @@ Summary
 Trait selector
     ``operation``
 Value type
-    ``object``
+    ``structure``
 
-The ``endpoint`` trait is an object that contains the following properties:
+The ``endpoint`` trait is a structure that contains the following members:
 
 .. list-table::
     :header-rows: 1

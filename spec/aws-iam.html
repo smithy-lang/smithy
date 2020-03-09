@@ -10,10 +10,10 @@
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom-tabs.css" type="text/css" />
 
     
@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/tabs.js"></script>
     <script type="text/javascript" src="../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript">
         function _scroll(subjectId) {
             var subjectElement = $(subjectId);
@@ -75,7 +74,9 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Amazon API Gateway Integrations" href="amazon-apigateway.html" />
-    <link rel="prev" title="AWS Core Specification" href="aws-core.html" /> 
+    <link rel="prev" title="AWS Core Specification" href="aws-core.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   </head><body>
     <header>
         <div class="header-flex width-wrapper">
@@ -189,7 +190,7 @@ JSON</div>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">:test(resource,</span> <span class="pre">operation)</span></code></dd>
 <dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">array</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> values</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></dd>
 </dl>
 <p>Condition keys derived automatically can be applied to a resource or operation
 explicitly. Condition keys applied this way MUST be either inferred or
@@ -304,13 +305,13 @@ addition to inferred and global condition keys.</dd>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt>
-<dd><code class="docutils literal notranslate"><span class="pre">map</span></code> of IAM identifiers to condition key <code class="docutils literal notranslate"><span class="pre">object</span></code></dd>
+<dd><code class="docutils literal notranslate"><span class="pre">map</span></code> of IAM identifiers to condition key <code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait defines additional condition keys
 that appear within a service. Keys in the map must be valid IAM identifiers,
 meaning they must adhere to the following regular expression:
 <code class="docutils literal notranslate"><span class="pre">&quot;^([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:[^:]+)$&quot;</span></code>.
-Each condition key object supports the following key-value pairs:</p>
+Each condition key structure supports the following members:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="10%" />
@@ -334,11 +335,11 @@ be one of: <code class="docutils literal notranslate"><span class="pre">ARN</spa
 for more information.</td>
 </tr>
 <tr class="row-odd"><td>documentation</td>
-<td>string</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>Defines documentation about the condition key.</td>
 </tr>
 <tr class="row-even"><td>externalDocumentation</td>
-<td>string</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>A valid URL that defines more information about the condition key.</td>
 </tr>
 </tbody>
@@ -569,8 +570,8 @@ executing the targeted operation.</dd>
 <dt>Trait selector</dt>
 <dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
 <dt>Value type</dt>
-<dd>This trait contains an unordered list of string values that reference
-condition keys defined in the closure of the service.</dd>
+<dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value references condition keys
+defined in the closure of the service.</dd>
 </dl>
 <p>Defines the actions, in addition to the targeted operation, that a user must
 be authorized to execute in order invoke an operation. The following example
