@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.build.model.TransformConfig;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.utils.ListUtils;
 
 public class ProjectionConfigTest {
@@ -29,7 +30,7 @@ public class ProjectionConfigTest {
     public void buildsProjections() {
         TransformConfig t = TransformConfig.builder()
                 .name("foo")
-                .args(ListUtils.of("baz"))
+                .args(Node.objectNode().withMember("__args", Node.fromStrings("baz")))
                 .build();
         ProjectionConfig p = ProjectionConfig.builder()
                 .setAbstract(false)

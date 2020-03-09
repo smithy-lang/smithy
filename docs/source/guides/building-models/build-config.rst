@@ -67,8 +67,18 @@ The following is an example ``smithy-build.json`` configuration:
                 "projection-name": {
                     "imports": ["projection-specific-imports/"],
                     "transforms": [
-                        {"name": "excludeShapesByTag", "args": ["internal", "beta", "..."]},
-                        {"name": "excludeTraitsByTag", "args": ["internal"]}
+                        {
+                            "name": "excludeShapesByTag",
+                            "args": {
+                                "tags": ["internal", "beta", "..."]
+                            }
+                        },
+                        {
+                            "name": "excludeTraitsByTag",
+                            "args": {
+                                "tags": ["internal"]
+                            }
+                        }
                     ],
                     "plugins": {
                         "plugin-name": {
@@ -167,7 +177,6 @@ Transforms are applied to the model, in order.
 
 A transform accepts the following configuration:
 
-
 .. list-table::
     :header-rows: 1
     :widths: 10 20 70
@@ -179,8 +188,8 @@ A transform accepts the following configuration:
       - ``string``
       - The required name of the transform.
     * - args
-      - ``string[]``
-      - Provides a list of arguments to pass to the transform.
+      - ``structure``
+      - A structure that contains configuration key-value pairs.
 
 
 .. _apply-transform:
@@ -188,10 +197,21 @@ A transform accepts the following configuration:
 apply
 -----
 
-Applies the transforms defined in the given projection names. Each provided
-name must be a valid projection name. The transforms of the referenced
-projections are applied in the order provided. No cycles are allowed in
-``apply``.
+Applies the transforms defined in the given projection names.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - projections
+      - ``[string]``
+      - The ordered list of projection names to apply. Each provided
+        name must be a valid projection name. The transforms of the
+        referenced projections are applied in the order provided.
+        No cycles are allowed in ``apply``.
 
 .. tabs::
 
@@ -210,7 +230,12 @@ projections are applied in the order provided. No cycles are allowed in
                     "imports": ["projection-specific-imports/"],
                     "transforms": [
                         {"name": "baz"},
-                        {"name": "apply", "args": ["my-abstract-projection"]},
+                        {
+                            "name": "apply",
+                            "args": {
+                                "projections": ["my-abstract-projection"]
+                            }
+                        },
                         {"name": "bar"}
                     ]
                 }
@@ -225,8 +250,19 @@ excludeShapesByTag
 
 Aliases: ``excludeByTag`` (deprecated)
 
-Removes shapes if they are tagged with one or more of the given arguments via
+Removes shapes if they are tagged with one or more of the given ``tags`` via
 the :ref:`tags trait <tags-trait>`.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - tags
+      - ``[string]``
+      - The set of tags that causes shapes to be removed.
 
 .. tabs::
 
@@ -237,7 +273,12 @@ the :ref:`tags trait <tags-trait>`.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "excludeByTag", "args": ["foo", "baz"]}
+                        {
+                            "name": "excludeByTag",
+                            "args": {
+                                "tags": ["foo", "baz"]
+                            }
+                        }
                     ]
                 }
             }
@@ -255,8 +296,19 @@ includeShapesByTag
 
 Aliases: ``includeByTag`` (deprecated)
 
-Removes shapes that are not tagged with at least one of the given arguments
+Removes shapes that are not tagged with at least one of the given ``tags``
 via the :ref:`tags trait <tags-trait>`.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - tags
+      - ``[string]``
+      - The set of tags that causes shapes to be retained in the model.
 
 .. tabs::
 
@@ -267,7 +319,12 @@ via the :ref:`tags trait <tags-trait>`.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeByTag", "args": ["foo", "baz"]}
+                        {
+                            "name": "includeByTag",
+                            "args": {
+                                "tags": ["foo", "baz"]
+                            }
+                        }
                     ]
                 }
             }
@@ -286,6 +343,17 @@ includeNamespaces
 Filters out shapes that are not part of one of the given :ref:`namespaces <namespaces>`.
 Note that this does not filter out traits based on namespaces.
 
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - namespaces
+      - ``[string]``
+      - The namespaces to include in the model.
+
 .. tabs::
 
     .. code-tab:: json
@@ -295,7 +363,12 @@ Note that this does not filter out traits based on namespaces.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeNamespaces", "args": ["com.foo.bar", "my.api"]}
+                        {
+                            "name": "includeNamespaces",
+                            "args": {
+                                "namespaces": ["com.foo.bar", "my.api"]
+                            }
+                        }
                     ]
                 }
             }
@@ -311,8 +384,20 @@ Note that this does not filter out traits based on namespaces.
 includeServices
 ---------------
 
-Filters out service shapes that are not included in the arguments list of
-service shape IDs.
+Filters out service shapes that are not included in the ``services`` list of
+shape IDs.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - services
+      - ``[string]``
+      - The service shape IDs to include in the model. Each entry MUST be
+        a valid service shape ID.
 
 .. tabs::
 
@@ -323,7 +408,12 @@ service shape IDs.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeServices", "args": ["my.api#MyService"]}
+                        {
+                            "name": "includeServices",
+                            "args": {
+                                "services": ["my.api#MyService"]
+                            }
+                        }
                     ]
                 }
             }
@@ -336,8 +426,18 @@ excludeTags
 -----------
 
 Removes tags from shapes and trait definitions that match any of the
-provided arguments (a list of allowed tags).
+provided ``tags``.
 
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - tags
+      - ``[string]``
+      - The set of tags that are removed from the model.
 
 .. tabs::
 
@@ -348,7 +448,12 @@ provided arguments (a list of allowed tags).
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "excludeTags", "args": ["tagA", "tagB"]}
+                        {
+                            "name": "excludeTags",
+                            "args": {
+                                "tags": ["tagA", "tagB"]
+                            }
+                        }
                     ]
                 }
             }
@@ -361,12 +466,26 @@ excludeTraits
 -------------
 
 Removes trait definitions from a model if the trait name is present in the
-provided list of arguments. Any instance of a removed trait is also removed
+provided list of ``traits``. Any instance of a removed trait is also removed
 from shapes in the model.
 
 The shapes that make up trait definitions that are removed *are not*
 automatically removed from the model. Use ``removeUnusedShapes`` to remove
 orphaned shapes.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - traits
+      - ``[string]``
+      - The set of traits that are removed from the model. Arguments that
+        end with "#" exclude the traits of an entire namespace. Trait
+        shape IDs that are relative are assumed to be part of the
+        ``smithy.api`` prelude namespace.
 
 .. tabs::
 
@@ -377,7 +496,12 @@ orphaned shapes.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "excludeTraits", "args": ["since", "com.foo#customTrait"]}
+                        {
+                            "name": "excludeTraits",
+                            "args": {
+                                "traits": ["since", "com.foo#customTrait"]
+                            }
+                        }
                     ]
                 }
             }
@@ -397,7 +521,12 @@ all traits in the "example.foo" namespace:
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "excludeTraits", "args": ["example.foo#"]}
+                        {
+                            "name": "excludeTraits",
+                            "args": {
+                                "traits": ["example.foo#"]
+                            }
+                        }
                     ]
                 }
             }
@@ -417,6 +546,17 @@ The shapes that make up trait definitions that are removed *are not*
 automatically removed from the model. Use ``removeUnusedShapes`` to remove
 orphaned shapes.
 
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - tags
+      - ``[string]``
+      - The list of tags that, if present, cause a trait to be removed.
+
 .. tabs::
 
     .. code-tab:: json
@@ -426,7 +566,12 @@ orphaned shapes.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "excludeTraitsByTag", "args": ["internal"]}
+                        {
+                            "name": "excludeTraitsByTag",
+                            "args": {
+                                "tags": ["internal"]
+                            }
+                        }
                     ]
                 }
             }
@@ -442,8 +587,19 @@ orphaned shapes.
 includeTags
 -----------
 
-Removes tags from shapes and trait definitions that are not in the
-argument list (a list of allowed tags).
+Removes tags from shapes and trait definitions that are not in the ``tags``
+list.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - tags
+      - ``[string]``
+      - The set of tags that are retained in the model.
 
 .. tabs::
 
@@ -454,7 +610,12 @@ argument list (a list of allowed tags).
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeTags", "args": ["foo", "baz"]}
+                        {
+                            "name": "includeTags",
+                            "args": {
+                                "tags": ["foo", "baz"]
+                            }
+                        }
                     ]
                 }
             }
@@ -467,12 +628,26 @@ includeTraits
 -------------
 
 Removes trait definitions from a model if the trait name is not present in the
-provided list of arguments. Any instance of a removed trait is also removed
+provided list of ``traits``. Any instance of a removed trait is also removed
 from shapes in the model.
 
 The shapes that make up trait definitions that are removed *are not*
 automatically removed from the model. Use ``removeUnusedShapes`` to remove
 orphaned shapes.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - traits
+      - ``[string]``
+      - The list of trait shape IDs to include. A trait ID that ends with "#"
+        will include all traits from a namespace. Trait shape IDs that are
+        relative are assumed to be part of the ``smithy.api``
+        prelude namespace.
 
 .. tabs::
 
@@ -483,7 +658,12 @@ orphaned shapes.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeTraits", "args": ["sensitive", "com.foo.baz#customTrait"]}
+                        {
+                            "name": "includeTraits",
+                            "args": {
+                                "traits": ["sensitive", "com.foo.baz#customTrait"]
+                            }
+                        }
                     ]
                 }
             }
@@ -503,7 +683,12 @@ all traits in the "smithy.api" namespace:
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeTraits", "args": ["smithy.api#"]}
+                        {
+                            "name": "includeTraits",
+                            "args": {
+                                "traits": ["smithy.api#"]
+                            }
+                        }
                     ]
                 }
             }
@@ -523,6 +708,18 @@ The shapes that make up trait definitions that are removed *are not*
 automatically removed from the model. Use ``removeUnusedShapes`` to remove
 orphaned shapes.
 
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - tags
+      - ``[string]``
+      - The list of tags that must be present for a trait to be included
+        in the filtered model.
+
 .. tabs::
 
     .. code-tab:: json
@@ -532,7 +729,12 @@ orphaned shapes.
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "includeTraitsByTag", "args": ["public"]}
+                        {
+                            "name": "includeTraitsByTag",
+                            "args": {
+                                "tags": ["public"]
+                            }
+                        }
                     ]
                 }
             }
@@ -554,8 +756,21 @@ Removes shapes from the model that are not connected to any service shape
 or to a shape definition.
 
 You can *export* shapes that are not connected to any service shape by
-applying specific tags to the shape and adding the list of export tags as
-arguments to the transform.
+applying specific tags to the shape and adding the list of export tags in
+the ``exportTagged`` argument.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - exportTagged
+      - ``[string]``
+      - The set of tags that, if found on a shape, forces the shape to be
+        present in the transformed model regardless of if it was connected
+        to a service.
 
 The following example removes shapes that are not connected to any service,
 but keeps the shape if it has any of the provided tags:
@@ -569,7 +784,15 @@ but keeps the shape if it has any of the provided tags:
             "projections": {
                 "exampleProjection": {
                     "transforms": [
-                        {"name": "removeUnusedShapes", "args": ["export-tag1", "another-export-tag"]}
+                        {
+                            "name": "removeUnusedShapes",
+                            "args": {
+                                "exportTagged": [
+                                    "export-tag1",
+                                    "another-export-tag"
+                                ]
+                            }
+                        }
                     ]
                 }
             }
@@ -600,7 +823,12 @@ Consider the following ``smithy-build.json`` file:
         "projections": {
             "a": {
                 "transforms": [
-                    {"${NAME_KEY}": "includeByTag", "args": ["${FOO}", "\\${BAZ}"]}
+                    {
+                        "${NAME_KEY}": "includeByTag",
+                        "args": {
+                            "tags": ["${FOO}", "\\${BAZ}"]
+                        }
+                    }
                 ]
             }
         }
@@ -616,7 +844,12 @@ environment variable set to "hi", this file is equivalent to:
         "projections": {
             "a": {
                 "transforms": [
-                    {"name": "includeByTag", "args": ["Hi", "${BAZ}"]}
+                    {
+                        "name": "includeByTag",
+                        "args": {
+                            "tags": ["Hi", "${BAZ}"]
+                        }
+                     }
                 ]
             }
         }

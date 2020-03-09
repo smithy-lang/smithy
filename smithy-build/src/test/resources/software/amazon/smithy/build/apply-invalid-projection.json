@@ -4,7 +4,14 @@
     "foo": {
       "transforms": [
         // Does not exist.
-        {"name": "apply", "args": ["bar"]}
+        {
+          "name": "apply",
+          "args": {
+            "projections": [
+              "bar"
+            ]
+          }
+        }
       ]
     }
   }

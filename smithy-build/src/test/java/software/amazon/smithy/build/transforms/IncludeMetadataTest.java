@@ -18,13 +18,12 @@ package software.amazon.smithy.build.transforms;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.transform.ModelTransformer;
 
 public class IncludeMetadataTest {
     @Test
@@ -35,9 +34,11 @@ public class IncludeMetadataTest {
         Model model = Model.builder()
                 .metadata(metadata)
                 .build();
-        Model result = new IncludeMetadata()
-                .createTransformer(Collections.singletonList("b"))
-                .apply(ModelTransformer.create(), model);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode().withMember("keys", Node.fromStrings("b")))
+                .build();
+        Model result = new IncludeMetadata().transform(context);
 
         assertFalse(result.getMetadata().containsKey("a"));
         assertTrue(result.getMetadata().containsKey("b"));

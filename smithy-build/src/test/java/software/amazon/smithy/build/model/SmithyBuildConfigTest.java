@@ -16,7 +16,6 @@
 package software.amazon.smithy.build.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
@@ -35,6 +34,8 @@ import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.build.SmithyBuildTest;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ListUtils;
 
 public class SmithyBuildConfigTest {
@@ -126,7 +127,8 @@ public class SmithyBuildConfigTest {
         // Did the key expand?
         assertThat(transform.getName(), equalTo("includeByTag"));
         // Did the array and string values in it expand?
-        assertThat(transform.getArgs(), contains("Hi", "${BAZ}"));
+        assertThat(transform.getArgs(), equalTo(Node.objectNode()
+                .withMember("tags", Node.fromStrings("Hi", "${BAZ}"))));
     }
 
     @Test
@@ -134,6 +136,16 @@ public class SmithyBuildConfigTest {
         Assertions.assertThrows(SmithyBuildException.class, () -> {
             SmithyBuildConfig.load(Paths.get(getResourcePath("config-with-invalid-env.json")));
         });
+    }
+
+    @Test
+    public void rewritesArgsArrayToUnderscoreArgs() {
+        SmithyBuildConfig config = SmithyBuildConfig.load(
+                Paths.get(getResourcePath("rewrites-args-array.json")));
+        ObjectNode node = config.getProjections().get("rewrite").getTransforms().get(0).getArgs();
+        ObjectNode expected = Node.objectNode().withMember("__args", Node.fromStrings("sensitive"));
+
+        Node.assertEquals(node, expected);
     }
 
     private String getResourcePath(String name) {

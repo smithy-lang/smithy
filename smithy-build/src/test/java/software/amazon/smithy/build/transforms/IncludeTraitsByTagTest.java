@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.transform.ModelTransformer;
 
 public class IncludeTraitsByTagTest {
     @Test
@@ -35,9 +35,11 @@ public class IncludeTraitsByTagTest {
                 .addImport(Paths.get(getClass().getResource("tree-shaking-traits.json").toURI()))
                 .assemble()
                 .unwrap();
-        Model result = new IncludeTraitsByTag()
-                .createTransformer(Collections.singletonList("baz"))
-                .apply(ModelTransformer.create(), model);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode().withMember("tags", Node.fromStrings("baz")))
+                .build();
+        Model result = new IncludeTraitsByTag().transform(context);
         Set<String> traits = result.getTraitShapes().stream()
                 .map(Shape::getId)
                 .map(ShapeId::toString)

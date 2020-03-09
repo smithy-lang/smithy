@@ -3,13 +3,37 @@
   "projections": {
     "a": {
       "transforms": [
-        {"name": "includeByTag", "args": ["foo", "baz"]},
-        {"name": "includeTraits", "args": ["documentation", "format"]}
+        {
+          "name": "includeByTag",
+          "args": {
+            "tags": [
+              "foo",
+              "baz"
+            ]
+          }
+        },
+        {
+          "name": "includeTraits",
+          "args": {
+            "traits": [
+              "documentation",
+              "format"
+            ]
+          }
+        }
       ]
     },
     "b": {
       "transforms": [
-        {"name": "includeTraits", "args": ["length", "range"]}
+        {
+          "name": "includeTraits",
+          "args": {
+            "traits": [
+              "length",
+              "range"
+            ]
+          }
+        }
       ]
     }
   }

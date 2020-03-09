@@ -3,7 +3,15 @@
   "projections": {
     "a": {
       "transforms": [
-        {"${NAME_KEY}": "includeByTag", "args": ["${FOO}", "\\${BAZ}"]}
+        {
+          "${NAME_KEY}": "includeByTag",
+          "args": {
+            "tags": [
+              "${FOO}",
+              "\\${BAZ}"
+            ]
+          }
+        }
       ]
     }
   }
