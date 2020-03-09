@@ -15,9 +15,8 @@
 
 package software.amazon.smithy.build.model;
 
-import java.util.Collections;
-import java.util.List;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -25,11 +24,11 @@ import software.amazon.smithy.utils.SmithyBuilder;
  */
 public final class TransformConfig {
     private final String name;
-    private final List<String> args;
+    private final ObjectNode args;
 
     private TransformConfig(Builder builder) {
         name = SmithyBuilder.requiredState("name", builder.name);
-        args = ListUtils.copyOf(builder.args);
+        args = builder.args;
     }
 
     public static Builder builder() {
@@ -46,13 +45,13 @@ public final class TransformConfig {
     /**
      * @return Gets the args.
      */
-    public List<String> getArgs() {
+    public ObjectNode getArgs() {
         return args;
     }
 
     public static final class Builder implements SmithyBuilder<TransformConfig> {
         private String name;
-        private List<String> args = Collections.emptyList();
+        private ObjectNode args = Node.objectNode();
 
         private Builder() {}
 
@@ -75,11 +74,22 @@ public final class TransformConfig {
         /**
          * Sets the args of the transform.
          *
+         * <p>If an array is provided, the array is automatically converted
+         * to an object with a key named "__args" that contains the array.
+         * This is a backward compatibility shim for older versions of
+         * Smithy Builder that only accepts a list of strings for
+         * projection transforms.
+         *
          * @param args Arguments to set.
          * @return Returns the builder.
          */
-        public Builder args(List<String> args) {
-            this.args = args;
+        public Builder args(Node args) {
+            if (args.isArrayNode()) {
+                this.args = Node.objectNode().withMember("__args", args);
+            } else {
+                this.args = args.expectObjectNode();
+            }
+
             return this;
         }
     }

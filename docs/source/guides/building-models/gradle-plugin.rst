@@ -239,10 +239,27 @@ projection. For example:
             "projections": {
                 "external": {
                     "transforms": [
-                        {"name": "excludeShapesByTag", "args": ["internal"]},
-                        {"name": "excludeTraitsByTag", "args": ["internal"]},
-                        {"name": "excludeMetadata", "args": ["suppressions", "validators"]},
-                        {"name": "removeUnusedShapes", "args": []}
+                        {
+                            "name": "excludeShapesByTag",
+                            "args": {
+                                "tags": ["internal"]
+                            }
+                        },
+                        {
+                            "name": "excludeTraitsByTag",
+                            "args": {
+                                "tags": ["internal"]
+                            }
+                        },
+                        {
+                            "name": "excludeMetadata",
+                            "args": {
+                                "keys": ["suppressions", "validators"]
+                            }
+                        },
+                        {
+                            "name": "removeUnusedShapes"
+                        }
                     ]
                 }
             }

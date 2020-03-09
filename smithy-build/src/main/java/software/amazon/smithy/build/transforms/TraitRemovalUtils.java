@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,34 +16,26 @@
 package software.amazon.smithy.build.transforms;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
-import software.amazon.smithy.build.ProjectionTransformer;
-import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.Pair;
 
-abstract class AbstractTraitRemoval implements ProjectionTransformer {
+/**
+ * Utilities for {@link IncludeTraits} and {@link ExcludeTraits}.
+ */
+final class TraitRemovalUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(AbstractTraitRemoval.class.getName());
+    private TraitRemovalUtils() {}
 
-    Pair<Set<ShapeId>, Set<String>> parseTraits(List<String> arguments) {
+    static Pair<Set<ShapeId>, Set<String>> parseTraits(Set<String> ids) {
         Set<ShapeId> traitNames = new HashSet<>();
         Set<String> traitNamespaces = new HashSet<>();
 
-        for (String arg : arguments) {
+        for (String arg : ids) {
             if (arg.endsWith("#")) {
                 traitNamespaces.add(arg.substring(0, arg.length() - 1));
-            } else if (arg.equals(Prelude.NAMESPACE)) {
-                // For backwards compatibility, support "smithy.api" instead
-                // of "smithy.api#".
-                LOGGER.warning("Deprecation warning in " + getName() + ": Support for `smithy.api` as a trait name "
-                               + "is deprecated and will be removed in future releases. Update this value to "
-                               + "`smithy.api#`.");
-                traitNamespaces.add(arg);
             } else {
                 traitNames.add(ShapeId.from(Trait.makeAbsoluteName(arg)));
             }
@@ -52,7 +44,7 @@ abstract class AbstractTraitRemoval implements ProjectionTransformer {
         return Pair.of(traitNames, traitNamespaces);
     }
 
-    boolean matchesTraitDefinition(Shape traitShape, Set<ShapeId> traitNames, Set<String> traitNamespaces) {
+    static boolean matchesTraitDefinition(Shape traitShape, Set<ShapeId> traitNames, Set<String> traitNamespaces) {
         return traitNames.contains(traitShape.getId()) || traitNamespaces.contains(traitShape.getId().getNamespace());
     }
 }

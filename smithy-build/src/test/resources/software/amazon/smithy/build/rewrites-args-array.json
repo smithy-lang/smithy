@@ -1,0 +1,13 @@
+{
+    "version": "1.0",
+    "projections": {
+        "rewrite": {
+            "transforms": [
+                {
+                    "name": "includeTraits",
+                    "args": ["sensitive"]
+                }
+            ]
+        }
+    }
+}

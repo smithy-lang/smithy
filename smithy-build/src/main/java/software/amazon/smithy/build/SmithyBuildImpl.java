@@ -18,6 +18,7 @@ package software.amazon.smithy.build;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,34 +32,33 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.build.model.TransformConfig;
+import software.amazon.smithy.build.transforms.Apply;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 final class SmithyBuildImpl {
     private static final Logger LOGGER = Logger.getLogger(SmithyBuild.class.getName());
-    private static final String APPLY_PROJECTIONS = "apply";
     private static final Pattern PATTERN = Pattern.compile("^[A-Za-z0-9\\-_.]+$");
 
     private final SmithyBuildConfig config;
     private final Function<Path, FileManifest> fileManifestFactory;
     private final Supplier<ModelAssembler> modelAssemblerSupplier;
     private final Path outputDirectory;
-    private final Map<String, BiFunction<ModelTransformer, Model, Model>> transformers = new HashMap<>();
+    private final Map<String, List<Pair<ObjectNode, ProjectionTransformer>>> transformers = new HashMap<>();
     private final ModelTransformer modelTransformer;
     private final Function<String, Optional<ProjectionTransformer>> transformFactory;
     private final Function<String, Optional<SmithyBuildPlugin>> pluginFactory;
@@ -106,7 +106,9 @@ final class SmithyBuildImpl {
                 : Paths.get(".").toAbsolutePath().normalize();
 
         // Create the transformers for each projection.
-        config.getProjections().forEach((k, p) -> transformers.put(k, createTransformer(k, p, new LinkedHashSet<>())));
+        config.getProjections().forEach((projectionName, projectionConfig) -> {
+            transformers.put(projectionName, createTransformers(projectionName, projectionConfig));
+        });
 
         pluginClassLoader = builder.pluginClassLoader;
         projectionFilter = builder.projectionFilter;
@@ -305,10 +307,9 @@ final class SmithyBuildImpl {
         // Create the base directory where all projection artifacts are stored.
         Path baseProjectionDir = outputDirectory.resolve(projectionName);
 
-        // Project the model and collect the results.
-        Model projectedModel = transformers
-                .get(projectionName)
-                .apply(modelTransformer, resolvedModel);
+        // Transform the model and collect the results.
+        Model projectedModel = applyProjectionTransforms(
+                resolvedModel, resolvedModel, projectionName, Collections.emptySet());
 
         ValidatedResult<Model> modelResult = modelAssemblerSupplier.get().addModel(projectedModel).assemble();
 
@@ -325,6 +326,31 @@ final class SmithyBuildImpl {
         }
 
         return resultBuilder.build();
+    }
+
+    private Model applyProjectionTransforms(
+            Model inputModel,
+            Model originalModel,
+            String projectionName,
+            Set<String> visited
+    ) {
+        // Transform the model and collect the results.
+        Model projectedModel = inputModel;
+
+        for (Pair<ObjectNode, ProjectionTransformer> transformerBinding : transformers.get(projectionName)) {
+            TransformContext context = TransformContext.builder()
+                    .model(projectedModel)
+                    .originalModel(originalModel)
+                    .transformer(modelTransformer)
+                    .projectionName(projectionName)
+                    .sources(sources)
+                    .settings(transformerBinding.left)
+                    .visited(visited)
+                    .build();
+            projectedModel = transformerBinding.right.transform(context);
+        }
+
+        return projectedModel;
     }
 
     private void applyPlugin(
@@ -377,54 +403,55 @@ final class SmithyBuildImpl {
         return result;
     }
 
-    private BiFunction<ModelTransformer, Model, Model> createTransformer(
+    // Creates pairs where the left value is the configuration arguments of the
+    // transformer, and the right value is the instantiated transformer.
+    private List<Pair<ObjectNode, ProjectionTransformer>> createTransformers(
             String projectionName,
-            ProjectionConfig projection,
-            Set<String> visited
+            ProjectionConfig config
     ) {
-        if (visited.contains(projectionName)) {
-            visited.add(projectionName);
-            throw new SmithyBuildException(String.format("Cycle found in %s transforms: %s -> ...",
-                    APPLY_PROJECTIONS, String.join(" -> ", visited)));
+        List<Pair<ObjectNode, ProjectionTransformer>> resolved = new ArrayList<>(config.getTransforms().size());
+
+        for (TransformConfig transformConfig : config.getTransforms()) {
+            String name = transformConfig.getName();
+
+            if (name.equals("apply")) {
+                resolved.add(createApplyTransformer(projectionName, transformConfig));
+                continue;
+            }
+
+            ProjectionTransformer transformer = transformFactory.apply(name)
+                    .orElseThrow(() -> new UnknownTransformException(String.format(
+                            "Unable to find a transform for `%s` in the `%s` projection.", name, projectionName)));
+            resolved.add(Pair.of(transformConfig.getArgs(), transformer));
         }
 
-        visited.add(projectionName);
-
-        // Create a composed transformer of each created transformer.
-        return projection.getTransforms().stream()
-                .flatMap(transform -> getTransform(projectionName, transform, visited))
-                .reduce((a, b) -> (transformer, model) -> b.apply(transformer, a.apply(transformer, model)))
-                .orElse(((transformer, model) -> model));
+        return resolved;
     }
 
-    private Stream<BiFunction<ModelTransformer, Model, Model>> getTransform(
-            String projection,
-            TransformConfig config,
-            Set<String> visited
+    // This is a somewhat hacky special case that allows the "apply" transform to apply
+    // transformations defined on other projections.
+    private Pair<ObjectNode, ProjectionTransformer> createApplyTransformer(
+            String projectionName,
+            TransformConfig transformConfig
     ) {
-        String name = config.getName();
+        Apply.ApplyCallback callback = (currentModel, projectionTarget, visited) -> {
+            if (projectionTarget.equals(projectionName)) {
+                throw new SmithyBuildException(
+                        "Cannot recursively apply the same projection: " + projectionName);
+            } else if (visited.contains(projectionTarget)) {
+                visited.add(projectionTarget);
+                throw new SmithyBuildException(String.format(
+                        "Cycle found in apply transforms: %s -> ...", String.join(" -> ", visited)));
+            } else if (!transformers.containsKey(projectionTarget)) {
+                throw new UnknownProjectionException(String.format(
+                        "Unable to find projection named `%s` referenced by `%s`",
+                        projectionTarget, projectionName));
+            }
+            Set<String> updatedVisited = new LinkedHashSet<>(visited);
+            updatedVisited.add(projectionTarget);
+            return applyProjectionTransforms(currentModel, model, projectionTarget, updatedVisited);
+        };
 
-        if (name.equals(APPLY_PROJECTIONS)) {
-            return config.getArgs().stream().map(arg -> {
-                // Copy the set of visited projections to a new set;
-                // visiting the same projection isn't a problem, it's
-                // cycles that's problematic.
-                ProjectionConfig targetProjection = findProjection(projection, arg);
-                return createTransformer(arg, targetProjection, new LinkedHashSet<>(visited));
-            });
-        }
-
-        ProjectionTransformer transformer = transformFactory.apply(name)
-                .orElseThrow(() -> new UnknownTransformException("Unable to find a transform for `" + name + "`."));
-        return Stream.of(transformer.createTransformer(config.getArgs()));
-    }
-
-    private ProjectionConfig findProjection(String projection, String name) {
-        if (!config.getProjections().containsKey(name)) {
-            throw new UnknownProjectionException(String.format(
-                    "Unable to find projection named `%s` referenced by `%s`", name, projection));
-        }
-
-        return config.getProjections().get(name);
+        return Pair.of(transformConfig.getArgs(), new Apply(callback));
     }
 }

@@ -3,7 +3,7 @@
   "projections": {
     "foo": {
       "transforms": [
-        {"name": "foo", "args": []}
+        {"name": "foo", "args": {}}
       ]
     }
   }
