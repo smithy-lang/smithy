@@ -17,22 +17,51 @@ package software.amazon.smithy.build.transforms;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.function.BiFunction;
-import software.amazon.smithy.build.ProjectionTransformer;
+import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.transform.ModelTransformer;
 
 /**
- * Removes shapes and trait definitions that are not tagged with at
- * least one of the given trait arguments.
+ * {@code includeShapesByTag} removes shapes and trait definitions
+ * that are not tagged with at least one of the tags provided
+ * in the {@code tags} argument.
  *
  * <p>Prelude shapes are not removed by this transformer.
  */
-public final class IncludeShapesByTag implements ProjectionTransformer {
+public final class IncludeShapesByTag extends BackwardCompatHelper<IncludeShapesByTag.Config> {
+
+    /**
+     * {@code includeShapesByTag} configuration.
+     */
+    public static final class Config {
+        private Set<String> tags = Collections.emptySet();
+
+        /**
+         * Gets the set of tags that cause shapes to be included.
+         *
+         * @return Returns the inclusion tags.
+         */
+        public Set<String> getTags() {
+            return tags;
+        }
+
+        /**
+         * Sets the set of tags that cause shapes to be included.
+         *
+         * @param tags Tags that cause shapes to be included.
+         */
+        public void setTags(Set<String> tags) {
+            this.tags = tags;
+        }
+    }
+
+    @Override
+    public Class<Config> getConfigType() {
+        return Config.class;
+    }
+
     @Override
     public String getName() {
         return "includeShapesByTag";
@@ -44,10 +73,17 @@ public final class IncludeShapesByTag implements ProjectionTransformer {
     }
 
     @Override
-    public BiFunction<ModelTransformer, Model, Model> createTransformer(List<String> arguments) {
-        Set<String> includeTags = new HashSet<>(arguments);
-        return (transformer, model) -> transformer.filterShapes(
-                model, shape -> Prelude.isPreludeShape(shape)
-                                || shape.getTags().stream().anyMatch(includeTags::contains));
+    String getBackwardCompatibleNameMapping() {
+        return "tags";
+    }
+
+    @Override
+    protected Model transformWithConfig(TransformContext context, Config config) {
+        Set<String> includeTags = config.getTags();
+        ModelTransformer transformer = context.getTransformer();
+        Model model = context.getModel();
+        return transformer.filterShapes(model, shape -> {
+            return Prelude.isPreludeShape(shape) || shape.getTags().stream().anyMatch(includeTags::contains);
+        });
     }
 }

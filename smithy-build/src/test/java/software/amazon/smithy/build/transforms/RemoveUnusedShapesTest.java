@@ -21,15 +21,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 public class RemoveUnusedShapesTest {
@@ -40,9 +40,11 @@ public class RemoveUnusedShapesTest {
                 .addImport(Paths.get(getClass().getResource("tree-shaker.json").toURI()))
                 .assemble()
                 .unwrap();
-        Model result = new RemoveUnusedShapes()
-                .createTransformer(Collections.singletonList("export"))
-                .apply(ModelTransformer.create(), model);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode().withMember("exportTagged", Node.fromStrings("export")))
+                .build();
+        Model result = new RemoveUnusedShapes().transform(context);
         List<String> ids = result.shapes()
                 .filter(FunctionalUtils.not(Prelude::isPreludeShape))
                 .map(Shape::getId)
@@ -58,9 +60,11 @@ public class RemoveUnusedShapesTest {
                 .addImport(Paths.get(getClass().getResource("tree-shaking-traits.json").toURI()))
                 .assemble()
                 .unwrap();
-        Model result = new RemoveUnusedShapes()
-                .createTransformer(Collections.emptyList())
-                .apply(ModelTransformer.create(), model);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode().withMember("exportTagged", Node.arrayNode()))
+                .build();
+        Model result = new RemoveUnusedShapes().transform(context);
 
         assertTrue(result.getTraitDefinition("ns.foo#bar").isPresent());
         assertTrue(result.getShape(ShapeId.from("ns.foo#bar")).isPresent());
@@ -74,9 +78,11 @@ public class RemoveUnusedShapesTest {
                 .addImport(Paths.get(getClass().getResource("tree-shaking-traits.json").toURI()))
                 .assemble()
                 .unwrap();
-        Model result = new RemoveUnusedShapes()
-                .createTransformer(Collections.emptyList())
-                .apply(ModelTransformer.create(), model);
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode().withMember("exports", Node.arrayNode()))
+                .build();
+        Model result = new RemoveUnusedShapes().transform(context);
 
         assertFalse(result.getTraitDefinition("ns.foo#quux").isPresent());
         assertFalse(result.getShape(ShapeId.from("ns.foo#QuuxTraitShape")).isPresent());

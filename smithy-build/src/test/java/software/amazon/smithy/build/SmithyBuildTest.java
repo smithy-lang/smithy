@@ -400,6 +400,18 @@ public class SmithyBuildTest {
     }
 
     @Test
+    public void detectsDirectlyRecursiveApply() throws Exception {
+        Throwable thrown = Assertions.assertThrows(SmithyBuildException.class, () -> {
+            SmithyBuildConfig config = SmithyBuildConfig.builder()
+                    .load(Paths.get(getClass().getResource("apply-direct-recursion.json").toURI()))
+                    .build();
+            new SmithyBuild().config(config).build();
+        });
+
+        assertThat(thrown.getMessage(), containsString("Cannot recursively apply the same projection:"));
+    }
+
+    @Test
     public void appliesProjections() throws Exception {
         Model model = Model.assembler()
                 .addImport(Paths.get(getClass().getResource("simple-model.json").toURI()))

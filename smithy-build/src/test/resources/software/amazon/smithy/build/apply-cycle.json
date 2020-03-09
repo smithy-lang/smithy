@@ -3,12 +3,22 @@
   "projections": {
     "foo": {
       "transforms": [
-        {"name": "apply", "args": ["bar"]}
+        {
+          "name": "apply",
+          "args": {
+            "projections": ["bar"]
+          }
+        }
       ]
     },
     "bar": {
       "transforms": [
-        {"name": "apply", "args": ["foo"]}
+        {
+          "name": "apply",
+          "args": {
+            "projections": ["foo"]
+          }
+        }
       ]
     }
   }

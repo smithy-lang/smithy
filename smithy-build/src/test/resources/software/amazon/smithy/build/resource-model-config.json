@@ -3,12 +3,28 @@
   "projections": {
     "valid": {
       "transforms": [
-        {"name": "includeTraits", "args": ["sensitive", "required", "readonly"]}
+        {
+          "name": "includeTraits",
+          "args": {
+            "traits": [
+              "sensitive",
+              "required",
+              "readonly"
+            ]
+          }
+        }
       ]
     },
     "invalid": {
       "transforms": [
-        {"name": "excludeTraits", "args": ["required"]}
+        {
+          "name": "excludeTraits",
+          "args": {
+            "traits": [
+              "required"
+            ]
+          }
+        }
       ]
     }
   }

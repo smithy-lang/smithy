@@ -17,14 +17,11 @@ package software.amazon.smithy.build;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -48,14 +45,13 @@ public interface ProjectionTransformer {
     }
 
     /**
-     * Creates a function that transforms a model using the provided
-     * {@link ModelTransformer}.
+     * Transforms the given model using the provided {@link TransformContext}.
      *
-     * @param arguments Arguments used to create the ModelTransformer.
+     * @param context Transformation context.
      * @return Returns the created transformer.
      * @throws IllegalArgumentException if the arguments are invalid.
      */
-    BiFunction<ModelTransformer, Model, Model> createTransformer(List<String> arguments);
+    Model transform(TransformContext context);
 
     /**
      * Creates a {@code ProjectionTransformer} factory function using SPI

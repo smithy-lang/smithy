@@ -15,11 +15,11 @@
 
 package software.amazon.smithy.build.transforms;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -28,15 +28,51 @@ import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.Pair;
 
 /**
- * Removes trait definitions when a trait name does not match one of the
- * arguments (a list of trait names). Any instance of the trait is also
- * removed from the model.
+ * {@code includeTraits} removes trait definitions when a trait name
+ * does not match one of the provided {@code traits} shape IDs. Any
+ * instance of the trait is also removed from the model.
  *
- * <p>End an arguments with "#" to include the traits from an entire
- * namespace.
+ * <p>End an argument with "#" to include the traits from an entire
+ * namespace. Trait shape IDs that are relative are assumed to be part
+ * of the {@code smithy.api} prelude namespace.
  */
-public final class IncludeTraits extends AbstractTraitRemoval {
+public final class IncludeTraits extends BackwardCompatHelper<IncludeTraits.Config> {
+
     private static final Logger LOGGER = Logger.getLogger(IncludeTraits.class.getName());
+
+    /**
+     * {@code includeTraits} configuration settings.
+     */
+    public static final class Config {
+        private Set<String> traits = Collections.emptySet();
+
+        /**
+         * Gets the list of trait shape IDs to include.
+         *
+         * @return shape IDs to include.
+         */
+        public Set<String> getTraits() {
+            return traits;
+        }
+
+        /**
+         * Sets the list of trait shape IDs to include.
+         *
+         * <p>End an argument with "#" to include the traits from an entire
+         * namespace. Trait shape IDs that are relative are assumed to be
+         * part of the {@code smithy.api} prelude namespace.
+         *
+         * @param traits Traits to include.
+         */
+        public void setTraits(Set<String> traits) {
+            this.traits = traits;
+        }
+    }
+
+    @Override
+    public Class<Config> getConfigType() {
+        return Config.class;
+    }
 
     @Override
     public String getName() {
@@ -44,8 +80,13 @@ public final class IncludeTraits extends AbstractTraitRemoval {
     }
 
     @Override
-    public BiFunction<ModelTransformer, Model, Model> createTransformer(List<String> arguments) {
-        Pair<Set<ShapeId>, Set<String>> namesAndNamespaces = parseTraits(arguments);
+    String getBackwardCompatibleNameMapping() {
+        return "traits";
+    }
+
+    @Override
+    public Model transformWithConfig(TransformContext context, Config config) {
+        Pair<Set<ShapeId>, Set<String>> namesAndNamespaces = TraitRemovalUtils.parseTraits(config.getTraits());
         Set<ShapeId> names = namesAndNamespaces.getLeft();
         Set<String> namespaces = namesAndNamespaces.getRight();
         LOGGER.info(() -> "Including traits by ID " + names + " and namespaces " + namespaces);
@@ -53,16 +94,17 @@ public final class IncludeTraits extends AbstractTraitRemoval {
         // Don't remove the trait definition trait because it breaks everything!
         names.add(TraitDefinition.ID);
 
-        return (transformer, model) -> {
-            Set<Shape> removeTraits = model.getTraitShapes().stream()
-                    .filter(trait -> !matchesTraitDefinition(trait, names, namespaces))
-                    .collect(Collectors.toSet());
+        Model model = context.getModel();
+        ModelTransformer transformer = context.getTransformer();
 
-            if (!removeTraits.isEmpty()) {
-                LOGGER.info(() -> "Removing traits that are not explicitly allowed: " + removeTraits);
-            }
+        Set<Shape> removeTraits = model.getTraitShapes().stream()
+                .filter(trait -> !TraitRemovalUtils.matchesTraitDefinition(trait, names, namespaces))
+                .collect(Collectors.toSet());
 
-            return transformer.removeShapes(model, removeTraits);
-        };
+        if (!removeTraits.isEmpty()) {
+            LOGGER.info(() -> "Removing traits that are not explicitly allowed: " + removeTraits);
+        }
+
+        return transformer.removeShapes(model, removeTraits);
     }
 }
