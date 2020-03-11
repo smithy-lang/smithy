@@ -39,7 +39,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.Pair;
 
 /**
- *  Renames shapes using a mapping function while ensuring that the
+ *  Renames shapes using ShapeId pairs while ensuring that the
  *  transformed model is in a consistent state.
  *
  *  This transformer ensures that when an aggregate shape is renamed, all

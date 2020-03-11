@@ -135,12 +135,11 @@ public final class ModelTransformer {
     }
 
     /**
-     * Maps over all shapes in the model using a mapping function, allowing
-     * shapes to be replaced with completely different shapes or slightly
-     * modified shapes.
+     *  Renames shapes using ShapeId pairs while ensuring that the
+     *  transformed model is in a consistent state.
      *
-     * <p>An exception is thrown if a mapper returns a shape with a different
-     * shape ID or a different type.
+     *  This transformer ensures that when an aggregate shape is renamed, all
+     *  members are updated in the model.
      *
      * @param model Model to transform.
      * @param renamed Map of shapeIds
