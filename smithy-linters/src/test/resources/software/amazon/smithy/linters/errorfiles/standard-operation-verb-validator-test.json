@@ -1,6 +1,51 @@
 {
     "smithy": "0.5.0",
     "shapes": {
+        "ns.foo#Service": {
+            "type": "service",
+            "version": "2020-03-12",
+            "operations": [
+                {
+                    "target": "ns.foo#CreateFoo"
+                },
+                {
+                    "target": "ns.foo#DeleteFoo"
+                },
+                {
+                    "target": "ns.foo#UpdateFoo"
+                },
+                {
+                    "target": "ns.foo#BatchCreateFoo"
+                },
+                {
+                    "target": "ns.foo#BatchDeleteFoo"
+                },
+                {
+                    "target": "ns.foo#BatchUpdateFoo"
+                },
+                {
+                    "target": "ns.foo#BatchMakeFoo"
+                },
+                {
+                    "target": "ns.foo#BatchDestroyFoo"
+                },
+                {
+                    "target": "ns.foo#BatchChangeFoo"
+                },
+                {
+                    "target": "ns.foo#MakeFoo"
+                },
+                {
+                    "target": "ns.foo#DestroyFoo"
+                },
+                {
+                    "target": "ns.foo#ChangeFoo"
+                },
+                {
+                    "target": "ns.foo#Batch"
+                }
+            ]
+        },
         "ns.foo#CreateFoo": {
             "type": "operation"
         },

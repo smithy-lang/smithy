@@ -1,6 +1,15 @@
 {
     "smithy": "0.5.0",
     "shapes": {
+        "ns.foo#Service": {
+            "type": "service",
+            "version": "2020-03-12",
+            "operations": [
+                {
+                    "target": "ns.foo#_OperationBaz"
+                }
+            ]
+        },
         "ns.foo#_foo": {
             "type": "structure",
             "members": {
