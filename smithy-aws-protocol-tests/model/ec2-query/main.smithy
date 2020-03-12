@@ -59,6 +59,7 @@ service AwsEc2 {
         RecursiveXmlShapes,
         RecursiveXmlShapes,
         IgnoresWrappingXmlName,
+        XmlNamespaces,
 
         // Output error tests
         GreetingWithErrors,
