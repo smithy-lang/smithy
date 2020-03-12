@@ -7,6 +7,11 @@ namespace smithy.example
 use smithy.mqtt#topicLabel
 use smithy.mqtt#subscribe
 
+service FooService {
+    version: "2020-03-12",
+    operations: [Foo]
+}
+
 @subscribe("events/{foo}")
 operation Foo {
     input: FooInput,

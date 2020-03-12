@@ -1,5 +1,10 @@
 namespace smithy.example
 
+service FooService {
+    version: "2020-03-12",
+    operations: [Operation1, Operation2, Operation3, Operation4, Operation5]
+}
+
 // Missing input for {foo} property.
 @smithy.mqtt#publish("events1/{foo}")
 operation Operation1 {}

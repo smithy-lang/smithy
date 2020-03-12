@@ -2,6 +2,11 @@
 
 namespace smithy.example
 
+service FooService {
+    version: "2020-03-12",
+    operations: [Foo, Baz]
+}
+
 @smithy.mqtt#subscribe("event1")
 operation Foo {
     output: FooOutput,
