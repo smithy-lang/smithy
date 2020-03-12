@@ -3548,7 +3548,7 @@ Given the following model,
         @integerRef(MyShape)
         string ValidShape2
 
-        string MyShape
+        integer MyShape
 
     .. code-tab:: json
 
