@@ -1,6 +1,21 @@
 {
     "smithy": "0.5.0",
     "shapes": {
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2020-03-12",
+            "resources": [
+                {
+                    "target": "ns.foo#ValidA"
+                },
+                {
+                    "target": "ns.foo#ValidB"
+                },
+                {
+                    "target": "ns.foo#ValidE"
+                }
+            ]
+        },
         "ns.foo#ValidA": {
             "type": "resource",
             "identifiers": {

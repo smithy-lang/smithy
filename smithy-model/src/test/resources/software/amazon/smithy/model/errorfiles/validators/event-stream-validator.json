@@ -1,6 +1,39 @@
 {
     "smithy": "0.5.0",
     "shapes": {
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2020-03-12",
+            "operations": [
+                {
+                    "target": "ns.foo#ValidSingleEventInputOperation"
+                },
+                {
+                    "target": "ns.foo#ValidSingleEventOutputOperation"
+                },
+                {
+                    "target": "ns.foo#ValidSingleEventBidirectionalOperation"
+                },
+                {
+                    "target": "ns.foo#ValidMultiEventInputOperation"
+                },
+                {
+                    "target": "ns.foo#ValidMultiEventOutputOperation"
+                },
+                {
+                    "target": "ns.foo#ValidMultiEventBidirectionalOperation"
+                },
+                {
+                    "target": "ns.foo#EventStreamInputMemberMustNotBeRequired"
+                },
+                {
+                    "target": "ns.foo#EventStreamReferencesInvalidShape"
+                },
+                {
+                    "target": "ns.foo#EventStreamReferencesInvalidMultiEventShape"
+                }
+            ]
+        },
         "ns.foo#ValidSingleEventInputOperation": {
             "type": "operation",
             "input": {

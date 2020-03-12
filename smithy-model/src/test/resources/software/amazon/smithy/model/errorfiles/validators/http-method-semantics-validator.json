@@ -1,6 +1,48 @@
 {
     "smithy": "0.5.0",
     "shapes": {
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2020-03-12",
+            "operations": [
+                {
+                    "target": "ns.foo#A"
+                },
+                {
+                    "target": "ns.foo#B"
+                },
+                {
+                    "target": "ns.foo#C"
+                },
+                {
+                    "target": "ns.foo#D"
+                },
+                {
+                    "target": "ns.foo#E"
+                },
+                {
+                    "target": "ns.foo#F"
+                },
+                {
+                    "target": "ns.foo#G"
+                },
+                {
+                    "target": "ns.foo#H"
+                },
+                {
+                    "target": "ns.foo#I"
+                },
+                {
+                    "target": "ns.foo#J"
+                },
+                {
+                    "target": "ns.foo#K"
+                },
+                {
+                    "target": "ns.foo#L"
+                }
+            ]
+        },
         "ns.foo#A": {
             "type": "operation",
             "traits": {

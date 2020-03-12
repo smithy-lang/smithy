@@ -7,6 +7,9 @@
             "operations": [
                 {
                     "target": "smithy.private#PrivateOperation"
+                },
+                {
+                    "target": "smithy.example#InvalidOperation"
                 }
             ]
         },
