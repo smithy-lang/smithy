@@ -52,5 +52,6 @@ service RestJson {
         RecursiveShapes,
         JsonLists,
         JsonMaps,
+        JsonBlobs,
     ]
 }

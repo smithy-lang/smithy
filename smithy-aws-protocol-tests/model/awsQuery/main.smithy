@@ -42,6 +42,7 @@ service AwsQuery {
         RecursiveXmlShapes,
         RecursiveXmlShapes,
         IgnoresWrappingXmlName,
+        XmlNamespaces,
 
         // Output error tests
         GreetingWithErrors,
