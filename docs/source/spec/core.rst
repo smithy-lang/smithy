@@ -3547,7 +3547,7 @@ Given the following model,
         @integerRef(MyShape)
         string ValidShape2
 
-        string MyShape
+        integer MyShape
 
     .. code-tab:: json
 
@@ -3557,35 +3557,35 @@ Given the following model,
                 "smithy.example#InvalidShape1": {
                     "type": "string",
                     "traits": {
-                        "smithy.api#integerRef": "NotFound"
+                        "smithy.example#integerRef": "NotFound"
                     }
                 },
                 "smithy.example#InvalidShape2": {
                     "type": "string",
                     "traits": {
-                        "smithy.api#integerRef": "String"
+                        "smithy.example#integerRef": "String"
                     }
                 },
                 "smithy.example#InvalidShape3": {
                     "type": "string",
                     "traits": {
-                        "smithy.api#integerRef": "invalid-shape-id!"
+                        "smithy.example#integerRef": "invalid-shape-id!"
                     }
                 },
                 "smithy.example#ValidShape": {
                     "type": "string",
                     "traits": {
-                        "smithy.api#integerRef": "Integer"
+                        "smithy.example#integerRef": "Integer"
                     }
                 },
                 "smithy.example#ValidShape2": {
                     "type": "string",
                     "traits": {
-                        "smithy.api#integerRef": "MyShape"
+                        "smithy.example#integerRef": "smithy.example#MyShape"
                     }
                 },
                 "smithy.example#MyShape": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         }
