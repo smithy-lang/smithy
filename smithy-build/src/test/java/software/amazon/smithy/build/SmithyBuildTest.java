@@ -206,23 +206,23 @@ public class SmithyBuildTest {
         Model resultB = results.getProjectionResult("b").get().getModel();
         Model resultC = results.getProjectionResult("c").get().getModel();
 
-        assertTrue(resultA.getShape(ShapeId.from("com.foo#String")).get()
+        assertTrue(resultA.expectShape(ShapeId.from("com.foo#String"))
                            .getTrait(SensitiveTrait.class).isPresent());
-        assertFalse(resultA.getShape(ShapeId.from("com.foo#String")).get()
+        assertFalse(resultA.expectShape(ShapeId.from("com.foo#String"))
                            .getTrait(DocumentationTrait.class).isPresent());
 
-        assertTrue(resultB.getShape(ShapeId.from("com.foo#String")).get()
+        assertTrue(resultB.expectShape(ShapeId.from("com.foo#String"))
                            .getTrait(SensitiveTrait.class).isPresent());
-        assertTrue(resultB.getShape(ShapeId.from("com.foo#String")).get()
+        assertTrue(resultB.expectShape(ShapeId.from("com.foo#String"))
                            .getTrait(DocumentationTrait.class).isPresent());
-        assertThat(resultB.getShape(ShapeId.from("com.foo#String")).get()
+        assertThat(resultB.expectShape(ShapeId.from("com.foo#String"))
                            .getTrait(DocumentationTrait.class).get().getValue(), equalTo("b.json"));
 
-        assertTrue(resultC.getShape(ShapeId.from("com.foo#String")).get()
+        assertTrue(resultC.expectShape(ShapeId.from("com.foo#String"))
                            .getTrait(SensitiveTrait.class).isPresent());
-        assertTrue(resultC.getShape(ShapeId.from("com.foo#String")).get()
+        assertTrue(resultC.expectShape(ShapeId.from("com.foo#String"))
                            .getTrait(DocumentationTrait.class).isPresent());
-        assertThat(resultC.getShape(ShapeId.from("com.foo#String")).get()
+        assertThat(resultC.expectShape(ShapeId.from("com.foo#String"))
                            .getTrait(DocumentationTrait.class).get().getValue(), equalTo("c.json"));
     }
 

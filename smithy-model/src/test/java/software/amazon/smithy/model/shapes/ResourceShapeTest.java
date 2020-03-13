@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.shapes;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Assertions;
@@ -27,6 +29,7 @@ public class ResourceShapeTest {
         ResourceShape shape = ResourceShape.builder().id("ns.foo#Bar").build();
 
         assertEquals(shape.getType(), ShapeType.RESOURCE);
+        assertThat(shape, is(shape.expectResourceShape()));
     }
 
     @Test

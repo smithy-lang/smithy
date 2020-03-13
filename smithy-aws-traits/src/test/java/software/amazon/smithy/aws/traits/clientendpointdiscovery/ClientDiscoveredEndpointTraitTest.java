@@ -33,8 +33,8 @@ public class ClientDiscoveredEndpointTraitTest {
                 .unwrap();
         OperationShape operation = result
                 .expectShape(ShapeId.from("ns.foo#GetObject"))
-                .asOperationShape().get();
-        ClientDiscoveredEndpointTrait trait = operation.getTrait(ClientDiscoveredEndpointTrait.class).get();
+                .expectOperationShape();
+        ClientDiscoveredEndpointTrait trait = operation.expectTrait(ClientDiscoveredEndpointTrait.class);
 
         assertTrue(trait.isRequired());
     }

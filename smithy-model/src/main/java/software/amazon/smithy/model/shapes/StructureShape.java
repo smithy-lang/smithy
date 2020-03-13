@@ -49,6 +49,11 @@ public final class StructureShape extends NamedMembersShape implements ToSmithyB
         return Optional.of(this);
     }
 
+    @Override
+    public StructureShape expectStructureShape() {
+        return this;
+    }
+
     /**
      * Builder used to create a {@link StructureShape}.
      */

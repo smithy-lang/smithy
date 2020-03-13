@@ -63,8 +63,8 @@ public class AuthTraitValidator extends AbstractValidator {
             Shape shape,
             List<ValidationEvent> events
     ) {
-        if (shape.getTrait(AuthTrait.class).isPresent()) {
-            AuthTrait authTrait = shape.getTrait(AuthTrait.class).get();
+        if (shape.hasTrait(AuthTrait.class)) {
+            AuthTrait authTrait = shape.expectTrait(AuthTrait.class);
             Set<ShapeId> appliedAuthTraitValue = new TreeSet<>(authTrait.getValues());
             appliedAuthTraitValue.removeAll(serviceAuth);
 

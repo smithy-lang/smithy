@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.shapes;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Assertions;
@@ -33,6 +35,7 @@ public class UnionShapeTest {
                 .build();
 
         assertEquals(shape.getType(), ShapeType.UNION);
+        assertThat(shape, is(shape.expectUnionShape()));
     }
 
     @Test

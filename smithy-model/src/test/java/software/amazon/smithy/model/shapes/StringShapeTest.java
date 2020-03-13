@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.shapes;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Assertions;
@@ -27,6 +29,7 @@ public class StringShapeTest {
         StringShape shape = StringShape.builder().id("ns.foo#bar").build();
 
         assertEquals(shape.getType(), ShapeType.STRING);
+        assertThat(shape, is(shape.expectStringShape()));
     }
 
     @Test

@@ -42,10 +42,10 @@ public class ClientEndpointDiscoveryIdTraitTest {
                 .unwrap();
         OperationShape operation = result
                 .expectShape(ShapeId.from("ns.foo#GetObject"))
-                .asOperationShape().get();
+                .expectOperationShape();
         MemberShape member = result
                 .getShape(operation.getInput().get()).get()
-                .asStructureShape().get()
+                .expectStructureShape()
                 .getMember("Id").get();
 
         assertTrue(member.getTrait(ClientEndpointDiscoveryIdTrait.class).isPresent());

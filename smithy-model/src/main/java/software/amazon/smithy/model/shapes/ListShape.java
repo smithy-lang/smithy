@@ -46,6 +46,11 @@ public final class ListShape extends CollectionShape implements ToSmithyBuilder<
         return Optional.of(this);
     }
 
+    @Override
+    public ListShape expectListShape() {
+        return this;
+    }
+
     /**
      * Builder used to create a {@link ListShape}.
      */

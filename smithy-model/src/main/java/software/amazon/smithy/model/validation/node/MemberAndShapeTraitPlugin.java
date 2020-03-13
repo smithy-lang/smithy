@@ -38,9 +38,9 @@ abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T exte
     @SuppressWarnings("unchecked")
     public final List<String> apply(Shape shape, Node value, Model model) {
         if (nodeClass.isInstance(value)
-                && shape.getTrait(traitClass).isPresent()
+                && shape.hasTrait(traitClass)
                 && isMatchingShape(shape, model)) {
-            return check(shape, shape.getTrait(traitClass).get(), (N) value, model);
+            return check(shape, shape.expectTrait(traitClass), (N) value, model);
         }
 
         return ListUtils.of();

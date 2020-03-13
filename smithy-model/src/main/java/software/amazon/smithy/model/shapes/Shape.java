@@ -418,6 +418,319 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     }
 
     /**
+     * Gets the value as a {@link BigDecimalShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link BigDecimalShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public BigDecimalShape expectBigDecimalShape() {
+        throw expectedDifferentShapeType(ShapeType.BIG_DECIMAL);
+    }
+
+    /**
+     * Gets the value as a {@link BigIntegerShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link BigIntegerShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public BigIntegerShape expectBigIntegerShape() {
+        throw expectedDifferentShapeType(ShapeType.BIG_INTEGER);
+    }
+
+    /**
+     * Gets the value as a {@link BlobShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link BlobShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public BlobShape expectBlobShape() {
+        throw expectedDifferentShapeType(ShapeType.BLOB);
+    }
+
+    /**
+     * Gets the value as a {@link BooleanShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link BooleanShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public BooleanShape expectBooleanShape() {
+        throw expectedDifferentShapeType(ShapeType.BOOLEAN);
+    }
+
+    /**
+     * Gets the value as a {@link ByteShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link ByteShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public ByteShape expectByteShape() {
+        throw expectedDifferentShapeType(ShapeType.BYTE);
+    }
+
+    /**
+     * Gets the value as a {@link ShortShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link ShortShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public ShortShape expectShortShape() {
+        throw expectedDifferentShapeType(ShapeType.SHORT);
+    }
+
+    /**
+     * Gets the value as a {@link FloatShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link FloatShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public FloatShape expectFloatShape() {
+        throw expectedDifferentShapeType(ShapeType.FLOAT);
+    }
+
+    /**
+     * Gets the value as a {@link DocumentShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link DocumentShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public DocumentShape expectDocumentShape() {
+        throw expectedDifferentShapeType(ShapeType.DOCUMENT);
+    }
+
+    /**
+     * Gets the value as a {@link DoubleShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link DoubleShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public DoubleShape expectDoubleShape() {
+        throw expectedDifferentShapeType(ShapeType.DOUBLE);
+    }
+
+    /**
+     * Gets the value as a {@link IntegerShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link IntegerShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public IntegerShape expectIntegerShape() {
+        throw expectedDifferentShapeType(ShapeType.INTEGER);
+    }
+
+    /**
+     * Gets the value as a {@link ListShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link ListShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public ListShape expectListShape() {
+        throw expectedDifferentShapeType(ShapeType.LIST);
+    }
+
+    /**
+     * Gets the value as a {@link SetShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link SetShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public SetShape expectSetShape() {
+        throw expectedDifferentShapeType(ShapeType.SET);
+    }
+
+    /**
+     * Gets the value as a {@link LongShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link LongShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public LongShape expectLongShape() {
+        throw expectedDifferentShapeType(ShapeType.LONG);
+    }
+
+    /**
+     * Gets the value as a {@link MapShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link MapShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public MapShape expectMapShape() {
+        throw expectedDifferentShapeType(ShapeType.MAP);
+    }
+
+    /**
+     * Gets the value as a {@link MemberShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link MemberShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public MemberShape expectMemberShape() {
+        throw expectedDifferentShapeType(ShapeType.MEMBER);
+    }
+
+    /**
+     * Gets the value as a {@link OperationShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as an {@link OperationShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public OperationShape expectOperationShape() {
+        throw expectedDifferentShapeType(ShapeType.OPERATION);
+    }
+
+    /**
+     * Gets the value as a {@link ResourceShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link ResourceShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public ResourceShape expectResourceShape() {
+        throw expectedDifferentShapeType(ShapeType.RESOURCE);
+    }
+
+    /**
+     * Gets the value as a {@link ServiceShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link ServiceShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public ServiceShape expectServiceShape() {
+        throw expectedDifferentShapeType(ShapeType.SERVICE);
+    }
+
+    /**
+     * Gets the value as a {@link StringShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link StringShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public StringShape expectStringShape() {
+        throw expectedDifferentShapeType(ShapeType.STRING);
+    }
+
+    /**
+     * Gets the value as a {@link StructureShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link StructureShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public StructureShape expectStructureShape() {
+        throw expectedDifferentShapeType(ShapeType.STRUCTURE);
+    }
+
+    /**
+     * Gets the value as a {@link UnionShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link UnionShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public UnionShape expectUnionShape() {
+        throw expectedDifferentShapeType(ShapeType.UNION);
+    }
+
+    /**
+     * Gets the value as a {@link TimestampShape} or throws.
+     *
+     * <p>This method should only be used when it is known that the
+     * shape is of the desired type. Use the {@code as*} and {@code is*}
+     * methods before calling this method.
+     *
+     * @return Returns the shape as a {@link TimestampShape}.
+     * @throws ExpectationNotMetException if the shape is not of the expected type.
+     */
+    public TimestampShape expectTimestampShape() {
+        throw expectedDifferentShapeType(ShapeType.TIMESTAMP);
+    }
+
+    private ExpectationNotMetException expectedDifferentShapeType(ShapeType type) {
+        throw new ExpectationNotMetException(String.format(
+                "Expected `%s` to be a %s shape, but found a %s", getId(), type, getType()), this);
+    }
+
+    /**
      * @return Returns true if the shape is a {@link BigDecimalShape} shape.
      */
     public final boolean isBigDecimalShape() {

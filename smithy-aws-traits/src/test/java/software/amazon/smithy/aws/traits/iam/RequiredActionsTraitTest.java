@@ -33,7 +33,7 @@ public class RequiredActionsTraitTest {
                 .assemble()
                 .unwrap();
 
-        Shape myOperation = result.getShape(ShapeId.from("smithy.example#MyOperation")).get();
+        Shape myOperation = result.expectShape(ShapeId.from("smithy.example#MyOperation"));
 
         assertTrue(myOperation.hasTrait(RequiredActionsTrait.class));
         assertThat(myOperation.getTrait(RequiredActionsTrait.class).get().getValues(), containsInAnyOrder(

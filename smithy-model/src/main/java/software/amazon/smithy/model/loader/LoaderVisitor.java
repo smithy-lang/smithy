@@ -522,7 +522,7 @@ final class LoaderVisitor {
                 traits.put(traitId, value);
             } else if (previous.isArrayNode() && value.isArrayNode()) {
                 // You can merge trait arrays.
-                traits.put(traitId, value.asArrayNode().get().merge(previous.asArrayNode().get()));
+                traits.put(traitId, value.expectArrayNode().merge(previous.expectArrayNode()));
             } else if (previous.equals(value)) {
                 LOGGER.fine(() -> String.format(
                         "Ignoring duplicate %s trait value on %s", traitId, shapeBuilder.getId()));

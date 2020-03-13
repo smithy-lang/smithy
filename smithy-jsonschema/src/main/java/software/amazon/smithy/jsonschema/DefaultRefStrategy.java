@@ -121,8 +121,8 @@ final class DefaultRefStrategy implements RefStrategy {
     public boolean isInlined(Shape shape) {
         // We could add more logic here in the future if needed to account for
         // member shapes that absolutely must generate a synthesized schema.
-        if (shape.asMemberShape().isPresent()) {
-            MemberShape member = shape.asMemberShape().get();
+        if (shape.isMemberShape()) {
+            MemberShape member = shape.expectMemberShape();
             Shape target = model.expectShape(member.getTarget());
             return isInlined(target);
         }

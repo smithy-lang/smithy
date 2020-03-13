@@ -270,7 +270,7 @@ public class HttpBindingIndexTest {
 
     private static MemberShape expectMember(Model model, String id) {
         ShapeId shapeId = ShapeId.from(id);
-        return model.expectShape(shapeId).asMemberShape().get();
+        return model.expectShape(shapeId).expectMemberShape();
     }
 
     @Test

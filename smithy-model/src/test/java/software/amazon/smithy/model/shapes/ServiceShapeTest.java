@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.shapes;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Assertions;
@@ -27,6 +29,7 @@ public class ServiceShapeTest {
         ServiceShape shape = ServiceShape.builder().id("ns.foo#Bar").version("2017-01-17").build();
 
         assertEquals(shape.getType(), ShapeType.SERVICE);
+        assertThat(shape, is(shape.expectServiceShape()));
     }
 
     @Test

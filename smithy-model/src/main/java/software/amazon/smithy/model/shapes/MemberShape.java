@@ -64,6 +64,11 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
         return Optional.of(this);
     }
 
+    @Override
+    public MemberShape expectMemberShape() {
+        return this;
+    }
+
     /**
      * Get the targeted member shape ID.
      *

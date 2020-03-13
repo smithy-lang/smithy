@@ -137,7 +137,7 @@ public class RemoveShapesTest {
         assertThat(result.shapes().count(), Matchers.equalTo(2L));
         assertThat(result.getShape(container.getId()), Matchers.not(Optional.empty()));
         assertThat(result.getShape(c.getId()), Matchers.not(Optional.empty()));
-        assertThat(result.expectShape(container.getId()).asResourceShape().get().getOperations(),
+        assertThat(result.expectShape(container.getId()).expectResourceShape().getOperations(),
                    Matchers.contains(c.getId()));
     }
 }

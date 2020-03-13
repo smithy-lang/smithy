@@ -46,6 +46,11 @@ public final class LongShape extends NumberShape implements ToSmithyBuilder<Long
         return Optional.of(this);
     }
 
+    @Override
+    public LongShape expectLongShape() {
+        return this;
+    }
+
     /**
      * Builder used to create a {@link LongShape}.
      */

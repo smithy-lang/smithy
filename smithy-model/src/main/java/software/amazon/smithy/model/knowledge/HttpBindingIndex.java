@@ -134,9 +134,9 @@ public final class HttpBindingIndex implements KnowledgeIndex {
         if (shape.isOperationShape()) {
             return getHttpTrait(id).getCode();
         } else if (shape.getTrait(HttpErrorTrait.class).isPresent()) {
-            return shape.getTrait(HttpErrorTrait.class).get().getCode();
+            return shape.expectTrait(HttpErrorTrait.class).getCode();
         } else if (shape.getTrait(ErrorTrait.class).isPresent()) {
-            return shape.getTrait(ErrorTrait.class).get().getDefaultHttpStatusCode();
+            return shape.expectTrait(ErrorTrait.class).getDefaultHttpStatusCode();
         }
 
         throw new IllegalStateException(shape + " must be an operation or error structure");
@@ -328,7 +328,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
 
                 // Use the @mediaType trait if available.
                 if (target.getTrait(MediaTypeTrait.class).isPresent()) {
-                    return target.getTrait(MediaTypeTrait.class).get().getValue();
+                    return target.expectTrait(MediaTypeTrait.class).getValue();
                 } else if (target.isBlobShape()) {
                     return "application/octet-stream";
                 } else if (target.isStringShape()) {
@@ -361,20 +361,20 @@ public final class HttpBindingIndex implements KnowledgeIndex {
 
         for (MemberShape member : struct.getAllMembers().values()) {
             if (member.getTrait(HttpHeaderTrait.class).isPresent()) {
-                HttpHeaderTrait trait = member.getTrait(HttpHeaderTrait.class).get();
+                HttpHeaderTrait trait = member.expectTrait(HttpHeaderTrait.class);
                 bindings.add(new HttpBinding(member, HttpBinding.Location.HEADER, trait.getValue(), trait));
             } else if (member.getTrait(HttpPrefixHeadersTrait.class).isPresent()) {
-                HttpPrefixHeadersTrait trait = member.getTrait(HttpPrefixHeadersTrait.class).get();
+                HttpPrefixHeadersTrait trait = member.expectTrait(HttpPrefixHeadersTrait.class);
                 bindings.add(new HttpBinding(member, HttpBinding.Location.PREFIX_HEADERS, trait.getValue(), trait));
             } else if (isRequest && member.getTrait(HttpQueryTrait.class).isPresent()) {
-                HttpQueryTrait trait = member.getTrait(HttpQueryTrait.class).get();
+                HttpQueryTrait trait = member.expectTrait(HttpQueryTrait.class);
                 bindings.add(new HttpBinding(member, HttpBinding.Location.QUERY, trait.getValue(), trait));
             } else if (member.getTrait(HttpPayloadTrait.class).isPresent()) {
                 foundPayload = true;
-                HttpPayloadTrait trait = member.getTrait(HttpPayloadTrait.class).get();
+                HttpPayloadTrait trait = member.expectTrait(HttpPayloadTrait.class);
                 bindings.add(new HttpBinding(member, HttpBinding.Location.PAYLOAD, member.getMemberName(), trait));
             } else if (isRequest && member.getTrait(HttpLabelTrait.class).isPresent()) {
-                HttpLabelTrait trait = member.getTrait(HttpLabelTrait.class).get();
+                HttpLabelTrait trait = member.expectTrait(HttpLabelTrait.class);
                 bindings.add(new HttpBinding(member, HttpBinding.Location.LABEL, member.getMemberName(), trait));
             } else {
                 unbound.add(member);

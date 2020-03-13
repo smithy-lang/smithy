@@ -46,6 +46,11 @@ public final class StringShape extends SimpleShape implements ToSmithyBuilder<St
         return Optional.of(this);
     }
 
+    @Override
+    public StringShape expectStringShape() {
+        return this;
+    }
+
     /**
      * Builder used to create a {@link StringShape}.
      */

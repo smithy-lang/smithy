@@ -52,7 +52,7 @@ public final class TraitValueValidator implements Validator {
             return ListUtils.of();
         }
 
-        Shape schema = model.getShape(shape).get();
+        Shape schema = model.expectShape(shape);
         Node coerced = Trait.coerceTraitValue(trait.toNode(), schema.getType());
 
         NodeValidationVisitor cases = NodeValidationVisitor.builder()

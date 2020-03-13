@@ -106,7 +106,7 @@ public final class EventStreamIndex implements KnowledgeIndex {
             StructureShape structure,
             MemberShape member
     ) {
-        EventStreamTrait trait = member.getTrait(EventStreamTrait.class).get();
+        EventStreamTrait trait = member.expectTrait(EventStreamTrait.class);
 
         Shape eventStreamTarget = model.getShape(member.getTarget()).orElse(null);
         if (eventStreamTarget == null) {
@@ -118,14 +118,14 @@ public final class EventStreamIndex implements KnowledgeIndex {
 
         // Compute the events of the event stream.
         Map<String, StructureShape> events = new HashMap<>();
-        if (eventStreamTarget.asUnionShape().isPresent()) {
-            for (MemberShape unionMember : eventStreamTarget.asUnionShape().get().getAllMembers().values()) {
+        if (eventStreamTarget.isUnionShape()) {
+            for (MemberShape unionMember : eventStreamTarget.expectUnionShape().getAllMembers().values()) {
                 model.getShape(unionMember.getTarget()).flatMap(Shape::asStructureShape).ifPresent(struct -> {
                     events.put(unionMember.getMemberName(), struct);
                 });
             }
-        } else if (eventStreamTarget.asStructureShape().isPresent()) {
-            events.put(member.getMemberName(), eventStreamTarget.asStructureShape().get());
+        } else if (eventStreamTarget.isStructureShape()) {
+            events.put(member.getMemberName(), eventStreamTarget.expectStructureShape());
         } else {
             // If the event target is an invalid type, then we can't create the indexed result.
             LOGGER.severe(() -> String.format(

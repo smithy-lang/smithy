@@ -33,8 +33,8 @@ public class ClientEndpointDiscoveryTraitTest {
                 .unwrap();
         ServiceShape service = result
                 .expectShape(ShapeId.from("ns.foo#FooService"))
-                .asServiceShape().get();
-        ClientEndpointDiscoveryTrait trait = service.getTrait(ClientEndpointDiscoveryTrait.class).get();
+                .expectServiceShape();
+        ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
 
         assertEquals(trait.getOperation(), ShapeId.from("ns.foo#DescribeEndpoints"));
         assertEquals(trait.getError(), ShapeId.from("ns.foo#InvalidEndpointError"));

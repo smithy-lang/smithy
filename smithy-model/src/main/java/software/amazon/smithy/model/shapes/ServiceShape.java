@@ -54,6 +54,11 @@ public final class ServiceShape extends EntityShape implements ToSmithyBuilder<S
     }
 
     @Override
+    public ServiceShape expectServiceShape() {
+        return this;
+    }
+
+    @Override
     public boolean equals(Object other) {
         if (!super.equals(other)) {
             return false;

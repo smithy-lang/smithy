@@ -17,6 +17,7 @@ package software.amazon.smithy.model.shapes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -48,7 +49,9 @@ public class MemberShapeTest {
                 .id(ShapeId.from("ns.foo#bar$baz"))
                 .target("ns.foo#baz")
                 .build();
+
         assertEquals(ShapeType.MEMBER, shape.getType());
+        assertThat(shape, is(shape.expectMemberShape()));
     }
 
     @Test

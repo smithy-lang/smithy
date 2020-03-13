@@ -46,6 +46,11 @@ public final class BigDecimalShape extends NumberShape implements ToSmithyBuilde
         return Optional.of(this);
     }
 
+    @Override
+    public BigDecimalShape expectBigDecimalShape() {
+        return this;
+    }
+
     /**
      * Builder used to create a {@link BigDecimalShape}.
      */

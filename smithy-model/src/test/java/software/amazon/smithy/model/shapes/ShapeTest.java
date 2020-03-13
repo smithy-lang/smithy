@@ -248,4 +248,15 @@ public class ShapeTest {
 
         assertEquals(shapeA, shapeB);
     }
+
+    @Test
+    public void throwsForExpectedShapeTypesByDefault() {
+        Shape shape = StringShape.builder().id("ns.foo#baz").build();
+
+        ExpectationNotMetException e = Assertions.assertThrows(
+                ExpectationNotMetException.class,
+                shape::expectByteShape);
+
+        assertThat(e.getMessage(), equalTo("Expected `ns.foo#baz` to be a byte shape, but found a string"));
+    }
 }

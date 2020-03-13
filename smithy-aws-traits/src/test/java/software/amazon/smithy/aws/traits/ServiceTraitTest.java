@@ -88,8 +88,8 @@ public class ServiceTraitTest {
                 .unwrap();
         ServiceShape service = result
                 .expectShape(ShapeId.from("ns.foo#SomeService"))
-                .asServiceShape().get();
-        ServiceTrait trait = service.getTrait(ServiceTrait.class).get();
+                .expectServiceShape();
+        ServiceTrait trait = service.expectTrait(ServiceTrait.class);
 
         assertThat(trait.getSdkId(), equalTo("Some Value"));
         assertThat(trait.getCloudFormationName(), equalTo("SomeService"));

@@ -46,6 +46,11 @@ public final class DoubleShape extends NumberShape implements ToSmithyBuilder<Do
         return Optional.of(this);
     }
 
+    @Override
+    public DoubleShape expectDoubleShape() {
+        return this;
+    }
+
     /**
      * Builder used to create a {@link DoubleShape}.
      */

@@ -105,8 +105,8 @@ public final class HttpUriConflictValidator extends AbstractValidator {
     }
 
     private boolean isAllowableConflict(Model model, OperationShape operation, OperationShape otherOperation) {
-        UriPattern uriPattern = operation.getTrait(HttpTrait.class).get().getUri();
-        UriPattern otherUriPattern = otherOperation.getTrait(HttpTrait.class).get().getUri();
+        UriPattern uriPattern = operation.expectTrait(HttpTrait.class).getUri();
+        UriPattern otherUriPattern = otherOperation.expectTrait(HttpTrait.class).getUri();
 
         List<Pair<Segment, Segment>> conflictingLabelSegments = uriPattern.getConflictingLabelSegments(otherUriPattern);
 

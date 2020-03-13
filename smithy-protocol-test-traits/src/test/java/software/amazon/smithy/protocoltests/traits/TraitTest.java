@@ -16,8 +16,7 @@ public class TraitTest {
                 .assemble()
                 .unwrap();
         HttpRequestTestCase testCase = model.expectShape(ShapeId.from("smithy.example#SayHello"))
-                .getTrait(HttpRequestTestsTrait.class)
-                .get()
+                .expectTrait(HttpRequestTestsTrait.class)
                 .getTestCases()
                 .get(0);
 
@@ -33,8 +32,7 @@ public class TraitTest {
                 .assemble()
                 .unwrap();
         HttpResponseTestCase testCase = model.expectShape(ShapeId.from("smithy.example#SayGoodbye"))
-                .getTrait(HttpResponseTestsTrait.class)
-                .get()
+                .expectTrait(HttpResponseTestsTrait.class)
                 .getTestCases()
                 .get(0);
 

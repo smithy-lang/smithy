@@ -54,7 +54,7 @@ public class ModelTransformerTest {
         ShapeId operation = ShapeId.from("ns.foo#MyOperation");
 
         assertThat(nonTraitShapes.getShape(operation), Matchers.not(Optional.empty()));
-        assertThat(nonTraitShapes.getShape(operation).get().getTrait(ReadonlyTrait.class), Matchers.not(Optional.empty()));
+        assertThat(nonTraitShapes.expectShape(operation).getTrait(ReadonlyTrait.class), Matchers.not(Optional.empty()));
         assertThat(nonTraitShapes.getShape(EnumTrait.ID), Matchers.equalTo(Optional.empty()));
     }
 

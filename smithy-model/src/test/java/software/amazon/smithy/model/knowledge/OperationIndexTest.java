@@ -57,10 +57,10 @@ public class OperationIndexTest {
     @Test
     public void indexesOperations() {
         OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
-        Shape input = model.getShape(ShapeId.from("ns.foo#Input")).get();
-        Shape output = model.getShape(ShapeId.from("ns.foo#Output")).get();
-        Shape error1 = model.getShape(ShapeId.from("ns.foo#Error1")).get();
-        Shape error2 = model.getShape(ShapeId.from("ns.foo#Error2")).get();
+        Shape input = model.expectShape(ShapeId.from("ns.foo#Input"));
+        Shape output = model.expectShape(ShapeId.from("ns.foo#Output"));
+        Shape error1 = model.expectShape(ShapeId.from("ns.foo#Error1"));
+        Shape error2 = model.expectShape(ShapeId.from("ns.foo#Error2"));
 
         assertThat(opIndex.getInput(ShapeId.from("ns.foo#B")), is(Optional.of(input)));
         assertThat(opIndex.getOutput(ShapeId.from("ns.foo#B")), is(Optional.of(output)));

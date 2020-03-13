@@ -521,7 +521,7 @@ public final class SmithyIdlModelSerializer {
             }
 
             if (shape != null && shape.isMemberShape()) {
-                shape = model.expectShape(shape.asMemberShape().get().getTarget());
+                shape = model.expectShape(shape.expectMemberShape().getTarget());
             }
 
             if (node.isStringNode()) {
@@ -634,7 +634,7 @@ public final class SmithyIdlModelSerializer {
                 Shape member;
                 if (shape != null && shape.isMapShape()) {
                     // For maps the value member will always be the same.
-                    member = shape.asMapShape().get().getValue();
+                    member = shape.expectMapShape().getValue();
                 } else if (shape instanceof NamedMembersShape) {
                     member = members.get(name.getValue());
                 } else {

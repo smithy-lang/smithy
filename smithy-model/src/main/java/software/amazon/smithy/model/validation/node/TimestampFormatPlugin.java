@@ -41,10 +41,10 @@ public final class TimestampFormatPlugin implements NodeValidatorPlugin {
     public List<String> apply(Shape shape, Node value, Model model) {
         if (shape instanceof TimestampShape) {
             return validate(shape, shape.getTrait(TimestampFormatTrait.class).orElse(null), value);
-        } else if (shape instanceof MemberShape && shape.getTrait(TimestampFormatTrait.class).isPresent()) {
+        } else if (shape instanceof MemberShape && shape.hasTrait(TimestampFormatTrait.class)) {
             // Only perform timestamp format validation on a member when it references
             // a timestamp shape and the member has an explicit timestampFormat trait.
-            return validate(shape, shape.getTrait(TimestampFormatTrait.class).get(), value);
+            return validate(shape, shape.expectTrait(TimestampFormatTrait.class), value);
         } else {
             // Ignore when not a timestamp or member that targets a timestamp.
             return ListUtils.of();
@@ -111,11 +111,11 @@ public final class TimestampFormatPlugin implements NodeValidatorPlugin {
     }
 
     private List<String> validateHttpDate(Node value) {
-        if (!value.asStringNode().isPresent()) {
+        if (!value.isStringNode()) {
             return createInvalidHttpDateMessage(value.getType().toString());
         }
 
-        String dateValue = value.asStringNode().get().getValue();
+        String dateValue = value.expectStringNode().getValue();
         if (!isValidFormat(dateValue, HTTP_DATE) || !dateValue.endsWith("GMT")) {
             return createInvalidHttpDateMessage(dateValue);
         }

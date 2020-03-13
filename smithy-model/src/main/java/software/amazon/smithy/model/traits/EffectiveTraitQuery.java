@@ -54,12 +54,12 @@ public final class EffectiveTraitQuery implements ToSmithyBuilder<EffectiveTrait
             return true;
         }
 
-        if (!inheritFromContainer || !shape.asMemberShape().isPresent()) {
+        if (!inheritFromContainer || !shape.isMemberShape()) {
             return false;
         }
 
         // Check if the parent of the member is marked with the trait.
-        MemberShape memberShape = shape.asMemberShape().get();
+        MemberShape memberShape = shape.expectMemberShape();
         Shape parent = model.getShape(memberShape.getContainer()).orElse(null);
         return parent != null && parent.hasTrait(traitClass);
     }

@@ -46,6 +46,11 @@ public final class BigIntegerShape extends NumberShape implements ToSmithyBuilde
         return Optional.of(this);
     }
 
+    @Override
+    public BigIntegerShape expectBigIntegerShape() {
+        return this;
+    }
+
     /**
      * Builder used to create a {@link BigIntegerShape}.
      */

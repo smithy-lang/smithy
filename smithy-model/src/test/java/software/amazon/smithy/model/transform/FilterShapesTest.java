@@ -105,11 +105,11 @@ public class FilterShapesTest {
         assertThat(result.getShape(structure.getId()), Matchers.not(Optional.empty()));
 
         // Make sure the structure was updated so that it no longer has the removed member shape.
-        assertThat(result.getShape(structure.getId()).get().asStructureShape().get().getMember("member1"),
+        assertThat(result.expectShape(structure.getId(), StructureShape.class).getMember("member1"),
                    Matchers.not(Optional.empty()));
-        assertThat(result.getShape(structure.getId()).get().asStructureShape().get().getMember("member3"),
+        assertThat(result.expectShape(structure.getId(), StructureShape.class).getMember("member3"),
                    Matchers.not(Optional.empty()));
-        assertThat(result.getShape(structure.getId()).get().asStructureShape().get().getMember("member2"),
+        assertThat(result.expectShape(structure.getId(), StructureShape.class).getMember("member2"),
                    Matchers.is(Optional.empty()));
     }
 
@@ -149,10 +149,10 @@ public class FilterShapesTest {
         assertThat(definitions, Matchers.hasKey(barTrait));
         assertThat(definitions, Matchers.hasValue(barTrait.getTrait(TraitDefinition.class).get()));
 
-        assertThat(result.getShape(shapeId1).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(result.getShape(shapeId1).get().findTrait("ns.foo#baz"), Matchers.is(Optional.empty()));
-        assertThat(result.getShape(shapeId2).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(result.getShape(shapeId2).get().findTrait("ns.foo#baz"), Matchers.is(Optional.empty()));
-        assertThat(result.getShape(shapeId2).get().findTrait("ns.foo#bar"), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(shapeId1).getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(shapeId1).findTrait("ns.foo#baz"), Matchers.is(Optional.empty()));
+        assertThat(result.expectShape(shapeId2).getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(shapeId2).findTrait("ns.foo#baz"), Matchers.is(Optional.empty()));
+        assertThat(result.expectShape(shapeId2).findTrait("ns.foo#bar"), Matchers.not(Optional.empty()));
     }
 }

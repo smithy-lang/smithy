@@ -57,11 +57,11 @@ public class MqttTopicLabelValidator extends AbstractValidator {
 
     private static TopicCollection createTopics(OperationShape shape) {
         if (shape.hasTrait(SubscribeTrait.class)) {
-            SubscribeTrait trait = shape.getTrait(SubscribeTrait.class).get();
+            SubscribeTrait trait = shape.expectTrait(SubscribeTrait.class);
             List<Topic> bindings = Collections.singletonList(trait.getTopic());
             return new TopicCollection(shape, trait, bindings);
         } else if (shape.hasTrait(PublishTrait.class)) {
-            PublishTrait trait = shape.getTrait(PublishTrait.class).get();
+            PublishTrait trait = shape.expectTrait(PublishTrait.class);
             List<Topic> bindings = Collections.singletonList(trait.getTopic());
             return new TopicCollection(shape, trait, bindings);
         } else {
@@ -94,7 +94,7 @@ public class MqttTopicLabelValidator extends AbstractValidator {
                 if (labels.contains(member.getMemberName())) {
                     labels.remove(member.getMemberName());
                 } else {
-                    events.add(error(member, member.getTrait(TopicLabelTrait.class).get(), String.format(
+                    events.add(error(member, member.expectTrait(TopicLabelTrait.class), String.format(
                             "This member is marked with the `smithy.mqtt#topicLabel` trait, but when this member is "
                             + "used as part of the input of the `%s` operation, a corresponding label cannot be "
                             + "found in the `%s` trait",

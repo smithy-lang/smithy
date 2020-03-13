@@ -87,11 +87,11 @@ public class EventStreamValidator extends AbstractValidator {
             return Collections.emptyList();
         }
 
-        EventStreamTrait trait = member.getTrait(EventStreamTrait.class).get();
-        if (target.asUnionShape().isPresent()) {
+        EventStreamTrait trait = member.expectTrait(EventStreamTrait.class);
+        if (target.isUnionShape()) {
             // Find members that don't reference a structure and combine
             // these member names into a comma separated list.
-            String invalidMembers = target.asUnionShape().get().getAllMembers().values().stream()
+            String invalidMembers = target.expectUnionShape().getAllMembers().values().stream()
                     .map(em -> Pair.of(em.getMemberName(), model.getShape(em.getTarget()).orElse(null)))
                     .filter(pair -> pair.getRight() != null && !(pair.getRight() instanceof StructureShape))
                     .map(Pair::getLeft)

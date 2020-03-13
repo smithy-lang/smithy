@@ -100,16 +100,17 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
                     .orElseGet(HashMap::new);
             bindings.get(resource.getId()).put(operationId, computedBindings);
 
-            bindingTypes.get(resource.getId()).put(operationId, isCollection(resource, operationId)
+            BindingType operationBindingType = isCollection(resource, operationId)
                     ? BindingType.COLLECTION
-                    : BindingType.INSTANCE);
+                    : BindingType.INSTANCE;
+            bindingTypes.get(resource.getId()).put(operationId, operationBindingType);
         });
     }
 
     private boolean isCollection(ResourceShape resource, ToShapeId operationId) {
-        return resource.getCollectionOperations().contains(operationId)
-                || (resource.getCreate().isPresent() && resource.getCreate().get().toShapeId().equals(operationId))
-                || (resource.getList().isPresent() && resource.getList().get().toShapeId().equals(operationId));
+        return resource.getCollectionOperations().contains(operationId.toShapeId())
+                || (resource.getCreate().filter(id -> id.equals(operationId)).isPresent())
+                || (resource.getList().filter(id -> id.equals(operationId)).isPresent());
     }
 
     private boolean isImplicitIdentifierBinding(Map.Entry<String, MemberShape> memberEntry, ResourceShape resource) {
@@ -126,6 +127,5 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
                                 ? Stream.of(Pair.of(entry.getKey(), entry.getKey()))
                                 : Stream.empty()))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-
     }
 }

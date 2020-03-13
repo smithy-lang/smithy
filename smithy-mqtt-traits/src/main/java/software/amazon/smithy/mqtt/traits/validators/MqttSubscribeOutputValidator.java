@@ -69,7 +69,7 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         if (info.hasInitialMessage()) {
-            events.add(error(shape, shape.getTrait(SubscribeTrait.class).get(),
+            events.add(error(shape, shape.expectTrait(SubscribeTrait.class),
                              "Operations marked with the `smithy.mqtt#subscribe` trait must not utilize event "
                              + "streams with initial responses in their output structure."));
         }
@@ -102,7 +102,7 @@ public final class MqttSubscribeOutputValidator extends AbstractValidator {
 
             @Override
             public Stream<StructureShape> structureShape(StructureShape shape) {
-                return Stream.of(info.getEventStreamTarget().asStructureShape().get());
+                return Stream.of(info.getEventStreamTarget().expectStructureShape());
             }
         });
     }

@@ -93,6 +93,11 @@ public final class ResourceShape extends EntityShape implements ToSmithyBuilder<
     }
 
     @Override
+    public ResourceShape expectResourceShape() {
+        return this;
+    }
+
+    @Override
     public Set<ShapeId> getAllOperations() {
         return Collections.unmodifiableSet(allOperations);
     }

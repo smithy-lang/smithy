@@ -158,8 +158,7 @@ public class ModelAssemblerTest {
         assertThat(result.getValidationEvents(), hasSize(1));
         assertThat(result.getValidationEvents().get(0).getMessage(), containsString("Invalid shape `type`: foobaz"));
         assertThat(result.getValidationEvents().get(0).getSeverity(), is(Severity.ERROR));
-        assertTrue(result.getResult().get()
-                           .getShape(ShapeId.from("example.namespace#String")).isPresent());
+        assertTrue(result.getResult().get().getShape(ShapeId.from("example.namespace#String")).isPresent());
     }
 
     @Test
@@ -176,48 +175,48 @@ public class ModelAssemblerTest {
         assertThat(result.getValidationEvents(), empty());
         Model model = result.unwrap();
         assertTrue(model.getShape(ShapeId.from("example.namespace#String")).isPresent());
-        assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#String")).getType(),
             is(ShapeType.STRING));
-        assertThat(model.getShape(ShapeId.from("example.namespace#String2")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#String2")).getType(),
             is(ShapeType.STRING));
-        assertThat(model.getShape(ShapeId.from("example.namespace#String3")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#String3")).getType(),
             is(ShapeType.STRING));
-        assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#String")).getType(),
             is(ShapeType.STRING));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Integer")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Integer")).getType(),
             is(ShapeType.INTEGER));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Long")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Long")).getType(),
             is(ShapeType.LONG));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Float")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Float")).getType(),
             is(ShapeType.FLOAT));
-        assertThat(model.getShape(ShapeId.from("example.namespace#BigDecimal")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#BigDecimal")).getType(),
             is(ShapeType.BIG_DECIMAL));
-        assertThat(model.getShape(ShapeId.from("example.namespace#BigInteger")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#BigInteger")).getType(),
             is(ShapeType.BIG_INTEGER));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Blob")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Blob")).getType(),
             is(ShapeType.BLOB));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Boolean")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Boolean")).getType(),
             is(ShapeType.BOOLEAN));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Timestamp")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Timestamp")).getType(),
             is(ShapeType.TIMESTAMP));
-        assertThat(model.getShape(ShapeId.from("example.namespace#List")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#List")).getType(),
             is(ShapeType.LIST));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Map")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Map")).getType(),
             is(ShapeType.MAP));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Structure")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Structure")).getType(),
             is(ShapeType.STRUCTURE));
-        assertThat(model.getShape(ShapeId.from("example.namespace#TaggedUnion")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#TaggedUnion")).getType(),
             is(ShapeType.UNION));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Resource")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Resource")).getType(),
             is(ShapeType.RESOURCE));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Operation")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Operation")).getType(),
             is(ShapeType.OPERATION));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Service")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Service")).getType(),
             is(ShapeType.SERVICE));
 
         ShapeId stringId = ShapeId.from("example.namespace#String");
         Optional<SensitiveTrait> sensitiveTrait = model
-            .getShape(stringId).get()
+            .expectShape(stringId)
             .getTrait(SensitiveTrait.class);
         assertTrue(sensitiveTrait.isPresent());
 
@@ -270,48 +269,48 @@ public class ModelAssemblerTest {
         assertThat(result.getValidationEvents(), empty());
         Model model = result.unwrap();
         assertTrue(model.getShape(ShapeId.from("example.namespace#String")).isPresent());
-        assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#String")).getType(),
                    is(ShapeType.STRING));
-        assertThat(model.getShape(ShapeId.from("example.namespace#String2")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#String2")).getType(),
                    is(ShapeType.STRING));
-        assertThat(model.getShape(ShapeId.from("example.namespace#String3")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#String3")).getType(),
                    is(ShapeType.STRING));
-        assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#String")).getType(),
                    is(ShapeType.STRING));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Integer")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Integer")).getType(),
                    is(ShapeType.INTEGER));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Long")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Long")).getType(),
                    is(ShapeType.LONG));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Float")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Float")).getType(),
                    is(ShapeType.FLOAT));
-        assertThat(model.getShape(ShapeId.from("example.namespace#BigDecimal")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#BigDecimal")).getType(),
                    is(ShapeType.BIG_DECIMAL));
-        assertThat(model.getShape(ShapeId.from("example.namespace#BigInteger")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#BigInteger")).getType(),
                    is(ShapeType.BIG_INTEGER));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Blob")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Blob")).getType(),
                    is(ShapeType.BLOB));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Boolean")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Boolean")).getType(),
                    is(ShapeType.BOOLEAN));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Timestamp")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Timestamp")).getType(),
                    is(ShapeType.TIMESTAMP));
-        assertThat(model.getShape(ShapeId.from("example.namespace#List")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#List")).getType(),
                     is(ShapeType.LIST));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Map")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Map")).getType(),
                    is(ShapeType.MAP));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Structure")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Structure")).getType(),
                    is(ShapeType.STRUCTURE));
-        assertThat(model.getShape(ShapeId.from("example.namespace#TaggedUnion")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#TaggedUnion")).getType(),
                    is(ShapeType.UNION));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Resource")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Resource")).getType(),
                    is(ShapeType.RESOURCE));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Operation")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Operation")).getType(),
                    is(ShapeType.OPERATION));
-        assertThat(model.getShape(ShapeId.from("example.namespace#Service")).get().getType(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#Service")).getType(),
                    is(ShapeType.SERVICE));
 
         ShapeId stringId = ShapeId.from("example.namespace#String");
         Optional<SensitiveTrait> sensitiveTrait = model
-                .getShape(stringId).get()
+                .expectShape(stringId)
                 .getTrait(SensitiveTrait.class);
         assertTrue(sensitiveTrait.isPresent());
 
@@ -339,9 +338,9 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
-        assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getSourceLocation(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#String")).getSourceLocation(),
                 is(new SourceLocation(getClass().getResource("main.json").toString(), 4, 37)));
-        assertThat(model.getShape(ShapeId.from("example.namespace#TaggedUnion$foo")).get().getSourceLocation(),
+        assertThat(model.expectShape(ShapeId.from("example.namespace#TaggedUnion$foo")).getSourceLocation(),
                 is(new SourceLocation(getClass().getResource("main.json").toString(), 69, 24)));
     }
 
@@ -399,7 +398,7 @@ public class ModelAssemblerTest {
                 .unwrap();
 
         assertEquals("hi", model2.expectShape(ShapeId.from("example.namespace#String"))
-                .getTrait(DocumentationTrait.class).get().getValue());
+                .expectTrait(DocumentationTrait.class).getValue());
     }
 
     @Test
@@ -462,7 +461,7 @@ public class ModelAssemblerTest {
         for (String id : ListUtils.of("foo.baz#A", "foo.baz#B", "foo.baz#C")) {
             ShapeId shapeId = ShapeId.from(id);
             assertTrue(model.getShape(shapeId).isPresent());
-            assertThat(model.getShape(shapeId).get().getSourceLocation().getFilename(),
+            assertThat(model.expectShape(shapeId).getSourceLocation().getFilename(),
                        startsWith("jar:file:"));
         }
     }

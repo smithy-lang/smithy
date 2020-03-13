@@ -72,9 +72,9 @@ public class ReplaceShapesTest {
         Model result = transformer.replaceShapes(model, Arrays.asList(newList));
 
         assertThat(result.shapes().count(), Matchers.equalTo(3L));
-        assertThat(result.getShape(memberId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(result.getShape(containerId).get(), Matchers.is(newList));
-        assertThat(result.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
+        assertThat(result.expectShape(memberId).getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(containerId), Matchers.is(newList));
+        assertThat(result.expectShape(containerId, ListShape.class).getMember(), Matchers.is(newMember));
     }
 
     @Test
@@ -107,11 +107,11 @@ public class ReplaceShapesTest {
         Model result = transformer.replaceShapes(model, Arrays.asList(newMap));
 
         assertThat(result.shapes().count(), Matchers.equalTo(4L));
-        assertThat(result.getShape(keyId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(result.getShape(valueId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(result.getShape(containerId).get(), Matchers.is(newMap));
-        assertThat(result.getShape(containerId).get().asMapShape().get().getKey(), Matchers.is(newKey));
-        assertThat(result.getShape(containerId).get().asMapShape().get().getValue(), Matchers.is(newValue));
+        assertThat(result.expectShape(keyId).getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(valueId).getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(containerId), Matchers.is(newMap));
+        assertThat(result.expectShape(containerId, MapShape.class).getKey(), Matchers.is(newKey));
+        assertThat(result.expectShape(containerId, MapShape.class).getValue(), Matchers.is(newValue));
     }
 
     @Test
@@ -164,8 +164,8 @@ public class ReplaceShapesTest {
                 .build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMember));
 
-        assertThat(result.getShape(memberId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
-        assertThat(result.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
+        assertThat(result.expectShape(memberId).getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(containerId, ListShape.class).getMember(), Matchers.is(newMember));
     }
 
     @Test
@@ -195,14 +195,14 @@ public class ReplaceShapesTest {
                 .build();
         Model resultWithNewValue = transformer.replaceShapes(model, Arrays.asList(newValueMember));
 
-        assertThat(resultWithNewKey.getShape(keyMemberId).get().getTrait(SensitiveTrait.class),
+        assertThat(resultWithNewKey.expectShape(keyMemberId).getTrait(SensitiveTrait.class),
                           Matchers.not(Optional.empty()));
-        assertThat(resultWithNewKey.getShape(containerId).get().asMapShape().get().getKey(),
+        assertThat(resultWithNewKey.expectShape(containerId, MapShape.class).getKey(),
                           Matchers.is(newKeyMember));
 
-        assertThat(resultWithNewValue.getShape(valueMemberId).get().getTrait(SensitiveTrait.class),
+        assertThat(resultWithNewValue.expectShape(valueMemberId).getTrait(SensitiveTrait.class),
                           Matchers.not(Optional.empty()));
-        assertThat(resultWithNewValue.getShape(containerId).get().asMapShape().get().getValue(),
+        assertThat(resultWithNewValue.expectShape(containerId, MapShape.class).getValue(),
                           Matchers.is(newValueMember));
     }
 
@@ -236,11 +236,11 @@ public class ReplaceShapesTest {
         Model result = transformer.replaceShapes(model, Arrays.asList(newMemberB));
 
         // Make sure the member has the trait that was applied.
-        assertThat(result.getShape(memberBId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(memberBId).getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
         // Make sure it's still optional.
-        assertTrue(result.getShape(containerId).get().asStructureShape().get().getMember("b").get().isOptional());
+        assertTrue(result.expectShape(containerId, StructureShape.class).getMember("b").get().isOptional());
         // Ensure that the structure that contains the shape was updated.
-        assertThat(result.getShape(containerId).get().asStructureShape().get().getMember("b").get(),
+        assertThat(result.expectShape(containerId, StructureShape.class).getMember("b").get(),
                    Matchers.is(newMemberB));
     }
 
@@ -266,16 +266,14 @@ public class ReplaceShapesTest {
         MemberShape newMemberB = memberB.toBuilder().addTrait(new RequiredTrait(SourceLocation.NONE)).build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMemberA, newMemberB));
 
-        assertThat(result.getShape(memberAId).get().getTrait(RequiredTrait.class), Matchers.not(Optional.empty()));
-        assertThat(result.getShape(memberBId).get().getTrait(RequiredTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(memberAId).getTrait(RequiredTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(memberBId).getTrait(RequiredTrait.class), Matchers.not(Optional.empty()));
 
         // Make sure the members got updated inside of the container.
-        assertTrue(result.getShape(containerId).get()
-                .asStructureShape().get()
+        assertTrue(result.expectShape(containerId, StructureShape.class)
                 .getMember("a").get()
                 .hasTrait(RequiredTrait.class));
-        assertTrue(result.getShape(containerId).get()
-                .asStructureShape().get()
+        assertTrue(result.expectShape(containerId, StructureShape.class)
                 .getMember("b").get()
                 .hasTrait(RequiredTrait.class));
     }
@@ -306,9 +304,9 @@ public class ReplaceShapesTest {
         Model result = transformer.replaceShapes(model, Arrays.asList(newMemberB));
 
         // Make sure the member has the trait that was applied.
-        assertThat(result.getShape(memberBId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(memberBId).getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
         // Ensure that the union that contains the shape was updated.
-        assertThat(result.getShape(containerId).get().asUnionShape().get().getMember("b").get(),
+        assertThat(result.expectShape(containerId, UnionShape.class).getMember("b").get(),
                    Matchers.is(newMemberB));
     }
 
@@ -339,11 +337,11 @@ public class ReplaceShapesTest {
         Model result = transformer.replaceShapes(model, Arrays.asList(newMember, newContainer));
 
         // Make sure the member has the trait that was applied.
-        assertThat(result.getShape(memberId).get().getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(memberId).getTrait(SensitiveTrait.class), Matchers.not(Optional.empty()));
         // Ensure that the list shape changes were not overwritten.
-        assertThat(result.getShape(containerId).get().asListShape().get().getTrait(LengthTrait.class),
+        assertThat(result.expectShape(containerId, ListShape.class).getTrait(LengthTrait.class),
                           Matchers.not(Optional.empty()));
         // Ensure that the list shape has the new member.
-        assertThat(result.getShape(containerId).get().asListShape().get().getMember(), Matchers.is(newMember));
+        assertThat(result.expectShape(containerId, ListShape.class).getMember(), Matchers.is(newMember));
     }
 }

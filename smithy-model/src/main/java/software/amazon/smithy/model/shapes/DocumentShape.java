@@ -46,6 +46,11 @@ public final class DocumentShape extends SimpleShape implements ToSmithyBuilder<
         return Optional.of(this);
     }
 
+    @Override
+    public DocumentShape expectDocumentShape() {
+        return this;
+    }
+
     /**
      * Builder used to create a {@link DocumentShape}.
      */

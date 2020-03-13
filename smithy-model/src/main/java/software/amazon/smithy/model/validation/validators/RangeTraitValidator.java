@@ -74,7 +74,7 @@ public class RangeTraitValidator extends AbstractValidator {
     ) {
         if (!property.remainder(BigDecimal.ONE).equals(BigDecimal.ZERO)) {
             if (shape.isMemberShape()) {
-                MemberShape member = shape.asMemberShape().get();
+                MemberShape member = shape.expectMemberShape();
                 Optional<Shape> target = model.getShape(member.getTarget());
                 if (target.isPresent() && !isDecimalShape(target.get())) {
                     return Optional.of(error(shape, trait, format(

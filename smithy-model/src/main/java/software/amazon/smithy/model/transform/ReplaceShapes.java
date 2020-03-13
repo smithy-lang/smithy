@@ -211,14 +211,14 @@ final class ReplaceShapes {
         public Collection<Shape> unionShape(UnionShape shape) {
             return onNamedMemberContainer(
                     shape.getAllMembers(),
-                    previous.asUnionShape().get().getAllMembers());
+                    previous.expectUnionShape().getAllMembers());
         }
 
         @Override
         public Collection<Shape> structureShape(StructureShape shape) {
             return onNamedMemberContainer(
                     getStructureMemberMap(shape),
-                    getStructureMemberMap(previous.asStructureShape().get()));
+                    getStructureMemberMap(previous.expectStructureShape()));
         }
 
         private Map<String, MemberShape> getStructureMemberMap(StructureShape shape) {

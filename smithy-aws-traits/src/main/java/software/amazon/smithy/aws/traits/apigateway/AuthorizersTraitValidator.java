@@ -58,7 +58,7 @@ public class AuthorizersTraitValidator extends AbstractValidator {
             return Optional.empty();
         }
 
-        AuthorizersTrait authorizersTrait = service.getTrait(AuthorizersTrait.class).get();
+        AuthorizersTrait authorizersTrait = service.expectTrait(AuthorizersTrait.class);
         return Optional.of(error(service, authorizersTrait, String.format(
                 "Each `scheme` of the `%s` trait must target one of the auth schemes applied to the service "
                 + "(i.e., [%s]). The following mappings of authorizer names to schemes are invalid: %s",

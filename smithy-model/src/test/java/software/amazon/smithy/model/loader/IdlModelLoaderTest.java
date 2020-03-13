@@ -57,12 +57,9 @@ public class IdlModelLoaderTest {
                 .assemble()
                 .unwrap();
 
-        MemberShape baz = model.expectShape(ShapeId.from("smithy.example#Foo$baz"))
-                .asMemberShape().get();
-        MemberShape bar = model.expectShape(ShapeId.from("smithy.example#Foo$bar"))
-                .asMemberShape().get();
-        ResourceShape resource = model.expectShape(ShapeId.from("smithy.example#MyResource"))
-                .asResourceShape().get();
+        MemberShape baz = model.expectShape(ShapeId.from("smithy.example#Foo$baz")).expectMemberShape();
+        MemberShape bar = model.expectShape(ShapeId.from("smithy.example#Foo$bar")).expectMemberShape();
+        ResourceShape resource = model.expectShape(ShapeId.from("smithy.example#MyResource")).expectResourceShape();
 
         assertThat(baz.getTarget().toString(), equalTo("smithy.api#String"));
         assertThat(bar.getTarget().toString(), equalTo("smithy.example#Integer"));

@@ -46,6 +46,11 @@ public final class BlobShape extends SimpleShape implements ToSmithyBuilder<Blob
         return Optional.of(this);
     }
 
+    @Override
+    public BlobShape expectBlobShape() {
+        return this;
+    }
+
     /**
      * Builder used to create a {@link BlobShape}.
      */

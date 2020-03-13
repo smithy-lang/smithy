@@ -71,7 +71,7 @@ public final class ReferencesTraitValidator extends AbstractValidator {
                             "`references` trait reference targets a %s shape not a resource: %s",
                             targetedShape.get().getType(), reference)));
                 } else {
-                    ResourceShape resource = targetedShape.get().asResourceShape().get();
+                    ResourceShape resource = targetedShape.get().expectResourceShape();
                     events.addAll(validateSingleReference(model, reference, shape, trait, resource));
                 }
             }

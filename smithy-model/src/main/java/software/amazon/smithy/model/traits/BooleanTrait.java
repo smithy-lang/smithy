@@ -53,7 +53,7 @@ public abstract class BooleanTrait extends AbstractTrait {
 
         @Override
         public T createTrait(ShapeId id, Node value) {
-            if (value.asObjectNode().isPresent() && value.asObjectNode().get().getMembers().isEmpty()) {
+            if (value.isObjectNode() && value.expectObjectNode().getMembers().isEmpty()) {
                 return traitFactory.apply(value.getSourceLocation());
             }
 

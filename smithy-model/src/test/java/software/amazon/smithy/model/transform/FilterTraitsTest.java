@@ -50,10 +50,10 @@ public class FilterTraitsTest {
                 model, (shape, trait) -> !trait.toShapeId().equals(ShapeId.from("smithy.api#sensitive")));
 
         assertThat(result.shapes().count(), Matchers.is(2L));
-        assertThat(result.getShape(aId).get().getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
-        assertThat(result.getShape(aId).get().getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
-        assertThat(result.getShape(bId).get().getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
-        assertThat(result.getShape(bId).get().getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(aId).getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
+        assertThat(result.expectShape(aId).getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(bId).getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
+        assertThat(result.expectShape(bId).getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
     }
 
     @Test
@@ -72,9 +72,9 @@ public class FilterTraitsTest {
                                          && !trait.toShapeId().equals(ShapeId.from("smithy.api#documentation")));
 
         assertThat(result.shapes().count(), Matchers.is(1L));
-        assertThat(result.getShape(aId).get().getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
-        assertThat(result.getShape(aId).get().getTrait(DocumentationTrait.class), Matchers.is(Optional.empty()));
-        assertThat(result.getShape(aId).get().getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
+        assertThat(result.expectShape(aId).getTrait(SensitiveTrait.class), Matchers.is(Optional.empty()));
+        assertThat(result.expectShape(aId).getTrait(DocumentationTrait.class), Matchers.is(Optional.empty()));
+        assertThat(result.expectShape(aId).getTrait(DeprecatedTrait.class), Matchers.not(Optional.empty()));
     }
 
     @Test
