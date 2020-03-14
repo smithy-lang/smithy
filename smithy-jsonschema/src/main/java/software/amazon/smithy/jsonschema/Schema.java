@@ -837,7 +837,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                     return this.maxItems(null);
                 case JsonSchemaConstants.DISABLE_MIN_ITEMS:
                     return this.minItems(null);
-                case JsonSchemaConstants.DISABLE_UNIUQE_ITEMS:
+                case JsonSchemaConstants.DISABLE_UNIQUE_ITEMS:
                     return this.uniqueItems(false);
                 case JsonSchemaConstants.DISABLE_PROPERTIES:
                     return this.properties(null);
