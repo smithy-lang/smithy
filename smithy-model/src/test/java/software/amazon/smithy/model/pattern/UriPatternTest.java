@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static software.amazon.smithy.model.pattern.Pattern.Segment;
+import static software.amazon.smithy.model.pattern.SmithyPattern.Segment;
 
 import java.util.Arrays;
 import java.util.Collection;

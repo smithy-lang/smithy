@@ -40,7 +40,7 @@ import software.amazon.smithy.utils.Pair;
  * "{label+}". Only a single greedy label may appear in a pattern, and it
  * must be the last label in a pattern.
  */
-public final class UriPattern extends Pattern {
+public final class UriPattern extends SmithyPattern {
 
     private final Map<String, String> queryLiterals;
 
@@ -121,7 +121,7 @@ public final class UriPattern extends Pattern {
     /**
      * Determines if the pattern conflicts with another pattern.
      *
-     * @param otherPattern Pattern to check against.
+     * @param otherPattern SmithyPattern to check against.
      * @return Returns true if there is a conflict.
      */
     public boolean conflictsWith(UriPattern otherPattern) {
@@ -160,7 +160,7 @@ public final class UriPattern extends Pattern {
      * Gets a list of explicitly conflicting uri label segments between this
      * pattern and another.
      *
-     * @param otherPattern Pattern to check against.
+     * @param otherPattern SmithyPattern to check against.
      * @return A list of Segment Pairs where each pair represents a conflict
      *     and where the left side of the Pair is a segment from this pattern.
      */
