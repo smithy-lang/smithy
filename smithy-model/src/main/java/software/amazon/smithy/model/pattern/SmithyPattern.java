@@ -41,12 +41,12 @@ import java.util.stream.Collectors;
  * must be the last label in a pattern. Greedy labels may be disabled for a
  * pattern as part of the builder construction.
  */
-public class Pattern {
+public class SmithyPattern {
 
     private final String pattern;
     private final List<Segment> segments;
 
-    protected Pattern(Builder builder) {
+    protected SmithyPattern(Builder builder) {
         pattern = Objects.requireNonNull(builder.pattern);
         segments = Objects.requireNonNull(builder.segments);
 
@@ -107,7 +107,7 @@ public class Pattern {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof Pattern && pattern.equals(((Pattern) other).pattern);
+        return other instanceof SmithyPattern && pattern.equals(((SmithyPattern) other).pattern);
     }
 
     @Override
@@ -145,14 +145,14 @@ public class Pattern {
     }
 
     /**
-     * @return Returns a builder used to create a Pattern.
+     * @return Returns a builder used to create a SmithyPattern.
      */
     public static Builder builder() {
         return new Builder();
     }
 
     /**
-     * Builder used to create a Pattern.
+     * Builder used to create a SmithyPattern.
      */
     public static final class Builder {
         private boolean allowsGreedyLabels = true;
@@ -176,13 +176,13 @@ public class Pattern {
             return this;
         }
 
-        public Pattern build() {
-            return new Pattern(this);
+        public SmithyPattern build() {
+            return new SmithyPattern(this);
         }
     }
 
     /**
-     * Segment within a Pattern.
+     * Segment within a SmithyPattern.
      */
     public static final class Segment {
 
