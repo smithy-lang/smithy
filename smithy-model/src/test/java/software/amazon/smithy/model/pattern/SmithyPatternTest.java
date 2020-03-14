@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static software.amazon.smithy.model.pattern.Pattern.Segment;
+import static software.amazon.smithy.model.pattern.SmithyPattern.Segment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class PatternTest {
+public class SmithyPatternTest {
 
     private static List<Segment> parser(String target) {
         String[] unparsedSegments = target.split(java.util.regex.Pattern.quote("/"));
@@ -45,7 +45,7 @@ public class PatternTest {
     @Test
     public void parsesGreedyLabels() {
         String target = "/foo/baz/{bar+}";
-        Pattern pattern = Pattern.builder()
+        SmithyPattern pattern = SmithyPattern.builder()
                 .segments(parser(target))
                 .pattern(target)
                 .build();
@@ -58,12 +58,12 @@ public class PatternTest {
     @Test
     public void computesHashAndEquals() {
         String target1 = "/foo";
-        Pattern pattern1 = Pattern.builder()
+        SmithyPattern pattern1 = SmithyPattern.builder()
                 .segments(parser(target1))
                 .pattern(target1)
                 .build();
         String target2 = "/foo/{baz+}/";
-        Pattern pattern2 = Pattern.builder()
+        SmithyPattern pattern2 = SmithyPattern.builder()
                 .segments(parser(target2))
                 .pattern(target2)
                 .build();
@@ -79,7 +79,7 @@ public class PatternTest {
     @Test
     public void labelsAreCaseInsensitive() {
         String target = "/foo/{baz}";
-        Pattern pattern = Pattern.builder()
+        SmithyPattern pattern = SmithyPattern.builder()
                                   .segments(parser(target))
                 .pattern(target)
                 .build();
@@ -93,7 +93,7 @@ public class PatternTest {
     public void labelsMustNotIncludeEmptySegments() {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "//baz";
-            Pattern.builder()
+            SmithyPattern.builder()
                     .segments(parser(target))
                     .pattern(target)
                     .build();
@@ -106,7 +106,7 @@ public class PatternTest {
     public void labelsMustNotBeRepeated() {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{foo}/{Foo}";
-            Pattern.builder()
+            SmithyPattern.builder()
                     .segments(parser(target))
                     .pattern(target)
                     .build();
@@ -119,7 +119,7 @@ public class PatternTest {
     public void restrictsGreedyLabels() {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/foo/{baz+}";
-            Pattern.builder()
+            SmithyPattern.builder()
                     .allowsGreedyLabels(false)
                     .segments(parser(target))
                     .pattern(target)
@@ -133,7 +133,7 @@ public class PatternTest {
     public void noMoreThanOneGreedyLabel() {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{foo+}/{baz+}";
-            Pattern.builder()
+            SmithyPattern.builder()
                     .segments(parser(target))
                     .pattern(target)
                     .build();
@@ -146,7 +146,7 @@ public class PatternTest {
     public void greedyLabelsMustBeLastLabelInPattern() {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{foo+}/{baz}";
-            Pattern.builder()
+            SmithyPattern.builder()
                     .segments(parser(target))
                     .pattern(target)
                     .build();
@@ -159,7 +159,7 @@ public class PatternTest {
     public void noEmptyLabels() {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{}";
-            Pattern.builder()
+            SmithyPattern.builder()
                     .segments(parser(target))
                     .pattern(target)
                     .build();
@@ -172,7 +172,7 @@ public class PatternTest {
     public void labelsMustMatchRegex() {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{!}";
-            Pattern.builder()
+            SmithyPattern.builder()
                     .segments(parser(target))
                     .pattern(target)
                     .build();
@@ -185,7 +185,7 @@ public class PatternTest {
     public void labelsMustSpanEntireSegment() {
         Throwable thrown = Assertions.assertThrows(InvalidPatternException.class, () -> {
             String target = "/{foo}baz";
-            Pattern.builder()
+            SmithyPattern.builder()
                     .segments(parser(target))
                     .pattern(target)
                     .build();

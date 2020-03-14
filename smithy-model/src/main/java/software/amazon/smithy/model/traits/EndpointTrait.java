@@ -16,7 +16,7 @@
 package software.amazon.smithy.model.traits;
 
 import static java.lang.String.format;
-import static software.amazon.smithy.model.pattern.Pattern.Segment;
+import static software.amazon.smithy.model.pattern.SmithyPattern.Segment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.pattern.InvalidPatternException;
-import software.amazon.smithy.model.pattern.Pattern;
+import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -36,7 +36,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilder<EndpointTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#endpoint");
 
-    private final Pattern hostPrefix;
+    private final SmithyPattern hostPrefix;
 
     private EndpointTrait(Builder builder) {
         super(ID, builder.sourceLocation);
@@ -67,7 +67,7 @@ public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilde
             position += token.length();
         }
 
-        this.hostPrefix = Pattern.builder()
+        this.hostPrefix = SmithyPattern.builder()
                 .allowsGreedyLabels(false)
                 .segments(segments)
                 .pattern(hostPrefix)
@@ -88,7 +88,7 @@ public final class EndpointTrait extends AbstractTrait implements ToSmithyBuilde
         }
     }
 
-    public Pattern getHostPrefix() {
+    public SmithyPattern getHostPrefix() {
         return hostPrefix;
     }
 

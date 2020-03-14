@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.pattern.Pattern;
+import software.amazon.smithy.model.pattern.SmithyPattern;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -82,7 +82,7 @@ public class HostLabelTraitValidator extends AbstractValidator {
             events.add(error(operation, endpoint, format(
                     "`endpoint` trait hostPrefix contains labels (%s), but operation has no input.",
                     ValidationUtils.tickedList(endpoint.getHostPrefix().getLabels().stream()
-                            .map(Pattern.Segment::getContent).collect(Collectors.toSet())))));
+                            .map(SmithyPattern.Segment::getContent).collect(Collectors.toSet())))));
         } else {
             // Only validate the bindings if the input is a structure. Typing
             // validation of the input is handled elsewhere.
@@ -101,13 +101,13 @@ public class HostLabelTraitValidator extends AbstractValidator {
             StructureShape input
     ) {
         List<ValidationEvent> events = new ArrayList<>();
-        Pattern hostPrefix = endpoint.getHostPrefix();
+        SmithyPattern hostPrefix = endpoint.getHostPrefix();
 
         // Create a set of labels and remove from the set when a match is
         // found. If any labels remain after looking at all members, then
         // there are unmatched labels.
         Set<String> labels = hostPrefix.getLabels().stream()
-                .map(Pattern.Segment::getContent)
+                .map(SmithyPattern.Segment::getContent)
                 .collect(Collectors.toSet());
 
         input.getAllMembers().values().stream()
