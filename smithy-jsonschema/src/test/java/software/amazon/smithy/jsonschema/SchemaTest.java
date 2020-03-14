@@ -67,7 +67,7 @@ public class SchemaTest {
                 JsonSchemaConstants.DISABLE_READ_ONLY,
                 JsonSchemaConstants.DISABLE_REQUIRED,
                 JsonSchemaConstants.DISABLE_TITLE,
-                JsonSchemaConstants.DISABLE_UNIUQE_ITEMS,
+                JsonSchemaConstants.DISABLE_UNIQUE_ITEMS,
                 JsonSchemaConstants.DISABLE_WRITE_ONLY
         );
 

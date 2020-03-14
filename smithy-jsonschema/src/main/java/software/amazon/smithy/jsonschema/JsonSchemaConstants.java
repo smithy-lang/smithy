@@ -136,7 +136,7 @@ public final class JsonSchemaConstants {
     public static final String DISABLE_MIN_ITEMS = "disable.minItems";
 
     /** Strips any instances of "uniqueItems" from schemas. */
-    public static final String DISABLE_UNIUQE_ITEMS = "disable.uniqueItems";
+    public static final String DISABLE_UNIQUE_ITEMS = "disable.uniqueItems";
 
     /** Strips any instances of "properties" from schemas. */
     public static final String DISABLE_PROPERTIES = "disable.properties";
