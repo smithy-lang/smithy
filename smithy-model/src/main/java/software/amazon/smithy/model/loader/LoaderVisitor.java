@@ -282,7 +282,7 @@ final class LoaderVisitor {
             onTrait(target, traitDef);
         } else {
             PendingTrait pendingTrait = new PendingTrait(trait, traitValue);
-            pendingTraits.computeIfAbsent(target, targetId -> new ArrayList<>()).add(pendingTrait);
+            addPendingTrait(target, traitValue.getSourceLocation(), trait, pendingTrait);
         }
     }
 
@@ -294,7 +294,22 @@ final class LoaderVisitor {
      */
     public void onTrait(ShapeId target, Trait trait) {
         PendingTrait pending = new PendingTrait(target, trait);
-        pendingTraits.computeIfAbsent(target, targetId -> new ArrayList<>()).add(pending);
+        addPendingTrait(target, trait.getSourceLocation(), trait.toShapeId(), pending);
+    }
+
+    private void addPendingTrait(ShapeId target, SourceLocation sourceLocation, ShapeId trait, PendingTrait pending) {
+        if (Prelude.isImmutablePublicPreludeShape(target)) {
+            onError(ValidationEvent.builder()
+                    .severity(Severity.ERROR)
+                    .eventId(Validator.MODEL_ERROR)
+                    .sourceLocation(sourceLocation)
+                    .shapeId(target)
+                    .message(String.format(
+                            "Cannot apply `%s` to an immutable prelude shape defined in `smithy.api`.", trait))
+                    .build());
+        } else {
+            pendingTraits.computeIfAbsent(target, targetId -> new ArrayList<>()).add(pending);
+        }
     }
 
     /**

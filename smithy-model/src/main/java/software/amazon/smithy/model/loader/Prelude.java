@@ -235,6 +235,16 @@ public final class Prelude {
         return PUBLIC_PRELUDE_SHAPE_IDS.contains(toId) || PRELUDE_TRAITS.contains(toId);
     }
 
+    /**
+     * Checks if the given shape is an immutable public shape.
+     *
+     * @param id Shape to check.
+     * @return Returns true if the shape is immutable.
+     */
+    static boolean isImmutablePublicPreludeShape(ToShapeId id) {
+        return PUBLIC_PRELUDE_SHAPE_IDS.contains(id.toShapeId());
+    }
+
     // Used by the ModelAssembler to load the prelude into another visitor.
     static Model getPreludeModel() {
         return PreludeHolder.PRELUDE;
