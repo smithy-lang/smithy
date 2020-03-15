@@ -3082,8 +3082,8 @@ in JSON.
       - number | string
       - If a number is provided, it represents Unix epoch seconds with optional
         millisecond precision. If a string is provided, it MUST be a valid
-        :rfc:`3339` string with optional millisecond precision
-        (e.g., ``1990-12-31T23:59:60Z``).
+        :rfc:`3339` string with optional millisecond precision and no
+        UTC offset (for example, ``1990-12-31T23:59:60Z``).
     * - list
       - array
       - Each value in the array MUST be compatible with the referenced member.

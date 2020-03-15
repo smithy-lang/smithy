@@ -100,7 +100,10 @@ public final class TimestampFormatPlugin implements NodeValidatorPlugin {
         }
 
         String timestamp = value.expectStringNode().getValue();
-        if (isValidFormat(timestamp, DATE_TIME_Z)) {
+        // Newer versions of Java support parsing instants that have an offset.
+        // See: https://bugs.openjdk.java.net/browse/JDK-8166138
+        // However, Smithy doesn't allow offsets for timestamp shapes.
+        if (timestamp.endsWith("Z") && isValidFormat(timestamp, DATE_TIME_Z)) {
             return ListUtils.of();
         } else {
             return ListUtils.of(
