@@ -1,0 +1,1 @@
+[ERROR] smithy.api#String: Cannot apply `smithy.api#deprecated` to an immutable prelude shape defined in `smithy.api`. | Model
