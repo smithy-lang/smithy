@@ -18,6 +18,7 @@ package software.amazon.smithy.model.transform;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.BiFunction;
@@ -29,6 +30,7 @@ import software.amazon.smithy.model.neighbor.UnreferencedShapes;
 import software.amazon.smithy.model.neighbor.UnreferencedTraitDefinitions;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -130,6 +132,21 @@ public final class ModelTransformer {
      */
     public Model removeShapesIf(Model model, Predicate<Shape> predicate) {
         return filterShapes(model, FunctionalUtils.not(predicate));
+    }
+
+    /**
+     *  Renames shapes using ShapeId pairs while ensuring that the
+     *  transformed model is in a consistent state.
+     *
+     *  This transformer ensures that when an aggregate shape is renamed, all
+     *  members are updated in the model.
+     *
+     * @param model Model to transform.
+     * @param renamed Map of shapeIds
+     * @return Returns the transformed model.base.
+     */
+    public Model renameShapes(Model model, Map<ShapeId, ShapeId> renamed) {
+        return new RenameShapes(renamed).transform(this, model);
     }
 
     /**

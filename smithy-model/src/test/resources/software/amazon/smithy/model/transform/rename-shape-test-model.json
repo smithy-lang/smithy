@@ -1,0 +1,25 @@
+{
+  "smithy": "0.5.0",
+  "shapes": {
+    "ns.foo#integerRef": {
+      "type": "string",
+      "traits": {
+        "smithy.api#trait": true,
+        "smithy.api#idRef": {
+          "failWhenMissing": true,
+          "selector": "integer"
+        }
+      }
+    },
+    "ns.foo#ValidShape": {
+      "type": "string",
+      "traits": {
+        "ns.foo#integerRef": "ns.foo#OldShape",
+        "smithy.api#deprecated": {}
+      }
+    },
+    "ns.foo#OldShape": {
+      "type": "integer"
+    }
+  }
+}
