@@ -35,7 +35,6 @@ public final class UnreferencedEntityValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         Walker shapeWalker = new Walker(model.getKnowledge(NeighborProviderIndex.class).getProvider());
         Set<ServiceShape> serviceShapes = model.shapes(ServiceShape.class)
-                //.filter(serviceShape -> serviceShape.getId().getNamespace().equals("ns.special"))
                 .collect(Collectors.toSet());
 
         // Do not emit validation warnings if no services are present in the model.

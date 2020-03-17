@@ -52,6 +52,9 @@
                 },
                 {
                     "target": "ns.foo#R"
+                },
+                {
+                    "target": "ns.foo#Q"
                 }
             ]
         },
