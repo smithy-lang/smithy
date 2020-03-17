@@ -1,0 +1,72 @@
+{
+  "smithy": "0.5.0",
+  "shapes": {
+    "ns.foo#MyService": {
+      "type": "service",
+      "version": "2020-03-16",
+      "resources": [
+        {
+          "target": "ns.foo#ReferencedResource"
+        }
+      ],
+      "operations": [
+        {
+          "target": "ns.foo#ReferencedOperation"
+        }
+      ]
+    },
+    "ns.foo#ReferencedOperation": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#MyInput"
+      },
+      "output": {
+        "target": "ns.foo#MyOutput"
+      }
+    },
+    "ns.foo#UnreferencedOperation": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#MyInput"
+      },
+      "output": {
+        "target": "ns.foo#MyOutput"
+      }
+    },
+    "ns.foo#MyInput": {
+      "type": "structure",
+      "members": {
+        "name": {
+          "target": "ns.foo#Name"
+        }
+      }
+    },
+    "ns.foo#MyOutput": {
+      "type": "structure",
+      "members": {
+        "name": {
+          "target": "ns.foo#Name"
+        }
+      }
+    },
+    "ns.foo#Name": {
+      "type": "string"
+    },
+    "ns.foo#ReferencedResource": {
+      "type": "resource",
+      "identifiers": {
+        "id": {
+          "target": "smithy.api#String"
+        }
+      }
+    },
+    "ns.foo#UnreferencedResource": {
+      "type": "resource",
+      "identifiers": {
+        "id": {
+          "target": "smithy.api#String"
+        }
+      }
+    }
+  }
+}
