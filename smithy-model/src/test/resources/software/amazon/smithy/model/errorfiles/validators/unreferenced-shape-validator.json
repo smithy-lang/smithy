@@ -66,12 +66,5 @@
         "ns.foo#UnreferencedString": {
             "type": "string"
         }
-    },
-    "metadata": {
-        "validators": [
-            {
-                "name": "UnreferencedShape"
-            }
-        ]
     }
 }

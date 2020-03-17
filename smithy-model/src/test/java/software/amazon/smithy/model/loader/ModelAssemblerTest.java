@@ -173,7 +173,10 @@ public class ModelAssemblerTest {
             .addImport(getClass().getResource("main.json"))
             .addImport(createSymbolicLink(Paths.get(getClass().getResource("nested").toURI()), "symlink-nested"))
             .assemble();
-        assertThat(result.getValidationEvents(), empty());
+
+        result.getValidationEvents().forEach(event -> {
+            assertThat(event.getSuppressionReason().get(), is("This shape is being tested for model assembly."));
+        });
         Model model = result.unwrap();
         assertTrue(model.getShape(ShapeId.from("example.namespace#String")).isPresent());
         assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
@@ -267,7 +270,9 @@ public class ModelAssemblerTest {
                 .addImport(Paths.get(getClass().getResource("nested").toURI()))
                 .assemble();
 
-        assertThat(result.getValidationEvents(), empty());
+        result.getValidationEvents().forEach(event -> {
+            assertThat(event.getSuppressionReason().get(), is("This shape is being tested for model assembly."));
+        });
         Model model = result.unwrap();
         assertTrue(model.getShape(ShapeId.from("example.namespace#String")).isPresent());
         assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),

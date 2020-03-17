@@ -55,6 +55,15 @@
             "members": {
                 "valid": {
                     "target": "smithy.private#PrivateString"
+                },
+                "list": {
+                    "target": "smithy.example#InvalidList"
+                },
+                "struct": {
+                    "target": "smithy.example#InvalidStructure"
+                },
+                "map": {
+                    "target": "smithy.example#InvalidMap"
                 }
             },
             "traits": {

@@ -151,6 +151,33 @@
             "members": {
                 "integer": {
                     "target": "ns.foo#Integer"
+                },
+                "list": {
+                    "target": "ns.foo#ValidList"
+                },
+                "map": {
+                    "target": "ns.foo#ValidMap"
+                },
+                "another": {
+                    "target": "another.ns#String"
+                },
+                "another1": {
+                    "target": "ns.foo#InvalidListMemberReference"
+                },
+                "another2": {
+                    "target": "ns.foo#InvalidListMemberMember"
+                },
+                "another3": {
+                    "target": "ns.foo#InvalidListMemberResource"
+                },
+                "another4": {
+                    "target": "ns.foo#InvalidListMemberService"
+                },
+                "another5": {
+                    "target": "ns.foo#InvalidMapType"
+                },
+                "another6": {
+                    "target": "ns.foo#InvalidTraitReference"
                 }
             }
         },
