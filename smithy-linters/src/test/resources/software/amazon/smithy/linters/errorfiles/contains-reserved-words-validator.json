@@ -50,6 +50,9 @@
             "operations": [
                 {
                     "target": "ns.foo#OperationA"
+                },
+                {
+                    "target": "ns.foo#_OperationBaz"
                 }
             ]
         },
