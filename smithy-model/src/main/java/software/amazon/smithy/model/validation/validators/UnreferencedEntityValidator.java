@@ -30,6 +30,12 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
+/**
+ * Emits warnings when an operation is not referenced by a service or resource
+ * within a model, or when a resource is not referenced by a service or
+ * another resource.  No warnings are emitted if there are no services
+ * in the model.
+ */
 public final class UnreferencedEntityValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
