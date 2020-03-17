@@ -45,8 +45,9 @@ public class RenameShapesTest {
                 .addShapes(fooTarget)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
-        Map<ShapeId, ShapeId> renamed = new HashMap<ShapeId, ShapeId>();
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
         Model result = transformer.renameShapes(model, renamed);
+
         assertThat(result.shapes().count(), Matchers.equalTo(1L));
         assertThat(result.getShape(stringId).get(), Matchers.is(fooTarget));
     }
@@ -59,10 +60,10 @@ public class RenameShapesTest {
                 .addShapes(target)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
-        Map<ShapeId, ShapeId> renamed = new HashMap<ShapeId, ShapeId>() {
-            { put(stringId, stringId ); }
-        };
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
+        renamed.put(stringId, stringId );
         Model result = transformer.renameShapes(model, renamed);
+
         assertThat(result.shapes().count(), Matchers.equalTo(1L));
         assertThat(result.getShape(stringId).get(), Matchers.is(target));
     }
@@ -84,8 +85,8 @@ public class RenameShapesTest {
         ModelTransformer transformer = ModelTransformer.create();
 
         ShapeId toStringId = ShapeId.from("ns.bar#String");
-        Map<ShapeId, ShapeId> renamed = new HashMap<ShapeId, ShapeId>();
-        renamed.put(fromStringId, toStringId);
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
+        renamed.put(fromStringId, toStringId );
         Model result = transformer.renameShapes(model, renamed);
 
         assertThat(result.getShape(toStringId).isPresent(), Matchers.is(true));
@@ -101,7 +102,7 @@ public class RenameShapesTest {
 
         ShapeId fromId = ShapeId.from("ns.foo#OldShape");
         ShapeId toId = ShapeId.from("ns.foo#NewShape");
-        Map<ShapeId, ShapeId> renamed = new HashMap<ShapeId, ShapeId>();
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
         renamed.put(fromId, toId);
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.renameShapes(model, renamed);
@@ -123,7 +124,7 @@ public class RenameShapesTest {
 
         ShapeId fromId = ShapeId.from("ns.foo#MyOperation");
         ShapeId toId = ShapeId.from("ns.foo#MyNewOperation");
-        Map<ShapeId, ShapeId> renamed = new HashMap<ShapeId, ShapeId>();
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
         renamed.put(fromId, toId);
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.renameShapes(model, renamed);
@@ -147,7 +148,7 @@ public class RenameShapesTest {
         ModelTransformer transformer = ModelTransformer.create();
         ShapeId newContainerId = ShapeId.from("ns.bar#Baz");
         ShapeId newMemberId = ShapeId.from("ns.bar#Baz$member");
-        Map<ShapeId, ShapeId> renamed = new HashMap<ShapeId, ShapeId>();
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
         renamed.put(containerId, newContainerId);
         Model result = transformer.renameShapes(model, renamed);
 
@@ -175,7 +176,7 @@ public class RenameShapesTest {
         ShapeId newContainerId = ShapeId.from("ns.bar#Baz");
         ShapeId newKeyId = ShapeId.from("ns.bar#Baz$key");
         ShapeId newValueId = ShapeId.from("ns.bar#Baz$value");
-        Map<ShapeId, ShapeId> renamed = new HashMap<ShapeId, ShapeId>();
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
         renamed.put(containerId, newContainerId);
         Model result = transformer.renameShapes(model, renamed);
 
@@ -201,7 +202,7 @@ public class RenameShapesTest {
         ModelTransformer transformer = ModelTransformer.create();
         ShapeId newContainerId = ShapeId.from("ns.bar#Baz");
         ShapeId newMemberId = ShapeId.from("ns.bar#Baz$member");
-        Map<ShapeId, ShapeId> renamed = new HashMap<ShapeId, ShapeId>();
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
         renamed.put(containerId, newContainerId);
         Model result = transformer.renameShapes(model, renamed);
 
@@ -226,7 +227,7 @@ public class RenameShapesTest {
         ModelTransformer transformer = ModelTransformer.create();
         ShapeId newContainerId = ShapeId.from("ns.bar#Baz");
         ShapeId newMemberId = ShapeId.from("ns.bar#Baz$member");
-        Map<ShapeId, ShapeId> renamed = new HashMap<ShapeId, ShapeId>();
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
         renamed.put(containerId, newContainerId);
         Model result = transformer.renameShapes(model, renamed);
 
@@ -253,7 +254,7 @@ public class RenameShapesTest {
         ModelTransformer transformer = ModelTransformer.create();
         ShapeId newContainerId = ShapeId.from("ns.bar#Baz");
         ShapeId newMemberId = ShapeId.from("ns.bar#Baz$member");
-        Map<ShapeId, ShapeId> renamed = new HashMap<ShapeId, ShapeId>();
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
         renamed.put(containerId, newContainerId);
         Model result = transformer.renameShapes(model, renamed);
 

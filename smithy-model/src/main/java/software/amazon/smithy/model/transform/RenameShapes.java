@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.transform;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,27 +33,30 @@ import software.amazon.smithy.utils.Pair;
  *  Renames shapes using ShapeId pairs while ensuring that the
  *  transformed model is in a consistent state.
  *
- *  Member shapes are updated when their containing shape is updated.
+ *  <p><Member shapes are updated when their containing shape is updated.
  *
- *  Trait references to ShapeId values are also updated.
+ *  <p>Trait references to ShapeId values are also updated.
  */
-
 final class RenameShapes {
     private final Map<ShapeId, ShapeId> renamed;
 
     RenameShapes(Map<ShapeId, ShapeId> renamed) {
-        this.renamed = renamed;
+        this.renamed = new HashMap<>(renamed);
     }
 
     Model transform(ModelTransformer transformer, Model model) {
-
+        // Remove any no-op pairs to avoid renaming shapes unnecessarily.
         renamed.keySet().removeIf(fromId -> fromId.equals(renamed.get(fromId)));
         if (renamed.isEmpty()) {
             return model;
         }
 
+        // Creates a set that will be used for checking if a string value needs to be renamed or not.
         Set<String> toRename = renamed.keySet().stream().map(ShapeId::toString).collect(Collectors.toSet());
 
+        // This transformer converts the model into an ObjectNode. This approach was chosen because the
+        // JSON AST format includes fully qualified shape ID values, making it possible rename shapes across
+        // the model by only needing to compare and replace only StringNode values.
         ModelSerializer serializer = ModelSerializer.builder().build();
         ObjectNode node = serializer.serialize(model);
 
@@ -79,7 +83,9 @@ final class RenameShapes {
 
         @Override
         public Node arrayNode(ArrayNode node) {
-            return node.getElements().stream().map(element -> element.accept(this)).collect(ArrayNode.collect());
+            return node.getElements().stream()
+                    .map(element -> element.accept(this))
+                    .collect(ArrayNode.collect());
         }
 
         @Override
