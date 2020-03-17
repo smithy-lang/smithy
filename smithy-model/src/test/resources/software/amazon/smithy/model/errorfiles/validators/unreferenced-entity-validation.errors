@@ -1,2 +1,0 @@
-[WARNING] ns.foo#UnreferencedOperation: This operation shape is not bound to a service | UnreferencedEntity
-[WARNING] ns.foo#UnreferencedResource: This resource shape is not bound to a service | UnreferencedEntity

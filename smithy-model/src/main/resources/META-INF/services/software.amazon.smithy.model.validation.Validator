@@ -33,7 +33,7 @@ software.amazon.smithy.model.validation.validators.TargetValidator
 software.amazon.smithy.model.validation.validators.TraitConflictValidator
 software.amazon.smithy.model.validation.validators.TraitTargetValidator
 software.amazon.smithy.model.validation.validators.TraitValueValidator
-software.amazon.smithy.model.validation.validators.UnreferencedEntityValidator
+software.amazon.smithy.model.validation.validators.UnreferencedShapeValidator
 software.amazon.smithy.model.validation.validators.UnstableFeatureValidator
 software.amazon.smithy.model.validation.validators.UnstableTraitValidator
 software.amazon.smithy.model.validation.validators.XmlNamespaceTraitValidator

@@ -13,12 +13,15 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.linters;
+package software.amazon.smithy.model.validation.validators;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.UnreferencedShapes;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
@@ -28,19 +31,19 @@ import software.amazon.smithy.model.validation.ValidatorService;
  * connected to a service shape.
  */
 public final class UnreferencedShapeValidator extends AbstractValidator {
-
-    public static final class Provider extends ValidatorService.Provider {
-        public Provider() {
-            super(UnreferencedShapeValidator.class, UnreferencedShapeValidator::new);
-        }
-    }
-
     @Override
     public List<ValidationEvent> validate(Model model) {
+        Set<ServiceShape> serviceShapes = model.shapes(ServiceShape.class)
+                .collect(Collectors.toSet());
+
+        // Do not emit validation warnings if no services are present in the model.
+        if (serviceShapes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         return new UnreferencedShapes().compute(model).stream()
                 .map(shape -> note(shape, String.format(
-                        "The %s %s shape is not connected to from any service shape.",
-                        shape.getId(), shape.getType())))
+                        "The %s shape is not connected to from any service shape.", shape.getType())))
                 .collect(Collectors.toList());
     }
 }
