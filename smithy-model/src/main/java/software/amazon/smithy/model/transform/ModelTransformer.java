@@ -25,7 +25,9 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.neighbor.UnreferencedShapes;
 import software.amazon.smithy.model.neighbor.UnreferencedTraitDefinitions;
 import software.amazon.smithy.model.node.Node;
@@ -138,7 +140,7 @@ public final class ModelTransformer {
      *  Renames shapes using ShapeId pairs while ensuring that the
      *  transformed model is in a consistent state.
      *
-     *  This transformer ensures that when an aggregate shape is renamed, all
+     *  <p>This transformer ensures that when an aggregate shape is renamed, all
      *  members are updated in the model.
      *
      * @param model Model to transform.
@@ -147,6 +149,23 @@ public final class ModelTransformer {
      */
     public Model renameShapes(Model model, Map<ShapeId, ShapeId> renamed) {
         return new RenameShapes(renamed).transform(this, model);
+    }
+
+    /**
+     *  Renames shapes using ShapeId pairs while ensuring that the
+     *  transformed model is in a consistent state.
+     *
+     *  <p>This transformer ensures that when an aggregate shape is renamed, all
+     *  members are updated in the model.
+     *
+     * @param model Model to transform.
+     * @param renamed Map of shapeIds
+     * @param modelAssemblerSupplier Supplier used to create {@link ModelAssembler}s in each transform.
+     * @return Returns the transformed model.base.
+     */
+    public Model renameShapes(Model model, Map<ShapeId, ShapeId> renamed,
+                              Supplier<ModelAssembler> modelAssemblerSupplier) {
+        return new RenameShapes(renamed, modelAssemblerSupplier).transform(this, model);
     }
 
     /**

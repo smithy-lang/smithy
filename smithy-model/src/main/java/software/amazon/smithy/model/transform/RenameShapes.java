@@ -18,8 +18,10 @@ package software.amazon.smithy.model.transform;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeVisitor;
@@ -33,14 +35,20 @@ import software.amazon.smithy.utils.Pair;
  *  Renames shapes using ShapeId pairs while ensuring that the
  *  transformed model is in a consistent state.
  *
- *  <p><Member shapes are updated when their containing shape is updated.
+ *  <p>Member shapes are updated when their containing shape is updated.
  *
  *  <p>Trait references to ShapeId values are also updated.
  */
 final class RenameShapes {
     private final Map<ShapeId, ShapeId> renamed;
+    private Supplier<ModelAssembler> modelAssemblerSupplier;
 
     RenameShapes(Map<ShapeId, ShapeId> renamed) {
+        this.renamed = new HashMap<>(renamed);
+    }
+
+    RenameShapes(Map<ShapeId, ShapeId> renamed, Supplier<ModelAssembler> modelAssemblerSupplier) {
+        this.modelAssemblerSupplier = modelAssemblerSupplier;
         this.renamed = new HashMap<>(renamed);
     }
 
@@ -60,8 +68,12 @@ final class RenameShapes {
         ModelSerializer serializer = ModelSerializer.builder().build();
         ObjectNode node = serializer.serialize(model);
 
-        return Model.assembler()
-                .addDocumentNode(node.accept(new RenameShapeVisitor(toRename, renamed)))
+        Supplier<ModelAssembler> supplier = this.modelAssemblerSupplier != null
+                ? this.modelAssemblerSupplier
+                : Model::assembler;
+        ModelAssembler assembler = supplier.get();
+
+        return assembler.addDocumentNode(node.accept(new RenameShapeVisitor(toRename, renamed)))
                 .assemble()
                 .unwrap();
     }
