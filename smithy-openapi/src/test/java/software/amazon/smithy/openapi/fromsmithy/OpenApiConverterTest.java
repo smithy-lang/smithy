@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.jsonschema.JsonSchemaConstants;
 import software.amazon.smithy.model.Model;
@@ -43,6 +44,17 @@ import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 public class OpenApiConverterTest {
+    private static Model testService;
+
+    @BeforeAll
+    private static void setup() {
+        testService = Model.assembler()
+                .addImport(OpenApiConverterTest.class.getResource("test-service.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+    }
+
     @Test
     public void convertsModelsToOpenApi() {
         Model model = Model.assembler()
