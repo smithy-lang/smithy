@@ -56,7 +56,9 @@ final class RenameShapes {
         }
 
         // Creates a set that will be used for checking if a string value needs to be renamed or not.
-        Set<String> toRename = renamed.keySet().stream().map(ShapeId::toString).collect(Collectors.toSet());
+        Set<String> toRename = renamed.keySet().stream()
+                .map(ShapeId::toString)
+                .collect(Collectors.toSet());
 
         // This transformer converts the model into an ObjectNode. This approach was chosen because the
         // JSON AST format includes fully qualified shape ID values, making it possible rename shapes across
