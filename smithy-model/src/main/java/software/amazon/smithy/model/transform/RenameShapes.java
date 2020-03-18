@@ -41,15 +41,11 @@ import software.amazon.smithy.utils.Pair;
  */
 final class RenameShapes {
     private final Map<ShapeId, ShapeId> renamed;
-    private Supplier<ModelAssembler> modelAssemblerSupplier;
-
-    RenameShapes(Map<ShapeId, ShapeId> renamed) {
-        this.renamed = new HashMap<>(renamed);
-    }
+    private final ModelAssembler assembler;
 
     RenameShapes(Map<ShapeId, ShapeId> renamed, Supplier<ModelAssembler> modelAssemblerSupplier) {
-        this.modelAssemblerSupplier = modelAssemblerSupplier;
         this.renamed = new HashMap<>(renamed);
+        this.assembler = modelAssemblerSupplier.get();
     }
 
     Model transform(ModelTransformer transformer, Model model) {
@@ -68,12 +64,10 @@ final class RenameShapes {
         ModelSerializer serializer = ModelSerializer.builder().build();
         ObjectNode node = serializer.serialize(model);
 
-        Supplier<ModelAssembler> supplier = this.modelAssemblerSupplier != null
-                ? this.modelAssemblerSupplier
-                : Model::assembler;
-        ModelAssembler assembler = supplier.get();
+        // Use visitor to traverse node and rebuild model.
+        Node newModel = node.accept(new RenameShapeVisitor(toRename, renamed));
 
-        return assembler.addDocumentNode(node.accept(new RenameShapeVisitor(toRename, renamed)))
+        return assembler.addDocumentNode(newModel)
                 .assemble()
                 .unwrap();
     }

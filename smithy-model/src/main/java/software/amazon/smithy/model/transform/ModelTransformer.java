@@ -147,8 +147,11 @@ public final class ModelTransformer {
      * @param renamed Map of shapeIds
      * @return Returns the transformed model.base.
      */
-    public Model renameShapes(Model model, Map<ShapeId, ShapeId> renamed) {
-        return new RenameShapes(renamed).transform(this, model);
+    public Model renameShapes(
+            Model model,
+            Map<ShapeId, ShapeId> renamed
+    ) {
+        return new RenameShapes(renamed, Model::assembler).transform(this, model);
     }
 
     /**
@@ -163,8 +166,11 @@ public final class ModelTransformer {
      * @param modelAssemblerSupplier Supplier used to create {@link ModelAssembler}s in each transform.
      * @return Returns the transformed model.base.
      */
-    public Model renameShapes(Model model, Map<ShapeId, ShapeId> renamed,
-                              Supplier<ModelAssembler> modelAssemblerSupplier) {
+    public Model renameShapes(
+            Model model,
+            Map<ShapeId, ShapeId> renamed,
+            Supplier<ModelAssembler> modelAssemblerSupplier
+    ) {
         return new RenameShapes(renamed, modelAssemblerSupplier).transform(this, model);
     }
 
