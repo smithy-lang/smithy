@@ -15,12 +15,13 @@
 
 package software.amazon.smithy.model.transform;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import org.hamcrest.Matchers;
+
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -51,8 +52,8 @@ public class RenameShapesTest {
         Map<ShapeId, ShapeId> renamed = new HashMap<>();
         Model result = transformer.renameShapes(model, renamed);
 
-        assertThat(result.shapes().count(), Matchers.equalTo(1L));
-        assertThat(result.getShape(stringId).get(), Matchers.is(fooTarget));
+        assertEquals(result.shapes().count(), 1);
+        assertEquals(result.getShape(stringId).get(), fooTarget);
     }
 
     @Test
@@ -67,8 +68,8 @@ public class RenameShapesTest {
         renamed.put(stringId, stringId );
         Model result = transformer.renameShapes(model, renamed);
 
-        assertThat(result.shapes().count(), Matchers.equalTo(1L));
-        assertThat(result.getShape(stringId).get(), Matchers.is(target));
+        assertEquals(result.shapes().count(), 1);
+        assertEquals(result.getShape(stringId).get(), target);
     }
 
     @Test
@@ -92,8 +93,8 @@ public class RenameShapesTest {
         renamed.put(fromStringId, toStringId );
         Model result = transformer.renameShapes(model, renamed);
 
-        assertThat(result.getShape(toStringId).isPresent(), Matchers.is(true));
-        assertThat(result.getShape(fromStringId).isPresent(), Matchers.is(false));
+        assertTrue(result.getShape(toStringId).isPresent());
+        assertFalse(result.getShape(fromStringId).isPresent());
     }
 
     @Test
@@ -114,9 +115,9 @@ public class RenameShapesTest {
         ArrayNode suppressionShapes = suppression.getStringMap().get("shapes").expectArrayNode();
         StringNode suppressionShape = suppressionShapes.getElements().get(0).asStringNode().get();
 
-        assertThat(suppressionShape.getValue(), Matchers.equalTo("ns.bar#UnreferencedString"));
-        assertThat(result.getShape(barUnreferenced).isPresent(), Matchers.is(true));
-        assertThat(result.getShape(fooUnreferenced).isPresent(), Matchers.is(false));
+        assertEquals(suppressionShape.getValue(), "ns.bar#UnreferencedString");
+        assertTrue(result.getShape(barUnreferenced).isPresent());
+        assertFalse(result.getShape(fooUnreferenced).isPresent());
     }
 
     @Test
@@ -134,29 +135,97 @@ public class RenameShapesTest {
         Model result = transformer.renameShapes(model, renamed);
         StringNode node = Node.from(toId.toShapeId().toString());
 
-        assertThat(result.getShape(toId).isPresent(), Matchers.is(true));
-        assertThat(result.getShape(fromId).isPresent(), Matchers.is(false));
+        assertTrue(result.getShape(toId).isPresent());
+        assertFalse(result.getShape(fromId).isPresent());
         Shape shape = result.expectShape(ShapeId.from("ns.foo#ValidShape"));
         Trait trait = shape.findTrait("ns.foo#integerRef").get();
-        assertThat(trait.toNode(), Matchers.equalTo(node));
+        assertEquals(trait.toNode(), node);
     }
 
     @Test
-    public void testArrayNode() {
+    public void updatesShapeNamesAndReferences() {
         Model model = Model.assembler()
-                .addImport(IntegTest.class.getResource("test-model.json"))
+                .addImport(IntegTest.class.getResource("rename-shape-test-model.json"))
                 .assemble()
                 .unwrap();
-
-        ShapeId fromId = ShapeId.from("ns.foo#MyOperation");
-        ShapeId toId = ShapeId.from("ns.foo#MyNewOperation");
         Map<ShapeId, ShapeId> renamed = new HashMap<>();
-        renamed.put(fromId, toId);
+
+        // Service
+        ShapeId fromService = ShapeId.from("ns.foo#MyService");
+        ShapeId toService = ShapeId.from("ns.bar#MyNewService");
+        renamed.put(fromService,toService);
+
+        // Operation
+        ShapeId fromOperation = ShapeId.from("ns.foo#MyOperation");
+        ShapeId toOperation = ShapeId.from("ns.baz#MyNewService");
+        renamed.put(fromOperation,toOperation);
+
+        // Resource
+        ShapeId fromResource = ShapeId.from("ns.foo#MyResource");
+        ShapeId toResource = ShapeId.from("ns.qux#MyNewResource");
+        renamed.put(fromResource, toResource);
+
+        // Structure
+        ShapeId fromStructure = ShapeId.from("ns.foo#MyStructure");
+        ShapeId toStructure = ShapeId.from("ns.quux#MyNewStructure");
+        renamed.put(fromStructure, toStructure);
+
+        // List
+        ShapeId fromList = ShapeId.from("ns.foo#MyList");
+        ShapeId toList = ShapeId.from("ns.quuz#MyNewList");
+        renamed.put(fromList, toList);
+
+        // Map
+        ShapeId fromMap = ShapeId.from("ns.foo#MyMap");
+        ShapeId toMap = ShapeId.from("ns.corge#MyNewMap");
+        renamed.put(fromMap, toMap);
+
+        // Set
+        ShapeId fromSet = ShapeId.from("ns.foo#MySet");
+        ShapeId toSet = ShapeId.from("ns.grault#MyNewSet");
+        renamed.put(fromSet, toSet);
+
+        // Union
+        ShapeId fromUnion = ShapeId.from("ns.foo#MyUnion");
+        ShapeId toUnion = ShapeId.from("ns.garply#MyNewUnion");
+        renamed.put(fromUnion, toUnion);
+
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.renameShapes(model, renamed);
 
-        assertThat(result.getShape(toId).isPresent(), Matchers.is(true));
-        assertThat(result.getShape(fromId).isPresent(), Matchers.is(false));
+        // All new names are present.
+        assertTrue(result.getShape(toService).isPresent());
+        assertTrue(result.getShape(toOperation).isPresent());
+        assertTrue(result.getShape(toResource).isPresent());
+        assertTrue(result.getShape(toStructure).isPresent());
+        assertTrue(result.getShape(toList).isPresent());
+        assertTrue(result.getShape(toMap).isPresent());
+        assertTrue(result.getShape(toSet).isPresent());
+        assertTrue(result.getShape(toUnion).isPresent());
+
+        // All new shapes are updated as references.
+        StructureShape operationInput = result.getShape(ShapeId.from("ns.foo#MyOperationInput")).get()
+                .asStructureShape().get();
+        MemberShape struct = operationInput.getMember("struct").get();
+        MemberShape list = operationInput.getMember("list").get();
+        MemberShape map = operationInput.getMember("map").get();
+        MemberShape set = operationInput.getMember("set").get();
+        MemberShape union = operationInput.getMember("union").get();
+        assertEquals(struct.getTarget(), toStructure);
+        assertEquals(list.getTarget(), toList);
+        assertEquals(map.getTarget(), toMap);
+        assertEquals(set.getTarget(), toSet);
+        assertEquals(union.getTarget(), toUnion);
+
+        // All old names have been removed.
+        assertFalse(result.getShape(fromService).isPresent());
+        assertFalse(result.getShape(fromOperation).isPresent());
+        assertFalse(result.getShape(fromResource).isPresent());
+        assertFalse(result.getShape(fromStructure).isPresent());
+        assertFalse(result.getShape(fromList).isPresent());
+        assertFalse(result.getShape(fromMap).isPresent());
+        assertFalse(result.getShape(fromSet).isPresent());
+        assertFalse(result.getShape(fromUnion).isPresent());
     }
 
     @Test
@@ -178,10 +247,10 @@ public class RenameShapesTest {
         renamed.put(containerId, newContainerId);
         Model result = transformer.renameShapes(model, renamed);
 
-        assertThat(result.getShape(newContainerId).isPresent(), Matchers.is(true));
+        assertTrue(result.getShape(newContainerId).isPresent());
         ListShape newContainer = result.getShape(newContainerId).get().asListShape().get();
-        assertThat(newContainer.getMember().getId(), Matchers.is(newMemberId));
-        assertThat(result.getShape(containerId).isPresent(), Matchers.is(false));
+        assertEquals(newContainer.getMember().getId(), newMemberId);
+        assertFalse(result.getShape(containerId).isPresent());
     }
 
     @Test
@@ -206,11 +275,11 @@ public class RenameShapesTest {
         renamed.put(containerId, newContainerId);
         Model result = transformer.renameShapes(model, renamed);
 
-        assertThat(result.getShape(newContainerId).isPresent(), Matchers.is(true));
+        assertTrue(result.getShape(newContainerId).isPresent());
         MapShape newContainer = result.getShape(newContainerId).get().asMapShape().get();
-        assertThat(newContainer.getKey().getId(), Matchers.is(newKeyId));
-        assertThat(newContainer.getValue().getId(), Matchers.is(newValueId));
-        assertThat(result.getShape(containerId).isPresent(), Matchers.is(false));
+        assertEquals(newContainer.getKey().getId(), newKeyId);
+        assertEquals(newContainer.getValue().getId(), newValueId);
+        assertFalse(result.getShape(containerId).isPresent());
     }
 
     @Test
@@ -232,10 +301,10 @@ public class RenameShapesTest {
         renamed.put(containerId, newContainerId);
         Model result = transformer.renameShapes(model, renamed);
 
-        assertThat(result.getShape(newContainerId).isPresent(), Matchers.is(true));
+        assertTrue(result.getShape(newContainerId).isPresent());
         SetShape newContainer = result.getShape(newContainerId).get().asSetShape().get();
-        assertThat(newContainer.getMember().getId(), Matchers.is(newMemberId));
-        assertThat(result.getShape(containerId).isPresent(), Matchers.is(false));
+        assertEquals(newContainer.getMember().getId(), newMemberId);
+        assertFalse(result.getShape(containerId).isPresent());
     }
 
     @Test
@@ -257,12 +326,12 @@ public class RenameShapesTest {
         renamed.put(containerId, newContainerId);
         Model result = transformer.renameShapes(model, renamed);
 
-        assertThat(result.getShape(newContainerId).isPresent(), Matchers.is(true));
+        assertTrue(result.getShape(newContainerId).isPresent());
         StructureShape newContainer = result.getShape(newContainerId).get().asStructureShape().get();
         newContainer.getMember("member").ifPresent(newMember -> {
-            assertThat(newMember.getId(), Matchers.is(newMemberId));
+            assertEquals(newMember.getId(), newMemberId);
         });
-        assertThat(result.getShape(containerId).isPresent(), Matchers.is(false));
+        assertFalse(result.getShape(containerId).isPresent());
     }
 
     @Test
@@ -284,11 +353,11 @@ public class RenameShapesTest {
         renamed.put(containerId, newContainerId);
         Model result = transformer.renameShapes(model, renamed);
 
-        assertThat(result.getShape(newContainerId).isPresent(), Matchers.is(true));
+        assertTrue(result.getShape(newContainerId).isPresent());
         UnionShape newContainer = result.getShape(newContainerId).get().asUnionShape().get();
         newContainer.getMember("member").ifPresent(newMember -> {
-            assertThat(newMember.getId(), Matchers.is(newMemberId));
+            assertEquals(newMember.getId(), newMemberId);
         });
-        assertThat(result.getShape(containerId).isPresent(), Matchers.is(false));
+        assertFalse(result.getShape(containerId).isPresent());
     }
 }
