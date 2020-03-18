@@ -18,11 +18,14 @@ package software.amazon.smithy.model.transform;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
@@ -94,25 +97,48 @@ public class RenameShapesTest {
     }
 
     @Test
-    public void updatesIdRefsWhenValueRenamed() {
+    public void updatesMetadataReferences() {
         Model model = Model.assembler()
                 .addImport(IntegTest.class.getResource("rename-shape-test-model.json"))
                 .assemble()
                 .unwrap();
 
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
+        ShapeId fooUnreferenced = ShapeId.from("ns.foo#UnreferencedString");
+        ShapeId barUnreferenced = ShapeId.from("ns.bar#UnreferencedString");
+        renamed.put(fooUnreferenced, barUnreferenced);
+        ModelTransformer transformer = ModelTransformer.create();
+        Model result = transformer.renameShapes(model, renamed);
+        ArrayNode suppressions = result.getMetadata().get("suppressions").asArrayNode().get();
+        ObjectNode suppression = suppressions.getElements().get(0).asObjectNode().get();
+        ArrayNode suppressionShapes = suppression.getStringMap().get("shapes").expectArrayNode();
+        StringNode suppressionShape = suppressionShapes.getElements().get(0).asStringNode().get();
+
+        assertThat(suppressionShape.getValue(), Matchers.equalTo("ns.bar#UnreferencedString"));
+        assertThat(result.getShape(barUnreferenced).isPresent(), Matchers.is(true));
+        assertThat(result.getShape(fooUnreferenced).isPresent(), Matchers.is(false));
+    }
+
+    @Test
+    public void updatesIdRefValues() {
+        Model model = Model.assembler()
+                .addImport(IntegTest.class.getResource("rename-shape-test-model.json"))
+                .assemble()
+                .unwrap();
+
+        Map<ShapeId, ShapeId> renamed = new HashMap<>();
         ShapeId fromId = ShapeId.from("ns.foo#OldShape");
         ShapeId toId = ShapeId.from("ns.foo#NewShape");
-        Map<ShapeId, ShapeId> renamed = new HashMap<>();
         renamed.put(fromId, toId);
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.renameShapes(model, renamed);
         StringNode node = Node.from(toId.toShapeId().toString());
 
         assertThat(result.getShape(toId).isPresent(), Matchers.is(true));
+        assertThat(result.getShape(fromId).isPresent(), Matchers.is(false));
         Shape shape = result.expectShape(ShapeId.from("ns.foo#ValidShape"));
         Trait trait = shape.findTrait("ns.foo#integerRef").get();
         assertThat(trait.toNode(), Matchers.equalTo(node));
-        assertThat(result.getShape(fromId).isPresent(), Matchers.is(false));
     }
 
     @Test

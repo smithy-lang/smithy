@@ -151,7 +151,7 @@ public final class ModelTransformer {
             Model model,
             Map<ShapeId, ShapeId> renamed
     ) {
-        return new RenameShapes(renamed, Model::assembler).transform(this, model);
+        return this.renameShapes(model, renamed, Model::assembler);
     }
 
     /**

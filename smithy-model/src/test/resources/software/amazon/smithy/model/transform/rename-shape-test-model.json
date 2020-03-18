@@ -20,6 +20,18 @@
     },
     "ns.foo#OldShape": {
       "type": "integer"
+    },
+    "ns.foo#UnreferencedString": {
+      "type": "string"
     }
+  },
+  "metadata": {
+    "suppressions": [
+      {
+        "ids": ["UnreferencedShape"],
+        "shapes": ["ns.foo#UnreferencedString"],
+        "reason": "unreferenced shape"
+      }
+    ]
   }
 }
