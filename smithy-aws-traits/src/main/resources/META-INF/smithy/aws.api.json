@@ -142,15 +142,6 @@
                 "smithy.api#private": true
             }
         },
-        "aws.api#StringList": {
-            "type": "list",
-            "member": {
-                "target": "smithy.api#String"
-            },
-            "traits": {
-                "smithy.api#private": true
-            }
-        },
         "aws.api#clientDiscoveredEndpoint": {
             "type": "structure",
             "members": {
