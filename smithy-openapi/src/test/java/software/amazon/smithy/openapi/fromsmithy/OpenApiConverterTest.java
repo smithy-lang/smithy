@@ -19,13 +19,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.jsonschema.JsonSchemaConstants;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -40,6 +44,17 @@ import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 public class OpenApiConverterTest {
+    private static Model testService;
+
+    @BeforeAll
+    private static void setup() {
+        testService = Model.assembler()
+                .addImport(OpenApiConverterTest.class.getResource("test-service.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+    }
+
     @Test
     public void convertsModelsToOpenApi() {
         Model model = Model.assembler()
@@ -233,5 +248,15 @@ public class OpenApiConverterTest {
 
         assertThat(result.getSecurity().get(0).keySet(), contains("foo_baz"));
         assertThat(result.getPaths().get("/2").getGet().get().getSecurity().get().get(0).keySet(), contains("foo_baz"));
+    }
+
+    @Test
+    public void mergesInSchemaDocumentExtensions() {
+        ObjectNode result = OpenApiConverter.create()
+                .putSetting(JsonSchemaConstants.SCHEMA_DOCUMENT_EXTENSIONS, Node.objectNode()
+                        .withMember("foo", "baz"))
+                .convertToNode(testService, ShapeId.from("example.rest#RestService"));
+
+        assertThat(result.getMember("foo"), equalTo(Optional.of(Node.from("baz"))));
     }
 }
