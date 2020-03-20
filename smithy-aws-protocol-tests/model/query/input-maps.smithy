@@ -25,7 +25,7 @@ apply QueryMaps @httpRequestTests([
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: """
-              Action=QueryLists
+              Action=QueryMaps
               &Version=2020-01-08
               &MapArg.entry.1.key=foo
               &MapArg.entry.1.value=Foo
@@ -49,7 +49,7 @@ apply QueryMaps @httpRequestTests([
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: """
-              Action=QueryLists
+              Action=QueryMaps
               &Version=2020-01-08
               &Foo.entry.1.key=foo
               &Foo.entry.1.value=Foo""",
@@ -70,7 +70,7 @@ apply QueryMaps @httpRequestTests([
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: """
-              Action=QueryLists
+              Action=QueryMaps
               &Version=2020-01-08
               &ComplexMapArg.entry.1.key=foo
               &ComplexMapArg.entry.1.value.hi=Foo
@@ -98,7 +98,7 @@ apply QueryMaps @httpRequestTests([
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: """
-              Action=QueryLists
+              Action=QueryMaps
               &Version=2020-01-08""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
@@ -115,12 +115,12 @@ apply QueryMaps @httpRequestTests([
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: """
-              Action=QueryLists
+              Action=QueryMaps
               &Version=2020-01-08
               &MapWithXmlMemberName.entry.1.K=foo
               &MapWithXmlMemberName.entry.1.V=Foo
-              &MapWithXmlMemberName.entry.1.K=bar
-              &MapWithXmlMemberName.entry.1.V=Bar""",
+              &MapWithXmlMemberName.entry.2.K=bar
+              &MapWithXmlMemberName.entry.2.V=Bar""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             MapWithXmlMemberName: {
@@ -139,12 +139,12 @@ apply QueryMaps @httpRequestTests([
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: """
-              Action=QueryLists
+              Action=QueryMaps
               &Version=2020-01-08
               &FlattenedMap.1.key=foo
               &FlattenedMap.1.value=Foo
-              &FlattenedMap.1.key=bar
-              &FlattenedMap.1.value=Bar""",
+              &FlattenedMap.2.key=bar
+              &FlattenedMap.2.value=Bar""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             FlattenedMap: {
@@ -163,7 +163,7 @@ apply QueryMaps @httpRequestTests([
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: """
-              Action=QueryLists
+              Action=QueryMaps
               &Version=2020-01-08
               &Hi.1.K=foo
               &Hi.1.V=Foo
@@ -187,12 +187,14 @@ apply QueryMaps @httpRequestTests([
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: """
-              Action=QueryLists
+              Action=QueryMaps
               &Version=2020-01-08
-              &MapOfLists.entry.1.key.1=A
-              &MapOfLists.entry.1.key.2=B
-              &MapOfLists.entry.2.key.1=C
-              &MapOfLists.entry.2.key.2=D""",
+              &MapOfLists.entry.1.key=foo
+              &MapOfLists.entry.1.value.member.1=A
+              &MapOfLists.entry.1.value.member.2=B
+              &MapOfLists.entry.2.key=bar
+              &MapOfLists.entry.2.value.member.1=C
+              &MapOfLists.entry.2.value.member.2=D""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             MapOfLists: {
