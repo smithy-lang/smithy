@@ -31,8 +31,8 @@ apply QueryLists @httpRequestTests([
               &ListArg.1=foo
               &ListArg.2=bar
               &ListArg.3=baz
-              &ComplexListArg.1.hi=hello
-              &ComplexListArg.2.hi=hola""",
+              &ComplexListArg.1.Hi=hello
+              &ComplexListArg.2.Hi=hola""",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArg: ["foo", "bar", "baz"],
