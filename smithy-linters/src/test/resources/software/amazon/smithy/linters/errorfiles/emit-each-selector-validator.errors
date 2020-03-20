@@ -122,3 +122,10 @@
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from "service -[foo]-> *": Unable to deserialize Node using fromNode method: Syntax error at character 10 of 18, near `foo]-> *`: Expected one of the following tokens: `bound`, `collectionOperation`, `create`, `delete`, `error`, `identifier`, `input`, `instanceOperation`, `list`, `member`, `operation`, `output`, `put`, `read`, `resource`, `update`; expression `service -[foo]-> *` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from "[foo]": Unable to deserialize Node using fromNode method: Syntax error at character 1 of 5, near `foo]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo]` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from "[foo=baz]": Unable to deserialize Node using fromNode method: Syntax error at character 1 of 9, near `foo=baz]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo=baz]` | Model
+[NOTE] ns.foo#Long: The long shape is not connected to from any service shape. | UnreferencedShape
+[NOTE] ns.foo#Float: The float shape is not connected to from any service shape. | UnreferencedShape
+[NOTE] ns.foo#Boolean: The boolean shape is not connected to from any service shape. | UnreferencedShape
+[NOTE] ns.foo#Blob: The blob shape is not connected to from any service shape. | UnreferencedShape
+[NOTE] ns.foo#List: The list shape is not connected to from any service shape. | UnreferencedShape
+[NOTE] ns.foo#UtcTimestamp: The timestamp shape is not connected to from any service shape. | UnreferencedShape
+[NOTE] other.ns#String: The string shape is not connected to from any service shape. | UnreferencedShape
