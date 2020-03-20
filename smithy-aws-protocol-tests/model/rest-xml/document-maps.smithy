@@ -126,13 +126,13 @@ apply XmlMapsXmlName @httpRequestTests([
               <XmlMapsXmlNameInputOutput>
                   <myMap>
                       <entry>
-                          <Name>foo</Name>
+                          <Attribute>foo</Attribute>
                           <Setting>
                               <hi>there</hi>
                           </Setting>
                       </entry>
                       <entry>
-                          <Name>baz</Name>
+                          <Attribute>baz</Attribute>
                           <Setting>
                               <hi>bye</hi>
                           </Setting>
@@ -167,13 +167,13 @@ apply XmlMapsXmlName @httpResponseTests([
               <XmlMapsXmlNameInputOutput>
                   <myMap>
                       <entry>
-                          <Name>foo</Name>
+                          <Attribute>foo</Attribute>
                           <Setting>
                               <hi>there</hi>
                           </Setting>
                       </entry>
                       <entry>
-                          <Name>baz</Name>
+                          <Attribute>baz</Attribute>
                           <Setting>
                               <hi>bye</hi>
                           </Setting>

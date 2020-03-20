@@ -477,7 +477,7 @@ apply RecursiveShapes @httpRequestTests([
         documentation: "Serializes recursive structures",
         protocol: "aws.rest-xml",
         method: "PUT",
-        uri: "/XmlEnums",
+        uri: "/RecursiveShapes",
         body: """
               <RecursiveShapesInputOutput>
                   <nested>
@@ -587,7 +587,7 @@ apply XmlNamespaces @httpRequestTests([
         method: "POST",
         uri: "/XmlNamespaces",
         body: """
-              <RecursiveShapesInputOutput xmlns="http://foo.com">
+              <XmlNamespacesInputOutput xmlns="http://foo.com">
                   <nested>
                       <foo xmlns:baz="http://baz.com">Foo</foo>
                       <values xmlns="http://qux.com">
@@ -595,7 +595,7 @@ apply XmlNamespaces @httpRequestTests([
                           <member xmlns="http://bux.com">Baz</member>
                       </values>
                   </nested>
-              </RecursiveShapesInputOutput>
+              </XmlNamespacesInputOutput>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -620,7 +620,7 @@ apply XmlNamespaces @httpResponseTests([
         protocol: "aws.rest-xml",
         code: 200,
         body: """
-              <RecursiveShapesInputOutput xmlns="http://foo.com">
+              <XmlNamespacesInputOutput xmlns="http://foo.com">
                   <nested>
                       <foo xmlns:baz="http://baz.com">Foo</foo>
                       <values xmlns="http://qux.com">
@@ -628,7 +628,7 @@ apply XmlNamespaces @httpResponseTests([
                           <member xmlns="http://bux.com">Baz</member>
                       </values>
                   </nested>
-              </RecursiveShapesInputOutput>
+              </XmlNamespacesInputOutput>
               """,
         bodyMediaType: "application/xml",
         headers: {
