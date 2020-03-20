@@ -37,6 +37,9 @@
                 },
                 {
                     "target": "ns.foo#L"
+                },
+                {
+                    "target": "ns.foo#M"
                 }
             ]
         },

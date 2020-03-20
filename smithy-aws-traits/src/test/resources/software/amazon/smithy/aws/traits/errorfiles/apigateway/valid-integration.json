@@ -4,6 +4,11 @@
         "ns.foo#Service1": {
             "type": "service",
             "version": "2018-03-17",
+            "operations": [
+                {
+                    "target": "ns.foo#Operation"
+                }
+            ],
             "traits": {
                 "aws.api#service": {
                     "sdkId": "Some Value"

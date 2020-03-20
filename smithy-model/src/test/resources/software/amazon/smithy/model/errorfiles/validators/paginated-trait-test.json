@@ -40,6 +40,18 @@
                 },
                 {
                     "target": "ns.foo#Invalid9"
+                },
+                {
+                    "target": "ns.foo#ValidNestedOutputOperation"
+                },
+                {
+                    "target": "ns.foo#DeeplyNestedOutputOperation"
+                },
+                {
+                    "target": "ns.foo#InvalidNoOutput"
+                },
+                {
+                    "target": "ns.foo#InvalidNestedInput"
                 }
             ]
         },

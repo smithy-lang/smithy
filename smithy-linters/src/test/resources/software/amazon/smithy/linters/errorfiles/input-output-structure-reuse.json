@@ -70,9 +70,6 @@
         "ns.foo#CInputOutput": {
             "type": "structure"
         },
-        "ns.foo#COutputOutput": {
-            "type": "structure"
-        },
         "ns.foo#D": {
             "type": "operation",
             "input": {
@@ -86,9 +83,6 @@
             }
         },
         "ns.foo#DInputOutput": {
-            "type": "structure"
-        },
-        "ns.foo#DOutputOutput": {
             "type": "structure"
         },
         "ns.foo#E": {

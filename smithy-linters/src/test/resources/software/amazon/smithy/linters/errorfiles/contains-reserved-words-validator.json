@@ -6,6 +6,21 @@
             "members": {
                 "bar": {
                     "target": "ns.foo#String"
+                },
+                "long": {
+                    "target": "ns.foo#Long"
+                },
+                "bool": {
+                    "target": "ns.foo#Boolean"
+                },
+                "list": {
+                    "target": "ns.foo#List"
+                },
+                "timestamp": {
+                    "target": "ns.foo#UtcTimestamp"
+                },
+                "blob": {
+                    "target": "ns.foo#Blob"
                 }
             }
         },
@@ -50,6 +65,9 @@
             "operations": [
                 {
                     "target": "ns.foo#OperationA"
+                },
+                {
+                    "target": "ns.foo#_OperationBaz"
                 }
             ]
         },

@@ -17,9 +17,6 @@
                 "name": "UnknownValidator"
             },
             {
-                "name": "UnreferencedShape"
-            },
-            {
                 "name": "CamelCase"
             },
             "foo"
@@ -28,11 +25,6 @@
             {
                 "ids": [
                     "UnreferencedShape"
-                ]
-            },
-            {
-                "ids": [
-                    "UnknownValidator"
                 ]
             },
             [],

@@ -27,3 +27,5 @@
 [ERROR] ns.foo#OInput$a: Members with the `httpLabel` trait must be required. | HttpLabelTrait
 [ERROR] ns.foo#PInput$a: The `a` structure member corresponds to a greedy label when used as the input of the `ns.foo#P` operation. This member targets (integer: `ns.foo#Integer`), but greedy labels must target string shapes. | HttpLabelTrait
 [ERROR] ns.foo#RInput$b: `httpHeader` binding of `x-foo` conflicts with the `httpPrefixHeaders` binding of `ns.foo#RInput$a` to ``. `httpHeader` bindings must not case-insensitively start with any `httpPrefixHeaders` bindings. | HttpPrefixHeadersTrait
+[NOTE] ns.foo#BadError: The structure shape is not connected to from any service shape. | UnreferencedShape
+[NOTE] ns.foo#BadErrorMultipleBindings: The structure shape is not connected to from any service shape. | UnreferencedShape
