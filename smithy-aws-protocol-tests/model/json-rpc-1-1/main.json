@@ -59,7 +59,7 @@
                         "params": {},
                         "headers": {
                             "Content-Type": "application/x-amz-json-1.1",
-                            "X-Amz-Target": "JsonProtocolService.OperationWithOptionalInputOutput"
+                            "X-Amz-Target": "JsonProtocol.EmptyOperation"
                         }
                     }
                 ],
@@ -72,7 +72,6 @@
                         "headers": {
                             "Content-Type": "application/x-amz-json-1.1"
                         },
-                        "requireHeaders": ["Content-Length"],
                         "bodyMediaType": "application/json",
                         "body": "{}",
                         "params": {}
@@ -522,7 +521,7 @@
                             "MapOfStrings": {}
                         },
                         "bodyMediaType": "application/json",
-                        "body": "{\"MapOfStrings\":[]}"
+                        "body": "{\"MapOfStrings\":{}}"
                     },
                     {
                         "id": "serializes_map_of_list_shapes",
@@ -626,7 +625,7 @@
                             "SimpleStruct": {}
                         },
                         "bodyMediaType": "application/json",
-                        "body": "{\"SimpleStruct\":[]}"
+                        "body": "{\"SimpleStruct\":{}}"
                     },
                     {
                         "id": "serializes_structure_which_have_no_members",
@@ -638,7 +637,7 @@
                             "EmptyStruct": {}
                         },
                         "bodyMediaType": "application/json",
-                        "body": "{\"EmptyStruct\":[]}"
+                        "body": "{\"EmptyStruct\":{}}"
                     },
                     {
                         "id": "serializes_recursive_structure_shapes",
@@ -1000,7 +999,9 @@
                         "code": 200,
                         "headers": {
                             "X-Amzn-Requestid": "amazon-uniq-request-id"
-                        }
+                        },
+                        "bodyMediaType": "application/json",
+                        "body": "{}"
                     }
                 ]
             }
@@ -1101,7 +1102,7 @@
                         "uri": "/",
                         "headers": {
                             "Content-Type": "application/x-amz-json-1.1",
-                            "X-Amz-Target": "JsonProtocolService.OperationWithOptionalInputOutput"
+                            "X-Amz-Target": "JsonProtocol.OperationWithOptionalInputOutput"
                         },
                         "bodyMediaType": "application/json",
                         "body": "{}"
@@ -1117,9 +1118,8 @@
                         },
                         "headers": {
                             "Content-Type": "application/x-amz-json-1.1",
-                            "X-Amz-Target": "JsonProtocolService.OperationWithOptionalInputOutput"
+                            "X-Amz-Target": "JsonProtocol.OperationWithOptionalInputOutput"
                         },
-                        "requireHeaders": ["Content-Length"],
                         "bodyMediaType": "application/json",
                         "body": "{\"Value\":\"Hi\"}"
                     }
