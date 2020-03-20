@@ -68,7 +68,7 @@ apply XmlLists @httpResponseTests([
                           <member>baz</member>
                           <member>qux</member>
                       </member>
-                  <nestedStringList>
+                  </nestedStringList>
                   <renamed>
                       <item>foo</item>
                       <item>bar</item>
