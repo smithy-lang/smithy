@@ -23,7 +23,7 @@ apply XmlAttributes @httpRequestTests([
         method: "PUT",
         uri: "/XmlAttributes",
         body: """
-              <XmlAttributesInputOutput attr="test">
+              <XmlAttributesInputOutput test="test">
                   <foo>hi</foo>
               </XmlAttributesInputOutput>
               """,
@@ -45,7 +45,7 @@ apply XmlAttributes @httpResponseTests([
         protocol: "aws.rest-xml",
         code: 200,
         body: """
-              <XmlAttributesInputOutput attr="test">
+              <XmlAttributesInputOutput test="test">
                   <foo>hi</foo>
               </XmlAttributesInputOutput>
               """,
@@ -84,7 +84,7 @@ apply XmlAttributesOnPayload @httpRequestTests([
         method: "PUT",
         uri: "/XmlAttributesOnPayload",
         body: """
-              <XmlAttributesInputOutput attr="test">
+              <XmlAttributesInputOutput test="test">
                   <foo>hi</foo>
               </XmlAttributesInputOutput>
               """,
@@ -108,7 +108,7 @@ apply XmlAttributesOnPayload @httpResponseTests([
         protocol: "aws.rest-xml",
         code: 200,
         body: """
-              <XmlAttributesInputOutput attr="test">
+              <XmlAttributesInputOutput test="test">
                   <foo>hi</foo>
               </XmlAttributesInputOutput>
               """,
