@@ -22,7 +22,7 @@ apply NoInputAndNoOutput @httpRequestTests([
         documentation: "No input serializes no payload",
         protocol: "aws.rest-json-1.1",
         method: "POST",
-        uri: "/NoInputAndOutput"
+        uri: "/NoInputAndNoOutput"
     }
 ])
 
@@ -50,7 +50,7 @@ apply NoInputAndOutput @httpRequestTests([
         documentation: "No input serializes no payload",
         protocol: "aws.rest-json-1.1",
         method: "POST",
-        uri: "/NoInputAndOutput"
+        uri: "/NoInputAndOutputOutput"
     }
 ])
 

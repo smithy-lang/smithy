@@ -6,6 +6,7 @@ $version: "0.5.0"
 namespace aws.protocols.tests.restjson
 
 use aws.protocols.tests.shared#BooleanList
+use aws.protocols.tests.shared#DateTime
 use aws.protocols.tests.shared#EpochSeconds
 use aws.protocols.tests.shared#FooEnum
 use aws.protocols.tests.shared#FooEnumList
@@ -57,7 +58,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
             "X-Long": "123",
             "X-Float": "1.0",
             "X-Double": "1.0",
-            "X-HeaderIntegerList": "1, 2, 3",
+            "X-IntegerList": "1, 2, 3",
         },
         body: "",
         params: {
@@ -79,12 +80,12 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         headers: {
             "X-Boolean1": "true",
             "X-Boolean2": "false",
-            "X-HeaderBooleanList": "true, false, true"
+            "X-BooleanList": "true, false, true"
         },
         body: "",
         params: {
             headerTrueBool: true,
-            headerFalseBool: true,
+            headerFalseBool: false,
             headerBooleanList: [true, false, true]
         }
     },
@@ -95,7 +96,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
-            "X-HeaderTimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
         },
         body: "",
         params: {
@@ -110,7 +111,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         uri: "/InputAndOutputWithHeaders",
         headers: {
             "X-Enum": "Foo",
-            "X-EnumList": "Foo, Baz, Bar"
+            "X-EnumList": "Foo, Bar, Baz"
         },
         body: "",
         params: {
@@ -150,7 +151,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             "X-Long": "123",
             "X-Float": "1.0",
             "X-Double": "1.0",
-            "X-HeaderIntegerList": "1, 2, 3",
+            "X-IntegerList": "1, 2, 3",
         },
         body: "",
         params: {
@@ -171,12 +172,12 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         headers: {
             "X-Boolean1": "true",
             "X-Boolean2": "false",
-            "X-HeaderBooleanList": "true, false, true"
+            "X-BooleanList": "true, false, true"
         },
         body: "",
         params: {
             headerTrueBool: true,
-            headerFalseBool: true,
+            headerFalseBool: false,
             headerBooleanList: [true, false, true]
         }
     },
@@ -186,7 +187,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         protocol: "aws.rest-json-1.1",
         code: 200,
         headers: {
-            "X-HeaderTimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
         },
         body: "",
         params: {
@@ -200,7 +201,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         code: 200,
         headers: {
             "X-Enum": "Foo",
-            "X-EnumList": "Foo, Baz, Bar"
+            "X-EnumList": "Foo, Bar, Baz"
         },
         body: "",
         params: {
@@ -399,5 +400,5 @@ structure TimestampFormatHeadersIO {
     targetHttpDate: HttpDate,
 
     @httpHeader("X-targetDateTime")
-    targetDateTime: HttpDate,
+    targetDateTime: DateTime,
 }
