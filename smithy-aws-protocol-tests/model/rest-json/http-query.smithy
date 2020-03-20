@@ -30,7 +30,7 @@ apply AllQueryStringTypes @httpRequestTests([
         documentation: "Serializes query string parameters with all supported types",
         protocol: "aws.rest-json-1.1",
         method: "GET",
-        uri: "/AllQueryStringTypes",
+        uri: "/AllQueryStringTypesInput",
         body: "",
         queryParams: [
             "String=Hello%20there",
@@ -60,9 +60,9 @@ apply AllQueryStringTypes @httpRequestTests([
             "BooleanList=false",
             "BooleanList=true",
             "Timestamp=1",
-            "TimestampList=1",
-            "TimestampList=2",
-            "TimestampList=3",
+            "TimestampList=1970-01-01T00%3A00%3A01Z",
+            "TimestampList=1970-01-01T00%3A00%3A02Z",
+            "TimestampList=1970-01-01T00%3A00%3A03Z",
             "Enum=Foo",
             "EnumList=Foo",
             "EnumList=Baz",
@@ -254,7 +254,6 @@ apply IgnoreQueryParamsInResponse @httpResponseTests([
         body: "",
         bodyMediaType: "json",
         params: {
-            baz: "bam"
         }
     }
 ])
@@ -324,10 +323,10 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
         uri: "/QueryIdempotencyTokenAutoFill",
         body: "",
         queryParams: [
-            "token=00000000-0000-4000-8000-000000000123",
+            "token=00000000-0000-4000-8000-000000000000",
         ],
         params: {
-            token: "00000000-0000-4000-8000-000000000123"
+            token: "00000000-0000-4000-8000-000000000000"
         }
     }
 ])

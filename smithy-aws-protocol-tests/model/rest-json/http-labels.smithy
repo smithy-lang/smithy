@@ -5,6 +5,7 @@ $version: "0.5.0"
 
 namespace aws.protocols.tests.restjson
 
+use aws.protocols.tests.shared#DateTime
 use aws.protocols.tests.shared#EpochSeconds
 use aws.protocols.tests.shared#HttpDate
 use smithy.test#httpRequestTests
@@ -141,7 +142,7 @@ structure HttpRequestWithLabelsAndTimestampFormatInput {
 
     @httpLabel
     @required
-    targetDateTime: HttpDate,
+    targetDateTime: DateTime,
 }
 
 // This example uses a greedy label and a normal label.
