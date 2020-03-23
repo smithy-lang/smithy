@@ -6,11 +6,6 @@ software.amazon.smithy.aws.traits.DataPlaneTrait$Provider
 software.amazon.smithy.aws.traits.DataTrait$Provider
 software.amazon.smithy.aws.traits.ServiceTrait$Provider
 software.amazon.smithy.aws.traits.auth.UnsignedPayloadTrait$Provider
-software.amazon.smithy.aws.traits.iam.ActionPermissionDescriptionTrait$Provider
-software.amazon.smithy.aws.traits.iam.ConditionKeysTrait$Provider
-software.amazon.smithy.aws.traits.iam.DefineConditionKeysTrait$Provider
-software.amazon.smithy.aws.traits.iam.DisableConditionKeyInferenceTrait$Provider
-software.amazon.smithy.aws.traits.iam.RequiredActionsTrait$Provider
 software.amazon.smithy.aws.traits.apigateway.AuthorizerTrait$Provider
 software.amazon.smithy.aws.traits.apigateway.AuthorizersTrait$Provider
 software.amazon.smithy.aws.traits.apigateway.RequestValidatorTrait$Provider

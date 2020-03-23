@@ -1,5 +1,4 @@
 aws.api.json
 aws.apigateway.json
 aws.auth.json
-aws.iam.json
 aws.protocols.json

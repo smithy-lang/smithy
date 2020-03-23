@@ -1,0 +1,5 @@
+software.amazon.smithy.aws.iam.traits.ActionPermissionDescriptionTrait$Provider
+software.amazon.smithy.aws.iam.traits.ConditionKeysTrait$Provider
+software.amazon.smithy.aws.iam.traits.DefineConditionKeysTrait$Provider
+software.amazon.smithy.aws.iam.traits.DisableConditionKeyInferenceTrait$Provider
+software.amazon.smithy.aws.iam.traits.RequiredActionsTrait$Provider
