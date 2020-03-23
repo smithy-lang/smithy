@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.aws.traits.iam;
+package software.amazon.smithy.aws.iam.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -33,10 +33,10 @@ public class RequiredActionsTraitTest {
                 .assemble()
                 .unwrap();
 
-        Shape myOperation = result.getShape(ShapeId.from("smithy.example#MyOperation")).get();
+        Shape myOperation = result.expectShape(ShapeId.from("smithy.example#MyOperation"));
 
         assertTrue(myOperation.hasTrait(RequiredActionsTrait.class));
-        assertThat(myOperation.getTrait(RequiredActionsTrait.class).get().getValues(), containsInAnyOrder(
+        assertThat(myOperation.expectTrait(RequiredActionsTrait.class).getValues(), containsInAnyOrder(
                 "iam:PassRole", "ec2:RunInstances"));
     }
 }

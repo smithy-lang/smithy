@@ -13,10 +13,10 @@
  * permissions and limitations under the License.
  */
 
-/**
- * Defines AWS specific traits for Smithy.
- */
-@SmithyUnstableApi
-package software.amazon.smithy.aws.traits.iam;
+description = "This module provides Smithy traits and validators for IAM."
+extra["displayName"] = "Smithy :: AWS :: IAM Traits"
+extra["moduleName"] = "software.amazon.smithy.aws.iam.traits"
 
-import software.amazon.smithy.utils.SmithyUnstableApi;
+dependencies {
+    api(project(":smithy-aws-traits"))
+}
