@@ -31,6 +31,8 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ResourceShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -153,12 +155,15 @@ public class RenameShapesTest {
         // Service
         ShapeId fromService = ShapeId.from("ns.foo#MyService");
         ShapeId toService = ShapeId.from("ns.bar#MyNewService");
-        renamed.put(fromService,toService);
+        renamed.put(fromService, toService);
 
         // Operation
         ShapeId fromOperation = ShapeId.from("ns.foo#MyOperation");
         ShapeId toOperation = ShapeId.from("ns.baz#MyNewOperation");
-        renamed.put(fromOperation,toOperation);
+        renamed.put(fromOperation, toOperation);
+        ShapeId fromOtherOperation = ShapeId.from("ns.foo#MyOtherOperation");
+        ShapeId toOtherOperation = ShapeId.from("ns.fred#MyOtherNewOperation");
+        renamed.put(fromOtherOperation, toOtherOperation);
 
         // Resource
         ShapeId fromResource = ShapeId.from("ns.foo#MyResource");
@@ -190,6 +195,11 @@ public class RenameShapesTest {
         ShapeId toUnion = ShapeId.from("ns.garply#MyNewUnion");
         renamed.put(fromUnion, toUnion);
 
+        // ID
+        ShapeId fromId = ShapeId.from("ns.foo#MyId");
+        ShapeId toId = ShapeId.from("ns.waldo#MyNewId");
+        renamed.put(fromId, toId);
+
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.renameShapes(model, renamed);
 
@@ -202,8 +212,17 @@ public class RenameShapesTest {
         assertTrue(result.getShape(toMap).isPresent());
         assertTrue(result.getShape(toSet).isPresent());
         assertTrue(result.getShape(toUnion).isPresent());
+        assertTrue(result.getShape(toId).isPresent());
 
         // All new shapes are updated as references.
+        ServiceShape service = result.getShape(toService).get().asServiceShape().get();
+        assertTrue(service.getOperations().contains(toOperation));
+        assertTrue(service.getResources().contains(toResource));
+
+        ResourceShape resource = result.getShape(toResource).get().asResourceShape().get();
+        assertEquals(resource.getIdentifiers().get("myId"), toId);
+        assertTrue(resource.getAllOperations().contains(toOtherOperation));
+
         StructureShape operationInput = result.getShape(ShapeId.from("ns.foo#MyOperationInput")).get()
                 .asStructureShape().get();
         MemberShape struct = operationInput.getMember("struct").get();
@@ -226,6 +245,7 @@ public class RenameShapesTest {
         assertFalse(result.getShape(fromMap).isPresent());
         assertFalse(result.getShape(fromSet).isPresent());
         assertFalse(result.getShape(fromUnion).isPresent());
+        assertFalse(result.getShape(fromId).isPresent());
     }
 
     @Test

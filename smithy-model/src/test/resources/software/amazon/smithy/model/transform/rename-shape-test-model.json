@@ -112,10 +112,36 @@
         "myId": {
           "target": "ns.foo#MyId"
         }
-      }
+      },
+      "operations": [
+        {
+          "target": "ns.foo#MyOtherOperation"
+        }
+      ]
     },
     "ns.foo#MyId": {
       "type": "string"
+    },
+    "ns.foo#MyOtherOperation": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#MyOtherInput"
+      },
+      "output": {
+        "target": "ns.foo#MyStructure"
+      }
+    },
+    "ns.foo#MyOtherInput": {
+      "type": "structure",
+      "members": {
+        "myId": {
+          "target": "ns.foo#MyId",
+          "traits": {
+            "smithy.api#required": true
+          }
+        }
+      }
+
     },
     "ns.foo#integerRef": {
       "type": "string",
