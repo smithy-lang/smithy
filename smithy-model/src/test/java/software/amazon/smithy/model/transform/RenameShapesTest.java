@@ -157,7 +157,7 @@ public class RenameShapesTest {
 
         // Operation
         ShapeId fromOperation = ShapeId.from("ns.foo#MyOperation");
-        ShapeId toOperation = ShapeId.from("ns.baz#MyNewService");
+        ShapeId toOperation = ShapeId.from("ns.baz#MyNewOperation");
         renamed.put(fromOperation,toOperation);
 
         // Resource

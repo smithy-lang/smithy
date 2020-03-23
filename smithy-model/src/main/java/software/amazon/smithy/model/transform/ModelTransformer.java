@@ -164,7 +164,7 @@ public final class ModelTransformer {
      * @param model Model to transform.
      * @param renamed Map of shapeIds
      * @param modelAssemblerSupplier Supplier used to create {@link ModelAssembler}s in each transform.
-     * @return Returns the transformed model.base.
+     * @return Returns the transformed model.
      */
     public Model renameShapes(
             Model model,
@@ -183,7 +183,7 @@ public final class ModelTransformer {
      *
      * @param model Model to transform.
      * @param predicate Predicate that filters shapes.
-     * @return Returns the transformed model.base.
+     * @return Returns the transformed model.
      */
     public Model filterShapes(Model model, Predicate<Shape> predicate) {
         return new FilterShapes(predicate).transform(this, model);

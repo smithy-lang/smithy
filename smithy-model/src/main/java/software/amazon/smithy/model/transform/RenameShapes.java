@@ -62,7 +62,7 @@ final class RenameShapes {
 
         // This transformer converts the model into an ObjectNode. This approach was chosen because the
         // JSON AST format includes fully qualified shape ID values, making it possible rename shapes across
-        // the model by only needing to compare and replace only StringNode values.
+        // the model by only needing to compare and replace StringNode values.
         ModelSerializer serializer = ModelSerializer.builder().build();
         ObjectNode node = serializer.serialize(model);
 
