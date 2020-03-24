@@ -18,7 +18,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.aws.traits.apigateway.RequestValidatorTrait;
+import software.amazon.smithy.aws.apigateway.traits.RequestValidatorTrait;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;

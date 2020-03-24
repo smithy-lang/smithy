@@ -1,0 +1,6 @@
+software.amazon.smithy.aws.apigateway.traits.AuthorizerTrait$Provider
+software.amazon.smithy.aws.apigateway.traits.AuthorizersTrait$Provider
+software.amazon.smithy.aws.apigateway.traits.RequestValidatorTrait$Provider
+software.amazon.smithy.aws.apigateway.traits.ApiKeySourceTrait$Provider
+software.amazon.smithy.aws.apigateway.traits.IntegrationTrait$Provider
+software.amazon.smithy.aws.apigateway.traits.MockIntegrationTrait$Provider

@@ -1,6 +1,7 @@
 rootProject.name = "smithy"
 include(":smithy-aws-iam-traits")
 include(":smithy-aws-traits")
+include(":smithy-aws-apigateway-traits")
 include(":smithy-aws-apigateway-openapi")
 include(":smithy-aws-protocol-tests")
 include(":smithy-cli")
