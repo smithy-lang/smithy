@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,12 +13,10 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides support for converting the Amazon API Gateway " +
-        "Smithy traits when converting a Smithy model to OpenAPI3."
-extra["displayName"] = "Smithy :: Amazon API Gateway OpenAPI Support"
-extra["moduleName"] = "software.amazon.smithy.aws.apigateway.openapi"
+description = "This module provides Smithy traits and validators for API Gateway."
+extra["displayName"] = "Smithy :: AWS :: API Gateway Traits"
+extra["moduleName"] = "software.amazon.smithy.aws.apigateway.traits"
 
 dependencies {
-    api(project(":smithy-openapi"))
-    api(project(":smithy-aws-apigateway-traits"))
+    api(project(":smithy-aws-traits"))
 }
