@@ -16,7 +16,7 @@
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.logging.Logger;
-import software.amazon.smithy.aws.traits.apigateway.ApiKeySourceTrait;
+import software.amazon.smithy.aws.apigateway.traits.ApiKeySourceTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
