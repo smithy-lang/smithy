@@ -7,6 +7,11 @@ THIRD PARTY COMPONENTS
 
 This software includes third party software subject to the following copyrights.
 
+minimal-json
+Copyright (c) 2013, 2014 EclipseSource
+https://github.com/ralfstx/minimal-json/blob/master/LICENSE
+
+
 Apache Commons Text
 Copyright 2014-2018 The Apache Software Foundation
 

@@ -19,11 +19,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.math.BigDecimal;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
 
-public class DefaultNodeFactoryTest {
+public class NodeParserTest {
     @Test
     public void parsesFalseNodes() {
         Node result = Node.parse("true");
@@ -78,7 +80,7 @@ public class DefaultNodeFactoryTest {
         Node result = Node.parse("1.5");
 
         assertThat(result.isNumberNode(), is(true));
-        assertThat(result.expectNumberNode().getValue(), equalTo(1.5));
+        assertThat(result.expectNumberNode().getValue(), equalTo(new BigDecimal("1.5")));
         assertThat(result.getSourceLocation().getLine(), is(1));
         assertThat(result.getSourceLocation().getColumn(), is(1));
     }
@@ -124,6 +126,7 @@ public class DefaultNodeFactoryTest {
 
         assertThat(result.expectArrayNode().get(1).get().getSourceLocation().getLine(), is(1));
         assertThat(result.expectArrayNode().get(1).get().getSourceLocation().getColumn(), is(8));
+        assertThat(result.expectArrayNode().get(2).get().getSourceLocation().getColumn(), is(15));
     }
 
     @Test
@@ -166,6 +169,39 @@ public class DefaultNodeFactoryTest {
                            .getSourceLocation().getLine(), is(1));
         assertThat(result.expectObjectNode().expectMember("foo").expectObjectNode().expectMember("bar")
                            .getSourceLocation().getColumn(), is(17));
+    }
+
+    @Test
+    public void parsesJsonWithComments() {
+        ObjectNode result = Node.parseJsonWithComments(
+                "// Skip leading comments...\n"
+                + " { // Hello!\n"
+                + "// Foo\n"
+                + "\"foo\"// baz bar //\n"
+                + ": // bam\n"
+                + "true // hi\n"
+                + "} // there\n"
+                + "// some more?\n"
+                + "     // even more\n", "/path/to/file.json").expectObjectNode();
+
+        assertThat(Node.printJson(result), equalTo("{\"foo\":true}"));
+        assertThat(result.getSourceLocation().getFilename(), equalTo("/path/to/file.json"));
+        assertThat(result.getSourceLocation().getLine(), equalTo(2));
+        assertThat(result.getSourceLocation().getColumn(), equalTo(2));
+
+        Map.Entry<StringNode, Node> entry = result.getMembers().entrySet().iterator().next();
+        assertThat(entry.getKey().getSourceLocation().getLine(), equalTo(4));
+        assertThat(entry.getKey().getSourceLocation().getColumn(), equalTo(1));
+        assertThat(entry.getValue().getSourceLocation().getLine(), equalTo(6));
+        assertThat(entry.getValue().getSourceLocation().getColumn(), equalTo(1));
+    }
+
+    @Test
+    public void parsesCommentsToEof() {
+        Node result = Node.parseJsonWithComments("{\"foo\": true}\n"
+                                                 + "// EOF");
+
+        assertThat(Node.printJson(result), equalTo("{\"foo\":true}"));
     }
 
     @Test

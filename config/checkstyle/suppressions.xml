@@ -18,6 +18,9 @@
         "-//Puppy Crawl//DTD Suppressions 1.1//EN"
         "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 <suppressions>
+    <!-- Ignore "vendored" internal classes that have a different copyright. -->
+    <suppress checks="RegexpHeader" files="internal/*"/>
+
     <suppress checks="EqualsHashCode" files="shapes/*"/>
     <suppress checks="InnerAssignment" files="StringUtils"/>
     <suppress checks="TypeName" files="AwsJson1_0Trait.java|AwsJson1_1Trait.java"/>
