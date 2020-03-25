@@ -276,7 +276,7 @@ public class NodePointerTest {
         Node node = Node.parse("[ 1, 2, [ 3, [ 4, 5 ] ] ]");
         Node result = pointer.addValue(node, Node.parse("{ \"foo\": [ \"bar\", \"baz\" ] }"));
 
-        assertThat(result, equalTo(Node.parse("[ 1, 2, [ 3, [ 4, 5, { \"foo\": [ \"bar\", \"baz\" ] } ] ] ]}")));
+        assertThat(result, equalTo(Node.parse("[ 1, 2, [ 3, [ 4, 5, { \"foo\": [ \"bar\", \"baz\" ] } ] ] ]")));
     }
 
     @Test

@@ -50,7 +50,7 @@ public class SmithyBuildConfigTest {
             SmithyBuildConfig.load(Paths.get(getResourcePath("bad-syntax.json")));
         });
 
-        assertThat(thrown.getMessage(), containsString("Error parsing file"));
+        assertThat(thrown.getMessage(), containsString("Error parsing"));
     }
 
     @Test

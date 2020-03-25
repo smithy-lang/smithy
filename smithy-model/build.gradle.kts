@@ -20,5 +20,4 @@ extra["moduleName"] = "software.amazon.smithy.model"
 
 dependencies {
     api(project(":smithy-utils"))
-    implementation("com.fasterxml.jackson.core:jackson-core:2.9.8")
 }
