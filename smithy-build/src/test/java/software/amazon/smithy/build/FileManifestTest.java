@@ -88,7 +88,7 @@ public class FileManifestTest {
 
         assertThat(Files.isDirectory(outputDirectory.resolve("foo")), is(true));
         assertThat(Files.isRegularFile(outputDirectory.resolve("foo/file.json")), is(true));
-        assertThat(new String(Files.readAllBytes(outputDirectory.resolve("foo/file.json"))), equalTo("{ }\n"));
+        assertThat(new String(Files.readAllBytes(outputDirectory.resolve("foo/file.json"))), equalTo("{}\n"));
     }
 
     @Test

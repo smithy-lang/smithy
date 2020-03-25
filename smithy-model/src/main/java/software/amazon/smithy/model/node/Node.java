@@ -17,12 +17,7 @@ package software.amazon.smithy.model.node;
 
 import static java.lang.String.format;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -36,6 +31,8 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
+import software.amazon.smithy.model.node.internal.NodeHandler;
+import software.amazon.smithy.utils.IoUtils;
 
 /**
  * Base class of for all Smithy model nodes.
@@ -45,8 +42,7 @@ import software.amazon.smithy.model.loader.ModelSyntaxException;
  * structure of the model document.
  */
 public abstract class Node implements FromSourceLocation, ToNode {
-    private static final JsonFactory JSON_FACTORY = new JsonFactory();
-    private static final DefaultNodeFactory NODE_FACTORY = new DefaultNodeFactory(JSON_FACTORY);
+
     private final SourceLocation sourceLocation;
 
     /**
@@ -68,7 +64,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ModelSyntaxException if the JSON text is invalid.
      */
     public static Node parse(String json) {
-        return parse(json, "");
+        return NodeHandler.parse("", json, false);
     }
 
     /**
@@ -80,7 +76,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ModelSyntaxException if the JSON text is invalid.
      */
     public static Node parse(String json, String file) {
-        return NODE_FACTORY.createNode(file, json);
+        return NodeHandler.parse(file, json, false);
     }
 
     /**
@@ -105,7 +101,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ModelSyntaxException if the JSON text is invalid.
      */
     public static Node parse(InputStream json, String file) {
-        return NODE_FACTORY.createNode(file, json);
+        return parse(IoUtils.toUtf8String(json), file);
     }
 
     /**
@@ -119,9 +115,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @throws ModelSyntaxException if the JSON text is invalid.
      */
     public static Node parseJsonWithComments(String json, String file) {
-        JsonFactory factory = new JsonFactory();
-        factory.enable(JsonParser.Feature.ALLOW_COMMENTS);
-        return new DefaultNodeFactory(factory).createNode(file, json);
+        return NodeHandler.parse(file, json, true);
     }
 
     /**
@@ -140,15 +134,22 @@ public abstract class Node implements FromSourceLocation, ToNode {
     /**
      * Writes the contents of a Node to a pretty-printed JSON string.
      *
-     * <p>Use {@link DefaultNodeWriter} directly to customize the output,
-     * write directly to a file, etc.
-     *
      * @param node Node to write.
      * @return Returns the serialized Node.
      */
     public static String prettyPrintJson(Node node) {
-        StringWriter writer = new StringWriter();
-        return printJson(node, createJsonParser(writer).setPrettyPrinter(new NodePrettyPrinter()), writer);
+        return prettyPrintJson(node, "  ");
+    }
+
+    /**
+     * Writes the contents of a Node to a pretty-printed JSON string.
+     *
+     * @param node Node to write.
+     * @param indentString String to use for indention.
+     * @return Returns the serialized Node.
+     */
+    public static String prettyPrintJson(Node node, String indentString) {
+        return NodeHandler.prettyPrint(node, indentString);
     }
 
     /**
@@ -158,27 +159,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @return Returns the serialized Node.
      */
     public static String printJson(Node node) {
-        StringWriter writer = new StringWriter();
-        return printJson(node, createJsonParser(writer), writer);
-    }
-
-    private static JsonGenerator createJsonParser(StringWriter writer) {
-        try {
-            return JSON_FACTORY.createGenerator(writer);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String printJson(Node node, JsonGenerator generator, StringWriter writer) {
-        try {
-            DefaultNodeWriter nodeWriter = new DefaultNodeWriter(generator);
-            node.accept(nodeWriter);
-            generator.close();
-            return writer.toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return NodeHandler.print(node);
     }
 
     /**
