@@ -1,8 +1,0 @@
-[ERROR] com.foo#List$member: Duplicate shape definition for `com.foo#List$member` found | Model
-[ERROR] com.foo#Map$key: Duplicate shape definition for `com.foo#Map$key` | Model
-[ERROR] com.foo#Map$value: Duplicate shape definition for `com.foo#Map$value` | Model
-[ERROR] com.foo#Set$member: Duplicate shape definition for `com.foo#Set$member` | Model
-[ERROR] com.foo#Struct$foo: Duplicate shape definition for `com.foo#Struct$foo` | Model
-[ERROR] com.foo#Struct$foo: Duplicate shape definition for `com.foo#Struct$foo` | Model
-[ERROR] com.foo#Union$foo: Duplicate shape definition for `com.foo#Union$foo` | Model
-[ERROR] com.foo#Union$foo: Duplicate shape definition for `com.foo#Union$foo` | Model
