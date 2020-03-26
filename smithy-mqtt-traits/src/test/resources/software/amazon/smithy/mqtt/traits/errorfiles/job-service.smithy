@@ -47,17 +47,17 @@ structure RejectedError {
   executionState: JobExecutionState,
 }
 
-@enum(
-  InvalidTopic: {},
-  InvalidJson: {},
-  InvalidRequest: {},
-  InvalidStateTransition: {},
-  ResourceNotFound: {},
-  VersionMismatch: {},
-  InternalError: {},
-  RequestThrottled: {},
-  TerminalStateReached: {},
-)
+@enum([
+  {value: "InvalidTopic"},
+  {value: "InvalidJson"},
+  {value: "InvalidRequest"},
+  {value: "InvalidStateTransition"},
+  {value: "ResourceNotFound"},
+  {value: "VersionMismatch"},
+  {value: "InternalError"},
+  {value: "RequestThrottled"},
+  {value: "TerminalStateReached"},
+])
 string RejectedErrorCode
 
 // ------ GetPendingJobExecutions -------
@@ -192,16 +192,16 @@ structure JobExecutionData {
   executionNumber: smithy.api#Long,
 }
 
-@enum(
-  QUEUED: {},
-  IN_PROGRESS: {},
-  TIMED_OUT: {},
-  FAILED: {},
-  SUCCEEDED: {},
-  CANCELED: {},
-  REJECTED: {},
-  REMOVED: {},
-)
+@enum([
+  {value: "QUEUED"},
+  {value: "IN_PROGRESS"},
+  {value: "TIMED_OUT"},
+  {value: "FAILED"},
+  {value: "SUCCEEDED"},
+  {value: "CANCELED"},
+  {value: "REJECTED"},
+  {value: "REMOVED"},
+])
 string JobStatus
 
 

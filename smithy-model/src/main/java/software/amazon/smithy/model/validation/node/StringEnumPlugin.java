@@ -36,10 +36,11 @@ public final class StringEnumPlugin extends FilteredPlugin<StringShape, StringNo
         List<String> messages = new ArrayList<>();
         // Validate the enum trait.
         shape.getTrait(EnumTrait.class).ifPresent(trait -> {
-            if (!trait.getValues().containsKey(node.getValue())) {
+            List<String> values = trait.getEnumDefinitionValues();
+            if (!values.contains(node.getValue())) {
                 messages.add(String.format(
                         "String value provided for `%s` must be one of the following values: %s",
-                        shape.getId(), ValidationUtils.tickedList(trait.getValues().keySet())));
+                        shape.getId(), ValidationUtils.tickedList(values)));
             }
         });
         return messages;

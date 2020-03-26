@@ -127,7 +127,9 @@ structure httpApiKeyAuth {
 }
 
 @private
-@enum(header: {},  query: {})
+@enum([
+    {value: "header"},
+    {value: "query"}])
 string HttpApiKeyLocations
 
 /// Indicates that an operation can be called without authentication.
@@ -158,8 +160,9 @@ structure Example {
 /// targeted with this trait.
 @trait(selector: "structure", conflicts: [trait])
 @tags(["diff.error.const"])
-@enum(client: {name: "CLIENT"},
-      server: {name: "SERVER"})
+@enum([
+    {value: "client", name: "CLIENT"},
+    {value: "server", name: "SERVER"}])
 string error
 
 /// Indicates that an error MAY be retried by the client.
@@ -317,21 +320,26 @@ string title
 /// of constant values.
 @trait(selector: "string")
 @tags(["diff.error.add", "diff.error.remove"])
-map enum {
-    key: String,
-    value: EnumConstantBody
+@length(min: 1)
+list enum {
+    member: EnumDefinition
 }
 
 /// An enum definition for the enum trait.
 @private
-structure EnumConstantBody {
+structure EnumDefinition {
+    /// Defines the enum value that is sent over the wire.
+    @required
+    value: NonEmptyString,
+
+    /// Defines the name, or label, that is used in code to represent this variant.
+    name: EnumConstantBodyName,
+
     /// Provides optional documentation about the enum constant value.
     documentation: String,
 
     /// Applies a list of tags to the enum constant.
     tags: NonEmptyStringList,
-
-    name: EnumConstantBodyName,
 }
 
 /// The optional name or label of the enum constant value.
@@ -559,23 +567,30 @@ structure idRef {
 
 @trait(selector: ":test(timestamp, member > timestamp)")
 @tags(["diff.error.const"])
-@enum(
-    "date-time": {
+@enum([
+    {
+        value: "date-time",
+        name: "DATE_TIME",
         documentation: """
             Date time as defined by the date-time production in RFC3339 section 5.6
             with no UTC offset (for example, 1985-04-12T23:20:50.52Z)."""
     },
-    "epoch-seconds": {
+    {
+        value: "epoch-seconds",
+        name: "EPOCH_SECONDS",
         documentation: """
             Also known as Unix time, the number of seconds that have elapsed since
             00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
             with decimal precision (for example, 1515531081.1234)."""
     },
-    "http-date": {
+    {
+        value: "http-date",
+        name: "HTTP_DATE",
         documentation: """
             An HTTP date as defined by the IMF-fixdate production in
             RFC 7231#section-7.1.1.1 (for example, Tue, 29 Apr 2014 18:30:38 GMT)."""
-    })
+    }
+])
 string timestampFormat
 
 /// Configures a custom operation endpoint.

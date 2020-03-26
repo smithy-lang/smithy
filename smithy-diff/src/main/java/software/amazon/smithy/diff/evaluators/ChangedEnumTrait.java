@@ -17,11 +17,12 @@ package software.amazon.smithy.diff.evaluators;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.EnumConstantBody;
+import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
@@ -46,26 +47,32 @@ public class ChangedEnumTrait extends AbstractDiffEvaluator {
         EnumTrait newTrait = trait.getRight();
         List<ValidationEvent> events = new ArrayList<>();
 
-        oldTrait.getValues().forEach((key, value) -> {
-            if (!newTrait.getValues().containsKey(key)) {
-                events.add(error(change.getNewShape(), String.format("Enum value `%s` was removed", key)));
+        for (EnumDefinition definition : oldTrait.getValues()) {
+            Optional<EnumDefinition> maybeNewValue = newTrait.getValues().stream()
+                    .filter(d -> d.getValue().equals(definition.getValue()))
+                    .findFirst();
+
+            if (!maybeNewValue.isPresent()) {
+                events.add(error(change.getNewShape(), String.format(
+                        "Enum value `%s` was removed", definition.getValue())));
             } else {
-                EnumConstantBody newValue = newTrait.getValues().get(key);
-                if (!newValue.getName().equals(value.getName())) {
+                EnumDefinition newValue = maybeNewValue.get();
+                if (!newValue.getName().equals(definition.getName())) {
                     events.add(error(change.getNewShape(), String.format(
                             "Enum `name` changed from `%s` to `%s` for the `%s` value",
-                            value.getName().orElse(null),
+                            definition.getName().orElse(null),
                             newValue.getName().orElse(null),
-                            key)));
+                            definition.getValue())));
                 }
             }
-        });
+        }
 
-        newTrait.getValues().forEach((key, value) -> {
-            if (!oldTrait.getValues().containsKey(key)) {
-                events.add(note(change.getNewShape(), String.format("Enum value `%s` was added", key)));
+        for (EnumDefinition definition : newTrait.getValues()) {
+            if (!oldTrait.getEnumDefinitionValues().contains(definition.getValue())) {
+                events.add(note(change.getNewShape(), String.format(
+                        "Enum value `%s` was added", definition.getValue())));
             }
-        });
+        }
 
         return events;
     }

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.StringShape;
-import software.amazon.smithy.model.traits.EnumConstantBody;
+import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -34,14 +34,14 @@ public class ChangedEnumTraitTest {
         StringShape s1 = StringShape.builder()
                 .id("foo.baz#Baz")
                 .addTrait(EnumTrait.builder()
-                        .addEnum("foo", EnumConstantBody.builder().build())
+                        .addEnum(EnumDefinition.builder().value("foo").build())
                         .build())
                 .build();
         StringShape s2 = StringShape.builder()
                 .id("foo.baz#Baz")
                 .addTrait(EnumTrait.builder()
-                        .addEnum("foo", EnumConstantBody.builder().build())
-                        .addEnum("baz", EnumConstantBody.builder().build())
+                        .addEnum(EnumDefinition.builder().value("foo").build())
+                        .addEnum(EnumDefinition.builder().value("baz").build())
                         .build())
                 .build();
         Model modelA = Model.assembler().addShape(s1).assemble().unwrap();
@@ -57,14 +57,14 @@ public class ChangedEnumTraitTest {
         StringShape s1 = StringShape.builder()
                 .id("foo.baz#Baz")
                 .addTrait(EnumTrait.builder()
-                        .addEnum("foo", EnumConstantBody.builder().build())
-                        .addEnum("baz", EnumConstantBody.builder().build())
+                        .addEnum(EnumDefinition.builder().value("foo").build())
+                        .addEnum(EnumDefinition.builder().value("baz").build())
                         .build())
                 .build();
         StringShape s2 = StringShape.builder()
                 .id("foo.baz#Baz")
                 .addTrait(EnumTrait.builder()
-                        .addEnum("foo", EnumConstantBody.builder().build())
+                        .addEnum(EnumDefinition.builder().value("foo").build())
                         .build())
                 .build();
         Model modelA = Model.assembler().addShape(s1).assemble().unwrap();
@@ -80,13 +80,13 @@ public class ChangedEnumTraitTest {
         StringShape s1 = StringShape.builder()
                 .id("foo.baz#Baz")
                 .addTrait(EnumTrait.builder()
-                        .addEnum("foo", EnumConstantBody.builder().name("OLD").build())
+                        .addEnum(EnumDefinition.builder().value("foo").name("OLD").build())
                         .build())
                 .build();
         StringShape s2 = StringShape.builder()
                 .id("foo.baz#Baz")
                 .addTrait(EnumTrait.builder()
-                        .addEnum("foo", EnumConstantBody.builder().name("NEW").build())
+                        .addEnum(EnumDefinition.builder().value("foo").name("NEW").build())
                         .build())
                 .build();
         Model modelA = Model.assembler().addShape(s1).assemble().unwrap();

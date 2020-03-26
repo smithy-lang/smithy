@@ -56,13 +56,13 @@ list TimestampList {
     member: Timestamp,
 }
 
-@enum(
-    Foo: {},
-    Baz: {},
-    Bar: {},
-    "1": {},
-    "0": {},
-)
+@enum([
+    {value: "Foo"},
+    {value: "Baz"},
+    {value: "Bar"},
+    {value: "1"},
+    {value: "0"},
+])
 string FooEnum
 
 list FooEnumList {

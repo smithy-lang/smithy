@@ -18,7 +18,6 @@ package software.amazon.smithy.jsonschema;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
@@ -283,8 +282,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
         }
 
         shape.getTrait(EnumTrait.class)
-                .map(EnumTrait::getValues)
-                .map(Map::keySet)
+                .map(EnumTrait::getEnumDefinitionValues)
                 .ifPresent(builder::enumValues);
 
         return builder;

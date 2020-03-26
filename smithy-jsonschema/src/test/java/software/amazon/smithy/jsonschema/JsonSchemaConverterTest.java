@@ -56,7 +56,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.model.traits.EnumConstantBody;
+import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
@@ -400,7 +400,7 @@ public class JsonSchemaConverterTest {
     public void supportsEnum() {
         StringShape string = StringShape.builder()
                 .id("smithy.api#String")
-                .addTrait(EnumTrait.builder().addEnum("foo", EnumConstantBody.builder().build()).build())
+                .addTrait(EnumTrait.builder().addEnum(EnumDefinition.builder().value("foo").build()).build())
                 .build();
         Model model = Model.builder().addShapes(string).build();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convertShape(string);
