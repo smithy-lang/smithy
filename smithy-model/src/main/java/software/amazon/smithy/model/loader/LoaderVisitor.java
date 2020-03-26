@@ -229,10 +229,11 @@ final class LoaderVisitor {
     private boolean validateOnShape(ShapeId id, FromSourceLocation source) {
         if (!hasDefinedShape(id)) {
             return true;
-        } else if (Prelude.isPreludeShape(id)) {
-            // Ignore prelude shape conflicts since it's such a common case of
-            // passing an already built model into a ModelAssembler.
-        } else {
+        }
+
+        // Ignore prelude shape conflicts since it's such a common case of
+        // passing an already built model into a ModelAssembler.
+        if (!Prelude.isPreludeShape(id)) {
             // The shape has been duplicated, so get the previously defined pending shape or built shape.
             SourceLocation previous = Optional.<FromSourceLocation>ofNullable(pendingShapes.get(id))
                     .orElseGet(() -> builtShapes.get(id)).getSourceLocation();
@@ -245,15 +246,9 @@ final class LoaderVisitor {
                 LOGGER.warning(() -> "Ignoring duplicate shape definition defined in the same file: "
                                      + id + " defined at " + source.getSourceLocation());
             } else {
-                onError(ValidationEvent.builder()
-                                .shapeId(id)
-                                .eventId(Validator.MODEL_ERROR)
-                                .severity(Severity.ERROR)
-                                .sourceLocation(source)
-                                .message(String.format(
-                                        "Duplicate shape definition for `%s` found at `%s` and `%s`",
-                                        id, previous.getSourceLocation(), source.getSourceLocation()))
-                                .build());
+                String message = String.format("Duplicate shape definition for `%s` found at `%s` and `%s`",
+                                               id, previous.getSourceLocation(), source.getSourceLocation());
+                throw new SourceException(message, source);
             }
         }
 
@@ -386,12 +381,13 @@ final class LoaderVisitor {
                 if (member != null) {
                     AbstractShapeBuilder container = pendingShapes.get(shape.getId().withoutMember());
                     if (container == null) {
-                        events.add(ValidationEvent.builder()
-                                .shape(member)
-                                .eventId(Validator.MODEL_ERROR)
-                                .severity(Severity.ERROR)
-                                .message(format("Member shape `%s` added to non-existent shape", member.getId()))
-                                .build());
+                        // As of today, this can only happen when the loading process fails while
+                        // parsing a container shape in the IDL. If the LoaderVisitor is externalized,
+                        // then we may need an alternative approach (for example, something more
+                        // heavyweight like pushing scopes when loading members that allows mutations
+                        // to the LoaderVisitor to be undone when parsing the container fails).
+                        LOGGER.warning(format("Member shape `%s` added to non-existent shape: %s",
+                                              member.getId(), member.getSourceLocation()));
                     } else {
                         container.addMember(member);
                     }

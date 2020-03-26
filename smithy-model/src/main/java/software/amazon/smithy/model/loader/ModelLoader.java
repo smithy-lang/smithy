@@ -26,7 +26,6 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
  * Used to load Smithy models from .json, .smithy, and .jar files.
@@ -54,28 +53,18 @@ final class ModelLoader {
      * @throws SourceException if there is an error reading from the contents.
      */
     static boolean load(String filename, Supplier<InputStream> contentSupplier, LoaderVisitor visitor) {
-        try {
-            if (filename.endsWith(".json")) {
-                return loadParsedNode(Node.parse(contentSupplier.get(), filename), visitor);
-            } else if (filename.endsWith(".smithy")) {
-                IdlModelLoader.load(filename, contentSupplier, visitor);
-                return true;
-            } else if (filename.endsWith(".jar")) {
-                return loadJar(filename, visitor);
-            } else if (filename.equals(SourceLocation.NONE.getFilename())) {
-                // Assume it's JSON if there's a N/A filename.
-                return loadParsedNode(Node.parse(contentSupplier.get(), filename), visitor);
-            } else {
-                return false;
-            }
-        } catch (ModelSyntaxException e) {
-            // A syntax error in any model is going to really mess up the loading
-            // process. While we *could* tolerate syntax errors and move on, to the
-            // next model, doing so would likely emit many unintelligible errors.
-            throw e;
-        } catch (SourceException e) {
-            visitor.onError(ValidationEvent.fromSourceException(e));
+        if (filename.endsWith(".json")) {
+            return loadParsedNode(Node.parse(contentSupplier.get(), filename), visitor);
+        } else if (filename.endsWith(".smithy")) {
+            IdlModelLoader.load(filename, contentSupplier, visitor);
             return true;
+        } else if (filename.endsWith(".jar")) {
+            return loadJar(filename, visitor);
+        } else if (filename.equals(SourceLocation.NONE.getFilename())) {
+            // Assume it's JSON if there's a N/A filename.
+            return loadParsedNode(Node.parse(contentSupplier.get(), filename), visitor);
+        } else {
+            return false;
         }
     }
 
