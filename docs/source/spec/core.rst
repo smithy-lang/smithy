@@ -3322,18 +3322,12 @@ Summary
 Trait selector
     ``string``
 Value type
-    ``map`` of enum constant values to structures optionally containing a name,
-    documentation, tags, and/or a deprecation flag.
+    ``list`` of enum definition structures.
 
 Smithy models SHOULD apply the enum trait when string shapes have a fixed
 set of allowable values.
 
-The enum trait is a map of allowed string values to enum constant definition
-structures. Enum values do not allow aliasing; all enum constant values MUST be
-unique across the entire set.
-
-An enum definition is a structure that supports the following optional
-members:
+An enum definition is a structure that supports the following members:
 
 .. list-table::
     :header-rows: 1
@@ -3342,6 +3336,10 @@ members:
     * - Property
       - Type
       - Description
+    * - value
+      - string
+      - **Required**. Defines the enum value that is sent over the wire.
+        Values MUST be unique across all enum definitions in an ``enum`` trait.
     * - name
       - string
       - Defines a constant name to use when referencing an enum value.
@@ -3358,6 +3356,8 @@ members:
         (``a-z``) and SHOULD NOT start with an ASCII underscore (``_``). That
         is, enum names SHOULD match the following regular expression:
         ``^[A-Z]+[A-Z_0-9]*$``.
+
+        Names MUST be unique across all enum definitions in an ``enum`` trait.
     * - documentation
       - string
       - Defines documentation about the enum value in the CommonMark_ format.
@@ -3384,8 +3384,9 @@ The following example defines an enum of valid string values for ``MyString``.
 
     .. code-tab:: smithy
 
-        @enum(
-            t2.nano: {
+        @enum([
+            {
+                value: "t2.nano",
                 name: "T2_NANO",
                 documentation: """
                     T2 instances are Burstable Performance
@@ -3394,7 +3395,8 @@ The following example defines an enum of valid string values for ``MyString``.
                     baseline.""",
                 tags: ["ebsOnly"]
             },
-            t2.micro: {
+            {
+                value: "t2.micro",
                 name: "T2_MICRO",
                 documentation: """
                     T2 instances are Burstable Performance
@@ -3403,11 +3405,12 @@ The following example defines an enum of valid string values for ``MyString``.
                     baseline.""",
                 tags: ["ebsOnly"]
             },
-            m256.mega: {
+            {
+                value: "m256.mega",
                 name: "M256_MEGA",
                 deprecated: true
             }
-        )
+        ])
         string MyString
 
     .. code-tab:: json
@@ -3418,26 +3421,29 @@ The following example defines an enum of valid string values for ``MyString``.
                 "smithy.example#MyString": {
                     "type": "string",
                     "traits": {
-                        "smithy.api#enum": {
-                            "t2.nano": {
+                        "smithy.api#enum": [
+                            {
+                                "value": "t2.nano",
                                 "name": "T2_NANO",
                                 "documentation": "T2 instances are ...",
                                 "tags": [
                                     "ebsOnly"
                                 ]
                             },
-                            "t2.micro": {
+                            {
+                                "value": "t2.micro",
                                 "name": "T2_MICRO",
                                 "documentation": "T2 instances are ...",
                                 "tags": [
                                     "ebsOnly"
                                 ]
                             },
-                            "m256.mega": {
+                            {
+                                "value": "m256.mega",
                                 "name": "M256_MEGA",
                                 "deprecated": true
                             }
-                        }
+                        ]
                     }
                 }
             }
@@ -5022,7 +5028,7 @@ can also support configuration settings.
     }
 
     @private
-    @enum("SHA-2": {})
+    @enum([{value": "SHA-2"}])
     string AlgorithmAuthAlgorithm
 
     @algorithmAuth(algorithm: "SHA-2")

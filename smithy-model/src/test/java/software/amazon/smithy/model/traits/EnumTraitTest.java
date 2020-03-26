@@ -16,8 +16,8 @@
 package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Assertions;
@@ -29,14 +29,14 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public class EnumTraitTest {
     @Test
     public void loadsTrait() {
-        Node node = Node.parse("{\"foo\": {}, \"bam\": {}, \"boozled\": {}}");
+        Node node = Node.parse("[{\"value\": \"foo\"}, "
+                               + "{\"value\": \"bam\"}, "
+                               + "{\"value\": \"boozled\"}]");
         EnumTrait trait = new EnumTrait.Provider().createTrait(ShapeId.from("ns.foo#baz"), node);
 
         assertThat(trait.toNode(), equalTo(node));
         assertThat(trait.toBuilder().build(), equalTo(trait));
-        assertThat(trait.getValues(), hasKey("foo"));
-        assertThat(trait.getValues(), hasKey("bam"));
-        assertThat(trait.getValues(), hasKey("boozled"));
+        assertThat(trait.getEnumDefinitionValues(), contains("foo", "bam", "boozled"));
     }
 
     @Test
@@ -49,7 +49,8 @@ public class EnumTraitTest {
 
     @Test
     public void checksIfAllDefineNames() {
-        Node node = Node.parse("{\"foo\": {\"name\": \"FOO\"}, \"bam\": {\"name\": \"BAM\"}}");
+        Node node = Node.parse("[{\"value\": \"foo\", \"name\": \"FOO\"}, "
+                               + "{\"value\": \"bam\", \"name\": \"BAM\"}]");
         EnumTrait trait = new EnumTrait.Provider().createTrait(ShapeId.from("ns.foo#baz"), node);
 
         assertThat(trait.hasNames(), is(true));

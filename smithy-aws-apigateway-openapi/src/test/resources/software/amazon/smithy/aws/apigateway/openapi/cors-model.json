@@ -198,14 +198,16 @@
         "example.smithy#EnumString": {
             "type": "string",
             "traits": {
-                "smithy.api#enum": {
-                    "a": {
+                "smithy.api#enum": [
+                    {
+                        "value": "a",
                         "name": "A"
                     },
-                    "c": {
+                    {
+                        "value": "c",
                         "name": "C"
                     }
-                }
+                ]
             }
         },
         "example.smithy#PayloadDescriptions": {

@@ -219,20 +219,24 @@
         "aws.apigateway#IntegrationType": {
             "type": "string",
             "traits": {
-                "smithy.api#enum": {
-                    "aws": {
+                "smithy.api#enum": [
+                    {
+                        "value": "aws",
                         "name": "AWS"
                     },
-                    "aws_proxy": {
+                    {
+                        "value": "aws_proxy",
                         "name": "AWS_PROXY"
                     },
-                    "http": {
+                    {
+                        "value": "http",
                         "name": "HTTP"
                     },
-                    "http_proxy": {
+                    {
+                        "value": "http_proxy",
                         "name": "HTTP_PROXY"
                     }
-                }
+                ]
             }
         },
         "aws.apigateway#IamRoleArn": {
@@ -283,27 +287,30 @@
             "type": "string",
             "traits": {
                 "smithy.api#private": true,
-                "smithy.api#enum": {
-                    "INTERNET": {},
-                    "VPC_LINK": {}
-                }
+                "smithy.api#enum": [
+                    {"value": "INTERNET"},
+                    {"value": "VPC_LINK"}
+                ]
             }
         },
         "aws.apigateway#PassThroughBehavior": {
             "type": "string",
             "traits": {
                 "smithy.api#documentation": "Defines the passThroughBehavior for the integration",
-                "smithy.api#enum": {
-                    "when_no_templates": {
+                "smithy.api#enum": [
+                    {
+                        "value": "when_no_templates",
                         "name": "WHEN_NO_TEMPLATES"
                     },
-                    "when_no_match": {
+                    {
+                        "value": "when_no_match",
                         "name": "WHEN_NO_MATCH"
                     },
-                    "never": {
+                    {
+                        "value": "never",
                         "name": "NEVER"
                     }
-                },
+                ],
                 "smithy.api#private": true
             }
         },
@@ -311,14 +318,10 @@
             "type": "string",
             "traits": {
                 "smithy.api#documentation": "Defines the contentHandling for the integration",
-                "smithy.api#enum": {
-                    "CONVERT_TO_TEXT": {
-                        "name": "CONVERT_TO_TEXT"
-                    },
-                    "CONVERT_TO_BINARY": {
-                        "name": "CONVERT_TO_BINARY"
-                    }
-                },
+                "smithy.api#enum": [
+                    {"value": "CONVERT_TO_TEXT", "name": "CONVERT_TO_TEXT"},
+                    {"value": "CONVERT_TO_BINARY", "name": "CONVERT_TO_BINARY"}
+                ],
                 "smithy.api#private": true
             }
         },

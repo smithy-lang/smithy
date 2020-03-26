@@ -91,14 +91,10 @@
         "ns.foo#String3": {
             "type": "string",
             "traits": {
-                "smithy.api#enum": {
-                    "foo": {
-                        "name": "FOO"
-                    },
-                    "bar": {
-                        "name": "BAR"
-                    }
-                }
+                "smithy.api#enum": [
+                    {"value": "foo", "name": "FOO"},
+                    {"value": "bar", "name": "BAR"}
+                ]
             }
         },
         "ns.foo#String4": {

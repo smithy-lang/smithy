@@ -15,18 +15,17 @@
 
 package software.amazon.smithy.model.traits;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -35,12 +34,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#enum");
 
-    private final Map<String, EnumConstantBody> constants;
+    private final List<EnumDefinition> definitions;
 
     private EnumTrait(Builder builder) {
         super(ID, builder.sourceLocation);
-        this.constants = Collections.unmodifiableMap(new LinkedHashMap<>(builder.constants));
-        if (constants.isEmpty()) {
+        this.definitions = ListUtils.copyOf(builder.definitions);
+        if (definitions.isEmpty()) {
             throw new SourceException("enum must have at least one entry", getSourceLocation());
         }
     }
@@ -48,10 +47,19 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
     /**
      * Gets the enum value to body.
      *
-     * @return returns the enum constant mapping.
+     * @return returns the enum constant definitions.
      */
-    public Map<String, EnumConstantBody> getValues() {
-        return constants;
+    public List<EnumDefinition> getValues() {
+        return definitions;
+    }
+
+    /**
+     * Gets the acceptable enum literal values.
+     *
+     * @return returns the enum constant definitions.
+     */
+    public List<String> getEnumDefinitionValues() {
+        return definitions.stream().map(EnumDefinition::getValue).collect(Collectors.toList());
     }
 
     /**
@@ -63,31 +71,25 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
      * @return Returns true if all constants define a name.
      */
     public boolean hasNames() {
-        return constants.values().stream().allMatch(body -> body.getName().isPresent());
+        return definitions.stream().allMatch(body -> body.getName().isPresent());
     }
 
     @Override
     protected Node createNode() {
-        return constants.entrySet().stream()
-                .map(entry -> {
-                    ObjectNode value = Node.objectNode()
-                            .withOptionalMember(EnumConstantBody.NAME, entry.getValue().getName().map(Node::from))
-                            .withOptionalMember(EnumConstantBody.DOCUMENTATION,
-                                                entry.getValue().getDocumentation().map(Node::from));
-                    if (!entry.getValue().getTags().isEmpty()) {
-                        value = value.withMember(EnumConstantBody.TAGS, entry.getValue().getTags().stream()
-                                .map(Node::from)
-                                .collect(ArrayNode.collect()));
-                    }
-                    return Pair.of(entry.getKey(), value);
-                })
-                .collect(ObjectNode.collectStringKeys(Pair::getLeft, Pair::getRight));
+        return definitions.stream()
+                .map(definition -> Node.objectNodeBuilder()
+                        .withMember(EnumDefinition.VALUE, definition.getValue())
+                        .withOptionalMember(EnumDefinition.NAME, definition.getName().map(Node::from))
+                        .withOptionalMember(EnumDefinition.DOCUMENTATION,
+                                            definition.getDocumentation().map(Node::from))
+                        .build())
+                .collect(ArrayNode.collect());
     }
 
     @Override
     public Builder toBuilder() {
         Builder builder = builder().sourceLocation(getSourceLocation());
-        constants.forEach(builder::addEnum);
+        definitions.forEach(builder::addEnum);
         return builder;
     }
 
@@ -102,20 +104,25 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
      * Builder used to create the enum trait.
      */
     public static final class Builder extends AbstractTraitBuilder<EnumTrait, Builder> {
-        private final Map<String, EnumConstantBody> constants = new LinkedHashMap<>();
+        private final List<EnumDefinition> definitions = new ArrayList<>();
 
-        public Builder addEnum(String name, EnumConstantBody value) {
-            constants.put(Objects.requireNonNull(name), Objects.requireNonNull(value));
+        public Builder addEnum(EnumDefinition value) {
+            definitions.add(value);
             return this;
         }
 
         public Builder removeEnum(String value) {
-            constants.remove(value);
+            definitions.removeIf(def -> def.getValue().equals(value));
+            return this;
+        }
+
+        public Builder removeEnumByName(String name) {
+            definitions.removeIf(def -> def.getName().filter(n -> n.equals(name)).isPresent());
             return this;
         }
 
         public Builder clearEnums() {
-            constants.clear();
+            definitions.clear();
             return this;
         }
 
@@ -134,23 +141,24 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
         @Override
         public EnumTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
-            value.expectObjectNode().getMembers().forEach((k, v) -> {
-                builder.addEnum(k.expectStringNode().getValue(), parseBody(v.expectObjectNode()));
-            });
+            for (ObjectNode definition : value.expectArrayNode().getElementsAs(ObjectNode.class)) {
+                builder.addEnum(parseEnum(definition));
+            }
             return builder.build();
         }
 
-        private EnumConstantBody parseBody(ObjectNode value) {
+        private EnumDefinition parseEnum(ObjectNode value) {
             value.warnIfAdditionalProperties(Arrays.asList(
-                    EnumConstantBody.NAME, EnumConstantBody.DOCUMENTATION, EnumConstantBody.TAGS));
-            EnumConstantBody.Builder builder = EnumConstantBody.builder()
-                    .name(value.getStringMember(EnumConstantBody.NAME).map(StringNode::getValue).orElse(null))
-                    .documentation(value.getStringMember(EnumConstantBody.DOCUMENTATION)
+                    EnumDefinition.VALUE, EnumDefinition.NAME, EnumDefinition.DOCUMENTATION, EnumDefinition.TAGS));
+            EnumDefinition.Builder builder = EnumDefinition.builder()
+                    .value(value.expectStringMember(EnumDefinition.VALUE).getValue())
+                    .name(value.getStringMember(EnumDefinition.NAME).map(StringNode::getValue).orElse(null))
+                    .documentation(value.getStringMember(EnumDefinition.DOCUMENTATION)
                                            .map(StringNode::getValue)
                                            .orElse(null));
 
-            value.getMember(EnumConstantBody.TAGS).ifPresent(node -> {
-                builder.tags(Node.loadArrayOfString(EnumConstantBody.TAGS, node));
+            value.getMember(EnumDefinition.TAGS).ifPresent(node -> {
+                builder.tags(Node.loadArrayOfString(EnumDefinition.TAGS, node));
             });
 
             return builder.build();

@@ -90,22 +90,22 @@
             "traits": {
                 "smithy.api#private": true,
                 "smithy.api#documentation": "The IAM policy type of the value that will supplied for this context key",
-                "smithy.api#enum": {
-                    "ARN": {},
-                    "ArrayOfARN": {},
-                    "Binary": {},
-                    "ArrayOfBinary": {},
-                    "String": {},
-                    "ArrayOfString": {},
-                    "Numeric": {},
-                    "ArrayOfNumeric": {},
-                    "Date": {},
-                    "ArrayOfDate": {},
-                    "Bool": {},
-                    "ArrayOfBool": {},
-                    "IPAddress": {},
-                    "ArrayOfIPAddress": {}
-                }
+                "smithy.api#enum": [
+                    {"value": "ARN"},
+                    {"value": "ArrayOfARN"},
+                    {"value": "Binary"},
+                    {"value": "ArrayOfBinary"},
+                    {"value": "String"},
+                    {"value": "ArrayOfString"},
+                    {"value": "Numeric"},
+                    {"value": "ArrayOfNumeric"},
+                    {"value": "Date"},
+                    {"value": "ArrayOfDate"},
+                    {"value": "Bool"},
+                    {"value": "ArrayOfBool"},
+                    {"value": "IPAddress"},
+                    {"value": "ArrayOfIPAddress"}
+                ]
             }
         }
     }
