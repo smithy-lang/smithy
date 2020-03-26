@@ -235,14 +235,10 @@
         "example.rest#EnumString": {
             "type": "string",
             "traits": {
-                "smithy.api#enum": {
-                    "a": {
-                        "name": "A"
-                    },
-                    "c": {
-                        "name": "C"
-                    }
-                }
+                "smithy.api#enum": [
+                    {"value": "a", "name": "A"},
+                    {"value": "c", "name": "C"}
+                ]
             }
         },
         "example.rest#TaggedUnion": {

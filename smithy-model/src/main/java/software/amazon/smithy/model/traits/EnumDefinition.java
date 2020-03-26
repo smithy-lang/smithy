@@ -27,23 +27,30 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 /**
  * An enum definition for the enum trait.
  */
-public final class EnumConstantBody implements ToSmithyBuilder<EnumConstantBody>, Tagged {
+public final class EnumDefinition implements ToSmithyBuilder<EnumDefinition>, Tagged {
+    public static final String VALUE = "value";
     public static final String NAME = "name";
     public static final String DOCUMENTATION = "documentation";
     public static final String TAGS = "tags";
 
+    private final String value;
     private final String documentation;
     private final List<String> tags;
     private final String name;
 
-    private EnumConstantBody(Builder builder) {
+    private EnumDefinition(Builder builder) {
+        value = SmithyBuilder.requiredState("value", builder.value);
+        name = builder.name;
         documentation = builder.documentation;
         tags = new ArrayList<>(builder.tags);
-        name = builder.name;
     }
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public String getValue() {
+        return value;
     }
 
     public Optional<String> getName() {
@@ -61,46 +68,53 @@ public final class EnumConstantBody implements ToSmithyBuilder<EnumConstantBody>
 
     @Override
     public Builder toBuilder() {
-        return builder().tags(tags).documentation(documentation).name(name);
+        return builder().value(value).tags(tags).documentation(documentation).name(name);
     }
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof EnumConstantBody)) {
+        if (!(other instanceof EnumDefinition)) {
             return false;
         }
 
-        EnumConstantBody otherEnum = (EnumConstantBody) other;
-        return Objects.equals(name, otherEnum.name)
+        EnumDefinition otherEnum = (EnumDefinition) other;
+        return value.equals(otherEnum.value)
+                && Objects.equals(name, otherEnum.name)
                 && Objects.equals(documentation, otherEnum.documentation)
                 && tags.equals(otherEnum.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, tags, documentation);
+        return Objects.hash(value, name, tags, documentation);
     }
 
     /**
-     * Builds a {@link EnumConstantBody}.
+     * Builds a {@link EnumDefinition}.
      */
-    public static final class Builder implements SmithyBuilder<EnumConstantBody> {
+    public static final class Builder implements SmithyBuilder<EnumDefinition> {
+        private String value;
         private String documentation;
         private String name;
         private final List<String> tags = new ArrayList<>();
 
         @Override
-        public EnumConstantBody build() {
-            return new EnumConstantBody(this);
+        public EnumDefinition build() {
+            return new EnumDefinition(this);
         }
 
-        public Builder documentation(String documentation) {
-            this.documentation = documentation;
+        public Builder value(String value) {
+            this.value = Objects.requireNonNull(value);
             return this;
         }
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder documentation(String documentation) {
+            this.documentation = documentation;
             return this;
         }
 

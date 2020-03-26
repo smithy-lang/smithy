@@ -79,28 +79,33 @@
                 "smithy.api#trait": {
                     "selector": ":test(simpleType, collection, structure, union, member)"
                 },
-                "smithy.api#enum": {
-                    "content": {
+                "smithy.api#enum": [
+                    {
+                        "value": "content",
                         "name": "CUSTOMER_CONTENT",
                         "documentation": "Customer content means any software (including machine images), data, text, audio, video or images that customers or any customer end user transfers to AWS for processing, storage or hosting by AWS services in connection with the customer\u2019s accounts and any computational results that customers or any customer end user derive from the foregoing through their use of AWS services."
                     },
-                    "account": {
+                    {
+                        "value": "account",
                         "name": "CUSTOMER_ACCOUNT_INFORMATION",
                         "documentation": "Account information means information about customers that customers provide to AWS in connection with the creation or administration of customers\u2019 accounts."
                     },
-                    "usage": {
+                    {
+                        "value": "usage",
                         "name": "SERVICE_ATTRIBUTES",
                         "documentation": "Service Attributes means service usage data related to a customer\u2019s account, such as resource identifiers, metadata tags, security and access roles, rules, usage policies, permissions, usage statistics, logging data, and analytics."
                     },
-                    "tagging": {
+                    {
+                        "value": "tagging",
                         "name": "TAG_DATA",
                         "documentation": "Designates metadata tags applied to AWS resources."
                     },
-                    "permissions": {
+                    {
+                        "value": "permissions",
                         "name": "PERMISSIONS_DATA",
                         "documentation": "Designates security and access roles, rules, usage policies, and permissions."
                     }
-                },
+                ],
                 "smithy.api#documentation": "Designates the target as containing data of a known classification level."
             }
         },
