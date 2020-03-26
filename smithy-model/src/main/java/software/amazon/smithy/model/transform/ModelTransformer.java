@@ -18,17 +18,21 @@ package software.amazon.smithy.model.transform;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.neighbor.UnreferencedShapes;
 import software.amazon.smithy.model.neighbor.UnreferencedTraitDefinitions;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIndex;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -133,6 +137,44 @@ public final class ModelTransformer {
     }
 
     /**
+     *  Renames shapes using ShapeId pairs while ensuring that the
+     *  transformed model is in a consistent state.
+     *
+     *  <p>This transformer ensures that when an aggregate shape is renamed, all
+     *  members are updated in the model.
+     *
+     * @param model Model to transform.
+     * @param renamed Map of shapeIds
+     * @return Returns the transformed model.base.
+     */
+    public Model renameShapes(
+            Model model,
+            Map<ShapeId, ShapeId> renamed
+    ) {
+        return this.renameShapes(model, renamed, Model::assembler);
+    }
+
+    /**
+     *  Renames shapes using ShapeId pairs while ensuring that the
+     *  transformed model is in a consistent state.
+     *
+     *  <p>This transformer ensures that when an aggregate shape is renamed, all
+     *  members are updated in the model.
+     *
+     * @param model Model to transform.
+     * @param renamed Map of shapeIds
+     * @param modelAssemblerSupplier Supplier used to create {@link ModelAssembler}s in each transform.
+     * @return Returns the transformed model.
+     */
+    public Model renameShapes(
+            Model model,
+            Map<ShapeId, ShapeId> renamed,
+            Supplier<ModelAssembler> modelAssemblerSupplier
+    ) {
+        return new RenameShapes(renamed, modelAssemblerSupplier).transform(this, model);
+    }
+
+    /**
      * Filters shapes out of the model that do not match the given predicate.
      *
      * <p>This filter will never filter out shapes that are part of the
@@ -141,7 +183,7 @@ public final class ModelTransformer {
      *
      * @param model Model to transform.
      * @param predicate Predicate that filters shapes.
-     * @return Returns the transformed model.base.
+     * @return Returns the transformed model.
      */
     public Model filterShapes(Model model, Predicate<Shape> predicate) {
         return new FilterShapes(predicate).transform(this, model);
