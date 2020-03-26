@@ -1,5 +1,33 @@
 # Smithy Changelog
 
+## 0.9.8 (2020-03-26)
+
+### Features
+
+* Add `RenameShapes` model transformer ([#318](https://github.com/awslabs/smithy/pull/318))
+* Build `ValidationEvents` are now sorted ([#263](https://github.com/awslabs/smithy/pull/263))
+* Smithy CLI logging improvements ([#263](https://github.com/awslabs/smithy/pull/263))
+* Model builds fail early when syntax errors occur ([#264](https://github.com/awslabs/smithy/pull/264))
+* Warn when a deprecated trait is applied to a shape ([#279](https://github.com/awslabs/smithy/pull/279))
+
+### Bug Fixes
+
+* Fix behavior of `schemaDocumentExtensions` when converting to OpenAPI ([#320](https://github.com/awslabs/smithy/pull/320))
+* Fix discrepancies in `smithy-aws-protocol-tests` ([#309](https://github.com/awslabs/smithy/pull/309), [#321](https://github.com/awslabs/smithy/pull/321))
+* Properly format test case results ([#271](https://github.com/awslabs/smithy/pull/271))
+* Fix dropping one character text block lines ([#285](https://github.com/awslabs/smithy/pull/285))
+
+### Optimizations
+
+* Builds run parallel projections in parallel only if there are more than one ([#263](https://github.com/awslabs/smithy/pull/263))
+* Run Smithy test suites as parameterized tests ([#263](https://github.com/awslabs/smithy/pull/263))
+
+### Cleanup
+
+* Migrate protocol tests to new operation syntax ([#260](https://github.com/awslabs/smithy/pull/260))
+* Build protocol tests with the Smithy Gradle plugin ([#263](https://github.com/awslabs/smithy/pull/263))
+* Deprecate using explicitly `smithy.api` for trait removal ([#306](https://github.com/awslabs/smithy/pull/306))
+
 ## 0.9.7 (2020-01-15)
 
 ### Features

@@ -12,7 +12,7 @@ Maven
 <dependency>
     <groupId>software.amazon.smithy</groupId>
     <artifactId>smithy-codegen-freemarker</artifactId>
-    <version>0.9.7</version>
+    <version>0.9.8</version>
 </dependency>
 ```
 
