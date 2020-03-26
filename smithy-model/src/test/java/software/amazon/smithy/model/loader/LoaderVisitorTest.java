@@ -30,6 +30,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -44,8 +45,6 @@ import software.amazon.smithy.model.traits.ReferencesTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
-import software.amazon.smithy.model.validation.ValidatedResult;
-import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.MapUtils;
 
@@ -61,21 +60,21 @@ public class LoaderVisitorTest {
 
     @Test
     public void cannotDuplicateTraitDefs() {
-        LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        StringShape def1 = StringShape.builder()
-                .id("foo.baz#Bar")
-                .addTrait(TraitDefinition.builder().build())
-                .build();
-        StringShape def2 = StringShape.builder()
-                .id("foo.baz#Bar")
-                .addTrait(TraitDefinition.builder().selector(Selector.parse("string")).build())
-                .build();
+        Assertions.assertThrows(SourceException.class, () -> {
+            LoaderVisitor visitor = new LoaderVisitor(FACTORY);
+            StringShape def1 = StringShape.builder()
+                    .id("foo.baz#Bar")
+                    .addTrait(TraitDefinition.builder().build())
+                    .build();
+            StringShape def2 = StringShape.builder()
+                    .id("foo.baz#Bar")
+                    .addTrait(TraitDefinition.builder().selector(Selector.parse("string")).build())
+                    .build();
 
-        visitor.onShape(def1);
-        visitor.onShape(def2);
-        List<ValidationEvent> events = visitor.onEnd().getValidationEvents();
-
-        assertThat(events, not(empty()));
+            visitor.onShape(def1);
+            visitor.onShape(def2);
+            visitor.onEnd();
+        });
     }
 
     @Test
@@ -99,21 +98,21 @@ public class LoaderVisitorTest {
 
     @Test
     public void cannotDuplicateNonPreludeTraitDefs() {
-        LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        Shape def1 = StructureShape.builder()
-                .id("smithy.example#deprecated")
-                .addTrait(TraitDefinition.builder().build())
-                .build();
-        Shape def2 = StructureShape.builder()
-                .id("smithy.example#deprecated")
-                .addTrait(TraitDefinition.builder().build())
-                .build();
+        Assertions.assertThrows(SourceException.class, () -> {
+            LoaderVisitor visitor = new LoaderVisitor(FACTORY);
+            Shape def1 = StructureShape.builder()
+                    .id("smithy.example#deprecated")
+                    .addTrait(TraitDefinition.builder().build())
+                    .build();
+            Shape def2 = StructureShape.builder()
+                    .id("smithy.example#deprecated")
+                    .addTrait(TraitDefinition.builder().build())
+                    .build();
 
-        visitor.onShape(def1);
-        visitor.onShape(def2);
-        List<ValidationEvent> events = visitor.onEnd().getValidationEvents();
-
-        assertThat(events, not(empty()));
+            visitor.onShape(def1);
+            visitor.onShape(def2);
+            visitor.onEnd();
+        });
     }
 
     @Test
@@ -232,25 +231,32 @@ public class LoaderVisitorTest {
         });
     }
 
+    /**
+     * Members are only ever added to non-existent shapes when parsing a containing
+     * shape fails. Normally, the members are added to the containing builder at
+     * the end of the loading process. Members are added to the LoaderVisitor first,
+     * followed by the containing shape. If there's a syntax error or a duplicate
+     * shape error when loading the containing shape, then the members are present
+     * in the LoaderVisitor but the containing shape is not. In this event, the
+     * LoaderVisitor just logs and continues. The loading process will eventually
+     * fail with the syntax error.
+     */
     @Test
-    public void cannotAddMemberToNonExistentShape() {
-        Assertions.assertThrows(ValidatedResultException.class, () -> {
-            LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-            visitor.onShape(MemberShape.builder().id("foo.baz#Bar$bam").target("foo.baz#Bam"));
-
-            visitor.onEnd().unwrap();
-        });
+    public void ignoresAddingMemberToNonExistentShape() {
+        LoaderVisitor visitor = new LoaderVisitor(FACTORY);
+        visitor.onShape(MemberShape.builder().id("foo.baz#Bar$bam").target("foo.baz#Bam"));
+        visitor.onEnd().unwrap();
     }
 
     @Test
     public void errorWhenShapesConflict() {
-        LoaderVisitor visitor = new LoaderVisitor(FACTORY);
-        Shape shape = StringShape.builder().id("smithy.foo#Baz").build();
-        visitor.onShape(shape);
-        visitor.onShape(shape);
-        ValidatedResult<Model> result = visitor.onEnd();
-
-        assertThat(result.getValidationEvents(), not(empty()));
+        Assertions.assertThrows(SourceException.class, () -> {
+            LoaderVisitor visitor = new LoaderVisitor(FACTORY);
+            Shape shape = StringShape.builder().id("smithy.foo#Baz").build();
+            visitor.onShape(shape);
+            visitor.onShape(shape);
+            visitor.onEnd();
+        });
     }
 
     @Test
