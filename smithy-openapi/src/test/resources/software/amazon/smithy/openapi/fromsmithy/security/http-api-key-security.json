@@ -12,7 +12,7 @@
             "traits": {
                 "aws.protocols#restJson1": true,
                 "smithy.api#httpApiKeyAuth": {
-                    "name": "X-Api-Key",
+                    "name": "x-api-key",
                     "in": "header"
                 }
             }

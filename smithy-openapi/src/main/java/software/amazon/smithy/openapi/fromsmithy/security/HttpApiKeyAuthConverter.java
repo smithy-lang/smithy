@@ -47,7 +47,7 @@ public final class HttpApiKeyAuthConverter implements SecuritySchemeConverter<Ht
     }
 
     @Override
-    public Set<String> getAuthRequestHeaders() {
-        return SetUtils.of("x-api-key");
+    public Set<String> getAuthRequestHeaders(HttpApiKeyAuthTrait trait) {
+        return SetUtils.of(trait.getName());
     }
 }
