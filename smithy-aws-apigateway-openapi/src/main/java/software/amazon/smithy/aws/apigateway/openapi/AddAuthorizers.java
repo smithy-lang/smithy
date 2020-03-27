@@ -86,7 +86,13 @@ final class AddAuthorizers implements OpenApiMapper {
     }
 
     @Override
-    public OperationObject updateOperation(Context context, OperationShape shape, OperationObject operation) {
+    public OperationObject updateOperation(
+            Context<? extends Trait> context,
+            OperationShape shape,
+            OperationObject operation,
+            String httpMethodName,
+            String path
+    ) {
         ServiceShape service = context.getService();
         AuthorizerIndex authorizerIndex = context.getModel().getKnowledge(AuthorizerIndex.class);
 
