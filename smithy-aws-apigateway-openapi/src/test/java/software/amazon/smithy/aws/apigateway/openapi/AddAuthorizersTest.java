@@ -16,10 +16,14 @@
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
@@ -28,6 +32,8 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.SecurityScheme;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 public class AddAuthorizersTest {
     @Test
@@ -94,5 +100,27 @@ public class AddAuthorizersTest {
         assertThat(sigV4.getIn().get(), equalTo("header"));
         assertThat(sigV4.getExtension("x-amazon-apigateway-authtype").get(), equalTo(Node.from("myCustomType")));
         assertFalse(sigV4.getExtension("x-amazon-apigateway-authorizer").isPresent());
+    }
+
+    @Test
+    public void resolvesEffectiveAuthorizersForEachOperation() {
+        Model model = Model.assembler()
+                .discoverModels(getClass().getClassLoader())
+                .addImport(getClass().getResource("effective-authorizers.smithy"))
+                .assemble()
+                .unwrap();
+        OpenApi result = OpenApiConverter.create()
+                .classLoader(getClass().getClassLoader())
+                .convert(model, ShapeId.from("smithy.example#ServiceA"));
+
+        // The security of the service is just "foo".
+        assertThat(result.getSecurity(), contains(MapUtils.of("foo", ListUtils.of())));
+        // The "baz" and "foo" securitySchemes must be present.
+        assertThat(result.getComponents().getSecuritySchemes().keySet(), containsInAnyOrder("baz", "foo"));
+        // The security schemes of operationA must be empty.
+        assertThat(result.getPaths().get("/operationA").getGet().get().getSecurity(), is(Optional.empty()));
+        // The security schemes of operationB must be "baz".
+        assertThat(result.getPaths().get("/operationB").getGet().get().getSecurity(),
+                   is(Optional.of(ListUtils.of(MapUtils.of("baz", ListUtils.of())))));
     }
 }
