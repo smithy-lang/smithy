@@ -323,7 +323,7 @@
                         "method": "POST",
                         "uri": "/",
                         "params": {
-                            "Blob": "YmluYXJ5LXZhbHVl"
+                            "Blob": "binary-value"
                         },
                         "bodyMediaType": "application/json",
                         "body": "{\"Blob\":\"YmluYXJ5LXZhbHVl\"}"
@@ -765,7 +765,7 @@
                         "bodyMediaType": "application/json",
                         "body": "{\"Blob\":\"YmluYXJ5LXZhbHVl\"}",
                         "params": {
-                            "Blob": "YmluYXJ5LXZhbHVl"
+                            "Blob": "binary-value"
                         }
                     },
                     {
