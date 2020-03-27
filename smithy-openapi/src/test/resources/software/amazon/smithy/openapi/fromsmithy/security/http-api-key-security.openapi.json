@@ -1,0 +1,34 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Service",
+        "version": "2006-03-01"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "Operation1",
+                "responses": {
+                    "200": {
+                        "description": "Operation1 response"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "http-x-api-key": {
+                "type": "apiKey",
+                "description": "X-Api-Key authentication",
+                "name": "x-api-key",
+                "in": "header"
+            }
+        }
+    },
+    "security": [
+        {
+            "http-x-api-key": []
+        }
+    ]
+}
