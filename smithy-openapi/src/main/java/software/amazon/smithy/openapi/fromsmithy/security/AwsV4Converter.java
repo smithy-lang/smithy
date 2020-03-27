@@ -49,7 +49,7 @@ public final class AwsV4Converter implements SecuritySchemeConverter<SigV4Trait>
     }
 
     @Override
-    public Set<String> getAuthRequestHeaders() {
+    public Set<String> getAuthRequestHeaders(SigV4Trait trait) {
         return REQUEST_HEADERS;
     }
 }

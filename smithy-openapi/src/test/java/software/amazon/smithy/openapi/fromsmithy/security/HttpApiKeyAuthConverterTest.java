@@ -1,9 +1,13 @@
 package software.amazon.smithy.openapi.fromsmithy.security;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
@@ -21,5 +25,16 @@ public class HttpApiKeyAuthConverterTest {
                 getClass().getResourceAsStream("http-api-key-security.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void returnsTraitHeader() {
+        HttpApiKeyAuthConverter converter = new HttpApiKeyAuthConverter();
+        HttpApiKeyAuthTrait trait = HttpApiKeyAuthTrait.builder()
+                .name("x-api-key")
+                .in(HttpApiKeyAuthTrait.Location.HEADER)
+                .build();
+
+        assertThat(converter.getAuthRequestHeaders(trait), containsInAnyOrder("x-api-key"));
     }
 }

@@ -91,9 +91,10 @@ public interface SecuritySchemeConverter<T extends Trait> {
      *
      * <p>This is useful when integrating with things like CORS.</p>
      *
+     * @param authTrait The auth trait that is being used.
      * @return A set of header names.
      */
-    default Set<String> getAuthRequestHeaders() {
+    default Set<String> getAuthRequestHeaders(T authTrait) {
         return SetUtils.of();
     }
 
@@ -103,9 +104,10 @@ public interface SecuritySchemeConverter<T extends Trait> {
      *
      * <p>This is useful when integrating with things like CORS.</p>
      *
+     * @param authTrait The auth trait that is being used.
      * @return A set of header names.
      */
-    default Set<String> getAuthResponseHeaders() {
+    default Set<String> getAuthResponseHeaders(T authTrait) {
         return SetUtils.of();
     }
 

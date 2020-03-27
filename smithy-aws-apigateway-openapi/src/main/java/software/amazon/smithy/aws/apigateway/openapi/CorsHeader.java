@@ -53,10 +53,19 @@ enum CorsHeader {
         // and any headers explicitly modeled on the operation.
         Set<String> result = new TreeSet<>(cors.getAdditionalExposedHeaders());
         result.addAll(context.getOpenApiProtocol().getProtocolResponseHeaders(context, shape));
+
         for (SecuritySchemeConverter<? extends Trait> converter : context.getSecuritySchemeConverters()) {
-            result.addAll(converter.getAuthResponseHeaders());
+            result.addAll(getSecuritySchemeResponseHeaders(context, converter));
         }
 
         return result;
+    }
+
+    private static <T extends Trait> Set<String> getSecuritySchemeResponseHeaders(
+            Context<? extends Trait> context,
+            SecuritySchemeConverter<T> converter
+    ) {
+        T t = context.getService().expectTrait(converter.getAuthSchemeType());
+        return converter.getAuthResponseHeaders(t);
     }
 }
