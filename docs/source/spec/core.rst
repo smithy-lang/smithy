@@ -3304,6 +3304,52 @@ in Java).
             message: String,
         }
 
+.. _streaming-trait:
+
+``streaming`` trait
+-------------------
+
+Summary
+    Indicates that the the data stored in the shape is very large and should
+    not be stored in memory, or that the size of the data stored in the shape
+    is unknown at the start of a request.
+Trait selector::
+    ``operation -[input, output]-> structure > :test(member > blob)``
+
+    This trait may only be applied to top level members of operation inputs and
+    outputs.
+Value type
+    ``structure``
+
+The value of the ``streaming`` trait is a structure that supports the following
+optional members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - requiresLength
+      - ``boolean``
+      - Indicates that the stream must have a known size.
+
+        In an HTTP-based protocol, for instance, this indicates that the
+        ``content-length`` header must be set.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        operation StreamingOperation {
+            output: StreamingOutputWrapper,
+        }
+
+        structure StreamingOutputWrapper {
+            @streaming
+            output: Blob,
+        }
 
 Constraint traits
 =================
