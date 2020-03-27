@@ -15,11 +15,13 @@
 
 package software.amazon.smithy.openapi.fromsmithy.security;
 
+import java.util.Set;
 import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Uses an HTTP header named X-Api-Key that contains an API key.
@@ -41,5 +43,10 @@ public final class HttpApiKeyAuthConverter implements SecuritySchemeConverter<Ht
                 .name(trait.getName())
                 .in(trait.getIn().toString())
                 .build();
+    }
+
+    @Override
+    public Set<String> getAuthRequestHeaders(HttpApiKeyAuthTrait trait) {
+        return SetUtils.of(trait.getName());
     }
 }
