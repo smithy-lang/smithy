@@ -17,6 +17,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 import software.amazon.smithy.aws.traits.apigateway.AuthorizerDefinition;
 import software.amazon.smithy.aws.traits.apigateway.AuthorizerIndex;
@@ -24,6 +25,7 @@ import software.amazon.smithy.aws.traits.apigateway.AuthorizerTrait;
 import software.amazon.smithy.aws.traits.apigateway.AuthorizersTrait;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.openapi.fromsmithy.Context;
@@ -32,7 +34,9 @@ import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveUnusedComponents;
 import software.amazon.smithy.openapi.model.ComponentsObject;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.openapi.model.SecurityScheme;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 /**
@@ -77,6 +81,25 @@ final class AddAuthorizers implements OpenApiMapper {
                 // Add a new scheme for this operation using the authorizer name.
                 .map(authorizer -> MapUtils.of(authorizer, requirement.values().iterator().next()))
                 .orElse(requirement);
+    }
+
+    @Override
+    public OperationObject updateOperation(Context context, OperationShape shape, OperationObject operation) {
+        ServiceShape service = context.getService();
+        AuthorizerIndex authorizerIndex = context.getModel().getKnowledge(AuthorizerIndex.class);
+
+        // Get the resolved security schemes of the service and operation, and
+        // only add security if it's different than the service.
+        String serviceAuth = authorizerIndex.getAuthorizer(service).orElse(null);
+        String operationAuth = authorizerIndex.getAuthorizer(service, shape).orElse(null);
+
+        if (operationAuth == null || Objects.equals(operationAuth, serviceAuth)) {
+            return operation;
+        }
+
+        return operation.toBuilder()
+                .addSecurity(MapUtils.of(operationAuth, ListUtils.of()))
+                .build();
     }
 
     @Override
