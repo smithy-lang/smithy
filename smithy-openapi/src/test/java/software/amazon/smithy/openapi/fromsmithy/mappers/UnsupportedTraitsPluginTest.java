@@ -16,7 +16,7 @@ public class UnsupportedTraitsPluginTest {
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(UnsupportedTraitsPluginTest.class.getResource("streaming-service.smithy"))
+                .addImport(UnsupportedTraitsPluginTest.class.getResource("endpoint-service.smithy"))
                 .discoverModels()
                 .assemble()
                 .unwrap();
@@ -31,15 +31,15 @@ public class UnsupportedTraitsPluginTest {
     public void logsWhenUnsupportedTraitsAreFound() {
         OpenApiConverter.create()
                 .putSetting(OpenApiConstants.IGNORE_UNSUPPORTED_TRAITS, true)
-                .convert(model, ShapeId.from("smithy.example#Streaming"));
+                .convert(model, ShapeId.from("smithy.example#EndpointService"));
     }
 
     @Test
     public void throwsWhenUnsupportedTraitsAreFound() {
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
-            OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Streaming"));
+            OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#EndpointService"));
         });
 
-        Assertions.assertTrue(thrown.getMessage().contains("streaming"));
+        Assertions.assertTrue(thrown.getMessage().contains("endpoint"));
     }
 }
