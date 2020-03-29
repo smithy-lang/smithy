@@ -1,0 +1,27 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Streaming",
+        "version": "2018-01-01"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "StreamingOperation",
+                "responses": {
+                    "200": {
+                        "description": "StreamingOperation 200 response",
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "byte"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -19,6 +19,9 @@
                 },
                 {
                     "target": "ns.foo#WithLabels"
+                },
+                {
+                    "target": "ns.foo#ServiceOperationWithEventStream"
                 }
             ]
         },
@@ -287,6 +290,39 @@
             },
             "value": {
                 "target": "smithy.api#String"
+            }
+        },
+        "ns.foo#ServiceOperationWithEventStream": {
+            "type": "operation",
+            "output": {
+                "target": "ns.foo#ServiceOperationWithEventStreamOutput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/ServiceOperationWithEventStream",
+                    "method": "POST",
+                    "code": 200
+                }
+            }
+        },
+        "ns.foo#ServiceOperationWithEventStreamOutput": {
+            "type": "structure",
+            "members": {
+                "events": {
+                    "target": "ns.foo#EventStream",
+                    "traits": {
+                        "smithy.api#httpPayload": true,
+                        "smithy.api#eventStream": true
+                    }
+                }
+            }
+        },
+        "ns.foo#EventStream": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String"
+                }
             }
         }
     }

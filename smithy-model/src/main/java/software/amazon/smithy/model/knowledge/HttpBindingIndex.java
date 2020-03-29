@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.model.traits.EventStreamTrait;
 import software.amazon.smithy.model.traits.HttpErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
@@ -255,19 +256,35 @@ public final class HttpBindingIndex implements KnowledgeIndex {
     /**
      * Returns the expected request Content-Type of the given operation.
      *
+     * <p>See {@link #determineRequestContentType(ToShapeId, String, String)}
+     * for documentation on how the content-type is resolved.
+     *
+     * @param operation Operation to determine the content-type of.
+     * @param documentContentType Content-Type to use for protocol documents.
+     * @return Returns the optionally resolved content-type of the request.
+     */
+    public Optional<String> determineRequestContentType(ToShapeId operation, String documentContentType) {
+        return determineRequestContentType(operation, documentContentType, null);
+    }
+
+    /**
+     * Returns the expected request Content-Type of the given operation.
+     *
      * <p>If members are sent in the "document" body, then the default
      * {@code documentContentType} value is returned. If a member is bound
      * to the payload, then the following checks are made:
      *
      * <ul>
+     *     <li>If the payload has the {@link EventStreamTrait}, then the
+     *     {@code eventStreamContentType} is returned.</li>
+     *     <li>If the targeted shape is a structure or document type, then
+     *     the {@code documentContentType} is returned.</li>
      *     <li>If the targeted shape has the {@link MediaTypeTrait}, then
      *     the value of the trait is returned.</li>
      *     <li>If the targeted shape is a blob, then "application/octet-stream"
      *     is returned.</li>
      *     <li>If the targeted shape is a string, then "text/plain" is
      *     returned.</li>
-     *     <li>If the targeted shape is a structure or document type, then
-     *     the {@code documentContentType} is returned.</li>
      * </ul>
      *
      * <p>If no members are sent in the payload, an empty Optional is
@@ -275,11 +292,31 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      *
      * @param operation Operation to determine the content-type of.
      * @param documentContentType Content-Type to use for protocol documents.
+     * @param eventStreamContentType Content-Type to use for event streams.
      * @return Returns the optionally resolved content-type of the request.
      */
-    public Optional<String> determineRequestContentType(ToShapeId operation, String documentContentType) {
-        String contentType = determineContentType(getRequestBindings(operation).values(), documentContentType);
-        return Optional.ofNullable(contentType);
+    public Optional<String> determineRequestContentType(
+            ToShapeId operation,
+            String documentContentType,
+            String eventStreamContentType
+    ) {
+        Collection<HttpBinding> bindings = getRequestBindings(operation).values();
+        return Optional.ofNullable(determineContentType(bindings, documentContentType, eventStreamContentType));
+    }
+
+    /**
+     * Returns the expected response Content-Type of the given operation
+     * or error.
+     *
+     * <p>See {@link #determineResponseContentType(ToShapeId, String, String)}
+     * for documentation on how the content-type is resolved.
+     *
+     * @param operationOrError Operation or error to determine the content-type of.
+     * @param documentContentType Content-Type to use for protocol documents.
+     * @return Returns the optionally resolved content-type of the response.
+     */
+    public Optional<String> determineResponseContentType(ToShapeId operationOrError, String documentContentType) {
+        return determineResponseContentType(operationOrError, documentContentType, null);
     }
 
     /**
@@ -291,14 +328,16 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * to the payload, then the following checks are made:
      *
      * <ul>
+     *     <li>If the payload has the {@link EventStreamTrait}, then the
+     *     {@code eventStreamContentType} is returned.</li>
+     *     <li>If the targeted shape is a structure or document type, then
+     *     the {@code documentContentType} is returned.</li>
      *     <li>If the targeted shape has the {@link MediaTypeTrait}, then
      *     the value of the trait is returned.</li>
      *     <li>If the targeted shape is a blob, then "application/octet-stream"
      *     is returned.</li>
      *     <li>If the targeted shape is a string, then "text/plain" is
      *     returned.</li>
-     *     <li>If the targeted shape is a structure or document type, then
-     *     the {@code documentContentType} is returned.</li>
      * </ul>
      *
      * <p>If no members are sent in the payload, an empty Optional is
@@ -306,35 +345,48 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      *
      * @param operationOrError Operation or error to determine the content-type of.
      * @param documentContentType Content-Type to use for protocol documents.
+     * @param eventStreamContentType Content-Type used for event streams.
      * @return Returns the optionally resolved content-type of the response.
      */
-    public Optional<String> determineResponseContentType(ToShapeId operationOrError, String documentContentType) {
-        String contentType = determineContentType(getResponseBindings(operationOrError).values(), documentContentType);
-        return Optional.ofNullable(contentType);
+    public Optional<String> determineResponseContentType(
+            ToShapeId operationOrError,
+            String documentContentType,
+            String eventStreamContentType
+    ) {
+        Collection<HttpBinding> bindings = getResponseBindings(operationOrError).values();
+        return Optional.ofNullable(determineContentType(bindings, documentContentType, eventStreamContentType));
     }
 
-    private String determineContentType(Collection<HttpBinding> bindings, String documentContentType) {
+    private String determineContentType(
+            Collection<HttpBinding> bindings,
+            String documentContentType,
+            String eventStreamContentType
+    ) {
         for (HttpBinding binding : bindings) {
             if (binding.getLocation() == HttpBinding.Location.DOCUMENT) {
                 return documentContentType;
             }
 
             if (binding.getLocation() == HttpBinding.Location.PAYLOAD) {
-                Shape target = model.getShape(binding.getMember().getTarget()).orElse(null);
-
-                if (target == null) {
-                    break;
+                if (binding.getMember().hasTrait(EventStreamTrait.class)) {
+                    return eventStreamContentType;
                 }
 
-                // Use the @mediaType trait if available.
-                if (target.getTrait(MediaTypeTrait.class).isPresent()) {
+                Shape target = model.getShape(binding.getMember().getTarget()).orElse(null);
+                if (target == null) {
+                    // Can't determine the content-type because the model is broken :(
+                    // Let other parts of the validation system point this out.
+                    break;
+                } else if (target.isDocumentShape() || target.isStructureShape()) {
+                    // Document type and structure targets are always the document content-type.
+                    return documentContentType;
+                } else if (target.getTrait(MediaTypeTrait.class).isPresent()) {
+                    // Use the @mediaType trait if available.
                     return target.getTrait(MediaTypeTrait.class).get().getValue();
                 } else if (target.isBlobShape()) {
                     return "application/octet-stream";
                 } else if (target.isStringShape()) {
                     return "text/plain";
-                } else if (target.isDocumentShape() || target.isStructureShape()) {
-                    return documentContentType;
                 }
             }
         }

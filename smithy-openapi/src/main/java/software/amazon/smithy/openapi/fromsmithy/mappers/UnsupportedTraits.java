@@ -35,8 +35,7 @@ import software.amazon.smithy.utils.SetUtils;
  */
 public final class UnsupportedTraits implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(UnsupportedTraits.class.getName());
-    private static final Set<String> TRAITS = SetUtils.of(
-            "eventStream", "eventPayload", "eventHeader", "streaming");
+    private static final Set<String> TRAITS = SetUtils.of("endpoint", "hostLabel");
 
     @Override
     public byte getOrder() {
