@@ -260,12 +260,31 @@ public class HttpBindingIndexTest {
     }
 
     @Test
-    public void resolvesMediaTypeContentType() {
+    public void resolvesMediaType() {
         HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
         ShapeId operation = ShapeId.from("ns.foo#ServiceOperationWithMediaType");
         Optional<String> contentType = index.determineResponseContentType(operation, "application/json");
 
         assertThat(contentType, equalTo(Optional.of("application/xml")));
+    }
+
+    @Test
+    public void resolvesResponseEventStreamMediaType() {
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        ShapeId operation = ShapeId.from("ns.foo#ServiceOperationWithEventStream");
+        String expected = "application/vnd.amazon.eventstream";
+        Optional<String> contentType = index.determineResponseContentType(operation, "ignore/me", expected);
+
+        assertThat(contentType, equalTo(Optional.of(expected)));
+    }
+
+    @Test
+    public void resolvesDocumentMediaType() {
+        HttpBindingIndex index = model.getKnowledge(HttpBindingIndex.class);
+        ShapeId operation = ShapeId.from("ns.foo#ServiceOperationExplicitMembers");
+        Optional<String> contentType = index.determineResponseContentType(operation, "application/json");
+
+        assertThat(contentType, equalTo(Optional.of("application/json")));
     }
 
     private static MemberShape expectMember(Model model, String id) {

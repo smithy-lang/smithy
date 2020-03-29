@@ -23,6 +23,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import software.amazon.smithy.jsonschema.Schema;
+import software.amazon.smithy.model.knowledge.EventStreamIndex;
+import software.amazon.smithy.model.knowledge.EventStreamInfo;
 import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
@@ -60,6 +62,8 @@ import software.amazon.smithy.openapi.model.ResponseObject;
  * future when we're sure about its API.
  */
 abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<T> {
+
+    private static final String AWS_EVENT_STREAM_CONTENT_TYPE = "application/vnd.amazon.eventstream";
 
     /** The type of message being created. */
     enum MessageType { REQUEST, RESPONSE, ERROR }
@@ -102,11 +106,12 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             String uri = context.getOpenApiProtocol().getOperationUri(context, operation);
             OperationObject.Builder builder = OperationObject.builder().operationId(operation.getId().getName());
             HttpBindingIndex bindingIndex = context.getModel().getKnowledge(HttpBindingIndex.class);
+            EventStreamIndex eventStreamIndex = context.getModel().getKnowledge(EventStreamIndex.class);
             createPathParameters(context, operation).forEach(builder::addParameter);
             createQueryParameters(context, operation).forEach(builder::addParameter);
             createRequestHeaderParameters(context, operation).forEach(builder::addParameter);
-            createRequestBody(context, bindingIndex, operation).ifPresent(builder::requestBody);
-            createResponses(context, bindingIndex, operation).forEach(builder::putResponse);
+            createRequestBody(context, bindingIndex, eventStreamIndex, operation).ifPresent(builder::requestBody);
+            createResponses(context, bindingIndex, eventStreamIndex, operation).forEach(builder::putResponse);
             return Operation.create(method, uri, builder);
         });
     }
@@ -223,15 +228,41 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private Optional<RequestBodyObject> createRequestBody(
             Context<T> context,
             HttpBindingIndex bindingIndex,
+            EventStreamIndex eventStreamIndex,
             OperationShape operation
     ) {
         List<HttpBinding> payloadBindings = bindingIndex.getRequestBindings(
                 operation, HttpBinding.Location.PAYLOAD);
+
+        // Get the default media type if one cannot be resolved.
         String documentMediaType = getDocumentMediaType(context, operation, MessageType.REQUEST);
-        String mediaType = bindingIndex.determineRequestContentType(operation, documentMediaType).orElse(null);
+
+        // Get the event stream media type if an event stream is in use.
+        String eventStreamMediaType = eventStreamIndex.getInputInfo(operation)
+                .map(info -> getEventStreamMediaType(context, info))
+                .orElse(null);
+
+        String mediaType = bindingIndex
+                .determineRequestContentType(operation, documentMediaType, eventStreamMediaType)
+                .orElse(null);
+
         return payloadBindings.isEmpty()
                ? createRequestDocument(mediaType, context, bindingIndex, operation)
                : createRequestPayload(mediaType, context, payloadBindings.get(0));
+    }
+
+    /**
+     * Gets the media type of an event stream for the protocol.
+     *
+     * <p>By default, this method returns the binary AWS event stream
+     * media type, {@code application/vnd.amazon.eventstream}.
+     *
+     * @param context Conversion context.
+     * @param info Event stream info to provide the media type for.
+     * @return Returns the media type of the event stream.
+     */
+    protected String getEventStreamMediaType(Context<T> context, EventStreamInfo info) {
+        return AWS_EVENT_STREAM_CONTENT_TYPE;
     }
 
     private Optional<RequestBodyObject> createRequestPayload(
@@ -277,15 +308,20 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private Map<String, ResponseObject> createResponses(
             Context<T> context,
             HttpBindingIndex bindingIndex,
+            EventStreamIndex eventStreamIndex,
             OperationShape operation
     ) {
         Map<String, ResponseObject> result = new TreeMap<>();
         OperationIndex operationIndex = context.getModel().getKnowledge(OperationIndex.class);
+
         operationIndex.getOutput(operation).ifPresent(output -> {
-            updateResponsesMapWithResponseStatusAndObject(context, bindingIndex, operation, output, result);
+            updateResponsesMapWithResponseStatusAndObject(
+                    context, bindingIndex, eventStreamIndex, operation, output, result);
         });
+
         for (StructureShape error : operationIndex.getErrors(operation)) {
-            updateResponsesMapWithResponseStatusAndObject(context, bindingIndex, operation, error, result);
+            updateResponsesMapWithResponseStatusAndObject(
+                    context, bindingIndex, eventStreamIndex, operation, error, result);
         }
         return result;
     }
@@ -293,19 +329,22 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private void updateResponsesMapWithResponseStatusAndObject(
             Context<T> context,
             HttpBindingIndex bindingIndex,
+            EventStreamIndex eventStreamIndex,
             OperationShape operation,
             StructureShape shape,
             Map<String, ResponseObject> responses
     ) {
         Shape operationOrError = shape.hasTrait(ErrorTrait.class) ? shape : operation;
         String statusCode = context.getOpenApiProtocol().getOperationResponseStatusCode(context, operationOrError);
-        ResponseObject response = createResponse(context, bindingIndex, statusCode, operationOrError);
+        ResponseObject response = createResponse(
+                context, bindingIndex, eventStreamIndex, statusCode, operationOrError);
         responses.put(statusCode, response);
     }
 
     private ResponseObject createResponse(
             Context<T> context,
             HttpBindingIndex bindingIndex,
+            EventStreamIndex eventStreamIndex,
             String statusCode,
             Shape operationOrError
     ) {
@@ -313,7 +352,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         responseBuilder.description(String.format("%s %s response", operationOrError.getId().getName(), statusCode));
         createResponseHeaderParameters(context, operationOrError)
                 .forEach((k, v) -> responseBuilder.putHeader(k, Ref.local(v)));
-        addResponseContent(context, bindingIndex, responseBuilder, operationOrError);
+        addResponseContent(context, bindingIndex, eventStreamIndex, responseBuilder, operationOrError);
         return responseBuilder.build();
     }
 
@@ -329,13 +368,24 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private void addResponseContent(
             Context<T> context,
             HttpBindingIndex bindingIndex,
+            EventStreamIndex eventStreamIndex,
             ResponseObject.Builder responseBuilder,
             Shape operationOrError
     ) {
         List<HttpBinding> payloadBindings = bindingIndex.getResponseBindings(
                 operationOrError, HttpBinding.Location.PAYLOAD);
+
+        // Get the default media type if one cannot be resolved.
         String documentMediaType = getDocumentMediaType(context, operationOrError, MessageType.RESPONSE);
-        String mediaType = bindingIndex.determineResponseContentType(operationOrError, documentMediaType).orElse(null);
+
+        // Get the event stream media type if an event stream is in use.
+        String eventStreamMediaType = eventStreamIndex.getOutputInfo(operationOrError)
+                .map(info -> getEventStreamMediaType(context, info))
+                .orElse(null);
+
+        String mediaType = bindingIndex
+                .determineResponseContentType(operationOrError, documentMediaType, eventStreamMediaType)
+                .orElse(null);
 
         if (!payloadBindings.isEmpty()) {
             createResponsePayload(mediaType, context, payloadBindings.get(0), responseBuilder);

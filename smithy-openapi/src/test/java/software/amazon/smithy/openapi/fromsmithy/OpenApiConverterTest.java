@@ -274,4 +274,21 @@ public class OpenApiConverterTest {
 
         assertThat(result.getMember("foo"), equalTo(Optional.of(Node.from("baz"))));
     }
+
+    // Streaming traits are converted to just an application/octet-stream
+    @Test
+    public void convertsStreamingService() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("streaming-service.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        ObjectNode result = OpenApiConverter.create()
+                .putSetting(OpenApiConstants.PROTOCOL, "aws.protocols#restJson1")
+                .convertToNode(model, ShapeId.from("smithy.example#Streaming"));
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("streaming-service.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
 }
