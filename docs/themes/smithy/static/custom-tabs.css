@@ -13,18 +13,13 @@
     margin-top: 2rem;
 }
 
-/* Make the tab headings smaller to not distract from content. */
-.ui.attached.tabular.menu {
-    font-size: 80%;
-}
-
 /* Code tabs should encompass the entire tab. */
 .code-tab.tab {
     padding: 0 !important;
 }
 
 .ui.tabular.menu {
-    border-bottom-color: #eee !important;
+    border: none;
 }
 
 .ui.tabular.menu .item  {
@@ -38,5 +33,7 @@
 /* Remove code tab headings and use the same color as code backgrounds */
 .ui.tabular.menu .active.item {
     border: none !important;
-    background-color: #f6f8fa;
+    background-color: inherit;
+    text-decoration: underline;
+    font-weight: normal;
 }
