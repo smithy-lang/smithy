@@ -93,11 +93,11 @@ apply HttpRequestWithLabelsAndTimestampFormat @httpRequestTests([
         uri: """
              /HttpRequestWithLabelsAndTimestampFormat\
              /1576540098\
-             /Mon%2C+16+Dec+2019+23%3A48%3A18+GMT\
+             /Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT\
              /2019-12-16T23%3A48%3A18Z\
              /2019-12-16T23%3A48%3A18Z\
              /1576540098\
-             /Mon%2C+16+Dec+2019+23%3A48%3A18+GMT\
+             /Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT\
              /2019-12-16T23%3A48%3A18Z""",
         body: "",
         params: {
