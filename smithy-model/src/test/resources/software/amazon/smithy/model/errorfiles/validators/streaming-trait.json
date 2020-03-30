@@ -35,20 +35,6 @@
                 }
             }
         },
-        "ns.foo#StreamingError": {
-            "type": "structure",
-            "members": {
-                "Body": {
-                    "target": "smithy.api#Blob",
-                    "traits": {
-                        "smithy.api#streaming": true
-                    }
-                }
-            },
-            "traits": {
-                "smithy.api#error": "client"
-            }
-        },
         "ns.foo#InvalidStreamingStructure": {
             "type": "structure",
             "members": {
