@@ -2,6 +2,7 @@
 
 html {
   font-family: 'Open Sans', sans-serif;
+  background-color: #f7f7f5;
 }
 
 /* Base scaffolding taken from Markswatch theme */
@@ -17,6 +18,7 @@ body {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+  background-color: #f7f7f5;
 }
 
 /* Utility class used in things like hidden form fields */
@@ -48,22 +50,24 @@ h1, h2, h3, h4, h5, h6 {
   color: #000;
   line-height: 1.25;
   margin-bottom: 1em;
-  margin-top: 2rem;
   font-weight: 600;
 }
 
 h1 {
   margin-top: 0;
-  margin-top: 0;
   font-size: 2.4em;
-  border-bottom: 1px solid #eaecef;
+  border-bottom: 1px solid #ccc;
   padding-bottom: 0.3em;
 }
 
 h2 {
   font-size: 2em;
-  padding-bottom: 0.3em;
-  border-bottom: 1px solid #eaecef;
+}
+
+h2, h3, h4, h5, h6, h7 {
+  padding: 1.5em 0 0.4em 0;
+  border-top: 2px solid #ccc;
+  margin-top: 2em;
 }
 
 h3 {
@@ -90,11 +94,23 @@ h7 {
   font-weight: bold;
 }
 
+/* show auto-incrementing counters on section headings. */
+body {counter-reset: h2}
+.specificationPage h2 {counter-reset: h3}
+.specificationPage h3 {counter-reset: h4}
+.specificationPage h4 {counter-reset: h5}
+.specificationPage h5 {counter-reset: h6}
+.specificationPage h2:before {counter-increment: h2; content: counter(h2) ". "}
+.specificationPage h3:before {counter-increment: h3; content: counter(h2) "." counter(h3) ". "}
+.specificationPage h4:before {counter-increment: h4; content: counter(h2) "." counter(h3) "." counter(h4) ". "}
+.specificationPage h5:before {counter-increment: h5; content: counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) ". "}
+.specificationPage h6:before {counter-increment: h6; content: counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) "." counter(h6) ". "}
+
 /* ----- Landing page ------ */
 
 #splash {
   padding: 2em 0;
-  background: {{ theme_color }};
+  background: {{ theme_secondary_background }};
   color: #fff;
   margin-bottom: 1em;
 }
@@ -103,14 +119,18 @@ h7 {
   display: none;
 }
 
+.splash-highlight {
+  color: {{ theme_light_accent }};
+}
+
 #splash .highlight-smithy {
   color: #24292e
 }
 
 .headline {
-  font-weight: 400;
+  font-weight: bold;
   color: #fff;
-  font-size: 1.7em;
+  font-size: 2.1em;
 }
 
 @media (max-width: 600px) {
@@ -130,7 +150,7 @@ h7 {
   text-align: center;
   margin: 2em 0 1em 0;
   font-weight: 500;
-  background: #fff;
+  background: #f7f7f5;
   width: 160px;
 }
 
@@ -190,7 +210,7 @@ h7 {
 
 #page-container {
   padding: 3rem 2rem 2rem 2em;
-  background: #fff;
+  background: #f7f7f5;
   flex: 1;
 }
 
@@ -203,7 +223,7 @@ h7 {
 #landing-container {
   padding: 0 0 2em 0;
   min-height: 500px;
-  background: #fff;
+  background: #f7f7f5;
 }
 
 #page-container li > p.first:last-child,
@@ -250,15 +270,17 @@ a:hover, .reference.external:hover {
 
 /* First title (h1) on the page */
 .headerlink {
+  visibility: none;
   margin-left: 1em;
-  display: none;
   font-size: 18px;
   vertical-align: super;
   line-height: 0;
+  opacity: 0;
+  transition: opacity .25s;
 }
 
 *:hover > .headerlink {
-  display: inline-block;
+  opacity: 1;
 }
 
 
@@ -313,9 +335,8 @@ header {
   text-shadow: 0 0 0 {{ theme_color }};
   position: absolute;
   top: 1px;
-  background: theme_color;
   font-size: 18px;
-  background: #fff;
+  background: {{ theme_light_accent }};
 }
 
 #page-navigation {
@@ -343,7 +364,7 @@ header {
 
 #page-navigation .site-page a:hover {
   color: {{ theme_color }};
-  background: #fff;
+  background: #f7f7f5;
   text-decoration: none;
 }
 
@@ -355,7 +376,7 @@ header {
 #page-navigation .site-search .search-input {
   padding: 0 1em;
   color: #fff;
-  background-color: #14529B;
+  background-color: rgba(0, 0, 0, 0.2);
   border: solid 1px rgba(23, 30, 38, 0.2);
   border-radius: 3px;
   width: 180px;
@@ -366,24 +387,24 @@ header {
 #page-navigation .site-search button {
   border: none;
   padding: 5px 10px;
-  background-color: #fff;
+  background-color: #f7f7f5;
   color: #777;
 }
 
 footer {
   margin-top: 3rem;
   padding: 2rem;
-  background: #f1f1f3;
+  background-color: {{ theme_secondary_background }};
+  color: #fefefe;
 }
 
 .copyright {
   text-align: center;
   width: 100%;
-  font-size: 0.8rem;
 }
 
 .faq {
-  background: #f1f1f3;
+  background: #ebe9e7;
   padding: 2em 0;
   margin: 4em 0;
 }
@@ -399,14 +420,14 @@ table {
   border-spacing: 0;
   border-collapse: collapse;
   border-width: 1px;
-  border-color: #e8e8e8;
+  border-color: #ccc;
   border-style: solid;
   width: 100%;
   margin: 0 0 1rem 0;
 }
 
 tr {
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid #ddd;
 }
 
 tr.row-even {
@@ -422,7 +443,7 @@ th {
 td, th {
   padding: 8px 16px;
   border: none;
-  border-right: 1px solid #e8e8e8;
+  border-right: 1px solid #ccc;
 }
 
 /* Field list tables */
@@ -432,7 +453,7 @@ table.field-list {
 }
 
 table.field-list th {
-  background-color: #fff;
+  background-color: #f7f7f5;
   color: #24292e;
   border-right: 1px solid #e8e8e8;
   min-width: 0;
@@ -478,8 +499,9 @@ pre {
   padding: 16px;
   overflow: auto;
   line-height: 1.45;
-  background-color: #f6f8fa;
+  background-color: #fafafa;
   border-radius: 3px;
+  border: 1px solid #ddd;
   font-size: 14px;
 }
 
@@ -580,10 +602,11 @@ table.highlighttable pre {
 
 #right-column {
   font-size: 14px;
+  background: {{ theme_toc_column_color }};
+  padding-top: 1em;
 }
 
 #right-column > .column-body > .sidebar {
-  border-left: 1px solid {{ theme_color }};
   padding-left: 1em;
 }
 
@@ -669,6 +692,7 @@ table.highlighttable pre {
 .admonition {
   margin: 20px 0;
   padding: 1em 0.8em;
+  border-bottom: 1px solid #ddd;
 }
 
 .admonition dt {
@@ -695,7 +719,7 @@ table.highlighttable pre {
 .admonition.warning,
 .admonition.attention,
 .admonition.caution {
-  background-color: #fff3cd;
+  background-color: #f6eab7;
 }
 
 .admonition.note .admonition-title,
@@ -723,7 +747,7 @@ div.seealso {
 }
 
 div.admonition tt.xref, div.admonition a tt {
-  border-bottom: 1px solid #fafafa;
+  border-bottom: 1px solid #f7f7f5;
 }
 
 div.admonition p.last {
