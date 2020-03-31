@@ -14,7 +14,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 import smithy
-from smithylexer import SmithyLexer
+from smithy.lexer import SmithyLexer
 
 # -- General configuration ------------------------------------------------
 

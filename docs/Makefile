@@ -10,10 +10,13 @@ help:
 	@echo "  openhtml    to preview the built index.html"
 
 install:
-	pip install -r requirements.txt
+	pip install -e .
 
 clean:
 	-rm -rf $(BUILDDIR)/*
+
+install-server:
+	pip install -r requirements-server.txt
 
 serve: clean
 	sphinx-autobuild source build/html
