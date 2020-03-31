@@ -5,20 +5,40 @@ This package is the Smithy website, specification, and project documentation.
 
 ## Building
 
-First install the dependencies and the local modules:
+The Smithy docs are built using [Sphinx](https://www.sphinx-doc.org/en/stable),
+which requires python.
+
+Once you have python installed, you need to install the dependencies and local
+modules:
 
 ```
-pip install -e .
+make install
 ```
 
-You can run a local web server using the following command:
+Then to build static output, run:
+
+```
+make html
+```
+
+To view the output, just open up `build/html/index.html` in your browser:
+
+```
+open build/html/index.html
+```
+
+## Live Editing
+
+If you want to make modifications without having to manually build each time,
+you can run a local web server that will auto-build on changes. First, install
+the dependencies:
+
+```
+make install-server
+```
+
+And then run the server:
 
 ```
 make serve
-```
-
-This local web server requires you to install `sphinx-autobuild`.
-
-```
-pip install sphinx-autobuild
 ```

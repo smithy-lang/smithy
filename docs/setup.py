@@ -2,18 +2,16 @@
 
 from setuptools import setup, find_packages
 
-requires = ['sphinx==1.7.5',
-            'pygments==2.2.0',
-            'sphinx-tabs==1.1.7']
+requires = ["sphinx>=1.7.0,<1.8.0", "pygments==2.4.2", "sphinx-tabs==1.1.7"]
 
 # Register the custom Smithy loader with Pygments.
 # See: http://pygments.org/docs/plugins/
-setup (
-  name='smithy',
-  packages=find_packages(),
-  entry_points =
-  """
-  [pygments.lexers]
-  smithy = smithylexer:SmithyLexer
-  """,
+setup(
+    name="smithy",
+    packages=find_packages(),
+    install_requires=requires,
+    entry_points="""
+    [pygments.lexers]
+    smithy = smithy.lexer:SmithyLexer
+    """,
 )
