@@ -204,6 +204,7 @@ body {counter-reset: h2}
   bottom: 0.5em;
   right: 0.5em;
   font-size: 12px;
+  color: #999;
 }
 
 /* ----- Visual separations ------ */
@@ -499,10 +500,11 @@ pre {
   padding: 16px;
   overflow: auto;
   line-height: 1.45;
-  background-color: #fafafa;
+  background-color: #2B2B2B;
   border-radius: 3px;
-  border: 1px solid #ddd;
   font-size: 14px;
+  color: #A9B7C6;
+  overflow-x:auto
 }
 
 code, pre {

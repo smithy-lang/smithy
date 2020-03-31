@@ -10,7 +10,7 @@
 }
 
 .sphinx-tabs {
-    margin-top: 2rem;
+    margin-top: 1rem;
 }
 
 /* Code tabs should encompass the entire tab. */
@@ -23,6 +23,9 @@
 }
 
 .ui.tabular.menu .item  {
+    font-size: 0.8em;
+    font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
+    text-transform: lowercase;
     border: none !important;
 }
 
