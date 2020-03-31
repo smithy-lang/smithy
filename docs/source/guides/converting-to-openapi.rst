@@ -468,7 +468,14 @@ service.
 CORS functionality
 ------------------
 
-TODO
+When the ``smithy.api#cors`` trait is applied to a service, Smithy performs the following
+additions during the OpenAPI conversion:
+
+* Adds CORS-preflight OPTIONS requests using mock API Gateway integrations.
+* Adds CORS-specific headers to every response in the API, including ``Access-Control-Allow-Origin``,
+  ``Access-Control-Expose-Headers``, and ``Access-Control-Allow-Credentials`` where appropriate.
+* Adds static CORS response headers to API Gateway "gateway" responses.  These are added only when
+  no gateway responses are defined in the OpenAPI model.
 
 
 Security schemes
