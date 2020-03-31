@@ -1,1 +1,3 @@
-[ERROR] ns.foo#InvalidStreamingStructure$Body: Trait `streaming` cannot be applied to `ns.foo#InvalidStreamingStructure$Body`. This trait may only be applied to shapes that match the following selector: operation -[input, output]-> structure > :test(member > blob) | TraitTarget
+[ERROR] ns.foo#InvalidStreamingStructure$Body: The shape ns.foo#StreamingBlob has the smithy.api#streaming trait, and so may only be targeted by top-level operation inputs and outputs. | StreamingTrait
+[ERROR] ns.foo#InvalidStreamingStructure2$Body: The shape ns.foo#StreamingBlob2 has the smithy.api#streaming trait, and so may only be targeted by top-level operation inputs and outputs. | StreamingTrait
+[ERROR] ns.foo#InvalidStreamingOutput: Structures may only target one shape with the smithy.api#streaming trait, but found [ns.foo#InvalidStreamingOutput$StreamingBlob1, ns.foo#InvalidStreamingOutput$StreamingBlob2] | StreamingTrait

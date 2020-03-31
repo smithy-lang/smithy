@@ -29,6 +29,7 @@ software.amazon.smithy.model.validation.validators.ShapeIdConflictValidator
 software.amazon.smithy.model.validation.validators.ShapeRecursionValidator
 software.amazon.smithy.model.validation.validators.SingleOperationBindingValidator
 software.amazon.smithy.model.validation.validators.SingleResourceBindingValidator
+software.amazon.smithy.model.validation.validators.StreamingTraitValidator
 software.amazon.smithy.model.validation.validators.TargetValidator
 software.amazon.smithy.model.validation.validators.TraitConflictValidator
 software.amazon.smithy.model.validation.validators.TraitTargetValidator
