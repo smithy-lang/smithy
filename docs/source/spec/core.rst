@@ -1025,10 +1025,29 @@ Service
 A :dfn:`service` is the entry point of an API that aggregates resources and
 operations together. The :ref:`resources <resource>` and
 :ref:`operations <operation>` of an API are bound within the closure of a
-service.
+service. A service is defined using a :token:`service_statement`.
 
-A service shape is defined using a :token:`service_statement` and supports
-the following properties:
+.. tabs::
+
+    .. code-tab:: smithy
+
+        service MyService {
+            version: "2017-02-11"
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#MyService": {
+                    "type": "service",
+                    "version": "2017-02-11"
+                }
+            }
+        }
+
+The service shape supports the following members:
 
 .. list-table::
     :header-rows: 1
@@ -1098,13 +1117,6 @@ that do not fit within a resource hierarchy.
             }
         }
 
-**Validation**
-
-1. An operation MUST NOT be bound to multiple shapes within the closure of a
-   service.
-2. Every operation shape contained within the entire closure of a service MUST
-   have a case-insensitively unique shape name, regardless of their namespaces.
-
 
 .. _service-resources:
 
@@ -1145,13 +1157,40 @@ shape ID of a resource to the ``resources`` property of a service.
             }
         }
 
-**Validation**
 
-1. A resource MUST NOT be bound to multiple shapes within the closure of a
-   service.
-2. Every resource shape contained within the entire closure of a service MUST
-   have a case-insensitively unique shape name, regardless of their
-   namespaces.
+.. _service-closure:
+
+Service closure
+```````````````
+
+The *closure* of a service is the set of shapes connected to a service
+through resources, operations, and members.
+
+.. important::
+
+    With some exceptions, the shapes that are referenced in the *closure*
+    of a service MUST have case-insensitively unique names regardless of
+    their namespace.
+
+By requiring unique names within a service, each service forms a
+`ubiquitous language`_, making it easier for developers to understand the
+model and artifacts generated from the model, like code. For example, when
+using Java code generated from a Smithy model, a developer should not need
+to discern between ``BadRequestException`` classes across multiple packages
+that can be thrown by an operation. Uniqueness is required
+case-insensitively because many model transformations change the casing
+and inflection of shape names to make artifacts more idiomatic.
+
+:ref:`Simple types <simple-types>` and :ref:`lists <list>` or
+:ref:`sets <set>` of compatible simple types are allowed to conflict because
+a conflict for these type would rarely have an impact on generated artifacts.
+These kinds of conflicts are only allowed if both conflicting shapes are the
+same type and have the exact same traits.
+
+An operation or resource MUST NOT be bound to multiple shapes within the
+closure of a service. This constraint allows services to discern between
+operations and resources using only their shape name rather than a
+fully-qualified path from the service to the shape.
 
 
 ..  _operation:
@@ -6190,3 +6229,4 @@ model:
 .. _ECMA 262 regular expression dialect: https://www.ecma-international.org/ecma-262/8.0/index.html#sec-patterns
 .. _RFC 3986 Host: https://tools.ietf.org/html/rfc3986#section-3.2.2
 .. _CommonMark: https://spec.commonmark.org/
+.. _ubiquitous language: https://martinfowler.com/bliki/UbiquitousLanguage.html
