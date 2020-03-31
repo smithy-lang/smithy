@@ -3353,10 +3353,7 @@ Summary
     not be stored in memory, or that the size of the data stored in the shape
     is unknown at the start of a request.
 Trait selector::
-    ``operation -[input, output]-> structure > :test(member > blob)``
-
-    This trait may only be applied to top level members of operation inputs and
-    outputs.
+    ``blob``
 Value type
     ``structure``
 
@@ -3377,6 +3374,10 @@ optional members:
         In an HTTP-based protocol, for instance, this indicates that the
         ``content-length`` header must be set.
 
+Shapes targeted by this trait MAY NOT be used outside of top level operation
+inputs and operation outputs. Additionally, only one member of a structure may
+target a shape with this trait.
+
 .. tabs::
 
     .. code-tab:: smithy
@@ -3386,9 +3387,11 @@ optional members:
         }
 
         structure StreamingOutputWrapper {
-            @streaming
-            output: Blob,
+            output: StreamingBlob,
         }
+
+        @streaming
+        blob StreamingBlob
 
 Constraint traits
 =================
