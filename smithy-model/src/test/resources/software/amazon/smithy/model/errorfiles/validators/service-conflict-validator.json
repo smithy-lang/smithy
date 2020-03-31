@@ -1,0 +1,158 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#MyService": {
+            "type": "service",
+            "version": "2017-01-17",
+            "operations": [
+                {
+                    "target": "ns.foo#OperationA"
+                },
+                {
+                    "target": "another.ns#OperationA"
+                },
+                {
+                    "target": "ns.foo#OperationB"
+                }
+            ],
+            "resources": [
+                {
+                    "target": "ns.foo#ResourceA"
+                },
+                {
+                    "target": "another.ns#ResourceA"
+                },
+                {
+                    "target": "ns.foo#ResourceB"
+                }
+            ]
+        },
+        "ns.foo#OperationA": {
+            "type": "operation"
+        },
+        "another.ns#OperationA": {
+            "type": "operation"
+        },
+        "ns.foo#OperationB": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#OperationBInput"
+            }
+        },
+        "ns.foo#ResourceA": {
+            "type": "resource"
+        },
+        "another.ns#ResourceA": {
+            "type": "resource"
+        },
+        "ns.foo#ResourceB": {
+            "type": "resource"
+        },
+        "ns.foo#OperationBInput": {
+            "type": "structure",
+            "members": {
+                "allowedListConflict1": {"target": "ns.foo#ListA"},
+                "allowedListConflict2": {"target": "another.ns#ListA"},
+                "allowedListConflict3": {"target": "even.more.ns#ListA"},
+                "conflictingListTargets1": {"target": "ns.foo#ListB"},
+                "conflictingListTargets2": {"target": "another.ns#ListB"},
+                "conflictingMemberTraits1": {"target": "ns.foo#ListC"},
+                "conflictingMemberTraits2": {"target": "another.ns#ListC"},
+                "conflictingTypes1": {"target": "ns.foo#Foo"},
+                "conflictingTypes2": {"target": "another.ns#Foo"},
+                "mapConflict1": {"target": "ns.foo#MapA"},
+                "mapConflict2": {"target": "another.ns#MapA"},
+                "structureConflict1": {"target": "ns.foo#Baz"},
+                "structureConflict2": {"target": "another.ns#Baz"},
+                "unionConflict1": {"target": "ns.foo#Qux"},
+                "unionConflict2": {"target": "another.ns#Qux"}
+            }
+        },
+        "ns.foo#ListA": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#String"
+            }
+        },
+        "another.ns#ListA": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#String"
+            }
+        },
+        "even.more.ns#ListA": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        },
+        "ns.foo#ListB": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#String"
+            }
+        },
+        "another.ns#ListB": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#Integer"
+            }
+        },
+        "ns.foo#ListC": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#String"
+            }
+        },
+        "another.ns#ListC": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#String",
+                "traits": {
+                    "smithy.api#deprecated": true
+                }
+            }
+        },
+        "ns.foo#String": {
+            "type": "string"
+        },
+        "ns.foo#Foo": {
+            "type": "structure"
+        },
+        "another.ns#Foo": {
+            "type": "boolean"
+        },
+        "ns.foo#Baz": {
+            "type": "structure"
+        },
+        "another.ns#Baz": {
+            "type": "structure"
+        },
+        "ns.foo#MapA": {
+            "type": "map",
+            "key": {"target": "smithy.api#String"},
+            "value": {"target": "smithy.api#String"}
+        },
+        "another.ns#MapA": {
+            "type": "map",
+            "key": {"target": "smithy.api#String"},
+            "value": {"target": "smithy.api#String"}
+        },
+        "ns.foo#Qux": {
+            "type": "union",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "another.ns#Qux": {
+            "type": "union",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String"
+                }
+            }
+        }
+    }
+}

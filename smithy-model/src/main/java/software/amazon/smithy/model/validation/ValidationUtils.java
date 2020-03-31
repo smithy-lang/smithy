@@ -98,6 +98,8 @@ public final class ValidationUtils {
     public static <T extends ToShapeId> Map<String, List<ShapeId>> findDuplicateShapeNames(Collection<T> shapes) {
         return shapes.stream()
                 .map(ToShapeId::toShapeId)
+                // Exclude IDs with members since these need to be validated separately.
+                .filter(id -> !id.getMember().isPresent())
                 // Group by the lowercase name of each shape, and collect the shape IDs as strings.
                 .collect(groupingBy(id -> id.getName().toLowerCase(Locale.US)))
                 .entrySet().stream()
