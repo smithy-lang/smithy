@@ -510,10 +510,34 @@ uses the ``Fn::Sub`` variable syntax (``*`` means any value):
     OpenAPI configuration property to ``true``.
 
 
-Amazon Cognito user pools
+Amazon Cognito User Pools
 -------------------------
 
-TODO
+Smithy adds Cognito User Pool based authentication to the OpenAPI model when
+the :ref:`aws.auth#cognitoUserPools-trait` trait is added to a service shape.
+When this trait is present, Smithy will add a ``securitySchemes`` components
+entry:
+
+.. code-block:: json
+
+    {
+        "aws.auth#cognitoUserPools": {
+            "type": "apiKey",
+            "description": "Amazon Cognito User Pools authentication",
+            "name": "Authorization",
+            "in": "header",
+            "x-amazon-apigateway-authtype": "cognito_user_pools",
+            "x-amazon-apigateway-authorizer": {
+                "type": "cognito_user_pools",
+                "providerARNs": [
+                    "arn:aws:cognito-idp:us-east-1:123:userpool/123"
+                ]
+            }
+        }
+    }
+
+In the entry, ``providerARNs`` will be populated from the ``providerArns`` list
+from the trait.
 
 
 Other traits that influence API Gateway
