@@ -68,6 +68,7 @@ import software.amazon.smithy.model.traits.IdempotentTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.LengthTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.NoReplaceTrait;
 import software.amazon.smithy.model.traits.OptionalAuthTrait;
 import software.amazon.smithy.model.traits.PaginatedTrait;
 import software.amazon.smithy.model.traits.PatternTrait;
@@ -169,6 +170,7 @@ public final class Prelude {
             IdempotentTrait.ID,
             JsonNameTrait.ID,
             LengthTrait.ID,
+            NoReplaceTrait.ID,
             MediaTypeTrait.ID,
             PaginatedTrait.ID,
             PatternTrait.ID,

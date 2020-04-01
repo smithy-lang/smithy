@@ -228,6 +228,12 @@ structure xmlNamespace {
 @length(min: 1)
 string NonEmptyString
 
+/// Indicates that the put lifecycle operation of a resource
+/// can only be used to create a resource and cannot replace
+/// an existing resource.
+@trait(selector: "resource:test(-[put]->)")
+structure noReplace {}
+
 /// Describes the contents of a blob shape using a media type as defined by
 /// RFC 6838 (e.g., "video/quicktime").
 @trait(selector: ":each(blob, string)")

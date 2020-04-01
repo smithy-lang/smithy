@@ -1954,6 +1954,17 @@ The following snippet defines the ``PutForecast`` operation.
         chanceOfRain: Float
     }
 
+The semantics of a ``put`` lifecycle operation are similar to the semantics
+of an `HTTP PUT method`_:
+
+  The PUT method requests that the state of the target resource be
+  created or replaced ...
+
+The :ref:`noReplace-trait` can be applied to resources that define a
+``put`` lifecycle operation to indicate that a resource cannot be
+replaced using the ``put`` operation.
+
+
 .. _create-lifecycle:
 
 Create lifecycle
@@ -1966,6 +1977,7 @@ identifiers created by the service.
 
 - Create operations MUST NOT be marked with :ref:`readonly-trait`.
 - Create operations MUST form valid :ref:`collection operations <collection-operations>`.
+- The ``create`` operation MAY be marked with :ref:`idempotent-trait`.
 
 The following snippet defines the ``CreateForecast`` operation.
 
@@ -1987,8 +1999,6 @@ The following snippet defines the ``CreateForecast`` operation.
         // responsible for providing the identifier of the resource.
         chanceOfRain: Float,
     }
-
-The ``create`` operation MAY be marked with :ref:`idempotent-trait`
 
 
 .. _read-lifecycle:
@@ -4578,6 +4588,71 @@ to request additional results from the operation.
 Resource traits
 ===============
 
+.. _noReplace-trait:
+
+``noReplace`` trait
+-------------------
+
+Summary
+    Indicates that the :ref:`put lifecycle <put-lifecycle>` operation of a
+    resource can only be used to create a resource and cannot replace an
+    existing resource.
+Trait selector
+    ``resource:test(-[put]->)``
+
+    *A resource with a put lifecycle operation*
+Value type
+    Annotation trait.
+
+By default, ``put`` lifecycle operations are assumed to both create and
+replace an existing resource. Some APIs, however, do not support this
+behavior and require that a resource is first deleted before it can be
+replaced.
+
+For example, this is the behavior of Amazon DynamoDB's CreateTable_
+operation. The "Table" resource identifier, "TableName", is provided by the
+client, making it appropriate to model in Smithy as a ``put`` lifecycle
+operation. However, ``UpdateTable`` is used to update a table and attempting
+to call ``CreateTable`` on a table that already exists will return an error.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @noReplace
+        resource Table {
+            put: CreateTable
+        }
+
+        @idempotent
+        operation CreateTable {
+            // ...
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "0.5.0",
+            "shapes": {
+                "smithy.example#Table": {
+                    "type": "resource",
+                    "put": {
+                        "target": "smithy.example#CreateTable"
+                    },
+                    "traits": {
+                        "smithy.api#noReplace": true
+                    }
+                },
+                "smithy.example#CreateTable": {
+                    "type": "operation",
+                    "traits": {
+                        "smithy.api#idempotent": true
+                    }
+                }
+            }
+        }
+
+
 .. _references-trait:
 
 ``references`` trait
@@ -6228,3 +6303,5 @@ model:
 .. _RFC 3986 Host: https://tools.ietf.org/html/rfc3986#section-3.2.2
 .. _CommonMark: https://spec.commonmark.org/
 .. _ubiquitous language: https://martinfowler.com/bliki/UbiquitousLanguage.html
+.. _CreateTable: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_CreateTable.html
+.. _HTTP PUT method: https://tools.ietf.org/html/rfc7231#section-4.3.4
