@@ -161,6 +161,8 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+html_favicon = "favicon.png"
+
 
 def setup(sphinx):
     sphinx.add_lexer("smithy", SmithyLexer(startinline=True))
