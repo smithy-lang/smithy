@@ -71,9 +71,9 @@ Smithy supports the following types:
     * - :ref:`document <document-type>`
       - An untyped JSON-like value.
     * - :ref:`list`
-      - Homogeneous collection of values.
+      - Homogeneous collection of values
     * - :ref:`set`
-      - Unordered collection of unique homogeneous values.
+      - Unordered collection of unique homogeneous values
     * - :ref:`map`
       - Map data structure that maps string keys to homogeneous values
     * - :ref:`structure`
@@ -132,15 +132,16 @@ weather service.
 .. admonition:: What's that syntax?
     :class: note
 
-    Smithy models are defined using either the Smithy IDL or JSON. The JSON
-    representation of a Smithy model is typically an artifact created by build
-    tools to make them easier to use by other tooling.
+    Smithy models are defined using either the :ref:`Smithy IDL <smithy-language-specification>`
+    or the :ref:`JSON AST <json-ast>`. The JSON AST representation of a model
+    is typically an artifact created by build tools to make them easier to
+    use by other tooling.
 
-Smithy is a *protocol agnostic* IDL, meaning the model defines the interface of
-the API but not its serialization. A :ref:`protocol <protocolDefinition-trait>`
-defines how clients and servers communicate and how messages are passed back and
-forth. :ref:`Traits <traits>` can be used to influence how a protocol serializes
-shapes.
+    * ``//`` is used for comments
+    * ``///`` is used to add :ref:`documentation <documentation-comment>`
+      to the following shape.
+    * Keywords like ``service`` and ``structure`` start the definition of a
+      shape.
 
 
 Defining resources
@@ -445,7 +446,7 @@ The :ref:`list lifecycle operation <list-lifecycle>` can be added to the
 ``City`` resource to list all of the cities in the service. The list operation
 is a :ref:`collection operation <collection-operations>`, and as such, MUST NOT
 bind the identifier of a ``City`` to its input structure; we are listing
-cities, so there's no way we could provide a City identifier.
+cities, so there's no way we could provide a ``City`` identifier.
 
 .. tabs::
 
@@ -590,9 +591,8 @@ pagination to an API that lists resources because it can help prevent
 operational issues in the future if the list grows to an unpredicted size.
 
 The ``CitySummary`` structure defines a :ref:`reference <referencing-resources>`
-to a ``City`` resource. This allows client tooling that supports resource
-modeling to automatically dereference each City resource returned in the
-output and invoke operations on them.
+to a ``City`` resource. This gives tooling a better understanding of the
+relationships in your service.
 
 The above example refers to :ref:`prelude shapes <prelude>` like
 ``String`` that are automatically available in all Smithy models.
@@ -603,6 +603,7 @@ The above example refers to :ref:`prelude shapes <prelude>` like
     1. The ``list`` lifecycle operation is used to list resources.
     2. ``list`` operations should be :ref:`paginated-trait`.
     3. The :ref:`references-trait` links a structure to a resource.
+    4. Prelude shapes can help DRY up models.
 
 
 Non-Lifecycle Operations
