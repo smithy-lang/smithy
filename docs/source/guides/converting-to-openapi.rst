@@ -514,8 +514,9 @@ Amazon Cognito User Pools
 -------------------------
 
 Smithy adds Cognito User Pool based authentication to the OpenAPI model when
-the ``aws.auth#cognitoUserPools`` trait is added to a service shape. When this
-trait is present, Smithy will add a ``securitySchemes`` components entry:
+the :ref:`aws.auth#cognitoUserPools-trait` trait is added to a service shape.
+When this trait is present, Smithy will add a ``securitySchemes`` components
+entry:
 
 .. code-block:: json
 
