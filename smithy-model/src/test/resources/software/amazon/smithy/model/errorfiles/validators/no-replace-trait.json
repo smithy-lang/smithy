@@ -1,0 +1,38 @@
+{
+    "smithy": "0.5.0",
+    "shapes": {
+        "ns.foo#Service": {
+            "type": "service",
+            "version": "2019-06-27",
+            "resources": [
+                {
+                    "target": "ns.foo#ValidResource"
+                },
+                {
+                    "target": "ns.foo#InvalidResource"
+                }
+            ]
+        },
+        "ns.foo#ValidResource": {
+            "type": "resource",
+            "put": {
+                "target": "ns.foo#PutValidResource"
+            },
+            "traits": {
+                "smithy.api#noReplace": true
+            }
+        },
+        "ns.foo#PutValidResource": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#idempotent": true
+            }
+        },
+        "ns.foo#InvalidResource": {
+            "type": "resource",
+            "traits": {
+                "smithy.api#noReplace": true
+            }
+        }
+    }
+}

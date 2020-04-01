@@ -1,0 +1,1 @@
+[ERROR] ns.foo#InvalidResource: Trait `noReplace` cannot be applied to `ns.foo#InvalidResource`. This trait may only be applied to shapes that match the following selector: resource:test(-[put]->) | TraitTarget
