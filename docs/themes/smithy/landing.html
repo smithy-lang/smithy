@@ -48,31 +48,32 @@
                     serialization format.</p>
             </div>
             <div class="splash-column">
-                <h2>Extensible</h2>
-                <p>Smithy models can be extended through <em>traits</em>. There are
-                    many built-in traits to affect things like behavior and serialization,
-                    and custom traits can be added for additional functionality.</p>
+                <h2>Designed to evolve</h2>
+                <p>Smithy can be extended through <em>traits</em>. Smithy's extensible
+                   meta-model can capture more information about services and allows it to
+                   evolve without breaking changes.</p>
             </div>
         </div>
         <div class="splash-row">
             <div class="splash-column">
-                <h2>Enforce standards &amp; consistency</h2>
+                <h2>Codify and enforce API governance</h2>
                 <p>Customizable standards and validation constraints ensure that APIs
-                    adhere to any kind of standard or convention. Rule sets can be
+                    adhere to any kind of standard or convention. Rules can be
                     shared and applied to all APIs in an organization.</p>
             </div>
             <div class="splash-column">
                 <h2>Resource based</h2>
                 <p>Smithy is defined in terms of resources and operations you can enact on
                     them. Explicitly defining resources provides rich metadata about an API
-                    that can be used to build higher-level client tooling and derive
-                    artifacts from a model.</p>
+                    that can be used in model transformations.</p>
             </div>
         </div>
     </div>
 
     <div class="faq">
         <div class="width-wrapper">
+            <h2 class="faq-heading">FAQs</h2>
+
             <h2>Why did you develop Smithy?</h2>
             <p>Smithy is based on an interface definition language that has been widely
                 used within Amazon and AWS for over a decade. We decided to release Smithy
@@ -82,8 +83,8 @@
                 to make it easier for developers to maintain open source AWS SDKs.</p>
 
             <h2>Does Smithy only work with AWS?</h2>
-            <p>No. Smithy can be used with any kind of service. In fact, all
-                AWS-specific metadata in Smithy is loaded using additional packages.</p>
+            <p>No. Smithy can be used with any kind of service. All AWS-specific metadata
+                in Smithy is implemented as decoupled packages.</p>
 
             <h2>Why not just use an existing IDL?</h2>
             <p>At AWS, we rely heavily on metadata, code generation, service frameworks,
@@ -119,11 +120,6 @@
                 and external version of a model and providing beta models to customers
                 as part of a private beta.</p>
 
-            <h2>What is the main difference between Smithy and OpenAPI?</h2>
-            <p>The primary difference between Smithy and OpenAPI is that Smithy is
-                protocol-agnostic, allowing Smithy to describe a broader range of
-                services, metadata, and capabilities.</p>
-
             <h2>What does protocol-agnostic mean?</h2>
             <p>Protocol-agnostic means that the model is an abstraction that specifies
                 the rules and semantics of how a client and server communicate. The
@@ -132,6 +128,12 @@
                 a service owner may wish to evolve their serialization format (e.g.,
                 move from text to binary), their connection type (e.g., move from
                 HTTP/1 to HTTP/2), or launch entirely new capabilities.</p>
+
+            <h2>What is the main difference between Smithy and OpenAPI?</h2>
+            <p>The primary difference between Smithy and OpenAPI is that Smithy is
+                protocol-agnostic, allowing Smithy to describe a broader range of
+                services, metadata, and capabilities. Smithy can be used alongside
+                OpenAPI by <a href="{{ pathto('guides/converting-to-openapi') }}">converting Smithy models to OpenAPI</a>.</p>
         </div>
     </div>
 
