@@ -1,5 +1,3 @@
-.. highlight:: smithy
-
 .. _smithy-language-specification:
 
 =============================
@@ -8,10 +6,7 @@ Smithy Language Specification
 
 This document defines the ABNF_ grammar and syntax for defining models using
 the *Smithy interface definition language* (IDL) and the JSON abstract syntax
-tree (AST) that can be used to represent a model.
-
-Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
-line endings.
+tree (AST).
 
 .. contents:: Table of contents
     :depth: 2
@@ -40,13 +35,16 @@ The Smithy IDL is a series of statements separated by newlines.
 Lexical notes
 -------------
 
+Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
+line endings (``\n``).
+
 Whitespace is insignificant except for the following cases:
 
 * :token:`br` production which indicates that a new line MUST occur
 * :ref:`shape ID ABNF productions <shape-id-abnf>`
 
 .. productionlist:: smithy
-    br                  :%x0A / %x0D.0A
+    br                  :%x0A / %x0D.0A ; \n and \r\n
 
 .. _comments:
 
@@ -59,12 +57,11 @@ followed by any character. A newline terminates a comment.
 
 .. productionlist:: smithy
     line_comment        :"//" *(start_comment *`not_newline`)
-    start_comment       :%x09 / %x20-%x46 / %x48-10FFFF ; Any character other than "/" or newline
-    not_newline         :%x09 / %x20-10FFFF             ; Any character but new line
+    start_comment       :%x09 / %x20-%x46 / %x48-10FFFF ; Any character except "/" and newline
+    not_newline         :%x09 / %x20-10FFFF ; Any character except newline
 
-Example:
-
-::
+.. code-block:: smithy
+    :caption: Example
 
     // This is a comment
     namespace com.foo // This is also a comment
@@ -96,15 +93,10 @@ The version control statement is used to set the :ref:`version <smithy-version>`
 of a Smithy model file. The value of a version statement MUST be a string.
 Only a single version statement can appear in a model file.
 
-Example:
-
-::
+.. code-block:: smithy
+    :caption: Example
 
     $version: "0.5.0"
-
-.. note::
-
-    The Smithy specification is currently at version |version|.
 
 
 .. _metadata-statement:
@@ -120,9 +112,8 @@ to a model.
     metadata_key:`text`
     metadata_value:`node_value`
 
-Example:
-
-::
+.. code-block:: smithy
+    :caption: Example
 
     metadata example.string1 = "hello there"
     metadata example.string2 = 'hello there'
@@ -150,9 +141,8 @@ namespace can appear in an IDL model file.
 .. productionlist:: smithy
     namespace_statement     :"namespace" `namespace`
 
-Example:
-
-::
+.. code-block:: smithy
+    :caption: Example
 
     namespace com.foo.baz
 
@@ -260,7 +250,7 @@ definition.
 The following example applies the :ref:`deprecated-trait` trait to a shape
 named ``MyShape`` using a :ref:`relative shape id <relative-shape-id>`.
 
-::
+.. code-block:: smithy
 
     apply MyShape @deprecated
 
@@ -272,7 +262,7 @@ Documentation comment
 
 Documentation comments are a special kind of comment that provide
 documentation for shapes. A documentation comment is formed when three
-forward slashes ("///") appear as the first non-whitespace characters
+forward slashes (``"///"``) appear as the first non-whitespace characters
 on a line.
 
 .. productionlist:: smithy
@@ -286,12 +276,12 @@ Successive documentation comments are combined together using a newline
 
 .. note::
 
-    Documentation comments on shapes are just syntax sugar for applying the
-    :ref:`documentation-trait`.
+    Documentation comments are just syntactic sugar for applying
+    the :ref:`documentation-trait`.
 
 The following Smithy IDL example,
 
-::
+.. code-block:: smithy
 
     namespace smithy.example
 
@@ -335,7 +325,7 @@ appear **before** any traits applied to the shape.
 The following example is valid because the documentation comment comes
 before the traits applied to a shape:
 
-::
+.. code-block:: smithy
 
     /// A deprecated string.
     @deprecated
@@ -343,7 +333,7 @@ before the traits applied to a shape:
 
 Documentation comments can be applied to members of a shape.
 
-::
+.. code-block:: smithy
 
     // Documentation about the structure.
     structure Example {
@@ -355,7 +345,7 @@ Documentation comments can be applied to members of a shape.
 Documentation comments MUST NOT be applied to anything other than shapes.
 The following documentation comments are all invalid.
 
-::
+.. code-block:: smithy
 
     /// Invalid (cannot apply to control statements)
     $version: "0.5.0"
@@ -393,7 +383,7 @@ Trait values can only appear immediately before a shape or
 The following example applies various traits to a structure shape and its
 members.
 
-::
+.. code-block:: smithy
 
     @documentation("An animal in the animal kingdom")
     structure Animal {
@@ -411,13 +401,6 @@ members.
 
 String values
 -------------
-
-String values are utilized in various contexts. String values can be unquoted
-if they adhere to the :token:`unquoted_text` production.
-
-Smithy strings are considered *raw strings*, meaning they do not support any
-form of escapes other than to escape a closing quote (using ``\"`` or ``\'``)
-or to escape an escape (using ``\\``).
 
 .. productionlist:: smithy
     text                :`unquoted_text` / `quoted_text` / `text_block`
@@ -450,7 +433,9 @@ Unquoted strings that appear in the IDL as part of a trait value or metadata
 value are treated as shape IDs. Strings MUST be quoted if a value is not
 intended to be converted into a resolved shape ID.
 
-See :ref:`syntactic-shape-ids` for more information.
+.. seealso::
+
+   Refer to :ref:`syntactic-shape-ids` for more information.
 
 
 .. _text-blocks:
@@ -469,7 +454,7 @@ Text blocks differentiate *incidental whitespace* from
 *significant whitespace*. Smithy will re-indent the content of a text block by
 removing all incidental whitespace.
 
-::
+.. code-block:: smithy
 
     @documentation("""
         <div>
@@ -483,7 +468,7 @@ appears on its own line, a trailing new line is added to the result. The
 content of the text block is re-indented to remove the insignificant
 whitespace, making it equivalent to the following:
 
-::
+.. code-block:: smithy
 
     @documentation("<div>\n    <p>Hello!</p>\n</div>\n")
 
@@ -491,7 +476,7 @@ The closing delimiter can be placed on the same line as content if no new line
 is desired at the end of the result. The above example could be rewritten to
 not including a trailing new line:
 
-::
+.. code-block:: smithy
 
     @documentation("""
         <div>
@@ -500,13 +485,13 @@ not including a trailing new line:
 
 This example is equivalent to the following:
 
-::
+.. code-block:: smithy
 
     @documentation("<div>\n    <p>Hello!</p>\n</div>")
 
 The following text blocks are ill-formed:
 
-::
+.. code-block:: smithy
 
     """foo"""  // missing new line following open delimiter
     """ """    // missing new line following open delimiter
@@ -527,7 +512,7 @@ incidental whitespace using the following algorithm:
 
    Given the following example ("." is used to represent spaces),
 
-   ::
+   .. code-block:: smithy
 
        @documentation("""
        ....Foo
@@ -557,7 +542,7 @@ incidental whitespace using the following algorithm:
    computing the common whitespace. The following uses "." to represent the
    common whitespace prefix:
 
-   ::
+   .. code-block:: smithy
 
        @documentation("""
        ....Foo
@@ -582,7 +567,7 @@ incidental whitespace using the following algorithm:
    This step produces the following result ("|" is used to represent the
    left margin):
 
-   ::
+   .. code-block:: none
 
        |Foo
        |    Baz
@@ -600,7 +585,7 @@ whitespace prefix.
 
 Consider the following example:
 
-::
+.. code-block:: smithy
 
        @documentation("""
            Foo
@@ -612,7 +597,7 @@ Because the closing delimiter is at the margin and left of the rest of the
 content, the common whitespace prefix is 0 characters, resulting in the
 following equivalent string:
 
-::
+.. code-block:: smithy
 
        @documentation("    Foo\n        Baz\n    Bar\n")
 
@@ -620,7 +605,7 @@ If the closing delimiter is moved to the right of the content, then it has
 no bearing on the common whitespace prefix. The common whitespace prefix in
 the following example is visualized using "." to represent spaces:
 
-::
+.. code-block:: smithy
 
        @documentation("""
        ....Foo
@@ -631,7 +616,7 @@ the following example is visualized using "." to represent spaces:
 Because lines are trimmed when they are added to the result, the above example
 is equivalent to the following:
 
-::
+.. code-block:: smithy
 
        @documentation("Foo\n    Baz\nBar\n")
 
@@ -644,7 +629,7 @@ of other strings. The use of three double quotes allows unescaped double quotes
 (") to appear in text blocks. The following text block is interpreted as
 ``"hello!"``:
 
-::
+.. code-block:: smithy
 
     """
     "hello!"
@@ -654,7 +639,7 @@ Three quotes can appear in a text block without being treated as the closing
 delimiter as long as one of the quotes are escaped. The following text block
 is interpreted as ``foo """\nbaz``:
 
-::
+.. code-block:: smithy
 
     """
     foo \"""
@@ -663,7 +648,7 @@ is interpreted as ``foo """\nbaz``:
 String escapes are interpreted **after** :ref:`incidental whitespace <incidental-whitespace>`
 is removed from a text block. The following example uses "." to denote spaces:
 
-::
+.. code-block:: smithy
 
     """
     ..<div>
@@ -674,7 +659,7 @@ is removed from a text block. The following example uses "." to denote spaces:
 Because string escapes are expanded after incidental whitespace is removed, it
 is interpreted as:
 
-::
+.. code-block:: none
 
     <div>
     ..<p>Hi
@@ -685,7 +670,7 @@ New lines in the text block can be escaped. This allows for long, single-line
 strings to be broken into multiple lines in the IDL. The following example
 is interpreted as ``Foo Baz Bam``:
 
-::
+.. code-block:: smithy
 
     """
     Foo \
@@ -695,7 +680,7 @@ is interpreted as ``Foo Baz Bam``:
 Escaped new lines can be intermixed with unescaped newlines. The following
 example is interpreted as ``Foo\nBaz Bam``:
 
-::
+.. code-block:: smithy
 
     """
     Foo
@@ -709,8 +694,7 @@ String escape characters
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Smithy IDL supports escape sequences only within quoted strings. Smithy
-supports all of the same escape sequences as JSON plus escaping of single
-quotes.
+supports all of the same escape sequences as JSON.
 
 The following sequences are allowed:
 
@@ -724,9 +708,6 @@ The following sequences are allowed:
     * - U+0022
       - ``\"``
       - double quote
-    * - U+0027
-      - ``\'``
-      - single quote
     * - U+005C
       - ``\\``
       - backslash
@@ -788,25 +769,25 @@ and trailing commas.
 
 The following example defines a string metadata key:
 
-::
+.. code-block:: smithy
 
     metadata foo = "baz"
 
 The following example defines an integer metadata key:
 
-::
+.. code-block:: smithy
 
     metadata foo = 100
 
 The following example defines an array metadata key:
 
-::
+.. code-block:: smithy
 
     metadata foo = ["hello", 123, true, [false]]
 
 The following example defines a complex object metadata key:
 
-::
+.. code-block:: smithy
 
     metadata foo = {
         hello: 123,
@@ -910,7 +891,7 @@ a ``type`` property to define the shape type or ``apply``.
 
 All entries in the ``shapes`` map can contain a ``traits`` property that
 defines the traits attached to the shape. ``traits`` is a map of where
-each key is the absolute shape IDs of a trait definition and each value is
+each key is the absolute shape ID of a trait definition and each value is
 the value to assign to the trait.
 
 .. code-block:: json
@@ -1448,9 +1429,9 @@ The following example defines an operation, its input, output, and errors:
 AST apply type
 ~~~~~~~~~~~~~~
 
-A ``type`` of ``apply`` can be used to apply traits to shapes outside of a
-shape's definition. The ``apply`` type does not actually define a shape for
-the shape ID; the shape ID MUST reference a shape or member of a shape.
+Traits can be applied to shapes outside of their definition by setting
+``type`` to ``apply``. The ``apply`` type does not actually define a shape
+for the shape ID; the shape ID MUST reference a shape or member of a shape.
 The ``apply`` type allows only the ``traits`` property.
 
 .. code-block:: json

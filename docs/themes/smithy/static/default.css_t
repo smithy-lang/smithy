@@ -10,7 +10,7 @@ body {
   color: #24292e;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
     sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.5;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
@@ -130,7 +130,7 @@ body {counter-reset: h2}
 .headline {
   font-weight: bold;
   color: #fff;
-  font-size: 2.1em;
+  font-size: 2.3rem;
 }
 
 @media (max-width: 600px) {
@@ -175,23 +175,28 @@ body {counter-reset: h2}
   justify-content: top;
   width: 50%;
   padding: 0 20px;
+  margin-top: 2rem;
 }
 
-.splash-column p {
-  margin: 0;
-}
-
-.splash-column h2, .faq h2 {
+.splash-column h2,
+.faq h2 {
   color: {{ theme_color }};
-  font-weight: 300;
+  font-weight: bold;
   padding: 0;
-  font-size: 2rem;
+  font-size: 1.5rem;
   text-align: left;
   border: none;
 }
 
+.faq .faq-heading {
+  text-align: center;
+  color: {{ text_color }};
+  margin: 2rem 0;
+  font-size: 2rem;
+}
+
 .splash-column h2 {
-  margin-bottom: 0.5em;
+  margin: 0 0 1rem 0;
 }
 
 #splash pre {
@@ -502,17 +507,27 @@ pre {
   line-height: 1.45;
   background-color: #2B2B2B;
   border-radius: 3px;
-  font-size: 14px;
+  font-size: 1rem;
   color: #A9B7C6;
-  overflow-x:auto
+  overflow-x: auto
 }
 
 code, pre {
   font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
 }
 
-a code {
-  color: {{ theme_link_color }};
+pre a {
+  color: #A5C25C;
+  text-decoration: underline;
+}
+
+pre a:hover {
+  color: #A5C25C;
+}
+
+/* Hacky but fixes links inside of grammars */
+pre a code.xref {
+  font-size: 100%;
 }
 
 
@@ -706,10 +721,12 @@ table.highlighttable pre {
 }
 
 .admonition-title {
-  margin: 0px 0 5px;
+  margin: 0px 0 1rem;
   padding: 0;
   font-size: 1em;
   line-height: 1.1;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.6)
 }
 
 .admonition.danger,
@@ -724,16 +741,6 @@ table.highlighttable pre {
   background-color: #f6eab7;
 }
 
-.admonition.note .admonition-title,
-.admonition.tip .admonition-title,
-.admonition.hint .admonition-title,
-.admonition.important .admonition-title,
-.admonition.warning .admonition-title,
-.admonition.attention .admonition-title,
-.admonition.caution .admonition-title {
-  display: none;
-}
-
 .admonition.note,
 .admonition.hint {
   background-color: #ddecfc;
@@ -744,8 +751,7 @@ table.highlighttable pre {
 }
 
 div.seealso {
-  background-color: #ffc;
-  border: 1px solid #ff6;
+  background-color: #eee;
 }
 
 div.admonition tt.xref, div.admonition a tt {

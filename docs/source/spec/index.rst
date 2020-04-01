@@ -21,8 +21,8 @@ Core specifications
     core
     language-specification
     selectors
-    event-streams
     http
+    event-streams
     xml
 
 
@@ -37,10 +37,10 @@ Every specification builds on top of these core specifications.
       - Defines the syntax of ``.smithy`` models.
     * - :doc:`selectors`
       - Defines the syntax used to match shapes.
-    * - :doc:`event-streams`
-      - Defines streaming of structured data.
     * - :doc:`http`
       - Defines how to bind models to HTTP.
+    * - :doc:`event-streams`
+      - Defines streaming of structured data.
     * - :doc:`xml`
       - Defines how to bind models to XML.
 
@@ -55,8 +55,8 @@ Additional specifications
     :maxdepth: 1
 
     validation
-    mqtt
     http-protocol-compliance-tests
+    mqtt
 
 *Additional specifications* define additional functionality and
 enhancements.
@@ -65,12 +65,12 @@ enhancements.
     :widths: 45 55
 
     * - :doc:`validation`
-      - Defines how to configure custom validation.
-    * - :doc:`mqtt`
-      - Defines how to bind models to MQTT.
+      - Defines how to configure validation.
     * - :doc:`http-protocol-compliance-tests`
       - Defines traits used to validate HTTP-based
         client and server protocol implementations.
+    * - :doc:`mqtt`
+      - Defines how to bind models to MQTT.
 
 
 ------------------

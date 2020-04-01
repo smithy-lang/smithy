@@ -2156,11 +2156,15 @@ defined if needed. For example:
 
 .. code-block:: smithy
 
-    @references([{resource: HistoricalForecast,
-                  ids: {
-                      forecastId: "customForecastId",
-                      historicalId: "customHistoricalId"
-                  }])
+    @references([
+        {
+            resource: HistoricalForecast,
+            ids: {
+                forecastId: "customForecastId",
+                historicalId: "customHistoricalId"
+            }
+        }
+    ])
     structure AnotherHistoricalReference {
         customForecastId: String,
         customHistoricalId: String,
@@ -2193,7 +2197,7 @@ Shape ID
 A :dfn:`shape ID` is used to refer to shapes and traits in the model.
 Shape IDs adhere to the following syntax:
 
-::
+.. code-block:: none
 
     com.foo.baz#ShapeName$memberName
     \_________/ \_______/ \________/
@@ -5672,8 +5676,8 @@ Value type
 
 .. _unstable-trait:
 
-``_unstable`` trait
--------------------
+``unstable`` trait
+------------------
 
 Summary
     Indicates a shape is unstable and MAY change in the future. This trait can
@@ -5701,12 +5705,6 @@ Endpoint Traits
 
 Smithy provides various endpoint binding traits that can be used to configure
 request endpoints.
-
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
 
 .. _endpoint-trait:
 
