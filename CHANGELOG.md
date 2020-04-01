@@ -1,5 +1,14 @@
 # Smithy Changelog
 
+## 0.9.9 (2020-04-01)
+
+### Bug Fixes
+
+* Add security to individual operations in OpenAPI conversion ([#329](https://github.com/awslabs/smithy/pull/329))
+* Fix an issue with header casing for `x-api-key` integration with API Gateway ([#330](https://github.com/awslabs/smithy/pull/330))
+* Fix discrepancies in `smithy-aws-protocol-tests` ([#333](https://github.com/awslabs/smithy/pull/333), [#335](https://github.com/awslabs/smithy/pull/335),
+  [#349](https://github.com/awslabs/smithy/pull/349))
+
 ## 0.9.8 (2020-03-26)
 
 ### Features
