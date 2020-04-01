@@ -19,7 +19,8 @@ service RestJson {
 
         // @httpHeader tests
         InputAndOutputWithHeaders,
-        NullAndEmptyHeaders,
+        NullAndEmptyHeadersClient,
+        NullAndEmptyHeadersServer,
         TimestampFormatHeaders,
 
         // @httpLabel tests

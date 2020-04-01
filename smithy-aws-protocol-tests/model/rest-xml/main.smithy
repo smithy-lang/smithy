@@ -19,7 +19,8 @@ service RestXml {
 
         // @httpHeader tests
         InputAndOutputWithHeaders,
-        NullAndEmptyHeaders,
+        NullAndEmptyHeadersClient,
+        NullAndEmptyHeadersServer,
         TimestampFormatHeaders,
 
         // @httpLabel tests
