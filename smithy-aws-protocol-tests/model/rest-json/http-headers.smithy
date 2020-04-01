@@ -263,19 +263,20 @@ structure InputAndOutputWithHeadersIO {
 
 /// Null and empty headers are not sent over the wire.
 @readonly
-@http(uri: "/NullAndEmptyHeaders", method: "GET")
-operation NullAndEmptyHeaders {
+@http(uri: "/NullAndEmptyHeadersClient", method: "GET")
+@tags(["client-only"])
+operation NullAndEmptyHeadersClient {
     input: NullAndEmptyHeadersIO,
     output: NullAndEmptyHeadersIO
 }
 
-apply NullAndEmptyHeaders @httpRequestTests([
+apply NullAndEmptyHeadersClient @httpRequestTests([
     {
         id: "RestJsonNullAndEmptyHeaders",
         documentation: "Do not send null values, empty strings, or empty lists over the wire in headers",
         protocol: "aws.rest-json-1.1",
         method: "GET",
-        uri: "/NullAndEmptyHeaders",
+        uri: "/NullAndEmptyHeadersClient",
         forbidHeaders: ["X-A", "X-B", "X-C"],
         body: "",
         params: {
@@ -286,7 +287,16 @@ apply NullAndEmptyHeaders @httpRequestTests([
     },
 ])
 
-apply NullAndEmptyHeaders @httpResponseTests([
+/// Null and empty headers are not sent over the wire.
+@readonly
+@http(uri: "/NullAndEmptyHeadersServer", method: "GET")
+@tags(["server-only"])
+operation NullAndEmptyHeadersServer {
+    input: NullAndEmptyHeadersIO,
+    output: NullAndEmptyHeadersIO
+}
+
+apply NullAndEmptyHeadersServer @httpResponseTests([
     {
         id: "RestJsonNullAndEmptyHeaders",
         documentation: "Do not send null or empty headers",
