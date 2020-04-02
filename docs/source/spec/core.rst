@@ -3097,7 +3097,7 @@ in JSON.
     * - blob
       - string
       - A ``string`` value that is base64 encoded. The bytes provided for a
-        blob MUST be compatible with the ``format`` of the blob.
+        blob MUST be compatible with the ``mediaType`` of the blob.
     * - boolean
       - boolean
       - Can be set to ``true`` or ``false``.
@@ -3129,7 +3129,7 @@ in JSON.
         issues when parsing a Smithy model in various languages.
     * - string
       - string
-      - The provided value SHOULD be compatible with the ``format`` of the
+      - The provided value SHOULD be compatible with the ``mediaType`` of the
         string shape if present; however, this is not validated by Smithy.
     * - timestamp
       - number | string
