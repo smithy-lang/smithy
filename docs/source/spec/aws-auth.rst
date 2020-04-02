@@ -145,9 +145,9 @@ literal string ``UNSIGNED-PAYLOAD`` is used when constructing a
 
 .. _aws.auth#cognitoUserPools-trait:
 
--------------------------
-aws.auth#cognitoUserPools
--------------------------
+-----------------------------------
+``aws.auth#cognitoUserPools`` trait
+-----------------------------------
 
 Trait summary
     The ``aws.auth#cognitoUserPools`` trait adds support for
