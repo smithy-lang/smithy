@@ -17,13 +17,18 @@
                 },
                 "smithy.api#protocolDefinition": {
                     "traits": [
+                        "smithy.api#cors",
+                        "smithy.api#endpoint",
+                        "smithy.api#hostLabel",
+                        "smithy.api#http",
                         "smithy.api#httpError",
                         "smithy.api#httpHeader",
                         "smithy.api#httpLabel",
                         "smithy.api#httpPayload",
                         "smithy.api#httpPrefixHeaders",
                         "smithy.api#httpQuery",
-                        "smithy.api#jsonName"
+                        "smithy.api#jsonName",
+                        "smithy.api#timestampFormat"
                     ]
                 },
                 "smithy.api#documentation": "A RESTful protocol that sends JSON in structured payloads."
