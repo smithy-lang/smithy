@@ -12,3 +12,5 @@
 [DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not lower camel case | DefaultCamelCase
 [DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not upper camel case | OppositeOfDefaults
 [DANGER] ns.foo#lowerStructureTrait$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case | OppositeOfDefaults
+[DANGER] foo.protocols#fooJson1_1$foo: Member shape member name, `foo`, is not upper camel case | OppositeOfDefaults
+[DANGER] foo.auth#v1_1$name: Member shape member name, `name`, is not upper camel case | OppositeOfDefaults

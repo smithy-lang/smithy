@@ -24,6 +24,8 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.AuthDefinitionTrait;
+import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -125,6 +127,8 @@ public final class CamelCaseValidator extends AbstractValidator {
         // Trait shapes are expected to be lower camel.
         model.shapes()
                 .filter(shape -> shape.hasTrait(TraitDefinition.class))
+                .filter(shape -> !shape.hasTrait(AuthDefinitionTrait.class))
+                .filter(shape -> !shape.hasTrait(ProtocolDefinitionTrait.class))
                 .filter(shape -> !MemberNameHandling.LOWER.getRegex().matcher(shape.getId().getName()).find())
                 .map(shape -> danger(shape, format(
                         "%s trait definition, `%s`, is not lower camel case",

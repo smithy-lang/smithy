@@ -63,6 +63,38 @@
                     "target": "ns.foo#Foo"
                 }
             }
+        },
+        "foo.protocols#fooJson1_1": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#protocolDefinition": {
+                    "traits": [
+                        "smithy.api#jsonName"
+                    ]
+                }
+            }
+        },
+        "foo.auth#v1_1": {
+            "type": "structure",
+            "members": {
+                "name": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#authDefinition": true
+            }
         }
     },
     "metadata": {
