@@ -17,10 +17,7 @@
             "type": "structure",
             "members": {
                 "Body": {
-                    "target": "smithy.api#Blob",
-                    "traits": {
-                        "smithy.api#streaming": true
-                    }
+                    "target": "ns.foo#StreamingBlob"
                 }
             }
         },
@@ -28,10 +25,7 @@
             "type": "structure",
             "members": {
                 "Body": {
-                    "target": "smithy.api#Blob",
-                    "traits": {
-                        "smithy.api#streaming": true
-                    }
+                    "target": "ns.foo#StreamingBlob"
                 }
             }
         },
@@ -39,10 +33,44 @@
             "type": "structure",
             "members": {
                 "Body": {
-                    "target": "smithy.api#Blob",
-                    "traits": {
-                        "smithy.api#streaming": true
-                    }
+                    "target": "ns.foo#StreamingBlob"
+                }
+            }
+        },
+        "ns.foo#StreamingBlob": {
+            "type": "blob",
+            "traits": {
+                "smithy.api#streaming": true
+            }
+        },
+        "ns.foo#InvalidStreamingStructure2": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "target": "ns.foo#StreamingBlob2"
+                }
+            }
+        },
+        "ns.foo#StreamingBlob2": {
+            "type": "blob",
+            "traits": {
+                "smithy.api#streaming": true
+            }
+        },
+        "ns.foo#InvalidStreamingOperation": {
+            "type": "operation",
+            "output": {
+                "target": "ns.foo#InvalidStreamingOutput"
+            }
+        },
+        "ns.foo#InvalidStreamingOutput": {
+            "type": "structure",
+            "members": {
+                "StreamingBlob1": {
+                    "target": "ns.foo#StreamingBlob"
+                },
+                "StreamingBlob2": {
+                    "target": "ns.foo#StreamingBlob2"
                 }
             }
         }
