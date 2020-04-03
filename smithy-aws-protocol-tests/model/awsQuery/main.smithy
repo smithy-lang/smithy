@@ -2,6 +2,7 @@ $version: "1.0.0"
 
 namespace aws.protocoltests.query
 
+use aws.api#service
 use aws.protocols#awsQuery
 use aws.api#service
 use smithy.test#httpRequestTests
