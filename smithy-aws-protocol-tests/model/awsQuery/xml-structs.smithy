@@ -120,9 +120,9 @@ apply XmlTimestamps @httpResponseTests([
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
-                  <QueryXmlTimestampsResult>
+                  <XmlTimestampsResult>
                       <normal>2014-04-29T18:30:38Z</normal>
-                  </QueryXmlTimestampsResult>
+                  </XmlTimestampsResult>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -140,9 +140,9 @@ apply XmlTimestamps @httpResponseTests([
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
-                  <QueryXmlTimestampsResult>
+                  <XmlTimestampsResult>
                       <dateTime>2014-04-29T18:30:38Z</dateTime>
-                  </QueryXmlTimestampsResult>
+                  </XmlTimestampsResult>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -160,9 +160,9 @@ apply XmlTimestamps @httpResponseTests([
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
-                  <QueryXmlTimestampsResult>
+                  <XmlTimestampsResult>
                       <epochSeconds>1398796238</epochSeconds>
-                  </QueryXmlTimestampsResult>
+                  </XmlTimestampsResult>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",
@@ -180,9 +180,9 @@ apply XmlTimestamps @httpResponseTests([
         code: 200,
         body: """
               <XmlTimestampsResponse xmlns="https://example.com/">
-                  <QueryXmlTimestampsResult>
+                  <XmlTimestampsResult>
                       <httpDate>Tue, 29 Apr 2014 18:30:38 GMT</httpDate>
-                  </QueryXmlTimestampsResult>
+                  </XmlTimestampsResult>
               </XmlTimestampsResponse>
               """,
         bodyMediaType: "application/xml",

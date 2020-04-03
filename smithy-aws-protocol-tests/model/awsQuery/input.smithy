@@ -266,7 +266,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: """
-              Action=NestedStructures
+              Action=QueryIdempotencyTokenAutoFill
               &Version=2020-01-08
               &token=00000000-0000-4000-8000-000000000000""",
         bodyMediaType: "application/x-www-form-urlencoded",
@@ -281,7 +281,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: """
-              Action=NestedStructures
+              Action=QueryIdempotencyTokenAutoFill
               &Version=2020-01-08
               &token=00000000-0000-4000-8000-000000000123""",
         bodyMediaType: "application/x-www-form-urlencoded",
