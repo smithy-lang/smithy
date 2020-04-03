@@ -28,6 +28,7 @@ $version: "1.0.0"
 
 namespace aws.protocoltests.ec2
 
+use aws.api#service
 use aws.protocols#ec2Query
 use aws.api#service
 use smithy.test#httpRequestTests
