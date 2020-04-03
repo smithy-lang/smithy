@@ -2,6 +2,7 @@ $version: "1.0.0"
 
 namespace aws.protocoltests.restjson
 
+use aws.api#service
 use aws.protocols#restJson1
 use aws.api#service
 use smithy.test#httpRequestTests
