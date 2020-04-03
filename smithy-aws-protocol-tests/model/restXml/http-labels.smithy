@@ -6,6 +6,7 @@ $version: "1.0.0"
 namespace aws.protocoltests.restxml
 
 use aws.protocols#restXml
+use aws.protocoltests.shared#DateTime
 use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#HttpDate
 use smithy.test#httpRequestTests
@@ -93,11 +94,11 @@ apply HttpRequestWithLabelsAndTimestampFormat @httpRequestTests([
         uri: """
              /HttpRequestWithLabelsAndTimestampFormat\
              /1576540098\
-             /Mon%2C+16+Dec+2019+23%3A48%3A18+GMT\
+             /Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT\
              /2019-12-16T23%3A48%3A18Z\
              /2019-12-16T23%3A48%3A18Z\
              /1576540098\
-             /Mon%2C+16+Dec+2019+23%3A48%3A18+GMT\
+             /Mon%2C%2016%20Dec%202019%2023%3A48%3A18%20GMT\
              /2019-12-16T23%3A48%3A18Z""",
         body: "",
         params: {
@@ -142,7 +143,7 @@ structure HttpRequestWithLabelsAndTimestampFormatInput {
 
     @httpLabel
     @required
-    targetDateTime: HttpDate,
+    targetDateTime: DateTime,
 }
 
 // This example uses a greedy label and a normal label.

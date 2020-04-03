@@ -230,7 +230,7 @@ apply HttpPayloadWithXmlName @httpRequestTests([
         documentation: "Serializes a structure in the payload using a wrapper name based on xmlName",
         protocol: restXml,
         method: "PUT",
-        uri: "/HttpPayloadWithStructure",
+        uri: "/HttpPayloadWithXmlName",
         body: "<Hello><name>Phreddy</name></Hello>",
         bodyMediaType: "application/xml",
         headers: {
@@ -289,7 +289,7 @@ apply HttpPayloadWithXmlNamespace @httpRequestTests([
         method: "PUT",
         uri: "/HttpPayloadWithXmlNamespace",
         body: """
-              <PayloadWithXmlNamespace xmlns="http//foo.com">
+              <PayloadWithXmlNamespace xmlns="http://foo.com">
                   <name>Phreddy</name>
               </PayloadWithXmlNamespace>""",
         bodyMediaType: "application/xml",
@@ -311,7 +311,7 @@ apply HttpPayloadWithXmlNamespace @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <PayloadWithXmlNamespace xmlns="http//foo.com">
+              <PayloadWithXmlNamespace xmlns="http://foo.com">
                   <name>Phreddy</name>
               </PayloadWithXmlNamespace>""",
         bodyMediaType: "application/xml",
@@ -352,7 +352,7 @@ apply HttpPayloadWithXmlNamespaceAndPrefix @httpRequestTests([
         method: "PUT",
         uri: "/HttpPayloadWithXmlNamespaceAndPrefix",
         body: """
-              <PayloadWithXmlNamespaceAndPrefix xmlns:baz="http//foo.com">
+              <PayloadWithXmlNamespaceAndPrefix xmlns:baz="http://foo.com">
                   <name>Phreddy</name>
               </PayloadWithXmlNamespaceAndPrefix>""",
         bodyMediaType: "application/xml",
@@ -374,7 +374,7 @@ apply HttpPayloadWithXmlNamespaceAndPrefix @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <PayloadWithXmlNamespaceAndPrefix xmlns:baz="http//foo.com">
+              <PayloadWithXmlNamespaceAndPrefix xmlns:baz="http://foo.com">
                   <name>Phreddy</name>
               </PayloadWithXmlNamespaceAndPrefix>""",
         bodyMediaType: "application/xml",
