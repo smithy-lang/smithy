@@ -1,3 +1,4 @@
 software.amazon.smithy.aws.traits.ArnTemplateValidator
 software.amazon.smithy.aws.traits.SdkServiceIdValidator
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryValidator
+software.amazon.smithy.aws.traits.protocols.ProtocolHttpValidator
