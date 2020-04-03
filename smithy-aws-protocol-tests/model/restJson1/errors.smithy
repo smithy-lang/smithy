@@ -126,7 +126,8 @@ apply ComplexError @httpResponseTests([
         params: {},
         code: 403,
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-Amzn-Errortype": "ComplexError"
         },
         body: "{}",
         bodyMediaType: "application/json",

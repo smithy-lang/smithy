@@ -2,11 +2,13 @@ $version: "1.0.0"
 
 namespace aws.protocoltests.restjson
 
+use aws.api#service
 use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// A REST JSON service that sends JSON requests and responses.
+@service(sdkId: "Rest Json Protocol")
 @restJson1
 service RestJson {
     version: "2019-12-16",
@@ -18,7 +20,8 @@ service RestJson {
 
         // @httpHeader tests
         InputAndOutputWithHeaders,
-        NullAndEmptyHeaders,
+        NullAndEmptyHeadersClient,
+        NullAndEmptyHeadersServer,
         TimestampFormatHeaders,
 
         // @httpLabel tests

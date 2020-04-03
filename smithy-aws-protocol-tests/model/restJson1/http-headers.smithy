@@ -7,6 +7,7 @@ namespace aws.protocoltests.restjson
 
 use aws.protocols#restJson1
 use aws.protocoltests.shared#BooleanList
+use aws.protocoltests.shared#DateTime
 use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
@@ -58,7 +59,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
             "X-Long": "123",
             "X-Float": "1.0",
             "X-Double": "1.0",
-            "X-HeaderIntegerList": "1, 2, 3",
+            "X-IntegerList": "1, 2, 3",
         },
         body: "",
         params: {
@@ -80,12 +81,12 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         headers: {
             "X-Boolean1": "true",
             "X-Boolean2": "false",
-            "X-HeaderBooleanList": "true, false, true"
+            "X-BooleanList": "true, false, true"
         },
         body: "",
         params: {
             headerTrueBool: true,
-            headerFalseBool: true,
+            headerFalseBool: false,
             headerBooleanList: [true, false, true]
         }
     },
@@ -96,7 +97,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
-            "X-HeaderTimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
         },
         body: "",
         params: {
@@ -111,7 +112,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         uri: "/InputAndOutputWithHeaders",
         headers: {
             "X-Enum": "Foo",
-            "X-EnumList": "Foo, Baz, Bar"
+            "X-EnumList": "Foo, Bar, Baz"
         },
         body: "",
         params: {
@@ -151,7 +152,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             "X-Long": "123",
             "X-Float": "1.0",
             "X-Double": "1.0",
-            "X-HeaderIntegerList": "1, 2, 3",
+            "X-IntegerList": "1, 2, 3",
         },
         body: "",
         params: {
@@ -172,12 +173,12 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         headers: {
             "X-Boolean1": "true",
             "X-Boolean2": "false",
-            "X-HeaderBooleanList": "true, false, true"
+            "X-BooleanList": "true, false, true"
         },
         body: "",
         params: {
             headerTrueBool: true,
-            headerFalseBool: true,
+            headerFalseBool: false,
             headerBooleanList: [true, false, true]
         }
     },
@@ -187,7 +188,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         protocol: restJson1,
         code: 200,
         headers: {
-            "X-HeaderTimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
         },
         body: "",
         params: {
@@ -201,7 +202,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         code: 200,
         headers: {
             "X-Enum": "Foo",
-            "X-EnumList": "Foo, Baz, Bar"
+            "X-EnumList": "Foo, Bar, Baz"
         },
         body: "",
         params: {
@@ -263,19 +264,20 @@ structure InputAndOutputWithHeadersIO {
 
 /// Null and empty headers are not sent over the wire.
 @readonly
-@http(uri: "/NullAndEmptyHeaders", method: "GET")
-operation NullAndEmptyHeaders {
+@http(uri: "/NullAndEmptyHeadersClient", method: "GET")
+@tags(["client-only"])
+operation NullAndEmptyHeadersClient {
     input: NullAndEmptyHeadersIO,
     output: NullAndEmptyHeadersIO
 }
 
-apply NullAndEmptyHeaders @httpRequestTests([
+apply NullAndEmptyHeadersClient @httpRequestTests([
     {
         id: "RestJsonNullAndEmptyHeaders",
         documentation: "Do not send null values, empty strings, or empty lists over the wire in headers",
         protocol: restJson1,
         method: "GET",
-        uri: "/NullAndEmptyHeaders",
+        uri: "/NullAndEmptyHeadersClient",
         forbidHeaders: ["X-A", "X-B", "X-C"],
         body: "",
         params: {
@@ -286,7 +288,16 @@ apply NullAndEmptyHeaders @httpRequestTests([
     },
 ])
 
-apply NullAndEmptyHeaders @httpResponseTests([
+/// Null and empty headers are not sent over the wire.
+@readonly
+@http(uri: "/NullAndEmptyHeadersServer", method: "GET")
+@tags(["server-only"])
+operation NullAndEmptyHeadersServer {
+ input: NullAndEmptyHeadersIO,
+ output: NullAndEmptyHeadersIO
+}
+
+apply NullAndEmptyHeadersServer @httpResponseTests([
     {
         id: "RestJsonNullAndEmptyHeaders",
         documentation: "Do not send null or empty headers",
@@ -400,5 +411,5 @@ structure TimestampFormatHeadersIO {
     targetHttpDate: HttpDate,
 
     @httpHeader("X-targetDateTime")
-    targetDateTime: HttpDate,
+    targetDateTime: DateTime,
 }

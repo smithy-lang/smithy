@@ -74,14 +74,14 @@ apply JsonLists @httpRequestTests([
                           "qux"
                       ]
                   ],
-                  "structureList": [
+                  "myStructureList": [
                       {
-                          "a": "1",
-                          "b": "2"
+                          "value": "1",
+                          "other": "2"
                       },
                       {
-                          "a": "3",
-                          "b": "4"
+                          "value": "3",
+                          "other": "4"
                       }
                   ]
               }""",
@@ -212,14 +212,14 @@ apply JsonLists @httpResponseTests([
                           "qux"
                       ]
                   ],
-                  "structureList": [
+                  "myStructureList": [
                       {
-                          "a": "1",
-                          "b": "2"
+                          "value": "1",
+                          "other": "2"
                       },
                       {
-                          "a": "3",
-                          "b": "4"
+                          "value": "3",
+                          "other": "4"
                       }
                   ]
               }""",
