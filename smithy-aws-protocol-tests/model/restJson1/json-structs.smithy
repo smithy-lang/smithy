@@ -31,7 +31,6 @@ apply SimpleScalarProperties @httpRequestTests([
         uri: "/SimpleScalarProperties",
         body: """
               {
-                  "foo": "Foo",
                   "stringValue": "string",
                   "trueBooleanValue": true,
                   "falseBooleanValue": false,
@@ -70,7 +69,6 @@ apply SimpleScalarProperties @httpResponseTests([
         code: 200,
         body: """
               {
-                  "foo": "Foo",
                   "stringValue": "string",
                   "trueBooleanValue": true,
                   "falseBooleanValue": false,
@@ -454,7 +452,7 @@ apply RecursiveShapes @httpRequestTests([
         documentation: "Serializes recursive structures",
         protocol: restJson1,
         method: "PUT",
-        uri: "/JsonEnums",
+        uri: "/RecursiveShapes",
         body: """
               {
                   "nested": {
