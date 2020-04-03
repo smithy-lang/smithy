@@ -95,17 +95,6 @@ h7 {
   font-weight: bold;
 }
 
-/* show auto-incrementing counters on section headings. */
-body {counter-reset: h2}
-.specificationPage h2 {counter-reset: h3}
-.specificationPage h3 {counter-reset: h4}
-.specificationPage h4 {counter-reset: h5}
-.specificationPage h5 {counter-reset: h6}
-.specificationPage h2:before {counter-increment: h2; content: counter(h2) ". "}
-.specificationPage h3:before {counter-increment: h3; content: counter(h2) "." counter(h3) ". "}
-.specificationPage h4:before {counter-increment: h4; content: counter(h2) "." counter(h3) "." counter(h4) ". "}
-.specificationPage h5:before {counter-increment: h5; content: counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) ". "}
-.specificationPage h6:before {counter-increment: h6; content: counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) "." counter(h6) ". "}
 
 /* ----- Landing page ------ */
 
@@ -228,7 +217,6 @@ body {counter-reset: h2}
 }
 
 #landing-container {
-  padding: 0 0 2em 0;
   min-height: 500px;
   background: #f7f7f5;
 }
@@ -328,7 +316,7 @@ header {
   padding-left: 35px;
 }
 
-.site-logo .beta-text {
+.site-logo .version-text {
   font-weight: 300;
   padding-left: 6px;
   font-size: 12px;
@@ -399,7 +387,6 @@ header {
 }
 
 footer {
-  margin-top: 3rem;
   padding: 2rem;
   background-color: {{ theme_secondary_background }};
   color: #fefefe;
@@ -412,8 +399,8 @@ footer {
 
 .faq {
   background: #ebe9e7;
-  padding: 2em 0;
-  margin: 4em 0;
+  padding: 2em 0 4em;
+  margin: 4em 0 0 0;
 }
 
 .faq h2 {
@@ -506,7 +493,7 @@ pre {
   padding: 16px;
   overflow: auto;
   line-height: 1.45;
-  background-color: #2B2B2B;
+  background-color: #2f2d2a;
   border-radius: 3px;
   font-size: 1rem;
   color: #A9B7C6;
@@ -659,10 +646,6 @@ table.highlighttable pre {
 #sidebar-navigation a {
   color: rgba(0, 0, 0, 0.87);
   display: block;
-}
-
-#right-column a {
-  color: #387894;
 }
 
 #right-column a {
@@ -824,6 +807,16 @@ dt:target, .highlighted {
   color: #fff;
   background: {{ theme_link_color }};
   text-decoration: none;
+}
+
+.next-previous {
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+#right-column .next-previous a {
+  display: inline;
+  padding-right: 2rem;
 }
 
 /* -------- media query helpers ------- */

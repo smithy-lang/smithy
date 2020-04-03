@@ -1,6 +1,8 @@
-============
-XML bindings
-============
+.. _xml-binding-traits:
+
+==================
+XML binding traits
+==================
 
 This document defines how to bind Smithy shapes to XML documents. Smithy
 defines several traits that are used to influence the serialization of

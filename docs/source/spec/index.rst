@@ -4,45 +4,41 @@
 Specifications
 ==============
 
-Smithy is split into several specifications.
+Smithy is split into several specifications. The core specification
+defines the foundation of Smithy modeling. Additional specifications
+define optional features that can be used in Smithy models.
 
 
-.. _core-specifications:
+.. _core-specification:
 
--------------------
-Core specifications
--------------------
-
-.. rst-class:: hidden
+------------------
+Core specification
+------------------
 
 .. toctree::
-    :maxdepth: 1
+    :numbered:
 
-    core
-    language-specification
-    selectors
-    http
-    event-streams
-    xml
-
-
-Every specification builds on top of these core specifications.
-
-.. list-table::
-    :widths: 45 55
-
-    * - :doc:`core`
-      - Defines the foundation of Smithy modeling.
-    * - :doc:`language-specification`
-      - Defines the syntax of ``.smithy`` models.
-    * - :doc:`selectors`
-      - Defines the syntax used to match shapes.
-    * - :doc:`http`
-      - Defines how to bind models to HTTP.
-    * - :doc:`event-streams`
-      - Defines streaming of structured data.
-    * - :doc:`xml`
-      - Defines how to bind models to XML.
+    core/index
+    core/lexical-structure
+    core/shapes
+    core/shape-id
+    core/prelude-model
+    core/traits
+    core/constraint-traits
+    core/documentation-traits
+    core/type-refinement-traits
+    core/protocol-traits
+    core/auth-traits
+    core/behavior-traits
+    core/resource-traits
+    core/event-stream-traits
+    core/http-traits
+    core/xml-traits
+    core/endpoint-traits
+    core/selectors
+    core/json-ast
+    core/model-metadata
+    core/merging-models
 
 
 -------------------------
