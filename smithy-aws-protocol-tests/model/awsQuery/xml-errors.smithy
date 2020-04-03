@@ -23,7 +23,7 @@
 //
 // See: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-api-responses.html#sqs-api-error-response-structure
 
-$version: "0.5.0"
+$version: "1.0.0"
 
 namespace aws.protocoltests.query
 
