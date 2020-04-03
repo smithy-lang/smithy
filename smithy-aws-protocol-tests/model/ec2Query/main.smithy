@@ -28,11 +28,13 @@ $version: "1.0.0"
 
 namespace aws.protocoltests.ec2
 
+use aws.api#service
 use aws.protocols#ec2Query
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// An EC2 query service that sends query requests and XML responses.
+@service(sdkId: "EC2 Protocol")
 @ec2Query
 @xmlNamespace(uri: "https://example.com/")
 service AwsEc2 {
