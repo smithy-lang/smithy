@@ -48,7 +48,8 @@ members:
       - The priority ordered list of supported HTTP protocol versions
         that are required when using :ref:`event streams <event-streams>`
         with the service. If not set, this value defaults to the value
-        of the ``http`` member.
+        of the ``http`` member. Any entry in ``eventStreamHttp`` MUST
+        also appear in ``http``.
 
 Each entry in ``http`` and ``eventStreamHttp`` SHOULD be a valid
 `Application-Layer Protocol Negotiation (ALPN) Protocol ID`_ (for example,

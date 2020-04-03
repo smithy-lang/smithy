@@ -16,12 +16,9 @@
 package software.amazon.smithy.aws.traits.protocols;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
@@ -39,8 +36,8 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
     private static final String HTTP = "http";
     private static final String EVENT_STREAM_HTTP = "eventStreamHttp";
 
-    private final List<Http> http;
-    private final List<Http> eventStreamHttp;
+    private final List<String> http;
+    private final List<String> eventStreamHttp;
 
     // package-private constructor (at least for now)
     AwsProtocolTrait(ShapeId id, Builder<?, ?> builder) {
@@ -54,7 +51,7 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
      *
      * @return Returns the supported HTTP protocol versions.
      */
-    public List<Http> getHttp() {
+    public List<String> getHttp() {
         return http;
     }
 
@@ -64,7 +61,7 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
      *
      * @return Returns the supported event stream HTTP protocol versions.
      */
-    public List<Http> getEventStreamHttp() {
+    public List<String> getEventStreamHttp() {
         return eventStreamHttp;
     }
 
@@ -73,56 +70,14 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
         ObjectNode.Builder builder = Node.objectNodeBuilder();
 
         if (!getHttp().isEmpty()) {
-            builder.withMember(HTTP, getHttp().stream()
-                    .map(Http::toString)
-                    .map(Node::from)
-                    .collect(ArrayNode.collect()));
+            builder.withMember(HTTP, Node.fromStrings(getHttp()));
         }
 
         if (!getEventStreamHttp().isEmpty()) {
-            builder.withMember(EVENT_STREAM_HTTP, getEventStreamHttp().stream()
-                    .map(Http::toString)
-                    .map(Node::from)
-                    .collect(ArrayNode.collect()));
+            builder.withMember(EVENT_STREAM_HTTP, Node.fromStrings(getEventStreamHttp()));
         }
 
         return builder.build();
-    }
-
-    /**
-     * HTTP protocol versions, specified based on ALPN protocol IDs.
-     */
-    public enum Http {
-        HTTP_1_1("http/1.1"),
-        H2("h2");
-
-        private final String modelValue;
-
-        Http(String modelValue) {
-            this.modelValue = modelValue;
-        }
-
-        @Override
-        public String toString() {
-            return modelValue;
-        }
-
-        private static List<String> getAllModelValues() {
-            List<String> values = new ArrayList<>();
-            for (Http http : Http.values()) {
-                values.add(http.toString());
-            }
-            return values;
-        }
-
-        private static Http fromString(String value) {
-            for (Http http : Http.values()) {
-                if (http.toString().equals(value)) {
-                    return http;
-                }
-            }
-            return null;
-        }
     }
 
     /**
@@ -133,8 +88,8 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
      */
     public abstract static class Builder<T extends Trait, B extends Builder> extends AbstractTraitBuilder<T, B> {
 
-        private final List<Http> http = new ArrayList<>();
-        private final List<Http> eventStreamHttp = new ArrayList<>();
+        private final List<String> http = new ArrayList<>();
+        private final List<String> eventStreamHttp = new ArrayList<>();
 
         /**
          * Sets the list of supported HTTP protocols.
@@ -143,7 +98,7 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
          * @return Returns the builder.
          */
         @SuppressWarnings("unchecked")
-        public B http(List<Http> http) {
+        public B http(List<String> http) {
             this.http.clear();
             this.http.addAll(http);
             return (B) this;
@@ -156,7 +111,7 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
          * @return Returns the builder.
          */
         @SuppressWarnings("unchecked")
-        public B eventStreamHttp(List<Http> eventStreamHttp) {
+        public B eventStreamHttp(List<String> eventStreamHttp) {
             this.eventStreamHttp.clear();
             this.eventStreamHttp.addAll(eventStreamHttp);
             return (B) this;
@@ -171,22 +126,13 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
         @SuppressWarnings("unchecked")
         public B fromNode(Node node) {
             ObjectNode objectNode = node.expectObjectNode();
-            http(loadHttpList(HTTP, objectNode));
-            eventStreamHttp(loadHttpList(EVENT_STREAM_HTTP, objectNode));
+            objectNode.getArrayMember(HTTP)
+                    .map(values -> Node.loadArrayOfString(HTTP, values))
+                    .ifPresent(this::http);
+            objectNode.getArrayMember(EVENT_STREAM_HTTP)
+                    .map(values -> Node.loadArrayOfString(EVENT_STREAM_HTTP, values))
+                    .ifPresent(this::eventStreamHttp);
             return (B) this;
-        }
-
-        private List<Http> loadHttpList(String memberName, ObjectNode node) {
-            return node.getArrayMember(memberName)
-                    .map(array -> {
-                        List<Http> result = new ArrayList<>(array.size());
-                        for (StringNode value : array.getElementsAs(StringNode.class)) {
-                            String oneOf = value.expectOneOf(Http.getAllModelValues());
-                            result.add(Http.fromString(oneOf));
-                        }
-                        return result;
-                    })
-                    .orElse(Collections.emptyList());
         }
     }
 }
