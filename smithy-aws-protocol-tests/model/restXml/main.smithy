@@ -2,6 +2,7 @@ $version: "1.0.0"
 
 namespace aws.protocoltests.restxml
 
+use aws.api#service
 use aws.protocols#restXml
 use aws.api#service
 use smithy.test#httpRequestTests
