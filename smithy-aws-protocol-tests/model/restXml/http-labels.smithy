@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP URI label bindings.
 // See: https://awslabs.github.io/smithy/spec/http.html#httplabel-trait
 
-$version: "0.5.0"
+$version: "1.0"
 
 namespace aws.protocoltests.restxml
 

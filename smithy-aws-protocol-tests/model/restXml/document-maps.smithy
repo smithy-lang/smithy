@@ -1,6 +1,6 @@
 // This file defines test cases that serialize maps in XML payloads.
 
-$version: "0.5.0"
+$version: "1.0"
 
 namespace aws.protocoltests.restxml
 

@@ -17,7 +17,7 @@ package software.amazon.smithy.model.loader;
 
 enum SmithyVersion {
 
-    VERSION_0_5_0("0.5.0");
+    VERSION_1_0("1.0");
 
     public final String value;
 

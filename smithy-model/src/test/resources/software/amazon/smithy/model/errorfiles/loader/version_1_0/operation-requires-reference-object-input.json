@@ -1,9 +1,9 @@
 {
-    "smithy": "0.5.0",
+    "smithy": "1.0",
     "shapes": {
         "smithy.example#Operation": {
             "type": "operation",
-            "output": "Foo"
+            "input": "Foo"
         },
         "smithy.example#Foo": {
             "type": "structure"

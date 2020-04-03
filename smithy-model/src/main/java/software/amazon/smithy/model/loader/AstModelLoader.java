@@ -56,7 +56,7 @@ import software.amazon.smithy.utils.SetUtils;
 
 /**
  * A singleton that loads Smithy models from the JSON AST format,
- * version 0.5.0.
+ * version 1.0.
  */
 enum AstModelLoader {
 

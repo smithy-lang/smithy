@@ -114,7 +114,7 @@ and ``{second}``, in the MQTT topic template:
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#ExampleOperation": {
                     "type": "operation",
@@ -223,7 +223,7 @@ The following example defines an operation that publishes messages to the
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#PostFoo": {
                     "type": "operation",
@@ -344,7 +344,7 @@ topic using a :ref:`single-event event stream <single-event-event-stream>`:
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#SubscribeForEvents": {
                     "type": "operation",

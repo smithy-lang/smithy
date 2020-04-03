@@ -45,7 +45,7 @@ See
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -90,7 +90,7 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",

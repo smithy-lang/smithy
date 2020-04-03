@@ -1,7 +1,7 @@
 {
-    "smithy": "0.5.0",
+    "smithy": "1.0",
     "shapes": {
-        "ns.foo#Baz$bar": {
+        "Hi": {
             "type": "string"
         }
     }

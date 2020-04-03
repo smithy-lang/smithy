@@ -249,7 +249,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#SayHello": {
                     "type": "operation",
@@ -436,7 +436,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#SayGoodbye": {
                     "type": "operation",
@@ -522,7 +522,7 @@ that uses :ref:`HTTP binding traits <http-traits>`.
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#InvalidGreeting": {
                     "type": "structure",

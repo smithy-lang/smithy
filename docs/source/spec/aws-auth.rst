@@ -60,7 +60,7 @@ Trait value
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "aws.fooBaz#FooBaz": {
                     "type": "service",
@@ -116,7 +116,7 @@ operation MUST NOT be used as part of the request signature calculation:
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#PutThings": {
                     "type": "operation",

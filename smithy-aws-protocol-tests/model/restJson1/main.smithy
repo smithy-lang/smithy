@@ -1,4 +1,4 @@
-$version: "0.5.0"
+$version: "1.0"
 
 namespace aws.protocoltests.restjson
 

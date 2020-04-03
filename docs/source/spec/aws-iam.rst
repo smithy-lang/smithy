@@ -51,7 +51,7 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#FooOperation": {
                     "type": "operation",
@@ -112,7 +112,7 @@ The following example's ``MyResource`` resource has the
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -235,7 +235,7 @@ Each condition key structure supports the following members:
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -358,7 +358,7 @@ condition key inference disabled.
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -439,7 +439,7 @@ operation for it to complete successfully.
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -535,7 +535,7 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "0.5.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
