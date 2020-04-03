@@ -1,8 +1,8 @@
 .. _event-streams:
 
-==========================
-Event stream specification
-==========================
+===================
+Event stream traits
+===================
 
 An event stream is an abstraction that allows multiple messages to be sent
 asynchronously between a client and server. Event streams support both duplex

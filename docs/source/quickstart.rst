@@ -132,7 +132,7 @@ weather service.
 .. admonition:: What's that syntax?
     :class: note
 
-    Smithy models are defined using either the :ref:`Smithy IDL <smithy-language-specification>`
+    Smithy models are defined using either the :ref:`Smithy IDL <lexical-structure>`
     or the :ref:`JSON AST <json-ast>`. The JSON AST representation of a model
     is typically an artifact created by build tools to make them easier to
     use by other tooling.

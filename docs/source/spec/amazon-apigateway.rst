@@ -1,6 +1,6 @@
-===============================
-Amazon API Gateway Integrations
-===============================
+=========================
+Amazon API Gateway traits
+=========================
 
 Smithy can integrate with Amazon API Gateway using traits, authentication
 schemes, and OpenAPI specifications.
