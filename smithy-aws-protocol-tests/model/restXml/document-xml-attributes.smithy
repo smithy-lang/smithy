@@ -24,7 +24,7 @@ apply XmlAttributes @httpRequestTests([
         method: "PUT",
         uri: "/XmlAttributes",
         body: """
-              <XmlAttributesInputOutput attr="test">
+              <XmlAttributesInputOutput test="test">
                   <foo>hi</foo>
               </XmlAttributesInputOutput>
               """,
@@ -46,7 +46,7 @@ apply XmlAttributes @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlAttributesInputOutput attr="test">
+              <XmlAttributesInputOutput test="test">
                   <foo>hi</foo>
               </XmlAttributesInputOutput>
               """,
@@ -85,7 +85,7 @@ apply XmlAttributesOnPayload @httpRequestTests([
         method: "PUT",
         uri: "/XmlAttributesOnPayload",
         body: """
-              <XmlAttributesInputOutput attr="test">
+              <XmlAttributesInputOutput test="test">
                   <foo>hi</foo>
               </XmlAttributesInputOutput>
               """,
@@ -109,7 +109,7 @@ apply XmlAttributesOnPayload @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlAttributesInputOutput attr="test">
+              <XmlAttributesInputOutput test="test">
                   <foo>hi</foo>
               </XmlAttributesInputOutput>
               """,

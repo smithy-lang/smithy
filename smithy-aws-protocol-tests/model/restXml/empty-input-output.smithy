@@ -21,7 +21,7 @@ apply NoInputAndNoOutput @httpRequestTests([
         documentation: "No input serializes no payload",
         protocol: restXml,
         method: "POST",
-        uri: "/NoInputAndOutput",
+        uri: "/NoInputAndNoOutput",
         body: ""
     }
 ])
@@ -51,7 +51,7 @@ apply NoInputAndOutput @httpRequestTests([
         documentation: "No input serializes no payload",
         protocol: restXml,
         method: "POST",
-        uri: "/NoInputAndOutput",
+        uri: "/NoInputAndOutputOutput",
         body: ""
     }
 ])
