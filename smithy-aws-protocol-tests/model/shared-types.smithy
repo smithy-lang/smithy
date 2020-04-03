@@ -5,7 +5,7 @@
 // structures or other test-case specific shapes should be defined closer to
 // the test case and in its same file.
 
-$version: "0.5.0"
+$version: "1.0.0"
 
 metadata suppressions = [{
     ids: ["DeprecatedTrait"],

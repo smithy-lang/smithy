@@ -1,7 +1,7 @@
 // This file defines test cases that serialize synthesized XML documents
 // in the payload of HTTP requests and responses.
 
-$version: "0.5.0"
+$version: "1.0.0"
 
 namespace aws.protocoltests.restxml
 
