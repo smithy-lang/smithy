@@ -926,8 +926,8 @@ following members:
 
 .. _client-endpoint-discovery-id-trait:
 
-``aws.clientEndpointDiscoveryId`` trait
-=======================================
+``aws.api#clientEndpointDiscoveryId`` trait
+===========================================
 
 Summary
     The ``clientEndpointDiscoveryId`` trait indicates which member(s) of the
@@ -1133,6 +1133,7 @@ using an ``clientEndpointDiscoveryId``.
             }
         }
 
+
 Client Behavior
 ===============
 
@@ -1161,6 +1162,7 @@ parameters if they are in the endpoint operation's input shape:
 The client MUST then use an endpoint from the ``Endpoints`` list in the
 response. The client SHOULD prioritize endpoints by the order in which they
 appear in the list.
+
 
 Caching
 -------

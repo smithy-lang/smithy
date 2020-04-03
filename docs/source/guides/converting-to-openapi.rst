@@ -69,7 +69,7 @@ a Smithy model are not currently supported in the OpenAPI conversion:
   memory by clients or servers. This is not currently something supported
   as a built-in feature of OpenAPI (we could potentially add an extension
   to mark a specific type as streaming).
-* :ref:`Custom traits <trait-definition>`: Custom traits defined in a Smithy
+* :ref:`Custom traits <trait-shapes>`: Custom traits defined in a Smithy
   model are not converted and added to the OpenAPI specification. Copying
   Smithy traits into OpenAPI as extensions requires the use of a custom
   ``software.amazon.smithy.openapi.fromsmithy.OpenApiExtension``.
