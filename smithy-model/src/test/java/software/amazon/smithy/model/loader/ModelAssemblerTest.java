@@ -100,7 +100,7 @@ public class ModelAssemblerTest {
     }
 
     @Test
-    public void addsExplicitDocumentNode_1_0() {
+    public void addsExplicitDocumentNode_1_0_0() {
         ObjectNode node = Node.objectNode()
                 .withMember("smithy", "1.0.0")
                 .withMember("shapes", Node.objectNode()
