@@ -1,10 +1,10 @@
-.. _aws-query-protocol:
+.. _aws-json-1_1:
 
-==================
-AWS query protocol
-==================
+=====================
+AWS JSON 1.1 protocol
+=====================
 
-This specification defines the ``aws.protocols#awsQuery`` protocol.
+This specification defines the ``aws.protocols#awsJson1_1`` protocol.
 
 .. contents:: Table of contents
     :depth: 2
@@ -12,15 +12,15 @@ This specification defines the ``aws.protocols#awsQuery`` protocol.
     :backlinks: none
 
 
-.. _aws.protocols#awsQuery-trait:
+.. _aws.protocols#awsJson1_1-trait:
 
---------------------------------
-``aws.protocols#awsQuery`` trait
---------------------------------
+----------------------------------
+``aws.protocols#awsJson1_1`` trait
+----------------------------------
 
 Summary
-    Adds support for an HTTP protocol that sends requests in the query
-    string and responses in XML documents.
+    Adds support for an HTTP protocol that sends POST requests and
+    responses with JSON documents.
 Trait selector
     ``service``
 Value type
@@ -34,9 +34,9 @@ See
 
         namespace smithy.example
 
-        use aws.protocols#awsQuery
+        use aws.protocols#awsJson1_1
 
-        @awsQuery
+        @awsJson1_1
         service MyService {
             version: "2020-02-05"
         }
@@ -50,7 +50,7 @@ See
                     "type": "service",
                     "version": "2020-02-05",
                     "traits": {
-                        "aws.protocols#awsQuery": true
+                        "aws.protocols#awsJson1_1": true
                     }
                 }
             }

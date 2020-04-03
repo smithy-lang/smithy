@@ -6,44 +6,45 @@ Specifications
 
 Smithy is split into several specifications.
 
+.. contents:: Table of contents
+    :depth: 2
+    :local:
+    :backlinks: none
 
-.. _core-specifications:
 
--------------------
-Core specifications
--------------------
+.. _core-specification:
 
-.. rst-class:: hidden
+------------------
+Core specification
+------------------
 
 .. toctree::
-    :maxdepth: 1
+    :numbered:
+    :maxdepth: 3
 
-    core
-    language-specification
-    selectors
-    http
-    event-streams
-    xml
+    core/index
+    core/lexical-structure
+    core/shapes
+    core/prelude-model
+    core/traits
+    core/constraint-traits
+    core/documentation-traits
+    core/type-refinement-traits
+    core/protocol-traits
+    core/auth-traits
+    core/behavior-traits
+    core/resource-traits
+    core/event-stream-traits
+    core/http-traits
+    core/xml-traits
+    core/endpoint-traits
+    core/selectors
+    core/model-metadata
+    core/merging-models
+    core/json-ast
 
 
-Every specification builds on top of these core specifications.
-
-.. list-table::
-    :widths: 45 55
-
-    * - :doc:`core`
-      - Defines the foundation of Smithy modeling.
-    * - :doc:`language-specification`
-      - Defines the syntax of ``.smithy`` models.
-    * - :doc:`selectors`
-      - Defines the syntax used to match shapes.
-    * - :doc:`http`
-      - Defines how to bind models to HTTP.
-    * - :doc:`event-streams`
-      - Defines streaming of structured data.
-    * - :doc:`xml`
-      - Defines how to bind models to XML.
-
+.. _additional-specifications:
 
 -------------------------
 Additional specifications
@@ -72,6 +73,7 @@ enhancements.
     * - :doc:`mqtt`
       - Defines how to bind models to MQTT.
 
+.. _aws-specifications:
 
 ------------------
 AWS specifications
@@ -87,11 +89,13 @@ AWS specifications
     aws-iam
     amazon-apigateway
     aws-restjson1-protocol
-    aws-json-protocols
+    aws-json-1_0-protocol
+    aws-json-1_1-protocol
     aws-restxml-protocol
     aws-query-protocol
+    aws-ec2-query-protocol
 
-AWS-specific specifications are defined below.
+AWS specifications are defined below.
 
 .. list-table::
     :widths: 45 55
@@ -103,12 +107,24 @@ AWS-specific specifications are defined below.
     * - :doc:`aws-iam`
       - Defines AWS IAM traits.
     * - :doc:`amazon-apigateway`
-      - Defines Amazon API Gateway integrations.
-    * - :doc:`aws-restjson1-protocol`
+      - Defines Amazon API Gateway traits.
+
+
+AWS Protocols
+=============
+
+.. list-table::
+    :widths: 45 55
+
+    * - :doc:`aws.protocols#restJson1 <aws-restjson1-protocol>`
       - Defines the AWS restJson1 protocol.
-    * - :doc:`aws-json-protocols`
-      - Defines the AWS JSON 1.0 and 1.1 protocols.
-    * - :doc:`aws-restxml-protocol`
+    * - :doc:`aws.protocols#awsJson1_0 <aws-json-1_0-protocol>`
+      - Defines the AWS JSON 1.0 protocol.
+    * - :doc:`aws.protocols#awsJson1_1 <aws-json-1_1-protocol>`
+      - Defines the AWS JSON 1.1 protocol.
+    * - :doc:`aws.protocols#restXml <aws-restxml-protocol>`
       - Defines the AWS restXml protocol.
-    * - :doc:`aws-query-protocol`
+    * - :doc:`aws.protocols#awsQuery <aws-query-protocol>`
       - Defines the AWS query protocol.
+    * - :doc:`aws.protocols#ec2Query <aws-ec2-query-protocol>`
+      - Defines the Amazon EC2 query protocol.
