@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "1.0.0",
     "shapes": {
         "example.smithy#EmptyOperation": {
             "type": "operation"

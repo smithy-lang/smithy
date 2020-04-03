@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP header bindings.
 // See: https://awslabs.github.io/smithy/spec/http.html#httpheader-trait
 
-$version: "1.0"
+$version: "1.0.0"
 
 namespace aws.protocoltests.restxml
 

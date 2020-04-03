@@ -120,7 +120,7 @@ weather service.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "example.weather#Weather": {
                     "type": "service",
@@ -175,7 +175,7 @@ identifiers, operations, and any number of child resources.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "example.weather#Weather": {
                     "type": "service",
@@ -241,7 +241,7 @@ Each ``City`` has a single ``Forecast``. This can be defined by adding the
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "example.weather#City": {
                     "type": "resource",
@@ -350,7 +350,7 @@ Let's define the operation used to "read" a ``City``.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "example.weather#GetCity": {
                     "type": "operation",
@@ -500,7 +500,7 @@ cities, so there's no way we could provide a ``City`` identifier.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "example.weather#Weather": {
                     "type": "service",
@@ -642,7 +642,7 @@ service.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "example.weather#Weather": {
                     "type": "service",
@@ -836,7 +836,7 @@ Complete example
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "example.weather#Weather": {
                     "type": "service",

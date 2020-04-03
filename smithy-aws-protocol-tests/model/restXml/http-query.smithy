@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP query string bindings.
 // See: https://awslabs.github.io/smithy/spec/http.html#httpquery-trait
 
-$version: "1.0"
+$version: "1.0.0"
 
 namespace aws.protocoltests.restxml
 

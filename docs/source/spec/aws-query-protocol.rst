@@ -44,7 +44,7 @@ See
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -90,7 +90,7 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -133,7 +133,7 @@ when serializing an INPUT. For example, given the following Smithy model:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyStruct": {
                     "type": "structure",

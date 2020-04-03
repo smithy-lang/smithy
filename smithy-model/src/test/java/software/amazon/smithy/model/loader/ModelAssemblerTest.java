@@ -102,7 +102,7 @@ public class ModelAssemblerTest {
     @Test
     public void addsExplicitDocumentNode_1_0() {
         ObjectNode node = Node.objectNode()
-                .withMember("smithy", "1.0")
+                .withMember("smithy", "1.0.0")
                 .withMember("shapes", Node.objectNode()
                         .withMember("ns.foo#String", Node.objectNode()
                                 .withMember("type", Node.from("string"))));

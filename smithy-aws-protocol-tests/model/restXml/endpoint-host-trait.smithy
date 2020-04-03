@@ -1,7 +1,7 @@
 // This file defines test cases that change the endpoint based on the endpoint trait.
 // See: https://awslabs.github.io/smithy/spec/core.html#endpoint-trait
 
-$version: "1.0"
+$version: "1.0.0"
 
 namespace aws.protocoltests.restxml
 

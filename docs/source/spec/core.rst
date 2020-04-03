@@ -68,12 +68,12 @@ example sets the version to "|version|":
 
     .. code-tab:: smithy
 
-        $version: "1.0"
+        $version: "1.0.0"
 
     .. code-tab:: json
 
         {
-            "smithy": "1.0"
+            "smithy": "1.0.0"
         }
 
 When no version number is specified in the IDL, an implementation will assume
@@ -116,7 +116,7 @@ are defined.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "metadata": {
                 "foo": "baz",
                 "hello": "bar",
@@ -160,7 +160,7 @@ The following example defines a string shape named ``MyString`` in the
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string"
@@ -256,7 +256,7 @@ The following example defines a shape for each simple type in the
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#Blob": {
                     "type": "blob"
@@ -406,7 +406,7 @@ The following example defines a list with a string member from the
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyList": {
                     "member": {
@@ -431,7 +431,7 @@ Traits can be applied to the list shape and its member:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyList": {
                     "member": {
@@ -466,7 +466,7 @@ definition using an ``apply`` statement:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyList": {
                     "type": "apply",
@@ -506,7 +506,7 @@ The following example defines a set of strings:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#StringSet": {
                     "member": {
@@ -534,7 +534,7 @@ Traits can be applied to the set shape and its members:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#StringSet": {
                     "member": {
@@ -586,7 +586,7 @@ The following example defines a map of strings to integers:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#IntegerMap": {
                     "key": {
@@ -621,7 +621,7 @@ Traits can be applied to the map shape and its members:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#IntegerMap": {
                     "key": {
@@ -687,7 +687,7 @@ The following example defines a structure with two members:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -723,7 +723,7 @@ using the ``apply`` statement:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -781,7 +781,7 @@ The following example defines a union shape with several members:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyUnion": {
                     "type": "structure",
@@ -836,7 +836,7 @@ targets the ``MyString`` shape in the same namespace.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyList": {
                     "member": {
@@ -860,7 +860,7 @@ Traits can be attached to members before the member definition:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyList": {
                     "member": {
@@ -887,7 +887,7 @@ applied to shapes outside of their definition in the JSON AST using the
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyList$member": {
                     "type": "apply",
@@ -949,7 +949,7 @@ The following shape definition is invalid:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#RecursiveList": {
                     "type": "list",
@@ -977,7 +977,7 @@ The following shape definition is valid:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#ValidList": {
                     "type": "list",
@@ -1038,7 +1038,7 @@ service. A service is defined using a :token:`service_statement`.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -1097,7 +1097,7 @@ that do not fit within a resource hierarchy.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -1140,7 +1140,7 @@ shape ID of a resource to the ``resources`` property of a service.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -1236,7 +1236,7 @@ can potentially return the ``NotFound`` or ``BadRequest``
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyOperation": {
                     "type": "operation",
@@ -1280,7 +1280,7 @@ named ``Input``:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyOperation": {
                     "type": "operation",
@@ -1314,7 +1314,7 @@ structure named ``Output``:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyOperation": {
                     "type": "operation",
@@ -1351,7 +1351,7 @@ returns no output, and can potentially return the
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyOperation": {
                     "type": "operation",
@@ -1452,7 +1452,7 @@ single identifier named ``forecastId`` that targets the ``ForecastId`` shape:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#Forecast": {
                     "type": "resource",
@@ -1511,7 +1511,7 @@ For example, given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#ResourceA": {
                     "type": "resource",
@@ -1596,7 +1596,7 @@ define an ``identifiers`` property that is compatible with their parents:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#ResourceA": {
                     "type": "resource",
@@ -1717,7 +1717,7 @@ For example, given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#Forecast": {
                     "type": "resource",
@@ -1802,7 +1802,7 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#Forecast": {
                     "type": "resource",
@@ -2312,7 +2312,7 @@ For example, given the following Smithy model:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "1.0.0",
         "shapes": {
             "smithy.example#MyStructure": {
                 "type": "structure",
@@ -2459,7 +2459,7 @@ JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "1.0",
+        "smithy": "1.0.0",
         "metadata": {
             "String": "smithy.api#String"
         }
@@ -2481,7 +2481,7 @@ defined in the prelude are available inside of the ``smithy.api`` namespace.
     :caption: Smithy prelude
     :name: prelude-shapes
 
-    $version: "1.0"
+    $version: "1.0.0"
 
     namespace smithy.api
 
@@ -2572,7 +2572,7 @@ to ``MyString``:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -2610,7 +2610,7 @@ The following example applies the :ref:`documentation-trait` and
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "apply",
@@ -2680,7 +2680,7 @@ following example defines an annotation trait named ``foo``:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#foo": {
                     "type": "structure",
@@ -2719,7 +2719,7 @@ The following applications of the ``foo`` annotation trait are all equivalent:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyString1": {
                     "type": "string",
@@ -2770,7 +2770,7 @@ example and the following example are all valid even after adding a member to th
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#foo": {
                     "type": "structure",
@@ -2885,7 +2885,7 @@ The following example defines a trait named ``myTraitName`` in the
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#myTraitName": {
                     "type": "structure",
@@ -2920,7 +2920,7 @@ namespace:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -3017,7 +3017,7 @@ The following example defines two custom traits: ``beta`` and
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#beta": {
                     "type": "apply",
@@ -3212,7 +3212,7 @@ is wrapped in an `Option type`_.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#BoxedInteger": {
                     "type": "integer",
@@ -3269,7 +3269,7 @@ The ``deprecated`` trait is a structure that supports the following members:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#SomeString": {
                     "type": "string",
@@ -3518,7 +3518,7 @@ The following example defines an enum of valid string values for ``MyString``.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -3617,7 +3617,7 @@ contain a valid shape ID that targets an integer shape in the model.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#integerRef": {
                     "type": "string",
@@ -3660,7 +3660,7 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#InvalidShape1": {
                     "type": "string",
@@ -3763,7 +3763,7 @@ blob         The size of the blob in bytes
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -3807,7 +3807,7 @@ languages.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -3884,7 +3884,7 @@ of the targeted numeric shape to which it is applied.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyInt": {
                     "type": "integer",
@@ -3932,7 +3932,7 @@ in a response.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -3974,7 +3974,7 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyList": {
                     "type": "list",
@@ -4245,7 +4245,7 @@ explicitly on the operation.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#GetFoos": {
                     "type": "operation",
@@ -4330,7 +4330,7 @@ settings from a service.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#Example": {
                     "type": "service",
@@ -4413,7 +4413,7 @@ wrapper where the output token and items are referenced by paths.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#GetFoos": {
                     "type": "operation",
@@ -4635,7 +4635,7 @@ to call ``CreateTable`` on a table that already exists will return an error.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#Table": {
                     "type": "resource",
@@ -4900,7 +4900,7 @@ The following example defines a service that supports both the hypothetical
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#WeatherService": {
                     "type": "service",
@@ -4982,7 +4982,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -5159,7 +5159,7 @@ and the hypothetical ``fooExample`` authentication scheme.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#WeatherService": {
                     "type": "service",
@@ -5408,7 +5408,7 @@ The following example defines two operations:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#AuthenticatedService": {
                     "type": "service",
@@ -5522,7 +5522,7 @@ For example, given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#Foo": {
                     "type": "structure",
@@ -5838,7 +5838,7 @@ The following example defines an operation that uses a custom endpoint:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",
@@ -5904,7 +5904,7 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",
@@ -5973,7 +5973,7 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",
@@ -6038,7 +6038,7 @@ invalid because the ``{foo}`` and ``{bar}`` labels are adjacent:
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",
@@ -6106,7 +6106,7 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",
@@ -6196,7 +6196,7 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
     .. code-tab:: json
 
         {
-            "smithy": "1.0",
+            "smithy": "1.0.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",

@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "1.0.0",
     "shapes": {
         "aws.iam#actionPermissionDescription": {
             "type": "string",
