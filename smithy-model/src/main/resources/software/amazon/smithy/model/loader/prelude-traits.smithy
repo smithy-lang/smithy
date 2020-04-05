@@ -10,11 +10,26 @@ structure trait {
     selector: String,
 
     /// Whether or not only a single member in a structure can have this trait.
-    structurallyExclusive: PrimitiveBoolean,
+    structurallyExclusive: StructurallyExclusive,
 
     /// The traits that this trait conflicts with.
     conflicts: NonEmptyStringList,
 }
+
+@private
+@enum([
+    {
+        name: "MEMBER",
+        value: "member",
+        documentation: "Only a single member of a structure can be marked with the trait."
+    },
+    {
+        name: "TARGET",
+        value: "target",
+        documentation: "Only a single member of a structure can target a shape marked with this trait."
+    }
+])
+string StructurallyExclusive
 
 /// Indicates that a shape is boxed.
 ///
@@ -186,7 +201,7 @@ structure idempotent {}
 /// Defines the input member of an operation that is used by the server to
 /// identify and discard replayed requests.
 @trait(selector: ":test(member:of(structure) > string)",
-       structurallyExclusive: true)
+       structurallyExclusive: "member")
 structure idempotencyToken {}
 
 /// The jsonName trait allows a serialized object property name to differ
@@ -299,7 +314,7 @@ string since
 /// Indicates that the the data stored in the shape is very large and should not
 /// be stored in memory, or that the size of the data stored in the shape is
 /// unknown at the start of a request
-@trait(selector: "blob")
+@trait(selector: "blob", structurallyExclusive: "target")
 @tags(["diff.error.const"])
 structure streaming {
     /// Indicates that the stream must have a known size.
@@ -469,7 +484,7 @@ string httpHeader
 
 /// Binds a map of key-value pairs to prefixed HTTP headers.
 @trait(selector: ":test(member:of(structure) > map > member[id|member=value] > :test(simpleType, collection > member > simpleType))",
-       structurallyExclusive: true,
+       structurallyExclusive: "member",
        conflicts: [httpLabel, httpQuery, httpHeader, httpPayload])
 @tags(["diff.error.const"])
 string httpPrefixHeaders
@@ -477,7 +492,7 @@ string httpPrefixHeaders
 /// Binds a single structure member to the body of an HTTP request.
 @trait(selector: ":test(member:of(structure) > :test(string, blob, structure, union))",
        conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders],
-       structurallyExclusive: true)
+       structurallyExclusive: "member")
 @tags(["diff.error.const"])
 structure httpPayload {}
 
@@ -526,7 +541,7 @@ list NonEmptyStringList {
 /// Marks a member as the payload of an event.
 @trait(selector: "member:of(structure):test(> :each(blob, string, structure, union))",
        conflicts: [eventHeader],
-       structurallyExclusive: true)
+       structurallyExclusive: "member")
 @tags(["diff.error.const"])
 structure eventPayload {}
 
@@ -541,7 +556,7 @@ structure eventHeader {}
 /// an operation, and must target a union or structure. The
 /// targeted member must not be marked as required.
 @trait(selector: "operation -[input, output]-> structure > :test(member > :each(structure, union))",
-       structurallyExclusive: true,
+       structurallyExclusive: "member",
        conflicts: [required])
 @tags(["diff.error.const"])
 structure eventStream {}
