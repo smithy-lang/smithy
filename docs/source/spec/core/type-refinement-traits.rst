@@ -168,8 +168,9 @@ optional members:
         ``content-length`` header must be set.
 
 Shapes targeted by this trait MAY NOT be used outside of top level operation
-inputs and operation outputs. Additionally, only one member of a structure may
-target a shape with this trait.
+inputs and operation outputs. Additionally, the ``streaming`` trait is
+*structurally exclusive by target*, meaning only a single member of a
+structure can target a shape marked as ``streaming``.
 
 .. tabs::
 

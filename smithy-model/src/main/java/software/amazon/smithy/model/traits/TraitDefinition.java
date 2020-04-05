@@ -19,11 +19,12 @@ import static software.amazon.smithy.model.node.Node.loadArrayOfString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.selector.Selector;
@@ -40,6 +41,20 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class TraitDefinition extends AbstractTrait implements ToSmithyBuilder<TraitDefinition> {
     public static final ShapeId ID = ShapeId.from("smithy.api#trait");
 
+    /** The structural exclusion semantics of the trait. */
+    public enum StructurallyExclusive {
+        /** The trait can only be applied to a single member of a structure. */
+        MEMBER,
+
+        /** Only a single structure member can target a shape marked with the trait. */
+        TARGET;
+
+        @Override
+        public String toString() {
+            return super.toString().toLowerCase(Locale.ENGLISH);
+        }
+    }
+
     public static final String SELECTOR_KEY = "selector";
     public static final String STRUCTURALLY_EXCLUSIVE_KEY = "structurallyExclusive";
     public static final String CONFLICTS_KEY = "conflicts";
@@ -49,7 +64,7 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
 
     private final Selector selector;
     private final List<ShapeId> conflicts;
-    private final boolean structurallyExclusive;
+    private final StructurallyExclusive structurallyExclusive;
 
     public TraitDefinition(TraitDefinition.Builder builder) {
         super(ID, builder.sourceLocation);
@@ -88,10 +103,26 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
     }
 
     /**
-     * @return Returns true if the trait is structurally exclusive.
+     * Gets the {@code structurallyExclusive} property of the trait.
+     *
+     * @return Returns the {@code structurallyExclusive} property of the trait.
      */
-    public boolean isStructurallyExclusive() {
-        return structurallyExclusive;
+    public Optional<StructurallyExclusive> getStructurallyExclusive() {
+        return Optional.ofNullable(structurallyExclusive);
+    }
+
+    /**
+     * @return Returns true if the trait is {@code structurallyExclusive} by member.
+     */
+    public boolean isStructurallyExclusiveByMember() {
+        return structurallyExclusive == StructurallyExclusive.MEMBER;
+    }
+
+    /**
+     * @return Returns true if the trait is {@code structurallyExclusive} by target.
+     */
+    public boolean isStructurallyExclusiveByTarget() {
+        return structurallyExclusive == StructurallyExclusive.TARGET;
     }
 
     @Override
@@ -109,9 +140,9 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
                     .collect(ArrayNode.collect()));
         }
 
-        if (isStructurallyExclusive()) {
-            builder.withMember(STRUCTURALLY_EXCLUSIVE_KEY, Node.from(true));
-        }
+        builder.withOptionalMember(
+                STRUCTURALLY_EXCLUSIVE_KEY,
+                getStructurallyExclusive().map(StructurallyExclusive::toString).map(Node::from));
 
         return builder.build();
     }
@@ -122,7 +153,7 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
     public static final class Builder extends AbstractTraitBuilder<TraitDefinition, Builder> {
         private Selector selector = Selector.IDENTITY;
         private final List<ShapeId> conflicts = new ArrayList<>();
-        private boolean structurallyExclusive;
+        private StructurallyExclusive structurallyExclusive;
 
         private Builder() {}
 
@@ -153,7 +184,7 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
             return this;
         }
 
-        public Builder structurallyExclusive(boolean structurallyExclusive) {
+        public Builder structurallyExclusive(StructurallyExclusive structurallyExclusive) {
             this.structurallyExclusive = structurallyExclusive;
             return this;
         }
@@ -182,8 +213,12 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
                     .map(Selector::fromNode)
                     .ifPresent(builder::selector);
 
-            members.getBooleanMember(TraitDefinition.STRUCTURALLY_EXCLUSIVE_KEY)
-                    .map(BooleanNode::getValue)
+            members.getStringMember(TraitDefinition.STRUCTURALLY_EXCLUSIVE_KEY)
+                    .map(node -> node.expectOneOf(
+                            StructurallyExclusive.MEMBER.toString(),
+                            StructurallyExclusive.TARGET.toString()))
+                    .map(string -> string.toUpperCase(Locale.ENGLISH))
+                    .map(StructurallyExclusive::valueOf)
                     .ifPresent(builder::structurallyExclusive);
 
             members.getMember(TraitDefinition.CONFLICTS_KEY)

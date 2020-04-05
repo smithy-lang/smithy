@@ -33,6 +33,17 @@ public class TraitDefinitionTest {
     }
 
     @Test
+    public void isomorphicBuilder() {
+        TraitDefinition trait = TraitDefinition.builder()
+                .selector(Selector.parse("string"))
+                .addConflict("com.foo#baz")
+                .structurallyExclusive(TraitDefinition.StructurallyExclusive.MEMBER)
+                .build();
+
+        assertThat(trait.toBuilder().build(), equalTo(trait));
+    }
+
+    @Test
     public void comparesAndHashCodeWhenShapeIsNull() {
         TraitDefinition a = TraitDefinition.builder().selector(Selector.parse("string")).build();
         TraitDefinition b = TraitDefinition.builder().selector(Selector.parse("string")).build();
