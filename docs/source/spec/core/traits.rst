@@ -452,9 +452,11 @@ members:
         namespace, ``smithy.api``. Conflict shape IDs MAY reference unknown
         trait shapes that are not defined in the model.
     * - structurallyExclusive
-      - boolean
-      - Requires that only a single member of a structure can be marked with
-        the trait.
+      - string
+      - One of "member" or "target". When set to "member", only a single
+        member of a structure can be marked with the trait. When set to
+        "target", only a single member of a structure can target a shape
+        marked with this trait.
 
 The following example defines two custom traits: ``beta`` and
 ``structuredTrait``:
