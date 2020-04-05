@@ -31,43 +31,18 @@ import software.amazon.smithy.utils.SetUtils;
 public class StreamingTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        Set<MemberShape> streamingMembers = model.shapes(MemberShape.class)
-                .filter(member -> member.getMemberTrait(model, StreamingTrait.class).isPresent())
-                .collect(Collectors.toSet());
-
-        List<ValidationEvent> events = validateShapesOnlyUsedAtTopLevel(model, streamingMembers);
-        events.addAll(validateOnlyOneStreamPerStructure(model, streamingMembers));
-        return events;
-    }
-
-    private List<ValidationEvent> validateShapesOnlyUsedAtTopLevel(Model model, Set<MemberShape> streamingMembers) {
         Set<ShapeId> topLevelIoShapes = model.shapes(OperationShape.class)
                 .flatMap(operation -> SetUtils.of(operation.getInput(), operation.getOutput()).stream())
                 .flatMap(OptionalUtils::stream)
                 .collect(Collectors.toSet());
 
-        return streamingMembers.stream()
+        return model.shapes(MemberShape.class)
+                .filter(member -> member.getMemberTrait(model, StreamingTrait.class).isPresent())
                 .filter(member -> !topLevelIoShapes.contains(member.getContainer()))
                 .map(member -> error(member, String.format(
                         "The shape %s has the smithy.api#streaming trait, and so may only be targeted by "
-                                + "top-level operation inputs and outputs.",
+                        + "top-level operation inputs and outputs.",
                         member.getTarget())))
-                .collect(Collectors.toList());
-    }
-
-    private List<ValidationEvent> validateOnlyOneStreamPerStructure(Model model, Set<MemberShape> streamingMembers) {
-        return streamingMembers.stream()
-                .collect(Collectors.groupingBy(MemberShape::getContainer)).entrySet().stream()
-                .filter(entry -> entry.getValue().size() > 1)
-                .map(entry -> {
-                    String streamingTargets = entry.getValue().stream()
-                            .sorted()
-                            .map(member -> member.toShapeId().toString())
-                            .collect(Collectors.joining(", "));
-                    return error(model.expectShape(entry.getKey()), String.format(
-                            "Structures may only target one shape with the smithy.api#streaming trait, but found [%s]",
-                            streamingTargets));
-                })
                 .collect(Collectors.toList());
     }
 }

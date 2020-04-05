@@ -820,8 +820,8 @@ Value type
 Conflicts with
    :ref:`eventheader-trait`
 Validation
-    1. This trait is *structurally exclusive*, meaning only a single member
-       of a structure can be targeted by the trait.
+    1. This trait is *structurally exclusive by member*, meaning only a
+       single member of a structure can be targeted by the trait.
     2. If the ``eventPayload`` trait is applied to a structure member,
        then all other members of the structure MUST be marked with the
        ``eventHeader`` trait.
