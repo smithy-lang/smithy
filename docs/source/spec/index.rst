@@ -12,17 +12,17 @@ Smithy is split into several specifications.
     :backlinks: none
 
 
-.. _core-specification:
+.. _smithy-specification:
 
-------------------
-Core specification
-------------------
+--------------------
+Smithy specification
+--------------------
 
 .. toctree::
     :numbered:
     :maxdepth: 3
 
-    core/index
+    Introduction <core/index>
     core/lexical-structure
     core/shapes
     core/prelude-model

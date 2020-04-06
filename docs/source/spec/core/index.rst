@@ -1,6 +1,6 @@
-============
-Introduction
-============
+====================
+Smithy specification
+====================
 
 Smithy is an interface definition language and set of tools used to
 build clients, servers, and other kinds of artifacts through
