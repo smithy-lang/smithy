@@ -15,8 +15,10 @@
 
 package software.amazon.smithy.openapi;
 
+import java.util.List;
 import software.amazon.smithy.build.JsonSubstitutions;
 import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.utils.ListUtils;
 
 public final class OpenApiConstants {
     /** The supported version of OpenAPI. */
@@ -50,6 +52,21 @@ public final class OpenApiConstants {
 
     /** Adds support for OpenAPI's "externalDocs" keyword. */
     public static final String OPEN_API_USE_EXTERNAL_DOCS = "openapi.use.externalDocs";
+
+    /**
+     * Limits the source of converted "externalDocs" fields to the specified
+     * priority ordered list of names in an {@code externalDocumentation}
+     * trait. This list is case insensitive. The value must be an
+     * {@link ArrayNode} of Strings.
+     *
+     * By default, this is a list of the following values: "homepage", "api reference",
+     * "user guide", "developer guide", "reference", and "guide".
+     */
+    public static final String OPEN_API_CONVERTED_EXTERNAL_DOCS = "openapi.externalDocs";
+
+    /** The default set of converted "externalDocs" entry names when enabled. */
+    public static final List<String> OPEN_API_DEFAULT_CONVERTED_EXTERNAL_DOCS =
+            ListUtils.of("homepage", "api reference", "user guide", "developer guide", "reference", "guide");
 
     /** Adds support for OpenAPI's custom JSON Schema formats. */
     public static final String OPEN_API_USE_FORMATS = "openapi.use.formats";

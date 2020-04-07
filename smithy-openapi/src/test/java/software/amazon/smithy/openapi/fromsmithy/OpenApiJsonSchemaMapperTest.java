@@ -27,6 +27,7 @@ import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.jsonschema.SchemaDocument;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
@@ -82,10 +83,11 @@ public class OpenApiJsonSchemaMapperTest {
 
     @Test
     public void supportsExternalDocs() {
+        String key = "Homepage";
         String link = "https://foo.com";
         StringShape shape = StringShape.builder()
                 .id("a.b#C")
-                .addTrait(new ExternalDocumentationTrait(link))
+                .addTrait(ExternalDocumentationTrait.builder().addUrl(key, link).build())
                 .build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder()
@@ -95,7 +97,37 @@ public class OpenApiJsonSchemaMapperTest {
                 .build()
                 .convertShape(shape);
 
-        Node.assertEquals(document.getRootSchema().getExtension("externalDocs").get(), Node.from(link));
+        ObjectNode expectedDocs = ObjectNode.objectNodeBuilder()
+                .withMember("description", key)
+                .withMember("url", link)
+                .build();
+        Node.assertEquals(document.getRootSchema().getExtension("externalDocs").get(), expectedDocs);
+    }
+
+    @Test
+    public void supportsCustomExternalDocNames() {
+        String key = "CuStOm NaMe";
+        String link = "https://foo.com";
+        StringShape shape = StringShape.builder()
+                .id("a.b#C")
+                .addTrait(ExternalDocumentationTrait.builder().addUrl(key, link).build())
+                .build();
+        Model model = Model.builder().addShape(shape).build();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(Node.objectNodeBuilder()
+                        .withMember(OpenApiConstants.OPEN_API_MODE, true)
+                        .withMember(OpenApiConstants.OPEN_API_CONVERTED_EXTERNAL_DOCS, Node.fromStrings("Custom Name"))
+                        .build())
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .model(model)
+                .build()
+                .convertShape(shape);
+
+        ObjectNode expectedDocs = ObjectNode.objectNodeBuilder()
+                .withMember("description", key)
+                .withMember("url", link)
+                .build();
+        Node.assertEquals(document.getRootSchema().getExtension("externalDocs").get(), expectedDocs);
     }
 
     @Test

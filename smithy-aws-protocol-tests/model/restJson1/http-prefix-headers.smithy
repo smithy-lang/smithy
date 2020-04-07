@@ -12,7 +12,7 @@ use smithy.test#httpResponseTests
 /// This examples adds headers to the input of a request and response by prefix.
 @readonly
 @http(uri: "/HttpPrefixHeaders", method: "GET")
-@externalDocumentation("https://awslabs.github.io/smithy/spec/http.html#httpprefixheaders-trait")
+@externalDocumentation("httpPrefixHeaders Trait": "https://awslabs.github.io/smithy/spec/http.html#httpprefixheaders-trait")
 operation HttpPrefixHeaders  {
     input: HttpPrefixHeadersInputOutput,
     output: HttpPrefixHeadersInputOutput

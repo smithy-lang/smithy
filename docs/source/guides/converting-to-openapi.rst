@@ -196,6 +196,28 @@ openapi.use.xml (boolean)
     Enables converting Smithy XML traits to OpenAPI XML properties. (this
     feature is not yet implemented).
 
+openapi.externalDocs ([string])
+    Limits the source of converted "externalDocs" fields to the specified
+    priority ordered list of names in an :ref:`externaldocumentation-trait`.
+    This list is case insensitive. By default, this is a list of the following
+    values: "Homepage", "API Reference", "User Guide", "Developer Guide",
+    "Reference", and "Guide".
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "openapi.externalDocs": [
+                        "Homepage",
+                        "Custom"
+                    ]
+                }
+            }
+        }
+
 openapi.keepUnusedComponents (boolean)
     Set to ``true`` to prevent unused components from being removed from the
     created specification.
