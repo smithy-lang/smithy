@@ -1,1 +1,2 @@
-[ERROR] ns.foo#Invalid: Error creating trait `externalDocumentation`: externalDocumentation must be a valid URL. Found invalid! | Model
+[ERROR] ns.foo#Invalid: Error creating trait `externalDocumentation`: Each externalDocumentation value must be a valid URL. Found "invalid!" for name "Homepage" | Model
+[ERROR] ns.foo#Invalid2: Error validating trait `externalDocumentation`: Value provided for `smithy.api#externalDocumentation` must have at least 1 entries, but the provided value only has 0 entries | TraitValue

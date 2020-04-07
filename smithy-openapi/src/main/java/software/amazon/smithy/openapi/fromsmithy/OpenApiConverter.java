@@ -45,14 +45,12 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.model.ComponentsObject;
-import software.amazon.smithy.openapi.model.ExternalDocumentation;
 import software.amazon.smithy.openapi.model.InfoObject;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
@@ -348,9 +346,8 @@ public final class OpenApiConverter {
         mapper.before(context, openapi);
 
         // The externalDocumentation trait of the service maps to externalDocs.
-        service.getTrait(ExternalDocumentationTrait.class)
-                .ifPresent(trait -> openapi.externalDocs(
-                        ExternalDocumentation.builder().url(trait.getValue()).build()));
+        OpenApiJsonSchemaMapper.getResolvedExternalDocs(service, context.getConfig())
+                .ifPresent(openapi::externalDocs);
 
         // Include @tags trait tags that are compatible with OpenAPI settings.
         if (environment.context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_TAGS)) {

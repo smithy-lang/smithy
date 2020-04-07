@@ -245,17 +245,21 @@ These values use the same semantics and format as
 -------------------------------
 
 Summary
-    Provides a link to external documentation for a shape.
+    Provides named links to external documentation for a shape.
 Trait selector
     ``*``
 Value type
-    ``string`` containing a valid URL.
+    ``map`` of ``string`` containing a name to ``string`` containing a valid
+    URL.
 
 .. tabs::
 
     .. code-tab:: smithy
 
-        @externalDocumentation("https://www.example.com/")
+        @externalDocumentation(
+            "Homepage": "https://www.example.com/",
+            "API Reference": "https://www.example.com/api-ref",
+        )
         service MyService {
             version: "2006-03-01",
         }

@@ -15,18 +15,28 @@
 
 package software.amazon.smithy.openapi.fromsmithy;
 
+import static java.util.function.Function.identity;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.model.ExternalDocumentation;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
@@ -60,9 +70,9 @@ public class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
         boolean enabled = config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_MODE);
 
         if (enabled || config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_USE_EXTERNAL_DOCS)) {
-            shape.getTrait(ExternalDocumentationTrait.class)
-                    .map(ExternalDocumentationTrait::getValue)
-                    .ifPresent(docs -> builder.putExtension("externalDocs", Node.from(docs)));
+            getResolvedExternalDocs(shape, config)
+                    .map(ExternalDocumentation::toNode)
+                    .ifPresent(docs -> builder.putExtension("externalDocs", docs));
         }
 
         if (enabled || config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_USE_NULLABLE)) {
@@ -107,5 +117,39 @@ public class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
         }
 
         return builder;
+    }
+
+    static Optional<ExternalDocumentation> getResolvedExternalDocs(Shape shape, ObjectNode config) {
+        Optional<ExternalDocumentationTrait> traitOptional = shape.getTrait(ExternalDocumentationTrait.class);
+        if (!traitOptional.isPresent()) {
+            return Optional.empty();
+        }
+
+        // Get the valid list of lower case names to look for when converting.
+        List<String> externalDocKeys = config.getArrayMember(OpenApiConstants.OPEN_API_CONVERTED_EXTERNAL_DOCS)
+                .map(node -> node.getElementsAs(StringNode::getValue))
+                .orElse(OpenApiConstants.OPEN_API_DEFAULT_CONVERTED_EXTERNAL_DOCS)
+                .stream()
+                .map(s -> s.toLowerCase(Locale.US))
+                .collect(Collectors.toList());
+
+        // Get lower case keys to check for when converting.
+        Map<String, String> traitUrls = traitOptional.get().getUrls();
+        Map<String, String> lowercaseKeyMap = traitUrls.keySet().stream()
+                .collect(MapUtils.toUnmodifiableMap(i -> i.toLowerCase(Locale.US), identity()));
+        for (String externalDocKey : externalDocKeys) {
+            // Compare the lower case name, but use the specified name.
+            if (lowercaseKeyMap.containsKey(externalDocKey)) {
+                String traitKey = lowercaseKeyMap.get(externalDocKey);
+                // Return an ExternalDocumentation object assembled from the trait.
+                return Optional.of(ExternalDocumentation.builder()
+                        .description(traitKey)
+                        .url(traitUrls.get(traitKey))
+                        .build());
+            }
+        }
+
+        // We didn't find any external docs with the a name in the specified set.
+        return Optional.empty();
     }
 }

@@ -88,7 +88,7 @@ public class MemberShapeTest {
         Shape target = StringShape.builder()
                 .id("foo.baz#Bar")
                 .addTrait(new DocumentationTrait("hi"))
-                .addTrait(new ExternalDocumentationTrait("http://example.com"))
+                .addTrait(ExternalDocumentationTrait.builder().addUrl("Ref", "http://example.com").build())
                 .build();
         MemberShape member = MemberShape.builder()
                 .id("foo.baz#Bar$member")
@@ -101,7 +101,7 @@ public class MemberShapeTest {
                 member.getMemberTrait(model, DocumentationTrait.class).get().getValue(),
                 equalTo("override"));
         assertThat(
-                member.getMemberTrait(model, ExternalDocumentationTrait.class).get().getValue(),
+                member.getMemberTrait(model, ExternalDocumentationTrait.class).get().getUrls().get("Ref"),
                 equalTo("http://example.com"));
         assertThat(
                 member.findMemberTrait(model, "documentation"),

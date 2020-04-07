@@ -8,7 +8,9 @@
                     "selector": "service"
                 },
                 "smithy.api#documentation": "Specifies the source of the caller identifier that will be used to throttle API methods that require a key.",
-                "smithy.api#externalDocumentation": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html",
+                "smithy.api#externalDocumentation": {
+                    "Developer Guide": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html"
+                },
                 "smithy.api#tags": [
                     "internal"
                 ]
