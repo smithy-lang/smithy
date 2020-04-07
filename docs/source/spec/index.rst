@@ -84,47 +84,9 @@ AWS specifications
 .. toctree::
     :maxdepth: 1
 
-    aws-core
-    aws-auth
-    aws-iam
-    amazon-apigateway
-    aws-restjson1-protocol
-    aws-json-1_0-protocol
-    aws-json-1_1-protocol
-    aws-restxml-protocol
-    aws-query-protocol
-    aws-ec2-query-protocol
+    aws/index
 
-AWS specifications are defined below.
+Smithy AWS specifications define protocols, authentication schemes,
+and traits used to model AWS services.
 
-.. list-table::
-    :widths: 45 55
-
-    * - :doc:`aws-core`
-      - Defines core traits used to integrate Smithy models with AWS.
-    * - :doc:`aws-auth`
-      - Defines AWS authentication schemes.
-    * - :doc:`aws-iam`
-      - Defines AWS IAM traits.
-    * - :doc:`amazon-apigateway`
-      - Defines Amazon API Gateway traits.
-
-
-AWS Protocols
-=============
-
-.. list-table::
-    :widths: 45 55
-
-    * - :doc:`aws.protocols#restJson1 <aws-restjson1-protocol>`
-      - Defines the AWS restJson1 protocol.
-    * - :doc:`aws.protocols#awsJson1_0 <aws-json-1_0-protocol>`
-      - Defines the AWS JSON 1.0 protocol.
-    * - :doc:`aws.protocols#awsJson1_1 <aws-json-1_1-protocol>`
-      - Defines the AWS JSON 1.1 protocol.
-    * - :doc:`aws.protocols#restXml <aws-restxml-protocol>`
-      - Defines the AWS restXml protocol.
-    * - :doc:`aws.protocols#awsQuery <aws-query-protocol>`
-      - Defines the AWS query protocol.
-    * - :doc:`aws.protocols#ec2Query <aws-ec2-query-protocol>`
-      - Defines the Amazon EC2 query protocol.
+* :doc:`aws/index`
