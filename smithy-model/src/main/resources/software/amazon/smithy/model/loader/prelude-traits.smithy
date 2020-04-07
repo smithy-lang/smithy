@@ -57,7 +57,11 @@ string documentation
 
 /// Provides a link to additional documentation.
 @trait
-string externalDocumentation
+@length(min: 1)
+map externalDocumentation {
+    key: NonEmptyString,
+    value: NonEmptyString
+}
 
 /// Defines the list of authentication schemes supported by a service or operation.
 @trait(selector: ":test(service, operation)")
@@ -108,21 +112,21 @@ structure authDefinition {
 /// on a service or operation.
 @trait(selector: "service")
 @authDefinition
-@externalDocumentation("https://tools.ietf.org/html/rfc2617.html")
+@externalDocumentation("RFC 2617": "https://tools.ietf.org/html/rfc2617.html")
 structure httpBasicAuth {}
 
 /// Enables HTTP Digest Authentication as defined in RFC 2617
 /// on a service or operation.
 @trait(selector: "service")
 @authDefinition
-@externalDocumentation("https://tools.ietf.org/html/rfc2617.html")
+@externalDocumentation("RFC 2617": "https://tools.ietf.org/html/rfc2617.html")
 structure httpDigestAuth {}
 
 /// Enables HTTP Bearer Authentication as defined in RFC 6750
 /// on a service or operation.
 @trait(selector: "service")
 @authDefinition
-@externalDocumentation("https://tools.ietf.org/html/rfc6750.html")
+@externalDocumentation("RFC 6750": "https://tools.ietf.org/html/rfc6750.html")
 structure httpBearerAuth {}
 
 /// An HTTP-specific authentication scheme that sends an arbitrary

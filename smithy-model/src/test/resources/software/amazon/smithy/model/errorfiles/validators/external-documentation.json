@@ -5,14 +5,25 @@
             "type": "service",
             "version": "2017-01-17",
             "traits": {
-                "smithy.api#externalDocumentation": "https://www.example.com"
+                "smithy.api#externalDocumentation": {
+                    "Homepage": "https://www.example.com"
+                }
             }
         },
         "ns.foo#Invalid": {
             "type": "service",
             "version": "2017-01-17",
             "traits": {
-                "smithy.api#externalDocumentation": "invalid!"
+                "smithy.api#externalDocumentation": {
+                    "Homepage": "invalid!"
+                }
+            }
+        },
+        "ns.foo#Invalid2": {
+            "type": "service",
+            "version": "2017-01-17",
+            "traits": {
+                "smithy.api#externalDocumentation": {}
             }
         }
     }

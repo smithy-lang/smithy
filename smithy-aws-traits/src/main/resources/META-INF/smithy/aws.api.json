@@ -24,7 +24,9 @@
                 "smithy.api#trait": {
                     "selector": "resource"
                 },
-                "smithy.api#externalDocumentation": "https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html",
+                "smithy.api#externalDocumentation": {
+                    "Reference": "https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html"
+                },
                 "smithy.api#documentation": "Specifies an ARN template for the resource."
             }
         },
