@@ -6,8 +6,6 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -27,7 +25,8 @@ public class DeconflictingStrategyTest {
         Model model = Model.builder().addShapes(str, integer, a, b, memberA, memberB).build();
 
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
-        RefStrategy strategy = RefStrategy.createDefaultStrategy(model, Node.objectNode(), propertyNamingStrategy);
+        RefStrategy strategy = RefStrategy
+                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy);
         assertThat(strategy.toPointer(a.getId()), equalTo("#/definitions/Page"));
         assertThat(strategy.toPointer(b.getId()), equalTo("#/definitions/PageComFoo"));
     }
@@ -40,16 +39,16 @@ public class DeconflictingStrategyTest {
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
 
         Assertions.assertThrows(ConflictingShapeNameException.class, () -> {
-            RefStrategy.createDefaultStrategy(model, Node.objectNode(), propertyNamingStrategy);
+            RefStrategy.createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy);
         });
     }
 
     @Test
     public void deconflictingStrategyPassesThroughToDelegate() {
-        ObjectNode config = Node.objectNode();
         Model model = Model.builder().build();
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
-        RefStrategy strategy = RefStrategy.createDefaultStrategy(model, config, propertyNamingStrategy);
+        RefStrategy strategy = RefStrategy
+                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy);
 
         assertThat(strategy.toPointer(ShapeId.from("com.foo#Nope")), equalTo("#/definitions/Nope"));
     }
