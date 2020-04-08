@@ -28,13 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.function.Predicate;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -189,10 +186,8 @@ public class JsonSchemaConverterTest {
     @Test
     public void addsExtensionsFromConfig() {
         Model model = Model.builder().build();
-        ObjectNode config = Node.objectNodeBuilder()
-                .withMember(JsonSchemaConstants.SCHEMA_DOCUMENT_EXTENSIONS, Node.objectNode()
-                        .withMember("foo", Node.from("bar")))
-                .build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setSchemaDocumentExtensions(Node.objectNode().withMember("foo", Node.from("bar")));
         SchemaDocument doc = JsonSchemaConverter.builder().config(config).model(model).build().convert();
 
         assertThat(doc.getDefinitions().keySet(), empty());
@@ -429,10 +424,10 @@ public class JsonSchemaConverterTest {
         MemberShape member = MemberShape.builder().id("a.b#Union$foo").target("smithy.api#String").build();
         UnionShape union = UnionShape.builder().id("a.b#Union").addMember(member).build();
         Model model = Model.builder().addShapes(union, member, string).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setUnionStrategy(JsonSchemaConfig.UnionStrategy.OBJECT);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder()
-                                .withMember(JsonSchemaConstants.UNION_STRATEGY, "object")
-                                .build())
+                .config(config)
                 .model(model)
                 .build()
                 .convertShape(union);
@@ -449,10 +444,10 @@ public class JsonSchemaConverterTest {
         MemberShape member = MemberShape.builder().id("a.b#Union$foo").target("smithy.api#String").build();
         UnionShape union = UnionShape.builder().id("a.b#Union").addMember(member).build();
         Model model = Model.builder().addShapes(union, member, string).build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setUnionStrategy(JsonSchemaConfig.UnionStrategy.STRUCTURE);
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder()
-                                .withMember(JsonSchemaConstants.UNION_STRATEGY, "structure")
-                                .build())
+                .config(config)
                 .model(model)
                 .build()
                 .convertShape(union);
@@ -461,23 +456,6 @@ public class JsonSchemaConverterTest {
         assertThat(schema.getOneOf(), empty());
         assertThat(schema.getType().get(), equalTo("object"));
         assertThat(schema.getProperties().keySet(), contains("foo"));
-    }
-
-    @Test
-    public void throwsForUnsupportUnionSetting() {
-        Assertions.assertThrows(SmithyJsonSchemaException.class, () -> {
-            StringShape string = StringShape.builder().id("smithy.api#String").build();
-            MemberShape member = MemberShape.builder().id("a.b#Union$foo").target("smithy.api#String").build();
-            UnionShape union = UnionShape.builder().id("a.b#Union").addMember(member).build();
-            Model model = Model.builder().addShapes(union, member, string).build();
-            JsonSchemaConverter.builder()
-                    .config(Node.objectNodeBuilder()
-                                    .withMember(JsonSchemaConstants.UNION_STRATEGY, "not-valid")
-                                    .build())
-                    .model(model)
-                    .build()
-                    .convert();
-        });
     }
 
     @Test
@@ -500,20 +478,5 @@ public class JsonSchemaConverterTest {
         SchemaDocument document3 = converter2.convert();
         SchemaDocument document4 = converter2.toBuilder().build().convert();
         assertThat(document3, equalTo(document4));
-    }
-
-    @Test
-    public void addsSchemaDocumentExtensions() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("test-service.json"))
-                .assemble()
-                .unwrap();
-        JsonSchemaConverter converter = JsonSchemaConverter.builder()
-                .model(model)
-                .putConfig(JsonSchemaConstants.SCHEMA_DOCUMENT_EXTENSIONS, Node.objectNode().withMember("foo", "bar"))
-                .build();
-        SchemaDocument document = converter.convert();
-
-        assertThat(document.getExtension("foo"), equalTo(Optional.of(Node.from("bar"))));
     }
 }

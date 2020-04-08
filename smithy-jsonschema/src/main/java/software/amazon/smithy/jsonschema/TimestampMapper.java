@@ -15,16 +15,14 @@
 
 package software.amazon.smithy.jsonschema;
 
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 
 /**
  * Updates builders based on timestamp shapes, timestampFormat traits, and
- * the value of {@link JsonSchemaConstants#DEFAULT_TIMESTAMP_FORMAT}.
+ * the value of {@link JsonSchemaConfig#getDefaultTimestampFormat()}.
  */
 final class TimestampMapper implements JsonSchemaMapper {
-    private static final String DEFAULT_TIMESTAMP_FORMAT = TimestampFormatTrait.DATE_TIME;
 
     @Override
     public byte getOrder() {
@@ -32,7 +30,7 @@ final class TimestampMapper implements JsonSchemaMapper {
     }
 
     @Override
-    public Schema.Builder updateSchema(Shape shape, Schema.Builder builder, ObjectNode config) {
+    public Schema.Builder updateSchema(Shape shape, Schema.Builder builder, JsonSchemaConfig config) {
         String format = extractTimestampFormat(shape, config);
 
         if (format == null) {
@@ -52,13 +50,11 @@ final class TimestampMapper implements JsonSchemaMapper {
         }
     }
 
-    private static String extractTimestampFormat(Shape shape, ObjectNode config) {
+    private static String extractTimestampFormat(Shape shape, JsonSchemaConfig config) {
         if (shape.isTimestampShape() || shape.hasTrait(TimestampFormatTrait.class)) {
             return shape.getTrait(TimestampFormatTrait.class)
                     .map(TimestampFormatTrait::getValue)
-                    .orElseGet(() -> config.getStringMemberOrDefault(
-                            JsonSchemaConstants.DEFAULT_TIMESTAMP_FORMAT,
-                            DEFAULT_TIMESTAMP_FORMAT));
+                    .orElseGet(() -> config.getDefaultTimestampFormat().toString());
         }
 
         return null;

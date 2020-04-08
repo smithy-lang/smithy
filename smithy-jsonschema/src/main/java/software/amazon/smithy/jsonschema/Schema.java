@@ -802,80 +802,80 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         }
 
         /**
-         * Applies a "disable.X" key to a schema builder.
+         * Applies a "disableX" key to a schema builder.
          *
-         * @param disableKey Disable key to apply (e.g., "disable.propertyNames").
+         * @param disableKey Disable key to apply (e.g., "disablePropertyNames").
          * @return Returns the builder.
          */
         public Builder disableProperty(String disableKey) {
             switch (disableKey) {
-                case JsonSchemaConstants.DISABLE_CONST:
+                case "const":
                     return this.constValue(null);
-                case JsonSchemaConstants.DISABLE_DEFAULT:
+                case "default":
                     return this.defaultValue(null);
-                case JsonSchemaConstants.DISABLE_ENUM:
+                case "enum":
                     return this.enumValues(null);
-                case JsonSchemaConstants.DISABLE_MULTIPLE_OF:
+                case "multipleOf":
                     return this.multipleOf(null);
-                case JsonSchemaConstants.DISABLE_MAXIMUM:
+                case "maximum":
                     return this.maximum(null);
-                case JsonSchemaConstants.DISABLE_EXCLUSIVE_MAXIMUM:
+                case "exclusiveMaximum":
                     return this.exclusiveMaximum(null);
-                case JsonSchemaConstants.DISABLE_MINIMUM:
+                case "minimum":
                     return this.minimum(null);
-                case JsonSchemaConstants.DISABLE_EXCLUSIVE_MINIMUM:
+                case "exclusiveMinimum":
                     return this.exclusiveMinimum(null);
-                case JsonSchemaConstants.DISABLE_MAX_LENGTH:
+                case "maxLength":
                     return this.maxLength(null);
-                case JsonSchemaConstants.DISABLE_MIN_LENGTH:
+                case "minLength":
                     return this.minLength(null);
-                case JsonSchemaConstants.DISABLE_PATTERN:
+                case "pattern":
                     return this.pattern(null);
-                case JsonSchemaConstants.DISABLE_ITEMS:
+                case "items":
                     return this.items(null);
-                case JsonSchemaConstants.DISABLE_MAX_ITEMS:
+                case "maxItems":
                     return this.maxItems(null);
-                case JsonSchemaConstants.DISABLE_MIN_ITEMS:
+                case "minItems":
                     return this.minItems(null);
-                case JsonSchemaConstants.DISABLE_UNIQUE_ITEMS:
+                case "uniqueItems":
                     return this.uniqueItems(false);
-                case JsonSchemaConstants.DISABLE_PROPERTIES:
+                case "properties":
                     return this.properties(null);
-                case JsonSchemaConstants.DISABLE_ADDITIONAL_PROPERTIES:
+                case "additionalProperties":
                     return this.additionalProperties(null);
-                case JsonSchemaConstants.DISABLE_REQUIRED:
+                case "required":
                     return this.required(null);
-                case JsonSchemaConstants.DISABLE_MAX_PROPERTIES:
+                case "maxProperties":
                     return this.maxProperties(null);
-                case JsonSchemaConstants.DISABLE_MIN_PROPERTIES:
+                case "minProperties":
                     return this.minProperties(null);
-                case JsonSchemaConstants.DISABLE_PROPERTY_NAMES:
+                case "propertyNames":
                     return this.propertyNames(null);
-                case JsonSchemaConstants.DISABLE_ALL_OF:
+                case "allOf":
                     return this.allOf(null);
-                case JsonSchemaConstants.DISABLE_ANY_OF:
+                case "anyOf":
                     return this.anyOf(null);
-                case JsonSchemaConstants.DISABLE_ONE_OF:
+                case "oneOf":
                     return this.oneOf(null);
-                case JsonSchemaConstants.DISABLE_NOT:
+                case "not":
                     return this.not(null);
-                case JsonSchemaConstants.DISABLE_TITLE:
+                case "title":
                     return this.title(null);
-                case JsonSchemaConstants.DISABLE_DESCRIPTION:
+                case "description":
                     return this.description(null);
-                case JsonSchemaConstants.DISABLE_FORMAT:
+                case "format":
                     return this.format(null);
-                case JsonSchemaConstants.DISABLE_READ_ONLY:
+                case "readOnly":
                     return this.readOnly(false);
-                case JsonSchemaConstants.DISABLE_WRITE_ONLY:
+                case "writeOnly":
                     return this.writeOnly(false);
-                case JsonSchemaConstants.DISABLE_COMMENT:
+                case "comment":
                     return this.comment(null);
-                case JsonSchemaConstants.DISABLE_CONTENT_ENCODING:
+                case "contentEncoding":
                     return this.contentEncoding(null);
-                case JsonSchemaConstants.DISABLE_CONTENT_MEDIA_TYPE:
+                case "contentMediaType":
                     return this.contentMediaType(null);
-                case JsonSchemaConstants.DISABLE_EXAMPLES:
+                case "examples":
                     return this.examples(null);
                 default:
                     LOGGER.warning("Unknown JSON Schema config 'disable' property: " + disableKey);

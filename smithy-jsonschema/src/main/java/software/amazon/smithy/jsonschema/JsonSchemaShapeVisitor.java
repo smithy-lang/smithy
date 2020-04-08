@@ -53,9 +53,6 @@ import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.utils.ListUtils;
 
 final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
-    private static final String UNION_STRATEGY_ONE_OF = "oneOf";
-    private static final String UNION_STRATEGY_OBJECT = "object";
-    private static final String UNION_STRATEGY_STRUCTURE = "structure";
 
     private final Model model;
     private final JsonSchemaConverter converter;
@@ -185,15 +182,14 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
 
     @Override
     public Schema unionShape(UnionShape shape) {
-        String unionStrategy = converter.getConfig().getStringMemberOrDefault(
-                JsonSchemaConstants.UNION_STRATEGY, UNION_STRATEGY_ONE_OF);
+        JsonSchemaConfig.UnionStrategy unionStrategy = converter.getConfig().getUnionStrategy();
 
         switch (unionStrategy) {
-            case UNION_STRATEGY_OBJECT:
+            case OBJECT:
                 return buildSchema(shape, createBuilder(shape, "object"));
-            case UNION_STRATEGY_STRUCTURE:
+            case STRUCTURE:
                 return structuredShape(shape, shape.getAllMembers().values());
-            case UNION_STRATEGY_ONE_OF:
+            case ONE_OF:
                 List<Schema> schemas = new ArrayList<>();
                 for (MemberShape member : shape.getAllMembers().values()) {
                     String memberName = converter.toPropertyName(member);
@@ -205,8 +201,7 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
                 }
                 return buildSchema(shape, createBuilder(shape, "object").type(null).oneOf(schemas));
             default:
-                throw new SmithyJsonSchemaException(String.format(
-                        "Unknown %s strategy: %s", JsonSchemaConstants.UNION_STRATEGY, unionStrategy));
+                throw new SmithyJsonSchemaException(String.format("Unsupported union strategy: %s", unionStrategy));
         }
     }
 

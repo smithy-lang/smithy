@@ -15,12 +15,11 @@
 
 package software.amazon.smithy.jsonschema;
 
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
  * Removes keywords from a Schema builder that have been disabled using
- * the settings object {@code disable.*} flags.
+ * {@link JsonSchemaConfig#setDisableFeatures}.
  */
 final class DisableMapper implements JsonSchemaMapper {
     @Override
@@ -29,9 +28,9 @@ final class DisableMapper implements JsonSchemaMapper {
     }
 
     @Override
-    public Schema.Builder updateSchema(Shape shape, Schema.Builder schema, ObjectNode config) {
-        for (String key : config.getMembersByPrefix("disable.").keySet()) {
-            schema.disableProperty(key);
+    public Schema.Builder updateSchema(Shape shape, Schema.Builder schema, JsonSchemaConfig config) {
+        for (String feature : config.getDisableFeatures()) {
+            schema.disableProperty(feature);
         }
 
         return schema;

@@ -16,7 +16,6 @@
 package software.amazon.smithy.jsonschema;
 
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -27,7 +26,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * future if we *really* need to. Ideally we don't.
  */
 interface RefStrategy {
-    String DEFAULT_POINTER = "#/definitions";
 
     /**
      * Given a shape ID, returns the value used in a $ref to refer to it.
@@ -63,7 +61,7 @@ interface RefStrategy {
      * the following ref is created "#/definitions/SmithyExampleFoo".
      *
      * <p>This implementation honors the value configured in
-     * {@link JsonSchemaConstants#DEFINITION_POINTER} to create a $ref
+     * {@link JsonSchemaConfig#getDefinitionPointer()} to create a $ref
      * pointer to a shape.
      *
      * @param model Model being converted.
@@ -73,7 +71,7 @@ interface RefStrategy {
      */
     static RefStrategy createDefaultStrategy(
             Model model,
-            ObjectNode config,
+            JsonSchemaConfig config,
             PropertyNamingStrategy propertyNamingStrategy
     ) {
         RefStrategy delegate = new DefaultRefStrategy(model, config, propertyNamingStrategy);

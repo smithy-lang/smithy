@@ -54,7 +54,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
 
     private final Model model;
     private final PropertyNamingStrategy propertyNamingStrategy;
-    private final ObjectNode config;
+    private final JsonSchemaConfig config;
     private final Predicate<Shape> shapePredicate;
     private final RefStrategy refStrategy;
     private final List<JsonSchemaMapper> realizedMappers;
@@ -95,8 +95,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
         visitor = new JsonSchemaShapeVisitor(model, this, realizedMappers);
 
         // Compute the number of segments in the root definition section.
-        rootDefinitionPointer = config.getStringMemberOrDefault(
-                JsonSchemaConstants.DEFINITION_POINTER, RefStrategy.DEFAULT_POINTER);
+        rootDefinitionPointer = config.getDefinitionPointer();
         rootDefinitionSegments = countSegments(rootDefinitionPointer);
         LOGGER.fine(() -> "Using the following root JSON schema pointer: " + rootDefinitionPointer
                           + " (" + rootDefinitionSegments + " segments)");
@@ -147,7 +146,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
      *
      * @return Returns the config object.
      */
-    public ObjectNode getConfig() {
+    public JsonSchemaConfig getConfig() {
         return config;
     }
 
@@ -179,7 +178,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
      * Checks if the given JSON pointer points to a top-level definition.
      *
      * <p>Note that this expects the pointer to exactly start with the same
-     * string that is configured as {@link JsonSchemaConstants#DEFINITION_POINTER},
+     * string that is configured as {@link JsonSchemaConfig#getDefinitionPointer()},
      * or the default value of "#/definitions". If the number of segments
      * in the provided pointer is also equal to the number of segments
      * in the default pointer + 1, then it is considered a top-level pointer.
@@ -274,10 +273,12 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
     }
 
     private void addExtensions(SchemaDocument.Builder builder) {
-        getConfig().getObjectMember(JsonSchemaConstants.SCHEMA_DOCUMENT_EXTENSIONS).ifPresent(extensions -> {
+        ObjectNode extensions = config.getSchemaDocumentExtensions();
+
+        if (!extensions.isEmpty()) {
             LOGGER.fine(() -> "Adding JSON schema extensions: " + Node.prettyPrintJson(extensions));
             builder.extensions(extensions);
-        });
+        }
     }
 
     @Override
@@ -296,7 +297,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
         private Model model;
         private ShapeId rootShape;
         private PropertyNamingStrategy propertyNamingStrategy = DEFAULT_PROPERTY_STRATEGY;
-        private ObjectNode config = Node.objectNode();
+        private JsonSchemaConfig config = new JsonSchemaConfig();
         private Predicate<Shape> shapePredicate = shape -> true;
         private final List<JsonSchemaMapper> mappers = new ArrayList<>();
 
@@ -349,31 +350,8 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
          * @param config Config to use.
          * @return Returns the converter.
          */
-        public Builder config(ObjectNode config) {
+        public Builder config(JsonSchemaConfig config) {
             this.config = Objects.requireNonNull(config);
-            return this;
-        }
-
-        /**
-         * Merges the current config object with the given config object.
-         *
-         * @param config Config to merge with.
-         * @return Returns the converter.
-         */
-        public Builder mergeConfig(ObjectNode config) {
-            this.config = this.config.merge(Objects.requireNonNull(config));
-            return this;
-        }
-
-        /**
-         * Sets a configuration setting.
-         *
-         * @param key Key to set.
-         * @param value Value to set.
-         * @return Returns the converter.
-         */
-        public Builder putConfig(String key, Node value) {
-            this.config = this.config.withMember(key, value);
             return this;
         }
 
