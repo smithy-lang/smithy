@@ -479,4 +479,38 @@ public class JsonSchemaConverterTest {
         SchemaDocument document4 = converter2.toBuilder().build().convert();
         assertThat(document3, equalTo(document4));
     }
+
+    @Test
+    public void canGetAndSetExtensionsAsPojo() {
+        Ext ext = new Ext();
+        ext.setBaz("hi");
+        ext.setFoo(true);
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.putExtensions(ext);
+        Ext ext2 = config.getExtensions(Ext.class);
+
+        assertThat(ext2.getBaz(), equalTo("hi"));
+        assertThat(ext2.isFoo(), equalTo(true));
+    }
+
+    public static final class Ext {
+        private boolean foo;
+        private String baz;
+
+        public boolean isFoo() {
+            return foo;
+        }
+
+        public void setFoo(boolean foo) {
+            this.foo = foo;
+        }
+
+        public String getBaz() {
+            return baz;
+        }
+
+        public void setBaz(String baz) {
+            this.baz = baz;
+        }
+    }
 }

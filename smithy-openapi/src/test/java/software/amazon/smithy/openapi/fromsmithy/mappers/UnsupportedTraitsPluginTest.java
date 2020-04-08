@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 
@@ -29,8 +29,10 @@ public class UnsupportedTraitsPluginTest {
 
     @Test
     public void logsWhenUnsupportedTraitsAreFound() {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setIgnoreUnsupportedTraits(true);
         OpenApiConverter.create()
-                .putSetting(OpenApiConstants.IGNORE_UNSUPPORTED_TRAITS, true)
+                .config(config)
                 .convert(model, ShapeId.from("smithy.example#EndpointService"));
     }
 

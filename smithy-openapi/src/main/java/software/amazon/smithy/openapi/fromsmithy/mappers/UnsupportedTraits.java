@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -63,7 +62,7 @@ public final class UnsupportedTraits implements OpenApiMapper {
                        + "model directly, they have no direct corollary in OpenAPI and can not be included in "
                        + "the generated model.");
 
-        if (context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.IGNORE_UNSUPPORTED_TRAITS)) {
+        if (context.getConfig().getIgnoreUnsupportedTraits()) {
             LOGGER.warning(message.toString());
         } else {
             throw new OpenApiException(message.toString());

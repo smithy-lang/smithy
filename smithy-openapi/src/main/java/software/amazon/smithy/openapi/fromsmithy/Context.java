@@ -24,18 +24,18 @@ import software.amazon.smithy.jsonschema.JsonSchemaConverter;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.jsonschema.SchemaDocument;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
 
 /**
  * Smithy to OpenAPI conversion context object.
  */
 public final class Context<T extends Trait> {
+
     private final Model model;
     private final ServiceShape service;
     private final JsonSchemaConverter jsonSchemaConverter;
@@ -44,10 +44,12 @@ public final class Context<T extends Trait> {
     private final SchemaDocument schemas;
     private final List<SecuritySchemeConverter<? extends Trait>> securitySchemeConverters;
     private Map<String, Schema> synthesizedSchemas = Collections.synchronizedMap(new TreeMap<>());
+    private OpenApiConfig config;
 
-    public Context(
+    Context(
             Model model,
             ServiceShape service,
+            OpenApiConfig config,
             JsonSchemaConverter jsonSchemaConverter,
             OpenApiProtocol<T> openApiProtocol,
             SchemaDocument schemas,
@@ -55,6 +57,7 @@ public final class Context<T extends Trait> {
     ) {
         this.model = model;
         this.service = service;
+        this.config = config;
         this.jsonSchemaConverter = jsonSchemaConverter;
         this.protocolTrait = service.expectTrait(openApiProtocol.getProtocolType());
         this.openApiProtocol = openApiProtocol;
@@ -81,14 +84,14 @@ public final class Context<T extends Trait> {
     }
 
     /**
-     * Gets the queryable configuration object used for the conversion.
+     * Gets the configuration object used for the conversion.
      *
      * <p>Plugins can query this object for configuration values.
      *
      * @return Returns the configuration object.
      */
-    public ObjectNode getConfig() {
-        return jsonSchemaConverter.getConfig();
+    public OpenApiConfig getConfig() {
+        return config;
     }
 
     /**
@@ -227,6 +230,6 @@ public final class Context<T extends Trait> {
      */
     public String putSynthesizedSchema(String name, Schema schema) {
         synthesizedSchemas.put(Objects.requireNonNull(name), Objects.requireNonNull(schema));
-        return OpenApiConstants.SCHEMA_COMPONENTS_POINTER + "/" + name;
+        return config.getDefinitionPointer() + "/" + name;
     }
 }

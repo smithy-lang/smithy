@@ -16,11 +16,11 @@
 package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.util.Map;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -35,6 +35,9 @@ import software.amazon.smithy.openapi.model.OpenApi;
  * This is run after substitutions so it is unaffected by them.
  */
 public final class OpenApiJsonAdd implements OpenApiMapper {
+
+    private static final Logger LOGGER = Logger.getLogger(OpenApiJsonAdd.class.getName());
+
     @Override
     public byte getOrder() {
         // This is run after substitutions.
@@ -43,20 +46,24 @@ public final class OpenApiJsonAdd implements OpenApiMapper {
 
     @Override
     public ObjectNode updateNode(Context<? extends Trait> context, OpenApi openapi, ObjectNode node) {
-        return context.getConfig().getObjectMember(OpenApiConstants.JSON_ADD)
-                .map(add -> {
-                    ObjectNode result = node;
-                    for (Map.Entry<String, Node> entry : add.getStringMap().entrySet()) {
-                        try {
-                            result = NodePointer.parse(entry.getKey())
-                                    .addWithIntermediateValues(result, entry.getValue().toNode())
-                                    .expectObjectNode();
-                        } catch (IllegalArgumentException e) {
-                            throw new OpenApiException(e.getMessage(), e);
-                        }
-                    }
-                    return result;
-                })
-                .orElse(node);
+        Map<String, Node> add = context.getConfig().getJsonAdd();
+
+        if (add.isEmpty()) {
+            return node;
+        }
+
+        ObjectNode result = node;
+        for (Map.Entry<String, Node> entry : add.entrySet()) {
+            try {
+                LOGGER.info(() -> "OpenAPI `jsonAdd`: adding `" + entry.getKey() + "`");
+                result = NodePointer.parse(entry.getKey())
+                        .addWithIntermediateValues(result, entry.getValue().toNode())
+                        .expectObjectNode();
+            } catch (IllegalArgumentException e) {
+                throw new OpenApiException(e.getMessage(), e);
+            }
+        }
+
+        return result;
     }
 }

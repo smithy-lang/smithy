@@ -70,6 +70,14 @@ public final class NodeMapper {
             public void handle(Class<?> into, String pointer, String property, Node value) {
                 LOGGER.warning(createMessage(property, pointer, into, value));
             }
+        },
+
+        /**
+         * Ignores unknown properties.
+         */
+        INGORE {
+            public void handle(Class<?> into, String pointer, String property, Node value) {
+            }
         };
 
         /**

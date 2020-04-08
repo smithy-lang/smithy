@@ -29,14 +29,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.jsonschema.JsonSchemaConstants;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.PathItem;
@@ -74,9 +73,11 @@ public class OpenApiConverterTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setTags(true);
+        config.setSupportedTags(ListUtils.of("baz", "foo"));
         OpenApi result = OpenApiConverter.create()
-                .putSetting(OpenApiConstants.OPEN_API_TAGS, true)
-                .putSetting(OpenApiConstants.OPEN_API_SUPPORTED_TAGS, Node.fromStrings("baz", "foo"))
+                .config(config)
                 .convert(model, ShapeId.from("smithy.example#Service"));
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("tagged-service.openapi.json")));
@@ -116,8 +117,10 @@ public class OpenApiConverterTest {
 
     @Test
     public void loadsProtocolFromConfiguration() {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setProtocol(ShapeId.from("aws.protocols#restJson1"));
         ObjectNode result = OpenApiConverter.create()
-                .putSetting(OpenApiConstants.PROTOCOL, "aws.protocols#restJson1")
+                .config(config)
                 .convertToNode(testService, ShapeId.from("example.rest#RestService"));
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("test-service.openapi.json")));
@@ -143,8 +146,10 @@ public class OpenApiConverterTest {
     @Test
     public void failsWhenConfiguredProtocolIsNoFound() {
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
+            OpenApiConfig config = new OpenApiConfig();
+            config.setProtocol(ShapeId.from("aws.protocols#restJson99"));
             OpenApiConverter.create()
-                    .putSetting(OpenApiConstants.PROTOCOL, "aws.protocols#restJson99")
+                    .config(config)
                     .convertToNode(testService, ShapeId.from("example.rest#RestService"));
         });
 
@@ -267,9 +272,10 @@ public class OpenApiConverterTest {
 
     @Test
     public void mergesInSchemaDocumentExtensions() {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setSchemaDocumentExtensions(Node.objectNode().withMember("foo", "baz"));
         ObjectNode result = OpenApiConverter.create()
-                .putSetting(JsonSchemaConstants.SCHEMA_DOCUMENT_EXTENSIONS, Node.objectNode()
-                        .withMember("foo", "baz"))
+                .config(config)
                 .convertToNode(testService, ShapeId.from("example.rest#RestService"));
 
         assertThat(result.getMember("foo"), equalTo(Optional.of(Node.from("baz"))));
@@ -283,8 +289,10 @@ public class OpenApiConverterTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setProtocol(ShapeId.from("aws.protocols#restJson1"));
         ObjectNode result = OpenApiConverter.create()
-                .putSetting(OpenApiConstants.PROTOCOL, "aws.protocols#restJson1")
+                .config(config)
                 .convertToNode(model, ShapeId.from("smithy.example#Streaming"));
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("streaming-service.openapi.json")));

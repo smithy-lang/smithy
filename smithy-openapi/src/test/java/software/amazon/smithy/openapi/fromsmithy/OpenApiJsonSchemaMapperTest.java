@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.jsonschema.JsonSchemaConstants;
 import software.amazon.smithy.jsonschema.JsonSchemaConverter;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.jsonschema.SchemaDocument;
@@ -40,7 +39,8 @@ import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
+import software.amazon.smithy.utils.ListUtils;
 
 public class OpenApiJsonSchemaMapperTest {
     @Test
@@ -51,11 +51,8 @@ public class OpenApiJsonSchemaMapperTest {
                 .assemble()
                 .unwrap();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder()
-                        .withMember(OpenApiConstants.OPEN_API_MODE, true)
-                        .withMember(JsonSchemaConstants.DEFINITION_POINTER, OpenApiConstants.SCHEMA_COMPONENTS_POINTER)
-                        .build())
                 .addMapper(new OpenApiJsonSchemaMapper())
+                .config(new OpenApiConfig())
                 .model(model)
                 .build()
                 .convert();
@@ -71,7 +68,6 @@ public class OpenApiJsonSchemaMapperTest {
         MapShape shape = MapShape.builder().id("smithy.example#Map").key(key).value(value).build();
         Model model = Model.builder().addShapes(string, shape, key, value).build();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()
@@ -91,8 +87,8 @@ public class OpenApiJsonSchemaMapperTest {
                 .build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
+                .config(new OpenApiConfig())
                 .model(model)
                 .build()
                 .convertShape(shape);
@@ -101,6 +97,7 @@ public class OpenApiJsonSchemaMapperTest {
                 .withMember("description", key)
                 .withMember("url", link)
                 .build();
+
         Node.assertEquals(document.getRootSchema().getExtension("externalDocs").get(), expectedDocs);
     }
 
@@ -113,11 +110,10 @@ public class OpenApiJsonSchemaMapperTest {
                 .addTrait(ExternalDocumentationTrait.builder().addUrl(key, link).build())
                 .build();
         Model model = Model.builder().addShape(shape).build();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setExternalDocs(ListUtils.of("Custom Name"));
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder()
-                        .withMember(OpenApiConstants.OPEN_API_MODE, true)
-                        .withMember(OpenApiConstants.OPEN_API_CONVERTED_EXTERNAL_DOCS, Node.fromStrings("Custom Name"))
-                        .build())
+                .config(config)
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()
@@ -135,7 +131,6 @@ public class OpenApiJsonSchemaMapperTest {
         IntegerShape shape = IntegerShape.builder().id("a.b#C").addTrait(new BoxTrait()).build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()
@@ -149,7 +144,6 @@ public class OpenApiJsonSchemaMapperTest {
         IntegerShape shape = IntegerShape.builder().id("a.b#C").addTrait(DeprecatedTrait.builder().build()).build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()
@@ -163,7 +157,6 @@ public class OpenApiJsonSchemaMapperTest {
         IntegerShape shape = IntegerShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()
@@ -177,7 +170,6 @@ public class OpenApiJsonSchemaMapperTest {
         LongShape shape = LongShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()
@@ -191,7 +183,6 @@ public class OpenApiJsonSchemaMapperTest {
         FloatShape shape = FloatShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()
@@ -205,7 +196,6 @@ public class OpenApiJsonSchemaMapperTest {
         DoubleShape shape = DoubleShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()
@@ -219,7 +209,7 @@ public class OpenApiJsonSchemaMapperTest {
         BlobShape shape = BlobShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
+                .config(new OpenApiConfig())
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()
@@ -232,11 +222,10 @@ public class OpenApiJsonSchemaMapperTest {
     public void blobFormatOverriddenToBinary() {
         BlobShape shape = BlobShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setDefaultBlobFormat("binary");
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder()
-                                .withMember(OpenApiConstants.OPEN_API_MODE, true)
-                                .withMember(OpenApiConstants.OPEN_API_DEFAULT_BLOB_FORMAT, "binary")
-                                .build())
+                .config(config)
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()
@@ -250,7 +239,6 @@ public class OpenApiJsonSchemaMapperTest {
         StringShape shape = StringShape.builder().id("a.b#C").addTrait(new SensitiveTrait()).build();
         Model model = Model.builder().addShape(shape).build();
         SchemaDocument document = JsonSchemaConverter.builder()
-                .config(Node.objectNodeBuilder().withMember(OpenApiConstants.OPEN_API_MODE, true).build())
                 .addMapper(new OpenApiJsonSchemaMapper())
                 .model(model)
                 .build()

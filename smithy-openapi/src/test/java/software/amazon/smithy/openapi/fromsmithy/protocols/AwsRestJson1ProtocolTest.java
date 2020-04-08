@@ -10,7 +10,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
@@ -57,8 +57,10 @@ public class AwsRestJson1ProtocolTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setJsonContentType("application/x-amz-json-1.0");
         OpenApi result = OpenApiConverter.create()
-                .putSetting(OpenApiConstants.AWS_JSON_CONTENT_TYPE, "application/x-amz-json-1.0")
+                .config(config)
                 .convert(model, ShapeId.from("smithy.example#Service"));
 
         Assertions.assertTrue(Node.printJson(result.toNode()).contains("application/x-amz-json-1.0"));
