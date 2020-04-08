@@ -17,126 +17,100 @@ package software.amazon.smithy.openapi.fromsmithy;
 
 import static java.util.function.Function.identity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import software.amazon.smithy.jsonschema.JsonSchemaConfig;
 import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.model.ExternalDocumentation;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
- * Applies OpenAPI extensions to a {@link Schema}.
+ * Applies OpenAPI extensions to a {@link Schema} using configuration settings
+ * found in {@link OpenApiConfig}.
  *
- * <p>This mapper understands the following setting:
- *
- * <ul>
- *     <li>{@link OpenApiConstants#OPEN_API_MODE}: Enables all features.</li>
- *     <li>{@link OpenApiConstants#OPEN_API_USE_EXTERNAL_DOCS}: Adds the external
- *     docs property if a shape has the {@code externalDocumentation} trait.</li>
- *     <li>{@link OpenApiConstants#OPEN_API_USE_NULLABLE}: Adds the
- *     {@code nullable} property if a shape is boxed.</li>
- *     <li>{@link OpenApiConstants#OPEN_API_USE_DEPRECATED}: Adds the
- *     {@code deprecated} property if a shape has the corresponding trait.</li>
- *     <li>{@link OpenApiConstants#OPEN_API_USE_XML}: Uses XML traits to
- *     place OpenAPI XML definitions on schemas.</li>
- * </ul>
+ * <p>Note: the properties and features added by this mapper can be removed using
+ * {@link OpenApiConfig#setDisableFeatures}.
  */
 public class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
-    private static final Logger LOGGER = Logger.getLogger(OpenApiJsonSchemaMapper.class.getName());
-    private static final String DEFAULT_BLOB_FORMAT = "byte";
 
     /** See https://swagger.io/docs/specification/data-models/keywords/. */
     private static final Set<String> UNSUPPORTED_KEYWORD_DIRECTIVES = SetUtils.of(
-            "disable.propertyNames",
-            "disable.contentMediaType");
+            "propertyNames",
+            "contentMediaType");
 
     @Override
-    public Schema.Builder updateSchema(Shape shape, Schema.Builder builder, ObjectNode config) {
-        boolean enabled = config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_MODE);
+    public Schema.Builder updateSchema(Shape shape, Schema.Builder builder, JsonSchemaConfig config) {
+        getResolvedExternalDocs(shape, config)
+                .map(ExternalDocumentation::toNode)
+                .ifPresent(docs -> builder.putExtension("externalDocs", docs));
 
-        if (enabled || config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_USE_EXTERNAL_DOCS)) {
-            getResolvedExternalDocs(shape, config)
-                    .map(ExternalDocumentation::toNode)
-                    .ifPresent(docs -> builder.putExtension("externalDocs", docs));
+        if (shape.hasTrait(BoxTrait.class)) {
+            builder.putExtension("nullable", Node.from(true));
         }
 
-        if (enabled || config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_USE_NULLABLE)) {
-            if (shape.hasTrait(BoxTrait.class)) {
-                builder.putExtension("nullable", Node.from(true));
-            }
+        if (shape.hasTrait(DeprecatedTrait.class)) {
+            builder.putExtension("deprecated", Node.from(true));
         }
 
-        if (enabled || config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_USE_DEPRECATED)) {
-            if (shape.hasTrait(DeprecatedTrait.class)) {
-                builder.putExtension("deprecated", Node.from(true));
-            }
-        }
-
-        if (enabled || config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_USE_FORMATS)) {
-            // Don't overwrite an existing format setting.
-            if (!builder.getFormat().isPresent()) {
-                if (shape.isIntegerShape()) {
-                    builder.format("int32");
-                } else if (shape.isLongShape()) {
-                    builder.format("int64");
-                } else if (shape.isFloatShape()) {
-                    builder.format("float");
-                } else if (shape.isDoubleShape()) {
-                    builder.format("double");
-                } else if (shape.isBlobShape()) {
-                    return builder.format(config.getStringMemberOrDefault(
-                            OpenApiConstants.OPEN_API_DEFAULT_BLOB_FORMAT, DEFAULT_BLOB_FORMAT));
-                } else if (shape.hasTrait(SensitiveTrait.class)) {
-                    builder.format("password");
+        // Don't overwrite an existing format setting.
+        if (!builder.getFormat().isPresent()) {
+            if (shape.isIntegerShape()) {
+                builder.format("int32");
+            } else if (shape.isLongShape()) {
+                builder.format("int64");
+            } else if (shape.isFloatShape()) {
+                builder.format("float");
+            } else if (shape.isDoubleShape()) {
+                builder.format("double");
+            } else if (shape.isBlobShape()) {
+                if (config instanceof OpenApiConfig) {
+                    String blobFormat = ((OpenApiConfig) config).getDefaultBlobFormat();
+                    return builder.format(blobFormat);
                 }
+            } else if (shape.hasTrait(SensitiveTrait.class)) {
+                builder.format("password");
             }
-        }
-
-        if (config.getBooleanMemberOrDefault(OpenApiConstants.OPEN_API_USE_XML)) {
-            LOGGER.warning(OpenApiConstants.OPEN_API_USE_XML + " is not yet implemented");
         }
 
         // Remove unsupported JSON Schema keywords.
-        if (enabled) {
-            UNSUPPORTED_KEYWORD_DIRECTIVES.forEach(builder::disableProperty);
-        }
+        UNSUPPORTED_KEYWORD_DIRECTIVES.forEach(builder::disableProperty);
 
         return builder;
     }
 
-    static Optional<ExternalDocumentation> getResolvedExternalDocs(Shape shape, ObjectNode config) {
+    static Optional<ExternalDocumentation> getResolvedExternalDocs(Shape shape, JsonSchemaConfig config) {
         Optional<ExternalDocumentationTrait> traitOptional = shape.getTrait(ExternalDocumentationTrait.class);
-        if (!traitOptional.isPresent()) {
+
+        if (!traitOptional.isPresent() || !(config instanceof OpenApiConfig)) {
             return Optional.empty();
         }
 
+        OpenApiConfig openApiConfig = (OpenApiConfig) config;
+
         // Get the valid list of lower case names to look for when converting.
-        List<String> externalDocKeys = config.getArrayMember(OpenApiConstants.OPEN_API_CONVERTED_EXTERNAL_DOCS)
-                .map(node -> node.getElementsAs(StringNode::getValue))
-                .orElse(OpenApiConstants.OPEN_API_DEFAULT_CONVERTED_EXTERNAL_DOCS)
-                .stream()
-                .map(s -> s.toLowerCase(Locale.US))
-                .collect(Collectors.toList());
+        List<String> externalDocKeys = new ArrayList<>(openApiConfig.getExternalDocs().size());
+        for (String key : openApiConfig.getExternalDocs()) {
+            externalDocKeys.add(key.toLowerCase(Locale.ENGLISH));
+        }
 
         // Get lower case keys to check for when converting.
         Map<String, String> traitUrls = traitOptional.get().getUrls();
         Map<String, String> lowercaseKeyMap = traitUrls.keySet().stream()
                 .collect(MapUtils.toUnmodifiableMap(i -> i.toLowerCase(Locale.US), identity()));
+
         for (String externalDocKey : externalDocKeys) {
             // Compare the lower case name, but use the specified name.
             if (lowercaseKeyMap.containsKey(externalDocKey)) {

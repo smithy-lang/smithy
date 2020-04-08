@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -39,8 +39,10 @@ public class RemoveUnusedComponentsTest {
 
     @Test
     public void keepsUnusedSchemas() {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setKeepUnusedComponents(true);
         OpenApi result = OpenApiConverter.create()
-                .putSetting(OpenApiConstants.OPENAPI_KEEP_UNUSED_COMPONENTS, true)
+                .config(config)
                 .convert(model, ShapeId.from("smithy.example#Small"));
 
         // The input structure remains in the output even though it's unreferenced.

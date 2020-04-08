@@ -29,7 +29,6 @@ import software.amazon.smithy.model.node.NodeVisitor;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.ComponentsObject;
@@ -57,7 +56,7 @@ public class RemoveUnusedComponents implements OpenApiMapper {
 
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {
-        if (context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.OPENAPI_KEEP_UNUSED_COMPONENTS)) {
+        if (context.getConfig().getKeepUnusedComponents()) {
             return openapi;
         }
 
@@ -66,16 +65,16 @@ public class RemoveUnusedComponents implements OpenApiMapper {
 
         do {
             current = result;
-            result = removalRound(current);
+            result = removalRound(context, current);
         } while (!result.equals(current));
 
         result = removeUnusedSecuritySchemes(result);
         return result;
     }
 
-    private OpenApi removalRound(OpenApi openapi) {
+    private OpenApi removalRound(Context<? extends Trait> context, OpenApi openapi) {
         // Create a set of every component pointer (currently just schemas).
-        String schemaPointerPrefix = OpenApiConstants.SCHEMA_COMPONENTS_POINTER + "/";
+        String schemaPointerPrefix = context.getConfig().getDefinitionPointer() + "/";
         Set<String> pointers = openapi.getComponents().getSchemas().keySet().stream()
                 .map(key -> schemaPointerPrefix + key)
                 .collect(Collectors.toSet());

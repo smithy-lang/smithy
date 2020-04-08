@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 
@@ -29,8 +29,10 @@ public class CheckForPrefixHeadersTest {
 
     @Test
     public void canIgnorePrefixHeaders() {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setOnHttpPrefixHeaders(OpenApiConfig.HttpPrefixHeadersStrategy.WARN);
         OpenApiConverter.create()
-                .putSetting(OpenApiConstants.ON_HTTP_PREFIX_HEADERS, OpenApiConstants.ON_HTTP_PREFIX_HEADERS_WARN)
+                .config(config)
                 .convert(model, ShapeId.from("smithy.example#PrefixHeaders"));
     }
 

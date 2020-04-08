@@ -54,7 +54,7 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
 
     private final Model model;
     private final PropertyNamingStrategy propertyNamingStrategy;
-    private final JsonSchemaConfig config;
+    private JsonSchemaConfig config;
     private final Predicate<Shape> shapePredicate;
     private final RefStrategy refStrategy;
     private final List<JsonSchemaMapper> realizedMappers;
@@ -148,6 +148,15 @@ public final class JsonSchemaConverter implements ToSmithyBuilder<JsonSchemaConv
      */
     public JsonSchemaConfig getConfig() {
         return config;
+    }
+
+    /**
+     * Set the JSON Schema configuration settings.
+     *
+     * @param config Config object to set.
+     */
+    public void setConfig(JsonSchemaConfig config) {
+        this.config = config;
     }
 
     /**

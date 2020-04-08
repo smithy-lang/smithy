@@ -33,7 +33,7 @@ import software.amazon.smithy.model.node.NodeVisitor;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
@@ -51,7 +51,7 @@ final class CloudFormationSubstitution implements OpenApiMapper {
      * commonly extracted out of CloudFormation. This list may need to be updated over
      * time as new features are added. Note that this list only expands to simple
      * Fn::Sub. Anything more complex needs to be handled through JSON substitutions
-     * via {@link OpenApiConstants#SUBSTITUTIONS} as can anything that does not appear
+     * via {@link OpenApiConfig#setSubstitutions} as can anything that does not appear
      * in this list.
      */
     private static final List<String> PATHS = Arrays.asList(
@@ -69,11 +69,19 @@ final class CloudFormationSubstitution implements OpenApiMapper {
 
     @Override
     public ObjectNode updateNode(Context<? extends Trait> context, OpenApi openapi, ObjectNode node) {
-        if (!context.getConfig().getBooleanMemberOrDefault(ApiGatewayConstants.DISABLE_CLOUDFORMATION_SUBSTITUTION)) {
+        if (!isDisabled(context)) {
             return node.accept(new CloudFormationFnSubInjector(PATHS)).expectObjectNode();
         }
 
         return node;
+    }
+
+    private boolean isDisabled(Context<?> context) {
+        // Support the old name for backward compatibility.
+        return context.getConfig().getExtensions(ApiGatewayConfig.class).getDisableCloudFormationSubstitution()
+                || context.getConfig()
+                       .getExtensions()
+                       .getBooleanMemberOrDefault("apigateway.disableCloudFormationSubstitution");
     }
 
     private static class CloudFormationFnSubInjector extends NodeVisitor.Default<Node> {

@@ -17,7 +17,6 @@ package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.util.logging.Logger;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.openapi.OpenApiConstants;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -39,8 +38,6 @@ public class CheckForGreedyLabels implements OpenApiMapper {
 
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openApi) {
-        boolean forbid = context.getConfig().getBooleanMemberOrDefault(OpenApiConstants.FORBID_GREEDY_LABELS);
-
         for (String path : openApi.getPaths().keySet()) {
             // Throw an exception or warning when greedy URI labels are found in the path.
             if (path.contains("+}")) {
@@ -48,7 +45,7 @@ public class CheckForGreedyLabels implements OpenApiMapper {
                                  + "tools support this style of URI labels. Greedy URI labels are expected "
                                  + "to capture all remaining components of a URI, so if a tool does not "
                                  + "support them, the API will not function properly.";
-                if (forbid) {
+                if (context.getConfig().getForbidGreedyLabels()) {
                     throw new OpenApiException(message);
                 } else {
                     LOGGER.warning(message);

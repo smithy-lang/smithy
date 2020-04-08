@@ -15,12 +15,16 @@
 
 package software.amazon.smithy.openapi.fromsmithy;
 
+import java.util.Map;
+import java.util.logging.Logger;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
-import software.amazon.smithy.jsonschema.JsonSchemaConstants;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
+import software.amazon.smithy.openapi.OpenApiException;
 
 /**
  * Converts Smithy to an OpenAPI model and saves it as a JSON file.
@@ -28,10 +32,12 @@ import software.amazon.smithy.openapi.OpenApiConstants;
  * <p>This plugin requires a setting named "service" that is the
  * Shape ID of the Smithy service shape to convert to OpenAPI.
  *
- * <p>Constants defined in {@link JsonSchemaConstants} and
- * {@link OpenApiConstants} can be provided in the settings object.
+ * <p>This plugin is configured using {@link OpenApiConfig}.
  */
 public final class Smithy2OpenApi implements SmithyBuildPlugin {
+
+    private static final Logger LOGGER = Logger.getLogger(Smithy2OpenApi.class.getName());
+
     @Override
     public String getName() {
         return "openapi";
@@ -40,12 +46,29 @@ public final class Smithy2OpenApi implements SmithyBuildPlugin {
     @Override
     public void execute(PluginContext context) {
         OpenApiConverter converter = OpenApiConverter.create();
-        context.getSettings().getStringMap().forEach(converter::putSetting);
         context.getPluginClassLoader().ifPresent(converter::classLoader);
 
-        ShapeId shapeId = ShapeId.from(context.getSettings()
-                .expectStringMember(OpenApiConstants.SERVICE)
-                .getValue());
+        // Remove deprecated "openapi." prefixes from configuration settings.
+        ObjectNode mapped = context.getSettings();
+        for (Map.Entry<String, Node> entry : mapped.getStringMap().entrySet()) {
+            if (entry.getKey().startsWith("openapi.")) {
+                String expected = entry.getKey().substring(8);
+                LOGGER.warning("Deprecated `openapi` configuration setting found: " + entry.getKey()
+                               + ". Use " + expected + " instead");
+                mapped = mapped.withoutMember(entry.getKey());
+                mapped = mapped.withMember(expected, entry.getValue());
+            }
+        }
+
+        NodeMapper mapper = new NodeMapper();
+        OpenApiConfig config = new OpenApiConfig();
+        mapper.deserializeInto(mapped, config);
+
+        ShapeId shapeId = config.getService();
+
+        if (shapeId == null) {
+            throw new OpenApiException(getName() + " is missing required property, `service`");
+        }
 
         ObjectNode openApiNode = converter.convertToNode(context.getModel(), shapeId);
         context.getFileManifest().writeJson(shapeId.getName() + ".openapi.json", openApiNode);

@@ -15,12 +15,12 @@
 
 package software.amazon.smithy.jsonschema;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 
@@ -68,8 +68,14 @@ public class JsonSchemaConfig {
     private UnionStrategy unionStrategy = UnionStrategy.ONE_OF;
     private String definitionPointer = "#/definitions";
     private ObjectNode schemaDocumentExtensions = Node.objectNode();
-    private Map<String, Node> extensions = new HashMap<>();
+    private ObjectNode extensions = Node.objectNode();
     private Set<String> disableFeatures = new HashSet<>();
+    private final ConcurrentHashMap<Class, Object> extensionCache = new ConcurrentHashMap<>();
+    private final NodeMapper nodeMapper = new NodeMapper();
+
+    public JsonSchemaConfig() {
+        nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
+    }
 
     public boolean getAlphanumericOnlyRefs() {
         return alphanumericOnlyRefs;
@@ -181,8 +187,29 @@ public class JsonSchemaConfig {
         this.disableFeatures = disableFeatures;
     }
 
-    public Map<String, Node> getExtensions() {
+    public ObjectNode getExtensions() {
         return extensions;
+    }
+
+    /**
+     * Attempts to deserialize the {@code extensions} into the targeted
+     * type using a {@link NodeMapper}.
+     *
+     * <p>Extraneous properties are ignored and <em>not</em> warned on
+     * because many different plugins could be used with different
+     * configuration POJOs.
+     *
+     * <p>The result of calling this method is cached for each type,
+     * and the cache is cleared when any mutation is made to
+     * extensions.
+     *
+     * @param as Type to deserialize extensions into.
+     * @param <T> Type to deserialize extensions into.
+     * @return Returns the deserialized type.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getExtensions(Class<T> as) {
+        return (T) extensionCache.computeIfAbsent(as, t -> nodeMapper.deserialize(extensions, t));
     }
 
     /**
@@ -191,7 +218,48 @@ public class JsonSchemaConfig {
      *
      * @param extensions Extensions to set.
      */
-    public void setExtensions(Map<String, Node> extensions) {
+    public void setExtensions(ObjectNode extensions) {
         this.extensions = Objects.requireNonNull(extensions);
+        extensionCache.clear();
+    }
+
+    /**
+     * Add an extension to the "extensions" object node using a POJO.
+     *
+     * @param extensionContainer POJO to serialize and merge into extensions.
+     */
+    public void putExtensions(Object extensionContainer) {
+        ObjectNode serialized = nodeMapper.serialize(extensionContainer).expectObjectNode();
+        setExtensions(extensions.merge(serialized));
+    }
+
+    /**
+     * Add an extension to the "extensions" object node.
+     *
+     * @param key Property name to set.
+     * @param value Value to assigned.
+     */
+    public void putExtension(String key, Node value) {
+        setExtensions(extensions.withMember(key, value));
+    }
+
+    /**
+     * Add an extension to the "extensions" object node.
+     *
+     * @param key Property name to set.
+     * @param value Value to assigned.
+     */
+    public void putExtension(String key, boolean value) {
+        putExtension(key, Node.from(value));
+    }
+
+    /**
+     * Add an extension to the "extensions" object node.
+     *
+     * @param key Property name to set.
+     * @param value Value to assigned.
+     */
+    public void putExtension(String key, String value) {
+        putExtension(key, Node.from(value));
     }
 }
