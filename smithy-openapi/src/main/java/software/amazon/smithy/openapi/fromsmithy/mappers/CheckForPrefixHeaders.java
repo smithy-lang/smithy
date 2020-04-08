@@ -23,7 +23,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -65,15 +65,14 @@ public class CheckForPrefixHeaders implements OpenApiMapper {
     }
 
     private void check(Context<? extends Trait> context, List<HttpBinding> bindings) {
-        String setting = context.getConfig().getStringMemberOrDefault(
-                OpenApiConstants.ON_HTTP_PREFIX_HEADERS, OpenApiConstants.ON_HTTP_PREFIX_HEADERS_FAIL);
+        OpenApiConfig.HttpPrefixHeadersStrategy strategy = context.getConfig().getOnHttpPrefixHeaders();
 
         for (HttpBinding binding : bindings) {
-            switch (setting) {
-                case OpenApiConstants.ON_HTTP_PREFIX_HEADERS_WARN:
+            switch (strategy) {
+                case WARN:
                     LOGGER.warning(createMessage(binding));
                     break;
-                case OpenApiConstants.ON_HTTP_PREFIX_HEADERS_FAIL:
+                case FAIL:
                     throw new OpenApiException(createMessage(binding));
                 default:
                     break;

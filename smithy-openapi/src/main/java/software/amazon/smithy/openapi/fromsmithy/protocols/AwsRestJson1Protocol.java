@@ -19,16 +19,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.aws.traits.protocols.RestJson1Trait;
-import software.amazon.smithy.jsonschema.JsonSchemaConstants;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.knowledge.HttpBinding;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 
 /**
@@ -41,16 +38,14 @@ public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Tr
     }
 
     @Override
-    public ObjectNode getDefaultSettings() {
-        return Node.objectNode()
-                .withMember(JsonSchemaConstants.USE_JSON_NAME, true)
-                .withMember(JsonSchemaConstants.DEFAULT_TIMESTAMP_FORMAT, TimestampFormatTrait.EPOCH_SECONDS);
+    public void updateDefaultSettings(OpenApiConfig config) {
+        config.setUseJsonName(true);
+        config.setDefaultTimestampFormat(TimestampFormatTrait.Format.EPOCH_SECONDS);
     }
 
     @Override
     String getDocumentMediaType(Context context, Shape operationOrError, MessageType message) {
-        return context.getConfig().getStringMemberOrDefault(
-                OpenApiConstants.AWS_JSON_CONTENT_TYPE, "application/json");
+        return context.getConfig().getJsonContentType();
     }
 
     @Override

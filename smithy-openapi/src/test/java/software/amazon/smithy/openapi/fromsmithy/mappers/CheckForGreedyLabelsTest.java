@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.openapi.OpenApiConstants;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 
@@ -34,9 +34,12 @@ public class CheckForGreedyLabelsTest {
 
     @Test
     public void keepsUnusedSchemas() {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setForbidGreedyLabels(true);
+
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             OpenApiConverter.create()
-                    .putSetting(OpenApiConstants.FORBID_GREEDY_LABELS, true)
+                    .config(config)
                     .convert(model, ShapeId.from("smithy.example#Greedy"));
         });
 

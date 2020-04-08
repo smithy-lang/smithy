@@ -10,6 +10,7 @@ specifications.
     :local:
     :backlinks: none
 
+
 ------------
 Introduction
 ------------
@@ -25,6 +26,7 @@ Smithy generators are not available.
 Smithy models can be converted to OpenAPI through smithy-build using the
 ``openapi`` plugin or through code using the
 `software.amazon.smithy:smithy-openapi`_ Java package.
+
 
 --------------------------------------
 Differences between Smithy and OpenAPI
@@ -46,10 +48,14 @@ strongly-typed languages.
 Unsupported features
 ====================
 
-Converting a Smithy model to OpenAPI results in a trimmed-down, lossy
-representation of a model for a specific HTTP protocol. Various features in
-a Smithy model are not currently supported in the OpenAPI conversion:
+Converting a Smithy model to OpenAPI is a lossy conversion. Various features
+in a Smithy model are not currently supported in the OpenAPI conversion.
 
+**Unsupported features**
+
+* :ref:`endpoint-trait` and :ref:`hostLabel-trait`: These traits are used
+  to dynamically alter the endpoint of an operation based on input. They
+  are not supported in OpenAPI.
 * :ref:`HTTP prefix headers <httpPrefixHeaders-trait>`: "Prefix headers"
   are used in Smithy to bind all headers under a common prefix into a
   single property of the input or output of an API operation. This can
@@ -60,19 +66,7 @@ a Smithy model are not currently supported in the OpenAPI conversion:
   ``/foo/{baz+}/bar``). Some OpenAPI vendors/tooling support greedy labels
   (for example, Amazon API Gateway) while other do not. The converter will
   pass greedy labels through into the OpenAPI document by default, but they
-  can be forbidden through the ``openapi.forbidGreedyLabels`` flag.
-* :ref:`Event streams <event-streams>`: Event streams are a way of sending
-  many different messages over a stream. This is not currently implemented
-  in the converter (see `#80 <https://github.com/awslabs/smithy/issues/80>`_).
-* Streaming: Smithy allows blob and string shapes to be marked as
-  streaming, meaning that their contents should not be loaded into
-  memory by clients or servers. This is not currently something supported
-  as a built-in feature of OpenAPI (we could potentially add an extension
-  to mark a specific type as streaming).
-* :ref:`Custom traits <trait-shapes>`: Custom traits defined in a Smithy
-  model are not converted and added to the OpenAPI specification. Copying
-  Smithy traits into OpenAPI as extensions requires the use of a custom
-  ``software.amazon.smithy.openapi.fromsmithy.OpenApiExtension``.
+  can be forbidden through the ``forbidGreedyLabels`` flag.
 * Non-RESTful routing: HTTP routing schemes that aren't based on
   methods and unique URIs are not supported in OpenAPI (for example,
   routing to operations based on a specific header or query string
@@ -81,8 +75,24 @@ a Smithy model are not currently supported in the OpenAPI conversion:
   not supported with OpenAPI (for example, an MQTT-based protocol modeled
   with Smithy would need to also support an HTTP-based protocol to be
   converted to OpenAPI).
+
+**Compatibility notes**
+
+* Streaming: Smithy allows blob and string shapes to be marked as
+  streaming, meaning that their contents should not be loaded into
+  memory by clients or servers. While this isn't technically unsupported in
+  OpenAPI, some vendors like API Gateway do not currently support streaming
+  large payloads.
+
+**Lossy metadata**
+
 * Resources: Smithy resource metadata is not carried over into the OpenAPI
   specification.
+* :ref:`Custom traits <trait-shapes>`: Custom traits defined in a Smithy
+  model are not converted and added to the OpenAPI specification. Copying
+  Smithy traits into OpenAPI as extensions requires the use of a custom
+  ``software.amazon.smithy.openapi.fromsmithy.OpenApiExtension``.
+
 
 ---------------------------------------
 Converting to OpenAPI with smithy-build
@@ -106,7 +116,7 @@ specification from a Smithy model using a buildscript dependency:
 
     buildscript {
         dependencies {
-            classpath("software.amazon.smithy:smithy-openapi:0.9.7")
+            classpath("software.amazon.smithy:smithy-openapi:0.9.9")
         }
     }
 
@@ -132,7 +142,7 @@ that builds an OpenAPI specification from a service for the
 
 .. important::
 
-    A buildscript dependency on "software.amazon.smithy:smithy-openapi:0.9.7" is
+    A buildscript dependency on "software.amazon.smithy:smithy-openapi:0.9.9" is
     required in order for smithy-build to map the "openapi" plugin name to the
     correct Java library implementation.
 
@@ -143,7 +153,6 @@ OpenAPI configuration settings
 The ``openapi`` plugin is highly configurable to support different OpenAPI
 tools and vendors.
 
-
 .. tip::
 
     You typically only need to configure the ``service`` and
@@ -153,10 +162,22 @@ The following key-value pairs are supported:
 
 service (string)
     **Required**. The Smithy service :ref:`shape ID <shape-id>` to convert.
+    For example, ``smithy.example#Weather``.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather"
+                }
+            }
+        }
 
 protocol (string)
-    The protocol shape ID to use when converting Smithy to OpenAPI (for
-    example, ``aws.protocols#restJson1``).
+    The protocol shape ID to use when converting Smithy to OpenAPI.
+    For example, ``aws.protocols#restJson1``.
 
     Smithy will try to match the provided protocol name with an implementation
     of ``software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol``
@@ -165,15 +186,7 @@ protocol (string)
 
     .. important::
 
-        This property is required if a service supports multiple protocols.
-
-openapi.tags (boolean)
-    Whether or not to include Smithy :ref:`tags <tags-trait>` in the result.
-
-openapi.supportedTags ([string])
-    Limits the exported ``openapi.tags`` to a specific set of tags. The value
-    must be a list of strings. This property requires that ``openapi.tags``
-    is set to ``true`` in order to have an effect.
+        ``protocol`` is required if a service supports multiple protocols.
 
     .. code-block:: json
 
@@ -182,21 +195,64 @@ openapi.supportedTags ([string])
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
-                    "openapi.tags": true,
-                    "openapi.supportedTags": ["foo", "baz", "bar"]
+                    "protocol": "aws.protocols#restJson1"
                 }
             }
         }
 
-openapi.defaultBlobFormat (string)
+tags (boolean)
+    Whether or not to include Smithy :ref:`tags <tags-trait>` in the result
+    as `OpenAPI tags`_. The following example adds all tags in the Smithy
+    model to the OpenAPI model.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "tags": true
+                }
+            }
+        }
+
+supportedTags ([string])
+    Limits the exported ``tags`` to a specific set of tags. The value
+    must be a list of strings. This property requires that ``tags`` is set to
+    ``true`` in order to have an effect.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "tags": true,
+                    "supportedTags": ["foo", "baz", "bar"]
+                }
+            }
+        }
+
+defaultBlobFormat (string)
     Sets the default format property used when converting blob shapes in
     Smithy to strings in OpenAPI. Defaults to "byte", meaning Base64 encoded.
+    See `OpenAPI Data types`_ for more information.
 
-openapi.use.xml (boolean)
-    Enables converting Smithy XML traits to OpenAPI XML properties. (this
-    feature is not yet implemented).
+    .. code-block:: json
 
-openapi.externalDocs ([string])
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "defaultBlobFormat": "byte"
+                }
+            }
+        }
+
+externalDocs ([string])
     Limits the source of converted "externalDocs" fields to the specified
     priority ordered list of names in an :ref:`externaldocumentation-trait`.
     This list is case insensitive. By default, this is a list of the following
@@ -210,7 +266,7 @@ openapi.externalDocs ([string])
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
-                    "openapi.externalDocs": [
+                    "externalDocs": [
                         "Homepage",
                         "Custom"
                     ]
@@ -218,32 +274,9 @@ openapi.externalDocs ([string])
             }
         }
 
-openapi.keepUnusedComponents (boolean)
-    Set to ``true`` to prevent unused components from being removed from the
-    created specification.
-
-openapi.aws.jsonContentType (string)
-    Sets a custom media-type to associate with the JSON payload of
-    JSON-based protocols.
-
-openapi.forbidGreedyLabels (boolean)
-    Set to true to forbid greedy URI labels. By default, greedy labels will
-    appear as-is in the path generated for an operation. For example,
-    "/{foo+}".
-
-openapi.onHttpPrefixHeaders (string)
-    Specifies what to do when the :ref:`httpPrefixHeaders-trait` is found in
-    a model. OpenAPI does not support ``httpPrefixHeaders``. By default, the
-    conversion will fail when this trait is encountered, but this behavior
-    can be customized using the following values for the ``openapi.onHttpPrefixHeaders``
-    setting:
-
-    * FAIL: The default setting that causes the build to fail.
-    * WARN: The header is omitted from the OpenAPI model and a warning is logged.
-
-    .. note::
-
-        Additional values may be supported by other mappers or protocols.
+keepUnusedComponents (boolean)
+    Set to ``true`` to prevent unused OpenAPI ``components`` from being
+    removed from the created specification.
 
     .. code-block:: json
 
@@ -252,39 +285,88 @@ openapi.onHttpPrefixHeaders (string)
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
-                    "openapi.onHttpPrefixHeaders": "WARN"
+                    "keepUnusedComponents": true
                 }
             }
         }
 
-openapi.ignoreUnsupportedTrait (boolean)
+jsonContentType (string)
+    Sets a custom media-type to associate with the JSON payload of
+    JSON-based protocols.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "jsonContentType": "application/x-amz-json-1.1"
+                }
+            }
+        }
+
+forbidGreedyLabels (boolean)
+    Set to true to forbid greedy URI labels. By default, greedy labels will
+    appear as-is in the path generated for an operation. For example,
+    "/{foo+}".
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "forbidGreedyLabels": true
+                }
+            }
+        }
+
+onHttpPrefixHeaders (string)
+    Specifies what to do when the :ref:`httpPrefixHeaders-trait` is found in
+    a model. OpenAPI does not support ``httpPrefixHeaders``. By default, the
+    conversion will fail when this trait is encountered, but this behavior
+    can be customized using the following values for the ``onHttpPrefixHeaders``
+    setting:
+
+    * FAIL: The default setting that causes the build to fail.
+    * WARN: The header is omitted from the OpenAPI model and a warning is logged.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "onHttpPrefixHeaders": "WARN"
+                }
+            }
+        }
+
+ignoreUnsupportedTraits (boolean)
     Emits warnings rather than failing when unsupported traits like
-    ``eventStream`` are encountered.
+    ``endpoint`` and ``hostLabel`` are encountered.
 
-openapi.disablePrimitiveInlining (boolean)
-    Disables the automatic inlining of primitive ``$ref`` targets.
+    .. code-block:: json
 
-    Inlining these primitive references helps to make the generated
-    OpenAPI models more idiomatic while leaving complex types as-is so that
-    they support recursive types.
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "ignoreUnsupportedTraits": true
+                }
+            }
+        }
 
-    A *primitive reference* is considered one of the following OpenAPI types:
-
-    * integer
-    * number
-    * boolean
-    * string
-
-    A *primitive collection* is an array that has an "items"  property that
-    targets a primitive reference, or an object with no "properties" and an
-    "additionalProperties" reference that targets a primitive type.
-
-openapi.substitutions (``Map<String, any>``)
+substitutions (``Map<String, any>``)
     Defines a map of strings to any JSON value to find and replace in the
     generated OpenAPI model.
 
     String values are replaced if the string in its entirety matches
-    one of the keys provided in the ``openapi.substitutions`` map. The
+    one of the keys provided in the ``substitutions`` map. The
     corresponding value is then substituted for the string; this could
     even result in a string changing into an object, array, etc.
 
@@ -295,7 +377,7 @@ openapi.substitutions (``Map<String, any>``)
 
     .. warning::
 
-        When possible, prefer ``openapi.jsonAdd`` instead because the update
+        When possible, prefer ``jsonAdd`` instead because the update
         performed on the generated document is more explicit and resilient to
         change.
 
@@ -306,7 +388,7 @@ openapi.substitutions (``Map<String, any>``)
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
-                    "openapi.substitutions": {
+                    "substitutions": {
                         "REPLACE_ME": ["this is a", " replacement"],
                         "ANOTHER_REPLACEMENT": "Hello!!!"
                     }
@@ -314,7 +396,7 @@ openapi.substitutions (``Map<String, any>``)
             }
         }
 
-openapi.jsonAdd (``Map<String, Node>``)
+jsonAdd (``Map<String, Node>``)
     Adds or replaces the JSON value in the generated OpenAPI document at the
     given JSON pointer locations with a different JSON value. The value must
     be a map where each key is a valid JSON pointer string as defined in
@@ -333,7 +415,7 @@ openapi.jsonAdd (``Map<String, Node>``)
             "plugins": {
                 "openapi": {
                     "service": "smithy.example#Weather",
-                    "openapi.jsonAdd": {
+                    "jsonAdd": {
                         "/info/title": "Replaced title value",
                         "/info/nested/foo": {
                             "hi": "Adding this object created intermediate objects too!"
@@ -348,25 +430,40 @@ openapi.jsonAdd (``Map<String, Node>``)
 JSON schema configuration settings
 ==================================
 
-stripNamespaces (boolean)
-    Strips Smithy namespaces from the converted shape ID that is generated
-    in the definitions map of a JSON Schema document for a shape. This
-    requires that shape names across all namespaces are unique.
-
-includePrivateShapes (boolean)
-    Includes shapes marked with the :ref:`private-trait`.
-
 useJsonName (boolean)
     Uses the value of the :ref:`jsonName-trait` when creating JSON schema
-    properties for structure and union shapes.
+    properties for structure and union shapes. This property MAY be
+    automatically set to ``true`` depending on the protocol being converted.
 
-    TODO: This is enabled automatically with AWS protocols?
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "useJsonName": true
+                }
+            }
+        }
 
 defaultTimestampFormat (string)
     Sets the assumed :ref:`timestampFormat-trait` value for timestamps with
     no explicit timestampFormat trait. The provided value is expected to be
     a string. Defaults to "date-time" if not set. Can be set to "date-time",
     "epoch-seconds", or "http-date".
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "defaultTimestampFormat": "epoch-seconds"
+                }
+            }
+        }
 
 unionStrategy (string)
     Configures how Smithy union shapes are converted to JSON Schema.
@@ -379,8 +476,38 @@ unionStrategy (string)
     * structure: Converts to an object with properties just like a
       structure.
 
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "unionStrategy": "oneOf"
+                }
+            }
+        }
+
 schemaDocumentExtensions (``Map<String, any>``)
     Adds custom top-level key-value pairs to the created OpenAPI specification.
+    Any existing value is overwritten.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "schemaDocumentExtensions": {
+                        "x-my-custom-top-level-property": "Hello!",
+                        "x-another-custom-top-level-property": {
+                            "can be": ["complex", "value", "too!"]
+                        }
+                    }
+                }
+            }
+        }
 
 
 Amazon API Gateway extensions
@@ -397,7 +524,7 @@ dependency on ``software.amazon.smithy:smithy-aws-apigateway-openapi``.
 
     buildscript {
         dependencies {
-            classpath("software.amazon.smithy:smithy-aws-apigateway-openapi:0.9.7")
+            classpath("software.amazon.smithy:smithy-aws-apigateway-openapi:0.9.9")
         }
     }
 
@@ -535,8 +662,8 @@ uses the ``Fn::Sub`` variable syntax (``*`` means any value):
 
 .. note::
 
-    This functionality can be disabled by setting the ``apigateway.disableCloudFormationSubstitution``
-    OpenAPI configuration property to ``true``.
+    This functionality can be disabled by setting the ``disableCloudFormationSubstitution``
+    configuration property to ``true``.
 
 
 Amazon Cognito User Pools
@@ -603,7 +730,7 @@ shows how to install ``software.amazon.smithy:smithy-openapi`` through Gradle:
 
     buildscript {
         dependencies {
-            classpath("software.amazon.smithy:smithy-openapi:0.9.7")
+            classpath("software.amazon.smithy:smithy-openapi:0.9.9")
         }
     }
 
@@ -643,3 +770,5 @@ The conversion process is highly extensible through
 .. _intrinsic functions: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html
 .. _`Fn::Sub`: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-sub.html
 .. _x-amazon-apigateway-api-key-source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html
+.. _OpenAPI tags: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#tagObject
+.. _OpenAPI Data types: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#data-types

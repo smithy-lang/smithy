@@ -41,11 +41,6 @@ public abstract class Component implements ToNode {
         extensions.putAll(builder.getExtensions());
     }
 
-    public final Component addExtension(String name, Node value) {
-        extensions.put(name, value);
-        return this;
-    }
-
     public final Optional<Node> getExtension(String name) {
         return Optional.ofNullable(extensions.get(name));
     }

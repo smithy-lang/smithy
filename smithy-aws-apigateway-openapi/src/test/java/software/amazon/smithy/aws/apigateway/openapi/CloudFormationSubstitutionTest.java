@@ -20,6 +20,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.utils.IoUtils;
 
@@ -55,9 +56,14 @@ public class CloudFormationSubstitutionTest {
                 IoUtils.readUtf8File(getClass().getResource("substitution-not-performed.json").getPath()))
                 .expectObjectNode();
 
+        OpenApiConfig config = new OpenApiConfig();
+        ApiGatewayConfig apiGatewayConfig = new ApiGatewayConfig();
+        apiGatewayConfig.setDisableCloudFormationSubstitution(true);
+        config.putExtensions(apiGatewayConfig);
+
         ObjectNode actual = OpenApiConverter.create()
                 .classLoader(getClass().getClassLoader())
-                .putSetting(ApiGatewayConstants.DISABLE_CLOUDFORMATION_SUBSTITUTION, true)
+                .config(config)
                 .convertToNode(model, ShapeId.from("example.smithy#MyService"));
 
         Node.assertEquals(expected, actual);

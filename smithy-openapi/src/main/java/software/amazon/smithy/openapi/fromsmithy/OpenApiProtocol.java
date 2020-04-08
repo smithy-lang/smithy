@@ -18,13 +18,12 @@ package software.amazon.smithy.openapi.fromsmithy;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
@@ -49,14 +48,12 @@ public interface OpenApiProtocol<T extends Trait> {
     Class<T> getProtocolType();
 
     /**
-     * Configures protocol-specific default values when they are not present
-     * in the configuration context. Only values that are not explicitly set
-     * are modified as a result of calling this method.
+     * Sets protocol-specific default values on the OpenAPI configuration
+     * object.
      *
-     * @return Returns a map of property names to their default values to set.
+     * @param config Configuration object to modify.
      */
-    default ObjectNode getDefaultSettings() {
-        return Node.objectNode();
+    default void updateDefaultSettings(OpenApiConfig config) {
     }
 
     /**

@@ -791,6 +791,12 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
             return this;
         }
 
+        public Builder extensions(Map<String, Node> extensions) {
+            this.extensions.clear();
+            this.extensions.putAll(extensions);
+            return this;
+        }
+
         public Builder putExtension(String key, ToNode value) {
             extensions.put(key, value);
             return this;
