@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.jsonschema;
 
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.JsonNameTrait;
@@ -33,7 +32,7 @@ public interface PropertyNamingStrategy {
      * @param config Config to use.
      * @return Returns the computed member name.
      */
-    String toPropertyName(Shape containingShape, MemberShape member, ObjectNode config);
+    String toPropertyName(Shape containingShape, MemberShape member, JsonSchemaConfig config);
 
     /**
      * Creates a naming strategy that just uses the member name as-is.
@@ -53,8 +52,7 @@ public interface PropertyNamingStrategy {
     static PropertyNamingStrategy createDefaultStrategy() {
         return (containingShape, member, config) -> {
             // Use the jsonName trait if configured to do so.
-            if (config.getBooleanMemberOrDefault(JsonSchemaConstants.USE_JSON_NAME)
-                    && member.hasTrait(JsonNameTrait.class)) {
+            if (config.getUseJsonName() && member.hasTrait(JsonNameTrait.class)) {
                 return member.expectTrait(JsonNameTrait.class).getValue();
             }
 

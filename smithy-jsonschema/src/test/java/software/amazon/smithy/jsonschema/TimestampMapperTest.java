@@ -20,8 +20,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 
@@ -32,7 +30,7 @@ public class TimestampMapperTest {
                 .id("smithy.example#Timestamp")
                 .addTrait(new TimestampFormatTrait(TimestampFormatTrait.DATE_TIME))
                 .build();
-        Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), Node.objectNode()).build();
+        Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), new JsonSchemaConfig()).build();
 
         assertThat(schema.getType().get(), equalTo("string"));
         assertThat(schema.getFormat().get(), equalTo("date-time"));
@@ -44,7 +42,7 @@ public class TimestampMapperTest {
                 .id("smithy.example#Timestamp")
                 .addTrait(new TimestampFormatTrait(TimestampFormatTrait.HTTP_DATE))
                 .build();
-        Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), Node.objectNode()).build();
+        Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), new JsonSchemaConfig()).build();
 
         assertThat(schema.getType().get(), equalTo("string"));
         assertFalse(schema.getFormat().isPresent());
@@ -56,7 +54,7 @@ public class TimestampMapperTest {
                 .id("smithy.example#Timestamp")
                 .addTrait(new TimestampFormatTrait(TimestampFormatTrait.EPOCH_SECONDS))
                 .build();
-        Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), Node.objectNode()).build();
+        Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), new JsonSchemaConfig()).build();
 
         assertThat(schema.getType().get(), equalTo("number"));
         assertFalse(schema.getFormat().isPresent());
@@ -68,7 +66,7 @@ public class TimestampMapperTest {
                 .id("smithy.example#Timestamp")
                 .addTrait(new TimestampFormatTrait("epoch-millis"))
                 .build();
-        Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), Node.objectNode()).build();
+        Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), new JsonSchemaConfig()).build();
 
         assertThat(schema.getType().get(), equalTo("number"));
         assertFalse(schema.getFormat().isPresent());
@@ -77,9 +75,8 @@ public class TimestampMapperTest {
     @Test
     public void supportsDefaultTimestampFormat() {
         TimestampShape shape = TimestampShape.builder().id("smithy.example#Timestamp").build();
-        ObjectNode config = Node.objectNodeBuilder()
-                .withMember(JsonSchemaConstants.DEFAULT_TIMESTAMP_FORMAT, TimestampFormatTrait.DATE_TIME)
-                .build();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setDefaultTimestampFormat(TimestampFormatTrait.Format.DATE_TIME);
         Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), config).build();
 
         assertThat(schema.getType().get(), equalTo("string"));
@@ -91,7 +88,7 @@ public class TimestampMapperTest {
         TimestampShape shape = TimestampShape.builder()
                 .id("smithy.example#Timestamp")
                 .build();
-        Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), Node.objectNode()).build();
+        Schema schema = new TimestampMapper().updateSchema(shape, Schema.builder(), new JsonSchemaConfig()).build();
 
         assertThat(schema.getType().get(), equalTo("string"));
         assertThat(schema.getFormat().get(), equalTo("date-time"));

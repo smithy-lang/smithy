@@ -17,14 +17,12 @@ package software.amazon.smithy.jsonschema;
 
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.traits.EnumTrait;
-import software.amazon.smithy.utils.StringUtils;
 
 /**
  * This ref strategy converts Smithy shapes into the following:
@@ -55,27 +53,22 @@ import software.amazon.smithy.utils.StringUtils;
  */
 final class DefaultRefStrategy implements RefStrategy {
 
-    private static final Pattern SPLIT_PATTERN = Pattern.compile("\\.");
     private static final Pattern NON_ALPHA_NUMERIC = Pattern.compile("[^A-Za-z0-9]");
 
     private final Model model;
-    private final boolean alphanumericOnly;
-    private final boolean keepNamespaces;
     private final String rootPointer;
     private final PropertyNamingStrategy propertyNamingStrategy;
-    private final ObjectNode config;
+    private final JsonSchemaConfig config;
 
-    DefaultRefStrategy(Model model, ObjectNode config, PropertyNamingStrategy propertyNamingStrategy) {
+    DefaultRefStrategy(Model model, JsonSchemaConfig config, PropertyNamingStrategy propertyNamingStrategy) {
         this.model = model;
         this.propertyNamingStrategy = propertyNamingStrategy;
         this.config = config;
         rootPointer = computePointer(config);
-        alphanumericOnly = config.getBooleanMemberOrDefault(JsonSchemaConstants.ALPHANUMERIC_ONLY_REFS);
-        keepNamespaces = config.getBooleanMemberOrDefault(JsonSchemaConstants.KEEP_NAMESPACES);
     }
 
-    private static String computePointer(ObjectNode config) {
-        String pointer = config.getStringMemberOrDefault(JsonSchemaConstants.DEFINITION_POINTER, DEFAULT_POINTER);
+    private static String computePointer(JsonSchemaConfig config) {
+        String pointer = config.getDefinitionPointer();
         if (!pointer.endsWith("/")) {
             pointer += "/";
         }
@@ -89,10 +82,7 @@ final class DefaultRefStrategy implements RefStrategy {
             return createMemberPointer(member);
         }
 
-        StringBuilder builder = new StringBuilder();
-        appendNamespace(builder, id);
-        builder.append(id.getName());
-        return rootPointer + stripNonAlphaNumericCharsIfNecessary(builder.toString());
+        return rootPointer + stripNonAlphaNumericCharsIfNecessary(id.getName());
     }
 
     private String createMemberPointer(MemberShape member) {
@@ -158,18 +148,8 @@ final class DefaultRefStrategy implements RefStrategy {
         return shape instanceof SimpleShape;
     }
 
-    private void appendNamespace(StringBuilder builder, ShapeId id) {
-        // Append each namespace part, capitalizing each segment.
-        // For example, "smithy.example" becomes "SmithyExample".
-        if (keepNamespaces) {
-            for (String part : SPLIT_PATTERN.split(id.getNamespace())) {
-                builder.append(StringUtils.capitalize(part));
-            }
-        }
-    }
-
     private String stripNonAlphaNumericCharsIfNecessary(String result) {
-        return alphanumericOnly
+        return config.getAlphanumericOnlyRefs()
                ? NON_ALPHA_NUMERIC.matcher(result).replaceAll("")
                : result;
     }

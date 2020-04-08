@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.jsonschema;
 
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -44,5 +43,5 @@ public interface JsonSchemaMapper {
      * @param config JSON Schema config.
      * @return Returns an updated schema builder.
      */
-    Schema.Builder updateSchema(Shape shape, Schema.Builder schemaBuilder, ObjectNode config);
+    Schema.Builder updateSchema(Shape shape, Schema.Builder schemaBuilder, JsonSchemaConfig config);
 }
