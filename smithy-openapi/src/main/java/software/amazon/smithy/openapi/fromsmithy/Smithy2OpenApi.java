@@ -15,12 +15,8 @@
 
 package software.amazon.smithy.openapi.fromsmithy;
 
-import java.util.Map;
-import java.util.logging.Logger;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConfig;
@@ -36,8 +32,6 @@ import software.amazon.smithy.openapi.OpenApiException;
  */
 public final class Smithy2OpenApi implements SmithyBuildPlugin {
 
-    private static final Logger LOGGER = Logger.getLogger(Smithy2OpenApi.class.getName());
-
     @Override
     public String getName() {
         return "openapi";
@@ -47,23 +41,7 @@ public final class Smithy2OpenApi implements SmithyBuildPlugin {
     public void execute(PluginContext context) {
         OpenApiConverter converter = OpenApiConverter.create();
         context.getPluginClassLoader().ifPresent(converter::classLoader);
-
-        // Remove deprecated "openapi." prefixes from configuration settings.
-        ObjectNode mapped = context.getSettings();
-        for (Map.Entry<String, Node> entry : mapped.getStringMap().entrySet()) {
-            if (entry.getKey().startsWith("openapi.")) {
-                String expected = entry.getKey().substring(8);
-                LOGGER.warning("Deprecated `openapi` configuration setting found: " + entry.getKey()
-                               + ". Use " + expected + " instead");
-                mapped = mapped.withoutMember(entry.getKey());
-                mapped = mapped.withMember(expected, entry.getValue());
-            }
-        }
-
-        NodeMapper mapper = new NodeMapper();
-        OpenApiConfig config = new OpenApiConfig();
-        mapper.deserializeInto(mapped, config);
-
+        OpenApiConfig config = OpenApiConfig.fromNode(context.getSettings());
         ShapeId shapeId = config.getService();
 
         if (shapeId == null) {
