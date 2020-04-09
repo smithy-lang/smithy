@@ -69,19 +69,11 @@ final class CloudFormationSubstitution implements OpenApiMapper {
 
     @Override
     public ObjectNode updateNode(Context<? extends Trait> context, OpenApi openapi, ObjectNode node) {
-        if (!isDisabled(context)) {
+        if (!context.getConfig().getExtensions(ApiGatewayConfig.class).getDisableCloudFormationSubstitution()) {
             return node.accept(new CloudFormationFnSubInjector(PATHS)).expectObjectNode();
         }
 
         return node;
-    }
-
-    private boolean isDisabled(Context<?> context) {
-        // Support the old name for backward compatibility.
-        return context.getConfig().getExtensions(ApiGatewayConfig.class).getDisableCloudFormationSubstitution()
-                || context.getConfig()
-                       .getExtensions()
-                       .getBooleanMemberOrDefault("apigateway.disableCloudFormationSubstitution");
     }
 
     private static class CloudFormationFnSubInjector extends NodeVisitor.Default<Node> {

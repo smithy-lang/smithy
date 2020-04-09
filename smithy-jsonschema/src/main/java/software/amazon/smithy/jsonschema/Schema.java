@@ -808,13 +808,13 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         }
 
         /**
-         * Applies a "disableX" key to a schema builder.
+         * Disables a specific JSON schema property by name.
          *
-         * @param disableKey Disable key to apply (e.g., "disablePropertyNames").
+         * @param propertyName Property name to remove (e.g., "propertyNames").
          * @return Returns the builder.
          */
-        public Builder disableProperty(String disableKey) {
-            switch (disableKey) {
+        public Builder disableProperty(String propertyName) {
+            switch (propertyName) {
                 case "const":
                     return this.constValue(null);
                 case "default":
@@ -884,7 +884,7 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
                 case "examples":
                     return this.examples(null);
                 default:
-                    LOGGER.warning("Unknown JSON Schema config 'disable' property: " + disableKey);
+                    LOGGER.warning("Unknown JSON Schema config 'disable' property: " + propertyName);
                     return this;
             }
         }

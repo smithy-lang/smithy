@@ -16,15 +16,20 @@
 package software.amazon.smithy.openapi;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Logger;
 import software.amazon.smithy.jsonschema.JsonSchemaConfig;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol;
 import software.amazon.smithy.openapi.fromsmithy.Smithy2OpenApiExtension;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * "openapi" smithy-build plugin configuration settings.
@@ -45,6 +50,26 @@ public class OpenApiConfig extends JsonSchemaConfig {
 
     /** The JSON pointer to where OpenAPI schema components should be written. */
     private static final String SCHEMA_COMPONENTS_POINTER = "#/components/schemas";
+
+    private static final Logger LOGGER = Logger.getLogger(OpenApiConfig.class.getName());
+    private static final Map<String, String> DEPRECATED_PROPERTY_RENAMES = new HashMap<>();
+
+    static {
+        DEPRECATED_PROPERTY_RENAMES.put("openapi.tags", "tags");
+        DEPRECATED_PROPERTY_RENAMES.put("openapi.supportedTags", "supportedTags");
+        DEPRECATED_PROPERTY_RENAMES.put("openapi.defaultBlobFormat", "defaultBlobFormat");
+        DEPRECATED_PROPERTY_RENAMES.put("openapi.keepUnusedComponents", "keepUnusedComponents");
+        DEPRECATED_PROPERTY_RENAMES.put("openapi.aws.jsonContentType", "jsonContentType");
+        DEPRECATED_PROPERTY_RENAMES.put("openapi.forbidGreedyLabels", "forbidGreedyLabels");
+        DEPRECATED_PROPERTY_RENAMES.put("openapi.onHttpPrefixHeaders", "onHttpPrefixHeaders");
+        // There was a typo in the docs, so might as well fix that here.
+        DEPRECATED_PROPERTY_RENAMES.put("openapi.ignoreUnsupportedTrait", "ignoreUnsupportedTraits");
+        DEPRECATED_PROPERTY_RENAMES.put("openapi.ignoreUnsupportedTraits", "ignoreUnsupportedTraits");
+        DEPRECATED_PROPERTY_RENAMES.put("openapi.substitutions", "substitutions");
+        // Cheating a little here, but oh well.
+        DEPRECATED_PROPERTY_RENAMES.put("apigateway.disableCloudFormationSubstitution",
+                                        "disableCloudFormationSubstitution");
+    }
 
     private ShapeId service;
     private ShapeId protocol;
@@ -283,5 +308,50 @@ public class OpenApiConfig extends JsonSchemaConfig {
      */
     public void setExternalDocs(List<String> externalDocs) {
         this.externalDocs = Objects.requireNonNull(externalDocs);
+    }
+
+    /**
+     * Creates an OpenApiConfig from a Node value.
+     *
+     * <p>This method first converts deprecated keys into their new locations and
+     * formats, and then uses the {@link NodeMapper} on the converted input
+     * object. Note that this class can be deserialized using a NodeMapper too
+     * since the NodeMapper will look for a static, public, fromNode method.
+     *
+     * @param input Input to deserialize.
+     * @return Returns the deserialized OpenApiConfig.
+     */
+    public static OpenApiConfig fromNode(Node input) {
+        NodeMapper mapper = new NodeMapper();
+        ObjectNode node = fixDeprecatedKeys(input.expectObjectNode());
+        OpenApiConfig config = new OpenApiConfig();
+        return mapper.deserializeInto(node, config);
+    }
+
+    private static ObjectNode fixDeprecatedKeys(ObjectNode node) {
+        ObjectNode mapped = node;
+
+        // Remove deprecated "openapi." prefixes from configuration settings.
+        for (Map.Entry<String, Node> entry : mapped.getStringMap().entrySet()) {
+            if (DEPRECATED_PROPERTY_RENAMES.containsKey(entry.getKey())) {
+                // Fixes specific renamed keys.
+                String rename = DEPRECATED_PROPERTY_RENAMES.get(entry.getKey());
+                LOGGER.warning("Deprecated `openapi` configuration setting found: " + entry.getKey()
+                               + ". Use " + rename + " instead");
+                mapped = mapped.withMember(rename, entry.getValue());
+                mapped = mapped.withoutMember(entry.getKey());
+            } else if (entry.getKey().startsWith("disable.")) {
+                // These are now added into the "disableFeatures" property.
+                String property = StringUtils.uncapitalize(entry.getKey().substring(8));
+                throw new OpenApiException("Unsupported `openapi` configuration setting found: " + entry.getKey()
+                                           + ". Add `" + property + "` to the `disableFeatures` property instead");
+            } else if (entry.getKey().startsWith("openapi.use.")) {
+                throw new OpenApiException(String.format(
+                        "The `%s` `openapi` plugin property is no longer supported. Use the "
+                        + "`disableFeatures` property instead to disable features.", entry.getKey()));
+            }
+        }
+
+        return mapped;
     }
 }
