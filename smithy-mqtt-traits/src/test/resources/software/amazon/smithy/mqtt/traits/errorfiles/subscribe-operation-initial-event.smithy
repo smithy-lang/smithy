@@ -9,8 +9,12 @@ operation Foo {
 
 structure FooOutput {
   badMember: smithy.api#String, // <-- Erroneous initial event member
-  @eventStream
-  messages: Event1,
+  messages: EventStream,
 }
 
-structure Event1 {}
+@streaming
+union EventStream {
+    singleton: Event
+}
+
+structure Event {}

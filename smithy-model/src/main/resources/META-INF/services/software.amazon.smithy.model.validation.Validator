@@ -2,7 +2,6 @@ software.amazon.smithy.model.validation.validators.AuthTraitValidator
 software.amazon.smithy.model.validation.validators.DeprecatedTraitValidator
 software.amazon.smithy.model.validation.validators.EnumTraitValidator
 software.amazon.smithy.model.validation.validators.EventPayloadTraitValidator
-software.amazon.smithy.model.validation.validators.EventStreamValidator
 software.amazon.smithy.model.validation.validators.ExamplesTraitValidator
 software.amazon.smithy.model.validation.validators.ExclusiveStructureMemberTraitValidator
 software.amazon.smithy.model.validation.validators.HostLabelTraitValidator

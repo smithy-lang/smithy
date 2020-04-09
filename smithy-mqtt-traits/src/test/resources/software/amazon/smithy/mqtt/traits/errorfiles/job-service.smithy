@@ -32,8 +32,12 @@ service IotJobs {
 // ------ Service-wide error -------
 
 structure RejectedResponse {
-  @eventStream
-  messages: RejectedError
+  messages: RejectedErrorStream
+}
+
+@streaming
+union RejectedErrorStream {
+    singleton: RejectedError
 }
 
 structure RejectedError {
@@ -97,8 +101,12 @@ structure GetPendingJobExecutionsSubscriptionRequest {
 }
 
 structure GetPendingJobExecutionsSubscriptionResponse {
-  @eventStream
-  messages: GetPendingJobExecutionsResponse,
+  messages: GetPendingJobExecutionsResponseStream,
+}
+
+@streaming
+union GetPendingJobExecutionsResponseStream {
+    singleton: GetPendingJobExecutionsResponse
 }
 
 structure GetPendingJobExecutionsResponse {
@@ -168,8 +176,12 @@ structure StartNextPendingJobExecutionSubscriptionRequest {
 }
 
 structure StartNextPendingJobExecutionSubscriptionResponse {
-  @eventStream
-  messages: StartNextJobExecutionResponse
+  messages: StartNextJobExecutionResponseStream
+}
+
+@streaming
+union StartNextJobExecutionResponseStream {
+    singleton: StartNextJobExecutionResponse
 }
 
 structure StartNextJobExecutionResponse {
@@ -253,8 +265,12 @@ structure DescribeJobExecutionSubscriptionRequest {
 }
 
 structure DescribeJobExecutionSubscriptionResponse {
-  @eventStream
-  messages: DescribeJobExecutionResponse
+  messages: DescribeJobExecutionResponseStream
+}
+
+@streaming
+union DescribeJobExecutionResponseStream {
+    singleton: DescribeJobExecutionResponse
 }
 
 structure DescribeJobExecutionResponse {
@@ -322,8 +338,12 @@ structure UpdateJobExecutionSubscriptionRequest {
 }
 
 structure UpdateJobExecutionSubscriptionResponse {
-  @eventStream
-  messages: UpdateJobExecutionResponse
+  messages: UpdateJobExecutionResponseStream
+}
+
+@streaming
+union UpdateJobExecutionResponseStream {
+    singleton: UpdateJobExecutionResponse
 }
 
 structure UpdateJobExecutionResponse {
@@ -364,8 +384,12 @@ structure JobExecutionsChangedSubscriptionRequest {
 }
 
 structure JobExecutionsChangedSubscriptionResponse {
-  @eventStream
-  messages: JobExecutionsChangedEvent,
+  messages: JobExecutionsChangedEventStream,
+}
+
+@streaming
+union JobExecutionsChangedEventStream {
+    singleton: JobExecutionsChangedEvent
 }
 
 structure JobExecutionsChangedEvent {
@@ -398,8 +422,12 @@ structure NextJobExecutionChangedSubscriptionRequest {
 }
 
 structure NextJobExecutionChangedSubscriptionResponse {
-  @eventStream
-  messages: NextJobExecutionChangedEvent,
+  messages: NextJobExecutionChangedEventStream,
+}
+
+@streaming
+union NextJobExecutionChangedEventStream {
+    singleton: NextJobExecutionChangedEvent
 }
 
 structure NextJobExecutionChangedEvent {

@@ -13,7 +13,7 @@ structure mqttJson {}
 @pattern("^[^#+]+$")
 string publish
 
-@trait(selector: "operation:test(-[output]-> structure > member[trait|eventStream])",
+@trait(selector: "operation:test(-[output]-> structure > member > union[trait|streaming])",
        conflicts: ["smithy.mqtt#publish"])
 @tags(["diff.error.const"])
 // Matches one or more characters that are not "#" or "+".

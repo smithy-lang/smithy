@@ -119,12 +119,4 @@ public class EventStreamIndexTest {
 
         assertThat(input, not(equalTo(output)));
     }
-
-    @Test
-    public void loadsSingleEventEventStreams() {
-        EventStreamIndex index = model.getKnowledge(EventStreamIndex.class);
-        EventStreamInfo info = index.getInputInfo(ShapeId.from("example.smithy#SingleEventOperation")).get();
-
-        assertThat(info.getEvents(), hasKey("messages"));
-    }
 }

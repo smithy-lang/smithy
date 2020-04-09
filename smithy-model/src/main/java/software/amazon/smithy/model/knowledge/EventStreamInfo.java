@@ -22,7 +22,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.EventStreamTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 
 /**
  * Contains extracted event stream information.
@@ -35,11 +35,11 @@ public final class EventStreamInfo {
     private final Map<String, MemberShape> initialMembers;
     private final Map<String, Shape> initialTargets;
     private final Map<String, StructureShape> events;
-    private final EventStreamTrait eventStreamTrait;
+    private final StreamingTrait streamingTrait;
 
     EventStreamInfo(
             OperationShape operation,
-            EventStreamTrait eventStreamTrait,
+            StreamingTrait streamingTrait,
             StructureShape structure,
             MemberShape eventStreamMember,
             Shape eventStreamTarget,
@@ -48,7 +48,7 @@ public final class EventStreamInfo {
             Map<String, StructureShape> events
     ) {
         this.operation = operation;
-        this.eventStreamTrait = eventStreamTrait;
+        this.streamingTrait = streamingTrait;
         this.structure = structure;
         this.eventStreamMember = eventStreamMember;
         this.eventStreamTarget = eventStreamTarget;
@@ -71,8 +71,8 @@ public final class EventStreamInfo {
      *
      * @return Returns the event stream trait.
      */
-    public EventStreamTrait getEventStreamTrait() {
-        return eventStreamTrait;
+    public StreamingTrait getStreamingTrait() {
+        return streamingTrait;
     }
 
     /**
@@ -149,17 +149,6 @@ public final class EventStreamInfo {
      */
     public Map<String, Shape> getInitialMessageTargets() {
         return initialTargets;
-    }
-
-    /**
-     * Checks if this is a single-event event stream, meaning that only
-     * a single-event shape is streamed over the event stream zero or
-     * more times.
-     *
-     * @return Returns true if this is a single-event event stream.
-     */
-    public boolean isSingleEvent() {
-        return eventStreamTarget.isStructureShape();
     }
 
     /**
