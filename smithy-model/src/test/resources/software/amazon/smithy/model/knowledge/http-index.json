@@ -311,13 +311,23 @@
                 "events": {
                     "target": "ns.foo#EventStream",
                     "traits": {
-                        "smithy.api#httpPayload": true,
-                        "smithy.api#eventStream": true
+                        "smithy.api#httpPayload": true
                     }
                 }
             }
         },
         "ns.foo#EventStream": {
+            "type": "union",
+            "members": {
+                "singleton": {
+                    "target": "ns.foo#Event"
+                }
+            },
+            "traits": {
+                "smithy.api#streaming": {}
+            }
+        },
+        "ns.foo#Event": {
             "type": "structure",
             "members": {
                 "foo": {

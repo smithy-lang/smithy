@@ -6,8 +6,12 @@ operation Publish {
 }
 
 structure PublishInput {
-  @eventStream // invalid
-  messages: Event,
+  messages: EventStream,
+}
+
+@streaming
+union EventStream {
+    singleton: Event
 }
 
 structure Event {}

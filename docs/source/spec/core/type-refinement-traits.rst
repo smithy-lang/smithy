@@ -142,11 +142,16 @@ in Java).
 -------------------
 
 Summary
-    Indicates that the the data stored in the shape is very large and should
-    not be stored in memory, or that the size of the data stored in the shape
-    is unknown at the start of a request.
+    Indicates that the data represented by the shape needs to be streamed.
+
+    When applied to a blob, this simply means that the data could be very
+    large and thus should not be stored in memory or that the size is unknown
+    at the start of the request.
+
+    When applied to a union, it indicates that shape represents an
+    `event stream <event-streams>`.
 Trait selector::
-    ``blob``
+    ``:each(blob, union)``
 Value type
     ``structure``
 

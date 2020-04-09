@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.EventStreamTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.PublishTrait;
@@ -42,7 +42,10 @@ public class MqttPublishInputValidator extends AbstractValidator {
     private Stream<ValidationEvent> validateOperation(Model model, OperationShape operation) {
         return OptionalUtils.stream(operation.getInput().flatMap(model::getShape).flatMap(Shape::asStructureShape))
                 .flatMap(input -> input.getAllMembers().values().stream()
-                        .filter(member -> member.hasTrait(EventStreamTrait.class))
+                        .filter(member -> {
+                            Shape target = model.expectShape(member.getTarget());
+                            return target.isUnionShape() && target.hasTrait(StreamingTrait.class);
+                        })
                         .map(member -> error(member, String.format(
                                 "The input of `smithy.mqtt#publish` operations cannot contain event streams, "
                                 + "and this member is used as part of the input of the `%s` operation.",

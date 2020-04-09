@@ -8,7 +8,6 @@ software.amazon.smithy.model.traits.EnumTrait$Provider
 software.amazon.smithy.model.traits.ErrorTrait$Provider
 software.amazon.smithy.model.traits.EventHeaderTrait$Provider
 software.amazon.smithy.model.traits.EventPayloadTrait$Provider
-software.amazon.smithy.model.traits.EventStreamTrait$Provider
 software.amazon.smithy.model.traits.ExamplesTrait$Provider
 software.amazon.smithy.model.traits.ExternalDocumentationTrait$Provider
 software.amazon.smithy.model.traits.HostLabelTrait$Provider

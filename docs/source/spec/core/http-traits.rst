@@ -933,7 +933,7 @@ Event streams
 
 When using :ref:`event streams <event-streams>` and HTTP bindings, the
 :ref:`httpPayload <httppayload-trait>` trait MUST be applied to any input or
-output member targeted by the :ref:`eventStream-trait`.
+output member that targets a union with the :ref:`streaming-trait`.
 
 The following example defines an operation that uses an input event stream
 and HTTP bindings:
@@ -951,8 +951,12 @@ and HTTP bindings:
 
         structure PublishMessagesInput {
             @httpPayload
-            @eventStream
-            messages: Message,
+            messages: MessageStream,
+        }
+
+        @streaming
+        union MessageStream {
+            message: Message,
         }
 
         structure Message {
@@ -980,11 +984,18 @@ and HTTP bindings:
                     "type": "structure",
                     "members": {
                         "messages": {
-                            "target": "smithy.example#Message",
+                            "target": "smithy.example#MessageStream",
                             "traits": {
-                                "smithy.api#httpPayload": true,
-                                "smithy.api#eventStream": true
+                                "smithy.api#httpPayload": true
                             }
+                        }
+                    }
+                },
+                "smithy.example#MessageStream": {
+                    "type": "union",
+                    "members": {
+                        "message": {
+                            "target": "smithy.example#Message"
                         }
                     }
                 },
@@ -1000,7 +1011,7 @@ and HTTP bindings:
         }
 
 The following is **invalid** because the operation has the ``http`` trait
-and an input member is marked with the ``eventStream`` trait but not
+and an input union is marked with the ``streaming`` trait but not
 marked with the ``httpPayload`` trait:
 
 .. code-block:: smithy
@@ -1013,8 +1024,16 @@ marked with the ``httpPayload`` trait:
     }
 
     structure InvalidOperationInput {
-        @eventStream
-        invalid: Message, // <-- Missing the @httpPayload trait
+        invalid: MessageStream, // <-- Missing the @httpPayload trait
+    }
+
+    @streaming
+    union MessageStream {
+        message: Message,
+    }
+
+    structure Message {
+        message: String,
     }
 
 

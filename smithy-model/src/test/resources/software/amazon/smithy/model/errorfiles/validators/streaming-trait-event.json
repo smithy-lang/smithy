@@ -1,0 +1,96 @@
+{
+    "smithy": "1.0.0",
+    "shapes": {
+        "ns.foo#ValidMultiEventInputOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#ValidMultiEventInput"
+            }
+        },
+        "ns.foo#ValidMultiEventOutputOperation": {
+            "type": "operation",
+            "output": {
+                "target": "ns.foo#ValidMultiEventOutput"
+            }
+        },
+        "ns.foo#ValidMultiEventBidirectionalOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#ValidMultiEventInput"
+            },
+            "output": {
+                "target": "ns.foo#ValidMultiEventOutput"
+            }
+        },
+        "ns.foo#ValidMultiEventInput": {
+            "type": "structure",
+            "members": {
+                "events": {
+                    "target": "ns.foo#ValidUnion"
+                }
+            }
+        },
+        "ns.foo#ValidMultiEventOutput": {
+            "type": "structure",
+            "members": {
+                "events": {
+                    "target": "ns.foo#ValidUnion"
+                }
+            }
+        },
+        "ns.foo#ValidUnion": {
+            "type": "union",
+            "members": {
+                "a": {
+                    "target": "ns.foo#Event"
+                },
+                "b": {
+                    "target": "ns.foo#Event"
+                }
+            },
+            "traits": {
+                "smithy.api#streaming": {}
+            }
+        },
+        "ns.foo#EventStreamReferencesInvalidMultiEventShape": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#EventStreamReferencesInvalidMultiEventShapeInput"
+            }
+        },
+        "ns.foo#EventStreamReferencesInvalidMultiEventShapeInput": {
+            "type": "structure",
+            "members": {
+                "events": {
+                    "target": "ns.foo#InvalidUnion"
+                }
+            }
+        },
+        "ns.foo#InvalidUnion": {
+            "type": "union",
+            "members": {
+                "a": {
+                    "target": "ns.foo#Event"
+                },
+                "b": {
+                    "target": "smithy.api#String"
+                },
+                "c": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#streaming": {}
+            }
+        },
+        "ns.foo#InvalidEventStreamTargeting": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#EventStreamReferencesInvalidMultiEventShapeInput"
+            }
+        },
+        "ns.foo#Event": {
+            "type": "structure"
+        }
+    }
+}

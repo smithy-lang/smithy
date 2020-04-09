@@ -313,8 +313,9 @@ string since
 
 /// Indicates that the the data stored in the shape is very large and should not
 /// be stored in memory, or that the size of the data stored in the shape is
-/// unknown at the start of a request
-@trait(selector: "blob", structurallyExclusive: "target")
+/// unknown at the start of a request. If the target is a union then the shape
+/// represents a stream of events.
+@trait(selector: ":each(blob, union)", structurallyExclusive: "target")
 @tags(["diff.error.const"])
 structure streaming {
     /// Indicates that the stream must have a known size.
@@ -550,16 +551,6 @@ structure eventPayload {}
        conflicts: [eventPayload])
 @tags(["diff.error.const"])
 structure eventHeader {}
-
-/// Binds an input or output member as an event stream.
-/// The targeted member must be targeted by the input or output of
-/// an operation, and must target a union or structure. The
-/// targeted member must not be marked as required.
-@trait(selector: "operation -[input, output]-> structure > :test(member > :each(structure, union))",
-       structurallyExclusive: "member",
-       conflicts: [required])
-@tags(["diff.error.const"])
-structure eventStream {}
 
 /// Indicates that a string value MUST contain a valid shape ID.
 ///

@@ -40,10 +40,7 @@
                     "target": "smithy.api#Integer"
                 },
                 "c": {
-                    "target": "example.smithy#InputEventStream",
-                    "traits": {
-                        "smithy.api#eventStream": true
-                    }
+                    "target": "example.smithy#InputEventStream"
                 }
             }
         },
@@ -57,10 +54,7 @@
                     "target": "smithy.api#Integer"
                 },
                 "c": {
-                    "target": "example.smithy#OutputEventStream",
-                    "traits": {
-                        "smithy.api#eventStream": true
-                    }
+                    "target": "example.smithy#OutputEventStream"
                 }
             }
         },
@@ -73,6 +67,9 @@
                 "eventB": {
                     "target": "example.smithy#EventStructure"
                 }
+            },
+            "traits": {
+                "smithy.api#streaming": {}
             }
         },
         "example.smithy#OutputEventStream": {
@@ -84,6 +81,9 @@
                 "eventB": {
                     "target": "example.smithy#EventStructure"
                 }
+            },
+            "traits": {
+                "smithy.api#streaming": {}
             }
         },
         "example.smithy#EventStructure": {
@@ -91,23 +91,6 @@
             "members": {
                 "foo": {
                     "target": "smithy.api#String"
-                }
-            }
-        },
-        "example.smithy#SingleEventOperation": {
-            "type": "operation",
-            "input": {
-                "target": "example.smithy#SingleEventOperationInput"
-            }
-        },
-        "example.smithy#SingleEventOperationInput": {
-            "type": "structure",
-            "members": {
-                "messages": {
-                    "target": "example.smithy#EventStructure",
-                    "traits": {
-                        "smithy.api#eventStream": true
-                    }
                 }
             }
         }

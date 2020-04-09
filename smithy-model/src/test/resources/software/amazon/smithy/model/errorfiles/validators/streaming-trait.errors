@@ -1,3 +1,2 @@
-[ERROR] ns.foo#InvalidStreamingStructure$Body: The shape ns.foo#StreamingBlob has the smithy.api#streaming trait, and so may only be targeted by top-level operation inputs and outputs. | StreamingTrait
-[ERROR] ns.foo#InvalidStreamingStructure2$Body: The shape ns.foo#StreamingBlob2 has the smithy.api#streaming trait, and so may only be targeted by top-level operation inputs and outputs. | StreamingTrait
 [ERROR] ns.foo#InvalidStreamingOutput: Only a single member of a structure can target a shape marked with the `streaming` trait, but it was found on the following members: `StreamingBlob1`, `StreamingBlob2` | ExclusiveStructureMemberTrait
+[ERROR] ns.foo#InvalidNestedStream$NestedStream: This shape has an invalid `MEMBER_TARGET` relationship to a structure, `ns.foo#StreamingInput`, that contains a stream | StreamingTrait
