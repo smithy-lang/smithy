@@ -15,16 +15,23 @@
 
 package software.amazon.smithy.aws.apigateway.openapi;
 
+import java.util.List;
 import java.util.logging.Logger;
 import software.amazon.smithy.aws.apigateway.traits.ApiKeySourceTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.ListUtils;
 
-final class AddApiKeySource implements OpenApiMapper {
+final class AddApiKeySource implements ApiGatewayMapper {
+
     private static final String EXTENSION_NAME = "x-amazon-apigateway-api-key-source";
     private static final Logger LOGGER = Logger.getLogger(AddApiKeySource.class.getName());
+
+    @Override
+    public List<ApiGatewayConfig.ApiType> getApiTypes() {
+        return ListUtils.of(ApiGatewayConfig.ApiType.REST, ApiGatewayConfig.ApiType.HTTP);
+    }
 
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openApi) {

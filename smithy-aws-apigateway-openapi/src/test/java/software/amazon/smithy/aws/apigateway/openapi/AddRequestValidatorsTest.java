@@ -26,6 +26,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 
@@ -38,9 +39,12 @@ public class AddRequestValidatorsTest {
                 .assemble()
                 .unwrap();
 
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
         OpenApi result = OpenApiConverter.create()
+                .config(config)
                 .classLoader(getClass().getClassLoader())
-                .convert(model, ShapeId.from("smithy.example#Service"));
+                .convert(model);
 
         assertThat(result.getExtension("x-amazon-apigateway-request-validator").get(), equalTo(Node.from("full")));
         ObjectNode validators = result.getExtension("x-amazon-apigateway-request-validators").get().expectObjectNode();

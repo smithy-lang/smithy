@@ -26,15 +26,16 @@ public final class ApiGatewayExtension implements Smithy2OpenApiExtension {
     @Override
     public List<OpenApiMapper> getOpenApiMappers() {
         return ListUtils.of(
-                new AddApiKeySource(),
-                new AddAuthorizers(),
-                new AddBinaryTypes(),
-                new AddIntegrations(),
-                new AddRequestValidators(),
-                new CloudFormationSubstitution(),
-                new AddCorsResponseHeaders(),
-                new AddCorsPreflightIntegration(),
-                new AddCorsToGatewayResponses()
+                ApiGatewayMapper.wrap(new AddDefaultConfigSettings()),
+                ApiGatewayMapper.wrap(new AddApiKeySource()),
+                ApiGatewayMapper.wrap(new AddAuthorizers()),
+                ApiGatewayMapper.wrap(new AddBinaryTypes()),
+                ApiGatewayMapper.wrap(new AddIntegrations()),
+                ApiGatewayMapper.wrap(new AddRequestValidators()),
+                ApiGatewayMapper.wrap(new CloudFormationSubstitution()),
+                ApiGatewayMapper.wrap(new AddCorsResponseHeaders()),
+                ApiGatewayMapper.wrap(new AddCorsPreflightIntegration()),
+                ApiGatewayMapper.wrap(new AddCorsToGatewayResponses())
         );
     }
 

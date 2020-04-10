@@ -30,16 +30,19 @@ public class UnsupportedTraitsPluginTest {
     @Test
     public void logsWhenUnsupportedTraitsAreFound() {
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#EndpointService"));
         config.setIgnoreUnsupportedTraits(true);
         OpenApiConverter.create()
                 .config(config)
-                .convert(model, ShapeId.from("smithy.example#EndpointService"));
+                .convert(model);
     }
 
     @Test
     public void throwsWhenUnsupportedTraitsAreFound() {
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
-            OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#EndpointService"));
+            OpenApiConfig config = new OpenApiConfig();
+            config.setService(ShapeId.from("smithy.example#EndpointService"));
+            OpenApiConverter.create().config(config).convert(model);
         });
 
         Assertions.assertTrue(thrown.getMessage().contains("endpoint"));

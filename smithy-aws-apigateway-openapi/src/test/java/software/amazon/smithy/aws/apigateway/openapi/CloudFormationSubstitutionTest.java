@@ -36,10 +36,12 @@ public class CloudFormationSubstitutionTest {
         ObjectNode expected = Node.parse(
                 IoUtils.readUtf8File(getClass().getResource("substitution-performed.json").getPath()))
                 .expectObjectNode();
-
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
         ObjectNode actual = OpenApiConverter.create()
+                .config(config)
                 .classLoader(getClass().getClassLoader())
-                .convertToNode(model, ShapeId.from("example.smithy#MyService"));
+                .convertToNode(model);
 
         Node.assertEquals(actual, expected);
     }
@@ -57,6 +59,7 @@ public class CloudFormationSubstitutionTest {
                 .expectObjectNode();
 
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
         ApiGatewayConfig apiGatewayConfig = new ApiGatewayConfig();
         apiGatewayConfig.setDisableCloudFormationSubstitution(true);
         config.putExtensions(apiGatewayConfig);
@@ -64,7 +67,7 @@ public class CloudFormationSubstitutionTest {
         ObjectNode actual = OpenApiConverter.create()
                 .classLoader(getClass().getClassLoader())
                 .config(config)
-                .convertToNode(model, ShapeId.from("example.smithy#MyService"));
+                .convertToNode(model);
 
         Node.assertEquals(expected, actual);
     }

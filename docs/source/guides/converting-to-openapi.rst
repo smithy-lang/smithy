@@ -15,9 +15,9 @@ specifications.
 Introduction
 ------------
 
-OpenAPI is a standard for describing REST APIs. While Smithy has it's own
+OpenAPI is a standard for describing RESTful APIs. While Smithy has it's own
 interface definition language that's completely independent of OpenAPI,
-there are many use cases for authoring API models in Smithy and converting
+there are use cases for authoring API models in Smithy and converting
 them to OpenAPI using both ad-hoc and automated workflows. For example,
 integration with `Amazon API Gateway`_, access to OpenAPI tools like
 SwaggerUI, or access to OpenAPI client and server code generators when
@@ -40,7 +40,7 @@ RESTful APIs. Both approaches have their own strengths and weaknesses. For
 example, while Smithy can define a much broader set of functionality and
 services, it requires abstractions that have their own underlying complexity.
 OpenAPI is more permissive in the kinds of services it can describe, making it
-easier to adapt to existing web services, but at the same time making it possible
+easier to adapt to existing web services, but at the same time making it easier
 to author APIs that provide a poor customer experience when using clients in
 strongly-typed languages.
 
@@ -147,8 +147,9 @@ that builds an OpenAPI specification from a service for the
     correct Java library implementation.
 
 
+------------------------------
 OpenAPI configuration settings
-==============================
+------------------------------
 
 The ``openapi`` plugin is highly configurable to support different OpenAPI
 tools and vendors.
@@ -179,14 +180,13 @@ protocol (string)
     The protocol shape ID to use when converting Smithy to OpenAPI.
     For example, ``aws.protocols#restJson1``.
 
-    Smithy will try to match the provided protocol name with an implementation
-    of ``software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol``
-    registered with a service provider implementation of
-    ``software.amazon.smithy.openapi.fromsmithy.CoreExtension``.
-
     .. important::
 
-        ``protocol`` is required if a service supports multiple protocols.
+        * ``protocol`` is required if a service supports multiple protocols.
+        * A Smithy model can only be converted to OpenAPI if a corresponding
+          ``software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol``
+          implementation is registered by a ``software.amazon.smithy.openapi.fromsmithy.CoreExtension``
+          service provider found on the classpath.
 
     .. code-block:: json
 
@@ -427,8 +427,21 @@ jsonAdd (``Map<String, Node>``)
         }
 
 
+----------------------------------
 JSON schema configuration settings
-==================================
+----------------------------------
+
+alphanumericOnlyRefs (boolean)
+    Creates JSON schema names that strip out non-alphanumeric characters.
+
+    This is necessary for compatibility with some vendors like
+    Amazon API Gateway that only allow alphanumeric shape names.
+
+    .. note::
+
+        This setting is enabled by default when
+        ``software.amazon.smithy:smithy-aws-apigateway-openapi`` is on the classpath
+        and ``apiGatewayType`` is not set to ``DISABLED``.
 
 useJsonName (boolean)
     Uses the value of the :ref:`jsonName-trait` when creating JSON schema
@@ -470,10 +483,10 @@ unionStrategy (string)
 
     This property must be a string set to one of the following values:
 
-    * oneOf: Converts to a schema that uses "oneOf". This is the
+    * ``oneOf``: Converts to a schema that uses "oneOf". This is the
       default setting used if not configured.
-    * object: Converts to an empty object "{}".
-    * structure: Converts to an object with properties just like a
+    * ``object``: Converts to an empty object "{}".
+    * ``structure``: Converts to an object with properties just like a
       structure.
 
     .. code-block:: json
@@ -509,12 +522,109 @@ schemaDocumentExtensions (``Map<String, any>``)
             }
         }
 
+disableFeatures (``[string]``)
+    Disables JSON schema and OpenAPI property names from appearing in the
+    generated OpenAPI model.
 
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "disableFeatures": ["propertyNames"]
+                }
+            }
+        }
+
+
+----------------
+Security schemes
+----------------
+
+Smithy :ref:`authentication traits <authentication-traits>` applied to a service,
+resource, or operation are converted to `OpenAPI security schemes`_ that are
+defined and attached to the corresponding OpenAPI definitions.
+
+Smithy will look for service providers on the classpath that implement
+``software.amazon.smithy.openapi.fromsmithy.Smithy2OpenApiExtension``. These
+service providers register ``software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter``
+implementations used to convert Smithy authentication traits to
+OpenAPI security schemes.
+
+Smithy provides built-in support for the following authentication traits:
+
+* :ref:`aws.auth#sigv4 <aws.auth#sigv4-trait>`
+* :ref:`httpApiKeyAuth <httpApiKeyAuth-trait>`
+* :ref:`httpBasicAuth <httpBasicAuth-trait>`
+* :ref:`httpBearerAuth <httpBearerAuth-trait>`
+* :ref:`httpDigestAuth <httpDigestAuth-trait>`
+
+For example, given the following Smithy model:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    use aws.protocols#restJson1
+
+    @restJson1
+    @httpApiKeyAuth(name: "x-api-key", in: "header")
+    service Foo {
+        version: "2006-03-01",
+        operations: [ExampleOperation],
+    }
+
+    @http(method: "GET", uri: "/")
+    operation ExampleOperation {}
+
+Smithy will generate the following OpenAPI model:
+
+.. code-block:: json
+
+    {
+        "openapi": "3.0.2",
+        "info": {
+            "title": "Foo",
+            "version": "2006-03-01"
+        },
+        "paths": {
+            "/": {
+                "get": {
+                    "operationId": "ExampleOperation",
+                    "responses": {
+                        "200": {
+                            "description": "ExampleOperation response"
+                        }
+                    }
+                }
+            }
+        },
+        "components": {
+            "securitySchemes": {
+                "smithy.api#httpApiKeyAuth": {
+                    "type": "apiKey",
+                    "name": "x-api-key",
+                    "in": "header"
+                }
+            }
+        },
+        "security": [
+            {
+                "smithy.api#httpApiKeyAuth": [ ]
+            }
+        ]
+    }
+
+
+-----------------------------
 Amazon API Gateway extensions
-=============================
+-----------------------------
 
 Smithy models can be converted to OpenAPI specifications that contain
-`Amazon API Gateway extensions`_ for defining things like integrations. These
+`Amazon API Gateway extensions`_ for defining things like
+:ref:`integrations <aws.apigateway#integration-trait>` . These
 API Gateway extensions are automatically picked up by Smithy by adding a
 dependency on ``software.amazon.smithy:smithy-aws-apigateway-openapi``.
 
@@ -529,8 +639,56 @@ dependency on ``software.amazon.smithy:smithy-aws-apigateway-openapi``.
     }
 
 
+Amazon API Gateway configuration settings
+=========================================
+
+apiGatewayType (``string``)
+    Defines the type of API Gateway to define in the generated OpenAPI model.
+    This setting influences which API Gateway specific plugins apply
+    to the generated OpenAPI model.
+
+    This setting can be set to one of the following:
+
+    * ``REST``: Generates a `REST API`_. This is the default setting if not
+      configured.
+    * ``HTTP``: Generates an `HTTP API`_.
+    * ``DISABLED``: Disables all API Gateway modifications made to the
+      OpenAPI model. This is useful if ``software.amazon.smithy:smithy-aws-apigateway-openapi``
+      is inadvertently placed on the classpath by a dependency.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "apiGatewayType": "REST"
+                }
+            }
+        }
+
+disableCloudFormationSubstitution (``boolean``)
+    Disables automatically converting ``${}`` templates in specific properties
+    into CloudFormation intrinsic functions.
+
+    .. code-block:: json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "smithy.example#Weather",
+                    "disableCloudFormationSubstitution": true
+                }
+            }
+        }
+
+    .. seealso:: :ref:`openapi-cfn-substitutions`
+
+
 Binary types
-------------
+============
 
 The list of binary media types used by an API need to be specified for
 API Gateway in a top-level extension named `x-amazon-apigateway-binary-media-types`_.
@@ -542,7 +700,7 @@ with :ref:`httppayload-trait`.
 .. _apigateway-request-validators:
 
 Request validators
-------------------
+==================
 
 Amazon API Gateway can perform request validation before forwarding a request
 to an integration. You can opt-in to this feature using the
@@ -596,28 +754,29 @@ OpenAPI extension.
 .. _apigateway-integrations:
 
 Integrations
-------------
+============
 
 Smithy models can specify the backend integration configuration that
 Amazon API Gateway uses to for an operation.
 
-* ``aws.apigateway#integration`` trait defines an API Gateway integration
-  that calls an actual backend.
-* ``aws.apigateway#mockIntegration`` defines an API Gateway mock integration
-  that doesn't call a backend.
+* The :ref:`aws.apigateway#integration-trait` defines an API Gateway
+  integration that calls an actual backend.
+* The :ref:`aws.apigateway#mockIntegration-trait` defines an API Gateway mock
+  integration that doesn't call a backend.
 
-If the trait is applied to a service shape, then all operations in the service
-use the integration. If the trait is defined on a resource shape, then all
-operations of the resource and all child resources use the integration. If
-the trait is applied to an operation, then the operation uses a specific
-integration that overrides any integration inherited from a resource or
-service.
+If either of the above traits are applied to a service shape, then all
+operations in the service inherit the applied integration. If either trait is
+applied to a resource shape, then all operations of the resource and all child
+resources inherit the applied integration. If either trait is applied to an
+operation, then the operation uses a specific integration that overrides any
+integration inherited from a resource or service.
 
 
 CORS functionality
-------------------
+==================
 
-When the ``smithy.api#cors`` trait is applied to a service, Smithy performs the following
+When the ``smithy.api#cors`` trait is applied to a service and
+``apiGatewayType`` is set to ``REST``, then Smithy performs the following
 additions during the OpenAPI conversion:
 
 * Adds CORS-preflight OPTIONS requests using mock API Gateway integrations.
@@ -627,14 +786,200 @@ additions during the OpenAPI conversion:
   no gateway responses are defined in the OpenAPI model.
 
 
-Security schemes
-----------------
+.. _authorizers:
 
-TODO
+Authorizers
+===========
 
+The `x-amazon-apigateway-authorizer`_ security scheme extension is added
+using the :ref:`aws.apigateway#authorizers-trait` and
+:ref:`aws.apigateway#authorizer-trait`.
+
+The ``aws.apigateway#authorizers`` trait defines `Lambda authorizers`_ to
+attach to authentication schemes defined on a service. Authorizers are
+first defined on a service, and then attached to the service, resources,
+or operations using the ``aws.apigateway#authorizer-trait``.
+
+The following Smithy model:
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    use aws.apigateway#authorizer
+    use aws.apigateway#authorizers
+    use aws.auth#sigv4
+    use aws.protocols#restJson1
+
+    @restJson1
+    @sigv4(name: "service")
+    @authorizer("foo")
+    @authorizers(
+        foo: {scheme: sigv4, type: "aws", uri: "arn:foo"},
+        baz: {scheme: sigv4, type: "aws", uri: "arn:foo"})
+    service Example {
+      version: "2019-06-17",
+      operations: [OperationA, OperationB],
+      resources: [ResourceA, ResourceB],
+    }
+
+    // Inherits the authorizer of the service
+    operation OperationA {}
+
+    // Overrides the authorizer of the service
+    @authorizer("baz")
+    operation OperationB {}
+
+    // Inherits the authorizer of the service
+    resource ResourceA {
+      operations: [OperationC, OperationD]
+    }
+
+    // Inherits the authorizer of the service
+    operation OperationC {}
+
+    // Overrides the authorizer of the service
+    @authorizer("baz")
+    operation OperationD {}
+
+    // Overrides the authorizer of the service
+    @authorizer("baz")
+    resource ResourceB {
+      operations: [OperationE, OperationF]
+    }
+
+    // Inherits the authorizer of ResourceB
+    operation OperationE {}
+
+    // Overrides the authorizer of ResourceB
+    @authorizer("foo")
+    operation OperationF {}
+
+Is converted to the following OpenAPI model:
+
+.. code-block:: json
+
+    {
+        "openapi": "3.0.2",
+        "info": {
+            "title": "Example",
+            "version": "2019-06-17"
+        },
+        "paths": {
+            "/a": {
+                "get": {
+                    "operationId": "OperationA",
+                    "responses": {
+                        "200": {
+                            "description": "OperationA response"
+                        }
+                    }
+                }
+            },
+            "/b": {
+                "get": {
+                    "operationId": "OperationB",
+                    "responses": {
+                        "200": {
+                            "description": "OperationB response"
+                        }
+                    },
+                    "security": [
+                        {
+                            "baz": []
+                        }
+                    ]
+                }
+            },
+            "/c": {
+                "get": {
+                    "operationId": "OperationC",
+                    "responses": {
+                        "200": {
+                            "description": "OperationC response"
+                        }
+                    }
+                }
+            },
+            "/d": {
+                "get": {
+                    "operationId": "OperationD",
+                    "responses": {
+                        "200": {
+                            "description": "OperationD response"
+                        }
+                    },
+                    "security": [
+                        {
+                            "baz": []
+                        }
+                    ]
+                }
+            },
+            "/e": {
+                "get": {
+                    "operationId": "OperationE",
+                    "responses": {
+                        "200": {
+                            "description": "OperationE response"
+                        }
+                    },
+                    "security": [
+                        {
+                            "baz": []
+                        }
+                    ]
+                }
+            },
+            "/f": {
+                "get": {
+                    "operationId": "OperationF",
+                    "responses": {
+                        "200": {
+                            "description": "OperationF response"
+                        }
+                    }
+                }
+            }
+        },
+        "components": {
+            "securitySchemes": {
+                "baz": {
+                    "type": "apiKey",
+                    "description": "AWS Signature Version 4 authentication",
+                    "name": "Authorization",
+                    "in": "header",
+                    "x-amazon-apigateway-authorizer": {
+                        "type": "aws",
+                        "authorizerUri": "arn:foo"
+                    },
+                    "x-amazon-apigateway-authtype": "awsSigv4"
+                },
+                "foo": {
+                    "type": "apiKey",
+                    "description": "AWS Signature Version 4 authentication",
+                    "name": "Authorization",
+                    "in": "header",
+                    "x-amazon-apigateway-authorizer": {
+                        "type": "aws",
+                        "authorizerUri": "arn:foo"
+                    },
+                    "x-amazon-apigateway-authtype": "awsSigv4"
+                }
+            }
+        },
+        "security": [
+            {
+                "foo": []
+            }
+        ]
+    }
+
+
+.. _openapi-cfn-substitutions:
 
 AWS CloudFormation substitutions
---------------------------------
+================================
 
 OpenAPI specifications used with Amazon API Gateway are commonly deployed
 through AWS CloudFormation. Values within an OpenAPI specification for things
@@ -667,7 +1012,7 @@ uses the ``Fn::Sub`` variable syntax (``*`` means any value):
 
 
 Amazon Cognito User Pools
--------------------------
+=========================
 
 Smithy adds Cognito User Pool based authentication to the OpenAPI model when
 the :ref:`aws.auth#cognitoUserPools-trait` is added to a service shape.
@@ -697,10 +1042,7 @@ from the trait.
 
 
 Other traits that influence API Gateway
----------------------------------------
-
-``aws.api#service``
-    TODO
+=======================================
 
 ``aws.apigateway#apiKeySource``
     Specifies the source of the caller identifier that will be used to
@@ -711,7 +1053,8 @@ Other traits that influence API Gateway
     Lambda authorizers to attach to the authentication schemes defined on
     this service.
 
-    TODO: add more information
+    .. seealso:: See :ref:`authorizers`
+
 
 -------------------------------
 Converting to OpenAPI with code
@@ -772,3 +1115,8 @@ The conversion process is highly extensible through
 .. _x-amazon-apigateway-api-key-source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html
 .. _OpenAPI tags: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#tagObject
 .. _OpenAPI Data types: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#data-types
+.. _HTTP API: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api.html
+.. _REST API: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-rest-api.html
+.. _OpenAPI security schemes: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#securitySchemeObject
+.. _x-amazon-apigateway-authorizer: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
+.. _Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html

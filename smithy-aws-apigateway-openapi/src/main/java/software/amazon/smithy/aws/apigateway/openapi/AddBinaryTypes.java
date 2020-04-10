@@ -30,8 +30,8 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 
 /**
@@ -41,10 +41,16 @@ import software.amazon.smithy.utils.OptionalUtils;
  * <p>This data is used by API Gateway to determine which content-types do
  * not contain UTF-8 data.
  */
-final class AddBinaryTypes implements OpenApiMapper {
+final class AddBinaryTypes implements ApiGatewayMapper {
+
     private static final Logger LOGGER = Logger.getLogger(AddBinaryTypes.class.getName());
     private static final String EXTENSION_NAME = "x-amazon-apigateway-binary-media-types";
     private static final String DEFAULT_BINARY_TYPE = "application/octet-stream";
+
+    @Override
+    public List<ApiGatewayConfig.ApiType> getApiTypes() {
+        return ListUtils.of(ApiGatewayConfig.ApiType.REST, ApiGatewayConfig.ApiType.HTTP);
+    }
 
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openApi) {

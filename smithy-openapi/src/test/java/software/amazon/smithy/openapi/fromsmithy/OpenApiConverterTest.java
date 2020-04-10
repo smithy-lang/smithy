@@ -58,8 +58,11 @@ public class OpenApiConverterTest {
 
     @Test
     public void convertsModelsToOpenApi() {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.rest#RestService"));
         ObjectNode result = OpenApiConverter.create()
-                .convertToNode(testService, ShapeId.from("example.rest#RestService"));
+                .config(config)
+                .convertToNode(testService);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("test-service.openapi.json")));
 
@@ -74,11 +77,12 @@ public class OpenApiConverterTest {
                 .assemble()
                 .unwrap();
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
         config.setTags(true);
         config.setSupportedTags(ListUtils.of("baz", "foo"));
         OpenApi result = OpenApiConverter.create()
                 .config(config)
-                .convert(model, ShapeId.from("smithy.example#Service"));
+                .convert(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("tagged-service.openapi.json")));
 
@@ -93,8 +97,11 @@ public class OpenApiConverterTest {
                     .discoverModels()
                     .assemble()
                     .unwrap();
+            OpenApiConfig config = new OpenApiConfig();
+            config.setService(ShapeId.from("smithy.example#Service"));
             OpenApiConverter.create()
-                    .convert(model, ShapeId.from("smithy.example#Service"));
+                    .config(config)
+                    .convert(model);
         });
 
         assertThat(thrown.getMessage(), containsString("does not define any protocols"));
@@ -108,8 +115,11 @@ public class OpenApiConverterTest {
                     .discoverModels()
                     .assemble()
                     .unwrap();
+            OpenApiConfig config = new OpenApiConfig();
+            config.setService(ShapeId.from("smithy.example#Service"));
             OpenApiConverter.create()
-                    .convert(model, ShapeId.from("smithy.example#Service"));
+                    .config(config)
+                    .convert(model);
         });
 
         assertThat(thrown.getMessage(), containsString("Unable to find an OpenAPI service provider"));
@@ -118,10 +128,11 @@ public class OpenApiConverterTest {
     @Test
     public void loadsProtocolFromConfiguration() {
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.rest#RestService"));
         config.setProtocol(ShapeId.from("aws.protocols#restJson1"));
         ObjectNode result = OpenApiConverter.create()
                 .config(config)
-                .convertToNode(testService, ShapeId.from("example.rest#RestService"));
+                .convertToNode(testService);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("test-service.openapi.json")));
 
@@ -136,8 +147,11 @@ public class OpenApiConverterTest {
                     .discoverModels()
                     .assemble()
                     .unwrap();
+            OpenApiConfig config = new OpenApiConfig();
+            config.setService(ShapeId.from("smithy.example#Service"));
             OpenApiConverter.create()
-                    .convert(model, ShapeId.from("smithy.example#Service"));
+                    .config(config)
+                    .convert(model);
         });
 
         assertThat(thrown.getMessage(), containsString("defines multiple protocols"));
@@ -147,10 +161,11 @@ public class OpenApiConverterTest {
     public void failsWhenConfiguredProtocolIsNoFound() {
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             OpenApiConfig config = new OpenApiConfig();
+            config.setService(ShapeId.from("example.rest#RestService"));
             config.setProtocol(ShapeId.from("aws.protocols#restJson99"));
             OpenApiConverter.create()
                     .config(config)
-                    .convertToNode(testService, ShapeId.from("example.rest#RestService"));
+                    .convertToNode(testService);
         });
 
         assertThat(thrown.getMessage(), containsString("Unable to find protocol"));
@@ -163,7 +178,9 @@ public class OpenApiConverterTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        OpenApi result = OpenApiConverter.create().config(config).convert(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("unsupported-http-method.openapi.json")));
 
@@ -177,8 +194,11 @@ public class OpenApiConverterTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
         OpenApi result = OpenApiConverter.create()
-                .convert(model, ShapeId.from("smithy.example#Service"));
+                .config(config)
+                .convert(model);
 
         for (PathItem pathItem : result.getPaths().values()) {
             Assertions.assertFalse(pathItem.getGet().isPresent());
@@ -199,7 +219,9 @@ public class OpenApiConverterTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        OpenApi result = OpenApiConverter.create().config(config).convert(model);
 
         assertThat(result.getPaths().get("/").getGet().get().getResponses().values(), not(empty()));
     }
@@ -211,7 +233,9 @@ public class OpenApiConverterTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        OpenApi result = OpenApiConverter.create().config(config).convert(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("mixed-security-service.openapi.json")));
 
@@ -236,9 +260,12 @@ public class OpenApiConverterTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
         OpenApi result = OpenApiConverter.create()
                 .addOpenApiMapper(new NullSecurity())
-                .convert(model, ShapeId.from("smithy.example#Service"));
+                .config(config)
+                .convert(model);
 
         assertThat(result.getSecurity(), empty());
         assertThat(result.getPaths().get("/2").getGet().get().getSecurity().orElse(Collections.emptyList()), empty());
@@ -262,9 +289,12 @@ public class OpenApiConverterTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
         OpenApi result = OpenApiConverter.create()
                 .addOpenApiMapper(new ConstantSecurity())
-                .convert(model, ShapeId.from("smithy.example#Service"));
+                .config(config)
+                .convert(model);
 
         assertThat(result.getSecurity().get(0).keySet(), contains("foo_baz"));
         assertThat(result.getPaths().get("/2").getGet().get().getSecurity().get().get(0).keySet(), contains("foo_baz"));
@@ -273,10 +303,11 @@ public class OpenApiConverterTest {
     @Test
     public void mergesInSchemaDocumentExtensions() {
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.rest#RestService"));
         config.setSchemaDocumentExtensions(Node.objectNode().withMember("foo", "baz"));
         ObjectNode result = OpenApiConverter.create()
                 .config(config)
-                .convertToNode(testService, ShapeId.from("example.rest#RestService"));
+                .convertToNode(testService);
 
         assertThat(result.getMember("foo"), equalTo(Optional.of(Node.from("baz"))));
     }
@@ -290,13 +321,32 @@ public class OpenApiConverterTest {
                 .assemble()
                 .unwrap();
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Streaming"));
         config.setProtocol(ShapeId.from("aws.protocols#restJson1"));
         ObjectNode result = OpenApiConverter.create()
                 .config(config)
-                .convertToNode(model, ShapeId.from("smithy.example#Streaming"));
+                .convertToNode(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("streaming-service.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void addsDefaultSettings() {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.rest#RestService"));
+        config.setSchemaDocumentExtensions(Node.objectNode().withMember("foo", "baz"));
+        OpenApiConverter.create()
+                .addOpenApiMapper(new OpenApiMapper() {
+                    @Override
+                    public void updateDefaultSettings(OpenApiConfig config) {
+                        config.putExtension("hello", "goodbye");
+                    }
+                })
+                .config(config)
+                .convertToNode(testService);
+
+        assertThat(config.getExtensions().getMember("hello"), not(Optional.empty()));
     }
 }

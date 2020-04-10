@@ -5,6 +5,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
@@ -19,7 +20,9 @@ public class CorsTest {
                 .addImport(getClass().getResource("cors-model.json"))
                 .assemble()
                 .unwrap();
-        ObjectNode result = OpenApiConverter.create().convertToNode(model, ShapeId.from("example.smithy#MyService"));
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
+        ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("cors-model.openapi.json")));
 
@@ -33,7 +36,9 @@ public class CorsTest {
                 .addImport(getClass().getResource("cors-explicit-options.json"))
                 .assemble()
                 .unwrap();
-        ObjectNode result = OpenApiConverter.create().convertToNode(model, ShapeId.from("example.smithy#MyService"));
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
+        ObjectNode result = OpenApiConverter.create().config(config).convertToNode(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("cors-explicit-options.openapi.json")));
 
@@ -57,8 +62,12 @@ public class CorsTest {
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("cors-with-custom-gateway-response-headers.openapi.json")));
 
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
+
         // Create an OpenAPI model.
         ObjectNode result = OpenApiConverter.create()
+                .config(config)
                 .addOpenApiMapper(new OpenApiMapper() {
                     @Override
                     public byte getOrder() {
@@ -79,7 +88,7 @@ public class CorsTest {
                                 .build();
                     }
                 })
-                .convertToNode(model, ShapeId.from("example.smithy#MyService"));
+                .convertToNode(model);
 
         Node.assertEquals(result, expectedNode);
     }
