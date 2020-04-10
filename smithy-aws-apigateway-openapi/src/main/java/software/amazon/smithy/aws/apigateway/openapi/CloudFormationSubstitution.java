@@ -35,13 +35,14 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Finds and replaces CloudFormation variables into Fn::Sub intrinsic functions.
  */
-final class CloudFormationSubstitution implements OpenApiMapper {
+final class CloudFormationSubstitution implements ApiGatewayMapper {
+
     private static final Logger LOGGER = Logger.getLogger(CloudFormationSubstitution.class.getName());
     private static final String SUBSTITUTION_KEY = "Fn::Sub";
     private static final Pattern SUBSTITUTION_PATTERN = Pattern.compile("\\$\\{.+}");
@@ -61,6 +62,11 @@ final class CloudFormationSubstitution implements OpenApiMapper {
             "paths/*/*/x-amazon-apigateway-integration/connectionId",
             "paths/*/*/x-amazon-apigateway-integration/credentials",
             "paths/*/*/x-amazon-apigateway-integration/uri");
+
+    @Override
+    public List<ApiGatewayConfig.ApiType> getApiTypes() {
+        return ListUtils.of(ApiGatewayConfig.ApiType.REST, ApiGatewayConfig.ApiType.HTTP);
+    }
 
     @Override
     public byte getOrder() {

@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.aws.apigateway.openapi;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,9 +25,9 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 
@@ -42,7 +43,8 @@ import software.amazon.smithy.utils.OptionalUtils;
  *
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html">Request validators</a>
  */
-final class AddRequestValidators implements OpenApiMapper {
+final class AddRequestValidators implements ApiGatewayMapper {
+
     private static final String REQUEST_VALIDATOR = "x-amazon-apigateway-request-validator";
     private static final String REQUEST_VALIDATORS = "x-amazon-apigateway-request-validators";
     private static final Map<String, Node> KNOWN_VALIDATORS = MapUtils.of(
@@ -55,6 +57,11 @@ final class AddRequestValidators implements OpenApiMapper {
                     .withMember("validateRequestParameters", Node.from(true))
                     .withMember("validateRequestBody", Node.from(true))
     );
+
+    @Override
+    public List<ApiGatewayConfig.ApiType> getApiTypes() {
+        return ListUtils.of(ApiGatewayConfig.ApiType.REST, ApiGatewayConfig.ApiType.HTTP);
+    }
 
     @Override
     public OperationObject updateOperation(

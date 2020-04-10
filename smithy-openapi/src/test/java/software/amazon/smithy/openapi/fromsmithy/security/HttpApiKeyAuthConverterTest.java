@@ -8,6 +8,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.IoUtils;
@@ -20,7 +21,9 @@ public class HttpApiKeyAuthConverterTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Service"));
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        OpenApi result = OpenApiConverter.create().config(config).convert(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("http-api-key-security.openapi.json")));
 

@@ -29,18 +29,21 @@ public class CheckForGreedyLabelsTest {
 
     @Test
     public void logsInsteadOfThrows() {
-        OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Greedy"));
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Greedy"));
+        OpenApiConverter.create().config(config).convert(model);
     }
 
     @Test
     public void keepsUnusedSchemas() {
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Greedy"));
         config.setForbidGreedyLabels(true);
 
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
             OpenApiConverter.create()
                     .config(config)
-                    .convert(model, ShapeId.from("smithy.example#Greedy"));
+                    .convert(model);
         });
 
         Assertions.assertTrue(thrown.getMessage().contains("greedy"));

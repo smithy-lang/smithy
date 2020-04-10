@@ -44,11 +44,12 @@ public class OpenApiJsonAddTest {
                 .build();
 
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
         config.setJsonAdd(addNode.getStringMap());
 
         ObjectNode openApi = OpenApiConverter.create()
                 .config(config)
-                .convertToNode(model, ShapeId.from("smithy.example#Service"));
+                .convertToNode(model);
 
         String description = NodePointer.parse("/info/description").getValue(openApi).expectStringNode().getValue();
         String infoFoo = NodePointer.parse("/info/foo").getValue(openApi).expectStringNode().getValue();

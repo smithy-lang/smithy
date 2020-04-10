@@ -32,7 +32,9 @@ public class RemoveUnusedComponentsTest {
 
     @Test
     public void removesUnusedSchemas() {
-        OpenApi result = OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#Small"));
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Small"));
+        OpenApi result = OpenApiConverter.create().config(config).convert(model);
 
         Assertions.assertTrue(result.getComponents().getSchemas().isEmpty());
     }
@@ -40,10 +42,11 @@ public class RemoveUnusedComponentsTest {
     @Test
     public void keepsUnusedSchemas() {
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Small"));
         config.setKeepUnusedComponents(true);
         OpenApi result = OpenApiConverter.create()
                 .config(config)
-                .convert(model, ShapeId.from("smithy.example#Small"));
+                .convert(model);
 
         // The input structure remains in the output even though it's unreferenced.
         Assertions.assertFalse(result.getComponents().getSchemas().isEmpty());
@@ -51,7 +54,11 @@ public class RemoveUnusedComponentsTest {
 
     @Test
     public void removesUnusedSchemes() {
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Small"));
+
         OpenApi result = OpenApiConverter.create()
+                .config(config)
                 .addOpenApiMapper(new OpenApiMapper() {
                     @Override
                     public OpenApi after(Context context, OpenApi openapi) {
@@ -62,7 +69,7 @@ public class RemoveUnusedComponentsTest {
                                 .build();
                     }
                 })
-                .convert(model, ShapeId.from("smithy.example#Small"));
+                .convert(model);
 
         Assertions.assertFalse(result.getComponents().getSecuritySchemes().keySet().contains("foo"));
     }

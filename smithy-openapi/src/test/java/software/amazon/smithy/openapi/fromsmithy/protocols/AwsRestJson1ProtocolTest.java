@@ -37,8 +37,11 @@ public class AwsRestJson1ProtocolTest {
                 .discoverModels()
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
         ObjectNode result = OpenApiConverter.create()
-                .convertToNode(model, ShapeId.from("smithy.example#Service"));
+                .config(config)
+                .convertToNode(model);
         String openApiModel = smithy.replace(".json", ".openapi.json");
         InputStream openApiStream = getClass().getResourceAsStream(openApiModel);
 
@@ -58,10 +61,11 @@ public class AwsRestJson1ProtocolTest {
                 .assemble()
                 .unwrap();
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
         config.setJsonContentType("application/x-amz-json-1.0");
         OpenApi result = OpenApiConverter.create()
                 .config(config)
-                .convert(model, ShapeId.from("smithy.example#Service"));
+                .convert(model);
 
         Assertions.assertTrue(Node.printJson(result.toNode()).contains("application/x-amz-json-1.0"));
     }

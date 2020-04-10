@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -26,8 +27,8 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.CorsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Adds static CORS response headers to API Gateway "gateway" responses.
@@ -42,7 +43,7 @@ import software.amazon.smithy.openapi.model.OpenApi;
  *
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-gateway-responses.html">x-amazon-apigateway-gateway-responses Object</a>
  */
-final class AddCorsToGatewayResponses implements OpenApiMapper {
+final class AddCorsToGatewayResponses implements ApiGatewayMapper {
 
     private static final Logger LOGGER = Logger.getLogger(AddCorsToGatewayResponses.class.getName());
 
@@ -63,6 +64,11 @@ final class AddCorsToGatewayResponses implements OpenApiMapper {
     private static final String GATEWAY_RESPONSES_EXTENSION = "x-amazon-apigateway-gateway-responses";
     private static final String HEADER_PREFIX = "gatewayresponse.header.";
     private static final String RESPONSE_PARAMETERS_KEY = "responseParameters";
+
+    @Override
+    public List<ApiGatewayConfig.ApiType> getApiTypes() {
+        return ListUtils.of(ApiGatewayConfig.ApiType.REST);
+    }
 
     @Override
     public OpenApi after(Context<? extends Trait> context, OpenApi openapi) {

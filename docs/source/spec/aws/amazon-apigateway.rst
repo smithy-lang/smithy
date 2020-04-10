@@ -323,7 +323,7 @@ Summary
     Defines an `API Gateway integration`_ that integrates with an actual
     backend.
 Trait selector
-    ``:test(service, operation)``
+    ``:test(service, resource, operation)``
 Value type
     ``structure``
 See also
@@ -493,7 +493,7 @@ operation within the service.
 Summary
     Defines an `API Gateway integration`_ that returns a mock response.
 Trait selector
-    ``:test(service, operation)``
+    ``:test(service, resource, operation)``
 Value type
     ``structure``
 

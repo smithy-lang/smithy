@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -30,8 +31,8 @@ import software.amazon.smithy.model.traits.CorsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OperationObject;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.Pair;
 
 /**
@@ -44,7 +45,8 @@ import software.amazon.smithy.utils.Pair;
  * a security scheme that needs it, and and Access-Control-Allow-Origin
  * header that is the result of {@link CorsTrait#getOrigin()}.
  */
-final class AddIntegrations implements OpenApiMapper {
+final class AddIntegrations implements ApiGatewayMapper {
+
     private static final Logger LOGGER = Logger.getLogger(AddIntegrations.class.getName());
     private static final String EXTENSION_NAME = "x-amazon-apigateway-integration";
     private static final String RESPONSES_KEY = "responses";
@@ -52,6 +54,11 @@ final class AddIntegrations implements OpenApiMapper {
     private static final String DEFAULT_KEY = "default";
     private static final String STATUS_CODE_KEY = "statusCode";
     private static final String RESPONSE_PARAMETERS_KEY = "responseParameters";
+
+    @Override
+    public List<ApiGatewayConfig.ApiType> getApiTypes() {
+        return ListUtils.of(ApiGatewayConfig.ApiType.REST, ApiGatewayConfig.ApiType.HTTP);
+    }
 
     @Override
     public OperationObject updateOperation(

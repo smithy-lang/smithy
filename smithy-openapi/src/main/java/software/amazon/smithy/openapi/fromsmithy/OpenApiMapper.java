@@ -23,6 +23,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.openapi.model.ParameterObject;
@@ -54,6 +55,18 @@ public interface OpenApiMapper {
     default byte getOrder() {
         return 0;
     }
+
+    /**
+     * Sets default values on the OpenAPI configuration object.
+     *
+     * <p>Use this method <strong>and not {@link #before}</strong>
+     * to add default settings. Adding default settings in before()
+     * is possible, but might be too late in the process for those
+     * configuration changes to take effect.
+     *
+     * @param config Configuration object to modify.
+     */
+    default void updateDefaultSettings(OpenApiConfig config) {}
 
     /**
      * Updates an operation.
@@ -230,6 +243,13 @@ public interface OpenApiMapper {
         sorted.sort(Comparator.comparingInt(OpenApiMapper::getOrder));
 
         return new OpenApiMapper() {
+            @Override
+            public void updateDefaultSettings(OpenApiConfig config) {
+                for (OpenApiMapper plugin : sorted) {
+                    plugin.updateDefaultSettings(config);
+                }
+            }
+
             @Override
             public OperationObject updateOperation(
                     Context<? extends Trait> context,

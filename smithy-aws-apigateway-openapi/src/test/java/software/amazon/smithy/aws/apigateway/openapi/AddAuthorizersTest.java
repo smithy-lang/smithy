@@ -29,6 +29,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.SecurityScheme;
@@ -43,9 +44,12 @@ public class AddAuthorizersTest {
                 .addImport(getClass().getResource("authorizers.json"))
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("ns.foo#SomeService"));
         OpenApi result = OpenApiConverter.create()
+                .config(config)
                 .classLoader(getClass().getClassLoader())
-                .convert(model, ShapeId.from("ns.foo#SomeService"));
+                .convert(model);
         SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
 
         assertThat(result.getComponents().getSecuritySchemes().get("aws.v4"), nullValue());
@@ -69,9 +73,12 @@ public class AddAuthorizersTest {
                 .addImport(getClass().getResource("basic-authorizers.json"))
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("ns.foo#SomeService"));
         OpenApi result = OpenApiConverter.create()
+                .config(config)
                 .classLoader(getClass().getClassLoader())
-                .convert(model, ShapeId.from("ns.foo#SomeService"));
+                .convert(model);
         SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
 
         assertThat(result.getComponents().getSecuritySchemes().get("aws.v4"), nullValue());
@@ -89,9 +96,12 @@ public class AddAuthorizersTest {
                 .addImport(getClass().getResource("custom-auth-type-authorizer.json"))
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("ns.foo#SomeService"));
         OpenApi result = OpenApiConverter.create()
+                .config(config)
                 .classLoader(getClass().getClassLoader())
-                .convert(model, ShapeId.from("ns.foo#SomeService"));
+                .convert(model);
         SecurityScheme sigV4 = result.getComponents().getSecuritySchemes().get("sigv4");
 
         assertThat(result.getComponents().getSecuritySchemes().get("aws.v4"), nullValue());
@@ -109,9 +119,12 @@ public class AddAuthorizersTest {
                 .addImport(getClass().getResource("effective-authorizers.smithy"))
                 .assemble()
                 .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#ServiceA"));
         OpenApi result = OpenApiConverter.create()
+                .config(config)
                 .classLoader(getClass().getClassLoader())
-                .convert(model, ShapeId.from("smithy.example#ServiceA"));
+                .convert(model);
 
         // The security of the service is just "foo".
         assertThat(result.getSecurity(), contains(MapUtils.of("foo", ListUtils.of())));
