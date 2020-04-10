@@ -32,7 +32,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.ErrorTrait;
-import software.amazon.smithy.model.traits.EventStreamTrait;
 import software.amazon.smithy.model.traits.HttpErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
@@ -41,6 +40,7 @@ import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
@@ -275,7 +275,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * to the payload, then the following checks are made:
      *
      * <ul>
-     *     <li>If the payload has the {@link EventStreamTrait}, then the
+     *     <li>If the payload has the {@link StreamingTrait}, then the
      *     {@code eventStreamContentType} is returned.</li>
      *     <li>If the targeted shape is a structure or document type, then
      *     the {@code documentContentType} is returned.</li>
@@ -328,7 +328,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
      * to the payload, then the following checks are made:
      *
      * <ul>
-     *     <li>If the payload has the {@link EventStreamTrait}, then the
+     *     <li>If the payload has the {@link StreamingTrait}, then the
      *     {@code eventStreamContentType} is returned.</li>
      *     <li>If the targeted shape is a structure or document type, then
      *     the {@code documentContentType} is returned.</li>
@@ -368,15 +368,13 @@ public final class HttpBindingIndex implements KnowledgeIndex {
             }
 
             if (binding.getLocation() == HttpBinding.Location.PAYLOAD) {
-                if (binding.getMember().hasTrait(EventStreamTrait.class)) {
-                    return eventStreamContentType;
-                }
-
                 Shape target = model.getShape(binding.getMember().getTarget()).orElse(null);
                 if (target == null) {
                     // Can't determine the content-type because the model is broken :(
                     // Let other parts of the validation system point this out.
                     break;
+                } else if (StreamingTrait.isEventStream(target)) {
+                    return eventStreamContentType;
                 } else if (target.isDocumentShape() || target.isStructureShape()) {
                     // Document type and structure targets are always the document content-type.
                     return documentContentType;

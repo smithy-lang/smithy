@@ -23,8 +23,12 @@ operation C {
 }
 
 structure COutput {
-  @eventStream
-  messages: EmptyEvent,
+  messages: EmptyEventStream,
+}
+
+@streaming
+union EmptyEventStream {
+    singleton: EmptyEvent
 }
 
 structure EmptyEvent {}
@@ -48,8 +52,12 @@ operation F {
 }
 
 structure FOutput {
-  @eventStream
-  messages: DInputEvent,
+  messages: DInputEventStream,
+}
+
+@streaming
+union DInputEventStream {
+    singleton: DInputEvent
 }
 
 structure DInputEvent {

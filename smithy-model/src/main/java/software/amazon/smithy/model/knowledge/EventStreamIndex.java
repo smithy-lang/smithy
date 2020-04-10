@@ -26,7 +26,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
-import software.amazon.smithy.model.traits.EventStreamTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 
 /**
  * Index of operation shapes to event stream information.
@@ -62,7 +62,8 @@ public final class EventStreamIndex implements KnowledgeIndex {
             Map<ShapeId, EventStreamInfo> infoMap
     ) {
         for (MemberShape member : shape.getAllMembers().values()) {
-            if (member.hasTrait(EventStreamTrait.class)) {
+            Shape target = model.expectShape(member.getTarget());
+            if (target.hasTrait(StreamingTrait.class) && target.isUnionShape()) {
                 createEventStreamInfo(model, operation, shape, member).ifPresent(info -> {
                     infoMap.put(operation.getId(), info);
                 });
@@ -106,15 +107,8 @@ public final class EventStreamIndex implements KnowledgeIndex {
             StructureShape structure,
             MemberShape member
     ) {
-        EventStreamTrait trait = member.getTrait(EventStreamTrait.class).get();
 
-        Shape eventStreamTarget = model.getShape(member.getTarget()).orElse(null);
-        if (eventStreamTarget == null) {
-            LOGGER.severe(String.format(
-                    "Skipping event stream info for %s because the %s member target %s does not exist",
-                    operation.getId(), member.getMemberName(), member.getTarget()));
-            return Optional.empty();
-        }
+        Shape eventStreamTarget = model.expectShape(member.getTarget());
 
         // Compute the events of the event stream.
         Map<String, StructureShape> events = new HashMap<>();
@@ -147,7 +141,7 @@ public final class EventStreamIndex implements KnowledgeIndex {
         }
 
         return Optional.of(new EventStreamInfo(
-                operation, trait, structure,
+                operation, eventStreamTarget.expectTrait(StreamingTrait.class), structure,
                 member, eventStreamTarget,
                 initialMembers, initialTargets,
                 events));

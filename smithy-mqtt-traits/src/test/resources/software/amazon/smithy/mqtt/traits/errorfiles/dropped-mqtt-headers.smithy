@@ -12,8 +12,12 @@ operation Foo {
 structure FooInput {}
 
 structure FooOutput {
-  @eventStream
-  messages: Event
+  messages: EventStream
+}
+
+@streaming
+union EventStream {
+    singleton: Event
 }
 
 structure Event {

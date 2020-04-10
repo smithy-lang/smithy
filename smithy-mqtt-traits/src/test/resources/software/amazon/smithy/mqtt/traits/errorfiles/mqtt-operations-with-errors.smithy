@@ -9,11 +9,15 @@ operation Foo {
 }
 
 structure FooOutput {
-  @eventStream
-  messages: Event1,
+  messages: EventStream,
 }
 
-structure Event1 {}
+@streaming
+union EventStream {
+    singleton: Event
+}
+
+structure Event {}
 
 @error("client")
 structure Error {}

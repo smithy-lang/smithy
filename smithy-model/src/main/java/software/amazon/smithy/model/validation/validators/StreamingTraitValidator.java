@@ -15,34 +15,88 @@
 
 package software.amazon.smithy.model.validation.validators;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
+import software.amazon.smithy.model.neighbor.NeighborProvider;
+import software.amazon.smithy.model.neighbor.Relationship;
+import software.amazon.smithy.model.neighbor.RelationshipDirection;
+import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.OptionalUtils;
-import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.Pair;
 
+/**
+ * Validates the streaming trait.
+ *
+ * <p>Ensures that the targeted shapes are only referenced by top level input/output structures.
+ *
+ * <p>If the targeted shape is a union, ensures that all members are structures.
+ */
 public class StreamingTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        Set<ShapeId> topLevelIoShapes = model.shapes(OperationShape.class)
-                .flatMap(operation -> SetUtils.of(operation.getInput(), operation.getOutput()).stream())
-                .flatMap(OptionalUtils::stream)
+        List<ValidationEvent> events = validateStreamingTargets(model);
+        events.addAll(validateAllEventStreamMembers(model));
+        return events;
+    }
+
+    private List<ValidationEvent> validateStreamingTargets(Model model) {
+        List<ValidationEvent> events = new ArrayList<>();
+        NeighborProvider provider = model.getKnowledge(NeighborProviderIndex.class).getReverseProvider();
+
+        // Find any containers that reference a streaming trait.
+        Set<Shape> streamingStructures = model.shapes(MemberShape.class)
+                .filter(member -> member.getMemberTrait(model, StreamingTrait.class).isPresent())
+                .map(member -> model.expectShape(member.getContainer()))
                 .collect(Collectors.toSet());
 
-        return model.shapes(MemberShape.class)
-                .filter(member -> member.getMemberTrait(model, StreamingTrait.class).isPresent())
-                .filter(member -> !topLevelIoShapes.contains(member.getContainer()))
-                .map(member -> error(member, String.format(
-                        "The shape %s has the smithy.api#streaming trait, and so may only be targeted by "
-                        + "top-level operation inputs and outputs.",
-                        member.getTarget())))
+        for (Shape shape : streamingStructures) {
+            for (Relationship rel : provider.getNeighbors(shape)) {
+                if (rel.getRelationshipType() != RelationshipType.INPUT
+                        && rel.getRelationshipType() != RelationshipType.OUTPUT
+                        && rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED) {
+                    events.add(error(rel.getShape(), String.format(
+                            "This shape has an invalid `%s` relationship to a structure, `%s`, that contains "
+                            + "a stream", rel.getRelationshipType(), shape.getId())));
+                }
+            }
+        }
+
+        return events;
+    }
+
+    private List<ValidationEvent> validateAllEventStreamMembers(Model model) {
+        return model.shapes(UnionShape.class)
+                .filter(shape -> shape.hasTrait(StreamingTrait.class))
+                .flatMap(shape -> validateUnionMembers(model, shape).stream())
                 .collect(Collectors.toList());
+    }
+
+    private List<ValidationEvent> validateUnionMembers(Model model, UnionShape shape) {
+        // Find members that don't reference a structure and combine
+        // these member names into a comma separated list.
+        String invalidMembers = shape.getAllMembers().values().stream()
+                .map(em -> Pair.of(em.getMemberName(), model.getShape(em.getTarget()).orElse(null)))
+                .filter(pair -> pair.getRight() != null && !(pair.getRight() instanceof StructureShape))
+                .map(Pair::getLeft)
+                .sorted()
+                .collect(Collectors.joining(", "));
+        if (!invalidMembers.isEmpty()) {
+            return ListUtils.of(error(shape, String.format(
+                    "Each member of an event stream union must target a structure shape, but the following union "
+                    + "members do not: [%s]", invalidMembers)));
+        }
+        return Collections.emptyList();
     }
 }
