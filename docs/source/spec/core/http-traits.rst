@@ -933,7 +933,7 @@ Event streams
 
 When using :ref:`event streams <event-streams>` and HTTP bindings, the
 :ref:`httpPayload <httppayload-trait>` trait MUST be applied to any input or
-output member that targets a union with the :ref:`streaming-trait`.
+output member that targets a shape marked with the :ref:`streaming-trait`.
 
 The following example defines an operation that uses an input event stream
 and HTTP bindings:
@@ -1011,7 +1011,7 @@ and HTTP bindings:
         }
 
 The following is **invalid** because the operation has the ``http`` trait
-and an input union is marked with the ``streaming`` trait but not
+and an input member is marked with the ``streaming`` trait but not
 marked with the ``httpPayload`` trait:
 
 .. code-block:: smithy
