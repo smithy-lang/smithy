@@ -132,15 +132,13 @@ public final class OpenApiConverter {
     }
 
     /**
-     * Converts the given service shape to OpenAPI model using the given
-     * Smithy model.
+     * Converts the Smithy model to OpenAPI.
      *
      * @param model Smithy model to convert.
-     * @param serviceShapeId Service to convert.
      * @return Returns the converted model.
      */
-    public OpenApi convert(Model model, ShapeId serviceShapeId) {
-        return convertWithEnvironment(createConversionEnvironment(model, serviceShapeId));
+    public OpenApi convert(Model model) {
+        return convertWithEnvironment(createConversionEnvironment(model));
     }
 
     /**
@@ -157,17 +155,22 @@ public final class OpenApiConverter {
      * variable expressions that are replaced when synthesized).
      *
      * @param model Smithy model to convert.
-     * @param serviceShapeId Service to convert.
      * @return Returns the converted model.
      */
-    public ObjectNode convertToNode(Model model, ShapeId serviceShapeId) {
-        ConversionEnvironment<? extends Trait> environment = createConversionEnvironment(model, serviceShapeId);
+    public ObjectNode convertToNode(Model model) {
+        ConversionEnvironment<? extends Trait> environment = createConversionEnvironment(model);
         OpenApi openApi = convertWithEnvironment(environment);
         ObjectNode node = openApi.toNode().expectObjectNode();
         return environment.mapper.updateNode(environment.context, openApi, node);
     }
 
-    private ConversionEnvironment<? extends Trait> createConversionEnvironment(Model model, ShapeId serviceShapeId) {
+    private ConversionEnvironment<? extends Trait> createConversionEnvironment(Model model) {
+        ShapeId serviceShapeId = config.getService();
+
+        if (serviceShapeId == null) {
+            throw new OpenApiException("openapi is missing required property, `service`");
+        }
+
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder();
         jsonSchemaConverterBuilder.model(model);
 
@@ -193,6 +196,12 @@ public final class OpenApiConverter {
         Trait protocolTrait = loadOrDeriveProtocolTrait(model, service);
         OpenApiProtocol<Trait> openApiProtocol = loadOpenApiProtocol(service, protocolTrait, extensions);
 
+        // Add default values from mappers. This is needed instead of just using `before`
+        // because the JSON schema machinery uses configuration settings like
+        // `alphanumericOnlyRefs` when it is created.
+        OpenApiMapper composedMapper = createComposedMapper(extensions, mappers);
+        composedMapper.updateDefaultSettings(config);
+
         // Update with protocol default values.
         openApiProtocol.updateDefaultSettings(config);
         jsonSchemaConverterBuilder.config(config);
@@ -217,7 +226,17 @@ public final class OpenApiConverter {
                 model, service, config, jsonSchemaConverter,
                 openApiProtocol, document, securitySchemeConverters);
 
-        return new ConversionEnvironment<>(context, extensions, components, mappers);
+        return new ConversionEnvironment<>(context, extensions, components, composedMapper);
+    }
+
+    private static OpenApiMapper createComposedMapper(
+            List<Smithy2OpenApiExtension> extensions,
+            List<OpenApiMapper> mappers
+    ) {
+        return OpenApiMapper.compose(Stream.concat(
+                extensions.stream().flatMap(extension -> extension.getOpenApiMappers().stream()),
+                mappers.stream()
+        ).collect(Collectors.toList()));
     }
 
     // Gets the protocol configured in `protocol` if set.
@@ -262,19 +281,12 @@ public final class OpenApiConverter {
                 Context<T> context,
                 List<Smithy2OpenApiExtension> extensions,
                 ComponentsObject.Builder components,
-                List<OpenApiMapper> mappers
+                OpenApiMapper composedMapper
         ) {
             this.context = context;
             this.extensions = extensions;
             this.components = components;
-            this.mapper = createMapper(mappers);
-        }
-
-        private OpenApiMapper createMapper(List<OpenApiMapper> mappers) {
-            return OpenApiMapper.compose(Stream.concat(
-                    extensions.stream().flatMap(extension -> extension.getOpenApiMappers().stream()),
-                    mappers.stream()
-            ).collect(Collectors.toList()));
+            this.mapper = composedMapper;
         }
     }
 

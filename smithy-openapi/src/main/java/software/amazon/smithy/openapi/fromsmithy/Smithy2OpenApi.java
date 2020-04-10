@@ -20,7 +20,6 @@ import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.openapi.OpenApiConfig;
-import software.amazon.smithy.openapi.OpenApiException;
 
 /**
  * Converts Smithy to an OpenAPI model and saves it as a JSON file.
@@ -43,12 +42,7 @@ public final class Smithy2OpenApi implements SmithyBuildPlugin {
         context.getPluginClassLoader().ifPresent(converter::classLoader);
         OpenApiConfig config = OpenApiConfig.fromNode(context.getSettings());
         ShapeId shapeId = config.getService();
-
-        if (shapeId == null) {
-            throw new OpenApiException(getName() + " is missing required property, `service`");
-        }
-
-        ObjectNode openApiNode = converter.convertToNode(context.getModel(), shapeId);
+        ObjectNode openApiNode = converter.convertToNode(context.getModel());
         context.getFileManifest().writeJson(shapeId.getName() + ".openapi.json", openApiNode);
     }
 }

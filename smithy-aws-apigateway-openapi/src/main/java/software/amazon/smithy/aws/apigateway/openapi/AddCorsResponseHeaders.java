@@ -23,10 +23,10 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.traits.CorsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.ParameterObject;
 import software.amazon.smithy.openapi.model.Ref;
 import software.amazon.smithy.openapi.model.ResponseObject;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Adds CORS-specific headers to every response in the API.
@@ -38,8 +38,14 @@ import software.amazon.smithy.openapi.model.ResponseObject;
  * <p>This extension only takes effect if the service being converted to
  * OpenAPI has the CORS trait.
  */
-final class AddCorsResponseHeaders implements OpenApiMapper {
+final class AddCorsResponseHeaders implements ApiGatewayMapper {
+
     private static final Logger LOGGER = Logger.getLogger(AddCorsResponseHeaders.class.getName());
+
+    @Override
+    public List<ApiGatewayConfig.ApiType> getApiTypes() {
+        return ListUtils.of(ApiGatewayConfig.ApiType.REST);
+    }
 
     @Override
     public ResponseObject updateResponse(

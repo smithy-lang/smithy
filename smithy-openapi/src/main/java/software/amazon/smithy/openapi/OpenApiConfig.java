@@ -318,14 +318,35 @@ public class OpenApiConfig extends JsonSchemaConfig {
      * object. Note that this class can be deserialized using a NodeMapper too
      * since the NodeMapper will look for a static, public, fromNode method.
      *
+     * <p>This method also serializes unknown properties into the
+     * "extensions" map so that they are accessible to OpenAPI mappers.
+     *
      * @param input Input to deserialize.
      * @return Returns the deserialized OpenApiConfig.
      */
     public static OpenApiConfig fromNode(Node input) {
         NodeMapper mapper = new NodeMapper();
+
+        // Additional properties are treated as "extensions", so
+        // warning on something intentional is just noise. It sucks
+        // that this can't tell us when keys are misspelled, but it
+        // does allow for a flat key-space for all extensions.
+        mapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
+
+        // Fix and remap deprecated keys to newly supported keys.
         ObjectNode node = fixDeprecatedKeys(input.expectObjectNode());
+
+        // Deserialize known values into the configuration object.
         OpenApiConfig config = new OpenApiConfig();
-        return mapper.deserializeInto(node, config);
+        mapper.deserializeInto(node, config);
+
+        // Add all properties to "extensions" to make them accessible
+        // in plugins.
+        for (Map.Entry<String, Node> entry : node.getStringMap().entrySet()) {
+            config.putExtension(entry.getKey(), entry.getValue());
+        }
+
+        return config;
     }
 
     private static ObjectNode fixDeprecatedKeys(ObjectNode node) {

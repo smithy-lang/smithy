@@ -30,16 +30,19 @@ public class CheckForPrefixHeadersTest {
     @Test
     public void canIgnorePrefixHeaders() {
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#PrefixHeaders"));
         config.setOnHttpPrefixHeaders(OpenApiConfig.HttpPrefixHeadersStrategy.WARN);
         OpenApiConverter.create()
                 .config(config)
-                .convert(model, ShapeId.from("smithy.example#PrefixHeaders"));
+                .convert(model);
     }
 
     @Test
     public void throwsOnPrefixHeadersByDefault() {
         Exception thrown = Assertions.assertThrows(OpenApiException.class, () -> {
-            OpenApiConverter.create().convert(model, ShapeId.from("smithy.example#PrefixHeaders"));
+            OpenApiConfig config = new OpenApiConfig();
+            config.setService(ShapeId.from("smithy.example#PrefixHeaders"));
+            OpenApiConverter.create().config(config).convert(model);
         });
 
         Assertions.assertTrue(thrown.getMessage().contains("httpPrefixHeaders"));

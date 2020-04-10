@@ -35,10 +35,11 @@ public class OpenApiJsonSubstitutionsPluginTest {
                 .unwrap();
 
         OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
         config.setSubstitutions(MapUtils.of("SUB_HELLO", Node.from("hello")));
         ObjectNode openApi = OpenApiConverter.create()
                 .config(config)
-                .convertToNode(model, ShapeId.from("smithy.example#Service"));
+                .convertToNode(model);
         String description = openApi.getObjectMember("info").get().getStringMember("description").get().getValue();
 
         Assertions.assertEquals("hello", description);

@@ -31,7 +31,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.fromsmithy.mappers.RemoveUnusedComponents;
 import software.amazon.smithy.openapi.model.ComponentsObject;
@@ -57,10 +56,16 @@ import software.amazon.smithy.utils.MapUtils;
  * should be picked up and removed by the {@link RemoveUnusedComponents}
  * mapper.
  */
-final class AddAuthorizers implements OpenApiMapper {
+final class AddAuthorizers implements ApiGatewayMapper {
+
     private static final String EXTENSION_NAME = "x-amazon-apigateway-authorizer";
     private static final String CLIENT_EXTENSION_NAME = "x-amazon-apigateway-authtype";
     private static final Logger LOGGER = Logger.getLogger(AddApiKeySource.class.getName());
+
+    @Override
+    public List<ApiGatewayConfig.ApiType> getApiTypes() {
+        return ListUtils.of(ApiGatewayConfig.ApiType.REST, ApiGatewayConfig.ApiType.HTTP);
+    }
 
     @Override
     public Map<String, List<String>> updateSecurity(

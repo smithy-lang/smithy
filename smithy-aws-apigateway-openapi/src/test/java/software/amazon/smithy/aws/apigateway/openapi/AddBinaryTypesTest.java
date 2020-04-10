@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiConverter;
 import software.amazon.smithy.openapi.model.OpenApi;
 
@@ -35,9 +36,12 @@ public class AddBinaryTypesTest {
                 .assemble()
                 .unwrap();
 
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.smithy#MyService"));
         OpenApi result = OpenApiConverter.create()
+                .config(config)
                 .classLoader(getClass().getClassLoader())
-                .convert(model, ShapeId.from("example.smithy#MyService"));
+                .convert(model);
 
         List<String> types = result.getExtension("x-amazon-apigateway-binary-media-types")
                 .get()

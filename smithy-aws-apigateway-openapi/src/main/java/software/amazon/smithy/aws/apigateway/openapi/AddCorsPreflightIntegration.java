@@ -34,7 +34,6 @@ import software.amazon.smithy.model.traits.CorsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
-import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.openapi.model.ParameterObject;
@@ -63,11 +62,17 @@ import software.amazon.smithy.utils.ListUtils;
  *
  * @see <a href="https://fetch.spec.whatwg.org/#cors-preflight-fetch-0">CORS-preflight fetch</a>
  */
-final class AddCorsPreflightIntegration implements OpenApiMapper {
+final class AddCorsPreflightIntegration implements ApiGatewayMapper {
+
     private static final Logger LOGGER = Logger.getLogger(AddCorsPreflightIntegration.class.getName());
     private static final String API_GATEWAY_DEFAULT_ACCEPT_VALUE = "application/json";
     private static final String INTEGRATION_EXTENSION = "x-amazon-apigateway-integration";
     private static final String PREFLIGHT_SUCCESS = "{\"statusCode\":200}";
+
+    @Override
+    public List<ApiGatewayConfig.ApiType> getApiTypes() {
+        return ListUtils.of(ApiGatewayConfig.ApiType.REST);
+    }
 
     @Override
     public PathItem updatePathItem(Context<? extends Trait> context, String path, PathItem pathItem) {

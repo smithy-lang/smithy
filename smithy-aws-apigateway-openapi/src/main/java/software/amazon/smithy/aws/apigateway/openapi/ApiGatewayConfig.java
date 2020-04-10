@@ -15,13 +15,48 @@
 
 package software.amazon.smithy.aws.apigateway.openapi;
 
+import java.util.Objects;
+
 /**
  * API Gateway OpenAPI configuration.
  */
 public final class ApiGatewayConfig {
 
+    /**
+     * The type of API Gateway service to generate.
+     */
+    public enum ApiType {
+        /**
+         * Generates an OpenAPI model for an API Gateway "REST" API.
+         *
+         * <p>This is the default type of OpenAPI model to generate when not
+         * specified.
+         *
+         * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-rest-api.html">REST API</a>
+         */
+        REST,
+
+        /**
+         * Generates an OpenAPI model for an API Gateway "HTTP" API.
+         *
+         * <p>This converter does not currently support for HTTP APIs.
+         *
+         * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api.html">HTTP API</a>
+         */
+        HTTP,
+
+        /**
+         * Disables API Gateway OpenAPI plugins.
+         */
+        DISABLED
+    }
+
+    private ApiType apiGatewayType = ApiType.REST;
     private boolean disableCloudFormationSubstitution;
 
+    /**
+     * @return Returns true if CloudFormation substitutions are disabled.
+     */
     public boolean getDisableCloudFormationSubstitution() {
         return disableCloudFormationSubstitution;
     }
@@ -35,5 +70,23 @@ public final class ApiGatewayConfig {
      */
     public void setDisableCloudFormationSubstitution(boolean disableCloudFormationSubstitution) {
         this.disableCloudFormationSubstitution = disableCloudFormationSubstitution;
+    }
+
+    /**
+     * @return the type of API Gateway API to generate.
+     */
+    public ApiType getApiGatewayType() {
+        return apiGatewayType;
+    }
+
+    /**
+     * Sets the type of API Gateway API to generate.
+     *
+     * <p>If not set, this value defaults to a "REST" API.
+     *
+     * @param apiGatewayType API type to set.
+     */
+    public void setApiGatewayType(ApiType apiGatewayType) {
+        this.apiGatewayType = Objects.requireNonNull(apiGatewayType);
     }
 }

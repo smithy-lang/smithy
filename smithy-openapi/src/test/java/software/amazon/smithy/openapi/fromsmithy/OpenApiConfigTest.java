@@ -3,6 +3,7 @@ package software.amazon.smithy.openapi.fromsmithy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -42,5 +43,16 @@ public class OpenApiConfigTest {
 
         assertThat(config.getTags(), equalTo(true));
         assertThat(config.getIgnoreUnsupportedTraits(), equalTo(true));
+    }
+
+    @Test
+    public void putsAdditionalPropertiesInExtensions() {
+        Node mappedTest = Node.objectNode()
+                .withMember("tags", true)
+                .withMember("apiGatewayType", "REST");
+        OpenApiConfig config = OpenApiConfig.fromNode(mappedTest);
+
+        assertThat(config.getTags(), equalTo(true));
+        assertThat(config.getExtensions().getStringMap(), hasKey("apiGatewayType"));
     }
 }
