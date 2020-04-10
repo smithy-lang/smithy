@@ -15,8 +15,11 @@
 
 package software.amazon.smithy.model.traits;
 
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -50,6 +53,27 @@ public final class StreamingTrait extends AbstractTrait implements ToSmithyBuild
      */
     public boolean getRequiresLength() {
         return requiresLength;
+    }
+
+    /**
+     * Determines whether a given shape is an event stream.
+     *
+     * @param shape The shape to check.
+     * @return True if the shape is a union and has the streaming trait.
+     */
+    public static boolean isEventStream(Shape shape) {
+        return shape.isUnionShape() && shape.hasTrait(ID);
+    }
+
+    /**
+     * Determines whether a given member targets an event stream.
+     *
+     * @param model The model containing the member and its target.
+     * @param member The member whose target should be checked.
+     * @return True if the member targets a union with the streaming trait.
+     */
+    public static boolean isEventStream(Model model, MemberShape member) {
+        return isEventStream(model.expectShape(member.getTarget()));
     }
 
     @Override
