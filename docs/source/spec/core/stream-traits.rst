@@ -1,8 +1,79 @@
+.. _stream-traits:
+
+=================
+Streaming Traits
+=================
+
+A streaming shape is a shape which represents data that is not returned all at
+once. This includes both streaming binary data and event streams.
+
+.. contents:: Table of contents
+    :depth: 2
+    :local:
+    :backlinks: none
+
+.. _streaming-trait:
+
+-------------------
+``streaming`` trait
+-------------------
+
+Summary
+    Indicates that the data represented by the shape needs to be streamed.
+
+    When applied to a blob, this simply means that the data could be very
+    large and thus should not be stored in memory or that the size is unknown
+    at the start of the request.
+
+    When applied to a union, it indicates that shape represents an
+    `event stream <event-streams>`.
+Trait selector::
+    ``:each(blob, union)``
+Value type
+    ``structure``
+
+The value of the ``streaming`` trait is a structure that supports the following
+optional members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - requiresLength
+      - ``boolean``
+      - Indicates that the stream must have a known size.
+
+        In an HTTP-based protocol, for instance, this indicates that the
+        ``content-length`` header must be set.
+
+Shapes targeted by this trait MAY NOT be used outside of top level operation
+inputs and operation outputs. Additionally, the ``streaming`` trait is
+*structurally exclusive by target*, meaning only a single member of a
+structure can target a shape marked as ``streaming``.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        operation StreamingOperation {
+            output: StreamingOutputWrapper,
+        }
+
+        structure StreamingOutputWrapper {
+            output: StreamingBlob,
+        }
+
+        @streaming
+        blob StreamingBlob
+
 .. _event-streams:
 
-===================
-Event stream traits
-===================
+-------------
+Event Streams
+-------------
 
 An event stream is an abstraction that allows multiple messages to be sent
 asynchronously between a client and server. Event streams support both duplex
@@ -12,16 +83,7 @@ of a service.
 
 An operation can send an event stream as part of its input or output. An
 event stream is formed when an input or output member of an operation targets
-a union with the :ref:`streaming-trait`.
-
-.. contents:: Table of contents
-    :depth: 2
-    :local:
-    :backlinks: none
-
--------------------------
-Multi-event event streams
--------------------------
+a union marked with the :ref:`streaming-trait`.
 
 An event stream is capable of streaming any number of named event structure
 shapes defined by a union. It is formed when the ``streaming`` trait is

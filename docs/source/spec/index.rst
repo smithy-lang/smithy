@@ -34,7 +34,7 @@ Smithy specification
     core/auth-traits
     core/behavior-traits
     core/resource-traits
-    core/event-stream-traits
+    core/stream-traits
     core/http-traits
     core/xml-traits
     core/endpoint-traits
