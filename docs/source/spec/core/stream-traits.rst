@@ -8,7 +8,7 @@ A streaming shape is a shape which represents data that is not returned all at
 once. This includes both streaming binary data and event streams.
 
 .. contents:: Table of contents
-    :depth: 2
+    :depth: 3
     :local:
     :backlinks: none
 
@@ -26,7 +26,7 @@ Summary
     at the start of the request.
 
     When applied to a union, it indicates that shape represents an
-    `event stream <event-streams>`.
+    :ref:`event stream <event-streams>`.
 Trait selector::
     ``:each(blob, union)``
 Value type
@@ -59,10 +59,12 @@ structure can target a shape marked as ``streaming``.
     .. code-tab:: smithy
 
         operation StreamingOperation {
-            output: StreamingOutputWrapper,
+            output: StreamingOperationOutput,
         }
 
-        structure StreamingOutputWrapper {
+        structure StreamingOperationOutput {
+            @required
+            streamId: String
             output: StreamingBlob,
         }
 
@@ -72,7 +74,7 @@ structure can target a shape marked as ``streaming``.
 .. _event-streams:
 
 -------------
-Event Streams
+Event streams
 -------------
 
 An event stream is an abstraction that allows multiple messages to be sent
@@ -81,15 +83,11 @@ and simplex streaming. The serialization format and framing of messages sent
 over event streams is defined by the :ref:`protocol <protocolDefinition-trait>`
 of a service.
 
-An operation can send an event stream as part of its input or output. An
-event stream is formed when an input or output member of an operation targets
-a union marked with the :ref:`streaming-trait`.
-
-An event stream is capable of streaming any number of named event structure
-shapes defined by a union. It is formed when the ``streaming`` trait is
-applied to a union that is targeted by an input or output structure. Each
-member of the targeted union MUST target a structure shape. The member
-names of the union define the name that is used to identify each event
+An event stream is formed when an input or output member of an operation
+targets a union marked with the :ref:`streaming-trait`. An event stream is
+capable of streaming any number of named event structure shapes defined by a
+union. Each member of the targeted union MUST target a structure shape. The
+member names of the union define the name that is used to identify each event
 that is sent over the event stream.
 
 .. _input-eventstream:
@@ -109,7 +107,6 @@ stream in its input by referencing a member that targets a union:
 
         structure PublishMessagesInput {
             room: String,
-
             messages: PublishEvents,
         }
 
@@ -253,7 +250,235 @@ stream in its output:
             }
         }
 
-Client Behavior
+
+.. _initial-messages:
+
+Initial messages
+================
+
+An *initial message* is comprised of the top-level input or output members
+of an operation that do not target the event stream union. Initial
+messages provide an opportunity for a client or server to provide metadata
+about an event stream before transmitting events.
+
+
+.. _initial-request:
+
+Initial-request
+~~~~~~~~~~~~~~~
+
+An *initial-request* is an initial message that can be sent from a client to
+a server for an operation with an input event stream. The structure of an
+initial-request is the input of an operation with no value provided for the
+event stream member. An initial-request, if sent, is sent from a client to a
+server before sending any event stream events.
+
+When using :ref:`HTTP bindings <http-traits>`, initial-request fields are
+mapped to specific locations in the HTTP request such as headers or the
+URI. In other bindings or protocols, the initial-request can be
+sent however is necessary for the protocol.
+
+The following example defines an operation with an input event stream with
+an initial-request. The client will first send the initial-request to the
+service, followed by the events sent in the payload of the HTTP message.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @http(method: "POST", uri: "/messages/{room}")
+        operation PublishMessages {
+            input: PublishMessagesInput
+        }
+
+        structure PublishMessagesInput {
+            @httpLabel
+            @required
+            room: String,
+
+            @httpPayload
+            messages: MessageStream,
+        }
+
+        @streaming
+        union MessageStream {
+            message: Message,
+        }
+
+        structure Message {
+            message: String,
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0.0",
+            "shapes": {
+                "smithy.example#PublishMessages": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PublishMessagesInput"
+                    },
+                    "traits": {
+                        "smithy.api#http": {
+                            "uri": "/messages/{room}",
+                            "method": "POST"
+                        }
+                    }
+                },
+                "smithy.example#PublishMessagesInput": {
+                    "type": "structure",
+                    "members": {
+                        "room": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#httpLabel:": true,
+                                "smithy.api#required": true
+                            }
+                        },
+                        "messages": {
+                            "target": "smithy.example#MessageStream",
+                            "traits": {
+                                "smithy.api#httpPayload": true
+                            }
+                        }
+                    }
+                },
+                "smithy.example#MessageStream": {
+                    "type": "union",
+                    "members": {
+                        "message": {
+                            "target": "smithy.example#Message"
+                        }
+                    },
+                    "traits": {
+                        "smithy.api#streaming": {}
+                    }
+                },
+                "smithy.example#Message": {
+                    "type": "structure",
+                    "members": {
+                        "message": {
+                            "target": "smithy.api#String"
+                        }
+                    }
+                }
+            }
+        }
+
+.. _initial-response:
+
+Initial-response
+~~~~~~~~~~~~~~~~
+
+An *initial-response* is an initial message that can be sent from a server
+to a client for an operation with an output event stream. The structure of
+an initial-response is the output of an operation with no value provided for
+the event stream member. An initial-response, if sent, is sent from the
+server to the client before sending any event stream events.
+
+When using :ref:`HTTP bindings <http-traits>`, initial-response fields are
+mapped to HTTP headers. In other protocols, the initial-response can be sent
+however is necessary for the protocol.
+
+The following example defines an operation with an output event stream with
+an initial-response. The client will first receive and process the
+initial-response, followed by the events sent in the payload of the HTTP
+message.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        namespace smithy.example
+
+        @http(method: "GET", uri: "/messages/{room}")
+        operation SubscribeToMessages {
+            input: SubscribeToMessagesInput,
+            output: SubscribeToMessagesOutput
+        }
+
+        structure SubscribeToMessagesInput {
+            @httpLabel
+            @required
+            room: String
+        }
+
+        structure SubscribeToMessagesOutput {
+            @httpHeader("X-Connection-Lifetime")
+            connectionLifetime: Integer,
+
+            @httpPayload
+            messages: MessageStream,
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0.0",
+            "shapes": {
+                "smithy.example#PublishMessages": {
+                    "type": "operation",
+                    "input": {
+                        "target": "smithy.example#PublishMessagesInput"
+                    },
+                    "traits": {
+                        "smithy.api#http": {
+                            "uri": "/messages/{room}",
+                            "method": "POST"
+                        }
+                    }
+                },
+                "smithy.example#SubscribeToMessagesInput": {
+                    "type": "structure",
+                    "members": {
+                        "room": {
+                            "target": "smithy.api#String",
+                            "traits": {
+                                "smithy.api#httpLabel:": true,
+                                "smithy.api#required": true
+                            }
+                        }
+                    }
+                },
+                "smithy.example#SubscribeToMessagesOutput": {
+                    "type": "structure",
+                    "members": {
+                        "connectionLifetime": {
+                            "target": "smithy.api#Integer",
+                            "traits": {
+                                "smithy.api#httpHeader:": "X-Connection-Lifetime"
+                            }
+                        },
+                        "messages": {
+                            "target": "smithy.example#MessageStream",
+                            "traits": {
+                                "smithy.api#httpPayload": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+Initial message client and server behavior
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Initial messages, if received, MUST be provided to applications
+before event stream events.
+
+It is a backward compatible change to add an initial-request or
+initial-response to an existing operation; clients MUST NOT fail if an
+unexpected initial-request or initial-response is received. Clients and
+servers MUST NOT fail if an initial-request or initial-response is not
+received for an initial message that contains only optional members.
+
+
+.. _event-stream-client-behavior:
+
+Client behavior
 ===============
 
 Clients that send or receive event streams are expected to
@@ -296,238 +521,10 @@ type (for example, when ``a`` is received, an event of type ``Event1`` is
 provided).
 
 
-.. _initial-messages:
-
-----------------
-Initial messages
-----------------
-
-An *initial message* is comprised of the top-level input or output members
-of an operation that do not target the event stream union. Initial
-messages provide an opportunity for a client or server to provide metadata
-about an event stream before transmitting events.
-
-.. important::
-
-    Not all protocols support initial messages. Check trait binding and
-    protocol documentation before adding initial messages to an operation.
-
-
-.. _initial-request:
-
-Initial-request
-===============
-
-An *initial-request* is an initial message that can be sent from a client to
-a server for an operation with an input event stream. The structure of an
-initial-request is the input of an operation with no value provided for the
-event stream member. An initial-request, if sent, is sent from a client to a
-server before sending any event stream events.
-
-When using :ref:`HTTP bindings <http-traits>`, initial-request fields are
-mapped to specific locations in the HTTP request such as headers or the
-URI. In other bindings or protocols, the initial-request can be
-sent however is necessary for the protocol.
-
-The following example defines an operation with an input event stream with
-an initial-request. The client will first send the initial-request to the
-service, followed by the events sent in the payload of the HTTP message.
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        namespace smithy.example
-
-        @http(method: "POST", uri: "/messages/{room}")
-        operation PublishMessages {
-            input: PublishMessagesInput
-        }
-
-        structure PublishMessagesInput {
-            @httpLabel
-            room: String,
-
-            @httpPayload
-            messages: MessageStream,
-        }
-
-        @streaming
-        union MessageStream {
-            message: Message,
-        }
-
-        structure Message {
-            message: String,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0.0",
-            "shapes": {
-                "smithy.example#PublishMessages": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PublishMessagesInput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "uri": "/messages/{room}",
-                            "method": "POST"
-                        }
-                    }
-                },
-                "smithy.example#PublishMessagesInput": {
-                    "type": "structure",
-                    "members": {
-                        "room": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#httpLabel:": true
-                            }
-                        },
-                        "messages": {
-                            "target": "smithy.example#MessageStream",
-                            "traits": {
-                                "smithy.api#httpPayload": true
-                            }
-                        }
-                    }
-                },
-                "smithy.example#MessageStream": {
-                    "type": "union",
-                    "members": {
-                        "message": {
-                            "target": "smithy.example#Message"
-                        }
-                    },
-                    "traits": {
-                        "smithy.api#streaming": {}
-                    }
-                },
-                "smithy.example#Message": {
-                    "type": "structure",
-                    "members": {
-                        "message": {
-                            "target": "smithy.api#String"
-                        }
-                    }
-                }
-            }
-        }
-
-.. _initial-response:
-
-Initial-response
-================
-
-An *initial-response* is an initial message that can be sent from a server
-to a client for an operation with an output event stream. The structure of
-an initial-response is the output of an operation with no value provided for
-the event stream member. An initial-response, if sent, is sent from the
-server to the client before sending any event stream events.
-
-When using :ref:`HTTP bindings <http-traits>`, initial-response fields are
-mapped to HTTP headers. In other protocols, the initial-response can be sent
-however is necessary for the protocol.
-
-The following example defines an operation with an output event stream with
-an initial-response. The client will first receive and process the
-initial-response, followed by the events sent in the payload of the HTTP
-message.
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        namespace smithy.example
-
-        @http(method: "GET", uri: "/messages/{room}")
-        operation SubscribeToMessages {
-            input: SubscribeToMessagesInput,
-            output: SubscribeToMessagesOutput
-        }
-
-        structure SubscribeToMessagesInput {
-            @httpLabel
-            room: String
-        }
-
-        structure SubscribeToMessagesOutput {
-            @httpHeader("X-Connection-Lifetime")
-            connectionLifetime: Integer,
-
-            @httpPayload
-            messages: MessageStream,
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0.0",
-            "shapes": {
-                "smithy.example#PublishMessages": {
-                    "type": "operation",
-                    "input": {
-                        "target": "smithy.example#PublishMessagesInput"
-                    },
-                    "traits": {
-                        "smithy.api#http": {
-                            "uri": "/messages/{room}",
-                            "method": "POST"
-                        }
-                    }
-                },
-                "smithy.example#SubscribeToMessagesInput": {
-                    "type": "structure",
-                    "members": {
-                        "room": {
-                            "target": "smithy.api#String",
-                            "traits": {
-                                "smithy.api#httpLabel:": true
-                            }
-                        }
-                    }
-                },
-                "smithy.example#SubscribeToMessagesOutput": {
-                    "type": "structure",
-                    "members": {
-                        "connectionLifetime": {
-                            "target": "smithy.api#Integer",
-                            "traits": {
-                                "smithy.api#httpHeader:": "X-Connection-Lifetime"
-                            }
-                        },
-                        "messages": {
-                            "target": "smithy.example#MessageStream",
-                            "traits": {
-                                "smithy.api#httpPayload": true
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-Initial message client and server behavior
-==========================================
-
-Initial messages, if received, MUST be provided to applications
-before event stream events.
-
-It is a backward compatible change to add an initial-request or
-initial-response to an existing operation; clients MUST NOT fail if an
-unexpected initial-request or initial-response is received. Clients and
-servers MUST NOT fail if an initial-request or initial-response is not
-received for an initial message that contains only optional members.
-
-
 .. _event-message-serialization:
 
----------------------------
 Event message serialization
----------------------------
+===========================
 
 While the framing and serialization of an event stream is protocol-specific,
 traits can be used to influence the serialization of an event stream event.
@@ -625,14 +622,13 @@ based protocol, the event payload is serialized as a JSON object:
             }
         }
 
--------------------
 Event stream traits
--------------------
+===================
 
 .. _eventheader-trait:
 
 ``eventHeader`` trait
-=====================
+~~~~~~~~~~~~~~~~~~~~~
 
 Summary
     Binds a member of a structure to be serialized as an event header when
@@ -696,7 +692,7 @@ The following example defines multiple event headers:
 .. _eventpayload-trait:
 
 ``eventPayload`` trait
-======================
+~~~~~~~~~~~~~~~~~~~~~~
 
 Summary
     Binds a member of a structure to be serialized as the payload of an
