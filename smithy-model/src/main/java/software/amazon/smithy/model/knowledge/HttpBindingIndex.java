@@ -373,7 +373,7 @@ public final class HttpBindingIndex implements KnowledgeIndex {
                     // Can't determine the content-type because the model is broken :(
                     // Let other parts of the validation system point this out.
                     break;
-                } else if (target.isUnionShape() && target.hasTrait(StreamingTrait.class)) {
+                } else if (StreamingTrait.isEventStream(target)) {
                     return eventStreamContentType;
                 } else if (target.isDocumentShape() || target.isStructureShape()) {
                     // Document type and structure targets are always the document content-type.

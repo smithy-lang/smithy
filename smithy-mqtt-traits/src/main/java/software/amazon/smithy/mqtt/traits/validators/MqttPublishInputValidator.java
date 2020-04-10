@@ -42,10 +42,7 @@ public class MqttPublishInputValidator extends AbstractValidator {
     private Stream<ValidationEvent> validateOperation(Model model, OperationShape operation) {
         return OptionalUtils.stream(operation.getInput().flatMap(model::getShape).flatMap(Shape::asStructureShape))
                 .flatMap(input -> input.getAllMembers().values().stream()
-                        .filter(member -> {
-                            Shape target = model.expectShape(member.getTarget());
-                            return target.isUnionShape() && target.hasTrait(StreamingTrait.class);
-                        })
+                        .filter(member -> StreamingTrait.isEventStream(model, member))
                         .map(member -> error(member, String.format(
                                 "The input of `smithy.mqtt#publish` operations cannot contain event streams, "
                                 + "and this member is used as part of the input of the `%s` operation.",
