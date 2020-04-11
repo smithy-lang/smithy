@@ -77,6 +77,7 @@ import software.amazon.smithy.model.traits.RangeTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
 import software.amazon.smithy.model.traits.ReferencesTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
+import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 import software.amazon.smithy.model.traits.RetryableTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -183,6 +184,7 @@ public final class Prelude {
             RangeTrait.ID,
             ReadonlyTrait.ID,
             ReferencesTrait.ID,
+            RequiresLengthTrait.ID,
             RequiredTrait.ID,
             ResourceIdentifierTrait.ID,
             RetryableTrait.ID,

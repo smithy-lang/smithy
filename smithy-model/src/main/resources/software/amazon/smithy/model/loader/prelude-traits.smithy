@@ -315,16 +315,18 @@ structure sensitive {}
 @trait
 string since
 
-/// Indicates that the the data stored in the shape is very large and should not
+/// Indicates that the data stored in the shape is very large and should not
 /// be stored in memory, or that the size of the data stored in the shape is
 /// unknown at the start of a request. If the target is a union then the shape
 /// represents a stream of events.
 @trait(selector: ":each(blob, union)", structurallyExclusive: "target")
 @tags(["diff.error.const"])
-structure streaming {
-    /// Indicates that the stream must have a known size.
-    requiresLength: Boolean,
-}
+structure streaming {}
+
+/// Indicates that the streaming blob must be finite and has a known size.
+@trait(selector: "blob[trait|streaming]")
+@tags(["diff.error.const"])
+structure requiresLength {}
 
 /// Tags a shape with arbitrary tag names that can be used to filter and
 /// group shapes in the model.
