@@ -12,6 +12,7 @@ once. This includes both streaming binary data and event streams.
     :local:
     :backlinks: none
 
+
 .. _streaming-trait:
 
 -------------------
@@ -30,29 +31,15 @@ Summary
 Trait selector::
     ``:each(blob, union)``
 Value type
-    ``structure``
-
-The value of the ``streaming`` trait is a structure that supports the following
-optional members:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 10 10 80
-
-    * - Property
-      - Type
-      - Description
-    * - requiresLength
-      - ``boolean``
-      - Indicates that the stream must have a known size.
-
-        In an HTTP-based protocol, for instance, this indicates that the
-        ``content-length`` header must be set.
-
-Shapes targeted by this trait MAY NOT be used outside of top level operation
-inputs and operation outputs. Additionally, the ``streaming`` trait is
-*structurally exclusive by target*, meaning only a single member of a
-structure can target a shape marked as ``streaming``.
+    Annotation trait
+Validation
+    * ``streaming`` shapes can only be referenced from top-level members
+      of operation input or output structures.
+    * Structures that contain a member that targets a ``streaming`` shape
+      MUST NOT be targeted by other members.
+    * The ``streaming`` trait is *structurally exclusive by target*, meaning
+      only a single member of a structure can target a shape marked as
+      ``streaming``.
 
 .. tabs::
 
@@ -70,6 +57,37 @@ structure can target a shape marked as ``streaming``.
 
         @streaming
         blob StreamingBlob
+
+
+.. _requiresLength-trait:
+
+------------------------
+``requiresLength`` trait
+------------------------
+
+Summary
+    Indicates that the streaming blob MUST be finite and has a known size.
+
+    In an HTTP-based protocol, for instance, this trait indicates that the
+    ``Content-Length`` header MUST be sent prior to a client or server
+    sending the payload of a message. This can be useful for services that
+    need to determine if a request will be accepted based on its size or
+    where to store data based on the size of the stream.
+Trait selector::
+    ``blob[trait|streaming]``
+
+    *A blob shape marked with the streaming trait*
+Value type
+    ``structure``
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @streaming
+        @requiresLength
+        blob FiniteStreamingBlob
+
 
 .. _event-streams:
 
