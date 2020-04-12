@@ -6,18 +6,16 @@ Smithy can integrate with Amazon API Gateway using traits, authentication
 schemes, and OpenAPI specifications.
 
 .. contents:: Table of contents
-    :depth: 2
+    :depth: 1
     :local:
     :backlinks: none
 
--------------------------
-Amazon API Gateway traits
--------------------------
 
 .. _aws.apigateway#apiKeySource-trait:
 
+-------------------------------------
 ``aws.apigateway#apiKeySource`` trait
-=====================================
+-------------------------------------
 
 Summary
     Specifies the source of the caller identifier that will be used to
@@ -82,8 +80,9 @@ The following example sets the ``X-API-Key`` header as the API key source.
 
 .. _aws.apigateway#authorizers-trait:
 
+------------------------------------
 ``aws.apigateway#authorizers`` trait
-====================================
+------------------------------------
 
 Summary
     `Lambda authorizers`_ to attach to the authentication schemes defined on
@@ -220,8 +219,9 @@ An *authorizer* definition is a structure that supports the following members:
 
 .. _aws.apigateway#authorizer-trait:
 
+-----------------------------------
 ``aws.apigateway#authorizer`` trait
-====================================
+-----------------------------------
 
 Summary
     Applies a Lambda authorizer to a service, resource, or operation.
@@ -244,8 +244,9 @@ Value type
 
 .. _aws.apigateway#requestValidator-trait:
 
+-----------------------------------------
 ``aws.apigateway#requestValidator`` trait
-=========================================
+-----------------------------------------
 
 Summary
     Opts-in to Amazon API Gateway request validation for a service or
@@ -314,8 +315,9 @@ Then following example enables request validation on a service:
 
 .. _aws.apigateway#integration-trait:
 
+------------------------------------
 ``aws.apigateway#integration`` trait
-====================================
+------------------------------------
 
 Summary
     Defines an `API Gateway integration`_ that integrates with an actual
@@ -484,8 +486,9 @@ operation within the service.
 
 .. _aws.apigateway#mockIntegration-trait:
 
+----------------------------------------
 ``aws.apigateway#mockIntegration`` trait
-========================================
+----------------------------------------
 
 Summary
     Defines an `API Gateway integration`_ that returns a mock response.
@@ -585,9 +588,9 @@ The following example defines an operation that uses a mock integration.
     This trait should be considered internal-only and not exposed to your
     customers.
 
-
+-----------------------
 Shared trait data types
-=======================
+-----------------------
 
 The following shapes are used throughout the Smithy API Gateway traits
 definitions.
@@ -596,7 +599,7 @@ definitions.
 .. _apigateway-content-handling:
 
 ContentHandling string
-----------------------
+======================
 
 Defines the payload conversion handling of a request or response.
 Valid values are:
@@ -613,7 +616,7 @@ Valid values are:
 .. _apigateway-requestParameters:
 
 requestParameters structure
----------------------------
+===========================
 
 Specifies mappings from named method request parameters to integration
 request parameters. The method request parameters must be defined before
@@ -655,7 +658,7 @@ header (x-userid), and path parameters (op), respectively.
 .. _apigateway-requestTemplates:
 
 requestTemplates structure
---------------------------
+==========================
 
 Specifies mapping templates for a request payload of the specified media types.
 
@@ -688,7 +691,7 @@ The following example sets mapping templates for a request payload of the
 .. _apigateway-responses:
 
 responses structure
--------------------
+===================
 
 Defines the method's responses and specifies parameter mappings or payload
 mappings from integration responses to method responses.
@@ -750,7 +753,7 @@ property on the integration response's payload.
 .. _apigateway-response-structure:
 
 response structure
-------------------
+==================
 
 Defines a response and specifies parameter mappings or payload mappings from
 the integration response to the method response.
@@ -804,7 +807,7 @@ redirect URL from the integration response in the method's Location header.
 .. _apigateway-response-templates-structure:
 
 Response templates structure
-----------------------------
+============================
 
 Specifies mapping templates for a response payload of the specified
 media types.
@@ -842,7 +845,7 @@ The following example sets mapping templates for a request payload of the
 .. _apigateway-response-parameters-structure:
 
 Response parameters structure
------------------------------
+=============================
 
 Specifies mappings from integration method response parameters to method
 response parameters. Only the ``header`` and ``body`` types of the integration

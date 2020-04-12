@@ -99,6 +99,13 @@
         <section id="page-container">
             <div class="width-wrapper flex">
                 <article id="document-body">
+                    {% if parents %}
+                    <ul class="rel-parents">
+                    {%- for parent in parents %}
+                    <li><a href="{{ parent.link|e }}" {% if loop.last %}{{ accesskey("U") }}{% endif %}>{{ parent.title }}</a></li>
+                    {%- endfor %}
+                    </ul>
+                    {% endif %}
                     {% block body %} {% endblock %}
                     {% if prev or next %}
                     <section class="relations">
