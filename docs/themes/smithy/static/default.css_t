@@ -819,6 +819,57 @@ dt:target, .highlighted {
   padding-right: 2rem;
 }
 
+/* -------- toctree --------- */
+
+.large-toctree > ul {
+  padding-left: 0;
+}
+
+.large-toctree .toctree-l1 {
+  margin-bottom: 2rem;
+  list-style-type: none;
+}
+
+.large-toctree .toctree-l1:not(:last-child) {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 2rem;
+}
+
+.large-toctree .toctree-l1 > a {
+  font-weight: bold;
+  padding-bottom: 1rem;
+  display: block;
+}
+
+.caption-text {
+  font-weight: 300;
+  color: #222;
+}
+
+/* -------- Parent links --------- */
+
+.rel-parents {
+  list-style-type: none;
+  padding: 0;
+  margin: 0 0 0.5rem 0;
+  opacity: 0.9;
+  font-size: 90%;
+}
+
+.rel-parents li {
+  padding: 0;
+  margin: 0;
+  display: inline;
+}
+
+.rel-parents li:after {
+  content: " / ";
+}
+
+.rel-parents li:last-child:after {
+  content: "";
+}
+
 /* -------- media query helpers ------- */
 
 @media (max-width: 1100px) {

@@ -1,6 +1,8 @@
-=========================
-Smithy AWS specifications
-=========================
+==================
+AWS specifications
+==================
+
+.. rst-class:: large-toctree
 
 .. toctree::
     :maxdepth: 3
@@ -13,6 +15,8 @@ Smithy AWS specifications
 
 AWS Protocols
 =============
+
+.. rst-class:: large-toctree
 
 .. toctree::
     :maxdepth: 3
