@@ -2,6 +2,8 @@
 Smithy Guides
 =============
 
+.. rst-class:: large-toctree
+
 .. toctree::
     :maxdepth: 2
 
