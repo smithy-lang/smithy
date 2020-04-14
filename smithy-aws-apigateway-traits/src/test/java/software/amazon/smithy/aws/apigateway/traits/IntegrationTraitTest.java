@@ -19,7 +19,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 public class IntegrationTraitTest {
@@ -40,20 +39,8 @@ public class IntegrationTraitTest {
                 .build();
 
         assertThat(trait.toBuilder().build(), equalTo(trait));
-    }
-
-    @Test
-    public void loadsTraitFromModel() {
-        Model model = Model.assembler()
-                .discoverModels(getClass().getClassLoader())
-                .addImport(TestRunnerTest.class.getResource("errorfiles/valid-integration.json"))
-                .assemble()
-                .unwrap();
-
-        MockIntegrationTrait trait = model.expectShape(ShapeId.from("ns.foo#Operation"))
-                .getTrait(MockIntegrationTrait.class)
-                .get();
-
-        assertThat(trait.toBuilder().build(), equalTo(trait));
+        // Test round-tripping from/to node.
+        assertThat(new IntegrationTrait.Provider().createTrait(ShapeId.from("ns.foo#Operation"), trait.toNode()),
+                   equalTo(trait));
     }
 }

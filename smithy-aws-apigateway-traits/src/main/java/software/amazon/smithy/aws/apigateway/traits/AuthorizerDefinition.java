@@ -15,17 +15,13 @@
 
 package software.amazon.smithy.aws.apigateway.traits;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.aws.traits.auth.SigV4Trait;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NumberNode;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -36,22 +32,11 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<AuthorizerDefinition> {
     private static final String SIGV4_AUTH_TYPE = "awsSigv4";
-    private static final String DEFAULT_AUTH_TYPE = "custom";
     private static final String SCHEME_KEY = "scheme";
-    private static final String TYPE_KEY = "type";
-    private static final String AUTH_TYPE_KEY = "customAuthType";
-    private static final String URI_KEY = "uri";
-    private static final String CREDENTIALS_KEY = "credentials";
-    private static final String IDENTITY_SOURCE_KEY = "identitySource";
-    private static final String IDENTITY_VALIDATION_EXPRESSION_KEY = "identityValidationExpression";
-    private static final String RESULT_TTL_IN_SECONDS = "resultTtlInSeconds";
-    private static final List<String> PROPERTIES = ListUtils.of(
-            SCHEME_KEY, TYPE_KEY, AUTH_TYPE_KEY, URI_KEY, CREDENTIALS_KEY, IDENTITY_SOURCE_KEY,
-            IDENTITY_VALIDATION_EXPRESSION_KEY, RESULT_TTL_IN_SECONDS);
 
     private final ShapeId scheme;
     private final String type;
-    private final String authType;
+    private final String customAuthType;
     private final String uri;
     private final String credentials;
     private final String identitySource;
@@ -62,11 +47,18 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         scheme = SmithyBuilder.requiredState(SCHEME_KEY, builder.scheme);
         type = builder.type;
         uri = builder.uri;
-        authType = builder.authType;
         credentials = builder.credentials;
         identitySource = builder.identitySource;
         identityValidationExpression = builder.identityValidationExpression;
         resultTtlInSeconds = builder.resultTtlInSeconds;
+
+        if (builder.customAuthType != null) {
+            customAuthType = builder.customAuthType;
+        } else if (scheme.equals(SigV4Trait.ID)) {
+            customAuthType = SIGV4_AUTH_TYPE;
+        } else {
+            customAuthType = null;
+        }
     }
 
     /**
@@ -113,22 +105,16 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     }
 
     /**
-     * Gets the authType of the authorizer.
+     * Gets the customAuthType of the authorizer.
      *
      * <p>This value is not used directly by APIGateway but will be used for
      * OpenAPI exports. This will default to "awsSigV4" if your scheme is
-     * {@code aws.auth#sigv4}, and if not, falls back to "custom".</p>
+     * {@code aws.auth#sigv4}.
      *
-     * @return Returns the authType.
+     * @return Returns the customAuthType.
      */
-    public String getAuthType() {
-        if (authType != null) {
-            return authType;
-        } else if (scheme.equals(SigV4Trait.ID)) {
-            return SIGV4_AUTH_TYPE;
-        } else {
-            return DEFAULT_AUTH_TYPE;
-        }
+    public Optional<String> getCustomAuthType() {
+        return Optional.ofNullable(customAuthType);
     }
 
     /**
@@ -182,7 +168,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
                 .scheme(scheme)
                 .type(type)
                 .uri(uri)
-                .authType(authType)
+                .customAuthType(customAuthType)
                 .credentials(credentials)
                 .identitySource(identitySource)
                 .identityValidationExpression(identityValidationExpression)
@@ -191,17 +177,9 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
 
     @Override
     public Node toNode() {
-        return Node.objectNodeBuilder()
-                .withMember(SCHEME_KEY, Node.from(getScheme().toString()))
-                .withOptionalMember(TYPE_KEY, getType().map(Node::from))
-                .withOptionalMember(AUTH_TYPE_KEY, Optional.ofNullable(authType).map(Node::from))
-                .withOptionalMember(URI_KEY, getUri().map(Node::from))
-                .withOptionalMember(CREDENTIALS_KEY, getCredentials().map(Node::from))
-                .withOptionalMember(IDENTITY_SOURCE_KEY, getIdentitySource().map(Node::from))
-                .withOptionalMember(IDENTITY_VALIDATION_EXPRESSION_KEY,
-                                    getIdentityValidationExpression().map(Node::from))
-                .withOptionalMember(RESULT_TTL_IN_SECONDS, getResultTtlInSeconds().map(Node::from))
-                .build();
+        NodeMapper mapper = new NodeMapper();
+        mapper.disableToNodeForClass(AuthorizerDefinition.class);
+        return mapper.serialize(this).expectObjectNode();
     }
 
     @Override
@@ -216,7 +194,7 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         return scheme.equals(that.scheme)
                && Objects.equals(type, that.type)
                && Objects.equals(uri, that.uri)
-               && Objects.equals(authType, that.authType)
+               && Objects.equals(customAuthType, that.customAuthType)
                && Objects.equals(credentials, that.credentials)
                && Objects.equals(identitySource, that.identitySource)
                && Objects.equals(identityValidationExpression, that.identityValidationExpression)
@@ -228,42 +206,13 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         return Objects.hash(scheme, type, uri);
     }
 
-    static AuthorizerDefinition fromNode(ObjectNode node) {
-        node.warnIfAdditionalProperties(PROPERTIES);
-        Builder builder = builder();
-        builder.scheme(node.expectStringMember(SCHEME_KEY).expectShapeId());
-        node.getStringMember(TYPE_KEY)
-                .map(StringNode::getValue)
-                .ifPresent(builder::type);
-        node.getStringMember(AUTH_TYPE_KEY)
-                .map(StringNode::getValue)
-                .ifPresent(builder::authType);
-        node.getStringMember(URI_KEY)
-                .map(StringNode::getValue)
-                .ifPresent(builder::uri);
-        node.getStringMember(CREDENTIALS_KEY)
-                .map(StringNode::getValue)
-                .ifPresent(builder::credentials);
-        node.getStringMember(IDENTITY_SOURCE_KEY)
-                .map(StringNode::getValue)
-                .ifPresent(builder::identitySource);
-        node.getStringMember(IDENTITY_VALIDATION_EXPRESSION_KEY)
-                .map(StringNode::getValue)
-                .ifPresent(builder::identityValidationExpression);
-        node.getNumberMember(RESULT_TTL_IN_SECONDS)
-                .map(NumberNode::getValue)
-                .map(Number::intValue)
-                .ifPresent(builder::resultTtlInSeconds);
-        return builder.build();
-    }
-
     /**
      * Builder used to create an {@link AuthorizerDefinition}.
      */
     public static final class Builder implements SmithyBuilder<AuthorizerDefinition> {
         private ShapeId scheme;
         private String type;
-        private String authType;
+        private String customAuthType;
         private String uri;
         private String credentials;
         private String identitySource;
@@ -304,17 +253,17 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         }
 
         /**
-         * Sets the authType of the authorizer.
+         * Sets the customAuthType of the authorizer.
          *
          * <p>This value is not used directly by APIGateway but will be used
          * for OpenAPI exports. This will default to "awsSigV4" if your scheme
          * is "aws.v4", or "custom" otherwise.</p>
          *
-         * @param authType the auth type (e.g. awsSigV4)
+         * @param customAuthType the auth type (e.g. awsSigV4)
          * @return Returns the builder.
          */
-        public Builder authType(String authType) {
-            this.authType = authType;
+        public Builder customAuthType(String customAuthType) {
+            this.customAuthType = customAuthType;
             return this;
         }
 
