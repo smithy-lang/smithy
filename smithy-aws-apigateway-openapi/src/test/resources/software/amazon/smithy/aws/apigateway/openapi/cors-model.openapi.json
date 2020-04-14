@@ -84,6 +84,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "passThroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
           "requestTemplates": {
             "application/json": "{\"statusCode\":200}"
           },
@@ -252,6 +253,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "passThroughBehavior": "when_no_match",
+          "contentHandling": "CONVERT_TO_TEXT",
           "requestTemplates": {
             "application/json": "{\"statusCode\":200}",
             "application/octet-stream": "{\"statusCode\":200}"
