@@ -202,6 +202,8 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
         }
 
         MockIntegrationTrait.Builder integration = MockIntegrationTrait.builder()
+                // See https://forums.aws.amazon.com/thread.jspa?threadID=256140
+                .contentHandling("CONVERT_TO_TEXT")
                 .passThroughBehavior("when_no_match")
                 .putResponse("default", responseBuilder.build())
                 .putRequestTemplate(API_GATEWAY_DEFAULT_ACCEPT_VALUE, PREFLIGHT_SUCCESS);
