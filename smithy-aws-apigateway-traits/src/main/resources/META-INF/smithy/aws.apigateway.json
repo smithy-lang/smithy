@@ -58,7 +58,7 @@
                 "customAuthType": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#documentation": "This value is not used directly by APIGateway but will be used for OpenAPI exports. This will default to \"awsSigV4\" if your scheme is \"aws.v4\", or \"custom\" otherwise."
+                        "smithy.api#documentation": "This value is not used directly by API Gateway but will be used for OpenAPI exports. This will default to \"awsSigV4\" if your scheme is \"aws.v4\", or \"custom\" otherwise."
                     }
                 },
                 "uri": {

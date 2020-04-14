@@ -60,6 +60,7 @@ final class AddAuthorizers implements ApiGatewayMapper {
 
     private static final String EXTENSION_NAME = "x-amazon-apigateway-authorizer";
     private static final String CLIENT_EXTENSION_NAME = "x-amazon-apigateway-authtype";
+    private static final String DEFAULT_AUTH_TYPE = "custom";
     private static final Logger LOGGER = Logger.getLogger(AddApiKeySource.class.getName());
 
     @Override
@@ -130,7 +131,7 @@ final class AddAuthorizers implements ApiGatewayMapper {
         OpenApi.Builder builder = openApi.toBuilder();
         ComponentsObject.Builder components = openApi.getComponents().toBuilder();
 
-        for (Map.Entry<String, AuthorizerDefinition> entry : trait.getAllAuthorizers().entrySet()) {
+        for (Map.Entry<String, AuthorizerDefinition> entry : trait.getAuthorizers().entrySet()) {
             String authorizerName = entry.getKey();
             AuthorizerDefinition authorizer = entry.getValue();
             ShapeId scheme = entry.getValue().getScheme();
@@ -166,7 +167,7 @@ final class AddAuthorizers implements ApiGatewayMapper {
         T authTrait = context.getService().expectTrait(converter.getAuthSchemeType());
         SecurityScheme createdScheme = converter.createSecurityScheme(context, authTrait);
         SecurityScheme.Builder schemeBuilder = createdScheme.toBuilder();
-        schemeBuilder.putExtension(CLIENT_EXTENSION_NAME, authorizer.getAuthType());
+        schemeBuilder.putExtension(CLIENT_EXTENSION_NAME, authorizer.getCustomAuthType().orElse(DEFAULT_AUTH_TYPE));
 
         ObjectNode authorizerNode = Node.objectNodeBuilder()
                 .withOptionalMember("type", authorizer.getType().map(Node::from))
