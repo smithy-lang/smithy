@@ -18,16 +18,14 @@ package software.amazon.smithy.aws.apigateway.traits;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -35,14 +33,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class MockIntegrationTrait extends AbstractTrait implements ToSmithyBuilder<MockIntegrationTrait> {
     public static final ShapeId ID = ShapeId.from("aws.apigateway#mockIntegration");
-
-    private static final String PASS_THROUGH_BEHAVIOR_KEY = "passThroughBehavior";
-    private static final String CONTENT_HANDLING_KEY = "contentHandling";
-    private static final String REQUEST_PARAMETERS_KEY = "requestParameters";
-    private static final String REQUEST_TEMPLATES_KEY = "requestTemplates";
-    private static final String RESPONSES_KEY = "responses";
-    private static final Set<String> KEYS = SetUtils.of(
-            PASS_THROUGH_BEHAVIOR_KEY, REQUEST_PARAMETERS_KEY, REQUEST_TEMPLATES_KEY, RESPONSES_KEY);
 
     private final String passThroughBehavior;
     private final String contentHandling;
@@ -66,29 +56,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            Builder builder = builder();
-            builder.sourceLocation(value);
-            ObjectNode node = value.expectObjectNode();
-            node.warnIfAdditionalProperties(KEYS);
-            node.getStringMember(PASS_THROUGH_BEHAVIOR_KEY)
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::passThroughBehavior);
-            node.getStringMember(CONTENT_HANDLING_KEY)
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::contentHandling);
-            node.getObjectMember(REQUEST_PARAMETERS_KEY)
-                    .map(ObjectNode::getMembers)
-                    .ifPresent(members -> members.forEach(
-                            (k, v) -> builder.putRequestParameter(k.getValue(), v.expectStringNode().getValue())));
-            node.getObjectMember(REQUEST_TEMPLATES_KEY)
-                    .map(ObjectNode::getMembers)
-                    .ifPresent(members -> members.forEach(
-                            (k, v) -> builder.putRequestTemplate(k.getValue(), v.expectStringNode().getValue())));
-            node.getObjectMember(RESPONSES_KEY)
-                    .map(ObjectNode::getMembers)
-                    .ifPresent(members -> members.forEach((k, v) -> builder.putResponse(
-                            k.getValue(), IntegrationResponse.fromNode(v))));
-            return builder.build();
+            return new NodeMapper().deserialize(value, MockIntegrationTrait.class);
         }
     }
 
@@ -186,19 +154,10 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
 
     @Override
     protected ObjectNode createNode() {
-        return Node.objectNode()
-                .withOptionalMember(PASS_THROUGH_BEHAVIOR_KEY, getPassThroughBehavior().map(Node::from))
-                .withOptionalMember(CONTENT_HANDLING_KEY, getContentHandling().map(Node::from))
-                .withOptionalMember(REQUEST_PARAMETERS_KEY, requestParameters.size() > 0
-                        ? Optional.of(ObjectNode.fromStringMap(requestParameters))
-                        : Optional.empty())
-                .withOptionalMember(REQUEST_TEMPLATES_KEY, requestTemplates.size() > 0
-                        ? Optional.of(ObjectNode.fromStringMap(requestTemplates))
-                        : Optional.empty())
-                .withOptionalMember(RESPONSES_KEY, responses.size() > 0
-                        ? Optional.of(responses.entrySet().stream().collect(
-                                ObjectNode.collectStringKeys(Map.Entry::getKey, entry -> entry.getValue().toNode())))
-                        : Optional.empty());
+        NodeMapper mapper = new NodeMapper();
+        mapper.disableToNodeForClass(MockIntegrationTrait.class);
+        mapper.setOmitEmptyValues(true);
+        return mapper.serialize(this).expectObjectNode();
     }
 
     @Override

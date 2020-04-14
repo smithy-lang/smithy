@@ -46,7 +46,7 @@ public class AuthorizersTraitValidator extends AbstractValidator {
 
         // Create a comma separated string of authorizer names to schemes.
         String invalidMappings = service.getTrait(AuthorizersTrait.class)
-                .map(AuthorizersTrait::getAllAuthorizers)
+                .map(AuthorizersTrait::getAuthorizers)
                 .orElseGet(HashMap::new)
                 .entrySet().stream()
                 .filter(entry -> !authSchemes.contains(entry.getValue().getScheme()))

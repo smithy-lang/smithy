@@ -368,6 +368,50 @@ public class NodeMapperTest {
     }
 
     @Test
+    public void omitsEmptyValues() {
+        PojoWithEmptyValues pojo = new PojoWithEmptyValues();
+        NodeMapper mapper = new NodeMapper();
+        mapper.setOmitEmptyValues(true);
+        Node result = mapper.serialize(pojo);
+
+        assertThat(result, equalTo(Node.objectNode()));
+    }
+
+    public static final class PojoWithEmptyValues {
+        public List<String> getFoo() {
+            return Collections.emptyList();
+        }
+
+        public EmptyPojo getBaz() {
+            return new EmptyPojo();
+        }
+    }
+
+    public static final class EmptyPojo {
+    }
+
+    @Test
+    public void canDisableToNodeInsideOfClass() {
+        DisabledToNode pojo = new DisabledToNode();
+        NodeMapper mapper = new NodeMapper();
+        mapper.disableToNodeForClass(DisabledToNode.class);
+        Node result = mapper.serialize(pojo);
+
+        Node.assertEquals(result, Node.objectNode().withMember("foo", "hi"));
+    }
+
+    public static final class DisabledToNode implements ToNode {
+        @Override
+        public Node toNode() {
+            throw new RuntimeException("Was not meant to run!");
+        }
+
+        public String getFoo() {
+            return "hi";
+        }
+    }
+
+    @Test
     public void deserializesWithFromNodeFactoryAndUnknownPropertiesWithWarning() {
         Node baz = Node.parse("{\"foo\": \"hi\", \"baz\": 10, \"inner\": {\"inner\": {\"noSetter!\": \"inn!\"}}}");
         Baz result = new NodeMapper().deserialize(baz, Baz.class);

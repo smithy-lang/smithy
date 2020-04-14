@@ -20,11 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NumberNode;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
@@ -32,7 +30,6 @@ import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -45,24 +42,9 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
     private static final String SERVICE_NAME_LABEL = "{serviceName}";
     private static final String OPERATION_NAME_LABEL = "{operationName}";
     private static final String TYPE_KEY = "type";
-    private static final String PASS_THROUGH_BEHAVIOR_KEY = "passThroughBehavior";
-    private static final String REQUEST_PARAMETERS_KEY = "requestParameters";
-    private static final String REQUEST_TEMPLATES_KEY = "requestTemplates";
-    private static final String RESPONSES_KEY = "responses";
     private static final String CREDENTIALS_KEY = "credentials";
     private static final String HTTP_METHOD_KEY = "httpMethod";
-    private static final String CACHE_KEY_PARAMETERS_KEY = "cacheKeyParameters";
-    private static final String CACHE_NAMESPACE_KEY = "cacheNamespace";
-    private static final String CONTENT_HANDLING_KEY = "contentHandling";
-    private static final String TIMEOUT_KEY = "timeoutInMillis";
     private static final String URI_KEY = "uri";
-    private static final String CONNECTION_ID_KEY = "connectionId";
-    private static final String CONNECTION_TYPE = "connectionType";
-    private static final Set<String> KEYS = SetUtils.of(
-            TYPE_KEY, PASS_THROUGH_BEHAVIOR_KEY, REQUEST_PARAMETERS_KEY,
-            REQUEST_TEMPLATES_KEY, RESPONSES_KEY, CREDENTIALS_KEY, HTTP_METHOD_KEY,
-            CACHE_KEY_PARAMETERS_KEY, CACHE_NAMESPACE_KEY, CONTENT_HANDLING_KEY,
-            TIMEOUT_KEY, URI_KEY, CONNECTION_ID_KEY, CONNECTION_TYPE);
 
     private final String type;
     private final String uri;
@@ -104,47 +86,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            Builder builder = builder();
-            builder.sourceLocation(value);
-            ObjectNode node = value.expectObjectNode();
-            node.warnIfAdditionalProperties(KEYS);
-            builder.type(node.expectStringMember(TYPE_KEY).getValue());
-            builder.uri(node.expectStringMember(URI_KEY).getValue());
-            builder.httpMethod(node.expectStringMember(HTTP_METHOD_KEY).getValue());
-            node.getArrayMember(CACHE_KEY_PARAMETERS_KEY)
-                    .ifPresent(arrayNode -> arrayNode.getElements().stream()
-                            .map(Node::expectStringNode)
-                            .map(StringNode::getValue)
-                            .forEach(builder::addCacheKeyParameter));
-            node.getStringMember(CACHE_NAMESPACE_KEY)
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::cacheNamespace);
-            node.getStringMember(CONTENT_HANDLING_KEY)
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::contentHandling);
-            node.getNumberMember(TIMEOUT_KEY)
-                    .map(NumberNode::getValue)
-                    .map(Number::intValue)
-                    .ifPresent(builder::timeoutInMillis);
-            node.getStringMember(CONNECTION_ID_KEY).map(StringNode::getValue).ifPresent(builder::connectionId);
-            node.getStringMember(CONNECTION_TYPE).map(StringNode::getValue).ifPresent(builder::connectionType);
-            node.getStringMember(CREDENTIALS_KEY).map(StringNode::getValue).ifPresent(builder::credentials);
-            node.getStringMember(PASS_THROUGH_BEHAVIOR_KEY)
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::passThroughBehavior);
-            node.getObjectMember(REQUEST_PARAMETERS_KEY)
-                    .map(ObjectNode::getMembers)
-                    .ifPresent(members -> members.forEach(
-                            (k, v) -> builder.putRequestParameter(k.getValue(), v.expectStringNode().getValue())));
-            node.getObjectMember(REQUEST_TEMPLATES_KEY)
-                    .map(ObjectNode::getMembers)
-                    .ifPresent(members -> members.forEach(
-                            (k, v) -> builder.putRequestTemplate(k.getValue(), v.expectStringNode().getValue())));
-            node.getObjectMember(RESPONSES_KEY)
-                    .map(ObjectNode::getMembers)
-                    .ifPresent(members -> members.forEach((k, v) -> builder.putResponse(
-                            k.getValue(), IntegrationResponse.fromNode(v))));
-            return builder.build();
+            return new NodeMapper().deserialize(value, IntegrationTrait.class);
         }
     }
 
@@ -380,31 +322,10 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
 
     @Override
     protected ObjectNode createNode() {
-        return Node.objectNodeBuilder()
-                .withMember(TYPE_KEY, getType())
-                .withMember(URI_KEY, getUri())
-                .withMember(HTTP_METHOD_KEY, getHttpMethod())
-                .withOptionalMember(CREDENTIALS_KEY, getCredentials().map(Node::from))
-                .withOptionalMember(PASS_THROUGH_BEHAVIOR_KEY, getPassThroughBehavior().map(Node::from))
-                .withOptionalMember(CONTENT_HANDLING_KEY, getContentHandling().map(Node::from))
-                .withOptionalMember(TIMEOUT_KEY, getTimeoutInMillis().map(Node::from))
-                .withOptionalMember(CONNECTION_ID_KEY, getConnectionId().map(Node::from))
-                .withOptionalMember(CONNECTION_TYPE, getConnectionType().map(Node::from))
-                .withOptionalMember(CACHE_NAMESPACE_KEY, getCacheNamespace().map(Node::from))
-                .withOptionalMember(CACHE_KEY_PARAMETERS_KEY, cacheKeyParameters.size() > 0
-                        ? Optional.of(Node.fromStrings(cacheKeyParameters))
-                        : Optional.empty())
-                .withOptionalMember(REQUEST_PARAMETERS_KEY, requestParameters.size() > 0
-                        ? Optional.of(ObjectNode.fromStringMap(requestParameters))
-                        : Optional.empty())
-                .withOptionalMember(REQUEST_TEMPLATES_KEY, requestTemplates.size() > 0
-                        ? Optional.of(ObjectNode.fromStringMap(requestTemplates))
-                        : Optional.empty())
-                .withOptionalMember(RESPONSES_KEY, responses.size() > 0
-                        ? Optional.of(responses.entrySet().stream().collect(
-                                ObjectNode.collectStringKeys(Map.Entry::getKey, entry -> entry.getValue().toNode())))
-                        : Optional.empty())
-                .build();
+        NodeMapper mapper = new NodeMapper();
+        mapper.disableToNodeForClass(IntegrationTrait.class);
+        mapper.setOmitEmptyValues(true);
+        return mapper.serialize(this).expectObjectNode();
     }
 
     @Override

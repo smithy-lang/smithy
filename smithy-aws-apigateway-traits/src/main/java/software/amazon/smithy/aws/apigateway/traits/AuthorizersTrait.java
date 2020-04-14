@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
@@ -60,9 +61,10 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
+            NodeMapper mapper = new NodeMapper();
             Builder builder = builder().sourceLocation(value);
             value.expectObjectNode().getMembers().forEach((key, node) -> {
-                AuthorizerDefinition authorizer = AuthorizerDefinition.fromNode(node.expectObjectNode());
+                AuthorizerDefinition authorizer = mapper.deserialize(node, AuthorizerDefinition.class);
                 builder.putAuthorizer(key.getValue(), authorizer);
             });
             return builder.build();
@@ -93,7 +95,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
      *
      * @return Returns the authorizers.
      */
-    public Map<String, AuthorizerDefinition> getAllAuthorizers() {
+    public Map<String, AuthorizerDefinition> getAuthorizers() {
         return authorizers;
     }
 

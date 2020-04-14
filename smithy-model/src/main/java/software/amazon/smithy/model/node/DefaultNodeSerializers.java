@@ -59,6 +59,12 @@ final class DefaultNodeSerializers {
 
         @Override
         public Node serialize(ToNode value, Set<Object> serializedObjects, NodeMapper mapper) {
+            // Handle cases where the toNode method is disabled for a specific type.
+            // This allows other serializers to attempt to serialize the value.
+            if (mapper.getDisableToNode().contains(value.getClass())) {
+                return null;
+            }
+
             return value.toNode();
         }
     };
@@ -335,7 +341,7 @@ final class DefaultNodeSerializers {
                 try {
                     Object getterResult = entry.getValue().invoke(value);
                     Node result = mapper.serialize(getterResult, serializedObjects);
-                    if (mapper.getSerializeNullValues() || !result.isNullNode()) {
+                    if (canSerialize(mapper, result)) {
                         mappings.put(Node.from(entry.getKey()), result);
                     }
                 } catch (ReflectiveOperationException e) {
@@ -357,6 +363,22 @@ final class DefaultNodeSerializers {
             serializedObjects.remove(value);
 
             return new ObjectNode(mappings, SourceLocation.NONE);
+        }
+
+        private boolean canSerialize(NodeMapper mapper, Node value) {
+            if (!mapper.getSerializeNullValues() && value.isNullNode()) {
+                return false;
+            }
+
+            if (mapper.getOmitEmptyValues()) {
+                if (value.isObjectNode() && value.expectObjectNode().isEmpty()) {
+                    return false;
+                } else if (value.isArrayNode() && value.expectArrayNode().isEmpty()) {
+                    return false;
+                }
+            }
+
+            return true;
         }
     };
 

@@ -17,12 +17,10 @@ package software.amazon.smithy.aws.apigateway.traits;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -34,10 +32,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration-response.html">Integration response</a>
  */
 public final class IntegrationResponse implements ToNode, ToSmithyBuilder<IntegrationResponse> {
-    private static final String STATUS_CODE_KEY = "statusCode";
-    private static final String CONTENT_HANDLING_KEY = "contentHandling";
-    private static final String RESPONSE_TEMPLATES_KEY = "responseTemplates";
-    private static final String RESPONSE_PARAMETERS_KEY = "responseParameters";
 
     private final String statusCode;
     private final String contentHandling;
@@ -46,7 +40,7 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
     private final FromSourceLocation sourceLocation;
 
     private IntegrationResponse(Builder builder) {
-        statusCode = builder.statusCode;
+        statusCode = SmithyBuilder.requiredState("statusCode", builder.statusCode);
         contentHandling = builder.contentHandling;
         responseTemplates = MapUtils.copyOf(builder.responseTemplates);
         responseParameters = MapUtils.copyOf(builder.responseParameters);
@@ -60,25 +54,6 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
      */
     public static Builder builder() {
         return new Builder();
-    }
-
-    static IntegrationResponse fromNode(Node value) {
-        Objects.requireNonNull(value);
-        ObjectNode obj = value.expectObjectNode();
-        Builder builder = builder().sourceLocation(value);
-        builder.statusCode(obj.expectStringMember(STATUS_CODE_KEY).getValue());
-        obj.getStringMember(CONTENT_HANDLING_KEY).map(StringNode::getValue).ifPresent(builder::contentHandling);
-        obj.getObjectMember(RESPONSE_TEMPLATES_KEY)
-                .map(ObjectNode::getMembers)
-                .map(Map::entrySet)
-                .ifPresent(entrySet -> entrySet.forEach(entry -> builder.putResponseTemplate(
-                        entry.getKey().getValue(), entry.getValue().expectStringNode().getValue())));
-        obj.getObjectMember(RESPONSE_PARAMETERS_KEY)
-                .map(ObjectNode::getMembers)
-                .map(Map::entrySet)
-                .ifPresent(entrySet -> entrySet.forEach(entry -> builder.putResponseParameter(
-                        entry.getKey().getValue(), entry.getValue().expectStringNode().getValue())));
-        return builder.build();
     }
 
     /**
@@ -111,7 +86,7 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
      *
      * @return Returns the immutable map.
      */
-    public Map<String, String> getAllResponseTemplates() {
+    public Map<String, String> getResponseTemplates() {
         return responseTemplates;
     }
 
@@ -131,7 +106,7 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
      * @return Returns the map of parameter expressions to how they modify the response.
      * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration-responseParameters.html">Response parameters</a>
      */
-    public Map<String, String> getAllResponseParameters() {
+    public Map<String, String> getResponseParameters() {
         return responseParameters;
     }
 
@@ -158,16 +133,10 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
 
     @Override
     public Node toNode() {
-        return Node.objectNodeBuilder()
-                .withMember(STATUS_CODE_KEY, statusCode)
-                .withOptionalMember(CONTENT_HANDLING_KEY, getContentHandling().map(Node::from))
-                .withOptionalMember(RESPONSE_TEMPLATES_KEY, responseTemplates.size() > 0
-                        ? Optional.of(ObjectNode.fromStringMap(responseTemplates))
-                        : Optional.empty())
-                .withOptionalMember(RESPONSE_PARAMETERS_KEY, responseParameters.size() > 0
-                        ? Optional.of(ObjectNode.fromStringMap(responseParameters))
-                        : Optional.empty())
-                .build();
+        NodeMapper mapper = new NodeMapper();
+        mapper.disableToNodeForClass(IntegrationResponse.class);
+        mapper.setOmitEmptyValues(true);
+        return mapper.serialize(this).expectObjectNode();
     }
 
     @Override
@@ -227,12 +196,25 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
         }
 
         /**
+         * Sets a mapping of response MIME types to templates.
+         *
+         * @param responseTemplates Map of MIME types to response templates.
+         * @return Returns the builder.
+         * @see IntegrationResponse#getResponseTemplates()
+         */
+        public Builder responseTemplates(Map<String, String> responseTemplates) {
+            this.responseTemplates.clear();
+            this.responseTemplates.putAll(responseTemplates);
+            return this;
+        }
+
+        /**
          * Adds a response template for a MIME type.
          *
          * @param mimeType MIME type of the response template.
          * @param template Response template for the payload.
          * @return Returns the builder.
-         * @see IntegrationResponse#getAllResponseTemplates()
+         * @see IntegrationResponse#getResponseTemplates()
          */
         public Builder putResponseTemplate(String mimeType, String template) {
             responseTemplates.put(mimeType, template);
@@ -251,12 +233,25 @@ public final class IntegrationResponse implements ToNode, ToSmithyBuilder<Integr
         }
 
         /**
+         * Sets response parameter mappings.
+         *
+         * @param responseParameters Map of response expressions to expressions to apply to response.
+         * @return Returns the builder.
+         * @see IntegrationResponse#getResponseParameters()
+         */
+        public Builder responseParameters(Map<String, String> responseParameters) {
+            this.responseParameters.clear();
+            this.responseParameters.putAll(responseParameters);
+            return this;
+        }
+
+        /**
          * Sets a response parameter mapping.
          *
          * @param name Name of the expression to extract.
          * @param value Expression used to apply in the response.
          * @return Returns the builder.
-         * @see IntegrationResponse#getAllResponseParameters()
+         * @see IntegrationResponse#getResponseParameters()
          */
         public Builder putResponseParameter(String name, String value) {
             responseParameters.put(name, value);

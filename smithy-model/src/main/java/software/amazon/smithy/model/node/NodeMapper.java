@@ -23,6 +23,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,6 +119,9 @@ public final class NodeMapper {
         /**
          * Converts an object of type {@code T} into a {@code Node}.
          *
+         * <p>Return {@code null} to allow other serializers to attempt to
+         * serialize a type.
+         *
          * @param value Value to convert into a {@code Node}.
          * @param serializedObjects Identity set used to track recursion.
          * @param mapper Mapper used to recursively serialize types.
@@ -167,8 +171,10 @@ public final class NodeMapper {
     }
 
     private static final Logger LOGGER = Logger.getLogger(NodeMapper.class.getName());
-    private boolean serializeNullValues = false;
     private WhenMissing whenMissing = WhenMissing.WARN;
+    private final Set<Class> disableToNode = new HashSet<>();
+    private boolean serializeNullValues = false;
+    private boolean omitEmptyValues;
 
     private final List<Serializer> serializers = DefaultNodeSerializers.SERIALIZERS;
     private final ObjectCreatorFactory creatorFactory = DefaultNodeDeserializers.DEFAULT_CACHED_CREATOR;
@@ -203,6 +209,60 @@ public final class NodeMapper {
      */
     public WhenMissing getWhenMissingSetter() {
         return whenMissing;
+    }
+
+    /**
+     * Disables the use of the {@code toNode} method for a specific class
+     * when serializing the class as a POJO.
+     *
+     * <p>This method disables a specific concrete class and does not
+     * disable subclasses or implementations of an interface.
+     *
+     * <p>This is useful when using the NodeMapper inside of a {@code toNode}
+     * implementation.
+     *
+     * @param type Class to disable the {@code toNode} method serialization for.
+     */
+    public void disableToNodeForClass(Class type) {
+        disableToNode.add(type);
+    }
+
+    /**
+     * Enables the use of the {@code toNode} method for a specific class
+     * when serializing the class as a POJO.
+     *
+     * @param type Class to enable the {@code toNode} method serialization for.
+     */
+    public void enableToNodeForClass(Class type) {
+        disableToNode.remove(type);
+    }
+
+    /**
+     * Gets the set of classes where {@code toNode} is disabled.
+     *
+     * @return Returns the disabled classes.
+     */
+    public Set<Class> getDisableToNode() {
+        return disableToNode;
+    }
+
+    /**
+     * Gets whether or not empty arrays and empty objects are omitted from
+     * serialized POJOs.
+     *
+     * @return Returns true if empty arrays and POJOs returned from POJO getters are omitted.
+     */
+    public boolean getOmitEmptyValues() {
+        return omitEmptyValues;
+    }
+
+    /**
+     * Gets whether or not empty arrays and objects are omitted from serialized POJOs.
+     *
+     * @param omitEmptyValues Set to true if empty arrays and objects returned from POJO getters are omitted.
+     */
+    public void setOmitEmptyValues(boolean omitEmptyValues) {
+        this.omitEmptyValues = omitEmptyValues;
     }
 
     /**
@@ -283,7 +343,10 @@ public final class NodeMapper {
         // Iterate over the serializers in the correct order.
         for (Serializer serializer : serializers) {
             if (serializer.getType().isInstance(object)) {
-                return serializer.serialize(object, serializedObject, this);
+                Node result = serializer.serialize(object, serializedObject, this);
+                if (result != null) {
+                    return result;
+                }
             }
         }
 
