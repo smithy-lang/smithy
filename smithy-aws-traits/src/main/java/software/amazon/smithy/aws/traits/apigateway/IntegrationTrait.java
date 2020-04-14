@@ -290,7 +290,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
      * @return Returns the request parameters.
      * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration-requestParameters.html">Request parameters</a>
      */
-    public Map<String, String> getAllRequestParameters() {
+    public Map<String, String> getRequestParameters() {
         return requestParameters;
     }
 
@@ -310,7 +310,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
      * @return Returns a map of MIME types to request templates.
      * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration-requestTemplates.html">Request templates</a>
      */
-    public Map<String, String> getAllRequestTemplates() {
+    public Map<String, String> getRequestTemplates() {
         return requestTemplates;
     }
 
@@ -330,7 +330,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
      * @return Returns a map of status code regular expressions to responses.
      * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration-responses.html">Integration responses</a>
      */
-    public Map<String, IntegrationResponse> getAllResponses() {
+    public Map<String, IntegrationResponse> getResponses() {
         return responses;
     }
 
@@ -409,7 +409,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder()
+        return builder()
                 .type(type)
                 .uri(uri)
                 .credentials(credentials)
@@ -419,12 +419,11 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
                 .timeoutInMillis(timeoutInMillis)
                 .connectionId(connectionId)
                 .connectionType(connectionType)
-                .cacheNamespace(cacheNamespace);
-        cacheKeyParameters.forEach(builder::addCacheKeyParameter);
-        requestParameters.forEach(builder::putRequestParameter);
-        requestTemplates.forEach(builder::putRequestTemplate);
-        responses.forEach(builder::putResponse);
-        return builder;
+                .cacheNamespace(cacheNamespace)
+                .requestParameters(requestParameters)
+                .requestTemplates(requestTemplates)
+                .responses(responses)
+                .cacheKeyParameters(cacheKeyParameters);
     }
 
     public static final class Builder extends AbstractTraitBuilder<IntegrationTrait, Builder> {
@@ -515,7 +514,7 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          *     utf-8-encoded string or passing through the text payload natively
          *     without modification</li>
          *     <li>CONVERT_TO_BINARY, for converting a text payload into
-         *     Base64-decoded blobor passing through a binary payload natively
+         *     Base64-decoded blob or passing through a binary payload natively
          *     without modification.</li>
          * </ul>
          *
@@ -586,6 +585,18 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         }
 
         /**
+         * Sets a list of request parameters whose values are to be cached.
+         *
+         * @param cacheKeyParameters Parameters to use in the cache.
+         * @return Returns the builder.
+         */
+        public Builder cacheKeyParameters(List<String> cacheKeyParameters) {
+            this.cacheKeyParameters.clear();
+            this.cacheKeyParameters.addAll(cacheKeyParameters);
+            return this;
+        }
+
+        /**
          * Removes a specific cache key parameter.
          *
          * @param cacheKeyParameter Parameter to remove.
@@ -607,15 +618,28 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
         }
 
         /**
-         * Adds a request template.
+         * Adds a request parameter.
          *
          * @param input Input request expression.
          * @param output Output request expression.
          * @return Returns the builder.
-         * @see IntegrationTrait#getAllRequestParameters()
+         * @see IntegrationTrait#getRequestParameters()
          */
         public Builder putRequestParameter(String input, String output) {
             requestParameters.put(input, output);
+            return this;
+        }
+
+        /**
+         * Sets request parameters.
+         *
+         * @param requestParameters Map of parameters to add.
+         * @return Returns the builder.
+         * @see IntegrationTrait#getRequestParameters()
+         */
+        public Builder requestParameters(Map<String, String> requestParameters) {
+            this.requestParameters.clear();
+            this.requestParameters.putAll(requestParameters);
             return this;
         }
 
@@ -636,10 +660,23 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          * @param mimeType MIME type of the request template to set.
          * @param template Request template to set.
          * @return Returns the builder.
-         * @see IntegrationTrait#getAllRequestTemplates()
+         * @see IntegrationTrait#getRequestTemplates()
          */
         public Builder putRequestTemplate(String mimeType, String template) {
             requestTemplates.put(mimeType, template);
+            return this;
+        }
+
+        /**
+         * Sets request templates.
+         *
+         * @param requestTemplates Map of MIME types to the corresponding template.
+         * @return Returns the builder.
+         * @see IntegrationTrait#getRequestTemplates()
+         */
+        public Builder requestTemplates(Map<String, String> requestTemplates) {
+            this.requestTemplates.clear();
+            this.requestTemplates.putAll(requestTemplates);
             return this;
         }
 
@@ -660,10 +697,23 @@ public final class IntegrationTrait extends AbstractTrait implements ToSmithyBui
          * @param statusCodeRegex Status code regular expression.
          * @param integrationResponse Integration response to set.
          * @return Returns the builder.
-         * @see IntegrationTrait#getAllResponses()
+         * @see IntegrationTrait#getResponses()
          */
         public Builder putResponse(String statusCodeRegex, IntegrationResponse integrationResponse) {
             responses.put(statusCodeRegex, integrationResponse);
+            return this;
+        }
+
+        /**
+         * Sets responses for the given response regular expressions.
+         *
+         * @param responses Map of regular expressions to responses.
+         * @return Returns the builder.
+         * @see IntegrationTrait#getResponses()
+         */
+        public Builder responses(Map<String, IntegrationResponse> responses) {
+            this.responses.clear();
+            this.responses.putAll(responses);
             return this;
         }
 
