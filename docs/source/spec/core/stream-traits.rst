@@ -233,7 +233,7 @@ stream in its output:
                     "type": "structure",
                     "members": {
                         "movements": {
-                            "target": "smithy.example#Message"
+                            "target": "smithy.example#MovementEvents"
                         }
                     }
                 },
