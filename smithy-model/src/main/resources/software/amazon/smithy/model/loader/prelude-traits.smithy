@@ -538,3 +538,7 @@ structure endpoint {
 @trait(selector: ":test(member:of(structure)[trait|required] > string)")
 @tags(["diff.error.const"])
 structure hostLabel {}
+
+/// Marks an operation as requiring Content-MD5 header in its HTTP request
+@trait(selector: "operation")
+structure httpContentMd5 {}

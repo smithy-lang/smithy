@@ -53,6 +53,7 @@ import software.amazon.smithy.model.traits.EventStreamTrait;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.HostLabelTrait;
+import software.amazon.smithy.model.traits.HttpContentMd5Trait;
 import software.amazon.smithy.model.traits.HttpErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
@@ -154,6 +155,7 @@ public final class Prelude {
             ExamplesTrait.ID,
             ExternalDocumentationTrait.ID,
             HostLabelTrait.ID,
+            HttpContentMd5Trait.ID,
             HttpErrorTrait.ID,
             HttpHeaderTrait.ID,
             HttpLabelTrait.ID,

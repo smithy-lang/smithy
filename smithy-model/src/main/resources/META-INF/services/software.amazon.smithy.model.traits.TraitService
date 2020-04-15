@@ -12,6 +12,7 @@ software.amazon.smithy.model.traits.EventStreamTrait$Provider
 software.amazon.smithy.model.traits.ExamplesTrait$Provider
 software.amazon.smithy.model.traits.ExternalDocumentationTrait$Provider
 software.amazon.smithy.model.traits.HostLabelTrait$Provider
+software.amazon.smithy.model.traits.HttpContentMd5Trait$Provider
 software.amazon.smithy.model.traits.HttpErrorTrait$Provider
 software.amazon.smithy.model.traits.HttpHeaderTrait$Provider
 software.amazon.smithy.model.traits.HttpLabelTrait$Provider
