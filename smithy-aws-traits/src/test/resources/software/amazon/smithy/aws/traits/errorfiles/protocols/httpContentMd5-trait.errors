@@ -1,0 +1,4 @@
+[ERROR] ns.foo#InvalidInput: Trait `aws.protocols#httpContentMd5` cannot be applied to `ns.foo#InvalidInput`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
+[ERROR] ns.foo#InvalidOutput: Trait `aws.protocols#httpContentMd5` cannot be applied to `ns.foo#InvalidOutput`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
+[ERROR] ns.foo#InvalidError: Trait `aws.protocols#httpContentMd5` cannot be applied to `ns.foo#InvalidError`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget
+[ERROR] ns.foo#InvalidStructure$Body: Trait `aws.protocols#httpContentMd5` cannot be applied to `ns.foo#InvalidStructure$Body`. This trait may only be applied to shapes that match the following selector: operation | TraitTarget

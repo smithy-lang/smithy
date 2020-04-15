@@ -16,4 +16,5 @@ software.amazon.smithy.aws.traits.protocols.RestJson1Trait$Provider
 software.amazon.smithy.aws.traits.protocols.RestXmlTrait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsJson1_0Trait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsJson1_1Trait$Provider
+software.amazon.smithy.aws.traits.protocols.HttpContentMd5Trait$Provider
 software.amazon.smithy.aws.traits.auth.SigV4Trait$Provider
