@@ -274,7 +274,7 @@
                 "id": "invalid",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": "foo -[foo]->"
+                    "selector": "foo -[input]->"
                 }
             },
             {
@@ -576,13 +576,6 @@
                 "name": "EmitEachSelector",
                 "configuration": {
                     "selector": "service -[resource]-> resource"
-                }
-            },
-            {
-                "id": "noMatchInvalidRel",
-                "name": "EmitEachSelector",
-                "configuration": {
-                    "selector": "service -[foo]-> *"
                 }
             },
             {

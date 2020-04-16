@@ -354,6 +354,12 @@ The table below lists the labeled directed relationships from each shape.
       - The shape targeted by the member. Note that member targets have no
         relationship name.
 
+.. important::
+
+    Implementations MUST tolerate parsing unknown relationship types. When
+    evaluated, the directed traversal of unknown relationship types matches
+    no shapes.
+
 
 Functions
 =========
