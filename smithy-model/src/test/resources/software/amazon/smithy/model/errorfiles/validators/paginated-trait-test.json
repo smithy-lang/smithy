@@ -64,7 +64,7 @@
                 "target": "ns.foo#ValidOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken",
@@ -81,7 +81,7 @@
                 "target": "ns.foo#ValidOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken",
@@ -99,7 +99,7 @@
                 "target": "ns.foo#ValidOutput3"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken"
@@ -115,7 +115,7 @@
                 "target": "ns.foo#ValidWrappedOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "result.nextToken",
@@ -132,7 +132,7 @@
                 "target": "ns.foo#DeeplyNestedOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "output.result.nextToken",
@@ -178,7 +178,7 @@
                 "target": "ns.foo#ValidOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken",
@@ -193,7 +193,7 @@
                 "target": "ns.foo#ValidInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken",
@@ -211,7 +211,7 @@
                 "target": "ns.foo#MissingOutputToken"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken",
@@ -245,7 +245,7 @@
                 "target": "ns.foo#OutputNotString"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken",
@@ -282,7 +282,7 @@
                 "target": "ns.foo#NonOptionalOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken",
@@ -297,13 +297,13 @@
                 "nextToken": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "pageSize": {
                     "target": "ns.foo#Number",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -314,7 +314,7 @@
                 "nextToken": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "items": {
@@ -331,7 +331,7 @@
                 "target": "ns.foo#UnresolvedOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken",
@@ -360,7 +360,7 @@
                 "items": {
                     "target": "ns.foo#Missing",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -374,7 +374,7 @@
                 "target": "ns.foo#ValidOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken",
@@ -403,7 +403,7 @@
                 "target": "ns.foo#Invalid7Input"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "nextToken",
@@ -421,7 +421,7 @@
                 "items": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -435,7 +435,7 @@
                 "target": "ns.foo#Invalid8Output"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "inputToken": "nextToken",
                     "outputToken": "missing",
@@ -461,7 +461,7 @@
                 "target": "ns.foo#ValidOutput"
             },
             "traits": {
-                "smithy.api#paginated": true
+                "smithy.api#paginated": {}
             }
         },
         "ns.foo#InvalidNestedInput": {
@@ -509,7 +509,7 @@
                 "items": {
                     "target": "ns.foo#StringList",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -562,7 +562,7 @@
                 "target": "ns.foo#ListResourcesOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#paginated": {
                     "items": "items"
                 }

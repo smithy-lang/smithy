@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Indicates that an operation is idempotent.
  */
-public final class IdempotentTrait extends BooleanTrait {
+public final class IdempotentTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#idempotent");
 
     public IdempotentTrait(SourceLocation sourceLocation) {
@@ -32,7 +32,7 @@ public final class IdempotentTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<IdempotentTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<IdempotentTrait> {
         public Provider() {
             super(ID, IdempotentTrait::new);
         }

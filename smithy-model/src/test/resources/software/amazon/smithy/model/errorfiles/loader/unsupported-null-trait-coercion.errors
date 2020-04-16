@@ -1,1 +1,0 @@
-[ERROR] com.foo#MyString: Error validating trait `com.foo#foo`: Expected string value for string shape, `com.foo#foo`; found null value | TraitValue

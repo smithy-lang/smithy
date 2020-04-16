@@ -22,7 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * Binds a member to a URI label of an input of an operation using
  * the member name.
  */
-public final class HttpLabelTrait extends BooleanTrait {
+public final class HttpLabelTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#httpLabel");
 
     public HttpLabelTrait(SourceLocation sourceLocation) {
@@ -33,7 +33,7 @@ public final class HttpLabelTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<HttpLabelTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<HttpLabelTrait> {
         public Provider() {
             super(ID, HttpLabelTrait::new);
         }

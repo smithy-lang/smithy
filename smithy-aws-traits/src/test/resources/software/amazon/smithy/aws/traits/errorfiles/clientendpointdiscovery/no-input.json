@@ -93,7 +93,7 @@
                 "Id": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -128,7 +128,7 @@
                 "Id": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }, 
                 "Object": {

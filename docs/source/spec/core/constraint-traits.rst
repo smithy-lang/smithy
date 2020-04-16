@@ -222,7 +222,7 @@ contain a valid shape ID that targets an integer shape in the model.
                 "smithy.example#integerRef": {
                     "type": "string",
                     "traits": {
-                        "smithy.api#trait": true,
+                        "smithy.api#trait": {},
                         "smithy.api#idRef": {
                             "failWhenMissing": true,
                             "selector": "integer"
@@ -547,7 +547,7 @@ in a response.
                         "foo": {
                             "target": "smithy.example#FooString",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -591,7 +591,7 @@ Value type
                         "target": "smithy.api#String"
                     },
                     "traits": {
-                        "smithy.api#uniqueItems": true
+                        "smithy.api#uniqueItems": {}
                     }
                 }
             }

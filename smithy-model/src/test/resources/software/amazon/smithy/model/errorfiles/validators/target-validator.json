@@ -135,7 +135,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#ValidInput": {
@@ -206,7 +206,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#InalidOperationInputOutputErrorBadTypes": {
@@ -223,7 +223,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#InvalidOperationBadErrorTraits": {
@@ -240,7 +240,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#InvalidResourceLifecycle": {
@@ -279,7 +279,7 @@
         "ns.foo#fooTrait": {
             "type": "string",
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         },
         "ns.foo#InvalidTraitReference": {

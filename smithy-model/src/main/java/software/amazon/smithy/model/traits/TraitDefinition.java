@@ -28,7 +28,6 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -200,7 +199,10 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
         public TraitDefinition createTrait(ShapeId target, Node value) {
             // The handling of a trait definition is special-cased, so coercion
             // from a null value to an object is required.
-            ObjectNode members = Trait.coerceTraitValue(value, ShapeType.STRUCTURE).expectObjectNode();
+            ObjectNode members = value.isNullNode()
+                    ? Node.objectNode()
+                    : value.expectObjectNode();
+
             Builder builder = builder().sourceLocation(value);
 
             members.getMember(TraitDefinition.SELECTOR_KEY)

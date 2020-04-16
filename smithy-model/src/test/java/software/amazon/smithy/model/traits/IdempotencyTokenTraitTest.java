@@ -30,10 +30,10 @@ public class IdempotencyTokenTraitTest {
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(
-                ShapeId.from("smithy.api#idempotencyToken"), ShapeId.from("ns.qux#foo"), Node.from(true));
+                ShapeId.from("smithy.api#idempotencyToken"), ShapeId.from("ns.qux#foo"), Node.objectNode());
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(IdempotencyTokenTrait.class));
-        assertThat(trait.get().toNode(), equalTo(Node.from(true)));
+        assertThat(trait.get().toNode(), equalTo(Node.objectNode()));
     }
 }

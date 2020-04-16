@@ -17,12 +17,12 @@ package software.amazon.smithy.aws.iam.traits;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.BooleanTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
  * Disables the automatic inference of condition keys of a resource.
  */
-public final class DisableConditionKeyInferenceTrait extends BooleanTrait {
+public final class DisableConditionKeyInferenceTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.iam#disableConditionKeyInference");
 
     public DisableConditionKeyInferenceTrait(SourceLocation sourceLocation) {
@@ -33,7 +33,7 @@ public final class DisableConditionKeyInferenceTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<DisableConditionKeyInferenceTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<DisableConditionKeyInferenceTrait> {
         public Provider() {
             super(ID, DisableConditionKeyInferenceTrait::new);
         }

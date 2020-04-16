@@ -104,7 +104,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#OperationAInput": {
@@ -153,7 +153,7 @@
                 "id": {
                     "target": "ns.foo#MyResourceIdentifier",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }

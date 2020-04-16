@@ -40,7 +40,7 @@
                 "scheme": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true,
+                        "smithy.api#required": {},
                         "smithy.api#documentation": "The Smithy authentication scheme used by the client (e.g, aws.v4).",
                         "smithy.api#idRef": {
                             "selector": "[trait|authDefinition]",
@@ -94,7 +94,7 @@
             },
             "traits": {
                 "smithy.api#documentation": "An object that associates an authorizer and associated metadata with an authentication mechanism.",
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.apigateway#authorizer": {
@@ -127,13 +127,13 @@
                 "type": {
                     "target": "aws.apigateway#IntegrationType",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "uri": {
                     "target": "aws.apigateway#Arn",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "credentials": {
@@ -142,7 +142,7 @@
                 "httpMethod": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "passThroughBehavior": {
@@ -248,7 +248,7 @@
                 "aws.api#arnReference": {
                     "type": "AWS::IAM::Role"
                 },
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.apigateway#Arn": {
@@ -256,7 +256,7 @@
             "traits": {
                 "smithy.api#documentation": "<p>The ARN of an AWS integration target.</p><p>This string MAY contain the literal string <code>{serviceName}</code> and/or the literal string <code>{operationName}</code>, which will be replaced with the name of the Smithy service shape and the name of the Smithy operation shape, respectively.</p>",
                 "aws.api#arnReference": {},
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.apigateway#RequestParameters": {
@@ -269,7 +269,7 @@
             },
             "traits": {
                 "smithy.api#documentation": "<p>A mapping of integration request parameters to the API Gateway data mapping expression that should be used to populate the parameter.</p> <p><strong>Note:</strong> This feature is provided primarily to allow injecting static values and context variables for request parameters. Request data MAY be mapped to headers using the syntax described in <a href=\"https://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html#mapping-response-parameters\">the API Gateway Developer Guide</a>; however, the data must be identified according to its location in the serialized request, which may differ from protocol to protocol. Here be dragons!</p>",
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.apigateway#Templates": {
@@ -282,13 +282,13 @@
             },
             "traits": {
                 "smithy.api#documentation": "<p>A map of MIME types to velocity templates allowing you to craft a new integration message from received data.</p><p><strong>Note:</strong> This feature is provided primarily to allow injecting static values and context variables for request parameters. Request data MAY be mapped to headers using the syntax described in <a href=\"https://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html#mapping-response-parameters\">the API Gateway Developer Guide</a>; however, the data must be identified according to its location in the serialized request, which may differ from protocol to protocol. Here be dragons!</p>",
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.apigateway#ConnectionType": {
             "type": "string",
             "traits": {
-                "smithy.api#private": true,
+                "smithy.api#private": {},
                 "smithy.api#enum": [
                     {"value": "INTERNET"},
                     {"value": "VPC_LINK"}
@@ -313,7 +313,7 @@
                         "name": "NEVER"
                     }
                 ],
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.apigateway#ContentHandling": {
@@ -324,7 +324,7 @@
                     {"value": "CONVERT_TO_TEXT", "name": "CONVERT_TO_TEXT"},
                     {"value": "CONVERT_TO_BINARY", "name": "CONVERT_TO_BINARY"}
                 ],
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.apigateway#StringList": {
@@ -343,7 +343,7 @@
             },
             "traits": {
                 "smithy.api#documentation": "A map of response identifiers to responses.",
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.apigateway#IntegrationResponse": {
@@ -364,7 +364,7 @@
             },
             "traits": {
                 "smithy.api#documentation": "Defines a response and specifies parameter mappings.",
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.apigateway#ResponseParameters": {
@@ -377,7 +377,7 @@
             },
             "traits": {
                 "smithy.api#documentation": "Specifies parameter mappings for the response. Only the header and body parameters of the integration response can be mapped to the header parameters of the method.",
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         }
     }

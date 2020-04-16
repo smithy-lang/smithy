@@ -10,8 +10,8 @@
                 }
             ],
             "traits": {
-                "aws.protocols#restJson1": true,
-                "smithy.api#httpBasicAuth": true
+                "aws.protocols#restJson1": {},
+                "smithy.api#httpBasicAuth": {}
             }
         },
         "smithy.example#Operation1": {

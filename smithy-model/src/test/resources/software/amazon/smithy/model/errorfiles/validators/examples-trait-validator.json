@@ -10,7 +10,7 @@
                 "target": "ns.foo#OperationOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#examples": [
                     {
                         "title": "Testing 1",
@@ -39,7 +39,7 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "baz": {
@@ -53,7 +53,7 @@
                 "bam": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -61,7 +61,7 @@
         "ns.foo#Operation2": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#examples": [
                     {
                         "title": "Testing 3",

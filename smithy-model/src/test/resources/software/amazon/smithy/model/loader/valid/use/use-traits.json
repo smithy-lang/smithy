@@ -7,9 +7,9 @@
                 "a": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#sensitive": true,
-                        "smithy.api#deprecated": true,
-                        "smithy.api#required": true
+                        "smithy.api#sensitive": {},
+                        "smithy.api#deprecated": {},
+                        "smithy.api#required": {}
                     }
                 }
             }

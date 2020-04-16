@@ -9,7 +9,7 @@
                 }
             },
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         },
         "ns.foo#quux": {
@@ -20,7 +20,7 @@
                 }
             },
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         },
         "ns.foo#MyService": {

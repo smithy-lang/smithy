@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
 * Marks a structure member to be serialized to/from an XML attribute.
 */
-public final class XmlAttributeTrait extends BooleanTrait {
+public final class XmlAttributeTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#xmlAttribute");
 
     public XmlAttributeTrait(SourceLocation sourceLocation) {
@@ -32,7 +32,7 @@ public final class XmlAttributeTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<XmlAttributeTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<XmlAttributeTrait> {
         public Provider() {
             super(ID, XmlAttributeTrait::new);
         }

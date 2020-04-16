@@ -773,7 +773,7 @@ plane unless an operation or resource is marked with the
                         "target": "smithy.example#PutThingsOutput"
                     },
                     "traits": {
-                        "aws.api#controlPlane": true
+                        "aws.api#controlPlane": {}
                     }
                 }
             }
@@ -827,7 +827,7 @@ plane unless an operation or resource is marked with the
                         "target": "smithy.example#PutThingsOutput"
                     },
                     "traits": {
-                        "aws.api#dataPlane": true
+                        "aws.api#dataPlane": {}
                     }
                 }
             }
@@ -1111,8 +1111,8 @@ using an ``clientEndpointDiscoveryId``.
                         "Id": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "aws.api#clientEndpointDiscoveryId": true,
-                                "smithy.api#required": true
+                                "aws.api#clientEndpointDiscoveryId": {},
+                                "smithy.api#required": {}
                             }
                         }
                     }

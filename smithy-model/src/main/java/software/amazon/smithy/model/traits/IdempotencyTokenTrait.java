@@ -22,7 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * Defines an operation input member that is used to prevent
  * replayed requests.
  */
-public final class IdempotencyTokenTrait extends BooleanTrait {
+public final class IdempotencyTokenTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#idempotencyToken");
 
     public IdempotencyTokenTrait(SourceLocation sourceLocation) {
@@ -33,7 +33,7 @@ public final class IdempotencyTokenTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<IdempotencyTokenTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<IdempotencyTokenTrait> {
         public Provider() {
             super(ID, IdempotencyTokenTrait::new);
         }

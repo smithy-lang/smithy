@@ -4,7 +4,7 @@
         "com.foo#String": {
             "type": "apply",
             "traits": {
-                "smithy.api#sensitive": true
+                "smithy.api#sensitive": {}
             }
         }
     }

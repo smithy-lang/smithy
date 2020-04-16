@@ -59,13 +59,13 @@ syntax, similar to:
                         "foo": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         },
                         "baz": {
                             "target": "smithy.api#Integer",
                             "traits": {
-                                "smithy.api#deprecated": true
+                                "smithy.api#deprecated": {}
                             }
                         }
                     }

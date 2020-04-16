@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -38,11 +37,8 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
-import software.amazon.smithy.model.traits.ReferencesTrait;
-import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -153,61 +149,6 @@ public class LoaderVisitorTest {
         List<ValidationEvent> events = visitor.onEnd().getValidationEvents();
 
         assertThat(events, not(empty()));
-    }
-
-    @Test
-    public void coercesNullTraitValues() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("null-coerce-traits.json"))
-                .assemble()
-                .unwrap();
-
-        Shape shape = model.expectShape(ShapeId.from("ns.foo#Foo"));
-        assertTrue(shape.getTrait(DeprecatedTrait.class).isPresent());
-        assertTrue(shape.getTrait(TagsTrait.class).isPresent());
-        assertTrue(shape.getTrait(ReferencesTrait.class).isPresent());
-    }
-
-    @Test
-    public void coercesBooleanToStructureTraitValues() {
-        Model model = Model.assembler()
-                .addUnparsedModel("test.smithy", "namespace smithy.example\n"
-                                                 + "@foo(true)\n"
-                                                 + "string MyString\n"
-                                                 + "@trait(selector: \"*\")\n"
-                                                 + "structure foo {}\n")
-                .assemble()
-                .unwrap();
-        Shape shape = model.expectShape(ShapeId.from("smithy.example#MyString"));
-
-        assertTrue(shape.hasTrait("smithy.example#foo"));
-    }
-
-    private static Model createCoercionModel(String traitType) {
-        return Model.assembler()
-                .addUnparsedModel("test.smithy", "namespace smithy.example\n"
-                                                 + "@foo\n"
-                                                 + "string MyString\n"
-                                                 + "@trait(selector: \"*\")"
-                                                 + traitType + "\n")
-                .assemble()
-                .unwrap();
-    }
-
-    @Test
-    public void coercesListTraitValues() {
-        Model model = createCoercionModel("list foo { member: String }");
-        Shape shape = model.expectShape(ShapeId.from("smithy.example#MyString"));
-
-        assertTrue(shape.hasTrait("smithy.example#foo"));
-    }
-
-    @Test
-    public void coercesBooleanTraitValuesToStructures() {
-        Model model = createCoercionModel("structure foo {}");
-        Shape shape = model.expectShape(ShapeId.from("smithy.example#MyString"));
-
-        assertTrue(shape.hasTrait("smithy.example#foo"));
     }
 
     @Test

@@ -15,31 +15,31 @@
 
 package software.amazon.smithy.model.traits;
 
+import java.util.Collections;
 import java.util.function.Function;
-import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.BooleanNode;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
- * Trait implementation that expects an empty object or a boolean
- * value of true.
+ * Trait implementation for traits that are an empty object.
  */
-public abstract class BooleanTrait extends AbstractTrait {
-    public BooleanTrait(ShapeId id, SourceLocation sourceLocation) {
+public abstract class AnnotationTrait extends AbstractTrait {
+    public AnnotationTrait(ShapeId id, SourceLocation sourceLocation) {
         super(id, sourceLocation);
     }
 
     @Override
     protected final Node createNode() {
-        return new BooleanNode(true, getSourceLocation());
+        return new ObjectNode(Collections.emptyMap(), getSourceLocation());
     }
 
     /**
      * Trait provider that expects a boolean value of true.
      */
-    public static class Provider<T extends BooleanTrait> extends AbstractTrait.Provider {
+    public static class Provider<T extends AnnotationTrait> extends AbstractTrait.Provider {
         private final Function<SourceLocation, T> traitFactory;
 
         /**
@@ -53,17 +53,13 @@ public abstract class BooleanTrait extends AbstractTrait {
 
         @Override
         public T createTrait(ShapeId id, Node value) {
-            if (value.asObjectNode().isPresent() && value.asObjectNode().get().getMembers().isEmpty()) {
+            if (value.isObjectNode()) {
                 return traitFactory.apply(value.getSourceLocation());
             }
 
-            BooleanNode booleanNode = value.expectBooleanNode();
-            if (!booleanNode.getValue()) {
-                throw new SourceException(String.format(
-                        "Boolean trait `%s` expects a value of `true`, but found `false`", getShapeId()), value);
-            }
-
-            return traitFactory.apply(value.getSourceLocation());
+            throw new ExpectationNotMetException(String.format(
+                    "Annotation traits  must be an object or omitted in the IDL, but found %s",
+                    value.getType()), value);
         }
     }
 }

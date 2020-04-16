@@ -9,8 +9,8 @@
                 {"target":  "ns.foo#InvalidOperation"}
             ],
             "traits": {
-                "smithy.api#httpBasicAuth": true,
-                "smithy.api#httpDigestAuth": true
+                "smithy.api#httpBasicAuth": {},
+                "smithy.api#httpDigestAuth": {}
             }
         },
         "ns.foo#ValidOperation": {

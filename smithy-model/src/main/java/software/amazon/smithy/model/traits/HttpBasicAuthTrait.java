@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * An auth scheme trait uses HTTP basic auth.
  */
-public final class HttpBasicAuthTrait extends BooleanTrait {
+public final class HttpBasicAuthTrait extends AnnotationTrait {
 
     public static final ShapeId ID = ShapeId.from("smithy.api#httpBasicAuth");
 
@@ -33,7 +33,7 @@ public final class HttpBasicAuthTrait extends BooleanTrait {
         super(ID, sourceLocation);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<HttpBasicAuthTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<HttpBasicAuthTrait> {
         public Provider() {
             super(ID, HttpBasicAuthTrait::new);
         }

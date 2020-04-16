@@ -4,7 +4,7 @@
         "ns.foo#A": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/A",
@@ -15,7 +15,7 @@
         "ns.foo#B": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/B",
@@ -26,7 +26,7 @@
         "ns.foo#C": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/C",

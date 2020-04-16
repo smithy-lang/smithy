@@ -15,18 +15,12 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.Collections;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.loader.Prelude;
-import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.BooleanNode;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.OptionalUtils;
@@ -129,46 +123,5 @@ public interface Trait extends FromSourceLocation, ToNode, ToShapeId {
      */
     static String makeAbsoluteName(String traitName, String defaultNamespace) {
         return traitName.contains("#") ? traitName : defaultNamespace + "#" + traitName;
-    }
-
-    /**
-     * Coerces a trait value for the given type.
-     *
-     * <p>Null values provided for traits are coerced in some cases to fit
-     * the type referenced by the shape. This is used in the .smithy format
-     * to make is so that you can write "@foo" rather than "@foo(true)",
-     * "@foo()", or "@foo([])".
-     *
-     * <ul>
-     *     <li>Boolean traits are converted to `true`.</li>
-     *     <li>Structure and map traits are converted to an empty object.</li>
-     *     <li>List and set traits are converted to an empty array.</li>
-     * </ul>
-     *
-     * Boolean values can be coerced from `true` to an empty object if the
-     * shape targeted by the trait is a structure. This allows traits to
-     * evolve over time from being an annotation trait to a structured
-     * trait (with optional members only to make it backward-compatible).
-     *
-     * @param value Value to coerce.
-     * @param targetType Shape Type to convert into.
-     * @return Returns the coerced value.
-     */
-    static Node coerceTraitValue(Node value, ShapeType targetType) {
-        if (value.isNullNode()) {
-            if (targetType == null) {
-                return new BooleanNode(true, value.getSourceLocation());
-            } else if (targetType == ShapeType.STRUCTURE || targetType == ShapeType.MAP) {
-                return new ObjectNode(Collections.emptyMap(), value.getSourceLocation());
-            } else if (targetType == ShapeType.LIST || targetType == ShapeType.SET) {
-                return new ArrayNode(Collections.emptyList(), value.getSourceLocation());
-            }
-        } else if (targetType == ShapeType.STRUCTURE && value.asBooleanNode()
-                .filter(BooleanNode::getValue)
-                .isPresent()) {
-            return new ObjectNode(Collections.emptyMap(), value.getSourceLocation());
-        }
-
-        return value;
     }
 }

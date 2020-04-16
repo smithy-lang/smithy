@@ -475,7 +475,7 @@ into a containing structure/union. For example, given the following:
                         "flatMap": {
                             "target": "smithy.example#MyMap",
                             "traits": {
-                                "smithy.api#xmlFlattened": true
+                                "smithy.api#xmlFlattened": {}
                             }
                         }
                     }
@@ -635,7 +635,7 @@ member name. For example, given the following:
                         "foo": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#xmlAttribute": true
+                                "smithy.api#xmlAttribute": {}
                             }
                         },
                         "bar": {
@@ -678,7 +678,7 @@ Given the following:
                         "foo": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#xmlAttribute": true,
+                                "smithy.api#xmlAttribute": {},
                                 "smithy.api#xmlName": "NotFoo"
                             }
                         }
@@ -737,7 +737,7 @@ Given the following:
                         "flat": {
                             "target": "smithy.example#MyList",
                             "traits": {
-                                "smithy.api#xmlFlattened": true
+                                "smithy.api#xmlFlattened": {}
                             }
                         },
                         "nested": {
@@ -798,7 +798,7 @@ Maps can be flattened into structures too. Given the following:
                         "flat": {
                             "target": "smithy.example#MyMap",
                             "traits": {
-                                "smithy.api#xmlFlattened": true
+                                "smithy.api#xmlFlattened": {}
                             }
                         },
                         "notFlat": {

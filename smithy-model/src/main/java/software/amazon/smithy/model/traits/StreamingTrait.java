@@ -26,7 +26,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * not be stored in memory, or that the size of the data stored in the
  * shape is unknown at the start of a request.
  */
-public final class StreamingTrait extends BooleanTrait {
+public final class StreamingTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#streaming");
 
     public StreamingTrait(SourceLocation sourceLocation) {
@@ -37,7 +37,7 @@ public final class StreamingTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<StreamingTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<StreamingTrait> {
         public Provider() {
             super(ID, StreamingTrait::new);
         }

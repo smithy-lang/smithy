@@ -4,7 +4,7 @@
         "ns.foo#String1": {
             "type": "string",
             "traits": {
-                "ns.foo#custom1": true
+                "ns.foo#custom1": {}
             }
         },
         "ns.foo#String2": {
@@ -43,7 +43,7 @@
                 "foo": {
                     "target": "ns.foo#String1",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "baz": {

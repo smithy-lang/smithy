@@ -18,12 +18,12 @@ package software.amazon.smithy.aws.traits.auth;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.BooleanTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
  * Indicates that the payload of an operation is not to be signed.
  */
-public final class UnsignedPayloadTrait extends BooleanTrait {
+public final class UnsignedPayloadTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.auth#unsignedPayload");
 
     public UnsignedPayloadTrait(FromSourceLocation sourceLocation) {
@@ -34,7 +34,7 @@ public final class UnsignedPayloadTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<UnsignedPayloadTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<UnsignedPayloadTrait> {
         public Provider() {
             super(ID, UnsignedPayloadTrait::new);
         }

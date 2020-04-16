@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Indicates that an operation / service supports unauthenticated access.
  */
-public final class OptionalAuthTrait extends BooleanTrait {
+public final class OptionalAuthTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#optionalAuth");
 
     public OptionalAuthTrait() {
@@ -32,7 +32,7 @@ public final class OptionalAuthTrait extends BooleanTrait {
         super(ID, sourceLocation);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<OptionalAuthTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<OptionalAuthTrait> {
         public Provider() {
             super(ID, OptionalAuthTrait::new);
         }

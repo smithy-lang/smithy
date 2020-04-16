@@ -39,7 +39,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.model.traits.BooleanTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -371,9 +371,9 @@ public final class SmithyIdlModelSerializer {
             Node node = trait.toNode();
             Shape shape = model.expectShape(trait.toShapeId());
 
-            if (trait instanceof BooleanTrait || isEmptyStructure(node, shape)) {
-                // Traits that inherit from BooleanTrait specifically can omit a value.
-                // Traits that are simply boolean shapes which don't implement BooleanTrait cannot.
+            if (trait instanceof AnnotationTrait || isEmptyStructure(node, shape)) {
+                // Traits that inherit from AnnotationTrait specifically can omit a value.
+                // Traits that are simply boolean shapes which don't implement AnnotationTrait cannot.
                 // Additionally, empty structure traits can omit a value.
                 codeWriter.write("@$I", trait.toShapeId());
             } else if (node.isObjectNode()) {

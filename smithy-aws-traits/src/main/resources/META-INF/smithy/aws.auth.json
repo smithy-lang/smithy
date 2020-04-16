@@ -7,7 +7,7 @@
                 "name": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true,
+                        "smithy.api#required": {},
                         "smithy.api#documentation": "The signature version 4 service signing name to use in the credential scope when signing requests. This value SHOULD match the `arnNamespace` property of the `aws.api#service-trait`.",
                         "smithy.api#externalDocumentation": {
                             "Reference": "https://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html"
@@ -45,7 +45,7 @@
                 "providerArns": {
                     "target": "aws.auth#StringList",
                     "traits": {
-                        "smithy.api#required": true,
+                        "smithy.api#required": {},
                         "smithy.api#documentation": "A list of the Amazon Cognito user pool ARNs. Each element is of this format: arn:aws:cognito-idp:{region}:{account_id}:userpool/{user_pool_id}."
                     }
                 }
@@ -54,7 +54,7 @@
                 "smithy.api#trait": {
                     "selector": "service"
                 },
-                "smithy.api#authDefinition": true,
+                "smithy.api#authDefinition": {},
                 "smithy.api#documentation": "Configures an Amazon Cognito User Pools auth scheme.",
                 "smithy.api#tags": [
                     "internal"
@@ -67,7 +67,7 @@
                 "target": "smithy.api#String"
             },
             "traits": {
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         }
     }

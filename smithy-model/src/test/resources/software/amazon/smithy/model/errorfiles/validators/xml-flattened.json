@@ -22,7 +22,7 @@
                 "target": "smithy.api#String"
             },
             "traits": {
-                "smithy.api#xmlFlattened": true
+                "smithy.api#xmlFlattened": {}
             }
         },
         "ns.foo#InvalidStringMap": {
@@ -34,7 +34,7 @@
                 "target": "smithy.api#String"
             },
             "traits": {
-                "smithy.api#xmlFlattened": true
+                "smithy.api#xmlFlattened": {}
             }
         },
         "ns.foo#ValidStructure": {
@@ -43,13 +43,13 @@
                 "flatList": {
                     "target": "ns.foo#StringList",
                     "traits": {
-                        "smithy.api#xmlFlattened": true
+                        "smithy.api#xmlFlattened": {}
                     }
                 },
                 "flatMap": {
                     "target": "ns.foo#StringMap",
                     "traits": {
-                        "smithy.api#xmlFlattened": true
+                        "smithy.api#xmlFlattened": {}
                     }
                 }
             }

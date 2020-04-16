@@ -19,19 +19,19 @@
                 "target": "ns.foo#PutValidResource"
             },
             "traits": {
-                "smithy.api#noReplace": true
+                "smithy.api#noReplace": {}
             }
         },
         "ns.foo#PutValidResource": {
             "type": "operation",
             "traits": {
-                "smithy.api#idempotent": true
+                "smithy.api#idempotent": {}
             }
         },
         "ns.foo#InvalidResource": {
             "type": "resource",
             "traits": {
-                "smithy.api#noReplace": true
+                "smithy.api#noReplace": {}
             }
         }
     }

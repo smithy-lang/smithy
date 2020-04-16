@@ -63,13 +63,13 @@ to call ``CreateTable`` on a table that already exists will return an error.
                         "target": "smithy.example#CreateTable"
                     },
                     "traits": {
-                        "smithy.api#noReplace": true
+                        "smithy.api#noReplace": {}
                     }
                 },
                 "smithy.example#CreateTable": {
                     "type": "operation",
                     "traits": {
-                        "smithy.api#idempotent": true
+                        "smithy.api#idempotent": {}
                     }
                 }
             }

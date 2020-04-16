@@ -429,7 +429,7 @@ operation within the service.
                 "type": "service",
                 "version": "2018-03-17",
                 "traits": {
-                    "aws.protocols#restJson1": true,
+                    "aws.protocols#restJson1": {},
                     "aws.auth#sigv4": {
                         "name": "weather"
                     },

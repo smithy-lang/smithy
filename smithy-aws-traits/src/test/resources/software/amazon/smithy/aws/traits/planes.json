@@ -21,19 +21,19 @@
                 }
             ],
             "traits": {
-                "aws.api#controlPlane": true
+                "aws.api#controlPlane": {}
             }
         },
         "smithy.example#Operation1": {
             "type": "operation",
             "traits": {
-                "aws.api#dataPlane": true
+                "aws.api#dataPlane": {}
             }
         },
         "smithy.example#Operation2": {
             "type": "operation",
             "traits": {
-                "aws.api#controlPlane": true
+                "aws.api#controlPlane": {}
             }
         },
         "smithy.example#Operation3": {
@@ -61,13 +61,13 @@
         "smithy.example#Operation4": {
             "type": "operation",
             "traits": {
-                "aws.api#dataPlane": true
+                "aws.api#dataPlane": {}
             }
         },
         "smithy.example#Operation5": {
             "type": "operation",
             "traits": {
-                "aws.api#controlPlane": true
+                "aws.api#controlPlane": {}
             }
         },
         "smithy.example#Operation6": {
@@ -84,13 +84,13 @@
                 }
             ],
             "traits": {
-                "aws.api#dataPlane": true
+                "aws.api#dataPlane": {}
             }
         },
         "smithy.example#Operation7": {
             "type": "operation",
             "traits": {
-                "aws.api#controlPlane": true
+                "aws.api#controlPlane": {}
             }
         },
         "smithy.example#Operation8": {

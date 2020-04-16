@@ -337,8 +337,8 @@ The following example defines two operations:
                         }
                     ],
                     "traits": {
-                        "smithy.api#httpBasicAuth": true,
-                        "smithy.api#httpDigestAuth": true,
+                        "smithy.api#httpBasicAuth": {},
+                        "smithy.api#httpDigestAuth": {},
                         "smithy.api#auth": [
                             "smithy.api#httpBasicAuth"
                         ]

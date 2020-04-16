@@ -50,7 +50,7 @@ See
                     "type": "service",
                     "version": "2020-02-05",
                     "traits": {
-                        "aws.protocols#awsQuery": true
+                        "aws.protocols#awsQuery": {}
                     }
                 }
             }

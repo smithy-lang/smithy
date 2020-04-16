@@ -16,7 +16,7 @@
         "ns.foo#A": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#B": {
@@ -36,7 +36,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#Input": {
