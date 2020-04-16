@@ -141,7 +141,7 @@ final class IdlModelLoader {
     private final String filename;
     private final SmithyModelLexer lexer;
     private final LoaderVisitor visitor;
-    private final List<Pair<String, Node>> pendingTraits = new ArrayList<>();
+    private final List<TraitEntry> pendingTraits = new ArrayList<>();
 
     /** Map of shape aliases to their targets. */
     private final Map<String, ShapeId> useShapes = new HashMap<>();
@@ -184,6 +184,19 @@ final class IdlModelLoader {
         DocComment(String content, SourceLocation sourceLocation) {
             this.content = content;
             this.sourceLocation = sourceLocation;
+        }
+    }
+
+    // A pending trait that also doesn't yet have a resolved trait shape ID.
+    private static final class TraitEntry {
+        final String traitName;
+        final Node value;
+        final boolean isAnnotation;
+
+        TraitEntry(String traitName, Node value, boolean isAnnotation) {
+            this.traitName = traitName;
+            this.value = value;
+            this.isAnnotation = isAnnotation;
         }
     }
 
@@ -389,13 +402,13 @@ final class IdlModelLoader {
         }
     }
 
-    private Pair<String, Node> parseTraitValue(Token token, TraitValueType type) {
+    private TraitEntry parseTraitValue(Token token, TraitValueType type) {
         try {
             requireNamespaceOrThrow();
 
             // Resolve the trait name and ensure that the trait forms a syntactically valid value.
             ShapeId.fromOptionalNamespace(namespace, token.lexeme);
-            Pair<String, Node> result = Pair.of(token.lexeme, parseTraitValueBody());
+            TraitEntry result = parseTraitValueBody(token.lexeme);
 
             // `apply` doesn't require any specific token to follow.
             if (type == TraitValueType.APPLY) {
@@ -427,10 +440,10 @@ final class IdlModelLoader {
         }
     }
 
-    private Node parseTraitValueBody() {
+    private TraitEntry parseTraitValueBody(String traitName) {
         // Null is coerced into the appropriate type for the trait.
         if (!test(LPAREN)) {
-            return new NullNode(currentLocation());
+            return new TraitEntry(traitName, new NullNode(currentLocation()), true);
         }
 
         expect(LPAREN);
@@ -438,14 +451,14 @@ final class IdlModelLoader {
 
         if (next.type == RPAREN) {
             // An open and closed "()" signals an empty object.
-            return new ObjectNode(MapUtils.of(), next.getSourceLocation());
+            return new TraitEntry(traitName, new ObjectNode(MapUtils.of(), next.getSourceLocation()), false);
         }
 
         // Test to see if this is just a string or if it's an object.
         if (test(COLON)) {
             if (next.type == QUOTED || next.type == UNQUOTED) {
                 // Parse the object using the already parsed key.
-                return parseObjectNodeWithKey(currentLocation(), RPAREN, next);
+                return new TraitEntry(traitName, parseObjectNodeWithKey(currentLocation(), RPAREN, next), false);
             }
             throw syntax("Expected a string to start a trait value object");
         }
@@ -460,7 +473,7 @@ final class IdlModelLoader {
         }
         expect(RPAREN);
 
-        return result;
+        return new TraitEntry(traitName, result, false);
     }
 
     private Node parseNode() {
@@ -616,8 +629,8 @@ final class IdlModelLoader {
 
         try {
             ShapeId id = ShapeId.fromRelative(namespace, name);
-            for (Pair<String, Node> pair : pendingTraits) {
-                onDeferredTrait(id, pair.getLeft(), pair.getRight());
+            for (TraitEntry traitEntry : pendingTraits) {
+                onDeferredTrait(id, traitEntry.traitName, traitEntry.value, traitEntry.isAnnotation);
             }
             pendingTraits.clear();
             collectPendingDocString(id);
@@ -637,9 +650,16 @@ final class IdlModelLoader {
      * @param target Shape to add the trait to.
      * @param traitName Trait name to add.
      * @param traitValue Trait value as a Node object.
+     * @param isAnnotation Set to true to indicate that the value for the trait was omitted.
      */
-    private void onDeferredTrait(ShapeId target, String traitName, Node traitValue) {
-        onShapeTarget(traitName, traitValue.getSourceLocation(), id -> visitor.onTrait(target, id, traitValue));
+    private void onDeferredTrait(ShapeId target, String traitName, Node traitValue, boolean isAnnotation) {
+        onShapeTarget(traitName, traitValue.getSourceLocation(), id -> {
+            if (isAnnotation) {
+                visitor.onAnnotationTrait(target, id, traitValue.expectNullNode());
+            } else {
+                visitor.onTrait(target, id, traitValue);
+            }
+        });
     }
 
     private boolean isRealizedShapeId(ShapeId expectedId, String target) {
@@ -670,7 +690,7 @@ final class IdlModelLoader {
 
     private void parseStructuredContents(String shapeType, ShapeId parent, Collection<String> requiredMembers) {
         expect(LBRACE);
-        List<Pair<String, Node>> memberTraits = new ArrayList<>();
+        List<TraitEntry> memberTraits = new ArrayList<>();
         Set<String> remainingMembers = requiredMembers.isEmpty() ? SetUtils.of() : new HashSet<>(requiredMembers);
 
         Token token = expect(ANNOTATION, QUOTED, UNQUOTED, RBRACE, DOC);
@@ -697,8 +717,8 @@ final class IdlModelLoader {
                 expect(COLON);
                 parseMember(memberId);
                 // Add the loaded traits on the member now that the ID is known.
-                for (Pair<String, Node> pair : memberTraits) {
-                    onDeferredTrait(memberId, pair.getLeft(), pair.getRight());
+                for (TraitEntry traitEntry : memberTraits) {
+                    onDeferredTrait(memberId, traitEntry.traitName, traitEntry.value, traitEntry.isAnnotation);
                 }
                 memberTraits.clear();
                 collectPendingDocString(memberId);
@@ -753,13 +773,13 @@ final class IdlModelLoader {
         Token nextToken = expect(UNQUOTED);
         String name = nextToken.lexeme;
         Token token = expect(ANNOTATION);
-        Pair<String, Node> trait = parseTraitValue(token, TraitValueType.APPLY);
+        TraitEntry traitEntry = parseTraitValue(token, TraitValueType.APPLY);
         expectNewline();
 
         // First, resolve the targeted shape.
         onShapeTarget(name, nextToken.getSourceLocation(), id -> {
             // Next, resolve the trait ID.
-            onDeferredTrait(id, trait.getLeft(), trait.getRight());
+            onDeferredTrait(id, traitEntry.traitName, traitEntry.value, traitEntry.isAnnotation);
         });
     }
 

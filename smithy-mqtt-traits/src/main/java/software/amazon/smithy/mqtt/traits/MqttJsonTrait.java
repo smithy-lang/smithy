@@ -17,9 +17,9 @@ package software.amazon.smithy.mqtt.traits;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.BooleanTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 
-public final class MqttJsonTrait extends BooleanTrait {
+public final class MqttJsonTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.mqtt#mqttJson");
 
     public MqttJsonTrait(SourceLocation sourceLocation) {
@@ -30,7 +30,7 @@ public final class MqttJsonTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<MqttJsonTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<MqttJsonTrait> {
         public Provider() {
             super(ID, MqttJsonTrait::new);
         }

@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Indicates that a structure member is required.
  */
-public final class RequiredTrait extends BooleanTrait {
+public final class RequiredTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#required");
 
     public RequiredTrait(SourceLocation sourceLocation) {
@@ -32,7 +32,7 @@ public final class RequiredTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<RequiredTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<RequiredTrait> {
         public Provider() {
             super(ID, RequiredTrait::new);
         }

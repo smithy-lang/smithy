@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * An auth scheme trait uses HTTP digest auth.
  */
-public final class HttpDigestAuthTrait extends BooleanTrait {
+public final class HttpDigestAuthTrait extends AnnotationTrait {
 
     public static final ShapeId ID = ShapeId.from("smithy.api#httpDigestAuth");
 
@@ -33,7 +33,7 @@ public final class HttpDigestAuthTrait extends BooleanTrait {
         super(ID, sourceLocation);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<HttpDigestAuthTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<HttpDigestAuthTrait> {
         public Provider() {
             super(ID, HttpDigestAuthTrait::new);
         }

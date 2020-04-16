@@ -18,7 +18,7 @@ package software.amazon.smithy.model.traits;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-public class XmlFlattenedTrait extends BooleanTrait {
+public class XmlFlattenedTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#xmlFlattened");
 
     public XmlFlattenedTrait(SourceLocation sourceLocation) {
@@ -29,7 +29,7 @@ public class XmlFlattenedTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<XmlFlattenedTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<XmlFlattenedTrait> {
         public Provider() {
             super(ID, XmlFlattenedTrait::new);
         }

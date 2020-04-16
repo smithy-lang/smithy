@@ -15,13 +15,13 @@
                 "lorem": {
                     "target": "com.example#StringShape",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "ipsum": {
                     "target": "com.example#StringShape",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "dolor": {
@@ -43,8 +43,8 @@
                 "foo": {
                     "target": "com.example#StringShape",
                     "traits": {
-                        "smithy.api#required": true,
-                        "com.example#beta": true
+                        "smithy.api#required": {},
+                        "com.example#beta": {}
                     }
                 }
             }
@@ -64,8 +64,8 @@
                 "bar": {
                     "target": "com.example#MyShape",
                     "traits": {
-                        "smithy.api#required": true,
-                        "com.example#beta": true
+                        "smithy.api#required": {},
+                        "com.example#beta": {}
                     }
                 }
             }

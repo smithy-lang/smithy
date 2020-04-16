@@ -109,7 +109,7 @@
             "member": {
                 "target": "ns.foo#String",
                 "traits": {
-                    "smithy.api#deprecated": true
+                    "smithy.api#deprecated": {}
                 }
             }
         },

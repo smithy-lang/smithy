@@ -337,7 +337,7 @@ member:
                     "stringMember": {
                         "target": "smithy.api#String",
                         "traits": {
-                            "smithy.api#required": true
+                            "smithy.api#required": {}
                         }
                     },
                     "numberMember": {

@@ -34,6 +34,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -96,12 +97,14 @@ final class LoaderVisitor {
         final ShapeId id;
         final Node value;
         final Trait trait;
+        final boolean isAnnotation;
 
         // A pending trait that needs to be created.
-        PendingTrait(ShapeId id, Node value) {
+        PendingTrait(ShapeId id, Node value, boolean isAnnotation) {
             this.id = id;
             this.value = value;
             this.trait = null;
+            this.isAnnotation = isAnnotation;
         }
 
         // A pending trait that's already created.
@@ -109,6 +112,7 @@ final class LoaderVisitor {
             this.id = id;
             this.trait = trait;
             this.value = null;
+            isAnnotation = false;
         }
     }
 
@@ -266,10 +270,28 @@ final class LoaderVisitor {
      * if the trait name is not absolute.
      *
      * @param target Shape to add the trait to.
-     * @param trait SHape ID of the trait to add.
+     * @param trait Shape ID of the trait to add.
      * @param traitValue Trait value as a Node object.
      */
     public void onTrait(ShapeId target, ShapeId trait, Node traitValue) {
+        onTrait(target, trait, traitValue, false);
+    }
+
+    /**
+     * Adds an annotation trait to a shape.
+     *
+     * <p>An annotation trait has no value, and it's value is coerced from
+     * null into an object or array.
+     *
+     * @param target Shape to add the trait to.
+     * @param trait Shape ID of the trait to add.
+     * @param traitValue Trait value as a Node object.
+     */
+    public void onAnnotationTrait(ShapeId target, ShapeId trait, NullNode traitValue) {
+        onTrait(target, trait, traitValue, true);
+    }
+
+    private void onTrait(ShapeId target, ShapeId trait, Node traitValue, boolean isAnnotation) {
         // Special handling for the loading of trait definitions. These need to be
         // loaded first before other traits can be resolved.
         if (trait.equals(TraitDefinition.ID)) {
@@ -279,7 +301,7 @@ final class LoaderVisitor {
             // Add the definition trait to the shape.
             onTrait(target, traitDef);
         } else {
-            PendingTrait pendingTrait = new PendingTrait(trait, traitValue);
+            PendingTrait pendingTrait = new PendingTrait(trait, traitValue, isAnnotation);
             addPendingTrait(target, traitValue.getSourceLocation(), trait, pendingTrait);
         }
     }
@@ -529,7 +551,7 @@ final class LoaderVisitor {
             }
 
             ShapeId traitId = trait.id;
-            Node value = coerceTraitValue(trait.value, trait.id);
+            Node value = coerceTraitValue(trait);
             Node previous = traits.get(traitId);
 
             if (previous == null) {
@@ -548,8 +570,32 @@ final class LoaderVisitor {
         return traits;
     }
 
-    private Node coerceTraitValue(Node value, ShapeId traitId) {
-        return Trait.coerceTraitValue(value, determineTraitDefinitionType(traitId));
+    /**
+     * Coerces a null annotation trait value for the given type.
+     *
+     * <p>Null values provided for traits are coerced in some cases to fit
+     * the type referenced by the shape. This is used in the .smithy format
+     * to make is so that you can write "@foo" rather than "@foo([])".
+     *
+     * <ul>
+     *     <li>Structure and map traits are converted to an empty object.</li>
+     *     <li>List and set traits are converted to an empty array.</li>
+     * </ul>
+     *
+     * @param trait Trait to coerce.
+     * @return Returns the coerced value.
+     */
+    private Node coerceTraitValue(PendingTrait trait) {
+        if (trait.isAnnotation && trait.value.isNullNode()) {
+            ShapeType targetType = determineTraitDefinitionType(trait.id);
+            if (targetType == ShapeType.STRUCTURE || targetType == ShapeType.MAP) {
+                return new ObjectNode(Collections.emptyMap(), trait.value.getSourceLocation());
+            } else if (targetType == ShapeType.LIST || targetType == ShapeType.SET) {
+                return new ArrayNode(Collections.emptyList(), trait.value.getSourceLocation());
+            }
+        }
+
+        return trait.value;
     }
 
     private ShapeType determineTraitDefinitionType(ShapeId traitId) {

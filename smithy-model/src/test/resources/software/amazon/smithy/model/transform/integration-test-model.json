@@ -29,7 +29,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#MyOperationInput": {
@@ -41,7 +41,7 @@
                 "id": {
                     "target": "ns.foo#MyResourceIdentifier",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             },
@@ -101,7 +101,7 @@
                 "target": "ns.foo#MyResourceOperationInput"
             },
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#MyResourceOperationInput": {
@@ -110,7 +110,7 @@
                 "id": {
                     "target": "ns.foo#MyResourceIdentifier",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "otherValue": {

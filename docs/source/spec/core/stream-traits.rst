@@ -352,14 +352,14 @@ service, followed by the events sent in the payload of the HTTP message.
                         "room": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#httpLabel:": true,
-                                "smithy.api#required": true
+                                "smithy.api#httpLabel:": {},
+                                "smithy.api#required": {}
                             }
                         },
                         "messages": {
                             "target": "smithy.example#MessageStream",
                             "traits": {
-                                "smithy.api#httpPayload": true
+                                "smithy.api#httpPayload": {}
                             }
                         }
                     }
@@ -455,8 +455,8 @@ message.
                         "room": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#httpLabel:": true,
-                                "smithy.api#required": true
+                                "smithy.api#httpLabel:": {},
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -473,7 +473,7 @@ message.
                         "messages": {
                             "target": "smithy.example#MessageStream",
                             "traits": {
-                                "smithy.api#httpPayload": true
+                                "smithy.api#httpPayload": {}
                             }
                         }
                     }
@@ -584,19 +584,19 @@ headers and the "c" member as the payload.
                         "a": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#eventPayload": true
+                                "smithy.api#eventPayload": {}
                             }
                         },
                         "b": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#eventPayload": true
+                                "smithy.api#eventPayload": {}
                             }
                         },
                         "c": {
                             "target": "smithy.api#Blob",
                             "traits": {
-                                "smithy.api#eventPayload": true
+                                "smithy.api#eventPayload": {}
                             }
                         }
                     }
@@ -693,13 +693,13 @@ The following example defines multiple event headers:
                         "a": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#eventHeader": true
+                                "smithy.api#eventHeader": {}
                             }
                         },
                         "b": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#eventHeader": true
+                                "smithy.api#eventHeader": {}
                             }
                         }
                     }
@@ -763,13 +763,13 @@ of an event:
                         "a": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#eventPayload": true
+                                "smithy.api#eventPayload": {}
                             }
                         },
                         "b": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#eventHeader": true
+                                "smithy.api#eventHeader": {}
                             }
                         }
                     }

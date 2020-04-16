@@ -986,7 +986,7 @@ and HTTP bindings:
                         "messages": {
                             "target": "smithy.example#MessageStream",
                             "traits": {
-                                "smithy.api#httpPayload": true
+                                "smithy.api#httpPayload": {}
                             }
                         }
                     }

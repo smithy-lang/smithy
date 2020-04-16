@@ -4,7 +4,7 @@
         "ns.foo#Operation": {
             "type": "operation", 
             "traits": {
-                "smithy.api#sensitive": true
+                "smithy.api#sensitive": {}
             }
         }, 
         "ns.foo#Structure": {
@@ -15,13 +15,13 @@
                 }
             }, 
             "traits": {
-                "smithy.api#sensitive": true
+                "smithy.api#sensitive": {}
             }
         }, 
         "ns.foo#Blob": {
             "type": "blob", 
             "traits": {
-                "smithy.api#sensitive": true
+                "smithy.api#sensitive": {}
             }
         }, 
         "ns.foo#String": {
@@ -30,7 +30,7 @@
         "ns.foo#SensitiveString": {
             "type": "string", 
             "traits": {
-                "smithy.api#sensitive": true
+                "smithy.api#sensitive": {}
             }
         }
     }

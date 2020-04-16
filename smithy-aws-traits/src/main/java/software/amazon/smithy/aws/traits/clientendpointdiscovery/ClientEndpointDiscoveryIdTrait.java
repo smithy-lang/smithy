@@ -17,13 +17,13 @@ package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.BooleanTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
  * Indicates members of the operation input which should be use to discover
  * endpoints.
  */
-public final class ClientEndpointDiscoveryIdTrait extends BooleanTrait {
+public final class ClientEndpointDiscoveryIdTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.api#clientEndpointDiscoveryId");
 
     public ClientEndpointDiscoveryIdTrait(SourceLocation sourceLocation) {
@@ -34,7 +34,7 @@ public final class ClientEndpointDiscoveryIdTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<ClientEndpointDiscoveryIdTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<ClientEndpointDiscoveryIdTrait> {
         public Provider() {
             super(ID, ClientEndpointDiscoveryIdTrait::new);
         }

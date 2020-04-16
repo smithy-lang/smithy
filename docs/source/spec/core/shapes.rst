@@ -529,7 +529,7 @@ Traits can be applied to the set shape and its members:
                         "target": "smithy.api#String"
                     },
                     "traits": {
-                        "smithy.api#deprecated": true
+                        "smithy.api#deprecated": {}
                     }
                 }
             }
@@ -613,7 +613,7 @@ Traits can be applied to the map shape and its members:
                     "value": {
                         "target": "smithy.api#String",
                         "traits": {
-                            "smithy.api#sensitive": true
+                            "smithy.api#sensitive": {}
                         }
                     },
                     "traits": {
@@ -703,14 +703,14 @@ using the ``apply`` statement:
                             "target": "smithy.api#String",
                             "traits": {
                                 "smithy.api#documentation": "This is documentation for `foo`.",
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         },
                         "baz": {
                             "target": "smithy.api#Integer",
                             "traits": {
                                 "smithy.api#documentation": "This is documentation for `baz`.",
-                                "smithy.api#deprecated": true
+                                "smithy.api#deprecated": {}
                             }
                         }
                     },
@@ -764,7 +764,7 @@ The following example defines a union shape with several members:
                         "stringB": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#sensitive": true
+                                "smithy.api#sensitive": {}
                             }
                         }
                     }
@@ -1630,7 +1630,7 @@ For example, given the following model,
                         "target": "smithy.example#GetForecastOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true
+                        "smithy.api#readonly": {}
                     }
                 },
                 "smithy.example#GetForecastInput": {
@@ -1639,7 +1639,7 @@ For example, given the following model,
                         "forecastId": {
                             "target": "smithy.example#ForecastId",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -1650,7 +1650,7 @@ For example, given the following model,
                         "weather": {
                             "target": "smithy.example#WeatherData",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -1723,7 +1723,7 @@ Given the following model,
                         "forecasts": {
                             "target": "smithy.example#BatchPutForecastList",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }

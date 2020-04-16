@@ -7,7 +7,7 @@
         "smithy.example#Ctrait": {
             "type": "structure",
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         }
     },

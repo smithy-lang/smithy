@@ -18,7 +18,6 @@ package software.amazon.smithy.model.validation.validators;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
@@ -53,11 +52,9 @@ public final class TraitValueValidator implements Validator {
         }
 
         Shape schema = model.getShape(shape).get();
-        Node coerced = Trait.coerceTraitValue(trait.toNode(), schema.getType());
-
         NodeValidationVisitor cases = NodeValidationVisitor.builder()
                 .model(model)
-                .value(coerced)
+                .value(trait.toNode())
                 .eventShapeId(targetShape.getId())
                 .eventId(NAME)
                 .startingContext("Error validating trait `" + Trait.getIdiomaticTraitName(trait) + "`")

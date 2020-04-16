@@ -7,19 +7,19 @@
                 "foo": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#eventHeader": true
+                        "smithy.api#eventHeader": {}
                     }
                 },
                 "bar": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#eventHeader": true
+                        "smithy.api#eventHeader": {}
                     }
                 },
                 "baz": {
                     "target": "smithy.api#Blob",
                     "traits": {
-                        "smithy.api#eventPayload": true
+                        "smithy.api#eventPayload": {}
                     }
                 }
             }
@@ -30,7 +30,7 @@
                 "foo": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#eventPayload": true
+                        "smithy.api#eventPayload": {}
                     }
                 },
                 "baz": {
@@ -44,13 +44,13 @@
                 "foo": {
                     "target": "smithy.api#Boolean",
                     "traits": {
-                        "smithy.api#eventPayload": true
+                        "smithy.api#eventPayload": {}
                     }
                 },
                 "baz": {
                     "target": "smithy.api#Blob",
                     "traits": {
-                        "smithy.api#eventPayload": true
+                        "smithy.api#eventPayload": {}
                     }
                 }
             }
@@ -61,13 +61,13 @@
                 "foo": {
                     "target": "ns.foo#Structure",
                     "traits": {
-                        "smithy.api#eventHeader": true
+                        "smithy.api#eventHeader": {}
                     }
                 },
                 "baz": {
                     "target": "ns.foo#Structure",
                     "traits": {
-                        "smithy.api#eventPayload": true
+                        "smithy.api#eventPayload": {}
                     }
                 }
             }
@@ -78,7 +78,7 @@
                 "foo": {
                     "target": "smithy.api#Boolean",
                     "traits": {
-                        "smithy.api#eventPayload": true
+                        "smithy.api#eventPayload": {}
                     }
                 }
             }

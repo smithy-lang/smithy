@@ -1,0 +1,6 @@
+[ERROR] com.foo#MyString: Error validating trait `com.foo#foo`: Expected string value for string shape, `com.foo#foo`; found null value | TraitValue
+[ERROR] com.foo#MyString: Error validating trait `com.foo#baz`: Expected boolean value for boolean shape, `com.foo#baz`; found null value | TraitValue
+[ERROR] com.foo#MyString: Error validating trait `com.foo#qux`: Expected number value for integer shape, `com.foo#qux`; found null value | TraitValue
+[ERROR] com.foo#MyString: Error validating trait `com.foo#bam`: Expected object value for union shape, `com.foo#bam`; found null value | TraitValue
+[ERROR] com.foo#MyString: Error validating trait `com.foo#struct`: Expected object value for structure shape, `com.foo#struct`; found boolean value, `true` | TraitValue
+[ERROR] com.foo#MyString2: Error validating trait `com.foo#struct`: Expected object value for structure shape, `com.foo#struct`; found null value | TraitValue

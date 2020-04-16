@@ -20,7 +20,7 @@
                 "target": "example.smithy#GetPayloadOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "uri": "/test",
                     "method": "GET"

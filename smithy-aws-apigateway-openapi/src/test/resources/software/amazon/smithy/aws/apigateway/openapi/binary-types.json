@@ -37,7 +37,7 @@
                 "target": "example.smithy#OtherOperationOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly":  {},
                 "smithy.api#http": {
                     "uri": "/bar",
                     "method": "GET"
@@ -50,8 +50,8 @@
                 "payload": {
                     "target": "example.smithy#InboundBinaryPayload",
                     "traits": {
-                        "smithy.api#required": true,
-                        "smithy.api#httpPayload": true
+                        "smithy.api#required":  {},
+                        "smithy.api#httpPayload":  {}
                     }
                 }
             }
@@ -62,8 +62,8 @@
                 "payload": {
                     "target": "example.smithy#OutboundBinaryPayload",
                     "traits": {
-                        "smithy.api#required": true,
-                        "smithy.api#httpPayload": true
+                        "smithy.api#required":  {},
+                        "smithy.api#httpPayload":  {}
                     }
                 }
             }

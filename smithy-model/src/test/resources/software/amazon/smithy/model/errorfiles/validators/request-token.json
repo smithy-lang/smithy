@@ -13,7 +13,7 @@
                 "token": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#idempotencyToken": true
+                        "smithy.api#idempotencyToken": {}
                     }
                 }
             }
@@ -27,7 +27,7 @@
                 "target": "ns.foo#InvalidInputWithMultiple"
             },
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#InvalidInputWithMultiple": {
@@ -36,13 +36,13 @@
                 "token": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#idempotencyToken": true
+                        "smithy.api#idempotencyToken": {}
                     }
                 },
                 "anotherToken": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#idempotencyToken": true
+                        "smithy.api#idempotencyToken": {}
                     }
                 }
             }

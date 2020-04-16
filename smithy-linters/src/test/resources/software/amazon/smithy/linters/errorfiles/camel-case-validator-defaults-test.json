@@ -4,13 +4,13 @@
         "ns.foo#InvalidTrait": {
             "type": "string",
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         },
         "ns.foo#validTrait": {
             "type": "string",
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         },
         "ns.foo#lowerStructureTrait": {
@@ -21,7 +21,7 @@
                 }
             },
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         },
         "ns.foo#upperStructureTrait": {
@@ -35,7 +35,7 @@
                 }
             },
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         },
         "ns.foo#Foo": {
@@ -93,7 +93,7 @@
                 "smithy.api#trait": {
                     "selector": "service"
                 },
-                "smithy.api#authDefinition": true
+                "smithy.api#authDefinition": {}
             }
         }
     },

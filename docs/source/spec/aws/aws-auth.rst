@@ -66,7 +66,7 @@ Trait value
                     "type": "service",
                     "version": "2018-03-17",
                     "traits": {
-                        "aws.protocols#restJson1": true,
+                        "aws.protocols#restJson1": {},
                         "aws.api#service": {
                             "sdkId": "Some Value"
                         },
@@ -127,7 +127,7 @@ operation MUST NOT be used as part of the request signature calculation:
                         "target": "smithy.example#PutThingsOutput"
                     },
                     "traits": {
-                        "aws.auth#unsignedPayload": true
+                        "aws.auth#unsignedPayload": {}
                     }
                 }
             }

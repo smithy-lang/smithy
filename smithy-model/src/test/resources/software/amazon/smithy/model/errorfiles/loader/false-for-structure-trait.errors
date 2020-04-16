@@ -1,1 +1,0 @@
-[ERROR] com.foo#MyString1: Error validating trait `com.foo#foo`: Expected object value for structure shape, `com.foo#foo`; found boolean value, `false` | TraitValue

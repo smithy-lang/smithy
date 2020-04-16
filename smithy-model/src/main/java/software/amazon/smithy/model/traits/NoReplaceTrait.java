@@ -23,7 +23,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * can only be used to create a resource and cannot replace
  * an existing resource.
  */
-public final class NoReplaceTrait extends BooleanTrait {
+public final class NoReplaceTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#noReplace");
 
     public NoReplaceTrait(SourceLocation sourceLocation) {
@@ -34,7 +34,7 @@ public final class NoReplaceTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<NoReplaceTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<NoReplaceTrait> {
         public Provider() {
             super(ID, NoReplaceTrait::new);
         }

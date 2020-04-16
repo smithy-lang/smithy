@@ -59,7 +59,7 @@
                 "target": "example.smithy#PutPayloadInput"
             },
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent":  {},
                 "smithy.api#http": {
                     "uri": "/payload/{id}",
                     "method": "PUT",
@@ -76,7 +76,7 @@
                 "target": "example.smithy#GetPayloadOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly":  {},
                 "smithy.api#http": {
                     "uri": "/payload/{id}",
                     "method": "GET"
@@ -89,7 +89,7 @@
                 "target": "example.smithy#DeletePayloadInput"
             },
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent":  {},
                 "smithy.api#http": {
                     "uri": "/payload/{id}",
                     "method": "DELETE",
@@ -103,7 +103,7 @@
                 "target": "example.smithy#ListPayloadsOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly":  {},
                 "smithy.api#http": {
                     "uri": "/payload",
                     "method": "GET"
@@ -116,8 +116,8 @@
                 "id": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true,
-                        "smithy.api#httpLabel": true
+                        "smithy.api#required":  {},
+                        "smithy.api#httpLabel":  {}
                     }
                 },
                 "header": {
@@ -141,7 +141,7 @@
                 "body": {
                     "target": "smithy.api#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload":  {}
                     }
                 }
             }
@@ -152,8 +152,8 @@
                 "id": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel":  {},
+                        "smithy.api#required":  {}
                     }
                 }
             }
@@ -170,7 +170,7 @@
                 "body": {
                     "target": "smithy.api#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload":  {}
                     }
                 }
             }
@@ -181,8 +181,8 @@
                 "id": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel":  {},
+                        "smithy.api#required":  {}
                     }
                 }
             }
@@ -222,13 +222,13 @@
                 "id": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required":  {}
                     }
                 },
                 "createdAt": {
                     "target": "smithy.api#Timestamp",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required":  {}
                     }
                 }
             }

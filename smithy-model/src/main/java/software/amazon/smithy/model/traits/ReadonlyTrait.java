@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Indicates that an operation is read-only.
  */
-public final class ReadonlyTrait extends BooleanTrait {
+public final class ReadonlyTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#readonly");
 
     public ReadonlyTrait(SourceLocation sourceLocation) {
@@ -32,7 +32,7 @@ public final class ReadonlyTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<ReadonlyTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<ReadonlyTrait> {
         public Provider() {
             super(ID, ReadonlyTrait::new);
         }

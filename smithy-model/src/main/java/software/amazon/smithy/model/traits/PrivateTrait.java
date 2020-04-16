@@ -22,7 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * Indicates that a shape cannot be targeted outside of the namespace in
  * which it was defined.
  */
-public final class PrivateTrait extends BooleanTrait {
+public final class PrivateTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#private");
 
     public PrivateTrait(SourceLocation sourceLocation) {
@@ -33,7 +33,7 @@ public final class PrivateTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<PrivateTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<PrivateTrait> {
         public Provider() {
             super(ID, PrivateTrait::new);
         }

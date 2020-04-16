@@ -10,7 +10,7 @@
                 }
             ],
             "traits": {
-                "aws.protocols#restJson1": true
+                "aws.protocols#restJson1": {}
             }
         },
         "smithy.example#Operation": {
@@ -31,15 +31,15 @@
                 "timestamp1": {
                     "target": "smithy.api#Timestamp",
                     "traits": {
-                        "smithy.api#required": true,
-                        "smithy.api#httpLabel": true
+                        "smithy.api#required": {},
+                        "smithy.api#httpLabel": {}
                     }
                 },
                 "timestamp2": {
                     "target": "smithy.api#Timestamp",
                     "traits": {
-                        "smithy.api#required": true,
-                        "smithy.api#httpLabel": true,
+                        "smithy.api#required": {},
+                        "smithy.api#httpLabel": {},
                         "smithy.api#timestampFormat": "epoch-seconds"
                     }
                 }

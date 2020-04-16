@@ -51,7 +51,7 @@
                 "target": "ns.foo#BatchDeleteMyResourceInput"
             },
             "traits": {
-                "smithy.api#idempotent": true
+                "smithy.api#idempotent": {}
             }
         },
         "ns.foo#BatchDeleteMyResourceInput": {
@@ -60,7 +60,7 @@
                 "ids": {
                     "target": "ns.foo#AList",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -71,7 +71,7 @@
                 "target": "ns.foo#DeleteMyResourceInput"
             },
             "traits": {
-                "smithy.api#idempotent": true
+                "smithy.api#idempotent": {}
             }
         },
         "ns.foo#DeleteMyResourceInput": {
@@ -80,7 +80,7 @@
                 "id": {
                     "target": "ns.foo#MyResourceId",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -99,7 +99,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#GetMyResourceInput": {
@@ -108,7 +108,7 @@
                 "id": {
                     "target": "ns.foo#MyResourceId",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -127,7 +127,7 @@
                 "target": "ns.foo#PutMyResourceInput"
             },
             "traits": {
-                "smithy.api#idempotent": true
+                "smithy.api#idempotent": {}
             }
         },
         "ns.foo#PutMyResourceInput": {
@@ -136,7 +136,7 @@
                 "id": {
                     "target": "ns.foo#MyResourceId",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -210,7 +210,7 @@
                 "a": {
                     "target": "ns.foo#MyString",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "c": {
@@ -227,13 +227,13 @@
         "ns.foo#b": {
             "type": "structure",
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         },
         "ns.foo#a": {
             "type": "structure",
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         },
         "ns.foo#OperationNeedingAbsoluteShapeIds": {
@@ -250,7 +250,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#idempotent": true
+                "smithy.api#idempotent": {}
             }
         },
         "ns.foo#ResourceNeedingAbsoluteShapeIds": {
@@ -273,7 +273,7 @@
                 "target": "ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIdsOutput"
             },
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.resource.needing.ids#GetResourceNeedingAbsoluteShapeIdsInput": {
@@ -282,7 +282,7 @@
                 "id": {
                     "target": "ns.baz#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -297,7 +297,7 @@
         "ns.shapes#String": {
             "type": "string",
             "traits": {
-                "smithy.api#sensitive": true
+                "smithy.api#sensitive": {}
             }
         },
         "ns.shapes#Byte": {

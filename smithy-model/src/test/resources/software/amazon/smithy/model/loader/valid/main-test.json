@@ -26,13 +26,13 @@
                 "latitude": {
                     "target": "smithy.api#Float",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "longitude": {
                     "target": "smithy.api#Float",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -55,13 +55,13 @@
                 "cityId": {
                     "target": "example.weather#CityId",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "name": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             },
@@ -98,7 +98,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "example.weather#GetCityInput": {
@@ -107,7 +107,7 @@
                 "cityId": {
                     "target": "example.weather#CityId",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -118,13 +118,13 @@
                 "coordinates": {
                     "target": "example.weather#CityCoordinates",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "name": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -135,7 +135,7 @@
                 "target": "example.weather#GetCurrentTimeOutput"
             },
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "example.weather#GetCurrentTimeOutput": {
@@ -160,7 +160,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "example.weather#GetForecastInput": {
@@ -169,7 +169,7 @@
                 "cityId": {
                     "target": "example.weather#CityId",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -180,19 +180,19 @@
                 "chanceOfRain": {
                     "target": "smithy.api#Float",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "high": {
                     "target": "smithy.api#Integer",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "low": {
                     "target": "smithy.api#Integer",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -212,7 +212,7 @@
                     "outputToken": "nextToken",
                     "pageSize": "pageSize"
                 },
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "example.weather#ListCitiesInput": {
@@ -235,7 +235,7 @@
                 "items": {
                     "target": "example.weather#CitySummaries",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "nextToken": {
@@ -249,7 +249,7 @@
                 "resourceType": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             },

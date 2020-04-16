@@ -115,7 +115,7 @@
         "ns.foo#G": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "uri": "/qux",
                     "method": "GET"
@@ -174,8 +174,8 @@
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#pattern": "foo",
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -186,8 +186,8 @@
                 "Id": {
                     "target": "ns.foo#FooPatternString",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -198,8 +198,8 @@
                 "Id": {
                     "target": "ns.foo#BarPatternString",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -270,15 +270,15 @@
                 "Id": {
                     "target": "ns.foo#BarPatternString",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 },
                 "OtherId": {
                     "target": "ns.foo#FooPatternString",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -310,8 +310,8 @@
                 "Id": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }

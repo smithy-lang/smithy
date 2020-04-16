@@ -43,7 +43,7 @@ to ``MyString``:
                     "type": "string",
                     "traits": {
                         "smithy.api#documentation": "Contains a string",
-                        "smithy.api#sensitive": true
+                        "smithy.api#sensitive": {}
                     }
                 }
             }
@@ -189,8 +189,13 @@ traits if the shapes have no ``length`` constraints or ``required`` members.
 Annotation traits
 =================
 
-A structure trait with no members is called an *annotation trait*. The
-following example defines an annotation trait named ``foo``:
+A structure trait with no members is called an *annotation trait*. It's hard
+to predict what information a trait needs to capture when modeling a domain;
+a trait might start out as a simple annotation, but later might benefit
+from additional information. By defining an annotation trait rather than a
+boolean trait, the trait can safely add optional members over time as needed.
+
+The following example defines an annotation trait named ``foo``:
 
 .. tabs::
 
@@ -209,21 +214,13 @@ following example defines an annotation trait named ``foo``:
                 "smithy.example#foo": {
                     "type": "structure",
                     "traits": {
-                        "smithy.api#trait": true
+                        "smithy.api#trait": {}
                     }
                 }
             }
         }
 
-It's hard to predict what information a trait needs to capture when modeling
-a domain; a trait might start out as a simple annotation, but later might need
-additional information. By defining an annotation trait rather than a boolean
-shape, the trait can safely add optional members over time as needed.
-
-Smithy explicitly supports this use case by allowing ``true`` to be provided
-for structure traits that have no required members.
-
-The following applications of the ``foo`` annotation trait are all equivalent:
+The following applications of the ``foo`` annotation trait are equivalent:
 
 .. tabs::
 
@@ -236,9 +233,6 @@ The following applications of the ``foo`` annotation trait are all equivalent:
 
         @foo()
         string MyString2
-
-        @foo(true)
-        string MyString3
 
     .. code-tab:: json
 
@@ -256,20 +250,14 @@ The following applications of the ``foo`` annotation trait are all equivalent:
                     "traits": {
                         "smithy.api#foo": {}
                     }
-                },
-                "smithy.example#MyString3": {
-                    "type": "string",
-                    "traits": {
-                        "smithy.api#foo": true
-                    }
                 }
             }
         }
 
 A member can be safely added to an annotation trait if the member is not
-marked as required. The applications of the ``foo`` trait in the previous
-example and the following example are all valid even after adding a member
-to the ``foo`` trait:
+marked as :ref:`required <required-trait>`. The applications of the ``foo``
+trait in the previous example and the following example are all valid even
+after adding a member to the ``foo`` trait:
 
 .. tabs::
 
@@ -298,7 +286,7 @@ to the ``foo`` trait:
                         }
                     },
                     "traits": {
-                        "smithy.api#trait": true
+                        "smithy.api#trait": {}
                     }
                 },
                 "smithy.example#MyString4": {
@@ -404,7 +392,7 @@ the current namespace:
                 "smithy.example#MyString": {
                     "type": "string",
                     "traits": {
-                        "smithy.api#myTraitName": true
+                        "smithy.api#myTraitName": {}
                     }
                 }
             }

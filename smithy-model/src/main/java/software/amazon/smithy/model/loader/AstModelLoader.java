@@ -196,6 +196,9 @@ enum AstModelLoader {
     private void applyTraits(ShapeId id, ObjectNode traits, LoaderVisitor visitor) {
         for (Map.Entry<StringNode, Node> traitNode : traits.getMembers().entrySet()) {
             ShapeId traitId = traitNode.getKey().expectShapeId();
+            // JSON AST model traits are never considered annotation traits, meaning
+            // that a null value provided in the AST is not coerced in the same way
+            // as an omitted value in the IDL (e.g., "@foo").
             visitor.onTrait(id, traitId, traitNode.getValue());
         }
     }

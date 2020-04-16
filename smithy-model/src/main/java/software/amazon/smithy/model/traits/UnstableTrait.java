@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Marks a shape as unstable.
  */
-public final class UnstableTrait extends BooleanTrait {
+public final class UnstableTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#unstable");
 
     public UnstableTrait(SourceLocation sourceLocation) {
@@ -32,7 +32,7 @@ public final class UnstableTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<UnstableTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<UnstableTrait> {
         public Provider() {
             super(ID, UnstableTrait::new);
         }

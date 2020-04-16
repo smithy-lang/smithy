@@ -56,7 +56,7 @@ is wrapped in an `Option type`_.
                 "smithy.example#BoxedInteger": {
                     "type": "integer",
                     "traits": {
-                        "smithy.api#box": true
+                        "smithy.api#box": {}
                     }
                 }
             }

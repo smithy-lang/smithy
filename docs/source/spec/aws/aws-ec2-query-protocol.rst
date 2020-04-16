@@ -49,7 +49,7 @@ Value type
                     "type": "service",
                     "version": "2020-02-05",
                     "traits": {
-                        "aws.protocols#ec2Query": true
+                        "aws.protocols#ec2Query": {}
                     }
                 }
             }

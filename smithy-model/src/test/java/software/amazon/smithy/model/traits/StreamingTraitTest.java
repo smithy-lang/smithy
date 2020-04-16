@@ -34,6 +34,6 @@ public class StreamingTraitTest {
 
         assertTrue(trait.isPresent());
         assertThat(trait.get(), instanceOf(StreamingTrait.class));
-        assertThat(trait.get().toNode(), equalTo(Node.from(true)));
+        assertThat(trait.get().toNode(), equalTo(Node.objectNode()));
     }
 }

@@ -10,7 +10,7 @@
                 }
             ],
             "traits": {
-                "aws.protocols#restJson1": true,
+                "aws.protocols#restJson1": {},
                 "aws.auth#sigv4": {
                     "name": "example"
                 }

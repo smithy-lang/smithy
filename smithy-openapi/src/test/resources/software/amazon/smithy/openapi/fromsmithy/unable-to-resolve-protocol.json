@@ -8,14 +8,14 @@
                 "smithy.api#tags": [
                     "foo"
                 ],
-                "smithy.example#cannotResolveMe": true
+                "smithy.example#cannotResolveMe": {}
             }
         },
         "smithy.example#cannotResolveMe": {
             "type": "structure",
             "traits": {
                 "smithy.api#trait": {"selector":  "service"},
-                "smithy.api#protocolDefinition": true
+                "smithy.api#protocolDefinition": {}
             }
         }
     }

@@ -13,7 +13,7 @@
                 }
             ],
             "traits": {
-                "aws.protocols#restJson1": true
+                "aws.protocols#restJson1": {}
             }
         },
         "example.rest#PutPayload": {
@@ -30,7 +30,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent": {},
                 "smithy.api#deprecated": {},
                 "smithy.api#http": {
                     "uri": "/payload/{path}",
@@ -44,8 +44,8 @@
                 "path": {
                     "target": "example.rest#String",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 },
                 "header": {
@@ -75,7 +75,7 @@
                 "body": {
                     "target": "example.rest#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }
@@ -92,7 +92,7 @@
                 "body": {
                     "target": "example.rest#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }
@@ -131,7 +131,7 @@
                 "abc": {
                     "target": "example.rest#String",
                     "traits": {
-                        "smithy.api#sensitive": true
+                        "smithy.api#sensitive": {}
                     }
                 },
                 "def": {
@@ -160,7 +160,7 @@
                 "time": {
                     "target": "example.rest#Timestamp",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "taggedUnion": {
@@ -191,7 +191,7 @@
             "value": {
                 "target": "example.rest#String",
                 "traits": {
-                    "smithy.api#sensitive": true
+                    "smithy.api#sensitive": {}
                 }
             }
         },

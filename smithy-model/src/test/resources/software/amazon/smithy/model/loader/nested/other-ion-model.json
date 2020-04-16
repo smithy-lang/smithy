@@ -24,7 +24,7 @@
         "example.namespace#Operation": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         }
     },

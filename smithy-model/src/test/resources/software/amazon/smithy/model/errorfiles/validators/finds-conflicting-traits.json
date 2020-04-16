@@ -4,41 +4,41 @@
         "ns.foo#String1": {
             "type": "string",
             "traits": {
-                "ns.foo#foo": true
+                "ns.foo#foo": {}
             }
         },
         "ns.foo#String2": {
             "type": "string",
             "traits": {
-                "ns.foo#foo": true,
-                "ns.foo#baz": true
+                "ns.foo#foo": {},
+                "ns.foo#baz": {}
             }
         },
         "ns.foo#String3": {
             "type": "string",
             "traits": {
-                "ns.foo#foo": true,
-                "ns.foo#baz": true,
-                "ns.foo#qux": true
+                "ns.foo#foo": {},
+                "ns.foo#baz": {},
+                "ns.foo#qux": {}
             }
         },
         "ns.foo#String4": {
             "type": "string",
             "traits": {
-                "ns.foo#bam": true,
-                "ns.foo#qux": true
+                "ns.foo#bam": {},
+                "ns.foo#qux": {}
             }
         },
         "ns.foo#String5": {
             "type": "string",
             "traits": {
-                "ns.foo#bam": true
+                "ns.foo#bam": {}
             }
         },
         "ns.foo#String6": {
             "type": "string",
             "traits": {
-                "ns.foo#qux": true
+                "ns.foo#qux": {}
             }
         },
         "ns.foo#foo": {

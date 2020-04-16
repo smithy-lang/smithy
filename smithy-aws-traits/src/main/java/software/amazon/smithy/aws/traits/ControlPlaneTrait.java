@@ -17,9 +17,9 @@ package software.amazon.smithy.aws.traits;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.BooleanTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 
-public final class ControlPlaneTrait extends BooleanTrait {
+public final class ControlPlaneTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.api#controlPlane");
 
     public ControlPlaneTrait(SourceLocation sourceLocation) {
@@ -30,7 +30,7 @@ public final class ControlPlaneTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<ControlPlaneTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<ControlPlaneTrait> {
         public Provider() {
             super(ID, ControlPlaneTrait::new);
         }

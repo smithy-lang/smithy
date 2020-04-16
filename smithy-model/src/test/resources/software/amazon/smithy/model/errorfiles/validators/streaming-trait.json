@@ -32,7 +32,7 @@
         "ns.foo#StreamingBlob": {
             "type": "blob",
             "traits": {
-                "smithy.api#streaming": true
+                "smithy.api#streaming": {}
             }
         },
         "ns.foo#InvalidStreamingOperation": {

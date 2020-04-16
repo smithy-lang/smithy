@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Indicates that a shape is boxed, meaning a value may or may not be present.
  */
-public final class BoxTrait extends BooleanTrait {
+public final class BoxTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#box");
 
     public BoxTrait(SourceLocation sourceLocation) {
@@ -32,7 +32,7 @@ public final class BoxTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<BoxTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<BoxTrait> {
         public Provider() {
             super(ID, BoxTrait::new);
         }
