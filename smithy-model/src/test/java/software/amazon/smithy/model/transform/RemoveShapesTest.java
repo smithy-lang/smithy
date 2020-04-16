@@ -16,6 +16,8 @@
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +37,8 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.AuthDefinitionTrait;
+import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
 
 public class RemoveShapesTest {
@@ -139,5 +143,45 @@ public class RemoveShapesTest {
         assertThat(result.getShape(c.getId()), Matchers.not(Optional.empty()));
         assertThat(result.expectShape(container.getId()).asResourceShape().get().getOperations(),
                    Matchers.contains(c.getId()));
+    }
+
+    @Test
+    public void removesTraitsFromAuthDefinitionWhenReferenceRemoved() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("remove-shapes.json"))
+                .assemble()
+                .unwrap();
+        ShapeId removedId = ShapeId.from("ns.foo#bar");
+        Shape removedShape = model.expectShape(removedId);
+
+
+        ModelTransformer transformer = ModelTransformer.create();
+        Model result = transformer.removeShapes(model, Collections.singletonList(removedShape));
+
+        ShapeId subjectId = ShapeId.from("ns.foo#auth");
+        Shape subject = result.expectShape(subjectId);
+        AuthDefinitionTrait trait = subject.getTrait(AuthDefinitionTrait.class).get();
+
+        assertFalse(trait.getTraits().contains(removedId));
+    }
+
+    @Test
+    public void removesTraitsFromProtocolDefinitionWhenReferenceRemoved() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("remove-shapes.json"))
+                .assemble()
+                .unwrap();
+        ShapeId removedId = ShapeId.from("ns.foo#baz");
+        Shape removedShape = model.expectShape(removedId);
+
+
+        ModelTransformer transformer = ModelTransformer.create();
+        Model result = transformer.removeShapes(model, Collections.singletonList(removedShape));
+
+        ShapeId subjectId = ShapeId.from("ns.foo#protocol");
+        Shape subject = result.expectShape(subjectId);
+        ProtocolDefinitionTrait trait = subject.getTrait(ProtocolDefinitionTrait.class).get();
+
+        assertFalse(trait.getTraits().contains(removedId));
     }
 }
