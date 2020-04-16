@@ -32,7 +32,6 @@ import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.NUM
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.QUOTED;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RBRACE;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RBRACKET;
-import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RETURN;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.RPAREN;
 import static software.amazon.smithy.model.loader.SmithyModelLexer.TokenType.UNQUOTED;
 
@@ -944,65 +943,21 @@ final class IdlModelLoader {
         OperationShape.Builder builder = OperationShape.builder().id(id).source(sourceLocation);
         visitor.onShape(builder);
 
-        Token opening = expect(LPAREN, LBRACE);
-        if (opening.type == LPAREN) {
-            parseDeprecatedOperationSyntax(builder);
-        } else {
-            ObjectNode node = parseObjectNode(opening.getSourceLocation(), RBRACE);
-            node.expectNoAdditionalProperties(OPERATION_PROPERTY_NAMES);
-            node.getStringMember("input").ifPresent(input -> {
-                onShapeTarget(input.getValue(), input, builder::input);
-            });
-            node.getStringMember("output").ifPresent(output -> {
-                onShapeTarget(output.getValue(), output, builder::output);
-            });
-            node.getArrayMember("errors").ifPresent(errors -> {
-                for (StringNode value : errors.getElementsAs(StringNode.class)) {
-                    onShapeTarget(value.getValue(), value, builder::addError);
-                }
-            });
-        }
+        Token opening = expect(LBRACE);
+        ObjectNode node = parseObjectNode(opening.getSourceLocation(), RBRACE);
+        node.expectNoAdditionalProperties(OPERATION_PROPERTY_NAMES);
+        node.getStringMember("input").ifPresent(input -> {
+            onShapeTarget(input.getValue(), input, builder::input);
+        });
+        node.getStringMember("output").ifPresent(output -> {
+            onShapeTarget(output.getValue(), output, builder::output);
+        });
+        node.getArrayMember("errors").ifPresent(errors -> {
+            for (StringNode value : errors.getElementsAs(StringNode.class)) {
+                onShapeTarget(value.getValue(), value, builder::addError);
+            }
+        });
 
         expectNewline();
-    }
-
-    private void parseDeprecatedOperationSyntax(OperationShape.Builder builder) {
-        visitor.onError(ValidationEvent.builder()
-                .eventId(Validator.MODEL_ERROR)
-                .sourceLocation(builder.getSourceLocation())
-                .shapeId(builder.getId())
-                .message("Deprecated IDL syntax detected for operation definition")
-                .severity(Severity.WARNING)
-                .build());
-
-        Token next = expect(RPAREN, UNQUOTED);
-        if (next.type == UNQUOTED) {
-            onShapeTarget(next.lexeme, next, builder::input);
-            expect(RPAREN);
-        }
-
-        // Parse the optionally present return value.
-        if (test(RETURN)) {
-            expect(RETURN);
-            Token returnToken = expect(UNQUOTED);
-            onShapeTarget(returnToken.lexeme, returnToken, builder::output);
-        }
-
-        // Parse the optionally present errors list.
-        if (peek().filter(token -> token.lexeme.equals("errors")).isPresent()) {
-            next(); // Skip the error.
-            expect(LBRACKET);
-            if (!test(RBRACKET)) {
-                while (true) {
-                    Token errorToken = expect(UNQUOTED);
-                    onShapeTarget(errorToken.lexeme, errorToken, builder::addError);
-                    if (test(RBRACKET)) {
-                        break;
-                    }
-                    expect(COMMA);
-                }
-            }
-            expect(RBRACKET);
-        }
     }
 }
