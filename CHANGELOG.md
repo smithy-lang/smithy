@@ -7,6 +7,7 @@
 * aws.api#ec2QueryName was renamed to `aws.protocols#ec2QueryName`.
 * aws.api#unsignedPayload was renamed to `aws.auth#unsignedPayload` and no longer takes an array of values.
   All auth schemes that honor this trait should be considered unsigned when this trait is applied.
+* The `smithy-codegen-freemarker` package has been removed.
 
 ## 0.9.9 (2020-04-01)
 
