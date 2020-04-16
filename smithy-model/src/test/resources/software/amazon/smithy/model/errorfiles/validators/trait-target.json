@@ -22,7 +22,7 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "ns.foo#test": true
+                        "ns.foo#test": {}
                     }
                 }
             }
@@ -33,7 +33,7 @@
                 "baz": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "ns.foo#test": true
+                        "ns.foo#test": {}
                     }
                 }
             }

@@ -36,7 +36,7 @@
                 "target": "ns.foo#ResourceInput"
             },
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#DeleteValidA": {
@@ -45,7 +45,7 @@
                 "target": "ns.foo#ResourceInput"
             },
             "traits": {
-                "smithy.api#idempotent": true
+                "smithy.api#idempotent": {}
             }
         },
         "ns.foo#UpdateValidA": {
@@ -57,7 +57,7 @@
         "ns.foo#ListValidA": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#ResourceInput": {
@@ -66,7 +66,7 @@
                 "validId": {
                     "target": "ns.foo#ValidAIdentifier",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -99,7 +99,7 @@
                 "target": "ns.foo#PutValidBInput"
             },
             "traits": {
-                "smithy.api#idempotent": true
+                "smithy.api#idempotent": {}
             }
         },
         "ns.foo#PutValidBInput": {
@@ -108,7 +108,7 @@
                 "validB": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -136,7 +136,7 @@
                 "target": "ns.foo#PutValidCInput"
             },
             "traits": {
-                "smithy.api#idempotent": true
+                "smithy.api#idempotent": {}
             }
         },
         "ns.foo#PutValidCInput": {
@@ -145,13 +145,13 @@
                 "validB": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "validC": {
                     "target": "ns.foo#ValidCIdentifier",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -185,7 +185,7 @@
                 "validB": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -196,7 +196,7 @@
                 "target": "ns.foo#ListValidDInput"
             },
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#ListValidDInput": {
@@ -205,7 +205,7 @@
                 "validB": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -219,7 +219,7 @@
         "ns.foo#PutValidE": {
             "type": "operation",
             "traits": {
-                "smithy.api#idempotent": true
+                "smithy.api#idempotent": {}
             }
         }
     }

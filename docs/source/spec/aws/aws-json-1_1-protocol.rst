@@ -50,7 +50,7 @@ See
                     "type": "service",
                     "version": "2020-02-05",
                     "traits": {
-                        "aws.protocols#awsJson1_1": true
+                        "aws.protocols#awsJson1_1": {}
                     }
                 }
             }

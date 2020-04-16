@@ -4,7 +4,7 @@
         "ns.foo#A": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/A"
@@ -14,7 +14,7 @@
         "ns.foo#B": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "HEAD",
                     "uri": "/B"
@@ -24,7 +24,7 @@
         "ns.foo#C": {
             "type": "operation",
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent": {},
                 "smithy.api#http": {
                     "method": "DELETE",
                     "uri": "/C"
@@ -34,7 +34,7 @@
         "ns.foo#D": {
             "type": "operation",
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent": {},
                 "smithy.api#http": {
                     "method": "PUT",
                     "uri": "/D"
@@ -62,7 +62,7 @@
         "ns.foo#G": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "POST",
                     "uri": "/G"
@@ -90,7 +90,7 @@
         "ns.foo#J": {
             "type": "operation",
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent": {},
                 "smithy.api#http": {
                     "method": "POST",
                     "uri": "/J"
@@ -103,7 +103,7 @@
                 "target": "ns.foo#KInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/K"
@@ -116,8 +116,8 @@
                 "payload": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true,
-                        "smithy.api#httpPayload": true
+                        "smithy.api#required": {},
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }
@@ -128,7 +128,7 @@
                 "target": "ns.foo#LInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/L"
@@ -147,7 +147,7 @@
                 "payload": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }

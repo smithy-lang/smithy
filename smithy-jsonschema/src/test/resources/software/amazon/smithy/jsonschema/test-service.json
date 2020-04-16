@@ -22,7 +22,7 @@
                 "target": "example.rest#PutPayloadOutput"
             },
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent":  {},
                 "smithy.api#deprecated": {},
                 "smithy.api#http": {
                     "uri": "/payload/{path}",
@@ -36,8 +36,8 @@
                 "path": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel":  {},
+                        "smithy.api#required":  {}
                     }
                 },
                 "header": {
@@ -67,7 +67,7 @@
                 "body": {
                     "target": "example.rest#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload":  {}
                     }
                 }
             }
@@ -84,7 +84,7 @@
                 "body": {
                     "target": "example.rest#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload":  {}
                     }
                 }
             }
@@ -116,7 +116,7 @@
                 "abc": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#sensitive": true
+                        "smithy.api#sensitive":  {}
                     }
                 },
                 "def": {
@@ -173,7 +173,7 @@
             "value": {
                 "target": "smithy.api#String",
                 "traits": {
-                    "smithy.api#sensitive": true
+                    "smithy.api#sensitive":  {}
                 }
             }
         },

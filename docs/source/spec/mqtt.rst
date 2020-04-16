@@ -131,15 +131,15 @@ and ``{second}``, in the MQTT topic template:
                         "first": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true,
-                                "smithy.mqtt#topicLabel": true
+                                "smithy.api#required": {},
+                                "smithy.mqtt#topicLabel": {}
                             }
                         },
                         "second": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true,
-                                "smithy.mqtt#topicLabel": true
+                                "smithy.api#required": {},
+                                "smithy.mqtt#topicLabel": {}
                             }
                         },
                         "message": {
@@ -240,8 +240,8 @@ The following example defines an operation that publishes messages to the
                         "bar": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true,
-                                "smithy.mqtt#topicLabel": true
+                                "smithy.api#required": {},
+                                "smithy.mqtt#topicLabel": {}
                             }
                         },
                         "message": {
@@ -365,8 +365,8 @@ topic using an :ref:`event stream <event-streams>`:
                         "id": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true,
-                                "smithy.mqtt#topicLabel": true
+                                "smithy.api#required": {},
+                                "smithy.mqtt#topicLabel": {}
                             }
                         }
                     }

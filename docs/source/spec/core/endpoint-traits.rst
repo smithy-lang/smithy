@@ -79,7 +79,7 @@ The following example defines an operation that uses a custom endpoint:
                         "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true,
+                        "smithy.api#readonly": {},
                         "smithy.api#endpoint": {
                             "hostPrefix": "{foo}.data."
                         }
@@ -91,8 +91,8 @@ The following example defines an operation that uses a custom endpoint:
                         "foo": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true,
-                                "smithy.api#hostLabel": true
+                                "smithy.api#required": {},
+                                "smithy.api#hostLabel": {}
                             }
                         }
                     }
@@ -145,7 +145,7 @@ Given the following operation,
                         "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true,
+                        "smithy.api#readonly": {},
                         "smithy.api#endpoint": {
                             "hostPrefix": "{foo}.data."
                         }
@@ -157,8 +157,8 @@ Given the following operation,
                         "foo": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true,
-                                "smithy.api#hostLabel": true
+                                "smithy.api#required": {},
+                                "smithy.api#hostLabel": {}
                             }
                         }
                     }
@@ -214,7 +214,7 @@ Given the following operation,
                         "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true,
+                        "smithy.api#readonly": {},
                         "smithy.api#endpoint": {
                             "hostPrefix": "{foo}-{bar}.data."
                         }
@@ -226,15 +226,15 @@ Given the following operation,
                         "foo": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true,
-                                "smithy.api#hostLabel": true
+                                "smithy.api#required": {},
+                                "smithy.api#hostLabel": {}
                             }
                         },
                         "bar": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true,
-                                "smithy.api#hostLabel": true
+                                "smithy.api#required": {},
+                                "smithy.api#hostLabel": {}
                             }
                         }
                     }
@@ -279,7 +279,7 @@ invalid because the ``{foo}`` and ``{bar}`` labels are adjacent:
                         "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true,
+                        "smithy.api#readonly": {},
                         "smithy.api#endpoint": {
                             "hostPrefix": "{foo}{bar}.data."
                         }
@@ -347,7 +347,7 @@ Given the following operation,
                         "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true,
+                        "smithy.api#readonly": {},
                         "smithy.api#endpoint": {
                             "hostPrefix": "{foo}.data."
                         },
@@ -363,8 +363,8 @@ Given the following operation,
                         "foo": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true,
-                                "smithy.api#hostLabel": true,
+                                "smithy.api#required": {},
+                                "smithy.api#hostLabel": {},
                                 "smithy.api#httpHeader": "X-Foo"
                             }
                         }
@@ -438,7 +438,7 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
                         "target": "smithy.example#GetStatusOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true,
+                        "smithy.api#readonly": {},
                         "smithy.api#endpoint": {
                             "hostPrefix": "{foo}.data."
                         }
@@ -450,8 +450,8 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
                         "foo": {
                             "target": "smithy.api#String",
                             "traits": {
-                                "smithy.api#required": true,
-                                "smithy.api#hostLabel": true
+                                "smithy.api#required": {},
+                                "smithy.api#hostLabel": {}
                             }
                         }
                     }

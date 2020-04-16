@@ -20,7 +20,7 @@
         "smithy.example#Operation1": {
             "type": "operation",
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent":  {},
                 "smithy.api#http": {
                     "uri": "/1",
                     "method": "PUT"

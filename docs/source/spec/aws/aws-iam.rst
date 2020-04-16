@@ -386,7 +386,7 @@ condition key inference disabled.
                         }
                     },
                     "traits": {
-                        "aws.iam#disableConditionKeyInference": true
+                        "aws.iam#disableConditionKeyInference": {}
                     }
                 }
             }

@@ -22,7 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * Binds an input member to a label in the hostPrefix of an endpoint
  * trait on an operation.
  */
-public final class HostLabelTrait extends BooleanTrait {
+public final class HostLabelTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#hostLabel");
 
     public HostLabelTrait(SourceLocation sourceLocation) {
@@ -33,7 +33,7 @@ public final class HostLabelTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<HostLabelTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<HostLabelTrait> {
         public Provider() {
             super(ID, HostLabelTrait::new);
         }

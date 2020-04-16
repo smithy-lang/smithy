@@ -83,8 +83,8 @@ The following example defines a service that supports both the hypothetical
                     "type": "service",
                     "version": "2017-02-11",
                     "traits": {
-                        "smithy.example#jsonExample": true,
-                        "smithy.example#xmlExample": true
+                        "smithy.example#jsonExample": {},
+                        "smithy.example#xmlExample": {}
                     }
                 },
                 "smithy.example#jsonExample": {

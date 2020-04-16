@@ -84,7 +84,7 @@
                 "bam": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 },
                 "qux": {
@@ -152,7 +152,7 @@
                 "baz": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }
@@ -176,7 +176,7 @@
                 "baz": {
                     "target": "ns.foo#StructurePayload",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }
@@ -200,7 +200,7 @@
                 "baz": {
                     "target": "ns.foo#XmlBlob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }
@@ -224,7 +224,7 @@
                 "baz": {
                     "target": "smithy.api#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }
@@ -261,8 +261,8 @@
                 "baz": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -311,7 +311,7 @@
                 "events": {
                     "target": "ns.foo#EventStream",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }

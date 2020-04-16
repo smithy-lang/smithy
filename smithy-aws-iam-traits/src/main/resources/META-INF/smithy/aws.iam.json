@@ -61,7 +61,7 @@
         "aws.iam#IamIdentifier": {
             "type": "string",
             "traits": {
-                "smithy.api#private": true,
+                "smithy.api#private": {},
                 "smithy.api#pattern": "^([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:[^:]+)$"
             }
         },
@@ -77,18 +77,18 @@
                 "type": {
                     "target": "aws.iam#ConditionKeyType",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             },
             "traits": {
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.iam#ConditionKeyType": {
             "type": "string",
             "traits": {
-                "smithy.api#private": true,
+                "smithy.api#private": {},
                 "smithy.api#documentation": "The IAM policy type of the value that will supplied for this context key",
                 "smithy.api#enum": [
                     {"value": "ARN"},

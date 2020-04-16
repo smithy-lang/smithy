@@ -82,7 +82,7 @@ The following example defines a service that uses ``aws.protocols#restJson1``.
                     "type": "service",
                     "version": "2020-04-02",
                     "traits": {
-                        "aws.protocols#restJson1": true
+                        "aws.protocols#restJson1": {}
                     }
                 }
             }

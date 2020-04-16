@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Binds a single structure member to the payload of an HTTP request.
  */
-public final class HttpPayloadTrait extends BooleanTrait {
+public final class HttpPayloadTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#httpPayload");
 
     public HttpPayloadTrait(SourceLocation sourceLocation) {
@@ -32,7 +32,7 @@ public final class HttpPayloadTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<HttpPayloadTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<HttpPayloadTrait> {
         public Provider() {
             super(ID, HttpPayloadTrait::new);
         }

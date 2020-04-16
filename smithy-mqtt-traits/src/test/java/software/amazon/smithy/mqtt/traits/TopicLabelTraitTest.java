@@ -31,7 +31,7 @@ public class TopicLabelTraitTest {
     @Test
     public void loadsTrait() {
         ShapeId id = ShapeId.from("foo.bar#Baz$bam");
-        Node node = Node.from(true);
+        Node node = Node.objectNode();
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(TopicLabelTrait.ID, id, node);
 

@@ -4,14 +4,14 @@
         "example.namespace#MyString1": {
             "type": "string",
             "traits": {
-                "example.namespace#customTrait": true,
+                "example.namespace#customTrait": {},
                 "example.namespace#documentation": "foo"
             }
         },
         "example.namespace#MyString2": {
             "type": "string",
             "traits": {
-                "example.namespace#customTrait": true,
+                "example.namespace#customTrait": {},
                 "smithy.api#documentation": "foo"
             }
         },
@@ -31,7 +31,7 @@
         "example.namespace#customTrait": {
             "type": "structure",
             "traits": {
-                "smithy.api#trait": true
+                "smithy.api#trait": {}
             }
         },
         "example.namespace#documentation": {

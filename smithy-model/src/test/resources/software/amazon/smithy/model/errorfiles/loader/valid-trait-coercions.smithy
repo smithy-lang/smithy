@@ -22,5 +22,13 @@ map d {
 @trait(selector: "*")
 structure e {}
 
-@a @b @c @d @e
+@trait
+structure f {}
+
+@a
+@b
+@c
+@d
+@e
+@f()
 structure Test {}

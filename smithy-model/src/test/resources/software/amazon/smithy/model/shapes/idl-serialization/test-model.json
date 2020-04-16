@@ -16,7 +16,7 @@
                 "stringMember": {
                     "target": "ns.primitives#String",
                     "traits": {
-                        "smithy.api#required": true,
+                        "smithy.api#required": {},
                         "smithy.api#documentation": "A string member"
                     }
                 }

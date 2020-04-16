@@ -21,7 +21,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Indicates that the streaming blob must be finite and has a known size.
  */
-public final class RequiresLengthTrait extends BooleanTrait {
+public final class RequiresLengthTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#requiresLength");
 
     public RequiresLengthTrait(SourceLocation sourceLocation) {
@@ -32,7 +32,7 @@ public final class RequiresLengthTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<RequiresLengthTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<RequiresLengthTrait> {
         public Provider() {
             super(ID, RequiresLengthTrait::new);
         }

@@ -67,20 +67,20 @@
                 }
             },
             "traits": {
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "smithy.private#PrivateError": {
             "type": "structure",
             "traits": {
-                "smithy.api#private": true,
+                "smithy.api#private": {},
                 "smithy.api#error": "client"
             }
         },
         "smithy.private#PrivateString": {
             "type": "string",
             "traits": {
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "smithy.private#PrivateOperation": {
@@ -97,7 +97,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         }
     }

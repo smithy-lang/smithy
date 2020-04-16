@@ -37,7 +37,7 @@
                 "smithy.api#tags": [
                     "foo"
                 ],
-                "aws.protocols#restJson1": true
+                "aws.protocols#restJson1": {}
             }
         },
         "smithy.example#Patch": {

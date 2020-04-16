@@ -10,7 +10,7 @@
                 }
             ],
             "traits": {
-                "aws.protocols#restJson1": true
+                "aws.protocols#restJson1": {}
             }
         },
         "smithy.example#Operation": {
@@ -27,7 +27,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent": {},
                 "smithy.api#http": {
                     "uri": "/",
                     "method": "POST"
@@ -46,7 +46,7 @@
                 "body": {
                     "target": "smithy.api#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }
@@ -63,7 +63,7 @@
                 "body": {
                     "target": "smithy.api#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }
@@ -74,7 +74,7 @@
                 "foo": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             },

@@ -277,8 +277,8 @@ explicitly on the operation.
                         "target": "smithy.example#GetFoosOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true,
-                        "smithy.api#collection": true,
+                        "smithy.api#readonly": {},
+                        "smithy.api#collection": {},
                         "smithy.api#paginated": {
                             "inputToken": "nextToken",
                             "outputToken": "nextToken",
@@ -307,7 +307,7 @@ explicitly on the operation.
                         "foos": {
                             "target": "smithy.example#StringList",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -373,8 +373,8 @@ settings from a service.
                         "target": "smithy.example#GetFoosOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true,
-                        "smithy.api#collection": true,
+                        "smithy.api#readonly": {},
+                        "smithy.api#collection": {},
                         "smithy.api#paginated": {
                             "items": "foos"
                         }
@@ -445,7 +445,7 @@ wrapper where the output token and items are referenced by paths.
                         "target": "smithy.example#GetFoosOutput"
                     },
                     "traits": {
-                        "smithy.api#readonly": true,
+                        "smithy.api#readonly": {},
                         "smithy.api#paginated": {
                             "inputToken": "nextToken",
                             "outputToken": "result.nextToken",
@@ -471,7 +471,7 @@ wrapper where the output token and items are referenced by paths.
                         "result": {
                             "target": "smithy.example#ResultWrapper",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }
@@ -485,7 +485,7 @@ wrapper where the output token and items are referenced by paths.
                         "foos": {
                             "target": "smithy.example#StringList",
                             "traits": {
-                                "smithy.api#required": true
+                                "smithy.api#required": {}
                             }
                         }
                     }

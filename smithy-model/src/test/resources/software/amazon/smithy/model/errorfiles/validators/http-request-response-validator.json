@@ -61,7 +61,7 @@
         "ns.foo#A": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/A/{foo}",
@@ -78,7 +78,7 @@
                 "target": "ns.foo#BOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/b/{d}",
@@ -101,7 +101,7 @@
                 "target": "ns.foo#COutput"
             },
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent": {},
                 "smithy.api#http": {
                     "method": "PUT",
                     "uri": "/c/{a}",
@@ -115,8 +115,8 @@
                 "a": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 },
                 "b": {
@@ -140,7 +140,7 @@
                 "e": {
                     "target": "ns.foo#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 },
                 "otherHeader": {
@@ -187,7 +187,7 @@
                 "c": {
                     "target": "ns.foo#Blob",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             }
@@ -201,7 +201,7 @@
                 "target": "ns.foo#DOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/d",
@@ -273,7 +273,7 @@
                 "target": "ns.foo#EInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/e/{label1}/{label2}"
@@ -286,15 +286,15 @@
                 "label1": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 },
                 "label2": {
                     "target": "ns.foo#MapOfString",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -308,7 +308,7 @@
                 "target": "ns.foo#FInputOutput"
             },
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent": {},
                 "smithy.api#http": {
                     "method": "PUT",
                     "uri": "/f",
@@ -333,7 +333,7 @@
                 "target": "ns.foo#GOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/g/{a}",
@@ -349,9 +349,9 @@
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo",
                         "smithy.api#httpQuery": "a",
-                        "smithy.api#httpPayload": true,
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpPayload": {},
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 },
                 "b": {
@@ -370,7 +370,7 @@
                     "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-B",
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 },
                 "b": {
@@ -388,7 +388,7 @@
                 "target": "ns.foo#HInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/g"
@@ -412,7 +412,7 @@
                 "target": "ns.foo#JInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/j"
@@ -442,7 +442,7 @@
                 "target": "ns.foo#KInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/k"
@@ -481,7 +481,7 @@
         "ns.foo#L": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/k"
@@ -494,7 +494,7 @@
                 "target": "ns.foo#MInput"
             },
             "traits": {
-                "smithy.api#idempotent": true,
+                "smithy.api#idempotent": {},
                 "smithy.api#http": {
                     "method": "PUT",
                     "uri": "/m"
@@ -518,7 +518,7 @@
                 "target": "ns.foo#NInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/n"
@@ -531,8 +531,8 @@
                 "a": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -543,7 +543,7 @@
                 "target": "ns.foo#OInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/o/{a}"
@@ -556,7 +556,7 @@
                 "a": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#httpLabel": true
+                        "smithy.api#httpLabel": {}
                     }
                 }
             }
@@ -567,7 +567,7 @@
                 "target": "ns.foo#PInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/p/{a+}"
@@ -580,8 +580,8 @@
                 "a": {
                     "target": "ns.foo#Integer",
                     "traits": {
-                        "smithy.api#httpLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -592,7 +592,7 @@
                 "target": "ns.foo#QInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/q"
@@ -616,7 +616,7 @@
                 "target": "ns.foo#RInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#http": {
                     "method": "GET",
                     "uri": "/r"
@@ -680,7 +680,7 @@
                     "target": "ns.foo#String",
                     "traits": {
                         "smithy.api#httpHeader": "X-Foo",
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 }
             },

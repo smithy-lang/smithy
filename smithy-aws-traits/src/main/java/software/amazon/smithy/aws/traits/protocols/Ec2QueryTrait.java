@@ -17,7 +17,7 @@ package software.amazon.smithy.aws.traits.protocols;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.BooleanTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
  * An RPC-based protocol that sends query string requests and XML responses,
@@ -26,7 +26,7 @@ import software.amazon.smithy.model.traits.BooleanTrait;
  * <p>This protocol is deprecated. For new services, ise {@link RestJson1Trait}
  * or {@link AwsJson1_1Trait} instead.
  */
-public final class Ec2QueryTrait extends BooleanTrait {
+public final class Ec2QueryTrait extends AnnotationTrait {
 
     public static final ShapeId ID = ShapeId.from("aws.protocols#ec2Query");
 
@@ -38,7 +38,7 @@ public final class Ec2QueryTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<Ec2QueryTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<Ec2QueryTrait> {
         public Provider() {
             super(ID, Ec2QueryTrait::new);
         }

@@ -30,7 +30,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public class XmlAttributeTraitTest {
     @Test
     public void loadsTraitWithString() {
-        Node node = Node.from(true);
+        Node node = Node.objectNode();
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(
                 ShapeId.from("smithy.api#xmlAttribute"), ShapeId.from("ns.qux#foo"), node);

@@ -7,7 +7,7 @@
                 "template": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "absolute": {
@@ -36,7 +36,7 @@
                 "sdkId": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "arnNamespace": {
@@ -139,14 +139,14 @@
             "type": "string",
             "traits": {
                 "smithy.api#pattern": "^[a-z0-9.\\-]{1,63}$",
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.api#CloudFormationName": {
             "type": "string",
             "traits": {
                 "smithy.api#pattern": "^[A-Z][A-Za-z0-9]+$",
-                "smithy.api#private": true
+                "smithy.api#private": {}
             }
         },
         "aws.api#clientDiscoveredEndpoint": {
@@ -155,7 +155,7 @@
                 "required": {
                     "target": "smithy.api#Boolean",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             },
@@ -167,7 +167,7 @@
             }
         },
         "aws.api#clientEndpointDiscoveryId": {
-            "type": "boolean",
+            "type": "structure",
             "traits": {
                 "smithy.api#trait": {
                     "selector": "operation[trait|aws.api#clientDiscoveredEndpoint] -[input]-> structure > :test(member[trait|required] > string)"
@@ -185,7 +185,7 @@
                             "failWhenMissing": true,
                             "selector": "operation"
                         },
-                        "smithy.api#required": true,
+                        "smithy.api#required": {},
                         "smithy.api#documentation": "Indicates the operation that clients should use to discover endpoints for the service."
                     }
                 },
@@ -196,7 +196,7 @@
                             "failWhenMissing": true,
                             "selector": "structure[trait|error]"
                         },
-                        "smithy.api#required": true,
+                        "smithy.api#required": {},
                         "smithy.api#documentation": "Indicates the error that tells clients that the endpoint they are using is no longer valid. This error MUST be bound to any operation bound to the service which is marked with the aws.api#clientDiscoveredEndpoint trait."
                     }
                 }

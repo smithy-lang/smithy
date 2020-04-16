@@ -9,7 +9,7 @@
                 }
             },
             "traits": {
-                "smithy.api#trait": true,
+                "smithy.api#trait": {},
                 "smithy.api#tags": [
                     "foo",
                     "baz"
@@ -24,7 +24,7 @@
                 }
             },
             "traits": {
-                "smithy.api#trait": true,
+                "smithy.api#trait": {},
                 "smithy.api#tags": [
                     "foo",
                     "qux"

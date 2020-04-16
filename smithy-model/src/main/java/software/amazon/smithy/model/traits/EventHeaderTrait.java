@@ -24,7 +24,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * <p>This trait can targets members of a structure marked with the event
  * trait that targets blob, boolean, integer, long, string, or timestamp.
  */
-public final class EventHeaderTrait extends BooleanTrait {
+public final class EventHeaderTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#eventHeader");
 
     public EventHeaderTrait(SourceLocation sourceLocation) {
@@ -35,7 +35,7 @@ public final class EventHeaderTrait extends BooleanTrait {
         this(SourceLocation.NONE);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<EventHeaderTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<EventHeaderTrait> {
         public Provider() {
             super(ID, EventHeaderTrait::new);
         }

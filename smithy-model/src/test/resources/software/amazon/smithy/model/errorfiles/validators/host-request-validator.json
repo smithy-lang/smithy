@@ -46,7 +46,7 @@
         "ns.foo#A": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "A-{foo}"
                 }
@@ -61,7 +61,7 @@
                 "target": "ns.foo#BOutput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "B-{foo}"
                 }
@@ -79,7 +79,7 @@
                 "target": "ns.foo#CInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "C-{foo}"
                 }
@@ -91,8 +91,8 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#hostLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#hostLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -103,7 +103,7 @@
                 "target": "ns.foo#DInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "D-{foo}"
                 }
@@ -115,7 +115,7 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -126,7 +126,7 @@
                 "target": "ns.foo#EInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "E-{foo}"
                 }
@@ -138,7 +138,7 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#hostLabel": true
+                        "smithy.api#hostLabel": {}
                     }
                 }
             }
@@ -149,7 +149,7 @@
                 "target": "ns.foo#FInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "F-{foo}"
                 }
@@ -161,8 +161,8 @@
                 "foo": {
                     "target": "ns.foo#Integer",
                     "traits": {
-                        "smithy.api#hostLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#hostLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -173,7 +173,7 @@
                 "target": "ns.foo#GInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "G-{foo}-{bar}"
                 }
@@ -185,15 +185,15 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#hostLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#hostLabel": {},
+                        "smithy.api#required": {}
                     }
                 },
                 "bar": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#hostLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#hostLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }
@@ -204,7 +204,7 @@
                 "target": "ns.foo#BInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "H.1234567890123456789012345678901234567890123456789012345678901234."
                 }
@@ -216,7 +216,7 @@
                 "target": "ns.foo#BInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "1234567890123456789012345678901234567890123456789012345678901234.J."
                 }
@@ -228,7 +228,7 @@
                 "target": "ns.foo#BInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "data.||+."
                 }
@@ -240,7 +240,7 @@
                 "target": "ns.foo#BInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "L."
                 }
@@ -252,7 +252,7 @@
                 "target": "ns.foo#MInput"
             },
             "traits": {
-                "smithy.api#readonly": true,
+                "smithy.api#readonly": {},
                 "smithy.api#endpoint": {
                     "hostPrefix": "M-{foo}."
                 }
@@ -264,8 +264,8 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#hostLabel": true,
-                        "smithy.api#required": true
+                        "smithy.api#hostLabel": {},
+                        "smithy.api#required": {}
                     }
                 }
             }

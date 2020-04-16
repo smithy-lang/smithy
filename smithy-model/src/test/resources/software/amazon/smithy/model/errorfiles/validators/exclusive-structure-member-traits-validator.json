@@ -7,19 +7,19 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#eventPayload": true
+                        "smithy.api#eventPayload": {}
                     }
                 },
                 "baz": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#eventPayload": true
+                        "smithy.api#eventPayload": {}
                     }
                 },
                 "bar": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#eventHeader": true
+                        "smithy.api#eventHeader": {}
                     }
                 }
             }
@@ -30,13 +30,13 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#idempotencyToken": true
+                        "smithy.api#idempotencyToken": {}
                     }
                 },
                 "baz": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#idempotencyToken": true
+                        "smithy.api#idempotencyToken": {}
                     }
                 },
                 "bar": {
@@ -50,13 +50,13 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 },
                 "baz": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#httpPayload": true
+                        "smithy.api#httpPayload": {}
                     }
                 },
                 "bar": {

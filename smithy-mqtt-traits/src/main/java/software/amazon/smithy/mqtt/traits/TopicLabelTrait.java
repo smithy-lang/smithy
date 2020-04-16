@@ -17,19 +17,19 @@ package software.amazon.smithy.mqtt.traits;
 
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.BooleanTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
  * Binds a member to an MQTT label using the member name.
  */
-public final class TopicLabelTrait extends BooleanTrait {
+public final class TopicLabelTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.mqtt#topicLabel");
 
     public TopicLabelTrait(SourceLocation sourceLocation) {
         super(ID, sourceLocation);
     }
 
-    public static final class Provider extends BooleanTrait.Provider<TopicLabelTrait> {
+    public static final class Provider extends AnnotationTrait.Provider<TopicLabelTrait> {
         public Provider() {
             super(ID, TopicLabelTrait::new);
         }

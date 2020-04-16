@@ -178,7 +178,7 @@
                 "foo": {
                     "target": "ns.foo#String",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "baz": {
@@ -272,14 +272,14 @@
                 "requiredInt": {
                     "target": "smithy.api#PrimitiveInteger",
                     "traits": {
-                        "smithy.api#required": true
+                        "smithy.api#required": {}
                     }
                 },
                 "requiredInt2": {
                     "target": "smithy.api#PrimitiveInteger",
                     "traits": {
-                        "smithy.api#required": true,
-                        "smithy.api#box": true
+                        "smithy.api#required": {},
+                        "smithy.api#box": {}
                     }
                 }
             }
@@ -301,7 +301,7 @@
         "ns.foo#Operation": {
             "type": "operation",
             "traits": {
-                "smithy.api#readonly": true
+                "smithy.api#readonly": {}
             }
         },
         "ns.foo#Resource": {
