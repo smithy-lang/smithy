@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
-import java.util.Collections;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -90,8 +89,6 @@ public final class ClientDiscoveredEndpointTrait extends AbstractTrait
         @Override
         public ClientDiscoveredEndpointTrait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
-            objectNode.warnIfAdditionalProperties(Collections.singletonList(REQUIRED));
-
             return builder()
                     .required(objectNode.getBooleanMemberOrDefault(REQUIRED, true))
                     .build();

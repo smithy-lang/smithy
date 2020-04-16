@@ -15,14 +15,12 @@
 
 package software.amazon.smithy.aws.iam.traits;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -30,7 +28,6 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
     private static final String TYPE = "type";
     private static final String DOCUMENTATION = "documentation";
     private static final String EXTERNAL_DOCUMENTATION = "externalDocumentation";
-    private static final List<String> SUPPORTED_PROPERTIES = ListUtils.of(TYPE, DOCUMENTATION, EXTERNAL_DOCUMENTATION);
 
     private final String type;
     private final String documentation;
@@ -48,7 +45,6 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
 
     public static ConditionKeyDefinition fromNode(Node value) {
         ObjectNode objectNode = value.expectObjectNode();
-        objectNode.warnIfAdditionalProperties(SUPPORTED_PROPERTIES);
         Builder builder = builder()
                 .type(objectNode.expectStringMember(TYPE).getValue());
         objectNode.getStringMember(DOCUMENTATION).map(StringNode::getValue)

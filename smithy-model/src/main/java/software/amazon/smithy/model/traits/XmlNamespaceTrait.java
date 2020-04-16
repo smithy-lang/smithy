@@ -15,14 +15,12 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -35,7 +33,6 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
 
     private static final String PREFIX = "prefix";
     private static final String URI = "uri";
-    private static final List<String> XML_NAMESPACE_PROPERTIES = ListUtils.of(URI, PREFIX);
 
     private final String prefix;
     private final String uri;
@@ -111,7 +108,6 @@ public final class XmlNamespaceTrait extends AbstractTrait implements ToSmithyBu
         public XmlNamespaceTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             ObjectNode node = value.expectObjectNode();
-            node.warnIfAdditionalProperties(XML_NAMESPACE_PROPERTIES);
             builder.uri(node.expectStringMember(URI).getValue());
             node.getStringMember(PREFIX).map(StringNode::getValue).ifPresent(builder::prefix);
             return builder.build();
