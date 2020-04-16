@@ -23,10 +23,12 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.RangeTrait;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates the range trait on number shapes or members that target them.
  */
+@SmithyInternalApi
 public final class RangeTraitPlugin extends MemberAndShapeTraitPlugin<NumberShape, NumberNode, RangeTrait> {
     public RangeTraitPlugin() {
         super(NumberShape.class, NumberNode.class, RangeTrait.class);

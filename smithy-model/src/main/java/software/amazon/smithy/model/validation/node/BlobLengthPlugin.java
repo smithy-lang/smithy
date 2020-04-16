@@ -23,10 +23,12 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.LengthTrait;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates length trait on blob shapes and members that target blob shapes.
  */
+@SmithyInternalApi
 public final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, StringNode, LengthTrait> {
     public BlobLengthPlugin() {
         super(BlobShape.class, StringNode.class, LengthTrait.class);

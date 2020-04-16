@@ -22,10 +22,12 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.LengthTrait;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates the length trait on map shapes or members that target them.
  */
+@SmithyInternalApi
 public final class MapLengthPlugin extends MemberAndShapeTraitPlugin<MapShape, ObjectNode, LengthTrait> {
     public MapLengthPlugin() {
         super(MapShape.class, ObjectNode.class, LengthTrait.class);

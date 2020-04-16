@@ -64,6 +64,7 @@ import software.amazon.smithy.model.validation.node.StringLengthPlugin;
 import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Validates {@link Node} values provided for {@link Shape} definitions.
@@ -465,6 +466,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          * @param timestampValidationStrategy Timestamp validation strategy.
          * @return Returns the builder.
          */
+        @SmithyUnstableApi
         public Builder timestampValidationStrategy(TimestampValidationStrategy timestampValidationStrategy) {
             this.timestampValidationStrategy = timestampValidationStrategy;
             return this;
