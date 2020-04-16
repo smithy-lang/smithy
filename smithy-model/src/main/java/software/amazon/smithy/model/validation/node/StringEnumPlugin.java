@@ -22,10 +22,12 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates the enum trait on string shapes.
  */
+@SmithyInternalApi
 public final class StringEnumPlugin extends FilteredPlugin<StringShape, StringNode> {
     public StringEnumPlugin() {
         super(StringShape.class, StringNode.class);

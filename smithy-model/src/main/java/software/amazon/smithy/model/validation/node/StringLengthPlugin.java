@@ -22,10 +22,12 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.LengthTrait;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates the length trait on string shapes or members that target them.
  */
+@SmithyInternalApi
 public final class StringLengthPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, LengthTrait> {
     public StringLengthPlugin() {
         super(StringShape.class, StringNode.class, LengthTrait.class);

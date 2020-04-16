@@ -24,12 +24,14 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates that the value contained in a string shape is a valid shape ID
  * and that the shape ID targets a shape that is in the set of shapes
  * matching the selector.
  */
+@SmithyInternalApi
 public final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, IdRefTrait> {
 
     public IdRefPlugin() {

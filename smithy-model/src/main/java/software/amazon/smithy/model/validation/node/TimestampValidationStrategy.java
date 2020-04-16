@@ -22,10 +22,12 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Defines how timestamps are validated.
  */
+@SmithyInternalApi
 public enum TimestampValidationStrategy implements NodeValidatorPlugin {
     /**
      * Validates timestamps by requiring that the value uses matches the

@@ -22,10 +22,12 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.PatternTrait;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates the pattern trait on string shapes or members that target them.
  */
+@SmithyInternalApi
 public final class PatternTraitPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, PatternTrait> {
     public PatternTraitPlugin() {
         super(StringShape.class, StringNode.class, PatternTrait.class);
