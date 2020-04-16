@@ -18,6 +18,7 @@ package software.amazon.smithy.model.selector;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
@@ -111,5 +112,13 @@ public class SelectorTest {
     @Test
     public void detectsUnclosedMultiEdgeNeighborTrailingComma() {
         Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse("operation -[input, "));
+    }
+
+    @Test
+    public void toleratesUnexpectedRelationshipTypes() {
+        String expr = "operation -[foo]-> *";
+        Selector selector = Selector.parse(expr);
+
+        assertThat(expr, equalTo(selector.toString()));
     }
 }

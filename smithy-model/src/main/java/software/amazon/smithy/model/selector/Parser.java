@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.NumberShape;
@@ -35,6 +36,8 @@ import software.amazon.smithy.utils.SetUtils;
  * Parses a selector expression.
  */
 final class Parser {
+
+    private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
     private static final Set<Character> BREAK_TOKENS = SetUtils.of(',', ']', ')');
     private static final Set<String> REL_TYPES = new HashSet<>();
     private static final List<String> FUNCTIONS = ListUtils.of("test", "each", "of", "not");
@@ -155,7 +158,14 @@ final class Parser {
         String next;
         do {
             // Requires at least one relationship type.
-            relationships.add(expect(REL_TYPES));
+            next = parseIdentifier();
+            relationships.add(next);
+            // Tolerate unknown relationships, but log a warning.
+            if (!REL_TYPES.contains(next)) {
+                LOGGER.warning(String.format(
+                        "Unknown relationship type '%s' found near %s. Expected one of: %s",
+                        next, position - next.length(), REL_TYPES));
+            }
             next = expect(MULTI_EDGE_NEXT_ARG_TOKEN);
         } while (!next.equals("]->"));
         return new NeighborSelector(relationships);

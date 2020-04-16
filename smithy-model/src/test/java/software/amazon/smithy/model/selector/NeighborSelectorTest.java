@@ -18,6 +18,7 @@ package software.amazon.smithy.model.selector;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,5 +67,19 @@ public class NeighborSelectorTest {
         Set<String> result = selectIds("operation -[input, output]->");
 
         assertThat(result, contains("smithy.example#Input", "smithy.example#Output"));
+    }
+
+    @Test
+    public void skipsUnknownRelationships() {
+        Set<String> result = selectIds("operation -[input, output, foo]->");
+
+        assertThat(result, contains("smithy.example#Input", "smithy.example#Output"));
+    }
+
+    @Test
+    public void returnsEmptyForUnknownRelationships() {
+        Set<String> result = selectIds("operation -[foo]->");
+
+        assertThat(result, empty());
     }
 }
