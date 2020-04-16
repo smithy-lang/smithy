@@ -15,9 +15,6 @@
 
 package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -34,7 +31,6 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
 
     private static final String OPERATION = "operation";
     private static final String ERROR = "error";
-    private static final List<String> PROPERTIES = Collections.unmodifiableList(Arrays.asList(OPERATION, ERROR));
 
     private final ShapeId operation;
     private final ShapeId error;
@@ -139,8 +135,6 @@ public final class ClientEndpointDiscoveryTrait extends AbstractTrait
         @Override
         public ClientEndpointDiscoveryTrait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
-            objectNode.warnIfAdditionalProperties(PROPERTIES);
-
             return builder()
                     .operation(objectNode.expectStringMember(OPERATION).expectShapeId())
                     .error(objectNode.expectStringMember(ERROR).expectShapeId())

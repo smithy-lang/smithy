@@ -1,1 +1,0 @@
-[ERROR] -: Expected an object with possible properties of `metadata`, `shapes`, `smithy`, but found additional properties: `dope`, `nope`, `rope` | Model

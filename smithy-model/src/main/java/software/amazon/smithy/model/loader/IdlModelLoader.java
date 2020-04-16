@@ -885,7 +885,7 @@ final class IdlModelLoader {
                 .source(sourceLocation);
 
         ObjectNode shapeNode = parseObjectNode(expect(LBRACE).getSourceLocation(), RBRACE);
-        shapeNode.warnIfAdditionalProperties(SERVICE_PROPERTY_NAMES);
+        visitor.checkForAdditionalProperties(shapeNode, shapeId, SERVICE_PROPERTY_NAMES);
         builder.version(shapeNode.expectStringMember(VERSION_KEY).getValue());
         optionalIdList(shapeNode, shapeId.getNamespace(), OPERATIONS_KEY).forEach(builder::addOperation);
         optionalIdList(shapeNode, shapeId.getNamespace(), RESOURCES_KEY).forEach(builder::addResource);
@@ -913,7 +913,7 @@ final class IdlModelLoader {
         visitor.onShape(builder);
         ObjectNode shapeNode = parseObjectNode(expect(LBRACE).getSourceLocation(), RBRACE);
 
-        shapeNode.warnIfAdditionalProperties(RESOURCE_PROPERTY_NAMES);
+        visitor.checkForAdditionalProperties(shapeNode, shapeId, RESOURCE_PROPERTY_NAMES);
         optionalId(shapeNode, shapeId.getNamespace(), PUT_KEY).ifPresent(builder::put);
         optionalId(shapeNode, shapeId.getNamespace(), CREATE_KEY).ifPresent(builder::create);
         optionalId(shapeNode, shapeId.getNamespace(), READ_KEY).ifPresent(builder::read);
@@ -945,7 +945,7 @@ final class IdlModelLoader {
 
         Token opening = expect(LBRACE);
         ObjectNode node = parseObjectNode(opening.getSourceLocation(), RBRACE);
-        node.expectNoAdditionalProperties(OPERATION_PROPERTY_NAMES);
+        visitor.checkForAdditionalProperties(node, id, OPERATION_PROPERTY_NAMES);
         node.getStringMember("input").ifPresent(input -> {
             onShapeTarget(input.getValue(), input, builder::input);
         });

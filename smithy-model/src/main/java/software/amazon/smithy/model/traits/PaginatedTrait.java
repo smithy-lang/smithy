@@ -15,13 +15,11 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.validators.PaginatedTraitValidator;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -32,9 +30,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuilder<PaginatedTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#paginated");
-
-    private static final List<String> PAGINATED_PROPERTIES = ListUtils.of(
-            "items", "inputToken", "outputToken", "pageSize");
 
     private final String items;
     private final String inputToken;
@@ -174,7 +169,6 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
         public PaginatedTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             ObjectNode members = value.expectObjectNode();
-            members.warnIfAdditionalProperties(PAGINATED_PROPERTIES);
             builder.pageSize(members.getStringMemberOrDefault("pageSize", null));
             builder.items(members.getStringMemberOrDefault("items", null));
             builder.inputToken(members.getStringMemberOrDefault("inputToken", null));

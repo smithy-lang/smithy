@@ -15,14 +15,12 @@
 
 package software.amazon.smithy.aws.traits.auth;
 
-import java.util.Set;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -33,7 +31,6 @@ public final class SigV4Trait extends AbstractTrait implements ToSmithyBuilder<S
 
     public static final ShapeId ID = ShapeId.from("aws.auth#sigv4");
     private static final String NAME = "name";
-    private static final Set<String> PROPERTIES = SetUtils.of(NAME);
 
     private final String name;
 
@@ -90,7 +87,6 @@ public final class SigV4Trait extends AbstractTrait implements ToSmithyBuilder<S
         public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             ObjectNode objectNode = value.expectObjectNode();
-            objectNode.warnIfAdditionalProperties(PROPERTIES);
             builder.name(objectNode.expectStringMember(NAME).getValue());
             return builder.build();
         }

@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.aws.traits;
 
-import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -24,7 +23,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -36,7 +34,6 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
     private static final String TYPE = "type";
     private static final String SERVICE = "service";
     private static final String RESOURCE = "resource";
-    private static final List<String> PROPERTIES = ListUtils.of(TYPE, SERVICE, RESOURCE);
 
     private String type;
     private ShapeId service;
@@ -58,7 +55,6 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
         public Trait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
             Builder builder = builder();
-            objectNode.warnIfAdditionalProperties(PROPERTIES);
             objectNode.getStringMember(TYPE)
                     .map(StringNode::getValue)
                     .ifPresent(builder::type);
