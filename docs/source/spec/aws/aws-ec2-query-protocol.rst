@@ -19,9 +19,9 @@ This specification defines the ``aws.protocols#ec2`` protocol.
 --------------------------------
 
 Summary
-    Adds support for an HTTP protocol that sends request in the query
-    string and responses in XML documents. This protocol is an
-    Amazon EC2-specific extension of the ``awsQuery`` protocol.
+    Adds support for an HTTP protocol that sends requests in the query string
+    OR in a ``x-form-url-encoded`` body and responses in XML documents. This
+    protocol is an Amazon EC2-specific extension of the ``awsQuery`` protocol.
 Trait selector
     ``service``
 Value type
@@ -63,16 +63,20 @@ Value type
 ------------------------------------
 
 Summary
-    Indicates the serialized name of a structure member when that structure is
-    serialized for the input of an EC2 operation using the
-    ``aws.protocols#ec2Query`` protocol.
+    Allows a serialized query key to differ from a structure member name when
+    used in the model.
 Trait selector
     ``member:of(structure)``
+
+    *Any structure member*
 Value type
     ``string``
 
-It is very important to note that the ``aws.protocols#ec2QueryName`` ONLY applies
-when serializing an INPUT. For example, given the following Smithy model:
+.. important::
+    The ``aws.protocols#ec2QueryName`` MUST only apply when serializing
+    operation inputs using the ``aws.protocols#ec2`` protocol.
+
+Given the following structure definition:
 
 .. tabs::
 
@@ -102,19 +106,18 @@ when serializing an INPUT. For example, given the following Smithy model:
             }
         }
 
-The serialization of this structure as an input is:
+and the following values provided for ``MyStruct``,
 
 ::
 
-    MyStruct.bar=baz
+    "bar" = "baz"
 
-The serialization of the structure as an (XML) output is:
+the serialization of this structure as an input on the ``aws.protocols#ec2``
+protocol is:
 
-.. code-block:: xml
+::
 
-    <MyStruct>
-        <foo>baz</foo>
-    </MyStruct>
+    MyStruct.foo=baz
 
 
 *TODO: Add specifications, protocol examples, etc.*
