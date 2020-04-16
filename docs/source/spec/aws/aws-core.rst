@@ -603,7 +603,7 @@ previous example:
 ----------------------
 
 Summary
-    Designates the target as containing data of a known classification level.
+    Indicates that the target contains data of the specified classification.
 Trait selector
     ``:test(simpleType, collection, structure, union, member)``
 Value type
@@ -685,6 +685,11 @@ The effective data classifications in the previous example are as follows:
     * - ``smithy.example#TagList``
       - "tagging"
 
+.. note::
+
+    This trait should be used in conjunction with the
+    :ref:`sensitive-trait` trait as necessary.
+
 
 .. _data-classifications:
 
@@ -701,21 +706,18 @@ applied through the ``aws.api#data`` trait.
     * - Type
       - Description
     * - ``content``
-      - Customer content means any software (including machine images), data,
-        text, audio, video or images that customers or any customer end user
-        transfers to AWS for processing, storage or hosting by AWS services in
-        connection with the customer’s accounts and any computational results
-        that customers or any customer end user derive from the foregoing
-        through their use of AWS services.
+      - Designates software (including machine images), data, text, audio,
+        video or images that customers or any customer end user transfers to
+        AWS for processing, storage or hosting by AWS services in connection
+        with the customer’s accounts and any computational results that
+        customers or any customer end user derive from the foregoing through
+        their use of AWS services.
     * - ``account``
-      - Account information means information about customers that customers
-        provide to AWS in connection with the creation or administration of
-        customers’ accounts.
+      - Designates information about customers that customers provide to AWS in
+        connection with the creation or administration of customers’ accounts.
     * - ``usage``
-      - Service Attributes means service usage data related to a customer’s
-        account, such as resource identifiers, metadata tags, security and
-        access roles, rules, usage policies, permissions, usage statistics,
-        logging data, and analytics.
+      - Designates data related to a customer’s account, such as resource
+        identifiers, usage statistics, logging data, and analytics.
     * - ``tagging``
       - Designates metadata tags applied to AWS resources.
     * - ``permissions``
