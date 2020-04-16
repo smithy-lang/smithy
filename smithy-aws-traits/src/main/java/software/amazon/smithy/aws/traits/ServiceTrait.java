@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.aws.traits;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import software.amazon.smithy.model.SourceException;
@@ -60,9 +59,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
-            objectNode.warnIfAdditionalProperties(Arrays.asList(
-                    "sdkId", "arnNamespace", "cloudFormationName", "cloudTrailEventSource", "abbreviation"));
-
             Builder builder = builder();
             String sdkId = objectNode.getStringMember("sdkId")
                     .map(StringNode::getValue)

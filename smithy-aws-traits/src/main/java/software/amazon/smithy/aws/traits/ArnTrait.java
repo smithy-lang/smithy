@@ -27,7 +27,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -42,7 +41,6 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
     private static final String ABSOLUTE = "absolute";
     private static final String NO_REGION = "noRegion";
     private static final String NO_ACCOUNT = "noAccount";
-    private static final List<String> PROPERTIES = ListUtils.of(TEMPLATE, ABSOLUTE, NO_REGION, NO_ACCOUNT);
     private static final Pattern PATTERN = Pattern.compile("\\{([^}]+)}");
 
     private final boolean noRegion;
@@ -74,7 +72,6 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
         public Trait createTrait(ShapeId target, Node value) {
             Builder builder = builder();
             ObjectNode objectNode = value.expectObjectNode();
-            objectNode.warnIfAdditionalProperties(PROPERTIES);
             builder.template(objectNode.expectStringMember(TEMPLATE).getValue());
             builder.absolute(objectNode.getBooleanMemberOrDefault(ABSOLUTE));
             builder.noRegion(objectNode.getBooleanMemberOrDefault(NO_REGION));

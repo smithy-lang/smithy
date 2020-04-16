@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -32,7 +31,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -58,9 +56,6 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
     public static final String SELECTOR_KEY = "selector";
     public static final String STRUCTURALLY_EXCLUSIVE_KEY = "structurallyExclusive";
     public static final String CONFLICTS_KEY = "conflicts";
-
-    private static final Set<String> TRAIT_DEFINITION_PROPERTY_NAMES = SetUtils.of(
-            SELECTOR_KEY, STRUCTURALLY_EXCLUSIVE_KEY, CONFLICTS_KEY);
 
     private final Selector selector;
     private final List<ShapeId> conflicts;
@@ -206,7 +201,6 @@ public final class TraitDefinition extends AbstractTrait implements ToSmithyBuil
             // The handling of a trait definition is special-cased, so coercion
             // from a null value to an object is required.
             ObjectNode members = Trait.coerceTraitValue(value, ShapeType.STRUCTURE).expectObjectNode();
-            members.warnIfAdditionalProperties(TRAIT_DEFINITION_PROPERTY_NAMES);
             Builder builder = builder().sourceLocation(value);
 
             members.getMember(TraitDefinition.SELECTOR_KEY)

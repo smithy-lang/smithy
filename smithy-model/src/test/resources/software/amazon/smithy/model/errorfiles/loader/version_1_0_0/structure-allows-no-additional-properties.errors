@@ -1,1 +1,0 @@
-[ERROR] smithy.example#Hi: Expected an object with possible properties of `members`, `traits`, `type`, but found additional properties: `foo` | Model

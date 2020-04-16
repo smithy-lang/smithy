@@ -86,7 +86,7 @@ enum AstModelLoader {
             TYPE, "version", "operations", "resources", TRAITS);
 
     void load(ObjectNode model, LoaderVisitor visitor) {
-        model.expectNoAdditionalProperties(TOP_LEVEL_PROPERTIES);
+        visitor.checkForAdditionalProperties(model, null, TOP_LEVEL_PROPERTIES);
         loadMetadata(model, visitor);
         loadShapes(model, visitor);
     }
@@ -185,7 +185,7 @@ enum AstModelLoader {
                 loadOperation(id, value, visitor);
                 break;
             case "apply":
-                value.expectNoAdditionalProperties(APPLY_PROPERTIES);
+                visitor.checkForAdditionalProperties(value, id, APPLY_PROPERTIES);
                 applyTraits(id, value.expectObjectMember(TRAITS), visitor);
                 break;
             default:
@@ -205,7 +205,7 @@ enum AstModelLoader {
     }
 
     private void loadMember(LoaderVisitor visitor, ShapeId id, ObjectNode targetNode) {
-        targetNode.expectNoAdditionalProperties(MEMBER_PROPERTIES);
+        visitor.checkForAdditionalProperties(targetNode, id, MEMBER_PROPERTIES);
         MemberShape.Builder builder = MemberShape.builder().source(targetNode.getSourceLocation()).id(id);
         ShapeId target = targetNode.expectStringMember(TARGET).expectShapeId();
         builder.target(target);
@@ -219,52 +219,52 @@ enum AstModelLoader {
             CollectionShape.Builder builder,
             LoaderVisitor visitor
     ) {
-        node.expectNoAdditionalProperties(COLLECTION_PROPERTY_NAMES);
+        visitor.checkForAdditionalProperties(node, id, COLLECTION_PROPERTY_NAMES);
         applyShapeTraits(id, node, visitor);
         loadMember(visitor, id.withMember("member"), node.expectObjectMember("member"));
         visitor.onShape(builder.id(id).source(node.getSourceLocation()));
     }
 
     private void loadMap(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        node.expectNoAdditionalProperties(MAP_PROPERTY_NAMES);
+        visitor.checkForAdditionalProperties(node, id, MAP_PROPERTY_NAMES);
         loadMember(visitor, id.withMember("key"), node.expectObjectMember("key"));
         loadMember(visitor, id.withMember("value"), node.expectObjectMember("value"));
         applyShapeTraits(id, node, visitor);
         visitor.onShape(MapShape.builder().id(id).source(node.getSourceLocation()));
     }
 
-    private void loadOperation(ShapeId operationShapeId, ObjectNode node, LoaderVisitor visitor) {
-        node.expectNoAdditionalProperties(OPERATION_PROPERTY_NAMES);
-        applyShapeTraits(operationShapeId, node, visitor);
+    private void loadOperation(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
+        visitor.checkForAdditionalProperties(node, id, OPERATION_PROPERTY_NAMES);
+        applyShapeTraits(id, node, visitor);
         OperationShape.Builder builder = OperationShape.builder()
-                .id(operationShapeId)
+                .id(id)
                 .source(node.getSourceLocation())
-                .addErrors(loadOptionalTargetList(node, "errors"));
+                .addErrors(loadOptionalTargetList(visitor, id, node, "errors"));
 
-        loadOptionalTarget(node, "input").ifPresent(builder::input);
-        loadOptionalTarget(node, "output").ifPresent(builder::output);
+        loadOptionalTarget(visitor, id, node, "input").ifPresent(builder::input);
+        loadOptionalTarget(visitor, id, node, "output").ifPresent(builder::output);
         visitor.onShape(builder);
     }
 
     private void loadResource(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        node.expectNoAdditionalProperties(RESOURCE_PROPERTIES);
+        visitor.checkForAdditionalProperties(node, id, RESOURCE_PROPERTIES);
         applyShapeTraits(id, node, visitor);
         ResourceShape.Builder builder = ResourceShape.builder().id(id).source(node.getSourceLocation());
-        loadOptionalTarget(node, "put").ifPresent(builder::put);
-        loadOptionalTarget(node, "create").ifPresent(builder::create);
-        loadOptionalTarget(node, "read").ifPresent(builder::read);
-        loadOptionalTarget(node, "update").ifPresent(builder::update);
-        loadOptionalTarget(node, "delete").ifPresent(builder::delete);
-        loadOptionalTarget(node, "list").ifPresent(builder::list);
-        builder.operations(loadOptionalTargetList(node, "operations"));
-        builder.collectionOperations(loadOptionalTargetList(node, "collectionOperations"));
-        builder.resources(loadOptionalTargetList(node, "resources"));
+        loadOptionalTarget(visitor, id, node, "put").ifPresent(builder::put);
+        loadOptionalTarget(visitor, id, node, "create").ifPresent(builder::create);
+        loadOptionalTarget(visitor, id, node, "read").ifPresent(builder::read);
+        loadOptionalTarget(visitor, id, node, "update").ifPresent(builder::update);
+        loadOptionalTarget(visitor, id, node, "delete").ifPresent(builder::delete);
+        loadOptionalTarget(visitor, id, node, "list").ifPresent(builder::list);
+        builder.operations(loadOptionalTargetList(visitor, id, node, "operations"));
+        builder.collectionOperations(loadOptionalTargetList(visitor, id, node, "collectionOperations"));
+        builder.resources(loadOptionalTargetList(visitor, id, node, "resources"));
 
         // Load identifiers and resolve forward references.
         node.getObjectMember("identifiers").ifPresent(ids -> {
             for (Map.Entry<StringNode, Node> entry : ids.getMembers().entrySet()) {
                 String name = entry.getKey().getValue();
-                ShapeId target = loadReferenceBody(entry.getValue());
+                ShapeId target = loadReferenceBody(visitor, id, entry.getValue());
                 builder.addIdentifier(name, target);
             }
         });
@@ -273,30 +273,30 @@ enum AstModelLoader {
     }
 
     private void loadService(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        node.expectNoAdditionalProperties(SERVICE_PROPERTIES);
+        visitor.checkForAdditionalProperties(node, id, SERVICE_PROPERTIES);
         applyShapeTraits(id, node, visitor);
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(node.getSourceLocation());
         builder.version(node.expectStringMember("version").getValue());
-        builder.operations(loadOptionalTargetList(node, "operations"));
-        builder.resources(loadOptionalTargetList(node, "resources"));
+        builder.operations(loadOptionalTargetList(visitor, id, node, "operations"));
+        builder.resources(loadOptionalTargetList(visitor, id, node, "resources"));
         visitor.onShape(builder);
     }
 
     private void loadSimpleShape(
             ShapeId id, ObjectNode node, AbstractShapeBuilder builder, LoaderVisitor visitor) {
-        node.expectNoAdditionalProperties(SIMPLE_PROPERTY_NAMES);
+        visitor.checkForAdditionalProperties(node, id, SIMPLE_PROPERTY_NAMES);
         applyShapeTraits(id, node, visitor);
         visitor.onShape(builder.id(id).source(node.getSourceLocation()));
     }
 
     private void loadStructure(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        node.expectNoAdditionalProperties(STRUCTURE_AND_UNION_PROPERTY_NAMES);
+        visitor.checkForAdditionalProperties(node, id, STRUCTURE_AND_UNION_PROPERTY_NAMES);
         visitor.onShape(StructureShape.builder().id(id).source(node.getSourceLocation()));
         finishLoadingStructOrUnionMembers(id, node, visitor);
     }
 
     private void loadUnion(ShapeId id, ObjectNode node, LoaderVisitor visitor) {
-        node.expectNoAdditionalProperties(STRUCTURE_AND_UNION_PROPERTY_NAMES);
+        visitor.checkForAdditionalProperties(node, id, STRUCTURE_AND_UNION_PROPERTY_NAMES);
         visitor.onShape(UnionShape.builder().id(id).source(node.getSourceLocation()));
         finishLoadingStructOrUnionMembers(id, node, visitor);
     }
@@ -309,20 +309,22 @@ enum AstModelLoader {
         }
     }
 
-    private Optional<ShapeId> loadOptionalTarget(ObjectNode node, String member) {
-        return node.getObjectMember(member).map(this::loadReferenceBody);
+    private Optional<ShapeId> loadOptionalTarget(
+            LoaderVisitor visitor, ShapeId id, ObjectNode node, String member) {
+        return node.getObjectMember(member).map(r -> loadReferenceBody(visitor, id, r));
     }
 
-    private ShapeId loadReferenceBody(Node reference) {
+    private ShapeId loadReferenceBody(LoaderVisitor visitor, ShapeId id, Node reference) {
         ObjectNode referenceObject = reference.expectObjectNode();
-        referenceObject.expectNoAdditionalProperties(REFERENCE_PROPERTIES);
+        visitor.checkForAdditionalProperties(referenceObject, id, REFERENCE_PROPERTIES);
         return referenceObject.expectStringMember(TARGET).expectShapeId();
     }
 
-    private List<ShapeId> loadOptionalTargetList(ObjectNode node, String member) {
+    private List<ShapeId> loadOptionalTargetList(
+            LoaderVisitor visitor, ShapeId id, ObjectNode node, String member) {
         return node.getArrayMember(member)
                 .map(array -> array.getElements().stream()
-                        .map(this::loadReferenceBody)
+                        .map(e -> loadReferenceBody(visitor, id, e))
                         .collect(Collectors.toList()))
                 .orElseGet(Collections::emptyList);
     }

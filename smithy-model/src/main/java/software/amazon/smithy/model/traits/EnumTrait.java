@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.traits;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
@@ -148,8 +147,6 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
         }
 
         private EnumDefinition parseEnum(ObjectNode value) {
-            value.warnIfAdditionalProperties(Arrays.asList(
-                    EnumDefinition.VALUE, EnumDefinition.NAME, EnumDefinition.DOCUMENTATION, EnumDefinition.TAGS));
             EnumDefinition.Builder builder = EnumDefinition.builder()
                     .value(value.expectStringMember(EnumDefinition.VALUE).getValue())
                     .name(value.getStringMember(EnumDefinition.NAME).map(StringNode::getValue).orElse(null))

@@ -1,0 +1,1 @@
+[WARNING] smithy.example#Hi$member: Expected an object with possible properties of `target`, `traits`, but found additional properties: `foo` | Model

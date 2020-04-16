@@ -18,6 +18,7 @@ package software.amazon.smithy.model.loader;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,9 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -609,6 +612,26 @@ final class LoaderVisitor {
                     .toBuilder()
                     .shapeId(shapeBuilder.getId())
                     .build());
+        }
+    }
+
+    /**
+     * Checks if additional properties are in an object, and if so, emits a warning event.
+     *
+     * @param node Node to check.
+     * @param shape Shape to associate with the error.
+     * @param properties Properties to allow.
+     */
+    void checkForAdditionalProperties(ObjectNode node, ShapeId shape, Collection<String> properties) {
+        try {
+            node.expectNoAdditionalProperties(properties);
+        } catch (ExpectationNotMetException e) {
+            ValidationEvent event = ValidationEvent.fromSourceException(e)
+                    .toBuilder()
+                    .shapeId(shape)
+                    .severity(Severity.WARNING)
+                    .build();
+            onError(event);
         }
     }
 }
