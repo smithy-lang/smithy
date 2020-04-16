@@ -19,12 +19,14 @@ import java.util.List;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Applies pluggable validation when validating {@link Node} values against
  * the schema of a {@link Shape} (e.g., when validating that the values
  * provided for a trait in the model are valid for the shape of the trait).
  */
+@SmithyInternalApi
 public interface NodeValidatorPlugin {
     /**
      * Applies the plugin to the given shape, node value, and model.

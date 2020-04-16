@@ -22,11 +22,13 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.LengthTrait;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates the length trait on both list and set shapes or members that
  * target them.
  */
+@SmithyInternalApi
 public class CollectionLengthPlugin extends MemberAndShapeTraitPlugin<CollectionShape, ArrayNode, LengthTrait> {
     public CollectionLengthPlugin() {
         super(CollectionShape.class, ArrayNode.class, LengthTrait.class);

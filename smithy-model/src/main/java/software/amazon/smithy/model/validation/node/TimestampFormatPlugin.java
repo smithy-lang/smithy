@@ -26,12 +26,14 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates that timestamp shapes contain values that are compatible with their
  * timestampFormat traits or contain values that are numbers or an RFC 3339
  * date-time production.
  */
+@SmithyInternalApi
 public final class TimestampFormatPlugin implements NodeValidatorPlugin {
     private static final DateTimeFormatter HTTP_DATE = DateTimeFormatter.RFC_1123_DATE_TIME;
     private static final DateTimeFormatter DATE_TIME_Z = DateTimeFormatter.ISO_INSTANT;
