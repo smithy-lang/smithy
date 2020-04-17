@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.neighbor;
 
 import java.util.Optional;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
@@ -25,6 +26,7 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.TraitDefinition;
 
 /**
  * Defines the relationship types between neighboring shapes.
@@ -187,7 +189,19 @@ public enum RelationshipType {
      * shapes. They reference the {@link MemberShape member} shapes that define
      * the members of the union.
      */
-    UNION_MEMBER("member", RelationshipDirection.DIRECTED);
+    UNION_MEMBER("member", RelationshipDirection.DIRECTED),
+
+    /**
+     * Relationships that exist between a shape and traits bound to the
+     * shape. They reference shapes marked with the {@link TraitDefinition}
+     * trait.
+     *
+     * <p>This kind of relationship is not returned by default from a
+     * {@link NeighborProvider}. You must explicitly wrap a {@link NeighborProvider}
+     * with {@link NeighborProvider#withTraitRelationships(Model, NeighborProvider)}
+     * in order to yield trait relationships.
+     */
+    TRAIT("trait", RelationshipDirection.DIRECTED);
 
     private String selectorLabel;
     private RelationshipDirection direction;

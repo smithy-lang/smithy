@@ -110,7 +110,7 @@ public final class PathFinder {
         }
 
         // Find all shapes that match the selector then work backwards from there.
-        Set<Shape> candidates = targetSelector.select(neighborProvider, model);
+        Set<Shape> candidates = targetSelector.select(model, neighborProvider);
         if (candidates.isEmpty()) {
             LOGGER.info(() -> "No shapes matched the PathFinder selector of `" + targetSelector + "`");
             return ListUtils.of();

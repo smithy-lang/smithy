@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.neighbor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,36 @@ public interface NeighborProvider {
      */
     static NeighborProvider precomputed(Model model) {
         return precomputed(model, of(model));
+    }
+
+    /**
+     * Creates a NeighborProvider that includes {@link RelationshipType#TRAIT}
+     * relationships.
+     *
+     * @param model Model to use to look up trait shapes.
+     * @param neighborProvider Provider to wrap.
+     * @return Returns the created neighbor provider.
+     */
+    static NeighborProvider withTraitRelationships(Model model, NeighborProvider neighborProvider) {
+        return shape -> {
+            List<Relationship> relationships = neighborProvider.getNeighbors(shape);
+
+            // Don't copy the array unless the shape has traits.
+            if (shape.getAllTraits().isEmpty()) {
+                return relationships;
+            }
+
+            // The delegate might have returned an immutable list, so copy first.
+            relationships = new ArrayList<>(relationships);
+            for (ShapeId trait : shape.getAllTraits().keySet()) {
+                Relationship traitRel = model.getShape(trait)
+                        .map(target -> Relationship.create(shape, RelationshipType.TRAIT, target))
+                        .orElseGet(() -> Relationship.createInvalid(shape, RelationshipType.TRAIT, trait));
+                relationships.add(traitRel);
+            }
+
+            return relationships;
+        };
     }
 
     /**

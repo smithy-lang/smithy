@@ -78,6 +78,6 @@ public final class TraitTargetValidator extends AbstractValidator {
             Model model,
             NeighborProvider neighborProvider
     ) {
-        return check.selector.select(neighborProvider, model).contains(check.shape);
+        return check.selector.select(model, neighborProvider).contains(check.shape);
     }
 }

@@ -17,6 +17,7 @@ package software.amazon.smithy.model.selector;
 
 import java.util.List;
 import java.util.Set;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.SetUtils;
@@ -40,9 +41,9 @@ final class AndSelector implements Selector {
     }
 
     @Override
-    public Set<Shape> select(NeighborProvider neighborProvider, Set<Shape> shapes) {
+    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
         for (Selector selector : selectors) {
-            shapes = selector.select(neighborProvider, shapes);
+            shapes = selector.select(model, neighborProvider, shapes);
             if (shapes.isEmpty()) {
                 return SetUtils.of();
             }

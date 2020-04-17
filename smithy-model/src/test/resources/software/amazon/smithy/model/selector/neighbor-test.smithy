@@ -18,3 +18,23 @@ structure Output {
 structure Error {
   foo: smithy.api#String,
 }
+
+@trait
+@deprecated
+structure myTrait {}
+
+@myTrait
+string MyString
+
+@trait(selector: "service")
+@protocolDefinition
+structure myProtocol {}
+
+@myProtocol
+service MyService1 {
+    version: "2020-01-01"
+}
+
+service MyService2 {
+    version: "2020-01-01"
+}

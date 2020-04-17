@@ -258,6 +258,17 @@ an identifier:
 
     resource:test(-[identifier]->)
 
+Relationships from a shape to the traits applied to the shape can be traversed
+using a directed relationship named ``trait``. It is atypical to traverse
+``trait`` relationships, therefore they are only yielded by selectors when
+explicitly requested using a ``trait`` directed relationship. The following
+selector finds all service shapes that have a protocol trait applied to it
+(that is, a trait that is marked with the :ref:`protocolDefinition-trait`):
+
+::
+
+    service:test(-[trait]-> [trait|protocolDefinition])
+
 
 .. _selector-relationships:
 
@@ -353,6 +364,12 @@ The table below lists the labeled directed relationships from each shape.
       -
       - The shape targeted by the member. Note that member targets have no
         relationship name.
+    * - ``*``
+      - trait
+      - Each trait applied to a shape. The neighbor shape is the shape that
+        defines the trait. This kind of relationship is only traversed if the
+        ``trait`` relationship is explicitly stated as a desired directed
+        neighbor relationship type.
 
 .. important::
 
@@ -496,6 +513,20 @@ the member does not have the ``length`` trait:
         :test(> string:not([trait|length]))
         :test(:not([trait|length]))
 
+The following selector finds all service shapes that do not have a
+protocol trait applied to it:
+
+::
+
+    service:not(:test(-[trait]-> [trait|protocolDefinition]))
+
+The following selector finds all traits that are not attached to any shape
+in the model:
+
+::
+
+    :not(* -[trait]-> *)[trait|trait]
+
 
 :of
 ~~~
@@ -576,6 +607,7 @@ Selectors are defined by the following ABNF_ grammar.
                          :/ "instanceOperation"
                          :/ "resource"
                          :/ "bound"
+                         :/ "trait"
     attr                   :"[" `attr_key` *(`comparator` `attr_value` ["i"]) "]"
     attr_key               :`id_attribute` / `trait_attribute` / `service_attribute`
     id_attribute           :"id" ["|" ("namespace" / "name" / "member")]

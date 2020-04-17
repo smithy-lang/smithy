@@ -28,26 +28,27 @@ import software.amazon.smithy.model.shapes.Shape;
 @FunctionalInterface
 public interface Selector {
     /** A selector that always returns all provided values. */
-    Selector IDENTITY = (visitor, shapes) -> shapes;
+    Selector IDENTITY = (model, visitor, shapes) -> shapes;
 
     /**
      * Matches a selector to a set of shapes.
      *
+     * @param model Model used to resolve shapes with.
      * @param neighborProvider Provides neighbors for shapes.
      * @param shapes Matching context of shapes.
      * @return Returns the matching shapes.
      */
-    Set<Shape> select(NeighborProvider neighborProvider, Set<Shape> shapes);
+    Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes);
 
     /**
      * Matches a selector against a model using a custom neighbor visitor.
      *
-     * @param neighborProvider Provides neighbors for shapes
      * @param model Model to query.
+     * @param neighborProvider Provides neighbors for shapes
      * @return Returns the matching shapes.
      */
-    default Set<Shape> select(NeighborProvider neighborProvider, Model model) {
-        return select(neighborProvider, model.toSet());
+    default Set<Shape> select(Model model, NeighborProvider neighborProvider) {
+        return select(model, neighborProvider, model.toSet());
     }
 
     /**
@@ -57,7 +58,7 @@ public interface Selector {
      * @return Returns the matching shapes.
      */
     default Set<Shape> select(Model model) {
-        return select(NeighborProvider.of(model), model);
+        return select(model, NeighborProvider.of(model));
     }
 
     /**
