@@ -1,5 +1,5 @@
 [ERROR] ns.foo#Operation2: Input parameters provided for operation with no input structure members: `Testing 3` | ExamplesTrait
 [ERROR] ns.foo#Operation2: Output parameters provided for operation with no output structure members: `Testing 3` | ExamplesTrait
 [ERROR] ns.foo#Operation: Example input of `Testing 2`: Missing required structure member `foo` for `ns.foo#OperationInput` | ExamplesTrait
-[ERROR] ns.foo#Operation: Example output of `Testing 2`: Invalid structure member `additional` found for `ns.foo#OperationOutput` | ExamplesTrait
+[WARNING] ns.foo#Operation: Example output of `Testing 2`: Invalid structure member `additional` found for `ns.foo#OperationOutput` | ExamplesTrait
 [ERROR] ns.foo#Operation: Example output of `Testing 2`: Missing required structure member `bam` for `ns.foo#OperationOutput` | ExamplesTrait

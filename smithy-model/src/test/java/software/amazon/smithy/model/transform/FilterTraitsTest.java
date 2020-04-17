@@ -35,13 +35,13 @@ public class FilterTraitsTest {
         ShapeId aId = ShapeId.from("ns.foo#A");
         StringShape a = StringShape.builder()
                 .id(aId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .addTrait(DeprecatedTrait.builder().build())
                 .build();
         ShapeId bId = ShapeId.from("ns.foo#B");
         StringShape b = StringShape.builder()
                 .id(bId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .addTrait(DeprecatedTrait.builder().build())
                 .build();
         Model model = Model.builder().addShapes(a, b).build();
@@ -61,7 +61,7 @@ public class FilterTraitsTest {
         ShapeId aId = ShapeId.from("ns.foo#A");
         StringShape a = StringShape.builder()
                 .id(aId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .addTrait(new DocumentationTrait("docs", SourceLocation.NONE))
                 .addTrait(DeprecatedTrait.builder().build())
                 .build();

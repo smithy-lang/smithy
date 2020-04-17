@@ -26,7 +26,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -77,7 +76,7 @@ public class UnreferencedShapesTest {
 
     private Model createPrivateShapeModel(ShapeId id) {
         return Model.assembler()
-                .addShape(StringShape.builder().id(id).addTrait(new PrivateTrait(SourceLocation.NONE)).build())
+                .addShape(StringShape.builder().id(id).addTrait(new PrivateTrait()).build())
                 .assemble()
                 .unwrap();
     }

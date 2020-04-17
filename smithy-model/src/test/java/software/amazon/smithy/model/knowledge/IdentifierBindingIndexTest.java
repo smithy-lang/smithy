@@ -54,7 +54,7 @@ public class IdentifierBindingIndexTest {
                 .id("ns.foo#Input")
                 .addMember(MemberShape.builder()
                                    .id("ns.foo#Input$abc")
-                                   .addTrait(new RequiredTrait(SourceLocation.NONE))
+                                   .addTrait(new RequiredTrait())
                                    .target("ns.foo#Id").build())
                 .build();
         OperationShape operation = OperationShape.builder().id("ns.foo#Operation").input(input.getId()).build();
@@ -125,7 +125,7 @@ public class IdentifierBindingIndexTest {
                 .id("ns.foo#Input")
                 .addMember(MemberShape.builder()
                         .id("ns.foo#Input$def")
-                        .addTrait(new RequiredTrait(SourceLocation.NONE))
+                        .addTrait(new RequiredTrait())
                         .addTrait(new ResourceIdentifierTrait("abc", SourceLocation.NONE))
                         .target("smithy.api#String").build())
                 .build();

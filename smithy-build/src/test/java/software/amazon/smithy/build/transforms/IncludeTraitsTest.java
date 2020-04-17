@@ -64,7 +64,7 @@ public class IncludeTraitsTest {
     public void includesBuiltinTraits() {
         StringShape stringShape = StringShape.builder()
                 .id("ns.foo#baz")
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .addTrait(new DocumentationTrait("docs", SourceLocation.NONE))
                 .build();
         Model model = Model.assembler()

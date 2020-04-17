@@ -15,19 +15,20 @@
 
 package software.amazon.smithy.aws.traits;
 
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
 public final class DataPlaneTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.api#dataPlane");
 
-    public DataPlaneTrait(SourceLocation sourceLocation) {
-        super(ID, sourceLocation);
+    public DataPlaneTrait(ObjectNode node) {
+        super(ID, node);
     }
 
     public DataPlaneTrait() {
-        this(SourceLocation.NONE);
+        this(Node.objectNode());
     }
 
     public static final class Provider extends AnnotationTrait.Provider<DataPlaneTrait> {

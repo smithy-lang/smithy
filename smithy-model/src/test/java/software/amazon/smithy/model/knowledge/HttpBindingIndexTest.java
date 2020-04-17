@@ -148,7 +148,7 @@ public class HttpBindingIndexTest {
                 expectMember(model, "ns.foo#ServiceOperationExplicitBodyOutput$baz"),
                 HttpBinding.Location.PAYLOAD,
                 "baz",
-                new HttpPayloadTrait(SourceLocation.NONE))));
+                new HttpPayloadTrait())));
     }
 
     @Test
@@ -188,7 +188,7 @@ public class HttpBindingIndexTest {
                 .addMember(MemberShape.builder()
                                    .id("ns.foo#Input$bar")
                                    .target("ns.foo#String")
-                                   .addTrait(new HttpPayloadTrait(SourceLocation.NONE))
+                                   .addTrait(new HttpPayloadTrait())
                                    .build())
                 .addMember(MemberShape.builder().id("ns.foo#Input$baz").target("ns.foo#String").build())
                 .build();
@@ -213,7 +213,7 @@ public class HttpBindingIndexTest {
         Shape shape = MemberShape.builder()
                 .target("smithy.api#Timestamp")
                 .id("smithy.example#Baz$bar")
-                .addTrait(new HttpLabelTrait(SourceLocation.NONE))
+                .addTrait(new HttpLabelTrait())
                 .build();
 
         assertThat(HttpBindingIndex.hasHttpRequestBindings(shape), is(true));

@@ -274,7 +274,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                         String key = keyNode.getValue();
                         if (!members.containsKey(key)) {
                             events.add(event("Invalid structure member `" + key + "` found for `"
-                                             + shape.getId() + "`"));
+                                             + shape.getId() + "`", Severity.WARNING));
                         } else {
                             events.addAll(withNode(key, value).memberShape(members.get(key)));
                         }
@@ -369,9 +369,13 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     private ValidationEvent event(String message) {
+        return event(message, Severity.ERROR);
+    }
+
+    private ValidationEvent event(String message, Severity severity) {
         return ValidationEvent.builder()
                 .eventId(eventId)
-                .severity(Severity.ERROR)
+                .severity(severity)
                 .sourceLocation(value.getSourceLocation())
                 .shapeId(eventShapeId)
                 .message(context.isEmpty() ? message : context + ": " + message)

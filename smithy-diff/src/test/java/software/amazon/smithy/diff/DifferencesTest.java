@@ -85,7 +85,7 @@ public class DifferencesTest {
         Shape shape1 = StringShape.builder().id("foo.bar#Baz").build();
         Shape shape2 = StringShape.builder()
                 .id("foo.bar#Baz")
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         Model previous = Model.assembler().addShape(shape1).assemble().unwrap();
         Model current = Model.assembler().addShape(shape2).assemble().unwrap();

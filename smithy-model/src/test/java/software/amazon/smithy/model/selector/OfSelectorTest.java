@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -71,7 +70,7 @@ public class OfSelectorTest {
                 .build();
         Shape b = StructureShape.builder().id("foo.baz#B")
                 .addMember(bMember)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         MemberShape cMember = MemberShape.builder()
                 .id("foo.baz#C$member")
