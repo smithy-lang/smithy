@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -47,56 +48,68 @@ public final class CleanTraitDefinitions implements ModelTransformerPlugin {
         return model.shapes(StructureShape.class)
                 .flatMap(s -> Trait.flatMapStream(s, AuthDefinitionTrait.class))
                 .flatMap(pair -> {
-                    StructureShape subject = pair.getLeft();
                     AuthDefinitionTrait authDefTrait = pair.getRight();
                     List<ShapeId> traits = authDefTrait.getTraits();
-                    // Build new set of traits for AuthDefinitionTrait, excluding any that have been removed.
-                    List<ShapeId> newTraits = traits.stream()
-                            .filter(trait -> !removedShapeIds.contains(trait))
-                            .collect(Collectors.toList());
+                    List<ShapeId> newTraits = excludeTraitsInSet(traits, removedShapeIds);
 
                     // Return early if re-built list of traits is the same as existing list.
                     if (traits.equals(newTraits)) {
                         return Stream.empty();
                     }
 
-                    // Rebuild AuthDefinitionTrait with new list of traits.
-                    AuthDefinitionTrait.Builder traitBuilder = AuthDefinitionTrait.builder();
-                    traitBuilder.sourceLocation(authDefTrait.getSourceLocation());
-                    newTraits.forEach(traitBuilder::addTrait);
-
-                    // Return rebuilt shape.
-                    return Stream.of(subject.toBuilder().addTrait(traitBuilder.build()).build());
+                    return rebuildShapeWithAuthDef(pair.getLeft(), authDefTrait.getSourceLocation(), newTraits);
                 })
                 .collect(Collectors.toSet());
+    }
+
+    private Stream<Shape> rebuildShapeWithAuthDef(
+            StructureShape shape,
+            SourceLocation location,
+            List<ShapeId> traits
+    ) {
+        AuthDefinitionTrait.Builder traitBuilder = AuthDefinitionTrait.builder();
+        traitBuilder.sourceLocation(location);
+        traits.forEach(traitBuilder::addTrait);
+
+        return Stream.of(shape.toBuilder().addTrait(traitBuilder.build()).build());
     }
 
     private Set<Shape> getProtocolDefShapesToReplace(Model model, Set<ShapeId> removedShapeIds) {
         return model.shapes(StructureShape.class)
                 .flatMap(s -> Trait.flatMapStream(s, ProtocolDefinitionTrait.class))
                 .flatMap(pair -> {
-                    StructureShape subject = pair.getLeft();
                     ProtocolDefinitionTrait protocolDefinitionTrait = pair.getRight();
-
                     List<ShapeId> traits = protocolDefinitionTrait.getTraits();
-                    // Build new set of traits for ProtocolDefinitionTrait, excluding any that have been removed.
-                    List<ShapeId> newTraits = traits.stream()
-                            .filter(trait -> !removedShapeIds.contains(trait))
-                            .collect(Collectors.toList());
+                    List<ShapeId> newTraits = excludeTraitsInSet(traits, removedShapeIds);
 
                     // Return early if re-built list of traits is the same as existing list.
                     if (traits.equals(newTraits)) {
                         return Stream.empty();
                     }
 
-                    // Rebuild AuthDefinitionTrait with new list of traits.
-                    ProtocolDefinitionTrait.Builder traitBuilder = ProtocolDefinitionTrait.builder();
-                    traitBuilder.sourceLocation(protocolDefinitionTrait.getSourceLocation());
-                    newTraits.forEach(traitBuilder::addTrait);
-
-                    // Return rebuilt shape.
-                    return Stream.of(subject.toBuilder().addTrait(traitBuilder.build()).build());
+                    return rebuildShapeWithProtocolDef(
+                            pair.getLeft(),
+                            protocolDefinitionTrait.getSourceLocation(),
+                            newTraits);
                 })
                 .collect(Collectors.toSet());
+    }
+
+    private Stream<Shape> rebuildShapeWithProtocolDef(
+            StructureShape shape,
+            SourceLocation location,
+            List<ShapeId> traits
+    ) {
+        ProtocolDefinitionTrait.Builder traitBuilder = ProtocolDefinitionTrait.builder();
+        traitBuilder.sourceLocation(location);
+        traits.forEach(traitBuilder::addTrait);
+
+        return Stream.of(shape.toBuilder().addTrait(traitBuilder.build()).build());
+    }
+
+    private List<ShapeId> excludeTraitsInSet(List<ShapeId> traits, Set<ShapeId> shapeIds) {
+        return traits.stream()
+                .filter(trait -> !shapeIds.contains(trait))
+                .collect(Collectors.toList());
     }
 }
