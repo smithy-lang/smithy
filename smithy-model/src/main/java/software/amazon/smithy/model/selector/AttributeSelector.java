@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -75,7 +76,7 @@ final class AttributeSelector implements Selector {
     }
 
     @Override
-    public Set<Shape> select(NeighborProvider neighborProvider, Set<Shape> shapes) {
+    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
         return shapes.stream()
                 .filter(shape -> matchesAttribute(key.apply(shape)))
                 .collect(Collectors.toSet());

@@ -82,4 +82,24 @@ public class NeighborSelectorTest {
 
         assertThat(result, empty());
     }
+
+    @Test
+    public void canQueryTraitRelationships() {
+        Set<String> result1 = selectIds("string -[trait]-> [trait|deprecated]");
+
+        assertThat(result1, contains("smithy.example#myTrait"));
+
+        Set<String> result2 = selectIds(":test(string -[trait]-> [trait|deprecated])");
+
+        assertThat(result2, contains("smithy.example#MyString"));
+    }
+
+    @Test
+    public void canQueryTraitRelationshipsForProtocolServices() {
+        Set<String> result1 = selectIds("service:test(-[trait]-> [trait|protocolDefinition])");
+        Set<String> result2 = selectIds("service:not(:test(-[trait]-> [trait|protocolDefinition]))");
+
+        assertThat(result1, contains("smithy.example#MyService1"));
+        assertThat(result2, contains("smithy.example#MyService2"));
+    }
 }

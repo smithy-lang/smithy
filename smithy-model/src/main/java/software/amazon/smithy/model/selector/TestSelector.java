@@ -18,6 +18,7 @@ package software.amazon.smithy.model.selector;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.SetUtils;
@@ -36,12 +37,12 @@ final class TestSelector implements Selector {
     }
 
     @Override
-    public Set<Shape> select(NeighborProvider neighborProvider, Set<Shape> shapes) {
+    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
         Set<Shape> result = new HashSet<>();
         for (Shape shape : shapes) {
             Set<Shape> attempt = SetUtils.of(shape);
             for (Selector predicate : selectors) {
-                if (predicate.select(neighborProvider, attempt).size() > 0) {
+                if (predicate.select(model, neighborProvider, attempt).size() > 0) {
                     result.add(shape);
                     break;
                 }

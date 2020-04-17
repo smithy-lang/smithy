@@ -18,6 +18,7 @@ package software.amazon.smithy.model.selector;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -32,10 +33,10 @@ final class NotSelector implements Selector {
     }
 
     @Override
-    public Set<Shape> select(NeighborProvider neighborProvider, Set<Shape> shapes) {
+    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
         Set<Shape> result = new HashSet<>(shapes);
         for (Selector predicate : selectors) {
-            result.removeAll(predicate.select(neighborProvider, shapes));
+            result.removeAll(predicate.select(model, neighborProvider, shapes));
         }
         return result;
     }

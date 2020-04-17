@@ -15,47 +15,62 @@
 
 package software.amazon.smithy.model.selector;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Traverses into the neighbors of shapes with an optional list of
  * neighbor rel filters.
  */
 final class NeighborSelector implements Selector {
+
     private final List<String> relTypes;
+    private final boolean includeTraits;
 
     NeighborSelector(List<String> relTypes) {
         this.relTypes = relTypes;
+        includeTraits = relTypes.contains("trait");
     }
 
     @Override
-    public Set<Shape> select(NeighborProvider neighborProvider, Set<Shape> shapes) {
-        return shapes.stream()
-                .flatMap(shape -> neighborProvider.getNeighbors(shape).stream().flatMap(this::mapNeighbor))
-                .collect(Collectors.toSet());
-    }
+    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
+        NeighborProvider resolvedProvider = createProvider(model, neighborProvider);
 
-    private Stream<Shape> mapNeighbor(Relationship rel) {
-        return OptionalUtils.stream(rel.getNeighborShape()
-                .flatMap(target -> createNeighbor(rel, target)));
-    }
-
-    private Optional<Shape> createNeighbor(Relationship rel, Shape target) {
-        if (rel.getRelationshipType() != RelationshipType.MEMBER_CONTAINER
-                && (relTypes.isEmpty() || relTypes.contains(getRelType(rel)))) {
-            return Optional.of(target);
+        Set<Shape> result = new HashSet<>();
+        for (Shape shape : shapes) {
+            for (Relationship rel : resolvedProvider.getNeighbors(shape)) {
+                if (rel.getNeighborShape().isPresent()) {
+                    Shape target = createNeighbor(rel, rel.getNeighborShape().get());
+                    if (target != null) {
+                        result.add(target);
+                    }
+                }
+            }
         }
 
-        return Optional.empty();
+        return result;
+    }
+
+    // Enable trait relationships only if explicitly asked for in a selector.
+    private NeighborProvider createProvider(Model model, NeighborProvider neighborProvider) {
+        return includeTraits
+               ? NeighborProvider.withTraitRelationships(model, neighborProvider)
+               : neighborProvider;
+    }
+
+    private Shape createNeighbor(Relationship rel, Shape target) {
+        if (rel.getRelationshipType() != RelationshipType.MEMBER_CONTAINER
+                && (relTypes.isEmpty() || relTypes.contains(getRelType(rel)))) {
+            return target;
+        }
+
+        return null;
     }
 
     private static String getRelType(Relationship rel) {

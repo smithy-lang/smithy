@@ -17,6 +17,7 @@ package software.amazon.smithy.model.selector;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -29,7 +30,7 @@ final class ShapeTypeSelector implements Selector {
     }
 
     @Override
-    public Set<Shape> select(NeighborProvider neighborProvider, Set<Shape> shapes) {
+    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
         return shapes.stream()
                 .filter(shape -> shape.getType() == shapeType)
                 .collect(Collectors.toSet());
