@@ -199,7 +199,13 @@ defined at the beginning of a Smithy file before any other statements.
 .. productionlist:: smithy
     control_statement       :"$" `text` ":" `node_value`
 
-Implementations SHOULD ignore unknown control statements.
+Implementations MUST ignore unknown control statements.
+
+.. note::
+
+    Control statements differ from :ref:`metadata <metadata>` because
+    control statements apply metadata to a single file, whereas metadata
+    is applied to the entire model.
 
 
 .. _smithy-version:
