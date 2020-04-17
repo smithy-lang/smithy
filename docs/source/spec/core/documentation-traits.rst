@@ -341,13 +341,13 @@ tags trait are arbitrary and up to the model author.
 ---------------
 
 Summary
-    Defines a proper name for a service or operation shape. This title can be
+    Defines a proper name for a service or resource shape. This title can be
     used in automatically generated documentation and other contexts to
-    provide a user friendly name for services and operations.
+    provide a user friendly name for services and resources.
 Trait selector
-    ``:test(service, operation)``
+    ``:test(service, resource)``
 
-    *Any service or operation*
+    *Any service or resource*
 Value type
     ``string``
 
