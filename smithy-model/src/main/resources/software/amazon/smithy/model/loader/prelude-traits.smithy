@@ -335,7 +335,7 @@ list tags {
     member: String
 }
 
-/// Defines a proper name for a service or resource shape.
+/// Defines a proper name for a service or operation shape.
 ///
 /// This title can be used in automatically generated documentation
 /// and other contexts to provide a user friendly name for services
