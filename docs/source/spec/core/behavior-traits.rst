@@ -77,8 +77,8 @@ Conflicts with
     .. code-tab:: smithy
 
         @idempotent
-        operation GetSomething {
-            input: DeleteSomething,
+        operation DeleteSomething {
+            input: DeleteSomethingInput,
             output: DeleteSomethingOutput
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,26 +15,27 @@
 
 package software.amazon.smithy.aws.traits.protocols;
 
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.BooleanTrait;
+import software.amazon.smithy.model.traits.AnnotationTrait;
 
 /**
  * Indicates that the operation requires Content-MD5 header in its
  * HTTP request.
  */
-public final class HttpContentMd5Trait extends BooleanTrait {
+public final class HttpContentMd5Trait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.protocols#httpContentMd5");
 
-    public HttpContentMd5Trait(SourceLocation sourceLocation) {
-        super(ID, sourceLocation);
+    public HttpContentMd5Trait(ObjectNode node) {
+        super(ID, node);
     }
 
     public HttpContentMd5Trait() {
-        this(SourceLocation.NONE);
+        this(Node.objectNode());
     }
 
-    public static final class Provider extends BooleanTrait.Provider<HttpContentMd5Trait> {
+    public static final class Provider extends AnnotationTrait.Provider<HttpContentMd5Trait> {
         public Provider() {
             super(ID, HttpContentMd5Trait::new);
         }

@@ -56,4 +56,31 @@ See
             }
         }
 
+
+.. _aws.protocols#httpContentMd5-trait:
+
+--------------------------------------
+``aws.protocols#httpContentMd5`` trait
+--------------------------------------
+
+Summary
+    Indicates that an operation requires the Content-MD5 header set in its HTTP
+    request.
+Trait selector
+    ``operation``
+Value type
+    Annotation trait.
+See
+    :rfc:`1864`
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @httpContentMd5
+        operation PutSomething {
+            input: PutSomethingInput,
+            output: PutSomethingOutput
+        }
+
 *TODO: Add specifications, protocol examples, etc.*
