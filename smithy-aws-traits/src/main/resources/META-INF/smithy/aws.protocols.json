@@ -172,7 +172,7 @@
                 "smithy.api#trait": {
                     "selector": "operation"
                 },
-                "smithy.api#documentation": "Defines if an operation requires Content-MD5 header set in its HTTP request"
+                "smithy.api#documentation": "Defines if an operation requires the Content-MD5 header set in its HTTP request"
             }
         }
     }
