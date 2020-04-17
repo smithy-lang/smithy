@@ -335,12 +335,12 @@ list tags {
     member: String
 }
 
-/// Defines a proper name for a service or operation shape.
+/// Defines a proper name for a service or resource shape.
 ///
 /// This title can be used in automatically generated documentation
 /// and other contexts to provide a user friendly name for services
 /// and resources.
-@trait(selector: ":test(service, operation)")
+@trait(selector: ":test(service, resource)")
 string title
 
 /// Constrains the acceptable values of a string to a fixed set
