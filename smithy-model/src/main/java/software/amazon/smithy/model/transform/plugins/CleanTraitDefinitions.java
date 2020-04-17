@@ -56,6 +56,8 @@ public final class CleanTraitDefinitions implements ModelTransformerPlugin {
                         return Stream.empty();
                     }
 
+                    // If the list of traits on the AuthDefinitionTrait has changed due to a trait shape being
+                    // removed from the model, return a new version of the shape with a new version of the trait.
                     return Stream.of(pair.getLeft().toBuilder().addTrait(authDefTrait.toBuilder()
                             .traits(newTraits).build()).build());
                 })
@@ -75,6 +77,9 @@ public final class CleanTraitDefinitions implements ModelTransformerPlugin {
                         return Stream.empty();
                     }
 
+                    // If the list of traits on the ProtocolDefinitionTrait has changed due to a trait shape
+                    // being removed from the model, return a new version of the shape with a new version of
+                    // the trait.
                     return Stream.of(pair.getLeft().toBuilder().addTrait(protocolDefinitionTrait.toBuilder()
                             .traits(newTraits).build()).build());
                 })
