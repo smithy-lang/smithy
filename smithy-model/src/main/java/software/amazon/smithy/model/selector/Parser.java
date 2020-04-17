@@ -49,7 +49,7 @@ final class Parser {
     private static final List<String> FUNCTION_ARG_NEXT_TOKEN = ListUtils.of(")", ",");
     private static final List<String> MULTI_EDGE_NEXT_ARG_TOKEN = ListUtils.of(",", "]->");
     private static final List<String> EXPRESSION_TOKENS = new ArrayList<>(Arrays.asList(
-            ":", "[", ">", "-[", "*", "number", "simpleType", "collection"));
+            ":", "[", ">", "-[", "*", "~>", "number", "simpleType", "collection"));
 
     static {
         // Adds selector relationship labels.
@@ -142,6 +142,7 @@ final class Parser {
             case "[": return parseAttribute();
             case ":": return parseFunction();
             case "*": return Selector.IDENTITY;
+            case "~>": return new RecursiveNeighborSelector();
             case "number": return new ShapeTypeCategorySelector(NumberShape.class);
             case "simpleType": return new ShapeTypeCategorySelector(SimpleShape.class);
             case "collection": return new ShapeTypeCategorySelector(CollectionShape.class);

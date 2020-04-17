@@ -55,7 +55,7 @@ Shapes can be matched by type using the following tokens:
 
 The following selector matches all string shapes in a model:
 
-::
+.. code-block:: none
 
     string
 
@@ -96,7 +96,7 @@ We can match shapes based on traits using an *attribute selector*. The
 following selector finds all structure shapes with the :ref:`error-trait`
 trait:
 
-::
+.. code-block:: none
 
     structure[trait|error]
 
@@ -106,7 +106,7 @@ and that that specific trait is ``time``.
 
 We can match string shapes that have a specific trait value:
 
-::
+.. code-block:: none
 
     structure[trait|error=client]
 
@@ -114,13 +114,13 @@ Matching on trait values only works for traits that have a scalar value
 (e.g., strings, numbers, and booleans). We can also match case-insensitvely
 on the value by appending " i" before the closing bracket:
 
-::
+.. code-block:: none
 
     structure[trait|error=CLIENT i]
 
 Fully-qualified trait names are also supported:
 
-::
+.. code-block:: none
 
     string[trait|smithy.example#customTrait=foo]
 
@@ -132,7 +132,7 @@ Attribute selectors can be used to match the :ref:`shape ID <shape-id>`. The
 following example matches a single resource shape with an ID of
 ``smithy.example#Foo``:
 
-::
+.. code-block:: none
 
     resource[id='smithy.example#Foo']
 
@@ -143,28 +143,28 @@ Smithy provides several attributes in the ``id`` namespace to make matching
 on a shape ID easier. The following example finds all shapes that are in the
 "smithy.example" namespace:
 
-::
+.. code-block:: none
 
     resource[id|namespace=smithy.example]
 
 Though not as clear, matching shapes in a specific namespace can also be
 achieved using the ``^=`` comparator against ``id``:
 
-::
+.. code-block:: none
 
     resource[id^=smithy.example#]
 
 The following example matches all member shapes that have a member name of
 "key":
 
-::
+.. code-block:: none
 
     resource[id|member=key]
 
 Though not as clear, matching members with a member name of "key" can also be
 achieved using the ``$=`` comparator against ``id``:
 
-::
+.. code-block:: none
 
     resource[id$="$key"]
 
@@ -210,21 +210,21 @@ The *current* shape evaluated by a selector is changed using a neighbor token,
 shape. For example, the following selector returns the key and value members of
 every map:
 
-::
+.. code-block:: none
 
     map > member
 
 We can return just the key members or just the value members by adding an
 attribute selector on the ``id|member``:
 
-::
+.. code-block:: none
 
     map > member[id|member=key]
 
 Neighbors can be chained to traverse further into a shape. The following
 selector returns strings that are targeted by list members:
 
-::
+.. code-block:: none
 
     list > member > string
 
@@ -237,7 +237,7 @@ directed edge traversal is necessary to match the appropriate shapes. For
 example, the following selector returns the "bound", "input", "output",
 and "errors" relationships of each operation:
 
-::
+.. code-block:: none
 
     operation > *
 
@@ -246,7 +246,7 @@ by a comma separated list of :ref:`relationships <selector-relationships>`,
 followed by ``]->``. The following selector matches all structure
 shapes referenced as operation input or output.
 
-::
+.. code-block:: none
 
     operation -[input, output]->
 
@@ -254,7 +254,7 @@ The ``:test`` function can be used to check if a shape has a named
 relationship. The following selector matches all resource shapes that define
 an identifier:
 
-::
+.. code-block:: none
 
     resource:test(-[identifier]->)
 
@@ -265,9 +265,31 @@ explicitly requested using a ``trait`` directed relationship. The following
 selector finds all service shapes that have a protocol trait applied to it
 (that is, a trait that is marked with the :ref:`protocolDefinition-trait`):
 
-::
+.. code-block:: none
 
     service:test(-[trait]-> [trait|protocolDefinition])
+
+
+Recursive neighbors
+~~~~~~~~~~~~~~~~~~~
+
+The ``~>`` neighbor selector finds all shapes that are recursively connected in
+the closure of another shape.
+
+The following selector finds all operations that are connected to a service
+shape:
+
+.. code-block:: none
+
+    service ~> operation
+
+The following selector finds all operations that do not have the :ref:`http-trait`
+that are in the closure of a service marked with the ``aws.protocols#restJson``
+trait:
+
+.. code-block:: none
+
+    service[trait|aws.protocols#restJson1] ~> operation:not([trait|http])
 
 
 .. _selector-relationships:
@@ -394,34 +416,34 @@ comma (",").
 
 The following selector matches all string and number shapes:
 
-::
+.. code-block:: none
 
     :each(string, number)
 
 Each can be used inside of neighbors too. The following selector
 matches all members that target a string or number:
 
-::
+.. code-block:: none
 
     member > :each(string, number)
 
 The following ``:each`` selector matches all shapes that are either
 targeted by a list member or targeted by a map member:
 
-::
+.. code-block:: none
 
     :each(list > member > *, map > member > *)
 
 The following selector matches all list and map shapes that target strings:
 
-::
+.. code-block:: none
 
     :each(:test(list > member > string), :test(map > member > string))
 
 Because none of the selectors in the ``:each`` function are intended to
 change the current node, this can be reduced to the following selector:
 
-::
+.. code-block:: none
 
     :test(:each(list > member > string, map > member > string))
 
@@ -435,7 +457,7 @@ shape.
 
 The following selector is used to match all string and number shapes:
 
-::
+.. code-block:: none
 
     :test(string, number)
 
@@ -443,7 +465,7 @@ The ``:test`` function is much more interesting when used to test if a shape
 contains a neighbor in addition to other filtering. The following example
 matches all shapes that are bound to a resource and have no documentation:
 
-::
+.. code-block:: none
 
     :test(-[bound, resource]->) :not([trait|documentation])
 
@@ -457,20 +479,20 @@ filtered out from the result set.
 
 The following selector matches every shape except strings:
 
-::
+.. code-block:: none
 
     :not(string)
 
 The following selector matches every shape except strings and floats:
 
-::
+.. code-block:: none
 
     :not(string, float)
 
 The following example matches all shapes except for strings that are targeted
 by a list member:
 
-::
+.. code-block:: none
 
     :not(list > member > string)
 
@@ -482,7 +504,7 @@ The ``:test`` function can be used to test a shape, potentially traversing its
 neighbors, without changing the return value of the test. The following
 example does not match any list shape that has a string member:
 
-::
+.. code-block:: none
 
     :not(:test(list > member > string))
 
@@ -490,7 +512,7 @@ Successive ``:not`` functions can be used to filter shapes using several
 predicates. The following example does not match strings or shapes with the
 :ref:`sensitive-trait` trait:
 
-::
+.. code-block:: none
 
     :not(string):not([trait|sensitive])
 
@@ -499,7 +521,7 @@ match all of the provided predicates. The following selector finds all
 string shapes that do not have both the ``length`` and ``pattern``
 traits:
 
-::
+.. code-block:: none
 
     string:not([trait|length], [trait|pattern])
 
@@ -507,7 +529,7 @@ The following example matches all structure members that target strings in
 which the member does not have the ``length`` trait and the shape targeted by
 the member does not have the ``length`` trait:
 
-::
+.. code-block:: none
 
     structure > member
         :test(> string:not([trait|length]))
@@ -516,14 +538,14 @@ the member does not have the ``length`` trait:
 The following selector finds all service shapes that do not have a
 protocol trait applied to it:
 
-::
+.. code-block:: none
 
     service:not(:test(-[trait]-> [trait|protocolDefinition]))
 
 The following selector finds all traits that are not attached to any shape
 in the model:
 
-::
+.. code-block:: none
 
     :not(* -[trait]-> *)[trait|trait]
 
@@ -539,13 +561,13 @@ the member is matched.
 
 The following example matches all structure members:
 
-::
+.. code-block:: none
 
     member:of(structure)
 
 The following example matches all structure and list members:
 
-::
+.. code-block:: none
 
     member:of(structure, list)
 
@@ -590,8 +612,9 @@ Selectors are defined by the following ABNF_ grammar.
                          :/ "number"
                          :/ "simpleType"
                          :/ "collection"
-    neighbors            :">" / `directed_neighbor`
+    neighbors            :">" / `directed_neighbor` / `recursive_neighbor`
     directed_neighbor    :"-[" `relationship_type` *("," `relationship_type`) "]->"
+    recursive_neighbor   :"~>"
     relationship_type    :"identifier"
                          :/ "create"
                          :/ "read"

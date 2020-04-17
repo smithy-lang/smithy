@@ -1,24 +1,5 @@
 namespace smithy.example
 
-operation Operation {
-    input: Input,
-    output: Output,
-    errors: [Error]
-}
-
-structure Input {
-  foo: smithy.api#String,
-}
-
-structure Output {
-  foo: smithy.api#String,
-}
-
-@error("client")
-structure Error {
-  foo: smithy.api#String,
-}
-
 @trait
 @deprecated
 structure myTrait {}
@@ -36,5 +17,25 @@ service MyService1 {
 }
 
 service MyService2 {
-    version: "2020-01-01"
+    version: "2020-01-01",
+    operations: [Operation],
+}
+
+operation Operation {
+    input: Input,
+    output: Output,
+    errors: [Error]
+}
+
+structure Input {
+  foo: smithy.api#String,
+}
+
+structure Output {
+  foo: smithy.api#String,
+}
+
+@error("client")
+structure Error {
+  foo: smithy.api#String,
 }
