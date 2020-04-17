@@ -22,7 +22,6 @@ import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
@@ -42,7 +41,7 @@ public class FilterShapesTest {
         ShapeId aId = ShapeId.from("ns.foo#A");
         StringShape a = StringShape.builder()
                 .id(aId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         ShapeId bId = ShapeId.from("ns.foo#B");
         StringShape b = StringShape.builder().id(bId).build();
@@ -128,14 +127,14 @@ public class FilterShapesTest {
         StringShape shape1 = StringShape.builder()
                 .id(shapeId1)
                 .addTrait(new DynamicTrait(ShapeId.from("foo.baz#foo"), Node.from(true)))
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         ShapeId shapeId2 = ShapeId.from("ns.foo#id2");
         StringShape shape2 = StringShape.builder()
                 .id(shapeId2)
                 .addTrait(new DynamicTrait(ShapeId.from("ns.foo#baz"), Node.from(true)))
                 .addTrait(new DynamicTrait(ShapeId.from("ns.foo#bar"), Node.from(true)))
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         Model model = Model.builder()
                 .addShapes(shape1, shape2, bazTrait, barTrait)

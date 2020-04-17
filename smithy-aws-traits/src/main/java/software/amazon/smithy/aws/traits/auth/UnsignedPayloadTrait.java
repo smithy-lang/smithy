@@ -15,8 +15,8 @@
 
 package software.amazon.smithy.aws.traits.auth;
 
-import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
@@ -26,12 +26,12 @@ import software.amazon.smithy.model.traits.AnnotationTrait;
 public final class UnsignedPayloadTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.auth#unsignedPayload");
 
-    public UnsignedPayloadTrait(FromSourceLocation sourceLocation) {
-        super(ID, sourceLocation.getSourceLocation());
+    public UnsignedPayloadTrait(ObjectNode node) {
+        super(ID, node);
     }
 
     public UnsignedPayloadTrait() {
-        this(SourceLocation.NONE);
+        this(Node.objectNode());
     }
 
     public static final class Provider extends AnnotationTrait.Provider<UnsignedPayloadTrait> {

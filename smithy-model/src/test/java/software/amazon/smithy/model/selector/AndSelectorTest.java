@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
@@ -37,7 +36,7 @@ public class AndSelectorTest {
                 new ShapeTypeSelector(ShapeType.STRING),
                 new AttributeSelector(new TraitAttributeKey("sensitive"))));
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();
-        Shape b = StringShape.builder().id("foo.baz#Bam").addTrait(new SensitiveTrait(SourceLocation.NONE)).build();
+        Shape b = StringShape.builder().id("foo.baz#Bam").addTrait(new SensitiveTrait()).build();
         Model model = Model.builder().addShapes(a, b).build();
         Set<Shape> result = selector.select(model);
 
@@ -50,7 +49,7 @@ public class AndSelectorTest {
                 new ShapeTypeSelector(ShapeType.BIG_INTEGER),
                 new AttributeSelector(new TraitAttributeKey("sensitive"))));
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();
-        Shape b = StringShape.builder().id("foo.baz#Bam").addTrait(new SensitiveTrait(SourceLocation.NONE)).build();
+        Shape b = StringShape.builder().id("foo.baz#Bam").addTrait(new SensitiveTrait()).build();
         Model model = Model.builder().addShapes(a, b).build();
         Set<Shape> result = selector.select(model);
 

@@ -37,7 +37,7 @@ public class MapShapesTest {
         ShapeId shapeId = ShapeId.from("ns.foo#id1");
         StringShape shape = StringShape.builder()
                 .id(shapeId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         Model model = Model.builder().addShape(shape).build();
         ModelTransformer transformer = ModelTransformer.create();
@@ -63,7 +63,7 @@ public class MapShapesTest {
         ShapeId shapeId = ShapeId.from("ns.foo#id1");
         StringShape shape = StringShape.builder()
                 .id(shapeId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .addTrait(new DocumentationTrait("docs", SourceLocation.NONE))
                 .build();
         Model model = Model.builder().addShape(shape).build();

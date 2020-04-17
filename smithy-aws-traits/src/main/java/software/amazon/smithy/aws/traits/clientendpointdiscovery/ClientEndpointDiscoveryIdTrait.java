@@ -15,7 +15,8 @@
 
 package software.amazon.smithy.aws.traits.clientendpointdiscovery;
 
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
@@ -26,12 +27,12 @@ import software.amazon.smithy.model.traits.AnnotationTrait;
 public final class ClientEndpointDiscoveryIdTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.api#clientEndpointDiscoveryId");
 
-    public ClientEndpointDiscoveryIdTrait(SourceLocation sourceLocation) {
-        super(ID, sourceLocation);
+    public ClientEndpointDiscoveryIdTrait(ObjectNode node) {
+        super(ID, node);
     }
 
     public ClientEndpointDiscoveryIdTrait() {
-        this(SourceLocation.NONE);
+        this(Node.objectNode());
     }
 
     public static final class Provider extends AnnotationTrait.Provider<ClientEndpointDiscoveryIdTrait> {

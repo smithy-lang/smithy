@@ -15,7 +15,8 @@
 
 package software.amazon.smithy.model.traits;
 
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
@@ -25,12 +26,12 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public final class SensitiveTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#sensitive");
 
-    public SensitiveTrait(SourceLocation sourceLocation) {
-        super(ID, sourceLocation);
+    public SensitiveTrait(ObjectNode node) {
+        super(ID, node);
     }
 
     public SensitiveTrait() {
-        this(SourceLocation.NONE);
+        this(Node.objectNode());
     }
 
     public static final class Provider extends AnnotationTrait.Provider<SensitiveTrait> {
