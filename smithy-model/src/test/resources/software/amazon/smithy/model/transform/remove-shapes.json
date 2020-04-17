@@ -1,0 +1,47 @@
+{
+    "smithy": "1.0.0",
+    "shapes": {
+        "ns.foo#auth": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#authDefinition": {
+                    "traits": [
+                        "ns.foo#bar"
+                    ]
+                }
+            }
+        },
+        "ns.foo#bar": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "operation"
+                }
+            }
+        },
+        "ns.foo#protocol": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#protocolDefinition": {
+                    "traits": [
+                        "ns.foo#baz"
+                    ]
+                }
+            }
+        },
+        "ns.foo#baz": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "operation"
+                }
+            }
+        }
+    }
+}
