@@ -57,7 +57,7 @@ final class ValidatorDefinition {
         // If there's a selector, create a list of candidate shape IDs that can be emitted.
         if (selector != null) {
             NeighborProvider provider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
-            candidates = selector.select(provider, model).stream()
+            candidates = selector.select(model, provider).stream()
                     .map(Shape::getId)
                     .collect(Collectors.toSet());
         }

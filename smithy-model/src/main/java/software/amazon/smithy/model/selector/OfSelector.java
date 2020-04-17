@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
@@ -44,7 +45,7 @@ final class OfSelector implements Selector {
     }
 
     @Override
-    public Set<Shape> select(NeighborProvider neighborProvider, Set<Shape> shapes) {
+    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
         Set<Shape> result = new HashSet<>();
 
         // Filter out non-member shapes, and member shapes that cannot
@@ -55,7 +56,7 @@ final class OfSelector implements Selector {
                 // If the parent provides a result for the predicate, then the
                 // Shape is not filtered out.
                 boolean anyMatch = selectors.stream()
-                        .anyMatch(selector -> !selector.select(neighborProvider, parentSet).isEmpty());
+                        .anyMatch(selector -> !selector.select(model, neighborProvider, parentSet).isEmpty());
                 if (anyMatch) {
                     result.add(shape);
                 }
