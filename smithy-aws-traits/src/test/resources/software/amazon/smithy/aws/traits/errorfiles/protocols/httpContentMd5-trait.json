@@ -13,7 +13,7 @@
         "target": "ns.foo#Output"
       },
       "traits": {
-        "aws.protocols#httpContentMd5": true
+        "aws.protocols#httpContentMd5": {}
       }
     },
     "ns.foo#Input": {
@@ -49,7 +49,7 @@
         }
       },
       "traits": {
-        "aws.protocols#httpContentMd5": true
+        "aws.protocols#httpContentMd5": {}
       }
     },
     "ns.foo#InvalidOutput": {
@@ -60,7 +60,7 @@
         }
       },
       "traits": {
-        "aws.protocols#httpContentMd5": true
+        "aws.protocols#httpContentMd5": {}
       }
     },
     "ns.foo#InvalidError": {
@@ -72,7 +72,7 @@
       },
       "traits": {
         "smithy.api#error": "client",
-        "aws.protocols#httpContentMd5": true
+        "aws.protocols#httpContentMd5": {}
       }
     },
     "ns.foo#InvalidStructure": {
@@ -81,7 +81,7 @@
         "Body": {
           "target": "smithy.api#Blob",
           "traits": {
-            "aws.protocols#httpContentMd5": true
+            "aws.protocols#httpContentMd5": {}
           }
         }
       }
