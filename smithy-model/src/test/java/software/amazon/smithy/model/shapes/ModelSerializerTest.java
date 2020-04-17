@@ -91,7 +91,7 @@ public class ModelSerializerTest {
     public void canFilterTraits() {
         Shape shape = StringShape.builder()
                 .id("ns.foo#baz")
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .addTrait(new DocumentationTrait("docs", SourceLocation.NONE))
                 .build();
         Model model = Model.assembler().addShape(shape).assemble().unwrap();

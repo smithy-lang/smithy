@@ -1,0 +1,13 @@
+{
+    "smithy": "1.0.0",
+    "shapes": {
+        "ns.foo#Baz": {
+            "type": "string",
+            "traits": {
+                "smithy.api#sensitive": {
+                    "test": 123
+                }
+            }
+        }
+    }
+}

@@ -24,7 +24,6 @@ import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -125,7 +124,7 @@ public class RemoveShapesTest {
                 .build();
         OperationShape a = OperationShape.builder()
                 .id("ns.foo#A")
-                .addTrait(new ReadonlyTrait(SourceLocation.NONE))
+                .addTrait(new ReadonlyTrait())
                 .build();
         OperationShape b = OperationShape.builder().id("ns.foo#B").build();
         OperationShape c = OperationShape.builder().id("ns.foo#C").build();

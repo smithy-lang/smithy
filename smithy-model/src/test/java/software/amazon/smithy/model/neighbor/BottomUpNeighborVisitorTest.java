@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.empty;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
@@ -252,16 +251,16 @@ public class BottomUpNeighborVisitorTest {
         OperationShape createOperation = OperationShape.builder().id("ns.foo#Create").build();
         OperationShape getOperation = OperationShape.builder()
                 .id("ns.foo#Get")
-                .addTrait(new ReadonlyTrait(SourceLocation.NONE))
+                .addTrait(new ReadonlyTrait())
                 .build();
         OperationShape updateOperation = OperationShape.builder().id("ns.foo#Update").build();
         OperationShape deleteOperation = OperationShape.builder()
                 .id("ns.foo#Delete")
-                .addTrait(new IdempotentTrait(SourceLocation.NONE))
+                .addTrait(new IdempotentTrait())
                 .build();
         OperationShape listOperation = OperationShape.builder()
                 .id("ns.foo#List")
-                .addTrait(new ReadonlyTrait(SourceLocation.NONE))
+                .addTrait(new ReadonlyTrait())
                 .build();
         OperationShape namedOperation = OperationShape.builder()
                 .id("ns.foo#Named")

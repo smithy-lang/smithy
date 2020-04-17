@@ -37,7 +37,7 @@ public class ExcludeTraitsTest {
     public void removesTraitsInList() {
         StringShape stringShape = StringShape.builder()
                 .id("ns.foo#baz")
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .addTrait(new DocumentationTrait("docs", SourceLocation.NONE))
                 .build();
         Model model = Model.assembler()

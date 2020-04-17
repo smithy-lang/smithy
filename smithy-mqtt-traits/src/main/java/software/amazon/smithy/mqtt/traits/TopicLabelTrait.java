@@ -15,7 +15,8 @@
 
 package software.amazon.smithy.mqtt.traits;
 
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
@@ -25,8 +26,12 @@ import software.amazon.smithy.model.traits.AnnotationTrait;
 public final class TopicLabelTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.mqtt#topicLabel");
 
-    public TopicLabelTrait(SourceLocation sourceLocation) {
-        super(ID, sourceLocation);
+    public TopicLabelTrait(ObjectNode node) {
+        super(ID, node);
+    }
+
+    public TopicLabelTrait() {
+        this(Node.objectNode());
     }
 
     public static final class Provider extends AnnotationTrait.Provider<TopicLabelTrait> {

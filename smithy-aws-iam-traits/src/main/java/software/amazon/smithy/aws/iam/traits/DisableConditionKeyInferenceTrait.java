@@ -15,7 +15,8 @@
 
 package software.amazon.smithy.aws.iam.traits;
 
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
@@ -25,12 +26,12 @@ import software.amazon.smithy.model.traits.AnnotationTrait;
 public final class DisableConditionKeyInferenceTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("aws.iam#disableConditionKeyInference");
 
-    public DisableConditionKeyInferenceTrait(SourceLocation sourceLocation) {
-        super(ID, sourceLocation);
+    public DisableConditionKeyInferenceTrait(ObjectNode node) {
+        super(ID, node);
     }
 
     public DisableConditionKeyInferenceTrait() {
-        this(SourceLocation.NONE);
+        this(Node.objectNode());
     }
 
     public static final class Provider extends AnnotationTrait.Provider<DisableConditionKeyInferenceTrait> {

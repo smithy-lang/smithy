@@ -15,7 +15,8 @@
 
 package software.amazon.smithy.model.traits;
 
-import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
@@ -25,12 +26,12 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public final class HttpLabelTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#httpLabel");
 
-    public HttpLabelTrait(SourceLocation sourceLocation) {
-        super(ID, sourceLocation);
+    public HttpLabelTrait(ObjectNode node) {
+        super(ID, node);
     }
 
     public HttpLabelTrait() {
-        this(SourceLocation.NONE);
+        this(Node.objectNode());
     }
 
     public static final class Provider extends AnnotationTrait.Provider<HttpLabelTrait> {

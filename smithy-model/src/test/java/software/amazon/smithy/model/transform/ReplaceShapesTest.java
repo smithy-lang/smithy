@@ -66,7 +66,7 @@ public class ReplaceShapesTest {
         MemberShape newMember = MemberShape.builder()
                 .id(memberId)
                 .target(stringId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         ListShape newList = ListShape.builder().id(containerId).member(newMember).build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newList));
@@ -96,12 +96,12 @@ public class ReplaceShapesTest {
         MemberShape newKey = MemberShape.builder()
                 .id(keyId)
                 .target(stringId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         MemberShape newValue = MemberShape.builder()
                 .id(valueId)
                 .target(stringId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         MapShape newMap = MapShape.builder().id(containerId).key(newKey).value(newValue).build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMap));
@@ -129,7 +129,7 @@ public class ReplaceShapesTest {
         // Add a trait to a replaced member3.
         MemberShape newMember3 = MemberShape.builder()
                 .id("ns.foo#Shape$member3")
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .target("ns.foo#String")
                 .build();
         // Replace the union with a shape that has the new member3.
@@ -160,7 +160,7 @@ public class ReplaceShapesTest {
         MemberShape newMember = MemberShape.builder()
                 .id(memberId)
                 .target(stringId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMember));
 
@@ -185,13 +185,13 @@ public class ReplaceShapesTest {
         MemberShape newKeyMember = MemberShape.builder()
                 .id(keyMemberId)
                 .target(stringId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         Model resultWithNewKey = transformer.replaceShapes(model, Arrays.asList(newKeyMember));
         MemberShape newValueMember = MemberShape.builder()
                 .id(valueMemberId)
                 .target(stringId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         Model resultWithNewValue = transformer.replaceShapes(model, Arrays.asList(newValueMember));
 
@@ -216,7 +216,7 @@ public class ReplaceShapesTest {
         MemberShape memberA = MemberShape.builder()
                 .id(memberAId)
                 .target(stringId)
-                .addTrait(new RequiredTrait(SourceLocation.NONE))
+                .addTrait(new RequiredTrait())
                 .build();
         MemberShape memberB = MemberShape.builder().id(memberBId).target(stringId).build();
         StructureShape container = StructureShape.builder()
@@ -231,7 +231,7 @@ public class ReplaceShapesTest {
         MemberShape newMemberB = MemberShape.builder()
                 .id(memberBId)
                 .target(stringId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMemberB));
 
@@ -262,8 +262,8 @@ public class ReplaceShapesTest {
                 .addShapes(target, memberA, memberB, container)
                 .build();
         ModelTransformer transformer = ModelTransformer.create();
-        MemberShape newMemberA = memberA.toBuilder().addTrait(new RequiredTrait(SourceLocation.NONE)).build();
-        MemberShape newMemberB = memberB.toBuilder().addTrait(new RequiredTrait(SourceLocation.NONE)).build();
+        MemberShape newMemberA = memberA.toBuilder().addTrait(new RequiredTrait()).build();
+        MemberShape newMemberB = memberB.toBuilder().addTrait(new RequiredTrait()).build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMemberA, newMemberB));
 
         assertThat(result.getShape(memberAId).get().getTrait(RequiredTrait.class), Matchers.not(Optional.empty()));
@@ -301,7 +301,7 @@ public class ReplaceShapesTest {
         MemberShape newMemberB = MemberShape.builder()
                 .id(memberBId)
                 .target(stringId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMemberB));
 
@@ -334,7 +334,7 @@ public class ReplaceShapesTest {
         MemberShape newMember = MemberShape.builder()
                 .id(memberId)
                 .target(stringId)
-                .addTrait(new SensitiveTrait(SourceLocation.NONE))
+                .addTrait(new SensitiveTrait())
                 .build();
         Model result = transformer.replaceShapes(model, Arrays.asList(newMember, newContainer));
 
