@@ -260,7 +260,7 @@
                 "id": "invalid",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": ":each(:not(string) > list"
+                    "selector": ":is(:not(string) > list"
                 }
             },
             {
@@ -309,14 +309,14 @@
                 "id": "invalid",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": ":each"
+                    "selector": ":is"
                 }
             },
             {
                 "id": "invalid",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": ":each("
+                    "selector": ":is("
                 }
             },
             {
@@ -330,28 +330,28 @@
                 "id": "invalid",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": ":each(string"
+                    "selector": ":is(string"
                 }
             },
             {
                 "id": "invalid",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": ":each(string, "
+                    "selector": ":is(string, "
                 }
             },
             {
                 "id": "invalid",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": ":each(string, )"
+                    "selector": ":is(string, )"
                 }
             },
             {
                 "id": "invalid",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": ":each(string, :not())"
+                    "selector": ":is(string, :not())"
                 }
             },
             {
@@ -582,14 +582,14 @@
                 "id": "any",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": ":each(long, float, boolean)"
+                    "selector": ":is(long, float, boolean)"
                 }
             },
             {
                 "id": "not",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": ":not(:each([trait|error], simpleType))"
+                    "selector": ":not(:is([trait|error], simpleType))"
                 }
             },
             {
@@ -624,7 +624,7 @@
                 "id": "ignored",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": "list :each(-[identifier]->, -[bound]->) *"
+                    "selector": "list :is(-[identifier]->, -[bound]->) *"
                 }
             }
         ]

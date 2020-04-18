@@ -170,7 +170,7 @@ Summary
     the number of results returned in a single response and that multiple
     invocations might be necessary to retrieve all results.
 Trait selector
-    ``:test(operation, service)``
+    ``:is(operation, service)``
 
     *An operation or service*
 Value type

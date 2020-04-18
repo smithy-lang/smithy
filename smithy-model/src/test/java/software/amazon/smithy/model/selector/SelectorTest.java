@@ -121,4 +121,24 @@ public class SelectorTest {
 
         assertThat(expr, equalTo(selector.toString()));
     }
+
+    @Test
+    public void toleratesUnexpectedFunctionNames() {
+        String expr = ":unknownFunction(string)";
+        Selector selector = Selector.parse(expr);
+
+        assertThat(expr, equalTo(selector.toString()));
+    }
+
+    @Test
+    public void supportsDeprecatedEachFunction() {
+        Model model = Model.assembler().addImport(getClass().getResource("model.json"))
+                .disablePrelude()
+                .assemble()
+                .unwrap();
+        Set<Shape> result1 = Selector.parse(":each(collection)").select(model);
+        Set<Shape> result2 = Selector.parse(":is(collection)").select(model);
+
+        assertThat(result1, equalTo(result2));
+    }
 }

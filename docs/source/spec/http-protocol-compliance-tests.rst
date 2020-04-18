@@ -316,7 +316,7 @@ Summary
 Trait selector
     .. code-block:: css
 
-        :each(operation, structure[trait|error])
+        :is(operation, structure[trait|error])
 Value type
     ``list`` of ``HttpResponseTestCase`` structures
 

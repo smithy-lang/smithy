@@ -228,7 +228,7 @@ Summary
     Authorizers are resolved hierarchically: an operation inherits
     the effective authorizer applied to a parent resource or operation.
 Trait selector
-    ``:each(service, resource, operation)``
+    ``:is(service, resource, operation)``
 
     *A service, resource, or operation*
 Value type
