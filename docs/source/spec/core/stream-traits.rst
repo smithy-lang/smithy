@@ -29,7 +29,7 @@ Summary
     When applied to a union, it indicates that shape represents an
     :ref:`event stream <event-streams>`.
 Trait selector::
-    ``:each(blob, union)``
+    ``:is(blob, union)``
 Value type
     Annotation trait
 Validation
@@ -654,7 +654,7 @@ Summary
 Trait selector
     .. code-block:: css
 
-        member:of(structure):test( > :each(boolean, byte, short, integer, long, blob, string, timestamp))
+        member:of(structure):test( > :is(boolean, byte, short, integer, long, blob, string, timestamp))
 
     *Member of a structure that targets a boolean, byte, short, integer, long, blob, string, or timestamp shape*
 Value type
@@ -718,7 +718,7 @@ Summary
 Trait selector
     .. code-block:: css
 
-        member:of(structure):test(> :each(blob, string, structure, union))
+        member:of(structure):test(> :is(blob, string, structure, union))
 
     *Structure member that targets a blob, string, structure, or union*
 Value type

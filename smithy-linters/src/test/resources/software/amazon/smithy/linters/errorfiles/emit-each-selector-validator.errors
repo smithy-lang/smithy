@@ -8,17 +8,17 @@
 [DANGER] ns.foo#Integer: Selector capture matched selector: integer | integer
 [DANGER] ns.foo#Integer: Selector capture matched selector: number | number
 [DANGER] ns.foo#Integer: Selector capture matched selector: simpleType | simpleType
-[DANGER] ns.foo#Long: Selector capture matched selector: :each(long, float, boolean) | any
+[DANGER] ns.foo#Long: Selector capture matched selector: :is(long, float, boolean) | any
 [DANGER] ns.foo#Long: Selector capture matched selector: long | long
 [DANGER] ns.foo#Long: Selector capture matched selector: number | number
 [DANGER] ns.foo#Long: Selector capture matched selector: simpleType | simpleType
 [NOTE] ns.foo#Long: The long shape is not connected to from any service shape. | UnreferencedShape
-[DANGER] ns.foo#Float: Selector capture matched selector: :each(long, float, boolean) | any
+[DANGER] ns.foo#Float: Selector capture matched selector: :is(long, float, boolean) | any
 [DANGER] ns.foo#Float: Selector capture matched selector: float | float
 [DANGER] ns.foo#Float: Selector capture matched selector: number | number
 [DANGER] ns.foo#Float: Selector capture matched selector: simpleType | simpleType
 [NOTE] ns.foo#Float: The float shape is not connected to from any service shape. | UnreferencedShape
-[DANGER] ns.foo#Boolean: Selector capture matched selector: :each(long, float, boolean) | any
+[DANGER] ns.foo#Boolean: Selector capture matched selector: :is(long, float, boolean) | any
 [DANGER] ns.foo#Boolean: Selector capture matched selector: boolean | boolean
 [DANGER] ns.foo#Boolean: Selector capture matched selector: simpleType | simpleType
 [NOTE] ns.foo#Boolean: The boolean shape is not connected to from any service shape. | UnreferencedShape
@@ -34,60 +34,60 @@
 [DANGER] ns.foo#Blob: Selector capture matched selector: blob | blob
 [DANGER] ns.foo#Blob: Selector capture matched selector: simpleType | simpleType
 [NOTE] ns.foo#Blob: The blob shape is not connected to from any service shape. | UnreferencedShape
-[DANGER] ns.foo#List: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#List: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#List: Selector capture matched selector: list | list
 [NOTE] ns.foo#List: The list shape is not connected to from any service shape. | UnreferencedShape
-[DANGER] ns.foo#List$member: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#List$member: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#List$member: Selector capture matched selector: :test(member > [id='ns.foo#String']) | memberTargetsString
 [DANGER] ns.foo#List$member: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#List$member: Selector capture matched selector: member | member
-[DANGER] ns.foo#Map: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#Map: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#Map: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#Map: Selector capture matched selector: map | map
-[DANGER] ns.foo#Map$key: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#Map$key: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#Map$key: Selector capture matched selector: :test(member > [id='ns.foo#String']) | memberTargetsString
 [DANGER] ns.foo#Map$key: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#Map$key: Selector capture matched selector: member | member
-[DANGER] ns.foo#Map$value: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#Map$value: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#Map$value: Selector capture matched selector: :test(member > [id='ns.foo#String']) | memberTargetsString
 [DANGER] ns.foo#Map$value: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#Map$value: Selector capture matched selector: member | member
-[DANGER] ns.foo#MyService: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#MyService: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#MyService: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#MyService: Selector capture matched selector: [service|version^=2017] | serviceVersion
-[DANGER] ns.foo#MyResource: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#MyResource: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#MyResource: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#MyResource: Selector capture matched selector: resource | resource
 [DANGER] ns.foo#MyResource: Selector capture matched selector: service -[resource]-> resource | serviceChild
 [DANGER] ns.foo#MyResourceIdentifier: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#MyResourceIdentifier: Selector capture matched selector: resource -[identifier]-> string | identifier
 [DANGER] ns.foo#MyResourceIdentifier: Selector capture matched selector: simpleType | simpleType
-[DANGER] ns.foo#OperationA: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationA: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#OperationA: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#OperationA: Selector capture matched selector: operation | operation
-[DANGER] ns.foo#OperationAInput: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationAInput: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#OperationAInput: Selector capture matched selector: > | valid-neighbor-only
-[DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: :test(member > [id='ns.foo#String']) | memberTargetsString
 [DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: [id|member=memberName] | shapeMember
 [DANGER] ns.foo#OperationAInput$memberName: Selector capture matched selector: member | member
-[DANGER] ns.foo#OperationAInput$otherMemberName: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationAInput$otherMemberName: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#OperationAInput$otherMemberName: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#OperationAInput$otherMemberName: Selector capture matched selector: member | member
-[DANGER] ns.foo#OperationAOutput: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationAOutput: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#OperationAOutput: Selector capture matched selector: > | valid-neighbor-only
-[DANGER] ns.foo#OperationAOutput$b: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationAOutput$b: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#OperationAOutput$b: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#OperationAOutput$b: Selector capture matched selector: member | member
 [DANGER] ns.foo#OperationErrorA: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#OperationErrorB: Selector capture matched selector: > | valid-neighbor-only
-[DANGER] ns.foo#OperationB: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationB: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#OperationB: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#OperationB: Selector capture matched selector: operation | operation
-[DANGER] ns.foo#OperationBInput: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationBInput: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#OperationBInput: Selector capture matched selector: > | valid-neighbor-only
-[DANGER] ns.foo#OperationBInput$id: Selector capture matched selector: :not(:each([trait|error], simpleType)) | not
+[DANGER] ns.foo#OperationBInput$id: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#OperationBInput$id: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#OperationBInput$id: Selector capture matched selector: member | member
 [DANGER] ns.foo#UtcTimestamp: Selector capture matched selector: simpleType | simpleType
@@ -112,19 +112,19 @@
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from "[foo=\"]": Unable to deserialize Node using fromNode method: Syntax error at character 1 of 7, near `foo="]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo="]` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from "[foo==value]": Unable to deserialize Node using fromNode method: Syntax error at character 1 of 12, near `foo==value]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo==value]` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from "[foo^foo]": Unable to deserialize Node using fromNode method: Syntax error at character 1 of 9, near `foo^foo]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo^foo]` | Model
-[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":each(:not(string) > list": Unable to deserialize Node using fromNode method: Syntax error at character 25 of 25, near ``: Expected one of the following tokens: `)`, `,`; expression `:each(:not(string) > list` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":is(:not(string) > list": Unable to deserialize Node using fromNode method: Syntax error at character 23 of 23, near ``: Expected one of the following tokens: `)`, `,`; expression `:is(:not(string) > list` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from "foo -[]->": Unable to deserialize Node using fromNode method: Syntax error at character 0 of 9, near `foo -[]->`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `foo -[]->` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from "foo -[input]->": Unable to deserialize Node using fromNode method: Syntax error at character 0 of 14, near `foo -[input]->`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `foo -[input]->` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":not": Unable to deserialize Node using fromNode method: Syntax error at character 4 of 4, near ``: Expected one of the following tokens: `(`; expression `:not` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":not(": Unable to deserialize Node using fromNode method: Syntax error at character 5 of 5, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:not(` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":not()": Unable to deserialize Node using fromNode method: Syntax error at character 5 of 6, near `)`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:not()` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":not(string": Unable to deserialize Node using fromNode method: Syntax error at character 11 of 11, near ``: Expected one of the following tokens: `)`, `,`; expression `:not(string` | Model
-[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":each": Unable to deserialize Node using fromNode method: Syntax error at character 5 of 5, near ``: Expected one of the following tokens: `(`; expression `:each` | Model
-[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":each(": Unable to deserialize Node using fromNode method: Syntax error at character 6 of 6, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:each(` | Model
-[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":nay()": Unable to deserialize Node using fromNode method: Syntax error at character 1 of 6, near `nay()`: Expected one of the following tokens: `each`, `not`, `of`, `test`; expression `:nay()` | Model
-[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":each(string": Unable to deserialize Node using fromNode method: Syntax error at character 12 of 12, near ``: Expected one of the following tokens: `)`, `,`; expression `:each(string` | Model
-[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":each(string, ": Unable to deserialize Node using fromNode method: Syntax error at character 14 of 14, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:each(string, ` | Model
-[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":each(string, )": Unable to deserialize Node using fromNode method: Syntax error at character 14 of 15, near `)`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:each(string, )` | Model
-[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":each(string, :not())": Unable to deserialize Node using fromNode method: Syntax error at character 19 of 21, near `))`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:each(string, :not())` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":is": Unable to deserialize Node using fromNode method: Syntax error at character 3 of 3, near ``: Expected one of the following tokens: `(`; expression `:is` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":is(": Unable to deserialize Node using fromNode method: Syntax error at character 4 of 4, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:is(` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":nay()": Unable to deserialize Node using fromNode method: Syntax error at character 5 of 6, near `)`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:nay()` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":is(string": Unable to deserialize Node using fromNode method: Syntax error at character 10 of 10, near ``: Expected one of the following tokens: `)`, `,`; expression `:is(string` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":is(string, ": Unable to deserialize Node using fromNode method: Syntax error at character 12 of 12, near ``: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:is(string, ` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":is(string, )": Unable to deserialize Node using fromNode method: Syntax error at character 12 of 13, near `)`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:is(string, )` | Model
+[ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from ":is(string, :not())": Unable to deserialize Node using fromNode method: Syntax error at character 17 of 19, near `))`: Expected one of the following tokens: `*`, `-[`, `:`, `>`, `[`, `bigDecimal`, `bigInteger`, `blob`, `boolean`, `byte`, `collection`, `document`, `double`, `float`, `integer`, `list`, `long`, `map`, `member`, `number`, `operation`, `resource`, `service`, `set`, `short`, `simpleType`, `string`, `structure`, `timestamp`, `union`, `~>`; expression `:is(string, :not())` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from "[foo]": Unable to deserialize Node using fromNode method: Syntax error at character 1 of 5, near `foo]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo]` | Model
 [ERROR] -: Error creating `EmitEachSelector` validator: Deserialization error at (/selector): unable to create software.amazon.smithy.model.selector.Selector from "[foo=baz]": Unable to deserialize Node using fromNode method: Syntax error at character 1 of 9, near `foo=baz]`: Expected one of the following tokens: `id`, `id|member`, `id|name`, `id|namespace`, `service|version`, `trait|`; expression `[foo=baz]` | Model

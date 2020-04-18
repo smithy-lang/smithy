@@ -275,7 +275,7 @@ Summary
     Indicates that the data stored in the shape or member is sensitive
     and MUST be handled with care.
 Trait selector
-    ``:not(:test(service, operation, resource))``
+    ``:not(:is(service, operation, resource))``
 
     *Any shape that is not a service, operation, or resource.*
 Value type
@@ -345,7 +345,7 @@ Summary
     used in automatically generated documentation and other contexts to
     provide a user friendly name for services and resources.
 Trait selector
-    ``:test(service, resource)``
+    ``:is(service, resource)``
 
     *Any service or resource*
 Value type

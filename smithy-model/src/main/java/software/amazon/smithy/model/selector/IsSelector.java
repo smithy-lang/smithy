@@ -25,15 +25,15 @@ import software.amazon.smithy.model.shapes.Shape;
 /**
  * Maps input over each function and returns the concatenated result.
  */
-final class EachSelector implements Selector {
+final class IsSelector implements Selector {
     private final List<Selector> selectors;
 
-    private EachSelector(List<Selector> predicates) {
+    private IsSelector(List<Selector> predicates) {
         this.selectors = predicates;
     }
 
     static Selector of(List<Selector> predicates) {
-        return predicates.size() == 1 ? predicates.get(0) : new EachSelector(predicates);
+        return predicates.size() == 1 ? predicates.get(0) : new IsSelector(predicates);
     }
 
     @Override

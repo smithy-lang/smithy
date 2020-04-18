@@ -275,7 +275,7 @@ Summary
     supported by the operation, overriding any ``auth`` trait specified
     on a service.
 Trait selector
-    ``:test(service, operation)``
+    ``:is(service, operation)``
 
     *Service or operation shapes*
 Value type

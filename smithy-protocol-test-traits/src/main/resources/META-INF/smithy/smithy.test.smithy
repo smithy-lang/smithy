@@ -134,7 +134,7 @@ list StringList {
 
 /// Define how an HTTP response is serialized given a specific protocol,
 /// authentication scheme, and set of output or error parameters.
-@trait(selector: ":each(operation, structure[trait|error])")
+@trait(selector: ":is(operation, structure[trait|error])")
 @length(min: 1)
 list httpResponseTests {
     member: HttpResponseTestCase,

@@ -703,7 +703,7 @@ The XML serialization is:
 Summary
     Unwraps the values of a list or map into the containing structure.
 Trait selector
-    ``:test(member:of(structure, union) > :each(collection, map))``
+    ``:test(member:of(structure, union) > :is(collection, map))``
 
     *Member of a structure or union that targets a list, set, or map*
 Value type
@@ -854,7 +854,7 @@ Summary
     Changes the serialized element or attribute name of a structure, union,
     or member.
 Trait selector
-    ``:test(structure, union, member)``
+    ``:is(structure, union, member)``
 
     *A structure, union, or member*
 Value type
