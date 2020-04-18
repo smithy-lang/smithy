@@ -33,6 +33,7 @@ import software.amazon.smithy.utils.ListUtils;
  */
 final class AttributeSelector implements Selector {
     static final Comparator EQUALS = String::equals;
+    static final Comparator NOT_EQUALS = (a, b) -> !a.equals(b);
     static final Comparator STARTS_WITH = String::startsWith;
     static final Comparator ENDS_WITH = String::endsWith;
     static final Comparator CONTAINS = String::contains;

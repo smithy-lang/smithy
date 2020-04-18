@@ -42,7 +42,7 @@ final class Parser {
     private static final Set<String> REL_TYPES = new HashSet<>();
     private static final List<String> ATTRIBUTES = ListUtils.of(
             "trait|", "id|namespace", "id|name", "id|member", "id", "service|version");
-    private static final List<String> AFTER_ATTRIBUTE = ListUtils.of("=", "^=", "$=", "*=", "]");
+    private static final List<String> AFTER_ATTRIBUTE = ListUtils.of("=", "!=", "^=", "$=", "*=", "]");
     private static final List<String> AFTER_ATTRIBUTE_RHS = ListUtils.of("i]", "]");
     private static final List<String> START_FUNCTION = ListUtils.of("(");
     private static final List<String> FUNCTION_ARG_NEXT_TOKEN = ListUtils.of(")", ",");
@@ -209,6 +209,9 @@ final class Parser {
                 return new AttributeSelector(attributeKey);
             case "=":
                 comparator = AttributeSelector.EQUALS;
+                break;
+            case "!=":
+                comparator = AttributeSelector.NOT_EQUALS;
                 break;
             case "^=":
                 comparator = AttributeSelector.STARTS_WITH;

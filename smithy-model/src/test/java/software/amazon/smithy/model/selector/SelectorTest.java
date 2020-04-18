@@ -21,7 +21,9 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
@@ -36,13 +38,37 @@ import software.amazon.smithy.model.traits.Trait;
 
 public class SelectorTest {
 
-    @Test
-    public void selectsCollections() {
-        Model model = Model.assembler().addImport(getClass().getResource("model.json"))
+    private static Model modelJson;
+
+    @BeforeAll
+    public static void before() {
+        modelJson = Model.assembler().addImport(SelectorTest.class.getResource("model.json"))
                 .disablePrelude()
                 .assemble()
                 .unwrap();
-        Set<Shape> result = Selector.parse("collection").select(model);
+    }
+
+    @Test
+    public void supportsDeprecatedEachFunction() {
+        Set<Shape> result1 = Selector.parse(":each(collection)").select(modelJson);
+        Set<Shape> result2 = Selector.parse(":is(collection)").select(modelJson);
+
+        assertThat(result1, equalTo(result2));
+    }
+
+    @Test
+    public void supportsNotEqualsAttribute() {
+        Set<String> result = Selector.parse("[id|member!=member]").select(modelJson).stream()
+                .map(Shape::getId)
+                .map(ShapeId::toString)
+                .collect(Collectors.toSet());
+
+        assertThat(result, containsInAnyOrder("ns.foo#Map$key", "ns.foo#Map$value"));
+    }
+
+    @Test
+    public void selectsCollections() {
+        Set<Shape> result = Selector.parse("collection").select(modelJson);
 
         assertThat(result, containsInAnyOrder(
                 SetShape.builder()
@@ -128,17 +154,5 @@ public class SelectorTest {
         Selector selector = Selector.parse(expr);
 
         assertThat(expr, equalTo(selector.toString()));
-    }
-
-    @Test
-    public void supportsDeprecatedEachFunction() {
-        Model model = Model.assembler().addImport(getClass().getResource("model.json"))
-                .disablePrelude()
-                .assemble()
-                .unwrap();
-        Set<Shape> result1 = Selector.parse(":each(collection)").select(model);
-        Set<Shape> result2 = Selector.parse(":is(collection)").select(model);
-
-        assertThat(result1, equalTo(result2));
     }
 }
