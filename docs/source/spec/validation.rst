@@ -764,7 +764,7 @@ following constraints:
             selector: """
                 :not([trait|documentation])
                 :not(simpleType)
-                :not(member:of(:each(list, map)))
+                :not(member:of(:is(list, map)))
                 :not(:test(member > [trait|documentation]))"""
         }
     }]
@@ -864,6 +864,6 @@ traits.
             No instances of the enum, pattern, length, or range trait
             could be found. Did you forget to apply these traits?""",
         configuration: {
-            selector: ":each([trait|enum], [trait|pattern], [trait|length], [trait|range])",
+            selector: ":is([trait|enum], [trait|pattern], [trait|length], [trait|range])",
         }
     }]

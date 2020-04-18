@@ -3,7 +3,7 @@ $version: "1.0.0"
 namespace smithy.api
 
 /// Makes a shape a trait.
-@trait(selector: ":each(simpleType, list, map, set, structure, union)")
+@trait(selector: ":is(simpleType, list, map, set, structure, union)")
 @tags(["diff.error.add", "diff.error.remove"])
 structure trait {
     /// The valid places in a model that the trait can be applied.
@@ -64,7 +64,7 @@ map externalDocumentation {
 }
 
 /// Defines the list of authentication schemes supported by a service or operation.
-@trait(selector: ":test(service, operation)")
+@trait(selector: ":is(service, operation)")
 @uniqueItems
 list auth {
     member: AuthTraitReference
@@ -221,12 +221,12 @@ string jsonName
 structure xmlAttribute {}
 
 /// Unwraps the values of a list, set, or map into the containing structure/union.
-@trait(selector: ":test(member:of(structure, union) > :each(collection, map))")
+@trait(selector: ":test(member:of(structure, union) > :is(collection, map))")
 @tags(["diff.error.const"])
 structure xmlFlattened {}
 
 /// Changes the serialized element or attribute name of a structure, union, or member.
-@trait(selector: ":test(structure, union, member)")
+@trait(selector: ":is(structure, union, member)")
 @tags(["diff.error.const"])
 @pattern("^[a-zA-Z_][a-zA-Z_0-9-]*(:[a-zA-Z_][a-zA-Z_0-9-]*)?$")
 string xmlName
@@ -255,14 +255,14 @@ structure noReplace {}
 
 /// Describes the contents of a blob shape using a media type as defined by
 /// RFC 6838 (e.g., "video/quicktime").
-@trait(selector: ":each(blob, string)")
+@trait(selector: ":is(blob, string)")
 @tags(["diff.error.remove"])
 string mediaType
 
 /// Defines the resource shapes that are referenced by a string shape or a
 /// structure shape and the members of the structure that provide values for
 /// the identifiers of the resource.
-@trait(selector: ":test(structure, string)")
+@trait(selector: ":is(structure, string)")
 list references {
     member: Reference
 }
@@ -308,7 +308,7 @@ string resourceIdentifier
 structure private {}
 
 /// Indicates that the data stored in the shape or member is sensitive and MUST be handled with care.
-@trait(selector: ":not(:test(service, operation, resource))")
+@trait(selector: ":not(:is(service, operation, resource))")
 structure sensitive {}
 
 /// Defines the version or date in which a shape or member was added to the model.
@@ -319,7 +319,7 @@ string since
 /// be stored in memory, or that the size of the data stored in the shape is
 /// unknown at the start of a request. If the target is a union then the shape
 /// represents a stream of events.
-@trait(selector: ":each(blob, union)", structurallyExclusive: "target")
+@trait(selector: ":is(blob, union)", structurallyExclusive: "target")
 @tags(["diff.error.const"])
 structure streaming {}
 
@@ -340,7 +340,7 @@ list tags {
 /// This title can be used in automatically generated documentation
 /// and other contexts to provide a user friendly name for services
 /// and resources.
-@trait(selector: ":test(service, resource)")
+@trait(selector: ":is(service, resource)")
 string title
 
 /// Constrains the acceptable values of a string to a fixed set
@@ -378,7 +378,7 @@ structure EnumDefinition {
 string EnumConstantBodyName
 
 /// Constrains a shape to minimum and maximum number of elements or size.
-@trait(selector: ":test(collection, map, string, blob, member > :each(collection, map, string, blob))")
+@trait(selector: ":test(collection, map, string, blob, member > :is(collection, map, string, blob))")
 structure length {
     /// Integer value that represents the minimum inclusive length of a shape.
     min: Long,
@@ -418,7 +418,7 @@ structure unstable {}
 /// The paginated trait indicates that an operation intentionally limits the number
 /// of results returned in a single response and that multiple invocations might be
 /// necessary to retrieve all results.
-@trait(selector: ":each(service, operation)")
+@trait(selector: ":is(service, operation)")
 @tags(["diff.error.remove"])
 structure paginated {
     /// The name of the operation input member that represents the continuation token.
@@ -546,14 +546,14 @@ list NonEmptyStringList {
 }
 
 /// Marks a member as the payload of an event.
-@trait(selector: "member:of(structure):test(> :each(blob, string, structure, union))",
+@trait(selector: "member:of(structure):test(> :is(blob, string, structure, union))",
        conflicts: [eventHeader],
        structurallyExclusive: "member")
 @tags(["diff.error.const"])
 structure eventPayload {}
 
 /// Marks a member as a header of an event.
-@trait(selector: "member:of(structure):test( > :each(boolean, byte, short, integer, long, blob, string, timestamp))",
+@trait(selector: "member:of(structure):test( > :is(boolean, byte, short, integer, long, blob, string, timestamp))",
        conflicts: [eventPayload])
 @tags(["diff.error.const"])
 structure eventHeader {}

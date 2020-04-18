@@ -59,6 +59,12 @@ The following selector matches all string shapes in a model:
 
     string
 
+The following selector matches all numbers defined in a model:
+
+.. code-block:: none
+
+    number
+
 
 Attribute selectors
 ===================
@@ -205,9 +211,16 @@ Available attributes
 Neighbors
 =========
 
-The *current* shape evaluated by a selector is changed using a neighbor token,
-``>``. A neighbor token returns every shape that is connected to the current
-shape. For example, the following selector returns the key and value members of
+The *current* shapes evaluated by a selector is changed using a
+:token:`neighbor` token.
+
+
+Undirected neighbor
+~~~~~~~~~~~~~~~~~~~
+
+An :token:`undirected neighbor <undirected_neighbor>` (``>``) changes the
+current set of shapes to every shape that is connected to the current shapes.
+For example, the following selector returns the key and value members of
 every map:
 
 .. code-block:: none
@@ -405,73 +418,84 @@ Functions
 
 Functions are used to filter shapes. Functions always start with ``:``.
 
+.. important::
 
-:each
-~~~~~
-
-The ``:each`` function is used to map over the current shape with multiple
-selectors and returns all of the shapes returned from each selector. The
-``:each`` function accepts a variadic list of selectors each separated by a
-comma (",").
-
-The following selector matches all string and number shapes:
-
-.. code-block:: none
-
-    :each(string, number)
-
-Each can be used inside of neighbors too. The following selector
-matches all members that target a string or number:
-
-.. code-block:: none
-
-    member > :each(string, number)
-
-The following ``:each`` selector matches all shapes that are either
-targeted by a list member or targeted by a map member:
-
-.. code-block:: none
-
-    :each(list > member > *, map > member > *)
-
-The following selector matches all list and map shapes that target strings:
-
-.. code-block:: none
-
-    :each(:test(list > member > string), :test(map > member > string))
-
-Because none of the selectors in the ``:each`` function are intended to
-change the current node, this can be reduced to the following selector:
-
-.. code-block:: none
-
-    :test(:each(list > member > string, map > member > string))
+    Implementations MUST tolerate parsing unknown function names. When
+    evaluated, the unknown function matches no shapes.
 
 
-:test
-~~~~~
+``:test``
+~~~~~~~~~
 
 The ``:test`` function is used to test if a shape is contained within any of
 the provided predicate selector return values without changing the current
 shape.
 
-The following selector is used to match all string and number shapes:
+The following selector is used to match all list shapes that target a string:
 
 .. code-block:: none
 
-    :test(string, number)
+    list:test(> member > string)
 
-The ``:test`` function is much more interesting when used to test if a shape
-contains a neighbor in addition to other filtering. The following example
-matches all shapes that are bound to a resource and have no documentation:
+The following example matches all shapes that are bound to a resource and have
+no documentation:
 
 .. code-block:: none
 
     :test(-[bound, resource]->) :not([trait|documentation])
 
 
-:not
-~~~~
+``:is``
+~~~~~~~
+
+The ``:is`` function is used to map over the current shape with multiple
+selectors and returns all of the shapes returned from each selector. The
+``:is`` function accepts a variadic list of selectors each separated by a
+comma (",").
+
+The following selector matches all string and number shapes:
+
+.. code-block:: none
+
+    :is(string, number)
+
+Each can be used inside of neighbors too. The following selector
+matches all members that target a string or number:
+
+.. code-block:: none
+
+    member > :is(string, number)
+
+The following ``:is`` selector matches all shapes that are either
+targeted by a list member or targeted by a map member:
+
+.. code-block:: none
+
+    :is(list > member > *, map > member > *)
+
+The following selector matches all list and map shapes that target strings:
+
+.. code-block:: none
+
+    :is(:test(list > member > string), :test(map > member > string))
+
+Because none of the selectors in the ``:is`` function are intended to
+change the current node, this can be reduced to the following selector:
+
+.. code-block:: none
+
+    :test(:is(list > member > string, map > member > string))
+
+.. note::
+
+    This function was previously named ``:each``. Implementations that wish
+    to maintain backward compatibility with the old function name MAY
+    treat ``:each`` as an alias for ``:is``, and models that use ``:each``
+    SHOULD update to use ``:is``.
+
+
+``:not``
+~~~~~~~~
 
 The *:not* function is used to filter out shapes. This function accepts a
 list of selector arguments, and the shapes returned from each predicate are
@@ -550,8 +574,8 @@ in the model:
     :not(* -[trait]-> *)[trait|trait]
 
 
-:of
-~~~
+``:of``
+~~~~~~~
 
 The ``:of`` function is used to match members based on their containers
 (i.e., the shape that defines the member). The ``:of`` function accepts one
@@ -585,7 +609,7 @@ Selectors are defined by the following ABNF_ grammar.
 
 .. productionlist:: selectors
     selector             :`selector_expression` *(`selector_expression`)
-    selector_expression  :`shape_types` / `attr` / `function_expression` / `neighbors`
+    selector_expression  :`shape_types` / `attr` / `function_expression` / `neighbor`
     shape_types          :"*"
                          :/ "blob"
                          :/ "boolean"
@@ -612,7 +636,8 @@ Selectors are defined by the following ABNF_ grammar.
                          :/ "number"
                          :/ "simpleType"
                          :/ "collection"
-    neighbors            :">" / `directed_neighbor` / `recursive_neighbor`
+    neighbor             :`undirected_neighbor` / `directed_neighbor` / `recursive_neighbor`
+    undirected_neighbor  :">"
     directed_neighbor    :"-[" `relationship_type` *("," `relationship_type`) "]->"
     recursive_neighbor   :"~>"
     relationship_type    :"identifier"
@@ -640,7 +665,7 @@ Selectors are defined by the following ABNF_ grammar.
     service_attribute      :"service|version"
     comparator            :"^=" / "$=" / "*=" / "="
     function_expression   :":" `function` "(" `selector` *("," `selector`) ")"
-    function              :"each" / "test" / "of" / "not"
+    function              :"test" / "is" / "not" / "of"
     selector_text         :`selector_single_quoted_text` / `selector_double_quoted_text`
     selector_single_quoted_text    :"'" 1*`selector_single_quoted_char` "'"
     selector_double_quoted_text    :DQUOTE 1*`selector_double_quoted_char` DQUOTE

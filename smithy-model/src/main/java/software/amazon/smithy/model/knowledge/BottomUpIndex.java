@@ -35,7 +35,7 @@ import software.amazon.smithy.model.shapes.ToShapeId;
  * Computes all of the parent shapes of resources and operations from the bottom-up.
  */
 public final class BottomUpIndex implements KnowledgeIndex {
-    private static final Selector SELECTOR = Selector.parse(":each(resource, operation)");
+    private static final Selector SELECTOR = Selector.parse(":is(resource, operation)");
     private final Map<ShapeId, Map<ShapeId, List<EntityShape>>> parentBindings = new HashMap<>();
 
     public BottomUpIndex(Model model) {

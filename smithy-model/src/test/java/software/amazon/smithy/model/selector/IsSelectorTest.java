@@ -28,10 +28,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 
-public class EachSelectorTest {
+public class IsSelectorTest {
     @Test
     public void projectsOutValues() {
-        Selector selector = EachSelector.of(Arrays.asList(
+        Selector selector = IsSelector.of(Arrays.asList(
                 new ShapeTypeSelector(ShapeType.STRING),
                 new ShapeTypeSelector(ShapeType.INTEGER)));
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();

@@ -93,7 +93,7 @@ Summary
     to resolve references by name, allowing the end-user to invoke operations
     on a specific referenced resource.
 Trait selector
-    ``:test(structure, string)``
+    ``:is(structure, string)``
 
     *Any structure or string*
 Value type

@@ -18,10 +18,10 @@ package software.amazon.smithy.model.selector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.CollectionShape;
@@ -40,7 +40,6 @@ final class Parser {
     private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
     private static final Set<Character> BREAK_TOKENS = SetUtils.of(',', ']', ')');
     private static final Set<String> REL_TYPES = new HashSet<>();
-    private static final List<String> FUNCTIONS = ListUtils.of("test", "each", "of", "not");
     private static final List<String> ATTRIBUTES = ListUtils.of(
             "trait|", "id|namespace", "id|name", "id|member", "id", "service|version");
     private static final List<String> AFTER_ATTRIBUTE = ListUtils.of("=", "^=", "$=", "*=", "]");
@@ -173,17 +172,23 @@ final class Parser {
     }
 
     private Selector parseFunction() {
-        String name = expect(FUNCTIONS);
+        String name = parseIdentifier();
+        List<Selector> selectors = parseVariadic();
         switch (name) {
-            case "not": return parseVariadic(NotSelector::new);
-            case "test": return parseVariadic(TestSelector::new);
-            case "each": return parseVariadic(EachSelector::of);
-            case "of": return parseVariadic(OfSelector::new);
-            default: throw new RuntimeException("Unreachable function case " + name);
+            case "not": return new NotSelector(selectors);
+            case "test": return new TestSelector(selectors);
+            case "is": return IsSelector.of(selectors);
+            case "each":
+                LOGGER.warning("The `:each` selector function has been renamed to `:is`: " + expression);
+                return IsSelector.of(selectors);
+            case "of": return new OfSelector(selectors);
+            default:
+                LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s", name, expression));
+                return (model, neighborProvider, shapes) -> Collections.emptySet();
         }
     }
 
-    private Selector parseVariadic(Function<List<Selector>, Selector> creator) {
+    private List<Selector> parseVariadic() {
         List<Selector> selectors = new ArrayList<>();
         expect(START_FUNCTION);
         String next;
@@ -191,7 +196,7 @@ final class Parser {
             selectors.add(AndSelector.of(recursiveParse()));
             next = expect(FUNCTION_ARG_NEXT_TOKEN);
         } while (!next.equals(")"));
-        return creator.apply(selectors);
+        return selectors;
     }
 
     private Selector parseAttribute() {

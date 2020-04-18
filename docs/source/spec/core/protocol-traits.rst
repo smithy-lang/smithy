@@ -207,7 +207,7 @@ Summary
     Describes the contents of a blob or string shape using a media type as
     defined by :rfc:`6838` (e.g., "video/quicktime").
 Trait selector
-    ``:test(blob, string)``
+    ``:is(blob, string)``
 
     *Any blob or string*
 Value type
