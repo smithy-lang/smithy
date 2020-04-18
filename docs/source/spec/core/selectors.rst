@@ -84,6 +84,10 @@ Attribute selectors support the following comparators:
       - Description
     * - ``=``
       - Matches if the attribute value is equal to the expected value.
+    * - ``!=``
+      - Matches if the attribute value is not equal to the expected value.
+        Note that this comparator is never matched if the resolved attribute
+        does not exist.
     * - ``^=``
       - Matches if the attribute value starts with the expected value.
     * - ``$=``
@@ -92,13 +96,13 @@ Attribute selectors support the following comparators:
       - Matches if the attribute value contains with the expected value.
 
 Attribute comparisons can be made case-insensitive by preceding the closing
-bracket with " i" (e.g., ``string[trait|time=DATE i]``).
+bracket with " i" (for example, ``string[trait|time=DATE i]``).
 
 
 Matching traits
 ~~~~~~~~~~~~~~~
 
-We can match shapes based on traits using an *attribute selector*. The
+Shapes can be matched based on traits using an *attribute selector*. The
 following selector finds all structure shapes with the :ref:`error-trait`
 trait:
 
@@ -107,18 +111,26 @@ trait:
     structure[trait|error]
 
 The ``trait|`` is called a *namespace prefix*. This particular prefix tells
-the selector that we are interested in a trait applied to the current shape,
-and that that specific trait is ``time``.
+the selector to match on a trait applied to the current shape, and that that
+specific trait is ``time``.
 
-We can match string shapes that have a specific trait value:
+The following selector matches string shapes that have a specific trait
+value:
 
 .. code-block:: none
 
     structure[trait|error=client]
 
+The following selector matches string shapes that have a specific trait
+but the trait value does not match the provided value:
+
+.. code-block:: none
+
+    structure[trait|error!=client]
+
 Matching on trait values only works for traits that have a scalar value
-(e.g., strings, numbers, and booleans). We can also match case-insensitvely
-on the value by appending " i" before the closing bracket:
+(for example, strings, numbers, and booleans). Selectors can also match
+case-insensitively on the value by appending " i" before the closing bracket:
 
 .. code-block:: none
 
@@ -203,7 +215,7 @@ Available attributes
       - ``service[service|version^='2018-']``
     * - ``trait|*``
       - Gets the value of a trait applied to a shape, where "*" is the name
-        of a trait (e.g., ``trait|error``). Boolean trait values are
+        of a trait (for example, ``trait|error``). Boolean trait values are
         converted to "true" or "false".
       - ``client``
 
@@ -227,8 +239,8 @@ every map:
 
     map > member
 
-We can return just the key members or just the value members by adding an
-attribute selector on the ``id|member``:
+Selectors can return just the key members or just the value members by adding
+an attribute selector on the ``id|member``:
 
 .. code-block:: none
 
@@ -663,7 +675,7 @@ Selectors are defined by the following ABNF_ grammar.
     attr_value             :`attr_identifier` / `selector_text`
     attr_identifier        :1*(ALPHA / DIGIT / "_") *(ALPHA / DIGIT / "_" / "-" / "." / "#")
     service_attribute      :"service|version"
-    comparator            :"^=" / "$=" / "*=" / "="
+    comparator            :"^=" / "$=" / "*=" / "!=" / "="
     function_expression   :":" `function` "(" `selector` *("," `selector`) ")"
     function              :"test" / "is" / "not" / "of"
     selector_text         :`selector_single_quoted_text` / `selector_double_quoted_text`
