@@ -91,6 +91,8 @@ final class AttributeSelector implements Selector {
         String rhs = caseInsensitive ? expected.toLowerCase(Locale.US) : expected;
         return result.stream()
                 .map(value -> caseInsensitive ? value.toLowerCase(Locale.US) : value)
-                .anyMatch(lhs -> comparator.apply(lhs, rhs));
+                // The returned attribute value might be null if
+                // the value exists, but isn't comparable.
+                .anyMatch(lhs -> lhs != null && comparator.apply(lhs, rhs));
     }
 }
