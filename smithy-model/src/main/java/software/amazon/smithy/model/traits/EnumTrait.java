@@ -22,7 +22,6 @@ import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -75,14 +74,7 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
 
     @Override
     protected Node createNode() {
-        return definitions.stream()
-                .map(definition -> Node.objectNodeBuilder()
-                        .withMember(EnumDefinition.VALUE, definition.getValue())
-                        .withOptionalMember(EnumDefinition.NAME, definition.getName().map(Node::from))
-                        .withOptionalMember(EnumDefinition.DOCUMENTATION,
-                                            definition.getDocumentation().map(Node::from))
-                        .build())
-                .collect(ArrayNode.collect());
+        return definitions.stream().map(EnumDefinition::toNode).collect(ArrayNode.collect());
     }
 
     @Override
@@ -141,23 +133,8 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
         public EnumTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
             for (ObjectNode definition : value.expectArrayNode().getElementsAs(ObjectNode.class)) {
-                builder.addEnum(parseEnum(definition));
+                builder.addEnum(EnumDefinition.fromNode(definition));
             }
-            return builder.build();
-        }
-
-        private EnumDefinition parseEnum(ObjectNode value) {
-            EnumDefinition.Builder builder = EnumDefinition.builder()
-                    .value(value.expectStringMember(EnumDefinition.VALUE).getValue())
-                    .name(value.getStringMember(EnumDefinition.NAME).map(StringNode::getValue).orElse(null))
-                    .documentation(value.getStringMember(EnumDefinition.DOCUMENTATION)
-                                           .map(StringNode::getValue)
-                                           .orElse(null));
-
-            value.getMember(EnumDefinition.TAGS).ifPresent(node -> {
-                builder.tags(Node.loadArrayOfString(EnumDefinition.TAGS, node));
-            });
-
             return builder.build();
         }
     }

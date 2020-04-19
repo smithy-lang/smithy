@@ -236,7 +236,7 @@ final class Parser {
     private AttributeSelector.KeyGetter parseAttributeKey() {
         String namespace = expect(ATTRIBUTES);
         switch (namespace) {
-            case "trait|": return new TraitAttributeKey(parseAttributeValue());
+            case "trait|": return new TraitAttributeKey(parseAttributeValue(), parsePipeDelimitedTraitAttributes());
             case "id": return AttributeSelector.KEY_ID;
             case "id|namespace": return AttributeSelector.KEY_ID_NAMESPACE;
             case "id|name": return AttributeSelector.KEY_ID_NAME;
@@ -244,6 +244,25 @@ final class Parser {
             case "service|version": return AttributeSelector.KEY_SERVICE_VERSION;
             default: throw syntax("Unreachable attribute case for " + namespace);
         }
+    }
+
+    private List<String> parsePipeDelimitedTraitAttributes() {
+        List<String> result = new ArrayList<>();
+        ws();
+
+        while (charPeek() == '|') {
+            position++;
+            ws();
+            if (compareExpressionSlice("(values)")) {
+                result.add(expect(Collections.singleton("(values)")));
+            } else if (compareExpressionSlice("(keys)")) {
+                result.add(expect(Collections.singleton("(keys)")));
+            } else {
+                result.add(parseAttributeValue());
+            }
+        }
+
+        return result;
     }
 
     private String parseAttributeValue() {

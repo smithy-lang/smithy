@@ -18,8 +18,12 @@ package software.amazon.smithy.model.selector;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
@@ -39,11 +43,16 @@ import software.amazon.smithy.model.traits.Trait;
 public class SelectorTest {
 
     private static Model modelJson;
+    private static Model traitModel;
 
     @BeforeAll
     public static void before() {
         modelJson = Model.assembler().addImport(SelectorTest.class.getResource("model.json"))
                 .disablePrelude()
+                .assemble()
+                .unwrap();
+        traitModel = Model.assembler()
+                .addImport(SelectorTest.class.getResource("nested-traits.smithy"))
                 .assemble()
                 .unwrap();
     }
@@ -56,14 +65,96 @@ public class SelectorTest {
         assertThat(result1, equalTo(result2));
     }
 
-    @Test
-    public void supportsNotEqualsAttribute() {
-        Set<String> result = Selector.parse("[id|member!=member]").select(modelJson).stream()
+    private List<String> ids(Model model, String expression) {
+        return Selector.parse(expression)
+                .select(model)
+                .stream()
                 .map(Shape::getId)
                 .map(ShapeId::toString)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
+    }
+
+    @Test
+    public void selectsUsingNestedTraitValues() {
+        List<String> result = ids(traitModel, "[trait|range|min=1]");
+
+        assertThat(result, hasItem("smithy.example#RangeInt1"));
+        assertThat(result, not(hasItem("smithy.example#RangeInt2")));
+        assertThat(result, not(hasItem("smithy.example#EnumString")));
+    }
+
+    @Test
+    public void selectsUsingNestedTraitValuesUsingNegation() {
+        List<String> result = ids(traitModel, "[trait|range|min!=1]");
+
+        assertThat(result, hasItem("smithy.example#RangeInt2"));
+        assertThat(result, not(hasItem("smithy.example#RangeInt1")));
+        assertThat(result, not(hasItem("smithy.example#EnumString")));
+    }
+
+    @Test
+    public void selectsUsingNestedTraitValuesThroughProjection() {
+        List<String> result = ids(traitModel, "[trait|enum|(values)|deprecated=true]");
+
+        assertThat(result, hasItem("smithy.example#EnumString"));
+        assertThat(result, not(hasItem("smithy.example#DocumentedString")));
+    }
+
+    @Test
+    public void canSelectOnTraitObjectKeys() {
+        List<String> result = ids(traitModel, "[trait|externalDocumentation|(keys)=Homepage]");
+
+        assertThat(result, hasItem("smithy.example#DocumentedString1"));
+        assertThat(result, not(hasItem("smithy.example#DocumentedString2")));
+    }
+
+    @Test
+    public void canSelectOnTraitObjectValues() {
+        List<String> result = ids(traitModel, "[trait|externalDocumentation|(values)='https://www.anotherexample.com/']");
+
+        assertThat(result, hasItem("smithy.example#DocumentedString2"));
+        assertThat(result, not(hasItem("smithy.example#DocumentedString1")));
+    }
+
+    @Test
+    public void pathThroughTerminalValueReturnsNoResults() {
+        List<String> result = ids(traitModel, "[trait|documentation|foo|baz='nope']");
+
+        assertThat(result, empty());
+    }
+
+    @Test
+    public void pathThroughArrayWithInvalidItemReturnsNoResults() {
+        List<String> result = ids(traitModel, "[trait|tags|foo|baz='nope']");
+
+        assertThat(result, empty());
+    }
+
+    @Test
+    public void supportsNotEqualsAttribute() {
+        List<String> result = ids(modelJson, "[id|member!=member]");
 
         assertThat(result, containsInAnyOrder("ns.foo#Map$key", "ns.foo#Map$value"));
+    }
+
+    @Test
+    public void supportsMatchingDeeplyOnTraitValues() {
+        List<String> result1 = ids(traitModel, "[trait|smithy.example#nestedTrait|foo|foo|bar='hi']");
+        List<String> result2 = ids(traitModel, "[trait|smithy.example#nestedTrait|foo|foo|bar='bye']");
+
+        assertThat(result1, hasItem("smithy.example#DocumentedString1"));
+        assertThat(result1, not(hasItem("smithy.example#DocumentedString2")));
+        assertThat(result2, hasItem("smithy.example#DocumentedString2"));
+        assertThat(result2, not(hasItem("smithy.example#DocumentedString1")));
+    }
+
+    @Test
+    public void emptyListDoesNotAppearWhenProjecting() {
+        List<String> result = ids(traitModel, "[trait|enum|(values)|tags|(values)]");
+
+        assertThat(result, hasItem("smithy.example#EnumString"));
+        assertThat(result, hasItem("smithy.example#DocumentedString1"));
+        assertThat(result, not(hasItem("smithy.example#DocumentedString2")));
     }
 
     @Test
