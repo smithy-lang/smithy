@@ -16,11 +16,13 @@
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.not;
 
 import java.util.List;
@@ -440,6 +442,24 @@ public class SelectorTest {
     }
 
     @Test
+    public void canMatchOnExistence() {
+        assertThat(ids(traitModel, "[id|namespace='smithy.example'][trait|tags]"),
+                   contains("smithy.example#EnumString"));
+    }
+
+    @Test
+    public void canMatchUsingCaseInsensitiveComparison() {
+        List<String> matches = ids(traitModel, "[trait|error = 'CLIENT' i]");
+
+        assertThat(matches, containsInAnyOrder("smithy.example#ErrorStruct2"));
+    }
+
+    @Test
+    public void cannotMatchOnNonComparableAttributes() {
+        assertThat(ids(traitModel, "[trait|tags='foo']"), empty());
+    }
+
+    @Test
     public void canMatchUsingCommaSeparatedAttributeValues() {
         List<String> matches1 = ids(traitModel, "[trait|enum|(values)|value='m256.mega', 'nope']");
         List<String> matches2 = ids(traitModel, "[trait|enum|(values)|value = 'm256.mega' ,'nope' ]");
@@ -458,5 +478,51 @@ public class SelectorTest {
         Assertions.assertThrows(
                 SelectorSyntaxException.class,
                 () -> Selector.parse("[trait|enum|(values)|value='m256.mega',]"));
+    }
+
+    @Test
+    public void parsedRelativeComparators() {
+        List<String> exprs = ListUtils.of(
+                "[trait|httpError > 500]",
+                "[trait|httpError >= 500]",
+                "[trait|httpError < 500]",
+                "[trait|httpError <= 500]",
+                "[trait|httpError>500]",
+                "[trait|httpError>=500]",
+                "[trait|httpError<500]",
+                "[trait|httpError<=500]",
+                "[trait|httpError > 500, 400]", // silly, but supported
+                "[trait|httpError >= 500, 400]", // silly, but supported
+                "[trait|httpError < 500, 400]", // silly, but supported
+                "[trait|httpError <= 500, 400]"); // silly, but supported
+
+        for (String expr : exprs) {
+            Selector.parse(expr);
+        }
+    }
+
+    @Test
+    public void canMatchUsingRelativeSelectors() {
+        List<String> matches1 = ids(traitModel, "[trait|httpError >= 500]");
+        List<String> matches2 = ids(traitModel, "[trait|httpError > 499]");
+        List<String> matches3 = ids(traitModel, "[trait|httpError >= 400]");
+        List<String> matches4 = ids(traitModel, "[trait|httpError > 399]");
+        List<String> matches5 = ids(traitModel, "[trait|httpError <= 500]");
+        List<String> matches6 = ids(traitModel, "[trait|httpError < 500]");
+        List<String> matches7 = ids(traitModel, "[trait|httpError >= 500e0]");
+
+        assertThat(matches1, containsInAnyOrder("smithy.example#ErrorStruct1"));
+        assertThat(matches2, containsInAnyOrder("smithy.example#ErrorStruct1"));
+        assertThat(matches3, containsInAnyOrder("smithy.example#ErrorStruct1", "smithy.example#ErrorStruct2"));
+        assertThat(matches4, containsInAnyOrder("smithy.example#ErrorStruct1", "smithy.example#ErrorStruct2"));
+        assertThat(matches5, containsInAnyOrder("smithy.example#ErrorStruct1", "smithy.example#ErrorStruct2"));
+        assertThat(matches6, containsInAnyOrder("smithy.example#ErrorStruct2"));
+        assertThat(matches7, containsInAnyOrder("smithy.example#ErrorStruct1"));
+    }
+
+    @Test
+    public void invalidNumbersFailsGracefully() {
+        assertThat(ids(traitModel, "[trait|httpError >= 'nope']"), empty());
+        assertThat(ids(traitModel, "[trait|error >= 500]"), empty());
     }
 }

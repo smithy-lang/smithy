@@ -234,7 +234,7 @@ final class Parser {
         ws();
         AttributeSelector.KeyGetter attributeKey = parseAttributeKey();
         ws();
-        char next = expect(']', '=', '!', '^', '$', '*');
+        char next = expect(']', '=', '!', '^', '$', '*', '>', '<');
         AttributeSelector.Comparator comparator;
 
         switch (next) {
@@ -258,6 +258,22 @@ final class Parser {
             case '*':
                 expect('=');
                 comparator = AttributeSelector.CONTAINS;
+                break;
+            case '>':
+                if (charPeek() == '=') {
+                    position++;
+                    comparator = AttributeSelector.GTE;
+                } else {
+                    comparator = AttributeSelector.GT;
+                }
+                break;
+            case '<':
+                if (charPeek() == '=') {
+                    position++;
+                    comparator = AttributeSelector.LTE;
+                } else {
+                    comparator = AttributeSelector.LT;
+                }
                 break;
             default:
                 // Unreachable

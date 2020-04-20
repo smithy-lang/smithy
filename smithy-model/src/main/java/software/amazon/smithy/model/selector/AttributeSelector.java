@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.selector;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -32,11 +33,18 @@ import software.amazon.smithy.utils.ListUtils;
  * Matches shapes with a specific attribute.
  */
 final class AttributeSelector implements Selector {
+
     static final Comparator EQUALS = String::equals;
     static final Comparator NOT_EQUALS = (a, b) -> !a.equals(b);
     static final Comparator STARTS_WITH = String::startsWith;
     static final Comparator ENDS_WITH = String::endsWith;
     static final Comparator CONTAINS = String::contains;
+
+    static final Comparator GT = (a, b) -> numericComparison(a, b, i -> i == 1);
+    static final Comparator GTE = (a, b) -> numericComparison(a, b, i -> i >= 0);
+    static final Comparator LT = (a, b) -> numericComparison(a, b, i -> i <= -1);
+    static final Comparator LTE = (a, b) -> numericComparison(a, b, i -> i <= 0);
+
     static final KeyGetter KEY_ID = (shape) -> ListUtils.of(shape.getId().toString());
     static final KeyGetter KEY_ID_NAMESPACE = (shape) -> ListUtils.of(shape.getId().getNamespace());
     static final KeyGetter KEY_ID_NAME = (shape) -> ListUtils.of(shape.getId().getName());
@@ -92,7 +100,7 @@ final class AttributeSelector implements Selector {
     }
 
     private boolean matchesAttribute(List<String> result) {
-        if (comparator == null || expected == null) {
+        if (comparator == null) {
             return !result.isEmpty();
         }
 
@@ -115,5 +123,30 @@ final class AttributeSelector implements Selector {
         }
 
         return false;
+    }
+
+    // Try to parse both numbers, ignore numeric failures since that's acceptable,
+    // then pass the result of calling compareTo on the numbers to the given
+    // evaluator. The evaluator then determines if the comparison is what was expected.
+    private static boolean numericComparison(String lhs, String rhs, Function<Integer, Boolean> evaluator) {
+        BigDecimal lhsNumber = parseNumber(lhs);
+        if (lhsNumber == null) {
+            return false;
+        }
+
+        BigDecimal rhsNumber = parseNumber(rhs);
+        if (rhsNumber == null) {
+            return false;
+        }
+
+        return evaluator.apply(lhsNumber.compareTo(rhsNumber));
+    }
+
+    private static BigDecimal parseNumber(String token) {
+        try {
+            return new BigDecimal(token);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
