@@ -353,7 +353,7 @@ trait that has an entry named ``Homepage``:
 
     [trait|externalDocumentation|(keys)=Homepage]
 
-Like the ``(list)`` property, the ``(keys)`` property also treats empty
+Like the ``(values)`` property, the ``(keys)`` property also treats empty
 objects as not present.
 
 The following example matches all shapes that have a trait named
@@ -376,7 +376,7 @@ MUST not cause an error and MUST match no shapes:
 Neighbors
 =========
 
-The *current* shapes evaluated by a selector is changed using a
+The *current shapes* evaluated by a selector are changed using a
 :token:`selector_neighbor` token.
 
 
@@ -613,7 +613,7 @@ no documentation:
 ``:is``
 -------
 
-The ``:is`` function is used to map over the current shape with multiple
+The ``:is`` function is used to map over the current shapes with multiple
 selectors and returns all of the shapes returned from each selector. The
 ``:is`` function accepts a variadic list of selectors each separated by a
 comma (",").
@@ -793,7 +793,7 @@ Selectors are defined by the following ABNF_ grammar.
     selector_value                  :`selector_text` / `number` / `root_shape_id`
     selector_absolute_root_shape_id :`namespace` "#" `identifier`
     selector_pseudo_key             :"(" `identifier` ")"
-    selector_comparator             :"^=" / "$=" / "*=" / "!=" / "="
+    selector_comparator             :"^=" / "$=" / "*=" / "!=" / ">=" / ">" / "<=" / "<" / "="
     selector_function_expression    :":" `selector_function` "(" `selector` *("," `selector`) ")"
     selector_function               :`identifier`
     selector_text                   :`selector_single_quoted_text` / `selector_double_quoted_text`
