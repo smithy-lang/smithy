@@ -281,9 +281,10 @@ Shape IDs are formally defined by the following ABNF:
 .. productionlist:: smithy
     identifier             :(ALPHA / "_") *(ALPHA / DIGIT / "_")
     namespace              :`identifier` *("." `identifier`)
-    shape_id               :`absolute_shape_id` / `relative_shape_id`
-    absolute_shape_id      :`namespace` "#" `relative_shape_id`
-    relative_shape_id      :`identifier` ["$" `identifier`]
+    shape_id               :`root_shape_id` [`shape_id_member`]
+    root_shape_id          :`absolute_shape_id` / `identifier`
+    absolute_shape_id      :`namespace` "#" `identifier`
+    shape_id_member        :"$" `identifier`
     LOALPHA                :%x61-7A ; a-z
 
 .. admonition:: Lexical note
