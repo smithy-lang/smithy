@@ -72,6 +72,12 @@ Attribute selectors
 *Attribute selectors* are used to match shapes based on
 :ref:`shape IDs <shape-id>`, :ref:`traits <traits>`, and other properties.
 
+.. important::
+
+    Implementations MUST NOT fail when unknown attribute keys are
+    encountered; implementations SHOULD emit a warning and match no results
+    when an unknown attribute is encountered.
+
 
 Attribute existence
 -------------------
@@ -133,23 +139,51 @@ Attribute selectors support the following comparators:
     * - Comparator
       - Description
     * - ``=``
-      - Matches if the attribute value is equal to the expected value.
+      - Matches if the attribute value is equal to the comparison value.
     * - ``!=``
-      - Matches if the attribute value is not equal to the expected value.
+      - Matches if the attribute value is not equal to the comparison value.
         Note that this comparator is never matched if the resolved attribute
         does not exist.
     * - ``^=``
-      - Matches if the attribute value starts with the expected value.
+      - Matches if the attribute value starts with the comparison value.
     * - ``$=``
-      - Matches if the attribute value ends with the expected value.
+      - Matches if the attribute value ends with the comparison value.
     * - ``*=``
-      - Matches if the attribute value contains with the expected value.
+      - Matches if the attribute value contains with the comparison value.
+    * - ``>``
+      - Matches if the attribute value is greater than the comparison value.
+    * - ``>=``
+      - Matches if the attribute value is greater than or equal to the
+        comparison value.
+    * - ``<``
+      - Matches if the attribute value is less than the comparison value.
+    * - ``<=``
+      - Matches if the attribute value is less than or equal to the
+        comparison value.
 
-.. important::
+The ``<``, ``<=``, ``>``, ``>=`` comparators only match if both the attribute
+value and comparison value contain valid :token:`number` productions. If
+either is not a number, then the selector does not match.
 
-    Implementations MUST NOT fail when unknown attribute keys are
-    encountered; implementations SHOULD emit a warning and match no results
-    when an unknown attribute is encountered.
+The following selector matches shapes that have an :ref:`httpError-trait`
+value that is greater than or equal to `500`:
+
+.. code-block:: none
+
+    [trait|httpError >= 500]
+
+The following selector is equivalent:
+
+.. code-block:: none
+
+    [trait|httpError >= '500']
+
+The following selector does not match any shapes because the comparison value
+is not a valid number:
+
+.. code-block:: none
+
+    [trait|httpError >= "not a number!"]
 
 
 ``id`` attribute
