@@ -27,8 +27,9 @@ import software.amazon.smithy.model.shapes.Shape;
  */
 @FunctionalInterface
 public interface Selector {
+
     /** A selector that always returns all provided values. */
-    Selector IDENTITY = (model, visitor, shapes) -> shapes;
+    Selector IDENTITY = new WrappedSelector("*", (model, provider, shapes) -> shapes);
 
     /**
      * Matches a selector to a set of shapes.
