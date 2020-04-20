@@ -18,7 +18,6 @@ package software.amazon.smithy.model.selector;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -27,7 +26,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -51,7 +49,7 @@ final class AttributeSelector implements Selector {
             .orElseGet(Collections::emptyList);
 
     private final KeyGetter key;
-    private final String expected;
+    private final List<String> expected;
     private final Comparator comparator;
     private final boolean caseInsensitive;
 
@@ -69,13 +67,21 @@ final class AttributeSelector implements Selector {
     AttributeSelector(
             KeyGetter key,
             Comparator comparator,
-            String expected,
+            List<String> expected,
             boolean caseInsensitive
     ) {
         this.expected = expected;
         this.key = key;
         this.caseInsensitive = caseInsensitive;
         this.comparator = comparator;
+
+        // Case insensitive comparisons are made by converting both
+        // side of the comparison to lowercase.
+        if (caseInsensitive) {
+            for (int i = 0; i < expected.size(); i++) {
+                expected.set(i, expected.get(i).toLowerCase(Locale.ENGLISH));
+            }
+        }
     }
 
     @Override
@@ -90,12 +96,24 @@ final class AttributeSelector implements Selector {
             return !result.isEmpty();
         }
 
-        String rhs = caseInsensitive ? expected.toLowerCase(Locale.US) : expected;
-        return result.stream()
-                // The returned attribute value might be null if
-                // the value exists, but isn't comparable.
-                .filter(FunctionalUtils.not(Objects::isNull))
-                .map(value -> caseInsensitive ? value.toLowerCase(Locale.ENGLISH) : value)
-                .anyMatch(lhs -> comparator.apply(lhs, rhs));
+        for (String attribute : result) {
+            // The returned attribute value might be null if
+            // the value exists, but isn't comparable.
+            if (attribute == null) {
+                continue;
+            }
+
+            if (caseInsensitive) {
+                attribute = attribute.toLowerCase(Locale.ENGLISH);
+            }
+
+            for (String value : expected) {
+                if (comparator.apply(attribute, value)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

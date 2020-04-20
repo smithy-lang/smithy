@@ -69,10 +69,60 @@ The following selector matches all numbers defined in a model:
 Attribute selectors
 ===================
 
-*Attribute selectors* are used to match shapes based on the
-:ref:`shape ID <shape-id>`, :ref:`traits <traits>`, and member target.
-Attribute selectors take one of two forms: existence of an attribute and
-comparison of an attribute value to an expected value.
+*Attribute selectors* are used to match shapes based on
+:ref:`shape IDs <shape-id>`, :ref:`traits <traits>`, and other properties.
+
+
+Attribute existence
+-------------------
+
+Checks for the existence of an attribute without any kind of
+comparison.
+
+The following selector checks if a shape has the :ref:`deprecated-trait`:
+
+.. code-block:: none
+
+    [trait|deprecated]
+
+
+Attribute comparison
+--------------------
+
+An attribute selector with a comparator checks for the existence of an
+attribute and compares the resolved attribute values to a comma separated
+list of values.
+
+The following selector matches shapes that have the :ref:`documentation-trait`
+with a value set to an empty string:
+
+.. code-block:: none
+
+    [trait|documentation=""]
+
+Multiple values can be provided using a comma separated list. One or more
+resolved attribute values MUST match one or more provided values.
+
+The following selector matches shapes that have the :ref:`tags-trait` in
+which one or more tags matches either "foo" or "baz".
+
+.. code-block:: none
+
+    [trait|tags|(values)=foo, baz]
+
+Attribute comparisons can be made case-insensitive by preceding the closing
+bracket with ``i``.
+
+The following selector matches shapes that have a documentation string
+that case-insensitively contains the word "FIXME":
+
+.. code-block:: none
+
+    [trait|documentation*=FIXME i]
+
+
+Attribute comparators
+---------------------
 
 Attribute selectors support the following comparators:
 
@@ -95,9 +145,6 @@ Attribute selectors support the following comparators:
     * - ``*=``
       - Matches if the attribute value contains with the expected value.
 
-Attribute comparisons can be made case-insensitive by preceding the closing
-bracket with " i" (for example, ``string[trait|time=DATE i]``).
-
 .. important::
 
     Implementations MUST NOT fail when unknown attribute keys are
@@ -106,7 +153,7 @@ bracket with " i" (for example, ``string[trait|time=DATE i]``).
 
 
 ``id`` attribute
-~~~~~~~~~~~~~~~~
+----------------
 
 Gets the full shape ID of a shape.
 
@@ -125,7 +172,7 @@ is enclosed in single or double quotes:
 
 
 ``id|namespace`` attribute
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 Gets the namespace part of a shape ID.
 
@@ -137,7 +184,7 @@ The following example matches all shapes in the ``foo.baz`` namespace:
 
 
 ``id|name`` attribute
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 Gets the name part of a shape ID.
 
@@ -150,7 +197,7 @@ name of ``MyShape``.
 
 
 ``id|member`` attribute
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Gets the member part of a shape ID (if available).
 
@@ -163,7 +210,7 @@ name of ``foo``.
 
 
 ``service|version`` attribute
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 Gets the version property of a service shape if the shape is
 a service.
@@ -177,7 +224,7 @@ property that starts with ``2018-``:
 
 
 ``trait|*`` attribute
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 Gets the value of a trait applied to a shape, where "*" is the ID
 of a trait. The ``smithy.api`` namespace MAY be omitted from shape IDs
@@ -216,7 +263,7 @@ Fully-qualified trait names are supported:
 
 
 Nested trait  properties
-^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Nested properties of a trait can be selected using subsequent pipe (``|``)
 delimited property names.
@@ -300,7 +347,7 @@ The *current* shapes evaluated by a selector is changed using a
 
 
 Undirected neighbor
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 An :token:`undirected neighbor <selector_undirected_neighbor>` (``>``) changes
 the current set of shapes to every shape that is connected to the current
@@ -327,7 +374,7 @@ selector returns strings that are targeted by list members:
 
 
 Directed neighbors
-~~~~~~~~~~~~~~~~~~
+------------------
 
 The ``>`` neighbor selector is an *undirected* edge traversal. Sometimes a
 directed edge traversal is necessary to match the appropriate shapes. For
@@ -368,7 +415,7 @@ selector finds all service shapes that have a protocol trait applied to it
 
 
 Recursive neighbors
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 The ``~>`` neighbor selector finds all shapes that are recursively connected in
 the closure of another shape.
@@ -392,7 +439,7 @@ trait:
 .. _selector-relationships:
 
 Relationships
-~~~~~~~~~~~~~
+-------------
 
 The table below lists the labeled directed relationships from each shape.
 
@@ -509,7 +556,7 @@ Functions are used to filter shapes. Functions always start with ``:``.
 
 
 ``:test``
-~~~~~~~~~
+---------
 
 The ``:test`` function is used to test if a shape is contained within any of
 the provided predicate selector return values without changing the current
@@ -530,7 +577,7 @@ no documentation:
 
 
 ``:is``
-~~~~~~~
+-------
 
 The ``:is`` function is used to map over the current shape with multiple
 selectors and returns all of the shapes returned from each selector. The
@@ -579,7 +626,7 @@ change the current node, this can be reduced to the following selector:
 
 
 ``:not``
-~~~~~~~~
+--------
 
 The *:not* function is used to filter out shapes. This function accepts a
 list of selector arguments, and the shapes returned from each predicate are
@@ -659,7 +706,7 @@ in the model:
 
 
 ``:of``
-~~~~~~~
+-------
 
 The ``:of`` function is used to match members based on their containers
 (i.e., the shape that defines the member). The ``:of`` function accepts one
@@ -705,9 +752,10 @@ Selectors are defined by the following ABNF_ grammar.
     selector_directed_neighbor      :"-[" `selector_rel_type` *("," `selector_rel_type`) "]->"
     selector_recursive_neighbor     :"~>"
     selector_rel_type               :`identifier`
-    selector_attr                   :"[" `selector_key` *(`selector_comparator` `selector_value` ["i"]) "]"
+    selector_attr                   :"[" `selector_key` *(`selector_comparator` `selector_values` ["i"]) "]"
     selector_key                    :`identifier` *("|" `selector_key_path`)
     selector_key_path               :`selector_pseudo_key` / `selector_value`
+    selector_values                 :`selector_value` *("," `selector_value`)
     selector_value                  :`selector_text` / `number` / `root_shape_id`
     selector_absolute_root_shape_id :`namespace` "#" `identifier`
     selector_pseudo_key             :"(" `identifier` ")"
