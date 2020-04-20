@@ -438,4 +438,25 @@ public class SelectorTest {
             this.selector = selector;
         }
     }
+
+    @Test
+    public void canMatchUsingCommaSeparatedAttributeValues() {
+        List<String> matches1 = ids(traitModel, "[trait|enum|(values)|value='m256.mega', 'nope']");
+        List<String> matches2 = ids(traitModel, "[trait|enum|(values)|value = 'm256.mega' ,'nope' ]");
+        List<String> matches3 = ids(traitModel, "[trait|enum|(values)|value = 'm256.mega' ,   nope ]");
+
+        assertThat(matches1, equalTo(matches2));
+        assertThat(matches1, equalTo(matches3));
+        assertThat(matches1, containsInAnyOrder(
+                "smithy.example#DocumentedString1",
+                "smithy.example#DocumentedString2",
+                "smithy.example#EnumString"));
+    }
+
+    @Test
+    public void detectsInvalidAttributeCsv() {
+        Assertions.assertThrows(
+                SelectorSyntaxException.class,
+                () -> Selector.parse("[trait|enum|(values)|value='m256.mega',]"));
+    }
 }

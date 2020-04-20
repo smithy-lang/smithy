@@ -264,7 +264,7 @@ final class Parser {
                 throw syntax("Unknown attribute comparator token '" + next + "'");
         }
 
-        String value = parseAttributeValue();
+        List<String> values = parseAttributeValues();
         ws();
 
         boolean insensitive = charPeek() == 'i';
@@ -274,7 +274,7 @@ final class Parser {
         }
 
         expect(']');
-        return new AttributeSelector(attributeKey, comparator, value, insensitive);
+        return new AttributeSelector(attributeKey, comparator, values, insensitive);
     }
 
     private AttributeSelector.KeyGetter parseAttributeKey() {
@@ -353,6 +353,20 @@ final class Parser {
                 result.add(parseAttributeValue());
             }
         } while (charPeek() == '|');
+
+        return result;
+    }
+
+    private List<String> parseAttributeValues() {
+        List<String> result = new ArrayList<>();
+        result.add(parseAttributeValue());
+        ws();
+
+        while (charPeek() == ',') {
+            position++;
+            result.add(parseAttributeValue());
+            ws();
+        }
 
         return result;
     }
