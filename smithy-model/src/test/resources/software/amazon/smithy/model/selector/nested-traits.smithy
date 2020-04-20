@@ -68,3 +68,11 @@ structure MoreNesting {
 structure EvenMoreNesting {
     bar: String,
 }
+
+@error("server")
+@httpError(500)
+structure ErrorStruct1 {}
+
+@error("client")
+@httpError(400)
+structure ErrorStruct2 {}
