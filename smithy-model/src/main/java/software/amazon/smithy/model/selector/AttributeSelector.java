@@ -18,6 +18,7 @@ package software.amazon.smithy.model.selector;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -26,6 +27,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -90,9 +92,10 @@ final class AttributeSelector implements Selector {
 
         String rhs = caseInsensitive ? expected.toLowerCase(Locale.US) : expected;
         return result.stream()
-                .map(value -> caseInsensitive ? value.toLowerCase(Locale.US) : value)
                 // The returned attribute value might be null if
                 // the value exists, but isn't comparable.
-                .anyMatch(lhs -> lhs != null && comparator.apply(lhs, rhs));
+                .filter(FunctionalUtils.not(Objects::isNull))
+                .map(value -> caseInsensitive ? value.toLowerCase(Locale.ENGLISH) : value)
+                .anyMatch(lhs -> comparator.apply(lhs, rhs));
     }
 }

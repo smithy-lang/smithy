@@ -88,7 +88,7 @@ Attribute selectors support the following comparators:
       - Matches if the attribute value is not equal to the expected value.
         Note that this comparator is never matched if the resolved attribute
         does not exist.
-    * - ``~=``
+    * - ``^=``
       - Matches if the attribute value starts with the expected value.
     * - ``$=``
       - Matches if the attribute value ends with the expected value.
@@ -97,6 +97,12 @@ Attribute selectors support the following comparators:
 
 Attribute comparisons can be made case-insensitive by preceding the closing
 bracket with " i" (for example, ``string[trait|time=DATE i]``).
+
+.. important::
+
+    Implementations MUST NOT fail when unknown attribute keys are
+    encountered; implementations SHOULD emit a warning and match no results
+    when an unknown attribute is encountered.
 
 
 ``id`` attribute
@@ -110,11 +116,12 @@ The following example matches only the ``foo.baz#Structure`` shape:
 
     [id=foo.baz#Structure]
 
-The following example matches only the ``foo.baz#Structure$foo`` shape:
+Matching on a shape ID that contains a member requires that the shape ID
+is enclosed in single or double quotes:
 
 .. code-block:: none
 
-    [id=foo.baz#Structure$foo]
+    [id='foo.baz#Structure$foo']
 
 
 ``id|namespace`` attribute
@@ -166,7 +173,7 @@ property that starts with ``2018-``:
 
 .. code-block:: none
 
-    [service|version~='2018-']
+    [service|version^='2018-']
 
 
 ``trait|*`` attribute
@@ -289,16 +296,16 @@ Neighbors
 =========
 
 The *current* shapes evaluated by a selector is changed using a
-:token:`neighbor` token.
+:token:`selector_neighbor` token.
 
 
 Undirected neighbor
 ~~~~~~~~~~~~~~~~~~~
 
-An :token:`undirected neighbor <undirected_neighbor>` (``>``) changes the
-current set of shapes to every shape that is connected to the current shapes.
-For example, the following selector returns the key and value members of
-every map:
+An :token:`undirected neighbor <selector_undirected_neighbor>` (``>``) changes
+the current set of shapes to every shape that is connected to the current
+shapes. For example, the following selector returns the key and value
+members of every map:
 
 .. code-block:: none
 
@@ -685,69 +692,32 @@ Selectors are defined by the following ABNF_ grammar.
    changing the semantics of a selector.
 
 .. productionlist:: selectors
-    selector             :`selector_expression` *(`selector_expression`)
-    selector_expression  :`shape_types` / `attr` / `function_expression` / `neighbor`
-    shape_types          :"*"
-                         :/ "blob"
-                         :/ "boolean"
-                         :/ "document"
-                         :/ "string"
-                         :/ "byte"
-                         :/ "short"
-                         :/ "integer"
-                         :/ "long"
-                         :/ "float"
-                         :/ "double"
-                         :/ "bigDecimal"
-                         :/ "bigInteger"
-                         :/ "timestamp"
-                         :/ "list"
-                         :/ "map"
-                         :/ "set"
-                         :/ "structure"
-                         :/ "union"
-                         :/ "service"
-                         :/ "operation"
-                         :/ "resource"
-                         :/ "member"
-                         :/ "number"
-                         :/ "simpleType"
-                         :/ "collection"
-    neighbor             :`undirected_neighbor` / `directed_neighbor` / `recursive_neighbor`
-    undirected_neighbor  :">"
-    directed_neighbor    :"-[" `relationship_type` *("," `relationship_type`) "]->"
-    recursive_neighbor   :"~>"
-    relationship_type    :"identifier"
-                         :/ "create"
-                         :/ "read"
-                         :/ "update"
-                         :/ "delete"
-                         :/ "list"
-                         :/ "member"
-                         :/ "input"
-                         :/ "output"
-                         :/ "error"
-                         :/ "operation"
-                         :/ "collectionOperation"
-                         :/ "instanceOperation"
-                         :/ "resource"
-                         :/ "bound"
-                         :/ "trait"
-    attr                   :"[" `attr_key` *(`comparator` `attr_value` ["i"]) "]"
-    attr_key               :`id_attribute` / `trait_attribute` / `service_attribute`
-    id_attribute           :"id" ["|" ("namespace" / "name" / "member")]
-    trait_attribute        :"trait" "|" `attr_value` *("|" `trait_attr_value`)
-    attr_value             :`attr_identifier` / `selector_text`
-    attr_identifier        :1*(ALPHA / DIGIT / "_") *(ALPHA / DIGIT / "_" / "-" / "." / "#")
-    trait_attr_value       :"(values)" / "(keys)" / `attr_value`
-    service_attribute      :"service|version"
-    comparator            :"~=" / "$=" / "*=" / "!=" / "="
-    function_expression   :":" `function` "(" `selector` *("," `selector`) ")"
-    function              :"test" / "is" / "not" / "of"
-    selector_text         :`selector_single_quoted_text` / `selector_double_quoted_text`
-    selector_single_quoted_text    :"'" 1*`selector_single_quoted_char` "'"
-    selector_double_quoted_text    :DQUOTE 1*`selector_double_quoted_char` DQUOTE
-    selector_single_quoted_char    :%x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
-    selector_double_quoted_char    :%x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (")
+    selector                        :`selector_expression` *(`selector_expression`)
+    selector_expression             :`selector_shape_types`
+                                    :/ `selector_attr`
+                                    :/ `selector_function_expression`
+                                    :/ `selector_neighbor`
+    selector_shape_types            :"*" / `identifier`
+    selector_neighbor               :`selector_undirected_neighbor`
+                                    :/ `selector_directed_neighbor`
+                                    :/ `selector_recursive_neighbor`
+    selector_undirected_neighbor    :">"
+    selector_directed_neighbor      :"-[" `selector_rel_type` *("," `selector_rel_type`) "]->"
+    selector_recursive_neighbor     :"~>"
+    selector_rel_type               :`identifier`
+    selector_attr                   :"[" `selector_key` *(`selector_comparator` `selector_value` ["i"]) "]"
+    selector_key                    :`identifier` *("|" `selector_key_path`)
+    selector_key_path               :`selector_pseudo_key` / `selector_value`
+    selector_value                  :`selector_text` / `number` / `root_shape_id`
+    selector_absolute_root_shape_id :`namespace` "#" `identifier`
+    selector_pseudo_key             :"(" `identifier` ")"
+    selector_comparator             :"^=" / "$=" / "*=" / "!=" / "="
+    selector_function_expression    :":" `selector_function` "(" `selector` *("," `selector`) ")"
+    selector_function               :`identifier`
+    selector_text                   :`selector_single_quoted_text` / `selector_double_quoted_text`
+    selector_single_quoted_text     :"'" 1*`selector_single_quoted_char` "'"
+    selector_double_quoted_text     :DQUOTE 1*`selector_double_quoted_char` DQUOTE
+    selector_single_quoted_char     :%x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
+    selector_double_quoted_char     :%x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (")
 
 .. _ABNF: https://tools.ietf.org/html/rfc5234

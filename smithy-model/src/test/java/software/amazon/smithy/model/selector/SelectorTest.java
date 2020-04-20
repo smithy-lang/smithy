@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.SetShape;
@@ -39,6 +40,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.ListUtils;
 
 public class SelectorTest {
 
@@ -201,7 +203,7 @@ public class SelectorTest {
     public void requiresValidAttribute() {
         Throwable thrown = Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse("[id=-]"));
 
-        assertThat(thrown.getMessage(), containsString("Invalid attribute start character"));
+        assertThat(thrown.getMessage(), containsString("Syntax error at character 5 of 6, near `]`"));
     }
 
     @Test
@@ -245,5 +247,195 @@ public class SelectorTest {
         Selector selector = Selector.parse(expr);
 
         assertThat(expr, equalTo(selector.toString()));
+        // Using the selector for an invalid function always returns an empty result.
+        assertThat(selector.select(Model.builder().build()), empty());
+    }
+
+    @Test
+    public void toleratesUnknownSelectorAttributes() {
+        String expr = "[foof]";
+        Selector selector = Selector.parse(expr);
+
+        assertThat(expr, equalTo(selector.toString()));
+        assertThat(selector.select(Model.builder().build()), empty());
+    }
+
+    @Test
+    public void throwsOnInvalidShapeType() {
+        SelectorSyntaxException e = Assertions.assertThrows(
+                SelectorSyntaxException.class,
+                () -> Selector.parse("foo"));
+
+        assertThat(e.getMessage(), containsString("Unknown shape type"));
+    }
+
+    @Test
+    public void parsesEachKindOfAttributeSelector() {
+        Selector.parse("[id=abc][id!=abc][id^=abc][id$=abc][id*=abc]");
+        Selector.parse("[  id = abc ] [ \nid\n!=\nabc\n]\n");
+    }
+
+    @Test
+    public void parsesNestedTraitEndsWith() {
+        Selector.parse("[trait|mediaType$='plain']");
+    }
+
+    @Test
+    public void throwsOnInvalidComparator() {
+        SelectorSyntaxException e = Assertions.assertThrows(
+                SelectorSyntaxException.class,
+                () -> Selector.parse("[id%=100]"));
+
+        assertThat(e.getMessage(), containsString("Expected one of the following tokens"));
+    }
+
+    @Test
+    public void parsesCaseInsensitiveAttributes() {
+        Selector.parse("[id=abc i][id=abc i ]");
+    }
+
+    @Test
+    public void detectsInvalidShapeIds() {
+        List<String> exprs = ListUtils.of(
+                "[id=#]",
+                "[id=com#]",
+                "[id=com.foo#]",
+                "[id=com.foo#$]",
+                "[id=com.foo#baz$]",
+                "[id=com.foo#.baz$]",
+                "[id=com..foo#baz]",
+                "[id=com#baz$.]",
+                "[id=com#baz$bar$]",
+                "[id=com#baz$bar#]",
+                "[id=com#baz$bar.bam]",
+                "[id=com.baz#foo$bar]", // Members are not permitted and must be quoted.
+                "[id=Com.Baz#Foo$Bar123]",
+                "[id=Com._Baz_#_Foo_$_Bar_123__]");
+
+        for (String expr : exprs) {
+            Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
+        }
+    }
+
+    @Test
+    public void parsesValidShapeIds() {
+        List<String> exprs = ListUtils.of(
+                "[id=com#foo]",
+                "[id=com.baz#foo]",
+                "[id=com.baz.bar#foo]",
+                "[id=Foo]");
+
+        for (String expr : exprs) {
+            Selector.parse(expr);
+        }
+    }
+
+    @Test
+    public void detectsInvalidNumbers() {
+        List<String> exprs = ListUtils.of(
+                "[id=1-]",
+                "[id=-]",
+                "[id=1.]",
+                "[id=1..1]",
+                "[id=1.0e]",
+                "[id=1.0e+]",
+                "[id=1e+]",
+                "[id=1e++]",
+                "[id=1+]",
+                "[id=+1]");
+
+        for (String expr : exprs) {
+            Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
+        }
+    }
+
+    @Test
+    public void parsesValidNumbers() {
+        List<String> exprs = ListUtils.of(
+                "[id=1]",
+                "[id=123]",
+                "[id=0]",
+                "[id=-1]",
+                "[id=-10]",
+                "[id=123456789]",
+                "[id=1.5]",
+                "[id=1.123456789]",
+                "[id=1.1e+1]",
+                "[id=1.1e-1]",
+                "[id=1.1e-0]",
+                "[id=1.1e-123456789]",
+                "[id=1e+123456789]",
+                "[id=1e-123456789]");
+
+        for (String expr : exprs) {
+            Selector.parse(expr);
+        }
+    }
+
+    @Test
+    public void parsesValidQuotedAttributes() {
+        List<String> exprs = ListUtils.of(
+                "[id='1']",
+                "[id=\"1\"]",
+                "[id='aaaaa']",
+                "[id=\"aaaaaa\"]",
+                "[trait|'foo'=\"aaaaaa\"]",
+                "[trait|\"foo\"=\"aaaaaa\"]");
+
+        for (String expr : exprs) {
+            Selector.parse(expr);
+        }
+    }
+
+    @Test
+    public void detectsInvalidKnownAttributePaths() {
+        List<String> exprs = ListUtils.of(
+                "[service]",
+                "[service|version|foo]",
+                "[trait]");
+
+        for (String expr : exprs) {
+            Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
+        }
+    }
+
+    @Test
+    public void parsesValidAttributePathsAndToleratesUnknownPaths() {
+        List<String> exprs = ListUtils.of(
+                "[id=abc]",
+                "[id|name=abc]",
+                "[id|member=abc]",
+                "[id|namespace=abc]",
+                "[id|namespace|(foo)=abc]", // invalid, tolerated
+                "[id|blurb=abc]",  // invalid, tolerated
+                "[service|version=abc]",
+                "[service|blurb=abc]",  // invalid, tolerated
+                "[trait|foo=abc]");
+
+        for (String expr : exprs) {
+            Selector.parse(expr);
+        }
+    }
+
+    @Test
+    public void canDeserializeSelectors() {
+        String selector = "[trait|mediaType$='plain']";
+        Node node = Node.objectNode().withMember("selector", selector);
+        NodeMapper mapper = new NodeMapper();
+        Pojo pojo = mapper.deserialize(node, Pojo.class);
+
+        assertThat(pojo.getSelector().toString(), equalTo(selector));
+    }
+
+    public static final class Pojo {
+        private Selector selector;
+
+        public Selector getSelector() {
+            return selector;
+        }
+
+        public void setSelector(Selector selector) {
+            this.selector = selector;
+        }
     }
 }
