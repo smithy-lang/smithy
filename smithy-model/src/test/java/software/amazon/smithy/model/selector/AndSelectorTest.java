@@ -28,13 +28,14 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 public class AndSelectorTest {
     @Test
     public void matchesAllPredicates() {
         Selector selector = AndSelector.of(Arrays.asList(
                 new ShapeTypeSelector(ShapeType.STRING),
-                new AttributeSelector(new TraitAttributeKey("sensitive"))));
+                AttributeSelector.existence(AttributeValue.Traits.createFactory(ListUtils.of("sensitive")))));
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();
         Shape b = StringShape.builder().id("foo.baz#Bam").addTrait(new SensitiveTrait()).build();
         Model model = Model.builder().addShapes(a, b).build();
@@ -47,7 +48,7 @@ public class AndSelectorTest {
     public void shortCircuits() {
         Selector selector = AndSelector.of(Arrays.asList(
                 new ShapeTypeSelector(ShapeType.BIG_INTEGER),
-                new AttributeSelector(new TraitAttributeKey("sensitive"))));
+                AttributeSelector.existence(AttributeValue.Traits.createFactory(ListUtils.of("sensitive")))));
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();
         Shape b = StringShape.builder().id("foo.baz#Bam").addTrait(new SensitiveTrait()).build();
         Model model = Model.builder().addShapes(a, b).build();

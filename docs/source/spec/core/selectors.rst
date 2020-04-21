@@ -174,11 +174,13 @@ Attribute selectors support the following
       - Matches if the attribute value on the left hand side of the comparator
         *exists* and matches the existence assertion on the right hand side.
         This comparator uses the same rules defined in :ref:`attribute-existence`.
-        A value *exists* if it is not null, and a projected value (the result
-        of ``(values)`` or ``(keys)``) is not empty. The comparator matches if
-        the value exists and the right hand side of the comparator is
-        ``true``, or if the value does not exist and the right hand side of
-        the comparator is set to ``false``.
+        The comparator matches if the value exists and the right hand side of
+        the comparator is ``true``, or if the value does not exist and the
+        right hand side of the comparator is set to ``false``.
+
+
+Relative comparators
+~~~~~~~~~~~~~~~~~~~~
 
 The ``<``, ``<=``, ``>``, ``>=`` comparators only match if both the attribute
 value and comparison value contain valid :token:`number` productions. If
@@ -240,7 +242,12 @@ is enclosed in single or double quotes:
 
     [id='foo.baz#Structure$foo']
 
-``id`` can be used as an object and has the following properties.
+
+``id`` properties
+~~~~~~~~~~~~~~~~~
+
+The ``id`` attribute can be used as an object and has the
+following properties.
 
 ``namespace`` (``string``)
     Gets the :token:`namespace` part of a shape ID.
@@ -274,21 +281,7 @@ is enclosed in single or double quotes:
 ---------------------
 
 The ``service`` attribute is an object that is available for service shapes.
-The ``service`` attribute contains the following properties:
-
-``version`` (``string``)
-    Gets the version property of a service shape if the shape is
-    a service.
-
-    The following example matches all service shapes that have a version
-    property that starts with ``2018-``:
-
-    .. code-block:: none
-
-        [service|version^='2018-']
-
-The ``service`` attribute matches all service shapes. The following selector
-matches all service shapes:
+The following selector matches all service shapes:
 
 .. code-block:: none
 
@@ -301,10 +294,25 @@ selector:
 
     service
 
-.. note::
+When compared to a string value, the ``service`` attribute returns an
+empty string.
 
-    When converted to a string, the ``service`` attribute returns an
-    empty string.
+
+``service`` properties
+~~~~~~~~~~~~~~~~~~~~~~
+
+The ``service`` attribute contains the following properties:
+
+``version`` (``string``)
+    Gets the version property of a service shape if the shape is
+    a service.
+
+    The following example matches all service shapes that have a version
+    property that starts with ``2018-``:
+
+    .. code-block:: none
+
+        [service|version^='2018-']
 
 
 ``trait`` attribute

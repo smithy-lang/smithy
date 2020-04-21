@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.not;
 
 import java.util.List;
@@ -69,18 +68,27 @@ public class SelectorTest {
         assertThat(result1, equalTo(result2));
     }
 
-    private List<String> ids(Model model, String expression) {
+    private Set<String> ids(Model model, String expression) {
         return Selector.parse(expression)
                 .select(model)
                 .stream()
                 .map(Shape::getId)
                 .map(ShapeId::toString)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
+    }
+
+    @Test
+    public void detectsUnexpectedEof() {
+        SelectorSyntaxException e = Assertions.assertThrows(SelectorSyntaxException.class, () -> {
+            Selector.parse(":is(string,");
+        });
+
+        assertThat(e.getMessage(), containsString("Unexpected selector EOF"));
     }
 
     @Test
     public void selectsUsingNestedTraitValues() {
-        List<String> result = ids(traitModel, "[trait|range|min=1]");
+        Set<String> result = ids(traitModel, "[trait|range|min=1]");
 
         assertThat(result, hasItem("smithy.example#RangeInt1"));
         assertThat(result, not(hasItem("smithy.example#RangeInt2")));
@@ -89,7 +97,7 @@ public class SelectorTest {
 
     @Test
     public void selectsUsingNestedTraitValuesUsingNegation() {
-        List<String> result = ids(traitModel, "[trait|range|min!=1]");
+        Set<String> result = ids(traitModel, "[trait|range|min!=1]");
 
         assertThat(result, hasItem("smithy.example#RangeInt2"));
         assertThat(result, not(hasItem("smithy.example#RangeInt1")));
@@ -98,7 +106,7 @@ public class SelectorTest {
 
     @Test
     public void selectsUsingNestedTraitValuesThroughProjection() {
-        List<String> result = ids(traitModel, "[trait|enum|(values)|deprecated=true]");
+        Set<String> result = ids(traitModel, "[trait|enum|(values)|deprecated=true]");
 
         assertThat(result, hasItem("smithy.example#EnumString"));
         assertThat(result, not(hasItem("smithy.example#DocumentedString")));
@@ -106,7 +114,7 @@ public class SelectorTest {
 
     @Test
     public void canSelectOnTraitObjectKeys() {
-        List<String> result = ids(traitModel, "[trait|externalDocumentation|(keys)=Homepage]");
+        Set<String> result = ids(traitModel, "[trait|externalDocumentation|(keys)=Homepage]");
 
         assertThat(result, hasItem("smithy.example#DocumentedString1"));
         assertThat(result, not(hasItem("smithy.example#DocumentedString2")));
@@ -114,7 +122,7 @@ public class SelectorTest {
 
     @Test
     public void canSelectOnTraitObjectValues() {
-        List<String> result = ids(traitModel, "[trait|externalDocumentation|(values)='https://www.anotherexample.com/']");
+        Set<String> result = ids(traitModel, "[trait|externalDocumentation|(values)='https://www.anotherexample.com/']");
 
         assertThat(result, hasItem("smithy.example#DocumentedString2"));
         assertThat(result, not(hasItem("smithy.example#DocumentedString1")));
@@ -122,29 +130,29 @@ public class SelectorTest {
 
     @Test
     public void pathThroughTerminalValueReturnsNoResults() {
-        List<String> result = ids(traitModel, "[trait|documentation|foo|baz='nope']");
+        Set<String> result = ids(traitModel, "[trait|documentation|foo|baz='nope']");
 
         assertThat(result, empty());
     }
 
     @Test
     public void pathThroughArrayWithInvalidItemReturnsNoResults() {
-        List<String> result = ids(traitModel, "[trait|tags|foo|baz='nope']");
+        Set<String> result = ids(traitModel, "[trait|tags|foo|baz='nope']");
 
         assertThat(result, empty());
     }
 
     @Test
     public void supportsNotEqualsAttribute() {
-        List<String> result = ids(modelJson, "[id|member!=member]");
+        Set<String> result = ids(modelJson, "[id|member!=member]");
 
         assertThat(result, containsInAnyOrder("ns.foo#Map$key", "ns.foo#Map$value"));
     }
 
     @Test
     public void supportsMatchingDeeplyOnTraitValues() {
-        List<String> result1 = ids(traitModel, "[trait|smithy.example#nestedTrait|foo|foo|bar='hi']");
-        List<String> result2 = ids(traitModel, "[trait|smithy.example#nestedTrait|foo|foo|bar='bye']");
+        Set<String> result1 = ids(traitModel, "[trait|smithy.example#nestedTrait|foo|foo|bar='hi']");
+        Set<String> result2 = ids(traitModel, "[trait|smithy.example#nestedTrait|foo|foo|bar='bye']");
 
         assertThat(result1, hasItem("smithy.example#DocumentedString1"));
         assertThat(result1, not(hasItem("smithy.example#DocumentedString2")));
@@ -154,7 +162,7 @@ public class SelectorTest {
 
     @Test
     public void emptyListDoesNotAppearWhenProjecting() {
-        List<String> result = ids(traitModel, "[trait|enum|(values)|tags|(values)]");
+        Set<String> result = ids(traitModel, "[trait|enum|(values)|tags|(values)]");
 
         assertThat(result, hasItem("smithy.example#EnumString"));
         assertThat(result, hasItem("smithy.example#DocumentedString1"));
@@ -390,14 +398,14 @@ public class SelectorTest {
     }
 
     @Test
-    public void detectsInvalidKnownAttributePaths() {
+    public void toleratesInvalidKnownAttributePaths() {
         List<String> exprs = ListUtils.of(
                 "[service]",
                 "[service|version|foo]",
                 "[trait]");
 
         for (String expr : exprs) {
-            Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
+            Selector.parse(expr);
         }
     }
 
@@ -449,7 +457,7 @@ public class SelectorTest {
 
     @Test
     public void canMatchUsingCaseInsensitiveComparison() {
-        List<String> matches = ids(traitModel, "[trait|error = 'CLIENT' i]");
+        Set<String> matches = ids(traitModel, "[trait|error = 'CLIENT' i]");
 
         assertThat(matches, containsInAnyOrder("smithy.example#ErrorStruct2"));
     }
@@ -461,16 +469,16 @@ public class SelectorTest {
 
     @Test
     public void canMatchUsingCommaSeparatedAttributeValues() {
-        List<String> matches1 = ids(traitModel, "[trait|enum|(values)|value='m256.mega', 'nope']");
-        List<String> matches2 = ids(traitModel, "[trait|enum|(values)|value = 'm256.mega' ,'nope' ]");
-        List<String> matches3 = ids(traitModel, "[trait|enum|(values)|value = 'm256.mega' ,   nope ]");
+        Set<String> matches1 = ids(traitModel, "[trait|enum|(values)|value='m256.mega', 'nope']");
+        Set<String> matches2 = ids(traitModel, "[trait|enum|(values)|value = 'm256.mega' ,'nope' ]");
+        Set<String> matches3 = ids(traitModel, "[trait|enum|(values)|value = 'm256.mega' ,   nope ]");
 
-        assertThat(matches1, equalTo(matches2));
-        assertThat(matches1, equalTo(matches3));
         assertThat(matches1, containsInAnyOrder(
                 "smithy.example#DocumentedString1",
                 "smithy.example#DocumentedString2",
                 "smithy.example#EnumString"));
+        assertThat(matches1, equalTo(matches2));
+        assertThat(matches1, equalTo(matches3));
     }
 
     @Test
@@ -503,13 +511,13 @@ public class SelectorTest {
 
     @Test
     public void canMatchUsingRelativeSelectors() {
-        List<String> matches1 = ids(traitModel, "[trait|httpError >= 500]");
-        List<String> matches2 = ids(traitModel, "[trait|httpError > 499]");
-        List<String> matches3 = ids(traitModel, "[trait|httpError >= 400]");
-        List<String> matches4 = ids(traitModel, "[trait|httpError > 399]");
-        List<String> matches5 = ids(traitModel, "[trait|httpError <= 500]");
-        List<String> matches6 = ids(traitModel, "[trait|httpError < 500]");
-        List<String> matches7 = ids(traitModel, "[trait|httpError >= 500e0]");
+        Set<String> matches1 = ids(traitModel, "[trait|httpError >= 500]");
+        Set<String> matches2 = ids(traitModel, "[trait|httpError > 499]");
+        Set<String> matches3 = ids(traitModel, "[trait|httpError >= 400]");
+        Set<String> matches4 = ids(traitModel, "[trait|httpError > 399]");
+        Set<String> matches5 = ids(traitModel, "[trait|httpError <= 500]");
+        Set<String> matches6 = ids(traitModel, "[trait|httpError < 500]");
+        Set<String> matches7 = ids(traitModel, "[trait|httpError >= 500e0]");
 
         assertThat(matches1, containsInAnyOrder("smithy.example#ErrorStruct1"));
         assertThat(matches2, containsInAnyOrder("smithy.example#ErrorStruct1"));
@@ -524,5 +532,118 @@ public class SelectorTest {
     public void invalidNumbersFailsGracefully() {
         assertThat(ids(traitModel, "[trait|httpError >= 'nope']"), empty());
         assertThat(ids(traitModel, "[trait|error >= 500]"), empty());
+    }
+
+    @Test
+    public void toleratesGettingNullPropertyFromString() {
+        assertThat(ids(traitModel, "[id|no|no=100]"), empty());
+    }
+
+    @Test
+    public void checksIfValueIsPresent() {
+        Set<String> hasTags = ids(traitModel, "[id|namespace='smithy.example'][trait|tags?=true]");
+        Set<String> noTags = ids(traitModel, "[id|namespace='smithy.example'][trait|tags?=false]");
+
+        assertThat(hasTags, containsInAnyOrder("smithy.example#EnumString"));
+        assertThat(noTags, not(hasItem("smithy.example#EnumString")));
+        assertThat(noTags, not(empty()));
+    }
+
+    @Test
+    public void matchesOnShapeIdName() {
+        Set<String> enumString = ids(traitModel, "[id|name=EnumString]");
+
+        assertThat(enumString, contains("smithy.example#EnumString"));
+    }
+
+    @Test
+    public void projectsKeysOfIdAttribute() {
+        Set<String> allIds1 = ids(traitModel, "[id|namespace='smithy.example'][id|(keys)=namespace]");
+        Set<String> allIds2 = ids(traitModel, "[id|namespace='smithy.example'][id|(keys)=name]");
+        Set<String> someIds = ids(traitModel, "[id|namespace='smithy.example'][id|(keys)=member]");
+
+        assertThat(allIds1, not(empty()));
+        assertThat(allIds1, equalTo(allIds2));
+        assertThat(someIds, not(empty()));
+
+        for (String id : someIds) {
+            assertThat(id, containsString("$"));
+        }
+    }
+
+    @Test
+    public void projectsValuesOfIdAttribute() {
+        // Ids should match exactly the same in both selectors.
+        Set<String> allIds1 = ids(traitModel, "[id|namespace='smithy.example']");
+        Set<String> allIds2 = ids(
+                traitModel, "[id|namespace='smithy.example'][id|(values)='smithy.example']");
+
+        assertThat(allIds1, not(empty()));
+        assertThat(allIds1, equalTo(allIds2));
+
+        // Member should have matched exactly the same members in both selectors.
+        Set<String> someIds1 = ids(traitModel, "[id|(values)='member']");
+        Set<String> someIds2 = ids(traitModel, "member[id|member=member]");
+
+        assertThat(someIds1, not(empty()));
+        assertThat(someIds1, equalTo(someIds2));
+    }
+
+    @Test
+    public void selectsServiceExistence() {
+        Set<String> services1 = ids(traitModel, "[service]");
+        Set<String> services2 = ids(traitModel, "service");
+
+        assertThat(services1, not(empty()));
+        assertThat(services1, equalTo(services2));
+    }
+
+    @Test
+    public void selectsServiceVersions() {
+        Set<String> services1 = ids(traitModel, "[service|version='2020-04-21']");
+        Set<String> services2 = ids(traitModel, "[id|name=MyService]");
+
+        assertThat(services1, not(empty()));
+        assertThat(services1, equalTo(services2));
+    }
+
+    @Test
+    public void projectsServiceKeysAndValues() {
+        Set<String> services1 = ids(traitModel, "service");
+        Set<String> services2 = ids(traitModel, "[service|(keys)=version]");
+        Set<String> services3 = ids(traitModel, "[service|(values)='2020-04-21']");
+
+        assertThat(services1, not(empty()));
+        assertThat(services1, equalTo(services2));
+        assertThat(services1, equalTo(services3));
+    }
+
+    @Test
+    public void toleratesUnknownServicePaths() {
+        Set<String> services1 = ids(traitModel, "[service|foo|baz='bam']");
+        Set<String> services2 = ids(traitModel, "[service|foo|baz]");
+
+        assertThat(services1, empty());
+        assertThat(services2, empty());
+    }
+
+    @Test
+    public void projectsTraitKeysAsShapeIds() {
+        // All traits with a shape ID name of 'tags'.
+        Set<String> shapes1 = ids(traitModel, "[id|namespace='smithy.example'][trait|(keys)|name='tags']");
+        Set<String> shapes2 = ids(traitModel, "[id|namespace='smithy.example'][trait|tags]");
+
+        assertThat(shapes1, contains("smithy.example#EnumString"));
+        assertThat(shapes2, equalTo(shapes1));
+    }
+
+    @Test
+    public void projectsTraitValuesAsNodes() {
+        // All traits that have a property named "min".
+        Set<String> shapes1 = ids(traitModel, "[id|namespace='smithy.example'][trait|(values)|min]");
+        Set<String> shapes2 = ids(traitModel, "[id|namespace='smithy.example'][trait|range]");
+
+        assertThat(shapes1, containsInAnyOrder("smithy.example#RangeInt1", "smithy.example#RangeInt2"));
+        assertThat(shapes2, equalTo(shapes1));
     }
 }

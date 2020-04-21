@@ -76,3 +76,7 @@ structure ErrorStruct1 {}
 @error("client")
 @httpError(400)
 structure ErrorStruct2 {}
+
+service MyService {
+    version: "2020-04-21"
+}

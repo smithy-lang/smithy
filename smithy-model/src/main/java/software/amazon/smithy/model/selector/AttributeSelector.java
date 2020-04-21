@@ -15,138 +15,70 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
-import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
- * Matches shapes with a specific attribute.
+ * Matches shapes with a specific attribute or that matches an attribute comparator.
  */
 final class AttributeSelector implements Selector {
 
-    static final Comparator EQUALS = String::equals;
-    static final Comparator NOT_EQUALS = (a, b) -> !a.equals(b);
-    static final Comparator STARTS_WITH = String::startsWith;
-    static final Comparator ENDS_WITH = String::endsWith;
-    static final Comparator CONTAINS = String::contains;
-
-    static final Comparator GT = (a, b) -> numericComparison(a, b, i -> i == 1);
-    static final Comparator GTE = (a, b) -> numericComparison(a, b, i -> i >= 0);
-    static final Comparator LT = (a, b) -> numericComparison(a, b, i -> i <= -1);
-    static final Comparator LTE = (a, b) -> numericComparison(a, b, i -> i <= 0);
-
-    static final KeyGetter KEY_ID = (shape) -> ListUtils.of(shape.getId().toString());
-    static final KeyGetter KEY_ID_NAMESPACE = (shape) -> ListUtils.of(shape.getId().getNamespace());
-    static final KeyGetter KEY_ID_NAME = (shape) -> ListUtils.of(shape.getId().getName());
-    static final KeyGetter KEY_ID_MEMBER = (shape) -> shape.getId().getMember()
-            .map(Collections::singletonList)
-            .orElseGet(Collections::emptyList);
-    static final KeyGetter KEY_SERVICE_VERSION = (shape) -> shape.asServiceShape()
-            .map(ServiceShape::getVersion)
-            .map(Collections::singletonList)
-            .orElseGet(Collections::emptyList);
-
-    private final KeyGetter key;
-    private final List<String> expected;
-    private final Comparator comparator;
+    private final AttributeValue.Factory key;
+    private final List<AttributeValue> expected;
+    private final AttributeComparator comparator;
     private final boolean caseInsensitive;
 
-    interface KeyGetter extends Function<Shape, List<String>> {}
-
-    interface Comparator extends BiFunction<String, String, Boolean> {}
-
-    AttributeSelector(KeyGetter key) {
-        this.key = key;
-        expected = null;
-        comparator = null;
-        caseInsensitive = false;
-    }
-
     AttributeSelector(
-            KeyGetter key,
-            Comparator comparator,
+            AttributeValue.Factory key,
             List<String> expected,
+            AttributeComparator comparator,
             boolean caseInsensitive
     ) {
-        this.expected = expected;
         this.key = key;
         this.caseInsensitive = caseInsensitive;
         this.comparator = comparator;
 
-        // Case insensitive comparisons are made by converting both
-        // side of the comparison to lowercase.
-        if (caseInsensitive) {
-            for (int i = 0; i < expected.size(); i++) {
-                expected.set(i, expected.get(i).toLowerCase(Locale.ENGLISH));
+        // Create the valid values of the expected selector.
+        if (expected == null) {
+            this.expected = Collections.emptyList();
+        } else {
+            this.expected = new ArrayList<>(expected.size());
+            for (String validValue : expected) {
+                this.expected.add(new AttributeValue.Literal(validValue));
             }
         }
+    }
+
+    static AttributeSelector existence(AttributeValue.Factory key) {
+        return new AttributeSelector(key, null, null, false);
     }
 
     @Override
     public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
         return shapes.stream()
-                .filter(shape -> matchesAttribute(key.apply(shape)))
+                .filter(this::matchesAttribute)
                 .collect(Collectors.toSet());
     }
 
-    private boolean matchesAttribute(List<String> result) {
-        if (comparator == null) {
-            return !result.isEmpty();
+    private boolean matchesAttribute(Shape shape) {
+        AttributeValue lhs = key.create(shape);
+
+        if (expected.isEmpty()) {
+            return lhs.isPresent();
         }
 
-        for (String attribute : result) {
-            // The returned attribute value might be null if
-            // the value exists, but isn't comparable.
-            if (attribute == null) {
-                continue;
-            }
-
-            if (caseInsensitive) {
-                attribute = attribute.toLowerCase(Locale.ENGLISH);
-            }
-
-            for (String value : expected) {
-                if (comparator.apply(attribute, value)) {
-                    return true;
-                }
+        for (AttributeValue rhs : expected) {
+            if (lhs.compare(comparator, rhs, caseInsensitive)) {
+                return true;
             }
         }
 
         return false;
-    }
-
-    // Try to parse both numbers, ignore numeric failures since that's acceptable,
-    // then pass the result of calling compareTo on the numbers to the given
-    // evaluator. The evaluator then determines if the comparison is what was expected.
-    private static boolean numericComparison(String lhs, String rhs, Function<Integer, Boolean> evaluator) {
-        BigDecimal lhsNumber = parseNumber(lhs);
-        if (lhsNumber == null) {
-            return false;
-        }
-
-        BigDecimal rhsNumber = parseNumber(rhs);
-        if (rhsNumber == null) {
-            return false;
-        }
-
-        return evaluator.apply(lhsNumber.compareTo(rhsNumber));
-    }
-
-    private static BigDecimal parseNumber(String token) {
-        try {
-            return new BigDecimal(token);
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 }

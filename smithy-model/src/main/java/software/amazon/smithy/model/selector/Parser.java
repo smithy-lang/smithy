@@ -232,47 +232,51 @@ final class Parser {
 
     private Selector parseAttribute() {
         ws();
-        AttributeSelector.KeyGetter attributeKey = parseAttributeKey();
+        AttributeValue.Factory keyFactory = parseAttributePath();
         ws();
-        char next = expect(']', '=', '!', '^', '$', '*', '>', '<');
-        AttributeSelector.Comparator comparator;
+        char next = expect(']', '=', '!', '^', '$', '*', '?', '>', '<');
+        AttributeComparator comparator;
 
         switch (next) {
             case ']':
-                return new AttributeSelector(attributeKey);
+                return AttributeSelector.existence(keyFactory);
             case '=':
-                comparator = AttributeSelector.EQUALS;
+                comparator = AttributeComparator.EQUALS;
                 break;
             case '!':
                 expect('=');
-                comparator = AttributeSelector.NOT_EQUALS;
+                comparator = AttributeComparator.NOT_EQUALS;
                 break;
             case '^':
                 expect('=');
-                comparator = AttributeSelector.STARTS_WITH;
+                comparator = AttributeComparator.STARTS_WITH;
                 break;
             case '$':
                 expect('=');
-                comparator = AttributeSelector.ENDS_WITH;
+                comparator = AttributeComparator.ENDS_WITH;
                 break;
             case '*':
                 expect('=');
-                comparator = AttributeSelector.CONTAINS;
+                comparator = AttributeComparator.CONTAINS;
+                break;
+            case '?':
+                expect('=');
+                comparator = AttributeComparator.EXISTS;
                 break;
             case '>':
                 if (charPeek() == '=') {
                     position++;
-                    comparator = AttributeSelector.GTE;
+                    comparator = AttributeComparator.GTE;
                 } else {
-                    comparator = AttributeSelector.GT;
+                    comparator = AttributeComparator.GT;
                 }
                 break;
             case '<':
                 if (charPeek() == '=') {
                     position++;
-                    comparator = AttributeSelector.LTE;
+                    comparator = AttributeComparator.LTE;
                 } else {
-                    comparator = AttributeSelector.LT;
+                    comparator = AttributeComparator.LT;
                 }
                 break;
             default:
@@ -290,10 +294,10 @@ final class Parser {
         }
 
         expect(']');
-        return new AttributeSelector(attributeKey, comparator, values, insensitive);
+        return new AttributeSelector(keyFactory, values, comparator, insensitive);
     }
 
-    private AttributeSelector.KeyGetter parseAttributeKey() {
+    private AttributeValue.Factory parseAttributePath() {
         // Parse the top-level namespace key.
         String namespace = parseIdentifier();
 
@@ -302,48 +306,15 @@ final class Parser {
 
         switch (namespace) {
             case "id":
-                if (path.isEmpty()) {
-                    return AttributeSelector.KEY_ID;
-                } else if (path.size() == 1) {
-                    switch (path.get(0)) {
-                        case "namespace":
-                            return AttributeSelector.KEY_ID_NAMESPACE;
-                        case "name":
-                            return AttributeSelector.KEY_ID_NAME;
-                        case "member":
-                            return AttributeSelector.KEY_ID_MEMBER;
-                        default:
-                            // Unknown attributes always return no result.
-                            LOGGER.warning("Unknown  selector attribute `id` path " + path.get(0) + ": " + expression);
-                            return s -> Collections.emptyList();
-                    }
-                } else {
-                    // Unknown attributes always return no result.
-                    LOGGER.warning("Too many selector attribute `id` paths " + path + ": " + expression);
-                    return s -> Collections.emptyList();
-                }
+                return AttributeValue.Id.createFactory(path);
             case "service":
-                if (path.size() != 1) {
-                    throw syntax("service attributes require exactly one path item");
-                } else if (path.get(0).equals("version")) {
-                    return AttributeSelector.KEY_SERVICE_VERSION;
-                } else {
-                    // Unknown attributes always return no result.
-                    LOGGER.warning("Unknown selector service attribute path " + path + ": " + expression);
-                    return s -> Collections.emptyList();
-                }
+                return AttributeValue.Service.createFactory(path);
             case "trait":
-                if (path.isEmpty()) {
-                    throw syntax("Trait attributes require a trait shape ID");
-                } else if (path.size() == 1) {
-                    return new TraitAttributeKey(path.get(0), Collections.emptyList());
-                } else {
-                    return new TraitAttributeKey(path.get(0), path.subList(1, path.size()));
-                }
+                return AttributeValue.Traits.createFactory(path);
             default:
                 // Unknown attributes always return no result.
-                LOGGER.warning("Unknown selector attribute `" + namespace + "` " + expression);
-                return s -> Collections.emptyList();
+                LOGGER.warning("Unknown selector attribute `" + namespace + "`: " + expression);
+                return AttributeValue.NULL_FACTORY;
         }
     }
 
