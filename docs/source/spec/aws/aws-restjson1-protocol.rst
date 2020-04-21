@@ -187,7 +187,7 @@ Content-Type
 ------------
 
 The ``aws.protocols#restJson1`` protocol uses a default Content-Type
-of ``application/x-amz-json-1.1``.
+of ``application/json``.
 
 Input or output shapes that apply the :ref:`httpPayload-trait` on one of
 their top-level members MUST use a Content-Type that is appropriate for
@@ -203,15 +203,15 @@ with the ``httpPayload`` trait:
       - Content-Type
     * - Has :ref:`mediaType-trait`
       - Use the value of the ``mediaType`` trait if present.
-    * - string
+    * - ``string``
       - ``text/plain``
-    * - blob
+    * - ``blob``
       - ``application/octet-stream``
-    * - document
+    * - ``document``
       - ``application/json``
-    * - structure
+    * - ``structure``
       - ``application/json``
-    * - union
+    * - ``union``
       - ``application/json``
 
 
@@ -225,55 +225,58 @@ JSON shape serialization
 
     * - Smithy type
       - JSON type
-    * - blob
+    * - ``blob``
       - JSON ``string`` value that is base64 encoded.
-    * - boolean
+    * - ``boolean``
       - JSON boolean
-    * - byte
+    * - ``byte``
       - JSON number
-    * - short
+    * - ``short``
       - JSON number
-    * - integer
+    * - ``integer``
       - JSON number
-    * - long
+    * - ``long``
       - JSON number
-    * - float
+    * - ``float``
       - JSON number
-    * - double
+    * - ``double``
       - JSON number
-    * - bigDecimal
+    * - ``bigDecimal``
       - JSON number. Unfortunately, this protocol serializes bigDecimal
         shapes as a normal JSON number. Many JSON parsers will either
         truncate the value or be unable to parse numbers that exceed the
         size of a double.
-    * - bigInteger
-      - JSON number. Unfortunately, this protocol serializes digInteger
+    * - ``bigInteger``
+      - JSON number. Unfortunately, this protocol serializes bigInteger
         shapes as a normal JSON number. Many JSON parsers will either
         truncate the value or be unable to parse numbers that exceed the
         size of a double.
-    * - string
+    * - ``string``
       - JSON string
-    * - timestamp
+    * - ``timestamp``
       - JSON number (default). This protocol uses ``epoch-seconds``, also
         known as Unix timestamps, in JSON payloads represented as a double.
         However, the :ref:`timestampFormat <timestampFormat-trait>` MAY be
         used to customize timestamp serialization.
-    * - document
+    * - ``document``
       - Any JSON value
-    * - list
+    * - ``list``
       - JSON array
-    * - map
+    * - ``set``
+      - JSON array. A set is serialized identically as a ``list`` shape,
+        but only contains unique values.
+    * - ``map``
       - JSON object
-    * - structure
+    * - ``structure``
       - JSON object. Each member value provided for the structure is
         serialized as a JSON property where the property name is the same
         as the member name. The :ref:`jsonName-trait` can be used to serialize
         a property using a custom name. A null value MAY be provided or
         omitted for a :ref:`boxed <box-trait>` member with no observable
         difference.
-    * - union
-      - JSON object. A union is serialized identically as a structure shape,
-        but only a single member can be set to a non-null value.
+    * - ``union``
+      - JSON object. A union is serialized identically as a ``structure``
+        shape, but only a single member can be set to a non-null value.
 
 
 --------------------------
@@ -281,9 +284,41 @@ HTTP binding serialization
 --------------------------
 
 The ``aws.protocols#restJson1`` protocol supports all of the HTTP binding traits
-defined in the `HTTP protocol bindings <http-traits>` specification. The
+defined in the :ref:`HTTP protocol bindings <http-traits>` specification. The
 serialization formats and and behaviors described for each trait are supported
 as defined in the ``aws.protocols#restJson1`` protocol.
+
+
+.. restJson1-errors:
+
+-----------------------------
+Operation error serialization
+-----------------------------
+
+Error responses in the ``restJson1`` protocol are serialized identically to
+standard responses with one additional component to distinguish which error
+is contained. The component MUST be one of the following: an additional header
+with the name ``X-Amzn-Errortype``, a body field with the name ``code``, or a
+body field named ``__type``. The value of this component SHOULD contain only
+the :token:`shape name <identifier>` of the error's :ref:`shape-id`.
+
+Legacy server-side protocol implementations sometimes include additional
+information in this value. New server-side protocol implementations SHOULD NOT
+populate this value with anything but the shape name. All client-side
+implementations SHOULD support sanitizing the value to retrieve the
+disambiguated error type using the following steps:
+
+1. If a ``:`` character is present, then take only the contents **before** the
+   first ``:`` character in the value.
+2. If a ``#`` character is present, then take only the contents **after** the
+   first ``#`` character in the value.
+
+All of the following error values resolve to ``FooError``:
+
+* ``FooError``
+* ``FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/``
+* ``aws.protocoltests.restjson#FooError``
+* ``aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/``
 
 
 -------------------------
@@ -291,9 +326,11 @@ Protocol compliance tests
 -------------------------
 
 A full compliance test suite is provided and SHALL be considered a normative
-reference: https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/rest-json
+reference: https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/awsJson1_1
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.
+
+*TODO: Add event stream handling specifications.*
 
 .. _`Application-Layer Protocol Negotiation (ALPN) Protocol ID`: https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids

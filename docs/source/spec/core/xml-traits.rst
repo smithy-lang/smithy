@@ -14,6 +14,8 @@ shapes with XML based protocols.
     :backlinks: none
 
 
+.. _serializing-xml-shapes:
+
 ----------------------
 Serializing XML shapes
 ----------------------
