@@ -33,6 +33,7 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.utils.ListUtils;
 
 public class OfSelectorTest {
     @Test
@@ -40,7 +41,7 @@ public class OfSelectorTest {
         Model model = createModel();
         // Containing shape must have the sensitive trait.
         Selector selector = new OfSelector(Collections.singletonList(
-                new AttributeSelector(new TraitAttributeKey("sensitive"))));
+                AttributeSelector.existence(AttributeValue.Traits.createFactory(ListUtils.of("sensitive")))));
 
         Set<Shape> result = selector.select(model);
         assertThat(result, hasSize(1));

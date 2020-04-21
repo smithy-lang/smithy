@@ -25,7 +25,15 @@ namespace smithy.example
         value: "m256.mega",
         name: "M256_MEGA",
         deprecated: true
-    }
+    },
+    {
+        value: "hi",
+        name: "bye"
+    },
+    {
+        value: "bye",
+        name: "hi"
+    },
 ])
 @tags(["foo", "baz"])
 string EnumString
@@ -45,7 +53,12 @@ integer RangeInt2
         value: "m256.mega",
         name: "M256_MEGA",
         tags: ["notEbs"]
-    }
+    },
+    {
+        value: "hi",
+        name: "hi",
+        tags: ["hi", "there"]
+    },
 ])
 @nestedTrait(foo: {foo: {bar: "hi"}})
 string DocumentedString1
@@ -76,3 +89,25 @@ structure ErrorStruct1 {}
 @error("client")
 @httpError(400)
 structure ErrorStruct2 {}
+
+@listyTrait([[[{foo: "a"}, {foo: "b"}]], [[{foo: "c"}]]])
+service MyService {
+    version: "2020-04-21"
+}
+
+@trait
+list listyTrait {
+    member: ListyTraitMember1,
+}
+
+list ListyTraitMember1 {
+    member: ListyTraitMember2,
+}
+
+list ListyTraitMember2 {
+    member: ListyTraitStruct,
+}
+
+structure ListyTraitStruct {
+    foo: String
+}
