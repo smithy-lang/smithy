@@ -70,34 +70,43 @@ Attribute selectors
 ===================
 
 *Attribute selectors* are used to match shapes based on
-:ref:`shape IDs <shape-id>`, :ref:`traits <traits>`, and other properties.
+:ref:`shape IDs <shape-id>`, :ref:`traits <traits>`, and other
+:ref:`attributes <selector-attributes>`.
 
-.. important::
 
-    Implementations MUST NOT fail when unknown attribute keys are
-    encountered; implementations SHOULD emit a warning and match no results
-    when an unknown attribute is encountered.
-
+.. _attribute-existence:
 
 Attribute existence
 -------------------
 
-Checks for the existence of an attribute without any kind of
-comparison.
+An attribute existence check tests for the existence of an attribute without
+any kind of comparison.
 
-The following selector checks if a shape has the :ref:`deprecated-trait`:
+The following selector matches shapes that are marked with the
+:ref:`deprecated-trait`:
 
 .. code-block:: none
 
     [trait|deprecated]
 
+Projected values from the :ref:`values-property` and :ref:`keys-property`
+are only considered present if they yield one or more results.
+
+The following example matches all shapes that have an ``enum`` trait,
+the trait contains at least one ``enum`` entry, and one or more entries
+contains a non-empty ``tags`` list.
+
+.. code-block:: none
+
+    [trait|enum|(values)|tags|(values)]
+
 
 Attribute comparison
 --------------------
 
-An attribute selector with a comparator checks for the existence of an
-attribute and compares the resolved attribute values to a comma separated
-list of values.
+An attribute selector with a :token:`comparator <selector_comparator>`
+checks for the existence of an attribute and compares the resolved
+attribute values to a comma separated list of values.
 
 The following selector matches shapes that have the :ref:`documentation-trait`
 with a value set to an empty string:
@@ -119,18 +128,19 @@ which one or more tags matches either "foo" or "baz".
 Attribute comparisons can be made case-insensitive by preceding the closing
 bracket with ``i``.
 
-The following selector matches shapes that have a documentation string
-that case-insensitively contains the word "FIXME":
+The following selector matches shapes that have a :ref:`httpQuery-trait`
+that case-insensitively contains the word "token":
 
 .. code-block:: none
 
-    [trait|documentation*=FIXME i]
+    [trait|httpQuery*=token i]
 
 
 Attribute comparators
 ---------------------
 
-Attribute selectors support the following comparators:
+Attribute selectors support the following
+:token:`comparators <selector_comparator>`:
 
 .. list-table::
     :header-rows: 1
@@ -160,6 +170,15 @@ Attribute selectors support the following comparators:
     * - ``<=``
       - Matches if the attribute value is less than or equal to the
         comparison value.
+    * - ``?=``
+      - Matches if the attribute value on the left hand side of the comparator
+        *exists* and matches the existence assertion on the right hand side.
+        This comparator uses the same rules defined in :ref:`attribute-existence`.
+        A value *exists* if it is not null, and a projected value (the result
+        of ``(values)`` or ``(keys)``) is not empty. The comparator matches if
+        the value exists and the right hand side of the comparator is
+        ``true``, or if the value does not exist and the right hand side of
+        the comparator is set to ``false``.
 
 The ``<``, ``<=``, ``>``, ``>=`` comparators only match if both the attribute
 value and comparison value contain valid :token:`number` productions. If
@@ -186,10 +205,27 @@ is not a valid number:
     [trait|httpError >= "not a number!"]
 
 
+.. _selector-attributes:
+
+Attributes
+==========
+
+Selector attributes return objects that MAY have nested properties. Objects
+returned from selectors MAY be available to cast to a string.
+
+.. important::
+
+    Implementations MUST NOT fail when unknown attribute keys are
+    encountered; implementations SHOULD emit a warning and match no results
+    when an unknown attribute is encountered.
+
+
 ``id`` attribute
 ----------------
 
-Gets the full shape ID of a shape.
+The ``id`` attribute returns an object that can be evaluated as a string.
+When used as a string, ``id`` contains the full :ref:`shape ID <shape-id>`
+of a shape.
 
 The following example matches only the ``foo.baz#Structure`` shape:
 
@@ -204,103 +240,132 @@ is enclosed in single or double quotes:
 
     [id='foo.baz#Structure$foo']
 
+``id`` can be used as an object and has the following properties.
 
-``id|namespace`` attribute
---------------------------
+``namespace`` (``string``)
+    Gets the :token:`namespace` part of a shape ID.
 
-Gets the namespace part of a shape ID.
+    The following example matches all shapes in the ``foo.baz`` namespace:
 
-The following example matches all shapes in the ``foo.baz`` namespace:
+    .. code-block:: none
 
-.. code-block:: none
+        [id|namespace='foo.baz']
+``name`` (``string``)
+    Gets the name part of a shape ID.
 
-    [id|namespace=foo.baz]
+    The following example matches all shapes in the model that have a shape
+    name of ``MyShape``.
+
+    .. code-block:: none
+
+        [id|name=MyShape]
+``member`` (``string``)
+    Gets the member part of a shape ID (if available).
+
+    The following example matches all members in the model that have a member
+    name of ``foo``.
+
+    .. code-block:: none
+
+        [id|member=foo]
 
 
-``id|name`` attribute
+``service`` attribute
 ---------------------
 
-Gets the name part of a shape ID.
+The ``service`` attribute is an object that is available for service shapes.
+The ``service`` attribute contains the following properties:
 
-The following example matches all shapes in the model that have a shape
-name of ``MyShape``.
+``version`` (``string``)
+    Gets the version property of a service shape if the shape is
+    a service.
 
-.. code-block:: none
+    The following example matches all service shapes that have a version
+    property that starts with ``2018-``:
 
-    [id|name=MyShape]
+    .. code-block:: none
 
+        [service|version^='2018-']
 
-``id|member`` attribute
------------------------
-
-Gets the member part of a shape ID (if available).
-
-The following example matches all members in the model that have a member
-name of ``foo``.
-
-.. code-block:: none
-
-    [id|member=foo]
-
-
-``service|version`` attribute
------------------------------
-
-Gets the version property of a service shape if the shape is
-a service.
-
-The following example matches all service shapes that have a version
-property that starts with ``2018-``:
+The ``service`` attribute matches all service shapes. The following selector
+matches all service shapes:
 
 .. code-block:: none
 
-    [service|version^='2018-']
+    [service]
 
-
-``trait|*`` attribute
----------------------
-
-Gets the value of a trait applied to a shape, where "*" is the ID
-of a trait. The ``smithy.api`` namespace MAY be omitted from shape IDs
-provided to the ``trait`` attribute. Traits are converted to their
-serialized :token:`node <node_value>` form when matching against their values.
-Only string, Boolean, and numeric values can be compared with an expected
-value. Boolean values are converted to "true" or "false". Numeric values
-are converted to their string representation.
-
-The following selector finds all structure shapes with the :ref:`error-trait`
-trait, and the ``error`` trait can be set to any value:
+The intent of the above selector is more clearly stated using the following
+selector:
 
 .. code-block:: none
 
-    structure[trait|error]
+    service
 
-The following selector finds all structure shapes with the :ref:`error-trait`
-set to ``client``:
+.. note::
+
+    When converted to a string, the ``service`` attribute returns an
+    empty string.
+
+
+``trait`` attribute
+-------------------
+
+The ``trait`` attribute returns an object that contains every trait applied
+to a shape. Each key of the ``trait`` object is the absolute shape ID of a
+trait applied to the shape, and each value is the value of the applied trait.
+
+The following example matches all shapes that have the
+:ref:`deprecated-trait`:
 
 .. code-block:: none
 
-    structure[trait|error=client]
+    [trait|smithy.api#deprecated]
 
-The following selector finds all structure shapes with the :ref:`error-trait`,
-but the trait is not set to ``client``:
-
-.. code-block:: none
-
-    structure[trait|error!=client]
-
-Fully-qualified trait names are supported:
+Traits in the ``smithy.api`` namespace MAY be retrieved from the ``trait``
+object without a namespace.
 
 .. code-block:: none
 
-    string[trait|smithy.example#customTrait=foo]
+    [trait|deprecated]
+
+Traits are converted to their serialized :token:`node <node_value>` form
+when matching against their values. Only string, Boolean, and numeric
+values can be compared with an expected value. Boolean values are converted
+to "true" or "false". Numeric values are converted to their string
+representation.
+
+The following selector matches all shapes with the :ref:`error-trait` set to
+``client``:
+
+.. code-block:: none
+
+    [trait|error=client]
+
+The following selector matches all shapes with the :ref:`error-trait`, but
+the trait is not set to ``client``:
+
+.. code-block:: none
+
+    [trait|error!=client]
+
+The following selector matches all shapes with the :ref:`documentation-trait`
+that have a value that contains "TODO" or "FIXME":
+
+.. code-block:: none
+
+    [trait|documentation *= TODO, FIXME]
+
+.. note::
+
+    When converted to a string, the ``trait`` attribute returns an
+    empty string.
 
 
-Nested trait  properties
-~~~~~~~~~~~~~~~~~~~~~~~~
+Nested attribute properties
+---------------------------
 
-Nested properties of a trait can be selected using subsequent pipe (``|``)
-delimited property names.
+Nested properties of an attribute can be selected using subsequent pipe
+(``|``) delimited property names.
 
 The following example matches all shapes that have a :ref:`range-trait`
 with a ``min`` property set to ``1``:
@@ -308,6 +373,12 @@ with a ``min`` property set to ``1``:
 .. code-block:: none
 
     [trait|range|min=1]
+
+
+.. _values-property:
+
+``(values)`` pseudo-property
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Values of a :token:`list <node_array>` can be selected using the special
 ``(values)`` syntax. Each element from the value currently being evaluated
@@ -321,16 +392,6 @@ that contains an enum definition with a ``tags`` property that is set to
 
     [trait|enum|(values)|tags|(values)=internal]
 
-An empty list is not considered present when checking for existence.
-
-The following example matches all shapes that have an ``enum`` trait,
-the trait contains at least one ``enum`` entry, and one or more entries
-contains a non-empty ``tags`` list.
-
-.. code-block:: none
-
-    [trait|enum|(values)|tags|(values)]
-
 Values of an :token:`object <node_object>` can also be selected using the
 special ``(values)`` syntax. Each value from object currently being evaluated
 is used as a new value to check subsequent properties against.
@@ -341,6 +402,19 @@ that has a value set to ``https://example.com``:
 .. code-block:: none
 
     [trait|externalDocumentation|(values)='https://example.com']
+
+The following selector matches every trait applied to a shape that is a string
+that contains a '$' character:
+
+.. code-block:: none
+
+    [trait|(values)*='$']
+
+
+.. _keys-property:
+
+``(keys)`` pseudo-property
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Keys of an object can be selected using the special ``(keys)`` syntax. Each
 key currently being evaluated is used as a new value to check subsequent
@@ -353,24 +427,120 @@ trait that has an entry named ``Homepage``:
 
     [trait|externalDocumentation|(keys)=Homepage]
 
-Like the ``(values)`` property, the ``(keys)`` property also treats empty
-objects as not present.
-
-The following example matches all shapes that have a trait named
-``myMapTrait`` that has at least one entry:
+The following selector matches shapes that apply any traits in the
+``smithy.example`` namespace:
 
 .. code-block:: none
 
-    [trait|smithy.example#myMapTrait|(keys)]
+    [trait|(keys)^='smithy.example#']
+
+
+Error handling
+~~~~~~~~~~~~~~
 
 Implementations MUST tolerate expressions that do not perform a valid
-traversal of a trait. The following example attempts to descend into
+traversal of an attribute. The following example attempts to descend into
 non-existent properties of the :ref:`documentation-trait`. This example
 MUST not cause an error and MUST match no shapes:
 
 .. code-block:: none
 
     [trait|documentation|invalid|child=Hi]
+
+
+Scoped attribute selectors
+==========================
+
+A :token:`scoped attribute selector <selector_scoped_attr>` is similar to an
+attribute selector, but it allows multiple complex comparisons to be made
+against a scoped attribute.
+
+In the following example, the ``trait|range`` attribute is used as the scoped
+attribute of the expression, and the selector matches all shapes marked with
+the :ref:`range-trait` where the ``min`` value is greater than the ``max``
+value:
+
+.. code-block:: none
+
+    [@trait|range: @{min} > @{max}]
+
+
+Context values
+--------------
+
+The first part of a scoped attribute selector is the attribute that is scoped
+for the expression, followed by ``:``. The scoped attribute is accessed using
+a :token:`context value <selector_context_value>` in the form of
+``@{`` :token:`identifier` ``}``.
+
+The ``(values)`` and ``(keys)`` pseudo-properties MAY be used in context
+values that branch off of the scoped attribute.
+
+The following selector matches shapes that have an :ref:`enum-trait` where one
+or more of the enum definitions is both marked as ``deprecated`` and contains
+an entry in its ``tags`` property named ``deprecated``.
+
+.. code-block:: none
+
+    [@trait|enum|(values):
+        @{deprecated}=true &&
+        @{tags|(values)}="deprecated"]
+
+
+And-logic
+---------
+
+Selector assertions can be combined together using *and* statements with ``&&``.
+
+The following selector matches all shapes with the :ref:`idRef-trait` that
+set ``failWhenMissing`` to true and omit an ``errorMessage``:
+
+.. code-block:: none
+
+    [@trait|idRef: @{failWhenMissing}=true && @{errorMessage}?=false]
+
+
+Matching multiple values
+------------------------
+
+Like non-scoped selectors, multiple values can be provided using a comma
+separated list. One or more resolved attribute values MUST match one or more
+provided values.
+
+The following selector matches all shapes with the :ref:`paginated-trait`
+where the ``inputToken`` is ``token`` or ``continuationToken``, and
+the ``outputToken`` is ``token`` or ``nextToken``:
+
+.. code-block:: none
+
+    [@trait|paginated:
+        @{inputToken}=token, continuationToken &&
+        @{outputToken}=token, nextToken]
+
+
+Case insensitive comparisons
+----------------------------
+
+The ``i`` token used before ``&&`` or the closing ``]`` makes a comparison
+case-insensitive.
+
+The following selector matches on the ``paginated`` trait using
+case-insensitive comparisons:
+
+.. code-block:: none
+
+    [@trait|paginated:
+        @{inputToken}=token, continuationToken i &&
+        @{outputToken}=token, nextToken i]
+
+The following selector matches on the ``paginated`` trait but only uses
+a case-insensitive comparison on the ``inputToken``:
+
+.. code-block:: none
+
+    [@trait|paginated:
+        @{inputToken}=token, continuationToken i &&
+        @{outputToken}=token, nextToken]
 
 
 Neighbors
@@ -776,6 +946,7 @@ Selectors are defined by the following ABNF_ grammar.
     selector                        :`selector_expression` *(`selector_expression`)
     selector_expression             :`selector_shape_types`
                                     :/ `selector_attr`
+                                    :/ `selector_scoped_attr`
                                     :/ `selector_function_expression`
                                     :/ `selector_neighbor`
     selector_shape_types            :"*" / `identifier`
@@ -787,13 +958,20 @@ Selectors are defined by the following ABNF_ grammar.
     selector_recursive_neighbor     :"~>"
     selector_rel_type               :`identifier`
     selector_attr                   :"[" `selector_key` *(`selector_comparator` `selector_values` ["i"]) "]"
-    selector_key                    :`identifier` *("|" `selector_key_path`)
-    selector_key_path               :`selector_pseudo_key` / `selector_value`
-    selector_values                 :`selector_value` *("," `selector_value`)
+    selector_key                    :`identifier` ["|" `selector_path`]
+    selector_path                   :`selector_path_segment` *("|" `selector_path_segment`)
+    selector_path_segment           :`selector_value` / `selector_pseudo_key`
     selector_value                  :`selector_text` / `number` / `root_shape_id`
-    selector_absolute_root_shape_id :`namespace` "#" `identifier`
     selector_pseudo_key             :"(" `identifier` ")"
-    selector_comparator             :"^=" / "$=" / "*=" / "!=" / ">=" / ">" / "<=" / "<" / "="
+    selector_values                 :`selector_value` *("," `selector_value`)
+    selector_comparator             :"^=" / "$=" / "*=" / "!=" / ">=" / ">" / "<=" / "<" / "?=" / "="
+    selector_absolute_root_shape_id :`namespace` "#" `identifier`
+    selector_scoped_attr            :"[@" `selector_key` ":" `selector_scoped_comparisons` "]"
+    selector_scoped_comparisons     :`selector_scoped_comparison` *("&&" `selector_scoped_comparison`)
+    selector_scoped_comparison      :`selector_scoped_value` `selector_comparator` `selector_scoped_values` ["i"]
+    selector_scoped_value           :`selector_value` / `selector_context_value`
+    selector_context_value          :"@{" `selector_path` "}"
+    selector_scoped_values          :`selector_scoped_value` *("," `selector_scoped_value`)
     selector_function_expression    :":" `selector_function` "(" `selector` *("," `selector`) ")"
     selector_function               :`identifier`
     selector_text                   :`selector_single_quoted_text` / `selector_double_quoted_text`
