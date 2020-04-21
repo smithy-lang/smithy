@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.traits.protocols;
 
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 
@@ -26,16 +27,54 @@ public final class RestXmlTrait extends AwsProtocolTrait {
 
     public static final ShapeId ID = ShapeId.from("aws.protocols#restXml");
 
+    private final boolean noErrorWrapping;
+
     private RestXmlTrait(Builder builder) {
         super(ID, builder);
+        this.noErrorWrapping = builder.noErrorWrapping;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * @return Returns the noErrorWrapping setting.
+     */
+    public boolean isNoErrorWrapping() {
+        return noErrorWrapping;
+    }
+
+    @Override
+    protected Node createNode() {
+        ObjectNode node = super.createNode().expectObjectNode();
+
+        if (isNoErrorWrapping()) {
+            node = node.withMember("noErrorWrapping", Node.from(noErrorWrapping));
+        }
+
+        return node;
+    }
+
     public static final class Builder extends AwsProtocolTrait.Builder<RestXmlTrait, Builder> {
+        private boolean noErrorWrapping = false;
+
         private Builder() {}
+
+        public Builder noErrorWrapping(boolean noErrorWrapping) {
+            this.noErrorWrapping = noErrorWrapping;
+            return this;
+        }
+
+        @Override
+        public Builder fromNode(Node node) {
+            Builder builder = super.fromNode(node);
+
+            ObjectNode objectNode = node.expectObjectNode();
+            builder.noErrorWrapping(objectNode.getBooleanMemberOrDefault("noErrorWrapping"));
+
+            return builder;
+        }
 
         @Override
         public RestXmlTrait build() {

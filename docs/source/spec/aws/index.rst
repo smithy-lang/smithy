@@ -27,3 +27,4 @@ AWS Protocols
     aws-restxml-protocol
     aws-query-protocol
     aws-ec2-query-protocol
+    aws-cross-protocol

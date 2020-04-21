@@ -42,6 +42,13 @@
                 },
                 "eventStreamHttp": {
                     "target": "aws.protocols#StringList"
+                },
+                "noErrorWrapping": {
+                    "target": "smithy.api#Boolean",
+                    "traits": {
+                        "smithy.api#documentation": "Disables the serialization wrapping of error properties in an 'Error' XML element.",
+                        "smithy.api#deprecated": {}
+                    }
                 }
             },
             "traits": {
