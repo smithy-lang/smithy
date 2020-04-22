@@ -89,7 +89,7 @@ The following selector matches shapes that are marked with the
 
     [trait|deprecated]
 
-Projected values from the :ref:`values-property` and :ref:`keys-property`
+Projected values from the :ref:`values-projection` and :ref:`keys-projection`
 are only considered present if they yield one or more results.
 
 The following example matches all shapes that have an ``enum`` trait,
@@ -275,6 +275,17 @@ following properties.
     .. code-block:: none
 
         [id|member=foo]
+``(length)``
+    The :ref:`(length) attribute function <attribute-function-properties>`
+    returns the length of the :token:`absolute shape ID <absolute_shape_id>`
+    as a string.
+
+    The following example matches all shapes with an absolute shape ID that
+    is longer than 100 characters:
+
+    .. code-block:: none
+
+        [id|(length) > 100]
 
 
 ``service`` attribute
@@ -313,6 +324,9 @@ The ``service`` attribute contains the following properties:
     .. code-block:: none
 
         [service|version^='2018-']
+``(length)``
+    Returns ``1``, the number of attribute supported by the service
+    property.
 
 
 ``trait`` attribute
@@ -368,12 +382,21 @@ that have a value that contains "TODO" or "FIXME":
     When converted to a string, the ``trait`` attribute returns an
     empty string.
 
+The ``(length)`` attribute function returns the number of traits applied to a
+shape.
+
+The following example matches all shapes with more than 10 traits applied to it:
+
+.. code-block:: none
+
+    [trait|(length) > 10]
+
 
 Nested attribute properties
 ---------------------------
 
-Nested properties of an attribute can be selected using subsequent pipe
-(``|``) delimited property names.
+Nested properties of an object attribute can be selected using subsequent
+pipe (``|``) delimited property names.
 
 The following example matches all shapes that have a :ref:`range-trait`
 with a ``min`` property set to ``1``:
@@ -383,15 +406,69 @@ with a ``min`` property set to ``1``:
     [trait|range|min=1]
 
 
+.. _attribute-function-properties:
+
+Attribute function properties
+-----------------------------
+
+:token:`Attribute function properties <selector_function_property>` are used
+to create :ref:`projections <attribute-projections>` and apply other
+functions on attributes. Attributes support the following functions:
+
+``(keys)``
+    Creates a :ref:`keys-projection` on objects.
+``(values)``
+    Creates a :ref:`values-projection` on arrays and objects.
+``(length)``
+    Returns the number of elements in an array, the number of entries in an
+    object, or the number of characters in a string.
+
+    The following example matches shapes where the name of the shape is
+    longer than 20 characters:
+
+    .. code-block:: none
+
+        [id|name|(length) > 20]
+
+    The following example matches shapes where the :ref:`externalDocumentation-trait`
+    has more than 10 entries:
+
+    .. code-block:: none
+
+        [trait|externalDocumentation|(length) > 10]
+
+    The following example checks if any ``enum`` trait definition contains
+    more than 100 tags:
+
+    .. code-block:: none
+
+        [trait|enum|(values)|tags|(length) > 100]
+
+    The following example checks if any ``enum`` trait definition contains
+    a tag that is longer than 20 characters:
+
+    .. code-block:: none
+
+        [trait|enum|(values)|tags|(values)|(length) > 20]
+
+.. note::
+
+    Attribute functions are not actual properties of an attribute. They are
+    never yielded as part of the result of a ``(values)`` or ``(keys)``
+    projection.
+
+
+.. _attribute-projections:
+
 Attribute projections
 ---------------------
 
 *Attribute projections* are values that perform set intersections with other
 values. A projection is formed using either the ``(values)`` or ``(keys)``
-:token:`pseudo-property <selector_pseudo_property>`.
+:token:`function-property <selector_function_property>`.
 
 
-.. _values-property:
+.. _values-projection:
 
 ``(values)`` projection
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -425,7 +502,7 @@ that contains a '$' character:
     [trait|(values)*='$']
 
 
-.. _keys-property:
+.. _keys-projection:
 
 ``(keys)`` projection
 ~~~~~~~~~~~~~~~~~~~~~
@@ -461,8 +538,8 @@ comparison matches if any value in the left projection satisfies the
 comparator when compared against any value in the right projection.
 
 
-Error handling
-~~~~~~~~~~~~~~
+Path traversal error handling
+-----------------------------
 
 Implementations MUST tolerate expressions that do not perform a valid
 traversal of an attribute. The following example attempts to descend into
@@ -989,9 +1066,9 @@ Selectors are defined by the following ABNF_ grammar.
     selector_attr                   :"[" `selector_key` *(`selector_comparator` `selector_values` ["i"]) "]"
     selector_key                    :`identifier` ["|" `selector_path`]
     selector_path                   :`selector_path_segment` *("|" `selector_path_segment`)
-    selector_path_segment           :`selector_value` / `selector_pseudo_property`
+    selector_path_segment           :`selector_value` / `selector_function_property`
     selector_value                  :`selector_text` / `number` / `root_shape_id`
-    selector_pseudo_property        :"(" `identifier` ")"
+    selector_function_property      :"(" `identifier` ")"
     selector_values                 :`selector_value` *("," `selector_value`)
     selector_comparator             :"^=" / "$=" / "*=" / "!=" / ">=" / ">" / "<=" / "<" / "?=" / "="
     selector_absolute_root_shape_id :`namespace` "#" `identifier`

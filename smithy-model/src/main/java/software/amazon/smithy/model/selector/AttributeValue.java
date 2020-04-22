@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeVisitor;
@@ -45,6 +46,11 @@ abstract class AttributeValue {
         boolean isPresent() {
             return false;
         }
+
+        @Override
+        AttributeValue getProperty(String key) {
+            return NULL;
+        }
     };
 
     /** Value created and used when a property does not exist. */
@@ -53,6 +59,7 @@ abstract class AttributeValue {
     private static final Logger LOGGER = Logger.getLogger(AttributeValue.class.getName());
     private static final String KEYS = "(keys)";
     private static final String VALUES = "(values)";
+    private static final String LENGTH = "(length)";
 
     @FunctionalInterface
     interface Factory {
@@ -73,9 +80,7 @@ abstract class AttributeValue {
      * @param key Property to get.
      * @return Returns the nested property.
      */
-    AttributeValue getProperty(String key) {
-        return NULL;
-    }
+    abstract AttributeValue getProperty(String key);
 
     /**
      * Checks if the attribute value is considered present.
@@ -128,15 +133,24 @@ abstract class AttributeValue {
      * An attribute that contains a static, scalar String value.
      */
     static final class Literal extends AttributeValue {
-        final String value;
+        final Object value;
 
-        Literal(String value) {
+        Literal(Object value) {
             this.value = Objects.requireNonNull(value);
         }
 
         @Override
         public String toString() {
-            return value;
+            return value.toString();
+        }
+
+        @Override
+        public AttributeValue getProperty(String key) {
+            if (key.equals(LENGTH)) {
+                return new Literal(toString().length());
+            } else {
+                return NULL;
+            }
         }
     }
 
@@ -168,22 +182,39 @@ abstract class AttributeValue {
 
         @Override
         AttributeValue getProperty(String key) {
-            if (value.isObjectNode()) {
-                ObjectNode node = value.expectObjectNode();
-                if (key.equals(KEYS)) {
-                    return project(node.getMembers().keySet());
-                } else if (key.equals(VALUES)) {
-                    return project(node.getMembers().values());
-                } else {
-                    return value.expectObjectNode()
-                            .getMember(key)
-                            .<AttributeValue>map(NodeValue::new)
-                            .orElse(NULL);
-                }
-            } else if (value.isArrayNode() && key.equals(VALUES)) {
-                return project(value.expectArrayNode().getElements());
-            } else {
-                return NULL;
+            switch (value.getType()) {
+                case OBJECT:
+                    ObjectNode objectNode = value.expectObjectNode();
+                    switch (key) {
+                        case KEYS:
+                            return project(objectNode.getMembers().keySet());
+                        case VALUES:
+                            return project(objectNode.getMembers().values());
+                        case LENGTH:
+                            return new Literal(objectNode.getMembers().size());
+                        default:
+                            return value.expectObjectNode()
+                                    .getMember(key)
+                                    .<AttributeValue>map(NodeValue::new)
+                                    .orElse(NULL);
+                    }
+                case ARRAY:
+                    ArrayNode arrayNode = value.expectArrayNode();
+                    switch (key) {
+                        case VALUES:
+                            return project(arrayNode.getElements());
+                        case LENGTH:
+                            return new Literal(arrayNode.size());
+                        default:
+                            return NULL;
+                    }
+                case STRING:
+                    if (key.equals(LENGTH)) {
+                        return new Literal(value.expectStringNode().getValue().length());
+                    }
+                    // fall through
+                default:
+                    return NULL;
             }
         }
 
@@ -312,6 +343,10 @@ abstract class AttributeValue {
                     return new Projection(Collections.singleton(new Literal("version")));
                 case VALUES:
                     return new Projection(Collections.singleton(new Literal(service.getVersion())));
+                case LENGTH:
+                    // Returns the number of elements in the object. It's only "version"
+                    // for services.
+                    return new Literal(1);
                 default:
                     return NULL;
             }
@@ -374,6 +409,9 @@ abstract class AttributeValue {
                     values.add(new Literal(id.getName()));
                     id.getMember().ifPresent(member -> values.add(new Literal(member)));
                     return new Projection(values);
+                case LENGTH:
+                    // Length returns the length of the shape ID.
+                    return new Literal(id.toString().length());
                 default:
                     return NULL;
             }
@@ -406,29 +444,32 @@ abstract class AttributeValue {
 
         @Override
         AttributeValue getProperty(String property) {
-            if (property.equals(KEYS)) {
-                // This allows the projected keys to be used like shape IDs:
-                // [trait|(keys)|namespace='com.foo']
-                List<AttributeValue> values = new ArrayList<>();
-                for (ShapeId id : shape.getAllTraits().keySet()) {
-                    values.add(new Id(id));
-                }
-                return new Projection(values);
-            } else if (property.equals(VALUES)) {
-                // This allows the projected values to be used as nodes. This
-                // selector finds all traits that have 'foo' property.
-                // [trait|(values)|foo]
-                List<AttributeValue> values = new ArrayList<>();
-                for (Trait trait : shape.getAllTraits().values()) {
-                    values.add(new NodeValue(trait.toNode()));
-                }
-                return new Projection(values);
-            } else {
-                // A normal property getter. This allows relative trait shape IDs
-                // and absolute IDs. Relative IDs resolve to 'smithy.api'.
-                return shape.findTrait(ShapeId.from(Trait.makeAbsoluteName(property)))
-                        .<AttributeValue>map(trait -> new NodeValue(trait.toNode()))
-                        .orElse(NULL);
+            switch (property) {
+                case KEYS:
+                    // This allows the projected keys to be used like shape IDs:
+                    // [trait|(keys)|namespace='com.foo']
+                    List<AttributeValue> keyValues = new ArrayList<>();
+                    for (ShapeId id : shape.getAllTraits().keySet()) {
+                        keyValues.add(new Id(id));
+                    }
+                    return new Projection(keyValues);
+                case VALUES:
+                    // This allows the projected values to be used as nodes. This
+                    // selector finds all traits that have 'foo' property.
+                    // [trait|(values)|foo]
+                    List<AttributeValue> values = new ArrayList<>();
+                    for (Trait trait : shape.getAllTraits().values()) {
+                        values.add(new NodeValue(trait.toNode()));
+                    }
+                    return new Projection(values);
+                case LENGTH:
+                    return new Literal(shape.getAllTraits().size());
+                default:
+                    // A normal property getter. This allows relative trait shape IDs
+                    // and absolute IDs. Relative IDs resolve to 'smithy.api'.
+                    return shape.findTrait(ShapeId.from(Trait.makeAbsoluteName(property)))
+                            .<AttributeValue>map(trait -> new NodeValue(trait.toNode()))
+                            .orElse(NULL);
             }
         }
     }

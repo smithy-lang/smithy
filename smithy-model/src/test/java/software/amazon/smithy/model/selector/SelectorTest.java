@@ -745,4 +745,71 @@ public class SelectorTest {
         assertThat(shapes2, equalTo(shapes1));
         assertThat(shapes3, equalTo(shapes1));
     }
+
+    @Test
+    public void getsTheLengthOfShapeIds() {
+        Set<String> shapes1 = ids(traitModel, "[id=smithy.api#String][id|(length) = 17]");
+        Set<String> shapes2 = ids(traitModel, "[id=smithy.api#String][id|name|(length) = 6]");
+        Set<String> shapes3 = ids(traitModel, "[id=smithy.api#String][id|namespace|(length) = 10]");
+
+        assertThat(shapes1, contains("smithy.api#String"));
+        assertThat(shapes2, equalTo(shapes1));
+        assertThat(shapes3, equalTo(shapes1));
+    }
+
+    @Test
+    public void getsTheLengthOfTraits() {
+        Set<String> shapes = ids(traitModel, "[id=smithy.example#MyService][trait|(length) = 1]");
+
+        assertThat(shapes, contains("smithy.example#MyService"));
+    }
+
+    @Test
+    public void getsTheLengthOfService() {
+        Set<String> shapes = ids(traitModel, "[id=smithy.example#MyService][service|(length) = 1]");
+
+        assertThat(shapes, contains("smithy.example#MyService"));
+    }
+
+    @Test
+    public void nullLengthIsNull() {
+        assertThat(ids(traitModel, "[id|name|(foo)|(length) = 1]"), empty());
+    }
+
+    @Test
+    public void getsTheLengthOfTraitString() {
+        // "client"
+        Set<String> shapes = ids(traitModel, "[id=smithy.example#ErrorStruct1][trait|error|(length) = 6]");
+
+        assertThat(shapes, contains("smithy.example#ErrorStruct1"));
+    }
+
+    @Test
+    public void getsTheLengthOfTraitArray() {
+        Set<String> shapes = ids(
+                traitModel,
+                "[id=smithy.example#MyService][trait|smithy.example#listyTrait|(length) = 2]");
+
+        assertThat(shapes, contains("smithy.example#MyService"));
+    }
+
+    @Test
+    public void getsTheLengthOfTraitObject() {
+        Set<String> shapes = ids(
+                traitModel,
+                "[id=smithy.example#DocumentedString2][trait|externalDocumentation|(length) = 1]");
+
+        assertThat(shapes, contains("smithy.example#DocumentedString2"));
+    }
+
+    @Test
+    public void projectionLengthUsesSetLogic() {
+        // Find shapes with the enum trait where there are more than 1 tags on any
+        // enum definition.
+        Set<String> shapes = ids(
+                traitModel,
+                "[id|namespace='smithy.example'][trait|enum|(values)|tags|(length) > 1]");
+
+        assertThat(shapes, contains("smithy.example#DocumentedString1"));
+    }
 }

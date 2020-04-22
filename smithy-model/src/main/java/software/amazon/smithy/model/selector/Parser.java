@@ -400,7 +400,7 @@ final class Parser {
         }
     }
 
-    // Can be a shape_id, quoted string, number, or pseudo_key.
+    // Can be a shape_id, quoted string, number, or function key.
     private List<String> parseSelectorPath() {
         ws();
 
@@ -419,7 +419,7 @@ final class Parser {
 
     private String parseSelectorPathSegment() {
         ws();
-        // Handle pseudo-keys enclosed in "(" identifier ")".
+        // Handle function properties enclosed in "(" identifier ")".
         if (charPeek() == '(') {
             position++;
             String propertyName = parseIdentifier();
