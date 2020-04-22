@@ -4,7 +4,6 @@ namespace aws.protocoltests.query
 
 use aws.api#service
 use aws.protocols#awsQuery
-use aws.api#service
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 

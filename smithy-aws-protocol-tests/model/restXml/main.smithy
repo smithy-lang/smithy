@@ -4,7 +4,6 @@ namespace aws.protocoltests.restxml
 
 use aws.api#service
 use aws.protocols#restXml
-use aws.api#service
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 

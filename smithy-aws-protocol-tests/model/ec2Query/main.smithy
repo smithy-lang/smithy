@@ -30,7 +30,6 @@ namespace aws.protocoltests.ec2
 
 use aws.api#service
 use aws.protocols#ec2Query
-use aws.api#service
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
