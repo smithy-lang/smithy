@@ -383,14 +383,24 @@ with a ``min`` property set to ``1``:
     [trait|range|min=1]
 
 
+Attribute projections
+---------------------
+
+*Attribute projections* are values that perform set intersections with other
+values. A projection is formed using either the ``(values)`` or ``(keys)``
+:token:`pseudo-property <selector_pseudo_property>`.
+
+
 .. _values-property:
 
-``(values)`` pseudo-property
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``(values)`` projection
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Values of a :token:`list <node_array>` can be selected using the special
-``(values)`` syntax. Each element from the value currently being evaluated
-is used as a new value to check subsequent properties against.
+The ``(values)`` property creates a *projection* of all values contained
+in a :token:`list <node_array>` or :token:`object <node_object>`. Each
+element from the value currently being evaluated is used as a new value
+to check subsequent properties against. A ``(values)`` projection on any
+value other than an array or object yields no result.
 
 The following example matches all shapes that have an :ref:`enum-trait`
 that contains an enum definition with a ``tags`` property that is set to
@@ -399,10 +409,6 @@ that contains an enum definition with a ``tags`` property that is set to
 .. code-block:: none
 
     [trait|enum|(values)|tags|(values)=internal]
-
-Values of an :token:`object <node_object>` can also be selected using the
-special ``(values)`` syntax. Each value from object currently being evaluated
-is used as a new value to check subsequent properties against.
 
 The following example matches all shapes that have an :ref:`externalDocumentation-trait`
 that has a value set to ``https://example.com``:
@@ -421,12 +427,14 @@ that contains a '$' character:
 
 .. _keys-property:
 
-``(keys)`` pseudo-property
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+``(keys)`` projection
+~~~~~~~~~~~~~~~~~~~~~
 
-Keys of an object can be selected using the special ``(keys)`` syntax. Each
-key currently being evaluated is used as a new value to check subsequent
-properties against.
+The ``(keys)`` property creates a *projection* of all keys of an
+:token:`object <node_object>`. Each key of the object currently being
+evaluated is used as a new value to check subsequent properties against.
+A ``(keys)`` projection on any value other than an object yields no
+result.
 
 The following example matches all shapes that have an ``externalDocumentation``
 trait that has an entry named ``Homepage``:
@@ -441,6 +449,16 @@ The following selector matches shapes that apply any traits in the
 .. code-block:: none
 
     [trait|(keys)^='smithy.example#']
+
+
+Projection comparisons
+~~~~~~~~~~~~~~~~~~~~~~
+
+When a projection is compared against a scalar value, the comparison matches
+if any value in the projection satisfies the comparator assertion against the
+scalar value. When a projection is compared against another projection, the
+comparison matches if any value in the left projection satisfies the
+comparator when compared against any value in the right projection.
 
 
 Error handling
@@ -463,15 +481,6 @@ A :token:`scoped attribute selector <selector_scoped_attr>` is similar to an
 attribute selector, but it allows multiple complex comparisons to be made
 against a scoped attribute.
 
-In the following example, the ``trait|range`` attribute is used as the scoped
-attribute of the expression, and the selector matches all shapes marked with
-the :ref:`range-trait` where the ``min`` value is greater than the ``max``
-value:
-
-.. code-block:: none
-
-    [@trait|range: @{min} > @{max}]
-
 
 Context values
 --------------
@@ -481,8 +490,20 @@ for the expression, followed by ``:``. The scoped attribute is accessed using
 a :token:`context value <selector_context_value>` in the form of
 ``@{`` :token:`identifier` ``}``.
 
-The ``(values)`` and ``(keys)`` pseudo-properties MAY be used in context
-values that branch off of the scoped attribute.
+In the following example, the ``trait|range`` attribute is used as the scoped
+attribute of the expression, and the selector matches all shapes marked with
+the :ref:`range-trait` where the ``min`` value is greater than the ``max``
+value:
+
+.. code-block:: none
+
+    [@trait|range: @{min} > @{max}]
+
+The ``(values)`` and ``(keys)`` projections MAY be used as the scoped
+attribute context value. When the scoped attribute context value is a
+projection, each flattened value of the projection is individually tested
+against each assertion. If any value from the projection matches the
+assertions, then the selector matches the shape.
 
 The following selector matches shapes that have an :ref:`enum-trait` where one
 or more of the enum definitions is both marked as ``deprecated`` and contains
@@ -515,15 +536,15 @@ Like non-scoped selectors, multiple values can be provided using a comma
 separated list. One or more resolved attribute values MUST match one or more
 provided values.
 
-The following selector matches all shapes with the :ref:`paginated-trait`
-where the ``inputToken`` is ``token`` or ``continuationToken``, and
-the ``outputToken`` is ``token`` or ``nextToken``:
+The following selector matches all shapes with the :ref:`httpApiKeyAuth-trait`
+where the ``in`` property is ``header`` and the ``name`` property is neither
+``x-api-token`` or ``authorization``:
 
 .. code-block:: none
 
-    [@trait|paginated:
-        @{inputToken}=token, continuationToken &&
-        @{outputToken}=token, nextToken]
+    [@trait|httpApiKeyAuth:
+        @{name}=header &&
+        @{in}!='x-api-token', 'authorization']
 
 
 Case insensitive comparisons
@@ -532,23 +553,23 @@ Case insensitive comparisons
 The ``i`` token used before ``&&`` or the closing ``]`` makes a comparison
 case-insensitive.
 
-The following selector matches on the ``paginated`` trait using
+The following selector matches on the ``httpApiKeyAuth`` trait using
 case-insensitive comparisons:
 
 .. code-block:: none
 
-    [@trait|paginated:
-        @{inputToken}=token, continuationToken i &&
-        @{outputToken}=token, nextToken i]
+    [@trait|httpApiKeyAuth:
+        @{name}=header i &&
+        @{in}!='x-api-token', 'authorization' i]
 
-The following selector matches on the ``paginated`` trait but only uses
-a case-insensitive comparison on the ``inputToken``:
+The following selector matches on the ``httpApiKeyAuth`` trait but only
+uses a case-insensitive comparison on ``in``:
 
 .. code-block:: none
 
-    [@trait|paginated:
-        @{inputToken}=token, continuationToken i &&
-        @{outputToken}=token, nextToken]
+    [@trait|httpApiKeyAuth:
+        @{name}=header &&
+        @{in}!='x-api-token', 'authorization' i]
 
 
 Neighbors
@@ -968,15 +989,15 @@ Selectors are defined by the following ABNF_ grammar.
     selector_attr                   :"[" `selector_key` *(`selector_comparator` `selector_values` ["i"]) "]"
     selector_key                    :`identifier` ["|" `selector_path`]
     selector_path                   :`selector_path_segment` *("|" `selector_path_segment`)
-    selector_path_segment           :`selector_value` / `selector_pseudo_key`
+    selector_path_segment           :`selector_value` / `selector_pseudo_property`
     selector_value                  :`selector_text` / `number` / `root_shape_id`
-    selector_pseudo_key             :"(" `identifier` ")"
+    selector_pseudo_property        :"(" `identifier` ")"
     selector_values                 :`selector_value` *("," `selector_value`)
     selector_comparator             :"^=" / "$=" / "*=" / "!=" / ">=" / ">" / "<=" / "<" / "?=" / "="
     selector_absolute_root_shape_id :`namespace` "#" `identifier`
-    selector_scoped_attr            :"[@" `selector_key` ":" `selector_scoped_comparisons` "]"
-    selector_scoped_comparisons     :`selector_scoped_comparison` *("&&" `selector_scoped_comparison`)
-    selector_scoped_comparison      :`selector_scoped_value` `selector_comparator` `selector_scoped_values` ["i"]
+    selector_scoped_attr            :"[@" `selector_key` ":" `selector_scoped_assertions` "]"
+    selector_scoped_assertions      :`selector_scoped_assertion` *("&&" `selector_scoped_assertion`)
+    selector_scoped_assertion       :`selector_scoped_value` `selector_comparator` `selector_scoped_values` ["i"]
     selector_scoped_value           :`selector_value` / `selector_context_value`
     selector_context_value          :"@{" `selector_path` "}"
     selector_scoped_values          :`selector_scoped_value` *("," `selector_scoped_value`)

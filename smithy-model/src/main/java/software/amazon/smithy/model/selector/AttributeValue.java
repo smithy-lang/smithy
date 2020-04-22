@@ -51,6 +51,8 @@ abstract class AttributeValue {
     static final Factory NULL_FACTORY = shape -> NULL;
 
     private static final Logger LOGGER = Logger.getLogger(AttributeValue.class.getName());
+    private static final String KEYS = "(keys)";
+    private static final String VALUES = "(values)";
 
     @FunctionalInterface
     interface Factory {
@@ -89,18 +91,15 @@ abstract class AttributeValue {
     }
 
     /**
-     * Compares the given attribute value with the other attribute value using
-     * a {@link AttributeComparator}.
+     * Gets all of the attribute values contained in the attribute value.
      *
-     * <p>This method is necessary in order to support matching on projections.
+     * <p>This will yield a single result for normal attributes, or a list
+     * of multiple values for projections.
      *
-     * @param comparator Comparator to use for the comparison.
-     * @param other The attribute to compare against.
-     * @param insensitive Whether or not to use a case-insensitive comparison.
-     * @return Returns true if the attribute match the comparison.
+     * @return Returns the flattened attribute values contained in the attribute value.
      */
-    boolean compare(AttributeComparator comparator, AttributeValue other, boolean insensitive) {
-        return comparator.compare(this, other, insensitive);
+    Collection<? extends AttributeValue> getFlattenedValues() {
+        return Collections.singleton(this);
     }
 
     /**
@@ -110,7 +109,7 @@ abstract class AttributeValue {
      * @param path The parsed path to select from the value.
      * @return Returns the created selector value.
      */
-    private static AttributeValue createPathSelector(AttributeValue current, List<String> path) {
+    static AttributeValue createPathSelector(AttributeValue current, List<String> path) {
         if (path.isEmpty()) {
             return current;
         }
@@ -121,6 +120,7 @@ abstract class AttributeValue {
                 break;
             }
         }
+
         return current;
     }
 
@@ -170,9 +170,9 @@ abstract class AttributeValue {
         AttributeValue getProperty(String key) {
             if (value.isObjectNode()) {
                 ObjectNode node = value.expectObjectNode();
-                if (key.equals("(keys)")) {
+                if (key.equals(KEYS)) {
                     return project(node.getMembers().keySet());
-                } else if (key.equals("(values)")) {
+                } else if (key.equals(VALUES)) {
                     return project(node.getMembers().values());
                 } else {
                     return value.expectObjectNode()
@@ -180,7 +180,7 @@ abstract class AttributeValue {
                             .<AttributeValue>map(NodeValue::new)
                             .orElse(NULL);
                 }
-            } else if (value.isArrayNode() && key.equals("(values)")) {
+            } else if (value.isArrayNode() && key.equals(VALUES)) {
                 return project(value.expectArrayNode().getElements());
             } else {
                 return NULL;
@@ -224,6 +224,7 @@ abstract class AttributeValue {
      */
     static final class Projection extends AttributeValue {
         final Collection<? extends AttributeValue> values;
+        Collection<? extends AttributeValue> flattened;
 
         Projection(Collection<? extends AttributeValue> values) {
             this.values = values;
@@ -244,22 +245,32 @@ abstract class AttributeValue {
             return new Projection(result);
         }
 
+        /**
+         * Computes the flattened values of the projection.
+         *
+         * @return Returns the flattened values of the projection.
+         */
+        Collection<? extends AttributeValue> getFlattenedValues() {
+            if (flattened == null) {
+                List<AttributeValue> result = new ArrayList<>(values.size());
+                for (AttributeValue value : values) {
+                    // Projections need to be flattened!
+                    if (value instanceof Projection) {
+                        result.addAll(((Projection) value).getFlattenedValues());
+                    } else {
+                        result.add(value);
+                    }
+                }
+                flattened = result;
+            }
+
+            return flattened;
+        }
+
         @Override
         boolean isPresent() {
             // An empty projection is not considered present.
             return !values.isEmpty();
-        }
-
-        @Override
-        public boolean compare(AttributeComparator comparator, AttributeValue other, boolean insensitive) {
-            // Projections match if any shape contained in the projection matches.
-            for (AttributeValue value : values) {
-                if (value.compare(comparator, other, insensitive)) {
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
 
@@ -297,9 +308,9 @@ abstract class AttributeValue {
             switch (key) {
                 case "version":
                     return new Literal(service.getVersion());
-                case "(keys)":
+                case KEYS:
                     return new Projection(Collections.singleton(new Literal("version")));
-                case "(values)":
+                case VALUES:
                     return new Projection(Collections.singleton(new Literal(service.getVersion())));
                 default:
                     return NULL;
@@ -351,13 +362,13 @@ abstract class AttributeValue {
                     return id.getMember()
                             .<AttributeValue>map(Literal::new)
                             .orElse(NULL);
-                case "(keys)":
+                case KEYS:
                     List<AttributeValue> keys = new ArrayList<>(3);
                     keys.add(new Literal("namespace"));
                     keys.add(new Literal("name"));
                     id.getMember().ifPresent(member -> keys.add(new Literal("member")));
                     return new Projection(keys);
-                case "(values)":
+                case VALUES:
                     List<AttributeValue> values = new ArrayList<>(3);
                     values.add(new Literal(id.getNamespace()));
                     values.add(new Literal(id.getName()));
@@ -395,7 +406,7 @@ abstract class AttributeValue {
 
         @Override
         AttributeValue getProperty(String property) {
-            if (property.equals("(keys)")) {
+            if (property.equals(KEYS)) {
                 // This allows the projected keys to be used like shape IDs:
                 // [trait|(keys)|namespace='com.foo']
                 List<AttributeValue> values = new ArrayList<>();
@@ -403,7 +414,7 @@ abstract class AttributeValue {
                     values.add(new Id(id));
                 }
                 return new Projection(values);
-            } else if (property.equals("(values)")) {
+            } else if (property.equals(VALUES)) {
                 // This allows the projected values to be used as nodes. This
                 // selector finds all traits that have 'foo' property.
                 // [trait|(values)|foo]

@@ -646,4 +646,103 @@ public class SelectorTest {
         assertThat(shapes1, containsInAnyOrder("smithy.example#RangeInt1", "smithy.example#RangeInt2"));
         assertThat(shapes2, equalTo(shapes1));
     }
+
+    @Test
+    public void parsesValidScopedAttributes() {
+        List<String> exprs = ListUtils.of(
+                "[@trait: 10=10]",
+                "[@trait: @{foo}=10]",
+                "[@trait: @{foo}=@{foo}]",
+                "[@trait: @{foo}=@{foo} && bar=bar]",
+                "[@trait: @{foo}=@{foo} && bar=10]",
+                "[@trait: @{foo}=@{foo} && bar=@{baz}]",
+                "[@trait: @{foo}=@{foo} && bar=@{baz} && bam='abc']",
+                "[@trait: @{foo}=@{foo} i && bar=@{baz} i && bam='abc' i ]",
+                "[@  trait  :    @{foo}=@{foo}    i   &&bar=@{baz} i&&bam='abc'i\n]",
+                "[@\r\n\t  trait\r\n\t : @{foo}=@{foo}]\r\n\t ",
+                "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}]",
+                "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}, @{foo|bam}]",
+                // Comma separated values are or'd together.
+                "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}, @{foo|bam} i && 10=10 i]");
+
+        for (String expr : exprs) {
+            Selector.parse(expr);
+        }
+    }
+
+    @Test
+    public void detectsInvalidScopedAttributes() {
+        List<String> exprs = ListUtils.of(
+                "[@",
+                "[@foo",
+                "[@foo:",
+                "[@foo: bar",
+                "[@foo: bar=",
+                "[@foo: bar=bam",
+                "[@foo: bar=bam i",
+                "[@foo: bar+bam]", // Invalid comparator
+                "[@foo: @",
+                "[@foo: @{",
+                "[@foo: @{abc",
+                "[@foo: @{abc}",
+                "[@foo: @{abc}]",
+                "[@foo: @{abc}=",
+                "[@foo: @{abc}=10",
+                "[@foo: @{abc}=10 &&",
+                "[@foo: @{abc}=10 && abc",
+                "[@foo: @{abc}=10 && abc=",
+                "[@foo: @{abc}=10 && abc=def",
+                "[@foo: @{abc}=10 && abc=def i",
+                "[@foo: @{abc{}}=10]",
+                "[@foo: @{abc|}=10]",
+                "[@foo: @{abc|def(baz)}=10]", // not a valid segment
+                "[@foo: @{abc|()}=10]", // missing contents of ()
+                "[@foo: @{abc|(.)}=10]"); // invalid contents of ());
+
+        for (String expr : exprs) {
+            Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
+        }
+    }
+
+    @Test
+    public void evaluatesScopedAttributes() {
+        Set<String> shapes1 = ids(traitModel, "[@trait|range: @{min}=1 && @{max}=10]");
+        // Can scope to `trait` and then do assertions on all traits.
+        // Not very useful, but technically supported.
+        Set<String> shapes2 = ids(traitModel, "[@trait: @{range|min}=1 && @{range|max}=10]");
+
+        assertThat(shapes1, contains("smithy.example#RangeInt1"));
+        assertThat(shapes2, equalTo(shapes1));
+    }
+
+    @Test
+    public void evaluatesScopedAttributesWithProjections() {
+        // Note that the projection can be on either side.
+        Set<String> shapes1 = ids(traitModel, "[@trait|enum|(values): @{name}=@{value} && @{tags|(values)}=hi]");
+        Set<String> shapes2 = ids(traitModel, "[@trait|enum|(values): @{name}=@{value} && hi=@{tags|(values)}]");
+
+        assertThat(shapes1, contains("smithy.example#DocumentedString1"));
+        assertThat(shapes2, equalTo(shapes1));
+    }
+
+    @Test
+    public void projectionsCanMatchThemselvesThroughIntersection() {
+        // Any enum with tags should match it's own tags.
+        Set<String> shapes1 = ids(traitModel, "[@trait|enum|(values): @{tags|(values)}=@{tags|(values)}]");
+        Set<String> shapes2 = ids(traitModel, "[@trait|enum|(values): @{tags}?=true]");
+
+        assertThat(shapes1, not(empty()));
+        assertThat(shapes2, equalTo(shapes1));
+    }
+
+    @Test
+    public void nestedProjectionsAreFlattened() {
+        Set<String> shapes1 = ids(traitModel, "[@trait|smithy.example#listyTrait|(values)|(values)|(values): @{foo}=a]");
+        Set<String> shapes2 = ids(traitModel, "[@trait|smithy.example#listyTrait|(values)|(values)|(values): @{foo}=b]");
+        Set<String> shapes3 = ids(traitModel, "[@trait|smithy.example#listyTrait|(values)|(values)|(values): @{foo}=c]");
+
+        assertThat(shapes1, contains("smithy.example#MyService"));
+        assertThat(shapes2, equalTo(shapes1));
+        assertThat(shapes3, equalTo(shapes1));
+    }
 }

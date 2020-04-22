@@ -47,6 +47,29 @@ interface AttributeComparator {
      */
     boolean compare(AttributeValue lhs, AttributeValue rhs, boolean caseInsensitive);
 
+    /**
+     * Compares the given attribute values by flattening each side of the
+     * comparison, and comparing each value.
+     *
+     * <p>This method is necessary in order to support matching on projections.
+     *
+     * @param lhs The left hand side of the comparison.
+     * @param rhs The right hand side of the comparison.
+     * @param insensitive Whether or not to use a case-insensitive comparison.
+     * @return Returns true if the attributes match the comparator.
+     */
+    default boolean flattenedCompare(AttributeValue lhs, AttributeValue rhs, boolean insensitive) {
+        for (AttributeValue l : lhs.getFlattenedValues()) {
+            for (AttributeValue r : rhs.getFlattenedValues()) {
+                if (compare(l, r, insensitive)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     // String comparators simplify how comparisons are made on attribute
     // values that MUST resolve to strings.
     static AttributeComparator stringComparator(BiFunction<String, String, Boolean> compare) {

@@ -46,10 +46,12 @@ final class Parser {
     }
 
     private final String expression;
+    private final int length;
     private int position = 0;
 
     private Parser(String selector) {
-        this.expression = selector;
+        expression = selector;
+        length = expression.length();
     }
 
     static Selector parse(String selector) {
@@ -70,7 +72,7 @@ final class Parser {
         ws();
 
         // Parse until a break token: ",", "]", and ")".
-        while (position != expression.length() && !BREAK_TOKENS.contains(expression.charAt(position))) {
+        while (position != length && !BREAK_TOKENS.contains(expression.charAt(position))) {
             selectors.add(createSelector());
             // Always skip ws after calling createSelector.
             ws();
@@ -89,7 +91,12 @@ final class Parser {
                 return parseFunction();
             case '[': // attribute
                 position++;
-                return parseAttribute();
+                if (charPeek() == '@') {
+                    position++;
+                    return parseScopedAttribute();
+                } else {
+                    return parseAttribute();
+                }
             case '>': // undirected neighbor
                 position++;
                 return new NeighborSelector(ListUtils.of());
@@ -131,17 +138,16 @@ final class Parser {
     }
 
     private void ws() {
-        while (position < expression.length() && isWhitespace(expression.charAt(position))) {
-            position++;
+        for (; position < length; position++) {
+            char c = expression.charAt(position);
+            if (c != ' ' && c != '\t' && c != '\r' && c != '\n') {
+                break;
+            }
         }
     }
 
-    private boolean isWhitespace(char c) {
-        return c == ' ' || c == '\t' || c == '\r' || c == '\n';
-    }
-
     private char charPeek() {
-        return position == expression.length() ? Character.MIN_VALUE : expression.charAt(position);
+        return position == length ? Character.MIN_VALUE : expression.charAt(position);
     }
 
     private char expect(char... tokens) {
@@ -235,11 +241,31 @@ final class Parser {
         AttributeValue.Factory keyFactory = parseAttributePath();
         ws();
         char next = expect(']', '=', '!', '^', '$', '*', '?', '>', '<');
-        AttributeComparator comparator;
 
+        if (next == ']') {
+            return AttributeSelector.existence(keyFactory);
+        }
+
+        AttributeComparator comparator = parseComparator(next);
+        List<String> values = parseAttributeValues();
+        boolean insensitive = parseCaseInsensitiveToken();
+        expect(']');
+        return new AttributeSelector(keyFactory, values, comparator, insensitive);
+    }
+
+    private boolean parseCaseInsensitiveToken() {
+        ws();
+        boolean insensitive = charPeek() == 'i';
+        if (insensitive) {
+            position++;
+            ws();
+        }
+        return insensitive;
+    }
+
+    private AttributeComparator parseComparator(char next) {
+        AttributeComparator comparator;
         switch (next) {
-            case ']':
-                return AttributeSelector.existence(keyFactory);
             case '=':
                 comparator = AttributeComparator.EQUALS;
                 break;
@@ -284,17 +310,73 @@ final class Parser {
                 throw syntax("Unknown attribute comparator token '" + next + "'");
         }
 
-        List<String> values = parseAttributeValues();
+        ws();
+        return comparator;
+    }
+
+    // "[@" selector_key ":" selector_scoped_comparisons "]"
+    private Selector parseScopedAttribute() {
+        ws();
+        AttributeValue.Factory keyScope = parseAttributePath();
+        ws();
+        expect(':');
+        ws();
+        return new ScopedAttributeSelector(keyScope, parseScopedAssertions());
+    }
+
+    // selector_scoped_comparison *("&&" selector_scoped_comparison)
+    private List<ScopedAttributeSelector.Assertion> parseScopedAssertions() {
+        List<ScopedAttributeSelector.Assertion> assertions = new ArrayList<>();
+        assertions.add(parseScopedAssertion());
         ws();
 
-        boolean insensitive = charPeek() == 'i';
-        if (insensitive) {
-            position++;
+        while (charPeek() == '&') {
+            expect('&');
+            expect('&');
             ws();
+            assertions.add(parseScopedAssertion());
         }
 
         expect(']');
-        return new AttributeSelector(keyFactory, values, comparator, insensitive);
+        return assertions;
+    }
+
+    private ScopedAttributeSelector.Assertion parseScopedAssertion() {
+        ScopedAttributeSelector.ScopedFactory lhs = parseScopedValue();
+        char next = charPeek();
+        position++;
+        AttributeComparator comparator = parseComparator(next);
+
+        List<ScopedAttributeSelector.ScopedFactory> rhs = new ArrayList<>();
+        rhs.add(parseScopedValue());
+
+        while (charPeek() == ',') {
+            position++;
+            rhs.add(parseScopedValue());
+        }
+
+        boolean insensitive = parseCaseInsensitiveToken();
+        return new ScopedAttributeSelector.Assertion(lhs, comparator, rhs, insensitive);
+    }
+
+    private ScopedAttributeSelector.ScopedFactory parseScopedValue() {
+        ws();
+        if (charPeek() == '@') {
+            position++;
+            expect('{');
+            // parse at least one path segment, followed by any number of
+            // comma separated segments.
+            List<String> path = new ArrayList<>();
+            path.add(parseSelectorPathSegment());
+            path.addAll(parseSelectorPath());
+            expect('}');
+            ws();
+            return value -> AttributeValue.createPathSelector(value, path);
+        } else {
+            String parsedValue = parseAttributeValue();
+            ws();
+            return value -> new AttributeValue.Literal(parsedValue);
+        }
     }
 
     private AttributeValue.Factory parseAttributePath() {
@@ -302,7 +384,7 @@ final class Parser {
         String namespace = parseIdentifier();
 
         // It is optionally followed by "|" delimited path keys.
-        List<String> path = parsePipeDelimitedTraitAttributes();
+        List<String> path = parseSelectorPath();
 
         switch (namespace) {
             case "id":
@@ -319,7 +401,7 @@ final class Parser {
     }
 
     // Can be a shape_id, quoted string, number, or pseudo_key.
-    private List<String> parsePipeDelimitedTraitAttributes() {
+    private List<String> parseSelectorPath() {
         ws();
 
         if (charPeek() != '|') {
@@ -329,19 +411,23 @@ final class Parser {
         List<String> result = new ArrayList<>();
         do {
             position++; // skip '|'
-            ws();
-            // Handle pseudo-keys enclosed in "(" identifier ")".
-            if (charPeek() == '(') {
-                position++;
-                String propertyName = parseIdentifier();
-                expect(')');
-                result.add("(" + propertyName + ")");
-            } else {
-                result.add(parseAttributeValue());
-            }
+            result.add(parseSelectorPathSegment());
         } while (charPeek() == '|');
 
         return result;
+    }
+
+    private String parseSelectorPathSegment() {
+        ws();
+        // Handle pseudo-keys enclosed in "(" identifier ")".
+        if (charPeek() == '(') {
+            position++;
+            String propertyName = parseIdentifier();
+            expect(')');
+            return "(" + propertyName + ")";
+        } else {
+            return parseAttributeValue();
+        }
     }
 
     private List<String> parseAttributeValues() {
@@ -387,7 +473,7 @@ final class Parser {
 
     private String consumeInside(char c) {
         int i = ++position;
-        while (i < expression.length()) {
+        while (i < length) {
             if (expression.charAt(i) == c) {
                 String result = expression.substring(position, i);
                 position = i + 1;

@@ -28,6 +28,6 @@ public final class SelectorSyntaxException extends RuntimeException {
         if (pos <= expression.length()) {
             result += ", near `" + expression.substring(pos) + "`";
         }
-        return result + ": " + message + "; expression `" + expression + "`";
+        return result + ": " + message + "; expression: " + expression;
     }
 }

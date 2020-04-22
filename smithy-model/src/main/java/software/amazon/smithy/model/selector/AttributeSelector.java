@@ -74,7 +74,7 @@ final class AttributeSelector implements Selector {
         }
 
         for (AttributeValue rhs : expected) {
-            if (lhs.compare(comparator, rhs, caseInsensitive)) {
+            if (comparator.flattenedCompare(lhs, rhs, caseInsensitive)) {
                 return true;
             }
         }
