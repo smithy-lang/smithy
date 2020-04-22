@@ -1,5 +1,5 @@
 {
-  "smithy": "0.5.0",
+  "smithy": "1.0.0",
   "shapes": {
     "ns.foo#MyService": {
       "type": "service",
@@ -13,14 +13,7 @@
         {
           "target": "ns.foo#MyResource"
         }
-      ],
-      "traits": {
-        "smithy.api#protocols": [
-          {
-            "name": "foo"
-          }
-        ]
-      }
+      ]
     },
     "ns.foo#MyOperation": {
       "type": "operation",
@@ -36,7 +29,7 @@
         }
       ],
       "traits": {
-        "smithy.api#readonly": true
+        "smithy.api#readonly": {}
       }
     },
     "ns.foo#MyOperationInput": {
@@ -92,7 +85,7 @@
         "b": {
           "target": "smithy.api#String",
           "traits": {
-            "smithy.api#sensitive": true
+            "smithy.api#sensitive": {}
           }
         }
       }
@@ -137,7 +130,7 @@
         "myId": {
           "target": "ns.foo#MyId",
           "traits": {
-            "smithy.api#required": true
+            "smithy.api#required": {}
           }
         }
       }
@@ -146,7 +139,7 @@
     "ns.foo#integerRef": {
       "type": "string",
       "traits": {
-        "smithy.api#trait": true,
+        "smithy.api#trait": {},
         "smithy.api#idRef": {
           "failWhenMissing": true,
           "selector": "integer"
