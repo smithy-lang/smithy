@@ -77,7 +77,8 @@ final class AddAuthorizers implements ApiGatewayMapper {
     ) {
         // Only modify requirements that exactly match the updated scheme.
         if (requirement.size() != 1
-                || !requirement.keySet().iterator().next().equals(converter.getAuthSchemeId().toString())) {
+                || !requirement.keySet().iterator().next().equals(converter.getAuthSchemeId().toString()
+                .replace("#", "."))) {
             return requirement;
         }
 

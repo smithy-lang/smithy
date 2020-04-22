@@ -504,7 +504,7 @@ public final class OpenApiConverter {
                     context, authSchemeClasses);
             for (SecuritySchemeConverter<? extends Trait> converter : converters) {
                 List<String> result = createSecurityRequirements(context, converter, service);
-                String openApiAuthName = converter.getAuthSchemeId().toString();
+                String openApiAuthName = converter.getAuthSchemeId().toString().replace("#", ".");
                 Map<String, List<String>> authMap = MapUtils.of(openApiAuthName, result);
                 Map<String, List<String>> requirement = plugin.updateSecurity(context, shape, converter, authMap);
                 if (requirement != null) {
@@ -625,7 +625,7 @@ public final class OpenApiConverter {
         for (SecuritySchemeConverter<? extends Trait> converter : context.getSecuritySchemeConverters()) {
             SecurityScheme createdScheme = createAndUpdateSecurityScheme(context, plugin, converter, service);
             if (createdScheme != null) {
-                components.putSecurityScheme(converter.getAuthSchemeId().toString(), createdScheme);
+                components.putSecurityScheme(converter.getAuthSchemeId().toString().replace("#", "."), createdScheme);
             }
         }
 
@@ -637,7 +637,7 @@ public final class OpenApiConverter {
         for (SecuritySchemeConverter<? extends Trait> converter : context.getSecuritySchemeConverters()) {
             if (defaultAuthTraits.contains(converter.getAuthSchemeType())) {
                 List<String> result = createSecurityRequirements(context, converter, context.getService());
-                String authSchemeName = converter.getAuthSchemeId().toString();
+                String authSchemeName = converter.getAuthSchemeId().toString().replace("#", ".");
                 Map<String, List<String>> requirement = plugin.updateSecurity(
                         context, context.getService(), converter, MapUtils.of(authSchemeName, result));
                 if (requirement != null) {

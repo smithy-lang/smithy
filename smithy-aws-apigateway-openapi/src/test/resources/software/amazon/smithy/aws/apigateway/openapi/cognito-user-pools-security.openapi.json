@@ -18,7 +18,7 @@
   },
   "components": {
     "securitySchemes": {
-      "aws.auth#cognitoUserPools": {
+      "aws.auth.cognitoUserPools": {
         "type": "apiKey",
         "description": "Amazon Cognito User Pools authentication",
         "name": "Authorization",
@@ -35,7 +35,7 @@
   },
   "security": [
     {
-      "aws.auth#cognitoUserPools": [ ]
+      "aws.auth.cognitoUserPools": [ ]
     }
   ]
 }
