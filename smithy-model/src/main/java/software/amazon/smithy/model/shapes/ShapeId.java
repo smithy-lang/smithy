@@ -43,14 +43,13 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
     private final String name;
     private final String member;
     private final String absoluteName;
-    private final int hash;
+    private int hash;
 
     private ShapeId(String absoluteName, String namespace, String name, String member) {
         this.namespace = namespace;
         this.name = name;
         this.member = member;
         this.absoluteName = absoluteName;
-        this.hash = 17 + 31 * namespace.hashCode() * 31 + name.hashCode() * 17 + Objects.hashCode(member);
     }
 
     private ShapeId(String namespace, String name, String member) {
@@ -84,7 +83,8 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
             memberName = absoluteShapeId.substring(memberPosition + 1);
         }
 
-        return fromParts(namespace, name, memberName);
+        validateParts(absoluteShapeId, namespace, name, memberName);
+        return new ShapeId(absoluteShapeId, namespace, name, memberName);
     }
 
     /**
@@ -98,11 +98,9 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
             return false;
         }
 
-        int position = 0;
         boolean start = true;
-
-        while (position < namespace.length()) {
-            char c = namespace.charAt(position++);
+        for (int position = 0; position < namespace.length(); position++) {
+            char c = namespace.charAt(position);
             if (start) {
                 start = false;
                 if (!isValidIdentifierStart(c)) {
@@ -161,22 +159,24 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      */
     public static ShapeId fromParts(String namespace, String name, String member) {
         String idFromParts = buildAbsoluteIdFromParts(namespace, name, member);
-
-        if (!isValidNamespace(namespace)
-                || !isValidIdentifier(name)
-                || (member != null && !isValidIdentifier(member))) {
-            throw new ShapeIdSyntaxException("Invalid shape ID: " + idFromParts);
-        }
-
+        validateParts(idFromParts, namespace, name, member);
         return new ShapeId(idFromParts, namespace, name, member);
     }
 
-    private static String buildAbsoluteIdFromParts(String namespace, String name, String member) {
-        StringBuilder builder = new StringBuilder(namespace).append('#').append(name);
-        if (member != null) {
-            builder.append('$').append(member);
+    private static void validateParts(String absoluteId, String namespace, String name, String member) {
+        if (!isValidNamespace(namespace)
+                || !isValidIdentifier(name)
+                || (member != null && !isValidIdentifier(member))) {
+            throw new ShapeIdSyntaxException("Invalid shape ID: " + absoluteId);
         }
-        return builder.toString();
+    }
+
+    private static String buildAbsoluteIdFromParts(String namespace, String name, String member) {
+        if (member != null) {
+            return namespace + '#' + name + '$' + member;
+        } else {
+            return namespace + '#' + name;
+        }
     }
 
     /**
@@ -330,6 +330,9 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
 
     @Override
     public int hashCode() {
+        if (hash == 0) {
+            hash = 17 + 31 * namespace.hashCode() * 31 + name.hashCode() * 17 + Objects.hashCode(member);
+        }
         return hash;
     }
 }
