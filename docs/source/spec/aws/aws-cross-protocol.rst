@@ -8,7 +8,7 @@ This specification defines traits that are not restricted to use in a single
 AWS protocol, but are specific to the AWS suite of protocols.
 
 .. contents:: Table of contents
-    :depth 2
+    :depth: 2
     :local:
     :backlinks: none
 
