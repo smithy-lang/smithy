@@ -16,11 +16,13 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -32,9 +34,9 @@ import software.amazon.smithy.utils.SmithyBuilder;
 public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S extends Shape>
         implements SmithyBuilder<S>, FromSourceLocation {
 
-    ShapeId id;
-    Map<ShapeId, Trait> traits = new HashMap<>();
-    SourceLocation source = SourceLocation.none();
+    private ShapeId id;
+    private Map<ShapeId, Trait> traits;
+    private SourceLocation source = SourceLocation.none();
 
     AbstractShapeBuilder() {}
 
@@ -119,7 +121,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      */
     @SuppressWarnings("unchecked")
     public final B traits(Collection<Trait> traitsToSet) {
-        traits.clear();
+        clearTraits();
         traitsToSet.forEach(this::addTrait);
         return (B) this;
     }
@@ -149,6 +151,10 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
             throw new IllegalArgumentException("trait must not be null");
         }
 
+        if (traits == null) {
+            traits = new HashMap<>();
+        }
+
         traits.put(trait.toShapeId(), trait);
         return (B) this;
     }
@@ -174,7 +180,9 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      */
     @SuppressWarnings("unchecked")
     public final B removeTrait(ShapeId traitId) {
-        traits.remove(traitId);
+        if (traits != null) {
+            traits.remove(traitId);
+        }
         return (B) this;
     }
 
@@ -185,7 +193,9 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      */
     @SuppressWarnings("unchecked")
     public final B clearTraits() {
-        traits.clear();
+        if (traits != null) {
+            traits.clear();
+        }
         return (B) this;
     }
 
@@ -215,5 +225,9 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
     public B addMember(MemberShape member) {
         throw new UnsupportedOperationException(String.format(
                 "Member `%s` cannot be added to %s", member.getId(), getClass().getName()));
+    }
+
+    Map<ShapeId, Trait> copyTraits() {
+        return traits == null ? Collections.emptyMap() : MapUtils.copyOf(traits);
     }
 }
