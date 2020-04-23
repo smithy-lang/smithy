@@ -99,7 +99,8 @@ public final class SmithyTestCase {
      * compared against the expected validation events. An actual event (A) is
      * considered a match with an expected event (E) if A and E target the
      * same shape, use the same validation event ID, have the same severity,
-     * and the message of E starts with the message of A.
+     * and the message of E starts with the suppression reason or message
+     * of A.
      *
      * @param validatedResult Result of creating and validating the model.
      * @return Returns the created test case result.
@@ -120,11 +121,17 @@ public final class SmithyTestCase {
     }
 
     private static boolean compareEvents(ValidationEvent expected, ValidationEvent actual) {
+        String normalizedActualMessage = actual.getMessage();
+        if (actual.getSuppressionReason().isPresent()) {
+            normalizedActualMessage += " (" + actual.getSuppressionReason().get() + ")";
+        }
+
+        String comparedMessage = expected.getMessage().replace("\n", "\\n");
         return expected.getSeverity() == actual.getSeverity()
                && expected.getEventId().equals(actual.getEventId())
                && expected.getShapeId().equals(actual.getShapeId())
                // Normalize new lines.
-               && actual.getMessage().replace("\n", "\\n").startsWith(expected.getMessage().replace("\n", "\\n"));
+               && normalizedActualMessage.startsWith(comparedMessage);
     }
 
     private static String inferErrorFileLocation(String modelLocation) {

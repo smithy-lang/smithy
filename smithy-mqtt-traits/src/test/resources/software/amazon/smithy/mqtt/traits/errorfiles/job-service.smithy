@@ -1,5 +1,3 @@
-metadata suppressions = [{"ids": ["UnstableFeature"], "shapes": ["aws.iotjobs#JobDocument"]}]
-
 namespace aws.iotjobs
 
 use smithy.mqtt#mqttJson
@@ -365,6 +363,7 @@ structure JobExecutionState {
   versionNumber: smithy.api#Integer,
 }
 
+@suppress(["UnstableFeature"])
 document JobDocument
 
 

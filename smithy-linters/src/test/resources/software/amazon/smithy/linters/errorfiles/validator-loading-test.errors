@@ -1,5 +1,0 @@
-[DANGER] ns.foo#Ignore_Me: string shape name, `Ignore_Me`, is not upper camel case | CamelCase
-[ERROR] -: Each element of `suppressions` must be an object. Found array. | Model
-[ERROR] -: Each element of `validators` must be an object. Found string. | Model
-[SUPPRESSED] ns.baz#This_is_ignored_too: string shape name, `This_is_ignored_too`, is not upper camel case | CamelCase
-[WARNING] -: Unable to locate a validator named `UnknownValidator` | UnknownValidator.UnknownValidator

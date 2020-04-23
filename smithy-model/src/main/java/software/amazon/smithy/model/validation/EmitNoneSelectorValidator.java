@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.linters;
+package software.amazon.smithy.model.validation;
 
 import java.util.List;
 import java.util.Set;
@@ -23,10 +23,6 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.validation.AbstractValidator;
-import software.amazon.smithy.model.validation.Severity;
-import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.model.validation.ValidatorService;
 import software.amazon.smithy.utils.ListUtils;
 
 /**

@@ -57,7 +57,6 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.validation.Severity;
-import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
@@ -76,16 +75,6 @@ public class ModelAssemblerTest {
     @AfterEach
     public void after() throws IOException {
         Files.walk(outputDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-    }
-
-    @Test
-    public void addsExplicitSuppressions() {
-        Suppression suppression = Suppression.builder().addValidatorId("foo").build();
-        ValidatedResult<Model> result = new ModelAssembler()
-                .addSuppression(suppression)
-                .assemble();
-
-        assertThat(result.getValidationEvents(), empty());
     }
 
     @Test
@@ -174,9 +163,6 @@ public class ModelAssemblerTest {
             .addImport(createSymbolicLink(Paths.get(getClass().getResource("nested").toURI()), "symlink-nested"))
             .assemble();
 
-        result.getValidationEvents().forEach(event -> {
-            assertThat(event.getSuppressionReason().get(), is("This shape is being tested for model assembly."));
-        });
         Model model = result.unwrap();
         assertTrue(model.getShape(ShapeId.from("example.namespace#String")).isPresent());
         assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
@@ -270,9 +256,6 @@ public class ModelAssemblerTest {
                 .addImport(Paths.get(getClass().getResource("nested").toURI()))
                 .assemble();
 
-        result.getValidationEvents().forEach(event -> {
-            assertThat(event.getSuppressionReason().get(), is("This shape is being tested for model assembly."));
-        });
         Model model = result.unwrap();
         assertTrue(model.getShape(ShapeId.from("example.namespace#String")).isPresent());
         assertThat(model.getShape(ShapeId.from("example.namespace#String")).get().getType(),
