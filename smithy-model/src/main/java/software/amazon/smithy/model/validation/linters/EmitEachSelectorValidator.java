@@ -13,34 +13,33 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model.validation;
+package software.amazon.smithy.model.validation.linters;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.selector.Selector;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.model.validation.AbstractValidator;
+import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidatorService;
 
 /**
- * Emits a validation event if no shapes match the given selector.
+ * Emits a validation event for each shape that matches a selector.
  */
-public final class EmitNoneSelectorValidator extends AbstractValidator {
+public final class EmitEachSelectorValidator extends AbstractValidator {
 
     /**
-     * EmitNoneSelector configuration settings.
+     * EmitEachSelector configuration settings.
      */
     public static final class Config {
         private Selector selector;
 
         /**
-         * Gets the selector that if no shapes match, a validation event
-         * is emitted.
+         * Each shape that matches the given selector will emit a validation
+         * event.
          *
-         * @return Returns the selector.
+         * @return Selector to match on.
          */
         public Selector getSelector() {
             return selector;
@@ -53,35 +52,24 @@ public final class EmitNoneSelectorValidator extends AbstractValidator {
 
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
-            super(EmitNoneSelectorValidator.class, configuration -> {
+            super(EmitEachSelectorValidator.class, configuration -> {
                 NodeMapper mapper = new NodeMapper();
                 Config config = mapper.deserialize(configuration, Config.class);
-                return new EmitNoneSelectorValidator(config);
+                return new EmitEachSelectorValidator(config);
             });
         }
     }
 
     private final Config config;
 
-    private EmitNoneSelectorValidator(Config config) {
+    private EmitEachSelectorValidator(Config config) {
         this.config = config;
     }
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        // Filter out prelude types.
-        Set<Shape> shapes = config.getSelector().select(model).stream()
-                .filter(shape -> !Prelude.isPreludeShape(shape.getId()))
-                .collect(Collectors.toSet());
-
-        if (shapes.isEmpty()) {
-            return ListUtils.of(ValidationEvent.builder()
-                    .eventId(getName())
-                    .severity(Severity.DANGER)
-                    .message("Expected at least one shape to match selector: " + config.getSelector())
-                    .build());
-        }
-
-        return ListUtils.of();
+        return config.getSelector().select(model).stream()
+                .map(shape -> danger(shape, "Selector capture matched selector: " + config.getSelector()))
+                .collect(Collectors.toList());
     }
 }

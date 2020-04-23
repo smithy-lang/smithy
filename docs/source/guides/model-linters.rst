@@ -1,12 +1,8 @@
-.. _validation:
+=============
+Model linters
+=============
 
-================
-Model Validation
-================
-
-This specification defines a customizable validation system for Smithy
-models that can be used by API designers and organizations to ensure that
-their APIs adhere to their own standards and best practices.
+This guide describes how to apply optional linters to a Smithy model.
 
 .. contents:: Table of contents
     :depth: 2
@@ -14,232 +10,43 @@ their APIs adhere to their own standards and best practices.
     :backlinks: none
 
 
-Introduction
-============
+----------------
+Linting overview
+----------------
 
-APIs require a great deal of care and discipline to ensure that they provide
-a coherent interface to customers, particularly after an API is released and
-new features are added. This specification defines metadata that is used to
-validate a model against configurable validator definitions, ensuring that
-developers adhere to an organization's API standards.
+A *linter* is a special kind of :ref:`model validator <validation>`
+that is configurable. Linter implementations are found in code. The
+`smithy-linters`_ package in Maven Central contains several linters that
+can be used to apply additional validation to Smithy models.
 
-Tools like Checkstyle and Findbugs help to ensure that developers avoid common
-bugs and pitfalls when writing code. This is a very powerful concept,
-particularly for developers that are new to a programming language. This
-concept is even more powerful when teams use the configurability of these
-tools to communicate the coding standards of an organization and automate
-their enforcement. This validation standard allows the same level of
-conformity and rigor to be applied to Smithy models and API definitions.
+The following example adds ``smithy-linters`` as a Gradle dependency
+to a ``build.gradle.kts`` file:
 
+.. tabs::
 
-.. _validator-definition:
+    .. code-tab:: kotlin
 
-Validators
-==========
-
-The ``validators`` metadata property contains an array of validator
-objects that are used to constrain a model. Each object in the
-``validators`` array supports the following properties:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 20 20 60
-
-    * - Property
-      - Type
-      - Description
-    * - name
-      - ``string``
-      - **Required**. The name of the validator to apply. This name is used in
-        implementations to find and configure the appropriate validator
-        implementation. Validators only take effect if a Smithy processor
-        implements the validator.
-    * - id
-      - ``string``
-      - Defines a custom identifier for the validator.
-
-        Multiple instances of a single validator can be configured for a model.
-        Providing an ``id`` allows suppressions to suppress a specific instance
-        of a validator.
-
-        If ``id`` is not specified, it will default to the ``name`` property of
-        the validator definition.
-    * - message
-      - ``string``
-      - Provides a custom message to use when emitting validation events. The
-        special ``{super}`` string can be added to a custom message to inject
-        the original error message of the validation event into the custom
-        message.
-    * - severity
-      - ``string``
-      - Provides a custom :ref:`severity <severity-definition>` level to use
-        when a validation event occurs. If no severity is provided, then the
-        default severity of the validator is used.
-
-        .. note::
-
-              The severity of user-defined validators cannot be set to ERROR.
-    * - namespaces
-      - [ ``string`` ]
-      - Provides a list of the namespaces that are targeted by the validator.
-        The validator will ignore any validation events encountered that are
-        not specific to the given namespaces.
-    * - selector
-      - ``string``
-      - A valid :ref:`selector <selectors>` that causes the validator to only
-        validate shapes that match the selector. The validator will ignore any
-        validation events encountered that do not satisfy the selector.
-    * - configuration
-      - ``object``
-      - Object that provides validator configuration. The available properties
-        are defined by each validator. Validators MAY require that specific
-        configuration properties are provided.
-
-The following Smithy document applies a custom validator named "SomeValidator":
-
-.. code-block:: smithy
-
-    metadata validators = [
-        {
-            // The name of the validator.
-            name: "SomeValidator",
-            // Uses a custom event ID for each validation event emitted.
-            id: "CustomEventId",
-            // Uses a custom message that also includes the default message.
-            message: "My custom message name. {super}",
-            // Applies the rule only to the following namespaces.
-            namespaces: ["foo.baz", "bar.qux"],
-            // The following properties are specific to the validator.
-            configuration: {
-              "someProperty": "foo",
-            }
+        dependencies {
+            implementation("software.amazon.smithy:smithy-model:1.0.0")
+            implementation("software.amazon.smithy:smithy-linters:1.0.0")
         }
-    ]
+
+After the dependency is added and available on the Java classpath, validators
+defined in the package and registered using `Java SPI`_ are available for
+use in Smithy models.
 
 
-.. _missing-validators:
+-----------------------------
+Linters in ``smithy-linters``
+-----------------------------
 
-Missing validators
-------------------
-
-If a Smithy implementation does not have an implementation for a specific
-validator by name, the Smithy implementation MUST emit a WARNING validation
-event with an event ID that is the concatenation of ``UnknownValidator.`` and
-the name property of the validator that could not be found. For example, given
-a custom validator that could not be found named ``Foo``, the implementation
-MUST emit a validation event with an event ID of ``UnknownValidator.Foo`` and
-a severity of WARNING.
-
-
-.. _severity-definition:
-
-Severity
-========
-
-When a model is in violation of a validator, a *validation event* is emitted.
-This validation event contains metadata about the violation, including the
-optional shape that was in violation, the source location of the violation,
-the validator ID, and the severity of the violation. *Severity* is used
-to define the importance or impact of a violation.
-
-**ERROR**
-    Indicates that something is structurally wrong with the model and cannot
-    be suppressed.
-
-    Validation events with a severity of ERROR are reserved for enforcing that
-    models adhere to the Smithy specification. Validators cannot emit a
-    validation event with a severity of ERROR.
-
-**DANGER**
-    Indicates that something is very likely wrong with the model. Unsuppressed
-    DANGER validation events indicate that a model is invalid.
-
-**WARNING**
-    Indicates that something might be wrong with the model.
-
-**NOTE**
-    Informational message that does not imply anything is wrong with the model.
-
-
-.. _suppression-definition:
-
-Suppressions
-============
-
-The ``suppressions`` metadata property contains an array of
-suppression objects. Suppressions are used to suppress specific validation
-events.
-
-.. note::
-
-    Validation events with a severity of ``ERROR`` cannot be suppressed.
-
-Each suppression object in the ``suppressions`` array supports the
-following properties:
-
-.. list-table::
-    :header-rows: 1
-    :widths: 20 20 60
-
-    * - Property
-      - Type
-      - Description
-    * - ids
-      - [ ``string`` ]
-      - **Required**. An array of validator event IDs to suppress. One or more
-        event IDs MUST be provided. A value of ``*`` MAY be provided in order
-        to suppress all validation event IDs (e.g., ``["*"]``).
-    * - shapes
-      - [ ``string`` ]
-      - A array of absolute :ref:`shape IDs <shape-id>` to suppress. An entire
-        namespace can be suppressed by suffixing a namespace name with ``#``.
-        For example, ``foo.baz#`` can be used to suppress all validation events
-        on shapes in the "foo.baz" namespace.
-    * - reason
-      - ``string``
-      - Provides a reason for the suppression.
-
-One or more entries from the ``ids`` list and one or more entries from the
-``shapes`` list (if provided) MUST match in order for a validation event to be
-suppressed.
-
-An example suppression for the "UnreferencedShape" validator:
-
-.. code-block:: smithy
-
-    metadata suppressions = [
-        {
-            // The list of rules to suppress.
-            ids: ["UnreferencedShape"],
-            // The optional list of shapes that are suppressed.
-            shapes: ["foo.baz#SomeShape/members/someMemberName"],
-            // The optional reason that the rule is suppressed.
-            reason: "This shape is used for code generation."
-        }
-    ]
-
-An example suppression that suppresses all validation events for all shapes
-within a specific namespace:
-
-.. code-block:: smithy
-
-    metadata suppressions = [
-        {
-            ids: ["*"],
-            shapes: ["smithy.testing#"],
-            reason: "smithy.testing is used only for testing"
-        }
-    ]
-
-
-Naming validators
-=================
+The ``smithy-linters`` package defines the following linters.
 
 
 .. _AbbreviationName:
 
 AbbreviationName
-----------------
+================
 
 Validates that shape names and member names do not represent abbreviations
 with all uppercase letters. For example, instead of using "XMLRequest" or
@@ -272,13 +79,17 @@ Example:
 
 .. code-block:: smithy
 
-    metadata validators = [{name: "AbbreviationName"}]
+    $version: "1.0.0"
+
+    metadata validators = [
+        {name: "AbbreviationName"}
+    ]
 
 
 .. _CamelCase:
 
 CamelCase
----------
+=========
 
 Validates that shape names and member names adhere to a consistent style of
 camel casing. By default, this validator will ensure that shape names use
@@ -310,13 +121,17 @@ Example:
 
 .. code-block:: smithy
 
-    metadata validators = [{name: "CamelCase"}]
+    $version: "1.0.0"
+
+    metadata validators = [
+        {name: "CamelCase"}
+    ]
 
 
 .. _ReservedWords:
 
 ReservedWords
--------------
+=============
 
 Validates that shape names and member names do not match a configured set of
 reserved words.
@@ -368,6 +183,8 @@ Example:
 
 .. code-block:: smithy
 
+    $version: "1.0.0"
+
     metadata validators = [{
         id: "FooReservedWords"
         name: "ReservedWords",
@@ -385,7 +202,7 @@ Example:
 .. _reserved-words-wildcards:
 
 Wildcards in ReservedWords
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 The ReservedWords validator allows leading and trailing wildcard characters to
 be specified.
@@ -471,7 +288,7 @@ be specified.
 .. _StandardOperationVerb:
 
 StandardOperationVerb
----------------------
+=====================
 
 Looks at each operation shape name and determines if the first word in the
 operation shape name is one of the defined standard verbs or if it is a verb
@@ -521,6 +338,8 @@ Example:
 
 .. code-block:: smithy
 
+    $version: "1.0.0"
+
     metadata validators = [{
         name: "StandardOperationVerb",
         configuration: {
@@ -537,7 +356,7 @@ Example:
 .. _StutteredShapeName:
 
 StutteredShapeName
-------------------
+==================
 
 Validators that :ref:`structure` member names and :ref:`union` member
 names do not stutter their shape names.
@@ -553,13 +372,10 @@ Default severity
     ``WARNING``
 
 
-Best practice validators
-========================
-
 .. _InputOutputStructureReuse:
 
 InputOutputStructureReuse
--------------------------
+=========================
 
 Detects when a structure is used as both input and output or if a structure
 is referenced as the input or output for multiple operations.
@@ -583,7 +399,7 @@ Default severity
 .. _MissingPaginatedTrait:
 
 MissingPaginatedTrait
----------------------
+=====================
 
 Checks for operations that look like they should be paginated but do not
 have the :ref:`paginated-trait`.
@@ -636,17 +452,15 @@ Example:
 
 .. code-block:: smithy
 
-   metadata validators = [{name: "MissingPaginatedTrait"}]
-
-
-Modeling validators
-===================
+    metadata validators = [
+        {name: "MissingPaginatedTrait"}
+    ]
 
 
 .. _ShouldHaveUsedTimestamp:
 
 ShouldHaveUsedTimestamp
------------------------
+=======================
 
 Looks for shapes that likely represent time, but that do not use a
 timestamp shape.
@@ -696,174 +510,199 @@ Configuration
            represent time.
 
 
-.. _UnreferencedShape:
+-------------------------
+Writing custom validators
+-------------------------
 
-UnreferencedShape
------------------
+Custom validators can be written in Java to apply more advanced model validation.
+Writing a custom validator involves writing an implementation of a
+Smithy validator in Java, creating a JAR, and making the JAR available on the
+classpath.
 
-Looks for shapes that are not connected to from any service shape within
-the model.
+Custom validators are implementations of the
+``software.amazon.smithy.model.validation.Validator`` interface. Most
+validators should extend from ``software.amazon.smithy.model.validation.AbstractValidator``.
 
-Rationale
-    Unreferenced shapes are good candidates for removal from a model.
+The following linter emits a ``ValidationEvent`` for every shape in the
+model that is not documented.
 
-Default severity
-    ``NOTE``
+.. code-block:: java
 
+    package com.example.mypackage;
 
-Misc validators
-===============
+    import java.util.List;
+    import java.util.stream.Collectors;
+    import software.amazon.smithy.model.Model;
+    import software.amazon.smithy.model.traits.DocumentationTrait;
+    import software.amazon.smithy.model.validation.AbstractValidator;
+    import software.amazon.smithy.model.validation.ValidationEvent;
 
-.. _EmitEachSelector:
-
-EmitEachSelector
-----------------
-
-Emits a validation event for each shape that matches the given
-:ref:`selector <selectors>`.
-
-Rationale
-    Detecting shapes that violate a validation rule using customizable
-    validators allows organizations to create custom Smithy validators without
-    needing to write code.
-
-Default severity
-    ``DANGER``
-
-Configuration
-    .. list-table::
-       :header-rows: 1
-       :widths: 20 20 60
-
-       * - Property
-         - Type
-         - Description
-       * - selector
-         - ``string``
-         - **Required**. A valid :ref:`selector <selectors>`. Each shape in
-           the model that is returned from the selector with emit a validation
-           event.
-
-Example:
-
-The following example detects if a shape is missing documentation with the
-following constraints:
-
-- Shapes that have the documentation trait are excluded.
-- Members that target shapes that have the documentation trait are excluded.
-- Simple types are excluded.
-- List and map members are excluded.
-
-.. code-block:: smithy
-
-    metadata validators = [{
-        name: "EmitEachSelector",
-        id: "MissingDocumentation",
-        message: "This shape is missing documentation"
-        configuration: {
-            selector: """
-                :not([trait|documentation])
-                :not(simpleType)
-                :not(member:of(:is(list, map)))
-                :not(:test(member > [trait|documentation]))"""
+    public class DocumentationValidator extends AbstractValidator {
+        @Override
+        public List<ValidationEvent> validate(Model model) {
+            return model.shapes()
+                    .filter(shape -> !shape.hasTrait(DocumentationTrait.class))
+                    .map(shape -> error(shape, "This shape is not documented!"))
+                    .collect(Collectors.toList());
         }
-    }]
+    }
 
-The following example emits a validation event for each structure referenced as
-input/output that has a shape name that does not case-insensitively end with
-"Input"/"Output":
+Validators need to be registered as Java service providers. Add the following
+class name to a file named ``software.amazon.smithy.model.validation.Validator``
+found in the ``src/main/resources/META-INF/services`` directory of a standard Gradle
+Java package:
+
+.. code-block:: none
+
+    com.example.mypackage.DocumentationValidator
+
+When added to the classpath (typically as a dependency of a published JAR),
+the custom validator is automatically applied to a model each time the
+model is loaded.
+
+
+----------------------
+Writing custom Linters
+----------------------
+
+Like custom validators, custom linters can be written in Java to apply more
+advanced model validation.
+
+Custom linters are implementations of the
+``software.amazon.smithy.model.validation.Validator`` interface. Because
+linters are configurable, they are created using an implementation of the
+``software.amazon.smithy.model.validation.ValidatorService`` interface.
+
+The following validator emits a ``ValidationEvent`` for every shape in the
+model that has documentation that contains a forbidden string.
+
+.. code-block:: java
+
+    package com.example.mypackage;
+
+    import java.util.List;
+    import java.util.Optional;
+    import java.util.stream.Collectors;
+    import java.util.stream.Stream;
+    import software.amazon.smithy.model.Model;
+    import software.amazon.smithy.model.node.NodeMapper;
+    import software.amazon.smithy.model.shapes.Shape;
+    import software.amazon.smithy.model.traits.DocumentationTrait;
+    import software.amazon.smithy.model.validation.AbstractValidator;
+    import software.amazon.smithy.model.validation.ValidationEvent;
+    import software.amazon.smithy.model.validation.ValidatorService;
+
+    public class ForbiddenDocumentationValidator extends AbstractValidator {
+
+        /**
+         * ForbiddenDocumentation configuration settings.
+         */
+        public static final class Config {
+            private List<String> forbid;
+
+            public List<String> getForbid() {
+                return forbid;
+            }
+
+            public void setForbid(List<String> forbid) {
+                this.forbid = forbid;
+            }
+        }
+
+        // Does the actual work of converting metadata found in a Smithy
+        // model into an actual implementation of a Validator.
+        public static final class Provider extends ValidatorService.Provider {
+            public Provider() {
+                super(ForbiddenDocumentationValidator.class, configuration -> {
+                    // Deserialize the Node value into the Config POJO.
+                    NodeMapper mapper = new NodeMapper();
+                    ForbiddenDocumentationValidator.Config config = mapper.deserialize(configuration, Config.class);
+                    return new ForbiddenDocumentationValidator(config);
+                });
+            }
+        }
+
+        private final List<String> forbid;
+
+        // The constructor is private since the validator is only intended to
+        // be created when loading a model via the Provider class.
+        private ForbiddenDocumentationValidator(Config config) {
+            this.forbid = config.forbid;
+        }
+
+        @Override
+        public List<ValidationEvent> validate(Model model) {
+            // Find every shape that violates the linter and return a list
+            // of ValidationEvents.
+            return model.shapes()
+                    .filter(shape -> shape.hasTrait(DocumentationTrait.class))
+                    .flatMap(shape -> validateShape(shape).map(Stream::of).orElseGet(Stream::empty))
+                    .collect(Collectors.toList());
+        }
+
+        private Optional<ValidationEvent> validateShape(Shape shape) {
+            // Grab the trait by type.
+            DocumentationTrait trait = shape.expectTrait(DocumentationTrait.class);
+            String docString = trait.getValue();
+
+            for (String text : forbid) {
+                if (docString.contains(text)) {
+                    // Emit an event that points at the location of the trait
+                    // and associates the warning with the shape.
+                    return Optional.of(warning(shape, trait, "Documentation uses forbidden text: " + text));
+                }
+            }
+
+            return Optional.empty();
+        }
+    }
+
+Configurable linters need to be registered as Java service providers. Add the following
+class name to a file named ``software.amazon.smithy.model.validation.ValidatorService``
+found in the ``src/main/resources/META-INF/services`` directory of a standard Gradle
+Java package:
+
+.. code-block:: none
+
+    com.example.mypackage.ForbiddenDocumentationValidator$Provider
+
+When added to the classpath (typically as a dependency of a published JAR),
+the custom validator is available to be used as a validator. The following
+example warns each time the word "meow" appears in documentation:
 
 .. code-block:: smithy
+
+    $version: "1.0.0"
 
     metadata validators = [
         {
-            name: "EmitEachSelector",
-            id: "OperationInputName",
-            message: "This shape is referenced as input but the name does not end with 'Input'",
+            name: "ForbiddenDocumentation",
             configuration: {
-                selector: "operation -[input]-> :not([id|name$=Input i])"
-            }
-        },
-        {
-            name: "EmitEachSelector",
-            id: "OperationOutputName",
-            message: "This shape is referenced as output but the name does not end with 'Output'",
-            configuration: {
-                selector: "operation -[output]-> :not([id|name$=Output i])"
+                forbid: ["meow"]
             }
         }
     ]
 
-The following example emits a validation event for each operation referenced
-as lifecycle 'read' or 'delete' that has a shape name that does not start with
-"Get" or "Delete":
+.. tip::
 
-.. code-block:: smithy
+    The :ref:`EmitEachSelector` can get you pretty far without needing to
+    write any Java code. For example, the above linter can be implemented
+    using the following Smithy model:
 
-    metadata validators = [
-        {
-            name: "EmitEachSelector",
-            id: "LifecycleGetName",
-            message: "Lifecycle 'read' operation shape names should start with 'Get'",
-            configuration: {
-                selector: "operation [read]-> :not([id|name^=Get i])"
+    .. code-block:: smithy
+
+        $version: "1.0.0"
+
+        metadata validators = [
+            {
+                name: "EmitEachSelector",
+                id: "ForbiddenDocumentation",
+                message: "Documentation uses forbidden text",
+                configuration: {
+                    selector: "[trait|documentation*='meow']"
+                }
             }
-        },
-        {
-            name: "EmitEachSelector",
-            id: "LifecycleDeleteName",
-            message: "Lifecycle 'delete' operation shape names should start with 'Delete'",
-            configuration: {
-                selector: "operation -[delete]-> :not([id|name^=Delete i])"
-            }
-        }
-    ]
+        ]
 
-
-.. _EmitNoneSelector:
-
-EmitNoneSelector
-----------------
-
-Emits a validation event if no shape in the model matches the given
-:ref:`selector <selectors>`.
-
-Rationale
-    Detecting the omission of a specific trait, pattern, or other requirement
-    can help developers to remember to apply constraint traits, documentation,
-    etc.
-
-Default severity
-    ``DANGER``
-
-Configuration
-    .. list-table::
-       :header-rows: 1
-       :widths: 20 20 60
-
-       * - Property
-         - Type
-         - Description
-       * - selector
-         - ``string``
-         - **Required**. A valid :ref:`selector <selectors>`. If no shape
-           in the model is returned by the selector, then a validation event
-           is emitted.
-
-Example:
-
-The following example detects if the model does not contain any constraint
-traits.
-
-.. code-block:: smithy
-
-    metadata validators = [{
-        name: "EmitNoneSelector",
-        id: "MissingConstraintTraits",
-        message: """
-            No instances of the enum, pattern, length, or range trait
-            could be found. Did you forget to apply these traits?""",
-        configuration: {
-            selector: ":is([trait|enum], [trait|pattern], [trait|length], [trait|range])",
-        }
-    }]
+.. _smithy-linters: https://search.maven.org/artifact/software.amazon.smithy/smithy-linters
+.. _Java SPI: https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html

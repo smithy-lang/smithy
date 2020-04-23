@@ -205,20 +205,20 @@ final class ModelValidator {
     }
 
     private Optional<String> matchSuppression(Shape shape, String eventId) {
-        // Check namespace-wide suppressions.
-        if (namespaceSuppressions.containsKey(eventId)) {
-            Map<String, String> namespaces = namespaceSuppressions.get(eventId);
-            if (namespaces.containsKey(shape.getId().getNamespace())) {
-                return Optional.of(namespaces.get(shape.getId().getNamespace()));
-            }
-        }
-
         // Traits take precedent over service suppressions.
         if (shape.getTrait(SuppressTrait.class).isPresent()) {
             if (shape.expectTrait(SuppressTrait.class).getValues().contains(eventId)) {
                 // The "" is filtered out before being passed to the
                 // updated ValidationEvent.
                 return Optional.of(EMPTY_REASON);
+            }
+        }
+
+        // Check namespace-wide suppressions.
+        if (namespaceSuppressions.containsKey(eventId)) {
+            Map<String, String> namespaces = namespaceSuppressions.get(eventId);
+            if (namespaces.containsKey(shape.getId().getNamespace())) {
+                return Optional.of(namespaces.get(shape.getId().getNamespace()));
             }
         }
 

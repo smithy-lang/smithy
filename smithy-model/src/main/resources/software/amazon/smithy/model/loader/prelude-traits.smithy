@@ -628,7 +628,7 @@ structure endpoint {
 @tags(["diff.error.const"])
 structure hostLabel {}
 
-/// Suppresses a validation event by ID for a given shape.
+/// Suppresses validation events by ID for a given shape.
 @trait
 list suppress {
     @pattern("^[_a-zA-Z][A-Za-z0-9]*$")

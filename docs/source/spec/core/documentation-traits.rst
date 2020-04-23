@@ -320,7 +320,7 @@ Summary
 Trait selector
     ``*``
 Value type
-    ``list<string>``
+    ``[string]``
 
 Tools can use these tags to filter shapes that should not be visible for a
 particular consumer of a model. The string values that can be provided to the
