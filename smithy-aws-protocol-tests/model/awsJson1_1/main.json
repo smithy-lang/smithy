@@ -1,5 +1,10 @@
 {
     "smithy": "1.0.0",
+    "metadata": {
+        "suppressions": [
+            {"id": "UnreferencedShape", "namespace": "aws.protocoltests.json"}
+        ]
+    },
     "shapes": {
         "aws.protocoltests.json#JsonProtocol": {
             "type": "service",

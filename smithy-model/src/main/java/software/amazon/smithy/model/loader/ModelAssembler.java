@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TraitFactory;
-import software.amazon.smithy.model.validation.Suppression;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
@@ -110,7 +109,6 @@ public final class ModelAssembler {
     });
 
     private final List<Validator> validators = new ArrayList<>();
-    private final List<Suppression> suppressions = new ArrayList<>();
     private final List<Node> documentNodes = new ArrayList<>();
     private final List<Model> mergeModels = new ArrayList<>();
     private final List<AbstractShapeBuilder<?, ?>> shapes = new ArrayList<>();
@@ -140,7 +138,6 @@ public final class ModelAssembler {
         assembler.validatorFactory = validatorFactory;
         assembler.inputStreamModels.putAll(inputStreamModels);
         assembler.validators.addAll(validators);
-        assembler.suppressions.addAll(suppressions);
         assembler.documentNodes.addAll(documentNodes);
         assembler.mergeModels.addAll(mergeModels);
         assembler.shapes.addAll(shapes);
@@ -158,7 +155,6 @@ public final class ModelAssembler {
      *
      * <ul>
      *     <li>Validators registered via {@link #addValidator}</li>
-     *     <li>Suppressions registered via {@link #addSuppression}</li>
      *     <li>Models registered via {@link #addImport}</li>
      *     <li>Models registered via {@link #addDocumentNode}</li>
      *     <li>Models registered via {@link #addUnparsedModel}</li>
@@ -178,7 +174,6 @@ public final class ModelAssembler {
         mergeModels.clear();
         inputStreamModels.clear();
         validators.clear();
-        suppressions.clear();
         documentNodes.clear();
         disablePrelude = false;
         return this;
@@ -218,17 +213,6 @@ public final class ModelAssembler {
      */
     public ModelAssembler addValidator(Validator validator) {
         validators.add(Objects.requireNonNull(validator));
-        return this;
-    }
-
-    /**
-     * Registers a suppression to be used when validating the model.
-     *
-     * @param suppression Suppression to register.
-     * @return Returns the assembler.
-     */
-    public ModelAssembler addSuppression(Suppression suppression) {
-        suppressions.add(Objects.requireNonNull(suppression));
         return this;
     }
 
@@ -531,8 +515,7 @@ public final class ModelAssembler {
         }
 
         // Validate the model based on the explicit validators and model metadata.
-        List<ValidationEvent> events = ModelValidator.validate(model, validatorFactory,
-                assembleValidators(), suppressions);
+        List<ValidationEvent> events = ModelValidator.validate(model, validatorFactory, assembleValidators());
         events.addAll(modelResultEvents);
         return new ValidatedResult<>(model, events);
     }

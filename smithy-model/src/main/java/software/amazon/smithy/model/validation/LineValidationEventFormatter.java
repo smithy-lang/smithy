@@ -23,11 +23,18 @@ import software.amazon.smithy.model.shapes.ShapeId;
 public final class LineValidationEventFormatter implements ValidationEventFormatter {
     @Override
     public String format(ValidationEvent event) {
+        String message = event.getMessage();
+
+        String reason = event.getSuppressionReason().orElse(null);
+        if (reason != null) {
+            message += " (" + reason + ")";
+        }
+
         return String.format(
                 "[%s] %s: %s | %s %s:%s:%s",
                 event.getSeverity(),
                 event.getShapeId().map(ShapeId::toString).orElse("-"),
-                event.getMessage(),
+                message,
                 event.getEventId(),
                 event.getSourceLocation().getFilename(),
                 event.getSourceLocation().getLine(),

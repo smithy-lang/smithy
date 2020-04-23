@@ -81,14 +81,6 @@
         "list": [
             "a",
             "b"
-        ],
-        "suppressions": [
-            {
-                "ids": ["UnreferencedShape"],
-                "shapes": [
-                    "example.namespace#"],
-                "reason": "This shape is being tested for model assembly."
-            }
         ]
     }
 }

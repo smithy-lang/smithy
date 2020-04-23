@@ -2,8 +2,6 @@
     "smithy": "1.0.0",
     "metadata": {
         "validators": {
-        },
-        "suppressions": {
         }
     }
 }

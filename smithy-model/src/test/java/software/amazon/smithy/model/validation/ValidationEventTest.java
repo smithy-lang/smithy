@@ -285,6 +285,20 @@ public class ValidationEventTest {
     }
 
     @Test
+    public void toStringContainsSuppressionReason() {
+        ValidationEvent a = ValidationEvent.builder()
+                .message("The message")
+                .severity(Severity.SUPPRESSED)
+                .eventId("abc.foo")
+                .shapeId(ShapeId.from("ns.foo#baz"))
+                .suppressionReason("Foo baz bar")
+                .sourceLocation(new SourceLocation("file", 1, 2))
+                .build();
+
+        assertEquals(a.toString(), "[SUPPRESSED] ns.foo#baz: The message (Foo baz bar) | abc.foo file:1:2");
+    }
+
+    @Test
     public void convertsToNode() {
         ValidationEvent a = ValidationEvent.builder()
                 .message("The message")

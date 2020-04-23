@@ -1,0 +1,7 @@
+[DANGER] smithy.example#List1: This list must not exist! | NoListsPlease
+[WARNING] smithy.example#List1$member: Members? Yuck! | ListMembersAreBadOkay
+[SUPPRESSED] smithy.example#List2: This list must not exist! | NoListsPlease
+[SUPPRESSED] smithy.example#List2$member: Members? Yuck! | ListMembersAreBadOkay
+[SUPPRESSED] -: Unable to locate a validator named `UnknownValidator2` (Please ignore this) | UnknownValidator_UnknownValidator2
+[WARNING] -: Unable to locate a validator named `UnknownValidator1` | UnknownValidator_UnknownValidator1
+[SUPPRESSED] smithy.example#MyService: This is suppressed | SuppressedValidator

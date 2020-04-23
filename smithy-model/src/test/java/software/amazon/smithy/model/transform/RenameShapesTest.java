@@ -21,12 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
@@ -112,12 +109,7 @@ public class RenameShapesTest {
         renamed.put(fooUnreferenced, barUnreferenced);
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.renameShapes(model, renamed);
-        ArrayNode suppressions = result.getMetadata().get("suppressions").asArrayNode().get();
-        ObjectNode suppression = suppressions.getElements().get(0).asObjectNode().get();
-        ArrayNode suppressionShapes = suppression.getStringMap().get("shapes").expectArrayNode();
-        StringNode suppressionShape = suppressionShapes.getElements().get(0).asStringNode().get();
 
-        assertEquals(suppressionShape.getValue(), "ns.bar#UnreferencedString");
         assertTrue(result.getShape(barUnreferenced).isPresent());
         assertFalse(result.getShape(fooUnreferenced).isPresent());
     }

@@ -83,6 +83,7 @@ import software.amazon.smithy.model.traits.RetryableTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SinceTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
+import software.amazon.smithy.model.traits.SuppressTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
@@ -191,6 +192,7 @@ public final class Prelude {
             SensitiveTrait.ID,
             SinceTrait.ID,
             StreamingTrait.ID,
+            SuppressTrait.ID,
             TagsTrait.ID,
             TimestampFormatTrait.ID,
             TitleTrait.ID,
