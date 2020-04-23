@@ -86,6 +86,18 @@ public interface SecuritySchemeConverter<T extends Trait> {
     }
 
     /**
+     * Gets the name of OpenApi auth scheme.
+     *
+     * <p>For compatibility with Amazon API Gateway, the `#` is replaced with
+     * an `.` when deriving the name from the auth scheme's shape ID.
+     *
+     * @return Returns the auth scheme's name.
+     */
+    default String getOpenApiAuthSchemeName() {
+        return getAuthSchemeId().toString().replace("#", ".");
+    }
+
+    /**
      * Gets the names of the headers set on HTTP requests used by this
      * authentication scheme.
      *
