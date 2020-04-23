@@ -27,7 +27,6 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.Tagged;
 
@@ -59,9 +58,9 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     @SuppressWarnings("unchecked")
     Shape(AbstractShapeBuilder builder, boolean expectMemberSegments) {
         type = builder.getShapeType();
-        source = builder.source;
-        id = SmithyBuilder.requiredState("id", builder.id);
-        traits = MapUtils.copyOf(builder.traits);
+        source = builder.getSourceLocation();
+        id = SmithyBuilder.requiredState("id", builder.getId());
+        traits = builder.copyTraits();
         validateShapeId(expectMemberSegments);
     }
 
