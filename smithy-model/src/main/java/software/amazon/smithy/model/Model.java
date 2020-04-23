@@ -16,10 +16,12 @@
 package software.amazon.smithy.model;
 
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -62,13 +64,17 @@ public final class Model implements ToSmithyBuilder<Model> {
 
     private final Map<String, Node> metadata;
 
-    private volatile Map<Shape, TraitDefinition> traitDefinitions;
+    /** Lazily computed map of trait definitions. */
+    private Map<Shape, TraitDefinition> traitDefinitions;
 
     /** Cache of computed {@link KnowledgeIndex} instances. */
     private final Map<Class<? extends KnowledgeIndex>, KnowledgeIndex> blackboard = new ConcurrentHashMap<>();
 
     /** A map of shape ID to shapes that backs the shape map. */
     private final Map<ShapeId, Shape> shapeMap;
+
+    /** A cache of shapes of a specific type. */
+    private final Map<Class<? extends Shape>, Collection<Shape>> cachedTypes = new ConcurrentHashMap<>();
 
     /** Lazily computed hashcode. */
     private int hash;
@@ -245,7 +251,15 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     @SuppressWarnings("unchecked")
     public <T extends Shape> Stream<T> shapes(Class<T> shapeType) {
-        return (Stream<T>) shapeMap.values().stream().filter(value -> value.getClass() == shapeType);
+        return (Stream<T>) cachedTypes.computeIfAbsent(shapeType, t -> {
+            List<Shape> result = new ArrayList<>();
+            for (Shape shape : shapeMap.values()) {
+                if (shape.getClass() == shapeType) {
+                    result.add(shape);
+                }
+            }
+            return result;
+        }).stream();
     }
 
     /**
