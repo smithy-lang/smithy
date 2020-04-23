@@ -27,6 +27,7 @@ public final class SourceLocation implements FromSourceLocation {
     private final String filename;
     private final int line;
     private final int column;
+    private int hash;
 
     public SourceLocation(String filename, int line, int column) {
         this.filename = Objects.requireNonNull(filename);
@@ -87,6 +88,9 @@ public final class SourceLocation implements FromSourceLocation {
 
     @Override
     public int hashCode() {
-        return filename.hashCode() + line * 17 + column;
+        if (hash == 0) {
+            hash = 1 + filename.hashCode() + line * 17 + column;
+        }
+        return hash;
     }
 }
