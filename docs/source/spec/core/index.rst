@@ -26,5 +26,6 @@ Smithy specification
     endpoint-traits
     selectors
     model-metadata
+    model-validation
     merging-models
     json-ast

@@ -30,7 +30,6 @@ Additional specifications
     :maxdepth: 1
     :caption: Defines additional specifications.
 
-    validation
     http-protocol-compliance-tests
     mqtt
 

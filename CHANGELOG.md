@@ -74,7 +74,10 @@ keys, was added.
 #### Validation updates
 
 * Services must now contain a closure of shapes that have case-insensitively unique names. [BC] ([#337](https://github.com/awslabs/smithy/pull/337))
+* `suppressions` has been updated to now only suppress validation events that occur for an entire namespace or across
+  the entire model. The `@suppress` trait was added to suppress validation events for a specific shape. [BC] ([#397](https://github.com/awslabs/smithy/pull/397)).
 * The `UnreferencedShape` validator has moved to `smithy-model` and is now always run. [BC] ([#319](https://github.com/awslabs/smithy/pull/319))
+* `EmitEachSelector` and `EmitNoneSelector` were moved from `smithy-linters` into `smithy-model`.
 
 #### JSON Schema conversion
 
