@@ -61,6 +61,20 @@
         },
         "smithy.example#Operation1": {
             "type": "operation",
+            "input": {
+                "target": "smithy.example#OperationInput"
+            },
+            "output": {
+                "target": "smithy.example#OperationOutput"
+            },
+            "errors": [
+                {
+                    "target": "smithy.example#Default"
+                },
+                {
+                    "target": "smithy.example#Redirect"
+                }
+            ],
             "traits": {
                 "smithy.api#http": {
                     "method": "POST",
@@ -70,6 +84,20 @@
         },
         "smithy.example#Operation2": {
             "type": "operation",
+            "input": {
+                "target": "smithy.example#OperationInput"
+            },
+            "output": {
+                "target": "smithy.example#OperationOutput"
+            },
+            "errors": [
+                {
+                    "target": "smithy.example#Default"
+                },
+                {
+                    "target": "smithy.example#Redirect"
+                }
+            ],
             "traits": {
                 "smithy.api#http": {
                     "method": "POST",
@@ -110,6 +138,75 @@
                     }
                 }
             }
+        },
+        "smithy.example#Default": {
+            "type": "structure",
+            "members": {
+                "testMethodResponseHeader": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "test-method-response-header"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client",
+                "smithy.api#httpError": 400
+            }
+        },
+        "smithy.example#Redirect": {
+            "type": "structure",
+            "members": {
+                "location": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "Location"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client",
+                "smithy.api#httpError": 302
+            }
+        },
+        "smithy.example#OperationInput": {
+            "type": "structure",
+            "members": {
+                "vendor": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#httpQuery": "vendor",
+                        "smithy.api#required": {}
+                    }
+                },
+                "version": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#httpQuery": "version",
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        },
+        "smithy.example#OperationOutput": {
+            "type": "structure",
+            "members": {
+                "requestId": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "requestId"
+                    }
+                }
+            }
         }
+    },
+    "metadata": {
+        "suppressions": [
+            {
+                "ids": ["HttpResponseCodeSemantics"],
+                "shapes": ["smithy.example#Redirect"],
+                "reason": "model redirect as error"
+            }
+        ]
     }
 }
