@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
@@ -29,13 +30,13 @@ import software.amazon.smithy.model.shapes.Shape;
  */
 final class AttributeSelector implements Selector {
 
-    private final AttributeValue.Factory key;
+    private final Function<Shape, AttributeValue> key;
     private final List<AttributeValue> expected;
     private final AttributeComparator comparator;
     private final boolean caseInsensitive;
 
     AttributeSelector(
-            AttributeValue.Factory key,
+            Function<Shape, AttributeValue> key,
             List<String> expected,
             AttributeComparator comparator,
             boolean caseInsensitive
@@ -50,12 +51,12 @@ final class AttributeSelector implements Selector {
         } else {
             this.expected = new ArrayList<>(expected.size());
             for (String validValue : expected) {
-                this.expected.add(new AttributeValue.Literal(validValue));
+                this.expected.add(AttributeValue.literal(validValue));
             }
         }
     }
 
-    static AttributeSelector existence(AttributeValue.Factory key) {
+    static AttributeSelector existence(Function<Shape, AttributeValue> key) {
         return new AttributeSelector(key, null, null, false);
     }
 
@@ -67,7 +68,7 @@ final class AttributeSelector implements Selector {
     }
 
     private boolean matchesAttribute(Shape shape) {
-        AttributeValue lhs = key.create(shape);
+        AttributeValue lhs = key.apply(shape);
 
         if (expected.isEmpty()) {
             return lhs.isPresent();

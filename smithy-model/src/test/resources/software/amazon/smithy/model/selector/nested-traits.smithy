@@ -111,3 +111,7 @@ list ListyTraitMember2 {
 structure ListyTraitStruct {
     foo: String
 }
+
+@trait
+@recursiveTrait("Wow!")
+string recursiveTrait

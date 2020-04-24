@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.not;
 
 import java.util.List;
@@ -663,7 +664,9 @@ public class SelectorTest {
                 "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}]",
                 "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}, @{foo|bam}]",
                 // Comma separated values are or'd together.
-                "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}, @{foo|bam} i && 10=10 i]");
+                "[@trait: @{foo|baz|bam|(boo)}=@{foo|bar|(boo)|baz}, @{foo|bam} i && 10=10 i]",
+                "[@: foo=bar]",
+                "[@    :  foo   = bam  ]");
 
         for (String expr : exprs) {
             Selector.parse(expr);
@@ -697,7 +700,11 @@ public class SelectorTest {
                 "[@foo: @{abc|}=10]",
                 "[@foo: @{abc|def(baz)}=10]", // not a valid segment
                 "[@foo: @{abc|()}=10]", // missing contents of ()
-                "[@foo: @{abc|(.)}=10]"); // invalid contents of ());
+                "[@foo: @{abc|(.)}=10]", // invalid contents of ());
+                "[@:",
+                "[@: bar",
+                "[@: bar]",
+                "[@: bar=bam");
 
         for (String expr : exprs) {
             Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
@@ -811,5 +818,13 @@ public class SelectorTest {
                 "[id|namespace='smithy.example'][trait|enum|(values)|tags|(length) > 1]");
 
         assertThat(shapes, contains("smithy.example#DocumentedString1"));
+    }
+
+    @Test
+    public void canBindShapeAsContext() {
+        assertThat(ids(traitModel, "[trait|trait][@: @{trait|(keys)} = @{id}]"),
+                   hasItems("smithy.example#recursiveTrait",
+                            "smithy.api#trait",
+                            "smithy.api#documentation"));
     }
 }

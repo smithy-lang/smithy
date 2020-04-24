@@ -41,7 +41,8 @@ public class OfSelectorTest {
         Model model = createModel();
         // Containing shape must have the sensitive trait.
         Selector selector = new OfSelector(Collections.singletonList(
-                AttributeSelector.existence(AttributeValue.Traits.createFactory(ListUtils.of("sensitive")))));
+                AttributeSelector.existence(
+                        shape -> AttributeValue.shape(shape).getPath(ListUtils.of("trait", "sensitive")))));
 
         Set<Shape> result = selector.select(model);
         assertThat(result, hasSize(1));

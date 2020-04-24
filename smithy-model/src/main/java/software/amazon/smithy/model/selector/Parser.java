@@ -20,10 +20,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.NumberShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.utils.ListUtils;
@@ -238,7 +240,7 @@ final class Parser {
 
     private Selector parseAttribute() {
         ws();
-        AttributeValue.Factory keyFactory = parseAttributePath();
+        Function<Shape, AttributeValue> keyFactory = parseAttributePath();
         ws();
         char next = expect(']', '=', '!', '^', '$', '*', '?', '>', '<');
 
@@ -317,7 +319,7 @@ final class Parser {
     // "[@" selector_key ":" selector_scoped_comparisons "]"
     private Selector parseScopedAttribute() {
         ws();
-        AttributeValue.Factory keyScope = parseAttributePath();
+        Function<Shape, AttributeValue> keyScope = parseAttributePath();
         ws();
         expect(':');
         ws();
@@ -371,33 +373,30 @@ final class Parser {
             path.addAll(parseSelectorPath());
             expect('}');
             ws();
-            return value -> AttributeValue.createPathSelector(value, path);
+            return value -> value.getPath(path);
         } else {
             String parsedValue = parseAttributeValue();
             ws();
-            return value -> new AttributeValue.Literal(parsedValue);
+            return value -> AttributeValue.literal(parsedValue);
         }
     }
 
-    private AttributeValue.Factory parseAttributePath() {
+    private Function<Shape, AttributeValue> parseAttributePath() {
+        ws();
+
+        // '[@:' binds the current shape as the context.
+        if (charPeek() == ':') {
+            return AttributeValue::shape;
+        }
+
+        List<String> path = new ArrayList<>();
         // Parse the top-level namespace key.
-        String namespace = parseIdentifier();
+        path.add(parseIdentifier());
 
         // It is optionally followed by "|" delimited path keys.
-        List<String> path = parseSelectorPath();
+        path.addAll(parseSelectorPath());
 
-        switch (namespace) {
-            case "id":
-                return AttributeValue.Id.createFactory(path);
-            case "service":
-                return AttributeValue.Service.createFactory(path);
-            case "trait":
-                return AttributeValue.Traits.createFactory(path);
-            default:
-                // Unknown attributes always return no result.
-                LOGGER.warning("Unknown selector attribute `" + namespace + "`: " + expression);
-                return AttributeValue.NULL_FACTORY;
-        }
+        return shape -> AttributeValue.shape(shape).getPath(path);
     }
 
     // Can be a shape_id, quoted string, number, or function key.
