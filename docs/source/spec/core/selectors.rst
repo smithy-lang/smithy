@@ -213,7 +213,10 @@ Attributes
 ==========
 
 Selector attributes return objects that MAY have nested properties. Objects
-returned from selectors MAY be available to cast to a string.
+returned from selectors MAY be available to cast to a string. Attempting
+to select a :ref:`values-projection`, :ref:`keys-projection`, or
+:ref:`(length) attribute function <attribute-function-properties>`
+directly from a shape will return no result.
 
 .. important::
 
@@ -575,6 +578,17 @@ value:
 .. code-block:: none
 
     [@trait|range: @{min} > @{max}]
+
+The scope can also be set to the current shape being evaluated by omitting
+an expression before the ":".
+
+The following selector matches all shapes that are traits that apply
+themselves as traits (for example, this matches `smithy.api#trait`,
+`smithy.api#documentation`, etc.):
+
+.. code-block:: none
+
+    [trait|trait][@: @{trait|(keys)} = @{id}]
 
 The ``(values)`` and ``(keys)`` projections MAY be used as the scoped
 attribute context value. When the scoped attribute context value is a
@@ -1072,7 +1086,7 @@ Selectors are defined by the following ABNF_ grammar.
     selector_values                 :`selector_value` *("," `selector_value`)
     selector_comparator             :"^=" / "$=" / "*=" / "!=" / ">=" / ">" / "<=" / "<" / "?=" / "="
     selector_absolute_root_shape_id :`namespace` "#" `identifier`
-    selector_scoped_attr            :"[@" `selector_key` ":" `selector_scoped_assertions` "]"
+    selector_scoped_attr            :"[@" [`selector_key`] ":" `selector_scoped_assertions` "]"
     selector_scoped_assertions      :`selector_scoped_assertion` *("&&" `selector_scoped_assertion`)
     selector_scoped_assertion       :`selector_scoped_value` `selector_comparator` `selector_scoped_values` ["i"]
     selector_scoped_value           :`selector_value` / `selector_context_value`

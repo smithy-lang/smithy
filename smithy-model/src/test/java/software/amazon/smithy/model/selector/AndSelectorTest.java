@@ -35,7 +35,8 @@ public class AndSelectorTest {
     public void matchesAllPredicates() {
         Selector selector = AndSelector.of(Arrays.asList(
                 new ShapeTypeSelector(ShapeType.STRING),
-                AttributeSelector.existence(AttributeValue.Traits.createFactory(ListUtils.of("sensitive")))));
+                AttributeSelector.existence(
+                        shape -> AttributeValue.shape(shape).getPath(ListUtils.of("trait", "sensitive")))));
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();
         Shape b = StringShape.builder().id("foo.baz#Bam").addTrait(new SensitiveTrait()).build();
         Model model = Model.builder().addShapes(a, b).build();
@@ -48,7 +49,8 @@ public class AndSelectorTest {
     public void shortCircuits() {
         Selector selector = AndSelector.of(Arrays.asList(
                 new ShapeTypeSelector(ShapeType.BIG_INTEGER),
-                AttributeSelector.existence(AttributeValue.Traits.createFactory(ListUtils.of("sensitive")))));
+                AttributeSelector.existence(
+                        shape -> AttributeValue.shape(shape).getPath(ListUtils.of("trait", "sensitive")))));
         Shape a = IntegerShape.builder().id("foo.baz#Bar").build();
         Shape b = StringShape.builder().id("foo.baz#Bam").addTrait(new SensitiveTrait()).build();
         Model model = Model.builder().addShapes(a, b).build();

@@ -17,6 +17,7 @@ package software.amazon.smithy.model.selector;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
@@ -57,10 +58,10 @@ final class ScopedAttributeSelector implements Selector {
         AttributeValue create(AttributeValue value);
     }
 
-    private final AttributeValue.Factory keyScope;
+    private final Function<Shape, AttributeValue> keyScope;
     private final List<Assertion> assertions;
 
-    ScopedAttributeSelector(AttributeValue.Factory keyScope, List<Assertion> assertions) {
+    ScopedAttributeSelector(Function<Shape, AttributeValue> keyScope, List<Assertion> assertions) {
         this.keyScope = keyScope;
         this.assertions = assertions;
     }
@@ -74,7 +75,7 @@ final class ScopedAttributeSelector implements Selector {
 
     private boolean matchesAssertions(Shape shape) {
         // First resolve the scope of the assertions.
-        AttributeValue scope = keyScope.create(shape);
+        AttributeValue scope = keyScope.apply(shape);
 
         // If it's not present, then nothing could ever match.
         if (!scope.isPresent()) {
