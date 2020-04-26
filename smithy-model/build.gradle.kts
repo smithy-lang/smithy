@@ -18,6 +18,13 @@ description = "This module provides the core implementation of loading, validati
 extra["displayName"] = "Smithy :: Model"
 extra["moduleName"] = "software.amazon.smithy.model"
 
+apply(plugin = "me.champeau.gradle.jmh")
+
 dependencies {
     api(project(":smithy-utils"))
+    "jmh"(project(":smithy-utils"))
+}
+
+configure<me.champeau.gradle.JMHPluginExtension> {
+    timeUnit = "us"
 }

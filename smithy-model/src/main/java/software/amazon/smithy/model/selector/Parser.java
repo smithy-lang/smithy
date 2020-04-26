@@ -58,7 +58,7 @@ final class Parser {
     }
 
     static Selector parse(String selector) {
-        return new WrappedSelector(selector, AndSelector.of(new Parser(selector).expression()));
+        return new WrappedSelector(selector, new Parser(selector).expression());
     }
 
     private List<InternalSelector> expression() {
@@ -163,6 +163,15 @@ final class Parser {
 
     private char charPeek() {
         return position == length ? Character.MIN_VALUE : expression.charAt(position);
+    }
+
+    private char expect(char token) {
+        if (charPeek() == token) {
+            position++;
+            return token;
+        }
+
+        throw syntax("Expected: '" + token + "'");
     }
 
     private char expect(char... tokens) {

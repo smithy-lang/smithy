@@ -20,38 +20,49 @@ import java.util.Optional;
 /** An enumeration of the different types in a model. */
 public enum ShapeType {
 
-    BLOB("blob"),
-    BOOLEAN("boolean"),
-    STRING("string"),
-    TIMESTAMP("timestamp"),
-    BYTE("byte"),
-    SHORT("short"),
-    INTEGER("integer"),
-    LONG("long"),
-    FLOAT("float"),
-    DOCUMENT("document"),
-    DOUBLE("double"),
-    BIG_DECIMAL("bigDecimal"),
-    BIG_INTEGER("bigInteger"),
-    LIST("list"),
-    SET("set"),
-    MAP("map"),
-    STRUCTURE("structure"),
-    UNION("union"),
-    SERVICE("service"),
-    RESOURCE("resource"),
-    OPERATION("operation"),
-    MEMBER("member");
+    BLOB("blob", BlobShape.class),
+    BOOLEAN("boolean", BooleanShape.class),
+    STRING("string", StringShape.class),
+    TIMESTAMP("timestamp", TimestampShape.class),
+    BYTE("byte", ByteShape.class),
+    SHORT("short", ShortShape.class),
+    INTEGER("integer", IntegerShape.class),
+    LONG("long", LongShape.class),
+    FLOAT("float", FloatShape.class),
+    DOCUMENT("document", DocumentShape.class),
+    DOUBLE("double", DoubleShape.class),
+    BIG_DECIMAL("bigDecimal", BigDecimalShape.class),
+    BIG_INTEGER("bigInteger", BigIntegerShape.class),
+    LIST("list", ListShape.class),
+    SET("set", SetShape.class),
+    MAP("map", MapShape.class),
+    STRUCTURE("structure", StructureShape.class),
+    UNION("union", UnionShape.class),
+    SERVICE("service", ServiceShape.class),
+    RESOURCE("resource", ResourceShape.class),
+    OPERATION("operation", OperationShape.class),
+    MEMBER("member", MemberShape.class);
 
     private final String stringValue;
+    private final Class<? extends Shape> shapeClass;
 
-    ShapeType(String stringValue) {
+    ShapeType(String stringValue, Class<? extends Shape> shapeClass) {
         this.stringValue = stringValue;
+        this.shapeClass = shapeClass;
     }
 
     @Override
     public String toString() {
         return stringValue;
+    }
+
+    /**
+     * Gets the class that implements this shape type.
+     *
+     * @return Returns the shape class.
+     */
+    public Class<? extends Shape> getShapeClass() {
+        return shapeClass;
     }
 
     /**

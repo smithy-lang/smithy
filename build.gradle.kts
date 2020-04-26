@@ -21,6 +21,7 @@ plugins {
     jacoco
     id("com.github.spotbugs") version "1.6.10"
     id("io.codearte.nexus-staging") version "0.21.0"
+    id("me.champeau.gradle.jmh") version "0.4.6"
 }
 
 // Set a global group ID and version on each project. This version might

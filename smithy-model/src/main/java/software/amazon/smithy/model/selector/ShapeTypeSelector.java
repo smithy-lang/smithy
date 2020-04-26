@@ -20,7 +20,8 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 
 final class ShapeTypeSelector implements InternalSelector {
-    private final ShapeType shapeType;
+
+    final ShapeType shapeType;
 
     ShapeTypeSelector(ShapeType shapeType) {
         this.shapeType = shapeType;
