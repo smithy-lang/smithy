@@ -24,6 +24,7 @@ import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -32,7 +33,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
 public interface Selector {
 
     /** A selector that always returns all provided values. */
-    Selector IDENTITY = new WrappedSelector("*", InternalSelector.IDENTITY);
+    Selector IDENTITY = new WrappedSelector("*", ListUtils.of(InternalSelector.IDENTITY));
 
     /**
      * Parses a selector expression.
@@ -83,10 +84,12 @@ public interface Selector {
     final class Runner {
 
         private final InternalSelector delegate;
+        private final Class<? extends Shape> startingShapeType;
         private Model model;
 
-        Runner(InternalSelector delegate) {
+        Runner(InternalSelector delegate, Class<? extends Shape> startingShapeType) {
             this.delegate = delegate;
+            this.startingShapeType = startingShapeType;
         }
 
         /**
@@ -107,17 +110,8 @@ public interface Selector {
          * @throws IllegalStateException if a {@code model} has not been set.
          */
         public Set<Shape> selectShapes() {
-            Context context = createContext();
-
-            // The last receiver is used to store all received shapes in Set.
             Set<Shape> result = new HashSet<>();
-            BiConsumer<Context, Shape> acceptor = (ctx, s) -> result.add(s);
-
-            for (Shape shape : model.toSet()) {
-                // Each shape creates a new context, so clear any previous shapes.
-                delegate.push(context.clearVars(), shape, acceptor);
-            }
-
+            pushShapes((ctx, s) -> result.add(s));
             return result;
         }
 
@@ -134,12 +128,20 @@ public interface Selector {
          * @throws IllegalStateException if a {@code model} has not been set.
          */
         public void selectMatches(BiConsumer<Shape, Map<String, Set<Shape>>> matchConsumer) {
-            Context context = createContext();
-            BiConsumer<Context, Shape> acceptor = (ctx, s) -> matchConsumer.accept(s, ctx.copyVars());
+            pushShapes((ctx, s) -> matchConsumer.accept(s, ctx.copyVars()));
+        }
 
-            for (Shape shape : model.toSet()) {
-                // Each shape creates a new context, so clear any previous shapes.
-                delegate.push(context.clearVars(), shape, acceptor);
+        private void pushShapes(BiConsumer<Context, Shape> acceptor) {
+            Context context = createContext();
+
+            if (startingShapeType != null) {
+                model.shapes(startingShapeType).forEach(shape -> {
+                    delegate.push(context.clearVars(), shape, acceptor);
+                });
+            } else {
+                for (Shape shape : model.toSet()) {
+                    delegate.push(context.clearVars(), shape, acceptor);
+                }
             }
         }
     }

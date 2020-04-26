@@ -35,45 +35,27 @@ final class AndSelector implements InternalSelector {
     }
 
     static InternalSelector of(List<InternalSelector> predicates) {
-        return predicates.size() == 1 ? predicates.get(0) : new AndSelector(predicates);
+        switch (predicates.size()) {
+            case 0:
+                return InternalSelector.IDENTITY;
+            case 1:
+                return predicates.get(0);
+            default:
+                return new AndSelector(predicates);
+        }
     }
 
     @Override
     public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
-        // Unroll common cases for selectors.
-        switch (selectors.size()) {
-            case 2:
-                selectors.get(0).push(context, shape, (c, s) -> {
-                    selectors.get(1).push(c, s, next);
-                });
-                break;
-            case 3:
-                selectors.get(0).push(context, shape, (c1, s1) -> {
-                    selectors.get(1).push(c1, s1, (c2, s2) -> {
-                        selectors.get(2).push(c2, s2, next);
-                    });
-                });
-                break;
-            case 4:
-                selectors.get(0).push(context, shape, (c1, s1) -> {
-                    selectors.get(1).push(c1, s1, (c2, s2) -> {
-                        selectors.get(2).push(c2, s2, (c3, s3) -> {
-                            selectors.get(3).push(c3, s3, next);
-                        });
-                    });
-                });
-                break;
-            default:
-                // Compose the next selector from the inside out. Note that there
-                // can never be a single selector provided to this class.
-                BiConsumer<Context, Shape> composedNext = composeNext(selectors.size() - 1, next);
-                for (int i = selectors.size() - 2; i > 0; i--) {
-                    composedNext = composeNext(i, composedNext);
-                }
-
-                // Push to the first selector, which pushes to the next, to the next...
-                selectors.get(0).push(context, shape, composedNext);
+        // Compose the next selector from the inside out. Note that there
+        // can never be a single selector provided to this class.
+        BiConsumer<Context, Shape> composedNext = composeNext(selectors.size() - 1, next);
+        for (int i = selectors.size() - 2; i > 0; i--) {
+            composedNext = composeNext(i, composedNext);
         }
+
+        // Push to the first selector, which pushes to the next, to the next...
+        selectors.get(0).push(context, shape, composedNext);
     }
 
     private BiConsumer<Context, Shape> composeNext(int position, BiConsumer<Context, Shape> next) {

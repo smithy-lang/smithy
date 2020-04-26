@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.model.selector;
 
+import java.util.List;
+import software.amazon.smithy.model.shapes.Shape;
+
 /**
  * Provides a toString method that prints the expression.
  *
@@ -24,15 +27,29 @@ package software.amazon.smithy.model.selector;
 final class WrappedSelector implements Selector {
     private final String expression;
     private final InternalSelector delegate;
+    private final Class<? extends Shape> startingShapeType;
 
-    WrappedSelector(String expression, InternalSelector delegate) {
+    WrappedSelector(String expression, List<InternalSelector> selectors) {
         this.expression = expression;
-        this.delegate = delegate;
+
+        if (selectors.get(0) instanceof ShapeTypeSelector) {
+            // If the starting selector filters based on type, then that can be
+            // done before sending all shapes in a model through the selector
+            // since querying models based on type is cached.
+            //
+            // This optimization significantly reduces the number of shapes
+            // that need to be sent through a selector.
+            startingShapeType = ((ShapeTypeSelector) selectors.get(0)).shapeType.getShapeClass();
+            delegate = AndSelector.of(selectors.subList(1, selectors.size()));
+        } else {
+            startingShapeType = null;
+            delegate = AndSelector.of(selectors);
+        }
     }
 
     @Override
     public Runner runner() {
-        return new Runner(delegate);
+        return new Runner(delegate, startingShapeType);
     }
 
     @Override
