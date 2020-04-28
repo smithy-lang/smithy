@@ -248,7 +248,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
 
         return payloadBindings.isEmpty()
                ? createRequestDocument(mediaType, context, bindingIndex, operation)
-               : createRequestPayload(mediaType, context, payloadBindings.get(0));
+               : createRequestPayload(mediaType, context, payloadBindings.get(0), operation);
     }
 
     /**
@@ -268,10 +268,14 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
     private Optional<RequestBodyObject> createRequestPayload(
             String mediaTypeRange,
             Context<T> context,
-            HttpBinding binding
+            HttpBinding binding,
+            OperationShape operation
     ) {
+        Schema schema = context.inlineOrReferenceSchema(binding.getMember());
+        String synthesizedName = operation.getId().getName() + "RequestBodyContent";
+        String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
-                .schema(context.inlineOrReferenceSchema(binding.getMember()))
+                .schema(Schema.builder().ref(pointer).build())
                 .build();
         RequestBodyObject requestBodyObject = RequestBodyObject.builder()
                 .putContent(Objects.requireNonNull(mediaTypeRange), mediaTypeObject)
@@ -352,7 +356,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         responseBuilder.description(String.format("%s %s response", operationOrError.getId().getName(), statusCode));
         createResponseHeaderParameters(context, operationOrError)
                 .forEach((k, v) -> responseBuilder.putHeader(k, Ref.local(v)));
-        addResponseContent(context, bindingIndex, eventStreamIndex, responseBuilder, operationOrError);
+        addResponseContent(context, bindingIndex, eventStreamIndex, responseBuilder, statusCode, operationOrError);
         return responseBuilder.build();
     }
 
@@ -370,6 +374,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             HttpBindingIndex bindingIndex,
             EventStreamIndex eventStreamIndex,
             ResponseObject.Builder responseBuilder,
+            String statusCode,
             Shape operationOrError
     ) {
         List<HttpBinding> payloadBindings = bindingIndex.getResponseBindings(
@@ -388,7 +393,13 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
                 .orElse(null);
 
         if (!payloadBindings.isEmpty()) {
-            createResponsePayload(mediaType, context, payloadBindings.get(0), responseBuilder);
+            createResponsePayload(mediaType,
+                    context,
+                    payloadBindings.get(0),
+                    responseBuilder,
+                    statusCode,
+                    operationOrError
+            );
         } else {
             createResponseDocumentIfNeeded(mediaType, context, bindingIndex, responseBuilder, operationOrError);
         }
@@ -398,10 +409,15 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             String mediaType,
             Context<T> context,
             HttpBinding binding,
-            ResponseObject.Builder responseBuilder
+            ResponseObject.Builder responseBuilder,
+            String statusCode,
+            Shape operationOrError
     ) {
+        Schema schema = context.inlineOrReferenceSchema(binding.getMember());
+        String synthesizedName = operationOrError.getId().getName() + statusCode + "ResponsePayload";
+        String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
-                .schema(context.inlineOrReferenceSchema(binding.getMember()))
+                .schema(Schema.builder().ref(pointer).build())
                 .build();
         responseBuilder.putContent(mediaType, mediaTypeObject);
     }

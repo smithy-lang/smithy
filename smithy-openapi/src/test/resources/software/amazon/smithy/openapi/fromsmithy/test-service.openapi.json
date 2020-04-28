@@ -57,8 +57,7 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "type": "string",
-                "format": "byte"
+                "$ref": "#/components/schemas/PutPayloadRequestBodyContent"
               }
             }
           }
@@ -116,8 +115,7 @@
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "type": "string",
-                  "format": "byte"
+                  "$ref": "#/components/schemas/PutPayload200ResponsePayload"
                 }
               }
             }
@@ -192,6 +190,14 @@
           "type": "string",
           "format": "password"
         }
+      },
+      "PutPayloadRequestBodyContent": {
+        "type": "string",
+        "format": "byte"
+      },
+      "PutPayload200ResponsePayload": {
+        "type": "string",
+        "format": "byte"
       },
       "TaggedUnion": {
         "oneOf": [

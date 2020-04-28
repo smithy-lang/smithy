@@ -14,13 +14,20 @@
                         "content": {
                             "application/octet-stream": {
                                 "schema": {
-                                    "type": "string",
-                                    "format": "byte"
+                                    "$ref": "#/components/schemas/StreamingOperation200ResponsePayload"
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "StreamingOperation200ResponsePayload": {
+                "type": "string",
+                "format": "byte"
             }
         }
     }
