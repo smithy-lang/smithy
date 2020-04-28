@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,12 +22,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Walks connected shapes within a Model.
@@ -71,11 +69,13 @@ public final class Walker {
      * @return Returns a set of connected shapes.
      */
     public Set<Shape> walkShapes(Shape shape, Predicate<Relationship> predicate) {
-        Set<Shape> connectedShapes = walk(shape, predicate)
-                .stream()
-                .flatMap(rel -> OptionalUtils.stream(rel.getNeighborShape()))
-                .collect(Collectors.toSet());
+        Set<Shape> connectedShapes = new HashSet<>();
         connectedShapes.add(shape);
+        for (Relationship rel : walk(shape, predicate)) {
+            if (rel.getNeighborShape().isPresent()) {
+                connectedShapes.add(rel.getNeighborShape().get());
+            }
+        }
         return connectedShapes;
     }
 
@@ -89,12 +89,13 @@ public final class Walker {
 
         while (!stack.isEmpty()) {
             relationship = stack.pop();
-            relationship.getNeighborShape().ifPresent(neighbor -> {
+            if (relationship.getNeighborShape().isPresent()) {
+                Shape neighbor = relationship.getNeighborShape().get();
                 if (!traversed.contains(neighbor.getId())) {
                     traversed.add(neighbor.getId());
                     pushNeighbors(stack, predicate, provider.getNeighbors(neighbor));
                 }
-            });
+            }
             relationships.add(relationship);
         }
 
@@ -106,6 +107,10 @@ public final class Walker {
             Predicate<Relationship> predicate,
             Collection<Relationship> relationships
     ) {
-        relationships.stream().filter(predicate).forEach(stack::push);
+        for (Relationship rel : relationships)  {
+            if (predicate.test(rel)) {
+                stack.push(rel);
+            }
+        }
     }
 }
