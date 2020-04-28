@@ -395,18 +395,10 @@
         "name": "Authorization",
         "in": "header",
         "x-amazon-apigateway-authtype": "awsSigv4"
-      },
-      "smithy.api.httpBasicAuth": {
-        "type": "http",
-        "description": "HTTP Basic authentication",
-        "scheme": "Basic"
       }
     }
   },
   "security": [
-    {
-      "smithy.api.httpBasicAuth": [ ]
-    },
     {
       "aws.auth.sigv4": [ ]
     }

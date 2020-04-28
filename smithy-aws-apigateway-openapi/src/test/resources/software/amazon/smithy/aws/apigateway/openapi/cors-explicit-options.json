@@ -14,7 +14,9 @@
             ],
             "traits": {
                 "aws.protocols#restJson1": {},
-                "smithy.api#httpBasicAuth": {},
+                "aws.auth#sigv4": {
+                    "name": "myservice"
+                },
                 "smithy.api#cors": {
                     "origin": "https://foo.com"
                 }
