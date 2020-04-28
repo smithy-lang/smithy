@@ -29,7 +29,7 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -241,13 +241,10 @@ final class SmithyBuildImpl {
             List<String> parallelProjectionNameOrder,
             BiConsumer<String, Throwable> projectionExceptionConsumer
     ) {
-        // Except for writing files to disk, projections are mostly CPU bound.
-        int numberOfCores = Runtime.getRuntime().availableProcessors();
-        ExecutorService executor = Executors.newFixedThreadPool(numberOfCores);
+        ExecutorService executor = ForkJoinPool.commonPool();
 
         try {
             List<Future<Void>> futures = executor.invokeAll(parallelProjections);
-            executor.shutdown();
             // Futures are returned in the same order they were added, so
             // use the list of ordered names to know which projections failed.
             for (int i = 0; i < futures.size(); i++) {
@@ -260,7 +257,6 @@ final class SmithyBuildImpl {
                 }
             }
         } catch (InterruptedException e) {
-            executor.shutdownNow();
             throw new SmithyBuildException(e.getMessage(), e);
         }
     }
