@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -219,12 +219,7 @@ public final class SmithyTestSuite {
      * @throws Error if the validation events do not match expectations.
      */
     public Result run() {
-        // Tests are mostly CPU bound. But rather than use all available
-        // cores, use cores - 1 since test suites are usually run along
-        // with other unit tests which are probably running in multiple
-        // threads.
-        int numberOfCores = Runtime.getRuntime().availableProcessors();
-        return run(Executors.newFixedThreadPool(numberOfCores - 1));
+        return run(ForkJoinPool.commonPool());
     }
 
     /**
