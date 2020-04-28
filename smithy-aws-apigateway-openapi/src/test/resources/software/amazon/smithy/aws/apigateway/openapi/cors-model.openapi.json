@@ -184,7 +184,7 @@
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetPayload200ResponsePayload"
+                  "$ref": "#/components/schemas/GetPayloadOutputPayload"
                 }
               }
             }
@@ -277,7 +277,7 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "$ref": "#/components/schemas/PutPayloadRequestBodyContent"
+                "$ref": "#/components/schemas/PutPayloadInputPayload"
               }
             }
           }
@@ -359,7 +359,7 @@
           "c"
         ]
       },
-      "GetPayload200ResponsePayload": {
+      "GetPayloadOutputPayload": {
         "type": "string",
         "format": "byte"
       },
@@ -389,7 +389,7 @@
           "id"
         ]
       },
-      "PutPayloadRequestBodyContent": {
+      "PutPayloadInputPayload": {
         "type": "string",
         "format": "byte"
       }

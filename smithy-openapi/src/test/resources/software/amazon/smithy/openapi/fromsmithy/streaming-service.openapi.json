@@ -14,7 +14,7 @@
                         "content": {
                             "application/octet-stream": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/StreamingOperation200ResponsePayload"
+                                    "$ref": "#/components/schemas/StreamingOperationOutputPayload"
                                 }
                             }
                         }
@@ -25,7 +25,7 @@
     },
     "components": {
         "schemas": {
-            "StreamingOperation200ResponsePayload": {
+            "StreamingOperationOutputPayload": {
                 "type": "string",
                 "format": "byte"
             }

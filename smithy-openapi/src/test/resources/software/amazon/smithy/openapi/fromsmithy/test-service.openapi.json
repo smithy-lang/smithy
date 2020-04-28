@@ -57,7 +57,7 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "$ref": "#/components/schemas/PutPayloadRequestBodyContent"
+                "$ref": "#/components/schemas/PutPayloadInputPayload"
               }
             }
           }
@@ -115,7 +115,7 @@
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/PutPayload200ResponsePayload"
+                  "$ref": "#/components/schemas/PutPayloadOutputPayload"
                 }
               }
             }
@@ -191,11 +191,11 @@
           "format": "password"
         }
       },
-      "PutPayloadRequestBodyContent": {
+      "PutPayloadInputPayload": {
         "type": "string",
         "format": "byte"
       },
-      "PutPayload200ResponsePayload": {
+      "PutPayloadOutputPayload": {
         "type": "string",
         "format": "byte"
       },

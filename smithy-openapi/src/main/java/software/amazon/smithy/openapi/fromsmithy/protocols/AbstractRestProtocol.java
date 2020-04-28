@@ -272,7 +272,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             OperationShape operation
     ) {
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
-        String synthesizedName = operation.getId().getName() + "RequestBodyContent";
+        String synthesizedName = operation.getId().getName() + "InputPayload";
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(Schema.builder().ref(pointer).build())
@@ -393,13 +393,7 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
                 .orElse(null);
 
         if (!payloadBindings.isEmpty()) {
-            createResponsePayload(mediaType,
-                    context,
-                    payloadBindings.get(0),
-                    responseBuilder,
-                    statusCode,
-                    operationOrError
-            );
+            createResponsePayload(mediaType, context, payloadBindings.get(0), responseBuilder, operationOrError);
         } else {
             createResponseDocumentIfNeeded(mediaType, context, bindingIndex, responseBuilder, operationOrError);
         }
@@ -410,11 +404,13 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Context<T> context,
             HttpBinding binding,
             ResponseObject.Builder responseBuilder,
-            String statusCode,
             Shape operationOrError
     ) {
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
-        String synthesizedName = operationOrError.getId().getName() + statusCode + "ResponsePayload";
+        String shapeName = operationOrError.getId().getName();
+        String synthesizedName = operationOrError instanceof OperationShape
+                ? shapeName + "OutputPayload"
+                : shapeName + "ErrorPayload";
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
         MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
                 .schema(Schema.builder().ref(pointer).build())
