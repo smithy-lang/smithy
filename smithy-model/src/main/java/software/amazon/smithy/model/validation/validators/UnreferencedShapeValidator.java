@@ -17,7 +17,6 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.UnreferencedShapes;
@@ -32,11 +31,10 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class UnreferencedShapeValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        Set<ServiceShape> serviceShapes = model.shapes(ServiceShape.class)
-                .collect(Collectors.toSet());
+        long serviceShapes = model.shapes(ServiceShape.class).count();
 
         // Do not emit validation warnings if no services are present in the model.
-        if (serviceShapes.isEmpty()) {
+        if (serviceShapes == 0) {
             return Collections.emptyList();
         }
 
