@@ -271,6 +271,9 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             HttpBinding binding,
             OperationShape operation
     ) {
+        // API Gateway validation requires that in-line schemas must be objects
+        // or arrays. These schemas are synthesized as references so that
+        // any schemas with string types will pass validation.
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
         String synthesizedName = operation.getId().getName() + "InputPayload";
         String pointer = context.putSynthesizedSchema(synthesizedName, schema);
