@@ -18,13 +18,17 @@ package software.amazon.smithy.model.selector;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
  * Selector attribute values are the data model of selectors.
  */
-interface AttributeValue {
+public interface AttributeValue {
 
     /**
      * Returns the string version of an attribute value.
@@ -33,6 +37,16 @@ interface AttributeValue {
      */
     @Override
     String toString();
+
+    /**
+     * Returns a debug string representation useful outside of
+     * comparisons.
+     *
+     * @return Returns the debug string.
+     */
+    default String debugString() {
+        return toString();
+    }
 
     /**
      * Gets a property from the attribute value.
@@ -93,22 +107,43 @@ interface AttributeValue {
     }
 
     /**
-     * Creates an {@code AttributeValue} for the given shape.
+     * Creates a 'shape' {@code AttributeValue} for the given shape.
      *
      * @param shape Shape to path into.
+     * @param vars Variables accessible to the shape.
      * @return Returns the created selector value.
      */
-    static AttributeValue shape(Shape shape) {
-        return new AttributeValueImpl.ShapeValue(shape);
+    static AttributeValue shape(Shape shape, Map<String, Set<Shape>> vars) {
+        return new AttributeValueImpl.ShapeValue(shape, vars);
     }
 
     /**
-     * Creates a null {@code AttributeValue} object.
+     * Creates an 'id' {@code AttributeValue} from a shape ID.
+     *
+     * @param id Shape ID to create.
+     * @return Returns the created selector value.
+     */
+    static AttributeValue id(ShapeId id) {
+        return new AttributeValueImpl.Id(id);
+    }
+
+    /**
+     * Creates a 'service' {@code AttributeValue} from a service shape.
+     *
+     * @param service Shape to create.
+     * @return Returns the created selector value.
+     */
+    static AttributeValue service(ServiceShape service) {
+        return new AttributeValueImpl.Service(service);
+    }
+
+    /**
+     * Creates an empty {@code AttributeValue} object.
      *
      * @return Returns the created selector value.
      */
-    static AttributeValue nullValue() {
-        return AttributeValueImpl.NULL;
+    static AttributeValue emptyValue() {
+        return AttributeValueImpl.EMPTY;
     }
 
     /**
@@ -122,12 +157,22 @@ interface AttributeValue {
     }
 
     /**
-     * Creates an {@code AttributeValue} for a {@link Node}.
+     * Creates a 'node' {@code AttributeValue} for a {@link Node}.
      *
      * @param node Node to create the value from.
      * @return Returns the created attribute value.
      */
     static AttributeValue node(Node node) {
         return new AttributeValueImpl.NodeValue(node);
+    }
+
+    /**
+     * Creates a 'projection' {@code AttributeValue}.
+     *
+     * @param values Values stored in the projection.
+     * @return Returns the created projection.
+     */
+    static AttributeValue projection(Collection<AttributeValue> values) {
+        return new AttributeValueImpl.Projection(values);
     }
 }

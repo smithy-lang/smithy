@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,16 +15,12 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import software.amazon.smithy.model.Model;
+import java.util.function.BiConsumer;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
+import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.OptionalUtils;
-import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Filters out members shapes that have a container shape that doesn't
@@ -37,39 +33,46 @@ import software.amazon.smithy.utils.SetUtils;
  *     member:of(structure)
  * </code>
  */
-final class OfSelector implements Selector {
-    private final List<Selector> selectors;
+final class OfSelector implements InternalSelector {
 
-    OfSelector(List<Selector> selectors) {
+    private final List<InternalSelector> selectors;
+
+    OfSelector(List<InternalSelector> selectors) {
         this.selectors = selectors;
     }
 
     @Override
-    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
-        Set<Shape> result = new HashSet<>();
-
-        // Filter out non-member shapes, and member shapes that cannot
-        // resolve their parents.
-        shapes.stream().filter(Shape::isMemberShape).forEach(shape -> {
-            findParent(neighborProvider, shape).ifPresent(parent -> {
-                Set<Shape> parentSet = SetUtils.of(parent);
-                // If the parent provides a result for the predicate, then the
-                // Shape is not filtered out.
-                boolean anyMatch = selectors.stream()
-                        .anyMatch(selector -> !selector.select(model, neighborProvider, parentSet).isEmpty());
-                if (anyMatch) {
-                    result.add(shape);
-                }
-            });
-        });
-
-        return result;
+    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+        if (shape.isMemberShape() && isParentMatch(shape, context)) {
+            next.accept(context, shape);
+        }
     }
 
-    private Optional<Shape> findParent(NeighborProvider neighborProvider, Shape shape) {
-        return neighborProvider.getNeighbors(shape).stream()
-                .filter(rel -> rel.getRelationshipType() == RelationshipType.MEMBER_CONTAINER)
-                .flatMap(rel -> OptionalUtils.stream(rel.getNeighborShape()))
-                .findFirst();
+    private boolean isParentMatch(Shape shape, Context context) {
+        Shape parent = findParent(context.neighborProvider, shape);
+
+        // If the parent provides a result for the parent predicate, then
+        // the Shape is not filtered out.
+        return parent != null && isParentSelectionValid(parent, context);
+    }
+
+    private Shape findParent(NeighborProvider neighborProvider, Shape shape) {
+        for (Relationship rel : neighborProvider.getNeighbors(shape)) {
+            if (rel.getRelationshipType() == RelationshipType.MEMBER_CONTAINER) {
+                return rel.getNeighborShape().orElse(null);
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isParentSelectionValid(Shape parent, Context context) {
+        for (InternalSelector selector : selectors) {
+            if (context.receivedShapes(parent, selector)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

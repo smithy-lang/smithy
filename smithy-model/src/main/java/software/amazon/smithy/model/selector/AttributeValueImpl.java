@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -41,10 +44,15 @@ import software.amazon.smithy.model.traits.Trait;
 final class AttributeValueImpl {
 
     /** Value used when a property or attribute value does not exist. **/
-    static final AttributeValue NULL = new AttributeValue() {
+    static final AttributeValue EMPTY = new AttributeValue() {
         @Override
         public String toString() {
             return "";
+        }
+
+        @Override
+        public String debugString() {
+            return "EMPTY";
         }
 
         @Override
@@ -54,7 +62,7 @@ final class AttributeValueImpl {
 
         @Override
         public AttributeValue getProperty(String key) {
-            return NULL;
+            return EMPTY;
         }
     };
 
@@ -62,6 +70,7 @@ final class AttributeValueImpl {
     private static final String KEYS = "(keys)";
     private static final String VALUES = "(values)";
     private static final String LENGTH = "(length)";
+    private static final String FIRST = "(first)";
 
     /**
      * An attribute that contains a static, scalar String value.
@@ -83,7 +92,7 @@ final class AttributeValueImpl {
             if (key.equals(LENGTH)) {
                 return AttributeValue.literal(toString().length());
             } else {
-                return NULL;
+                return EMPTY;
             }
         }
     }
@@ -115,6 +124,12 @@ final class AttributeValueImpl {
         }
 
         @Override
+        public String debugString() {
+            // Returns the JSON printed string of the Node value (not pretty printed).
+            return Node.printJson(value);
+        }
+
+        @Override
         public AttributeValue getProperty(String key) {
             switch (value.getType()) {
                 case OBJECT:
@@ -130,7 +145,7 @@ final class AttributeValueImpl {
                             return value.expectObjectNode()
                                     .getMember(key)
                                     .<AttributeValue>map(NodeValue::new)
-                                    .orElse(NULL);
+                                    .orElse(EMPTY);
                     }
                 case ARRAY:
                     ArrayNode arrayNode = value.expectArrayNode();
@@ -140,7 +155,7 @@ final class AttributeValueImpl {
                         case LENGTH:
                             return AttributeValue.literal(arrayNode.size());
                         default:
-                            return NULL;
+                            return EMPTY;
                     }
                 case STRING:
                     if (key.equals(LENGTH)) {
@@ -148,12 +163,16 @@ final class AttributeValueImpl {
                     }
                     // fall through
                 default:
-                    return NULL;
+                    return EMPTY;
             }
         }
 
         private AttributeValue project(Collection<? extends Node> nodes) {
-            return new Projection(nodes.stream().map(NodeValue::new).collect(Collectors.toList()));
+            List<AttributeValue> values = new ArrayList<>(nodes.size());
+            for (Node node : nodes) {
+                values.add(AttributeValue.node(node));
+            }
+            return AttributeValue.projection(values);
         }
 
         // Only string, numbers, and booleans are converted to strings.
@@ -197,6 +216,10 @@ final class AttributeValueImpl {
 
         @Override
         public AttributeValue getProperty(String key) {
+            if (key.equals(FIRST)) {
+                return values.isEmpty() ? EMPTY : getFlattenedValues().iterator().next();
+            }
+
             // All of the values that are yielded from the projected values
             // come together to create a new projection.
             List<AttributeValue> result = new ArrayList<>();
@@ -207,7 +230,16 @@ final class AttributeValueImpl {
                 }
             }
 
-            return new Projection(result);
+            return AttributeValue.projection(result);
+        }
+
+        @Override
+        public String debugString() {
+            // Returns a comma separated, sorted list of each contained, flattend debug string.
+            return getFlattenedValues().stream()
+                    .map(AttributeValue::debugString)
+                    .sorted()
+                    .collect(Collectors.joining(", ", "[", "]"));
         }
 
         /**
@@ -246,13 +278,6 @@ final class AttributeValueImpl {
 
     /**
      * Attribute that contains service shape properties.
-     *
-     * <p>Using this attribute as a string yields an empty string. This
-     * attribute has the following properties:
-     *
-     * <ul>
-     *     <li>version: The service version as a string.</li>
-     * </ul>
      */
     static final class Service implements AttributeValue {
         final ServiceShape service;
@@ -263,24 +288,17 @@ final class AttributeValueImpl {
 
         @Override
         public String toString() {
-            return "";
+            return service.getId().toString();
         }
 
         @Override
         public AttributeValue getProperty(String key) {
-            switch (key) {
-                case "version":
-                    return AttributeValue.literal(service.getVersion());
-                case KEYS:
-                    return new Projection(Collections.singleton(AttributeValue.literal("version")));
-                case VALUES:
-                    return new Projection(Collections.singleton(AttributeValue.literal(service.getVersion())));
-                case LENGTH:
-                    // Returns the number of elements in the object. It's only "version"
-                    // for services.
-                    return AttributeValue.literal(1);
-                default:
-                    return NULL;
+            if (key.equals("version")) {
+                return AttributeValue.literal(service.getVersion());
+            } else if (key.equals("id")) {
+                return AttributeValue.id(service.getId());
+            } else {
+                return EMPTY;
             }
         }
     }
@@ -319,24 +337,12 @@ final class AttributeValueImpl {
                 case "member":
                     return id.getMember()
                             .<AttributeValue>map(Literal::new)
-                            .orElse(NULL);
-                case KEYS:
-                    List<AttributeValue> keys = new ArrayList<>(3);
-                    keys.add(AttributeValue.literal("namespace"));
-                    keys.add(AttributeValue.literal("name"));
-                    id.getMember().ifPresent(member -> keys.add(AttributeValue.literal("member")));
-                    return new Projection(keys);
-                case VALUES:
-                    List<AttributeValue> values = new ArrayList<>(3);
-                    values.add(AttributeValue.literal(id.getNamespace()));
-                    values.add(AttributeValue.literal(id.getName()));
-                    id.getMember().ifPresent(member -> values.add(AttributeValue.literal(member)));
-                    return new Projection(values);
+                            .orElse(EMPTY);
                 case LENGTH:
                     // Length returns the length of the shape ID.
                     return AttributeValue.literal(id.toString().length());
                 default:
-                    return NULL;
+                    return EMPTY;
             }
         }
     }
@@ -367,6 +373,15 @@ final class AttributeValueImpl {
         }
 
         @Override
+        public String debugString() {
+            // Returns a sorted, comma separated list of absolute trait shape IDs.
+            return shape.getAllTraits().keySet().stream()
+                    .map(ShapeId::toString)
+                    .sorted()
+                    .collect(Collectors.joining(", "));
+        }
+
+        @Override
         public AttributeValue getProperty(String property) {
             switch (property) {
                 case KEYS:
@@ -374,9 +389,9 @@ final class AttributeValueImpl {
                     // [trait|(keys)|namespace='com.foo']
                     List<AttributeValue> keyValues = new ArrayList<>();
                     for (ShapeId id : shape.getAllTraits().keySet()) {
-                        keyValues.add(new Id(id));
+                        keyValues.add(AttributeValue.id(id));
                     }
-                    return new Projection(keyValues);
+                    return AttributeValue.projection(keyValues);
                 case VALUES:
                     // This allows the projected values to be used as nodes. This
                     // selector finds all traits that have 'foo' property.
@@ -385,7 +400,7 @@ final class AttributeValueImpl {
                     for (Trait trait : shape.getAllTraits().values()) {
                         values.add(new NodeValue(trait.toNode()));
                     }
-                    return new Projection(values);
+                    return AttributeValue.projection(values);
                 case LENGTH:
                     return AttributeValue.literal(shape.getAllTraits().size());
                 default:
@@ -393,16 +408,18 @@ final class AttributeValueImpl {
                     // and absolute IDs. Relative IDs resolve to 'smithy.api'.
                     return shape.findTrait(ShapeId.from(Trait.makeAbsoluteName(property)))
                             .<AttributeValue>map(trait -> new NodeValue(trait.toNode()))
-                            .orElse(NULL);
+                            .orElse(EMPTY);
             }
         }
     }
 
     static final class ShapeValue implements AttributeValue {
         final Shape shape;
+        final Map<String, Set<Shape>> vars;
 
-        ShapeValue(Shape shape) {
+        ShapeValue(Shape shape, Map<String, Set<Shape>> vars) {
             this.shape = Objects.requireNonNull(shape);
+            this.vars = vars == null ? Collections.emptyMap() : vars;
         }
 
         @Override
@@ -416,13 +433,55 @@ final class AttributeValueImpl {
                 case "trait":
                     return new Traits(shape);
                 case "id":
-                    return new Id(shape.getId());
+                    return AttributeValue.id(shape.getId());
                 case "service":
-                    return shape.asServiceShape().<AttributeValue>map(Service::new).orElse(NULL);
+                    return shape.asServiceShape().<AttributeValue>map(Service::new).orElse(EMPTY);
+                case "var":
+                    return new VariableValue(vars);
                 default:
                     LOGGER.warning("Unsupported shape selector attribute: " + property);
-                    return NULL;
+                    return EMPTY;
             }
+        }
+    }
+
+    static final class VariableValue implements AttributeValue {
+        final Map<String, Set<Shape>> vars;
+
+        VariableValue(Map<String, Set<Shape>> vars) {
+            this.vars = vars;
+        }
+
+        @Override
+        public String toString() {
+            return "";
+        }
+
+        @Override
+        public String debugString() {
+            // Creates a JSON version of the variables mapped to shape IDs,
+            // all on one line: (e.g., `{"a": ["com.foo#Bar", "com.foo#Baz"], "b": ["com.foo#Bar"]}`
+            // The keys are sorted, and the values in each key are sorted.
+            StringJoiner joiner = new StringJoiner(", ", "{", "}");
+            for (Map.Entry<String, Set<Shape>> entry : vars.entrySet()) {
+                joiner.add('"' + entry.getKey() + "\": " + entry.getValue().stream()
+                        .map(Shape::toShapeId)
+                        .map(ShapeId::toString)
+                        .map(s -> '"' + s + '"')
+                        .sorted()
+                        .collect(Collectors.joining(", ", "[", "]")));
+            }
+            return joiner.toString();
+        }
+
+        @Override
+        public AttributeValue getProperty(String property) {
+            Set<Shape> shapes = vars.getOrDefault(property, Collections.emptySet());
+            List<AttributeValue> values = new ArrayList<>(shapes.size());
+            for (Shape shape : shapes) {
+                values.add(AttributeValue.shape(shape, vars));
+            }
+            return AttributeValue.projection(values);
         }
     }
 

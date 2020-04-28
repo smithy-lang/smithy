@@ -18,25 +18,24 @@ package software.amazon.smithy.model.selector;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
  * Matches shapes with a specific attribute or that matches an attribute comparator.
  */
-final class AttributeSelector implements Selector {
+final class AttributeSelector implements InternalSelector {
 
-    private final Function<Shape, AttributeValue> key;
+    private final BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> key;
     private final List<AttributeValue> expected;
     private final AttributeComparator comparator;
     private final boolean caseInsensitive;
 
     AttributeSelector(
-            Function<Shape, AttributeValue> key,
+            BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> key,
             List<String> expected,
             AttributeComparator comparator,
             boolean caseInsensitive
@@ -56,26 +55,26 @@ final class AttributeSelector implements Selector {
         }
     }
 
-    static AttributeSelector existence(Function<Shape, AttributeValue> key) {
+    static AttributeSelector existence(BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> key) {
         return new AttributeSelector(key, null, null, false);
     }
 
     @Override
-    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
-        return shapes.stream()
-                .filter(this::matchesAttribute)
-                .collect(Collectors.toSet());
+    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+        if (matchesAttribute(shape, context)) {
+            next.accept(context, shape);
+        }
     }
 
-    private boolean matchesAttribute(Shape shape) {
-        AttributeValue lhs = key.apply(shape);
+    private boolean matchesAttribute(Shape shape, Context stack) {
+        AttributeValue lhs = key.apply(shape, stack.getVars());
 
         if (expected.isEmpty()) {
             return lhs.isPresent();
         }
 
         for (AttributeValue rhs : expected) {
-            if (comparator.flattenedCompare(lhs, rhs, caseInsensitive)) {
+            if (comparator.compare(lhs, rhs, caseInsensitive)) {
                 return true;
             }
         }

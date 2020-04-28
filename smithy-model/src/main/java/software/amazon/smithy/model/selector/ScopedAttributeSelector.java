@@ -16,18 +16,17 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
  * Matches a scoped attribute or projection against a set of assertions that
  * can path into the scoped attribute.
  */
-final class ScopedAttributeSelector implements Selector {
+final class ScopedAttributeSelector implements InternalSelector {
 
     static final class Assertion {
         private final ScopedFactory lhs;
@@ -58,24 +57,28 @@ final class ScopedAttributeSelector implements Selector {
         AttributeValue create(AttributeValue value);
     }
 
-    private final Function<Shape, AttributeValue> keyScope;
+    private final BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> keyScope;
     private final List<Assertion> assertions;
 
-    ScopedAttributeSelector(Function<Shape, AttributeValue> keyScope, List<Assertion> assertions) {
+    ScopedAttributeSelector(
+            BiFunction<Shape, Map<String, Set<Shape>>,
+                    AttributeValue> keyScope,
+            List<Assertion> assertions
+    ) {
         this.keyScope = keyScope;
         this.assertions = assertions;
     }
 
     @Override
-    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
-        return shapes.stream()
-                .filter(this::matchesAssertions)
-                .collect(Collectors.toSet());
+    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+        if (matchesAssertions(shape, context.getVars())) {
+            next.accept(context, shape);
+        }
     }
 
-    private boolean matchesAssertions(Shape shape) {
+    private boolean matchesAssertions(Shape shape, Map<String, Set<Shape>> vars) {
         // First resolve the scope of the assertions.
-        AttributeValue scope = keyScope.apply(shape);
+        AttributeValue scope = keyScope.apply(shape, vars);
 
         // If it's not present, then nothing could ever match.
         if (!scope.isPresent()) {
@@ -99,7 +102,7 @@ final class ScopedAttributeSelector implements Selector {
             AttributeValue lhs = assertion.lhs.create(scope);
             for (ScopedFactory factory : assertion.rhs) {
                 AttributeValue rhs = factory.create(scope);
-                if (!assertion.comparator.flattenedCompare(lhs, rhs, assertion.caseInsensitive)) {
+                if (!assertion.comparator.compare(lhs, rhs, assertion.caseInsensitive)) {
                     return false;
                 }
             }

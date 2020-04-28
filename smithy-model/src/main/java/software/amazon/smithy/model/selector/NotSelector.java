@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,29 +15,24 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
+import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
- * Filters out input that is returned from any of the given selectors.
+ * Filters out shapes that yield shapes when applied to a selector.
  */
-final class NotSelector implements Selector {
-    private final List<Selector> selectors;
+final class NotSelector implements InternalSelector {
 
-    NotSelector(List<Selector> selectors) {
-        this.selectors = selectors;
+    private final InternalSelector selector;
+
+    NotSelector(InternalSelector selector) {
+        this.selector = selector;
     }
 
     @Override
-    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
-        Set<Shape> result = new HashSet<>(shapes);
-        for (Selector predicate : selectors) {
-            result.removeAll(predicate.select(model, neighborProvider, shapes));
+    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+        if (!context.receivedShapes(shape, selector)) {
+            next.accept(context, shape);
         }
-        return result;
     }
 }
