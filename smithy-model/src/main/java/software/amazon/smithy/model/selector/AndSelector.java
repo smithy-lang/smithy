@@ -16,39 +16,67 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.List;
-import java.util.Set;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
+import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Maps input over a list of functions, passing the result of each to
  * the next.
  *
  * <p>The list of selectors is short-circuited if any selector returns
- * an empty result.
+ * an empty result (by virtue of a selector not forwarding a shape to
+ * the next selector).
  */
-final class AndSelector implements Selector {
-    private final List<Selector> selectors;
+final class AndSelector implements InternalSelector {
+    private final List<InternalSelector> selectors;
 
-    private AndSelector(List<Selector> predicates) {
+    private AndSelector(List<InternalSelector> predicates) {
         this.selectors = predicates;
     }
 
-    static Selector of(List<Selector> predicates) {
+    static InternalSelector of(List<InternalSelector> predicates) {
         return predicates.size() == 1 ? predicates.get(0) : new AndSelector(predicates);
     }
 
     @Override
-    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
-        for (Selector selector : selectors) {
-            shapes = selector.select(model, neighborProvider, shapes);
-            if (shapes.isEmpty()) {
-                return SetUtils.of();
-            }
-        }
+    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+        // Unroll common cases for selectors.
+        switch (selectors.size()) {
+            case 2:
+                selectors.get(0).push(context, shape, (c, s) -> {
+                    selectors.get(1).push(c, s, next);
+                });
+                break;
+            case 3:
+                selectors.get(0).push(context, shape, (c1, s1) -> {
+                    selectors.get(1).push(c1, s1, (c2, s2) -> {
+                        selectors.get(2).push(c2, s2, next);
+                    });
+                });
+                break;
+            case 4:
+                selectors.get(0).push(context, shape, (c1, s1) -> {
+                    selectors.get(1).push(c1, s1, (c2, s2) -> {
+                        selectors.get(2).push(c2, s2, (c3, s3) -> {
+                            selectors.get(3).push(c3, s3, next);
+                        });
+                    });
+                });
+                break;
+            default:
+                // Compose the next selector from the inside out. Note that there
+                // can never be a single selector provided to this class.
+                BiConsumer<Context, Shape> composedNext = composeNext(selectors.size() - 1, next);
+                for (int i = selectors.size() - 2; i > 0; i--) {
+                    composedNext = composeNext(i, composedNext);
+                }
 
-        return shapes;
+                // Push to the first selector, which pushes to the next, to the next...
+                selectors.get(0).push(context, shape, composedNext);
+        }
+    }
+
+    private BiConsumer<Context, Shape> composeNext(int position, BiConsumer<Context, Shape> next) {
+        return (c, s) -> selectors.get(position).push(c, s, next);
     }
 }

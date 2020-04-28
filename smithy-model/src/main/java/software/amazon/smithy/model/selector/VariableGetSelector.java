@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,31 +15,25 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
- * Filters out shapes that do not match any predicates.
- *
- * <p>The result of this selector is always a subset of the input
- * (i.e., it does not map over the input).
+ * Pushes the shapes stored in a specific variable to the next selector.
  */
-final class TestSelector implements InternalSelector {
-    private final List<InternalSelector> selectors;
+final class VariableGetSelector implements InternalSelector {
+    private final String variableName;
 
-    TestSelector(List<InternalSelector> selectors) {
-        this.selectors = selectors;
+    VariableGetSelector(String variableName) {
+        this.variableName = variableName;
     }
 
     @Override
     public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
-        // The instant something matches, stop piping through.
-        for (InternalSelector predicate : selectors) {
-            if (context.receivedShapes(shape, predicate)) {
-                next.accept(context, shape);
-                return;
-            }
+        // Do not fail on an invalid variable access.
+        for (Shape v : context.getVars().getOrDefault(variableName, Collections.emptySet())) {
+            next.accept(context, v);
         }
     }
 }

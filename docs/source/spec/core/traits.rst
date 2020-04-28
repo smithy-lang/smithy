@@ -317,7 +317,7 @@ Other trait values
 ==================
 
 All other trait values MUST adhere to the JSON type mappings defined
-in :ref:`trait-definition-values` table.
+in :ref:`trait-node-values` table.
 
 The following example defines a string trait value:
 
@@ -548,7 +548,7 @@ The following example defines two custom traits: ``beta`` and
         }
 
 
-.. _trait-definition-values:
+.. _trait-node-values:
 
 -----------------
 Trait node values

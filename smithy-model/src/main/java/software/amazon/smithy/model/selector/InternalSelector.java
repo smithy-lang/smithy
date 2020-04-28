@@ -16,23 +16,12 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.function.BiConsumer;
-import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.Shape;
 
-/**
- * Uses a {@link Walker} to find all shapes connected to the set of
- * given shapes.
- */
-final class RecursiveNeighborSelector implements InternalSelector {
-    @Override
-    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
-        Walker walker = new Walker(context.neighborProvider);
+interface InternalSelector {
 
-        for (Shape nextShape : walker.walkShapes(shape)) {
-            // Don't include the shape being visited.
-            if (!nextShape.equals(shape)) {
-                next.accept(context, nextShape);
-            }
-        }
-    }
+    /** A selector that always returns all provided values. */
+    InternalSelector IDENTITY = (ctx, shape, next) -> next.accept(ctx, shape);
+
+    void push(Context ctx, Shape shape, BiConsumer<Context, Shape> next);
 }

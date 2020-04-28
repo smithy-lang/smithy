@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,14 +15,11 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
+import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 
-final class ShapeTypeSelector implements Selector {
+final class ShapeTypeSelector implements InternalSelector {
     private final ShapeType shapeType;
 
     ShapeTypeSelector(ShapeType shapeType) {
@@ -30,9 +27,9 @@ final class ShapeTypeSelector implements Selector {
     }
 
     @Override
-    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
-        return shapes.stream()
-                .filter(shape -> shape.getType() == shapeType)
-                .collect(Collectors.toSet());
+    public void push(Context ctx, Shape shape, BiConsumer<Context, Shape> next) {
+        if (shape.getType() == shapeType) {
+            next.accept(ctx, shape);
+        }
     }
 }

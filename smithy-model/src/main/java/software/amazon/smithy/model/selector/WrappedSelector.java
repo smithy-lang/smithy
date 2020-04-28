@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,11 +15,6 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.util.Set;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
-import software.amazon.smithy.model.shapes.Shape;
-
 /**
  * Provides a toString method that prints the expression.
  *
@@ -28,16 +23,16 @@ import software.amazon.smithy.model.shapes.Shape;
  */
 final class WrappedSelector implements Selector {
     private final String expression;
-    private final Selector delegate;
+    private final InternalSelector delegate;
 
-    WrappedSelector(String expression, Selector delegate) {
+    WrappedSelector(String expression, InternalSelector delegate) {
         this.expression = expression;
         this.delegate = delegate;
     }
 
     @Override
-    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
-        return delegate.select(model, neighborProvider, shapes);
+    public Runner runner() {
+        return new Runner(delegate);
     }
 
     @Override

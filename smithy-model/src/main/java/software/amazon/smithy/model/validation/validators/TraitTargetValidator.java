@@ -51,7 +51,10 @@ public final class TraitTargetValidator extends AbstractValidator {
 
         for (SelectorTest test : tests) {
             // Find the shapes that this trait can be applied to.
-            Set<Shape> matches = test.selector.select(model, neighborProvider);
+            Set<Shape> matches = test.selector.runner()
+                    .model(model)
+                    .neighborProvider(neighborProvider)
+                    .selectShapes();
 
             // Remove the allowed locations from the real locations, leaving only
             // the shapes in the set that are invalid.

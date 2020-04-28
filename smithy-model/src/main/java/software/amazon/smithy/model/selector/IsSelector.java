@@ -16,30 +16,27 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
+import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
  * Maps input over each function and returns the concatenated result.
  */
-final class IsSelector implements Selector {
-    private final List<Selector> selectors;
+final class IsSelector implements InternalSelector {
+    private final List<InternalSelector> selectors;
 
-    private IsSelector(List<Selector> predicates) {
+    private IsSelector(List<InternalSelector> predicates) {
         this.selectors = predicates;
     }
 
-    static Selector of(List<Selector> predicates) {
+    static InternalSelector of(List<InternalSelector> predicates) {
         return predicates.size() == 1 ? predicates.get(0) : new IsSelector(predicates);
     }
 
     @Override
-    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
-        return selectors.stream()
-                .flatMap(selector -> selector.select(model, neighborProvider, shapes).stream())
-                .collect(Collectors.toSet());
+    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+        for (InternalSelector selector : selectors) {
+            selector.push(context, shape, next);
+        }
     }
 }

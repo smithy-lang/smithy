@@ -19,8 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.CollectionShape;
@@ -60,12 +61,12 @@ final class Parser {
         return new WrappedSelector(selector, AndSelector.of(new Parser(selector).expression()));
     }
 
-    private List<Selector> expression() {
+    private List<InternalSelector> expression() {
         return recursiveParse();
     }
 
-    private List<Selector> recursiveParse() {
-        List<Selector> selectors = new ArrayList<>();
+    private List<InternalSelector> recursiveParse() {
+        List<InternalSelector> selectors = new ArrayList<>();
 
         // createSelector() will strip leading ws.
         selectors.add(createSelector());
@@ -83,7 +84,7 @@ final class Parser {
         return selectors;
     }
 
-    private Selector createSelector() {
+    private InternalSelector createSelector() {
         ws();
 
         // Require at least one selector.
@@ -112,7 +113,10 @@ final class Parser {
                 return parseMultiEdgeDirectedNeighbor();
             case '*': // Any shape
                 position++;
-                return Selector.IDENTITY;
+                return InternalSelector.IDENTITY;
+            case '$': // variable
+                position++;
+                return parseVariable();
             default:
                 if (validIdentifierStart(charPeek())) {
                     String identifier = parseIdentifier();
@@ -172,7 +176,30 @@ final class Parser {
         return new SelectorSyntaxException(message, expression, position);
     }
 
-    private Selector parseMultiEdgeDirectedNeighbor() {
+    private InternalSelector parseVariable() {
+        ws();
+
+        if (charPeek() == '{') {
+            position++;
+            ws();
+            String variableName = parseIdentifier();
+            ws();
+            expect('}');
+            return new VariableGetSelector(variableName);
+        }
+
+        String name = parseIdentifier();
+        ws();
+        expect('(');
+        ws();
+        InternalSelector selector = AndSelector.of(recursiveParse());
+        ws();
+        expect(')');
+
+        return new VariableStoreSelector(name, selector);
+    }
+
+    private InternalSelector parseMultiEdgeDirectedNeighbor() {
         // Parses a multi edge neighbor selector: "-[" relationship-type *("," relationship-type) "]"
         List<String> relationships = new ArrayList<>();
         String next;
@@ -202,12 +229,17 @@ final class Parser {
         return new NeighborSelector(relationships);
     }
 
-    private Selector parseFunction() {
+    private InternalSelector parseFunction() {
+        int functionPosition = position;
         String name = parseIdentifier();
-        List<Selector> selectors = parseVariadic();
+        List<InternalSelector> selectors = parseVariadic();
         switch (name) {
             case "not":
-                return new NotSelector(selectors);
+                if (selectors.size() != 1) {
+                    throw new SelectorSyntaxException(
+                            "The :not function requires a single selector argument", expression, functionPosition);
+                }
+                return new NotSelector(selectors.get(0));
             case "test":
                 return new TestSelector(selectors);
             case "is":
@@ -219,13 +251,13 @@ final class Parser {
                 return new OfSelector(selectors);
             default:
                 LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s", name, expression));
-                return (model, neighborProvider, shapes) -> Collections.emptySet();
+                return (context, shape, next) -> { };
         }
     }
 
-    private List<Selector> parseVariadic() {
+    private List<InternalSelector> parseVariadic() {
         ws();
-        List<Selector> selectors = new ArrayList<>();
+        List<InternalSelector> selectors = new ArrayList<>();
         expect('(');
         char next;
 
@@ -238,9 +270,9 @@ final class Parser {
         return selectors;
     }
 
-    private Selector parseAttribute() {
+    private InternalSelector parseAttribute() {
         ws();
-        Function<Shape, AttributeValue> keyFactory = parseAttributePath();
+        BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> keyFactory = parseAttributePath();
         ws();
         char next = expect(']', '=', '!', '^', '$', '*', '?', '>', '<');
 
@@ -268,44 +300,61 @@ final class Parser {
     private AttributeComparator parseComparator(char next) {
         AttributeComparator comparator;
         switch (next) {
-            case '=':
+            case '=': // =
                 comparator = AttributeComparator.EQUALS;
                 break;
             case '!':
-                expect('=');
+                expect('='); // !=
                 comparator = AttributeComparator.NOT_EQUALS;
                 break;
             case '^':
-                expect('=');
+                expect('='); // ^=
                 comparator = AttributeComparator.STARTS_WITH;
                 break;
             case '$':
-                expect('=');
+                expect('='); // $=
                 comparator = AttributeComparator.ENDS_WITH;
                 break;
             case '*':
-                expect('=');
+                expect('='); // *=
                 comparator = AttributeComparator.CONTAINS;
                 break;
             case '?':
-                expect('=');
+                expect('='); // ?=
                 comparator = AttributeComparator.EXISTS;
                 break;
             case '>':
-                if (charPeek() == '=') {
+                if (charPeek() == '=') { // >=
                     position++;
                     comparator = AttributeComparator.GTE;
-                } else {
+                } else { // >
                     comparator = AttributeComparator.GT;
                 }
                 break;
             case '<':
-                if (charPeek() == '=') {
+                if (charPeek() == '=') { // <=
                     position++;
                     comparator = AttributeComparator.LTE;
-                } else {
+                } else { // <
                     comparator = AttributeComparator.LT;
                 }
+                break;
+            case '{': // projection comparators
+                char nextSet = expect('<', '=', '!');
+                if (nextSet == '<') {
+                    if (charPeek() == '<') {
+                        expect('<'); // {<<}
+                        comparator = AttributeComparator.PROPER_SUBSET;
+                    } else { // {<}
+                        comparator = AttributeComparator.SUBSET;
+                    }
+                } else if (nextSet == '=') { // {=}
+                    comparator = AttributeComparator.PROJECTION_EQUALS;
+                } else { // {!=}
+                    expect('=');
+                    comparator = AttributeComparator.PROJECTION_NOT_EQUALS;
+                }
+                expect('}');
                 break;
             default:
                 // Unreachable
@@ -317,9 +366,9 @@ final class Parser {
     }
 
     // "[@" selector_key ":" selector_scoped_comparisons "]"
-    private Selector parseScopedAttribute() {
+    private InternalSelector parseScopedAttribute() {
         ws();
-        Function<Shape, AttributeValue> keyScope = parseAttributePath();
+        BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> keyScope = parseAttributePath();
         ws();
         expect(':');
         ws();
@@ -381,7 +430,7 @@ final class Parser {
         }
     }
 
-    private Function<Shape, AttributeValue> parseAttributePath() {
+    private BiFunction<Shape, Map<String, Set<Shape>>, AttributeValue> parseAttributePath() {
         ws();
 
         // '[@:' binds the current shape as the context.
@@ -396,7 +445,7 @@ final class Parser {
         // It is optionally followed by "|" delimited path keys.
         path.addAll(parseSelectorPath());
 
-        return shape -> AttributeValue.shape(shape).getPath(path);
+        return (shape, variables) -> AttributeValue.shape(shape, variables).getPath(path);
     }
 
     // Can be a shape_id, quoted string, number, or function key.

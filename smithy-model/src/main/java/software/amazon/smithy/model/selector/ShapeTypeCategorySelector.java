@@ -15,13 +15,10 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
+import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 
-final class ShapeTypeCategorySelector implements Selector {
+final class ShapeTypeCategorySelector implements InternalSelector {
     private final Class<? extends Shape> shapeCategory;
 
     ShapeTypeCategorySelector(Class<? extends Shape> shapeCategory) {
@@ -29,7 +26,9 @@ final class ShapeTypeCategorySelector implements Selector {
     }
 
     @Override
-    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
-        return shapes.stream().filter(shapeCategory::isInstance).collect(Collectors.toSet());
+    public void push(Context ctx, Shape shape, BiConsumer<Context, Shape> next) {
+        if (shapeCategory.isInstance(shape)) {
+            next.accept(ctx, shape);
+        }
     }
 }

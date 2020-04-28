@@ -15,9 +15,8 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.function.BiConsumer;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
@@ -28,7 +27,7 @@ import software.amazon.smithy.model.shapes.Shape;
  * Traverses into the neighbors of shapes with an optional list of
  * neighbor rel filters.
  */
-final class NeighborSelector implements Selector {
+final class NeighborSelector implements InternalSelector {
 
     private final List<String> relTypes;
     private final boolean includeTraits;
@@ -39,22 +38,17 @@ final class NeighborSelector implements Selector {
     }
 
     @Override
-    public Set<Shape> select(Model model, NeighborProvider neighborProvider, Set<Shape> shapes) {
-        NeighborProvider resolvedProvider = createProvider(model, neighborProvider);
+    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+        NeighborProvider resolvedProvider = createProvider(context.model, context.neighborProvider);
 
-        Set<Shape> result = new HashSet<>();
-        for (Shape shape : shapes) {
-            for (Relationship rel : resolvedProvider.getNeighbors(shape)) {
-                if (rel.getNeighborShape().isPresent()) {
-                    Shape target = createNeighbor(rel, rel.getNeighborShape().get());
-                    if (target != null) {
-                        result.add(target);
-                    }
+        for (Relationship rel : resolvedProvider.getNeighbors(shape)) {
+            if (rel.getNeighborShape().isPresent()) {
+                Shape neighbor = createNeighbor(rel, rel.getNeighborShape().get());
+                if (neighbor != null) {
+                    next.accept(context, neighbor);
                 }
             }
         }
-
-        return result;
     }
 
     // Enable trait relationships only if explicitly asked for in a selector.

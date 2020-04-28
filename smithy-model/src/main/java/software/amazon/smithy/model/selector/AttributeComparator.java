@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.selector;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -31,11 +32,15 @@ interface AttributeComparator {
     AttributeComparator STARTS_WITH = stringComparator(String::startsWith);
     AttributeComparator ENDS_WITH = stringComparator(String::endsWith);
     AttributeComparator CONTAINS = stringComparator(String::contains);
-    AttributeComparator GT = stringComparator((a, b) -> numericComparison(a, b, result -> result == 1));
-    AttributeComparator GTE = stringComparator((a, b) -> numericComparison(a, b, result -> result >= 0));
-    AttributeComparator LT = stringComparator((a, b) -> numericComparison(a, b, result -> result <= -1));
-    AttributeComparator LTE = stringComparator((a, b) -> numericComparison(a, b, result -> result <= 0));
+    AttributeComparator GT = numericComparator(result -> result == 1);
+    AttributeComparator GTE = numericComparator(result -> result >= 0);
+    AttributeComparator LT = numericComparator(result -> result <= -1);
+    AttributeComparator LTE = numericComparator(result -> result <= 0);
     AttributeComparator EXISTS = AttributeComparator::existsCheck;
+    AttributeComparator SUBSET = AttributeComparator::subset;
+    AttributeComparator PROPER_SUBSET = AttributeComparator::properSubset;
+    AttributeComparator PROJECTION_EQUALS = AttributeComparator::setEquals;
+    AttributeComparator PROJECTION_NOT_EQUALS = AttributeComparator::setNotEquals;
 
     /**
      * Compares the left hand side value against the right using a comparator.
@@ -51,29 +56,30 @@ interface AttributeComparator {
      * Compares the given attribute values by flattening each side of the
      * comparison, and comparing each value.
      *
-     * <p>This method is necessary in order to support matching on projections.
+     * <p>This method is necessary in order to support matching on projections
+     * using projection semantics.
      *
-     * @param lhs The left hand side of the comparison.
-     * @param rhs The right hand side of the comparison.
-     * @param insensitive Whether or not to use a case-insensitive comparison.
-     * @return Returns true if the attributes match the comparator.
+     * @param singleComparison Comparison to apply to each element.
+     * @return Returns the created comparator.
      */
-    default boolean flattenedCompare(AttributeValue lhs, AttributeValue rhs, boolean insensitive) {
-        for (AttributeValue l : lhs.getFlattenedValues()) {
-            for (AttributeValue r : rhs.getFlattenedValues()) {
-                if (compare(l, r, insensitive)) {
-                    return true;
+    static AttributeComparator flattenedCompare(AttributeComparator singleComparison) {
+        return (lhs, rhs, caseInsensitive) -> {
+            for (AttributeValue l : lhs.getFlattenedValues()) {
+                for (AttributeValue r : rhs.getFlattenedValues()) {
+                    if (singleComparison.compare(l, r, caseInsensitive)) {
+                        return true;
+                    }
                 }
             }
-        }
 
-        return false;
+            return false;
+        };
     }
 
     // String comparators simplify how comparisons are made on attribute
     // values that MUST resolve to strings.
     static AttributeComparator stringComparator(BiFunction<String, String, Boolean> compare) {
-        return (lhs, rhs, caseInsensitive) -> {
+        return flattenedCompare((lhs, rhs, caseInsensitive) -> {
             // Both values MUST be present to compare.
             if (!lhs.isPresent() || !rhs.isPresent()) {
                 return false;
@@ -89,24 +95,26 @@ interface AttributeComparator {
             }
 
             return compare.apply(lhsString, rhsString);
-        };
+        });
     }
 
     // Try to parse both numbers, ignore numeric failures since that's acceptable,
     // then pass the result of calling compareTo on the numbers to the given
     // evaluator. The evaluator then determines if the comparison is what was expected.
-    static boolean numericComparison(String lhs, String rhs, Function<Integer, Boolean> evaluator) {
-        BigDecimal lhsNumber = parseNumber(lhs);
-        if (lhsNumber == null) {
-            return false;
-        }
+    static AttributeComparator numericComparator(Function<Integer, Boolean> evaluator) {
+        return stringComparator((lhs, rhs) -> {
+            BigDecimal lhsNumber = parseNumber(lhs);
+            if (lhsNumber == null) {
+                return false;
+            }
 
-        BigDecimal rhsNumber = parseNumber(rhs);
-        if (rhsNumber == null) {
-            return false;
-        }
+            BigDecimal rhsNumber = parseNumber(rhs);
+            if (rhsNumber == null) {
+                return false;
+            }
 
-        return evaluator.apply(lhsNumber.compareTo(rhsNumber));
+            return evaluator.apply(lhsNumber.compareTo(rhsNumber));
+        });
     }
 
     // Invalid numbers do not fail the parser or evaluation of a selector.
@@ -124,5 +132,67 @@ interface AttributeComparator {
         String bString = b.toString();
         return (a.isPresent() && bString.equals("true"))
                || (!a.isPresent() && b.toString().equals("false"));
+    }
+
+    static boolean areBothProjections(AttributeValue a, AttributeValue b) {
+        return a instanceof AttributeValueImpl.Projection && b instanceof AttributeValueImpl.Projection;
+    }
+
+    static boolean subset(AttributeValue a, AttributeValue b, boolean caseInsensitive) {
+        return areBothProjections(a, b)
+               && isSubset(a.getFlattenedValues(), b.getFlattenedValues(), caseInsensitive);
+    }
+
+    // Note that projections with different sizes can still be subsets since
+    // they operate like Sets<> where multiple instances of the same value
+    // are treated as a single value.
+    static boolean isSubset(
+            Collection<? extends AttributeValue> aValues,
+            Collection<? extends AttributeValue> bValues,
+            boolean caseInsensitive
+    ) {
+        for (AttributeValue aValue : aValues) {
+            boolean foundMatch = false;
+            for (AttributeValue bValue : bValues) {
+                if (EQUALS.compare(aValue, bValue, caseInsensitive)) {
+                    foundMatch = true;
+                    break;
+                }
+            }
+            if (!foundMatch) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // {A} is a proper subset of {B} as long as {A} is a subset of {B},
+    // and {B} is not a subset of {A}.
+    static boolean properSubset(AttributeValue a, AttributeValue b, boolean caseInsensitive) {
+        if (!areBothProjections(a, b)) {
+            return false;
+        }
+
+        Collection<? extends AttributeValue> aValues = a.getFlattenedValues();
+        Collection<? extends AttributeValue> bValues = b.getFlattenedValues();
+        return isSubset(aValues, bValues, caseInsensitive)
+               && !isSubset(bValues, aValues, caseInsensitive);
+    }
+
+    // {A} is equal to {B} if they are both subsets of one another.
+    static boolean setEquals(AttributeValue a, AttributeValue b, boolean caseInsensitive) {
+        if (!areBothProjections(a, b)) {
+            return false;
+        }
+
+        Collection<? extends AttributeValue> aValues = a.getFlattenedValues();
+        Collection<? extends AttributeValue> bValues = b.getFlattenedValues();
+        return isSubset(aValues, bValues, caseInsensitive)
+               && isSubset(bValues, aValues, caseInsensitive);
+    }
+
+    static boolean setNotEquals(AttributeValue a, AttributeValue b, boolean caseInsensitive) {
+        return !setEquals(a, b, caseInsensitive);
     }
 }
