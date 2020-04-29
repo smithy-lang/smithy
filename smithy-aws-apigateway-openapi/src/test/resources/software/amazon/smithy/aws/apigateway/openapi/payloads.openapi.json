@@ -1,0 +1,64 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "MyService",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/foo": {
+      "post": {
+        "operationId": "FooOperation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FooOperationPayload"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Foo-Header",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FooOperation 200 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FooOperationResponseContent"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FooOperationPayload": {
+        "type": "object",
+        "properties": {
+          "bar": {
+            "type": "string"
+          }
+        }
+      },
+      "FooOperationResponseContent": {
+        "type": "object",
+        "properties": {
+          "baz": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
