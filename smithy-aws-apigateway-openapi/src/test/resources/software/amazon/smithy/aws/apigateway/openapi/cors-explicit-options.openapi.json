@@ -73,16 +73,18 @@
   },
   "components": {
     "securitySchemes": {
-      "smithy.api.httpBasicAuth": {
-        "type": "http",
-        "description": "HTTP Basic authentication",
-        "scheme": "Basic"
+      "aws.auth.sigv4": {
+        "type": "apiKey",
+        "description": "AWS Signature Version 4 authentication",
+        "name": "Authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "awsSigv4"
       }
     }
   },
   "security": [
     {
-      "smithy.api.httpBasicAuth": [ ]
+      "aws.auth.sigv4": [ ]
     }
   ],
   "x-amazon-apigateway-gateway-responses": {
