@@ -57,8 +57,7 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "type": "string",
-                "format": "byte"
+                "$ref": "#/components/schemas/PutPayloadInputPayload"
               }
             }
           }
@@ -116,8 +115,7 @@
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "type": "string",
-                  "format": "byte"
+                  "$ref": "#/components/schemas/PutPayloadOutputPayload"
                 }
               }
             }
@@ -192,6 +190,14 @@
           "type": "string",
           "format": "password"
         }
+      },
+      "PutPayloadInputPayload": {
+        "type": "string",
+        "format": "byte"
+      },
+      "PutPayloadOutputPayload": {
+        "type": "string",
+        "format": "byte"
       },
       "TaggedUnion": {
         "oneOf": [

@@ -12,8 +12,7 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "type": "string",
-                "format": "byte"
+                "$ref": "#/components/schemas/OperationInputPayload"
               }
             }
           }
@@ -40,8 +39,7 @@
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "type": "string",
-                  "format": "byte"
+                  "$ref": "#/components/schemas/OperationOutputPayload"
                 }
               }
             }
@@ -51,12 +49,27 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/ErrorErrorPayload"
                 }
               }
             }
           }
         }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorErrorPayload": {
+        "type": "string"
+      },
+      "OperationInputPayload": {
+        "type": "string",
+        "format": "byte"
+      },
+      "OperationOutputPayload": {
+        "type": "string",
+        "format": "byte"
       }
     }
   }
