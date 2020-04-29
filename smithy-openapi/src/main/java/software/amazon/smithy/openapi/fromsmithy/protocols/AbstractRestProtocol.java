@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Function;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.knowledge.EventStreamIndex;
 import software.amazon.smithy.model.knowledge.EventStreamInfo;
@@ -275,11 +276,10 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         // or arrays. These schemas are synthesized as references so that
         // any schemas with string types will pass validation.
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
-        String synthesizedName = operation.getId().getName() + "InputPayload";
-        String pointer = context.putSynthesizedSchema(synthesizedName, schema);
-        MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
-                .schema(Schema.builder().ref(pointer).build())
-                .build();
+        MediaTypeObject mediaTypeObject = getMediaTypeObject(context, schema, operation, shape -> {
+            String shapeName = shape.getId().getName();
+            return shapeName + "InputPayload";
+        });
         RequestBodyObject requestBodyObject = RequestBodyObject.builder()
                 .putContent(Objects.requireNonNull(mediaTypeRange), mediaTypeObject)
                 .build();
@@ -413,15 +413,36 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
         // or arrays. These schemas are synthesized as references so that
         // any schemas with string types will pass validation.
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
-        String shapeName = operationOrError.getId().getName();
-        String synthesizedName = operationOrError instanceof OperationShape
-                ? shapeName + "OutputPayload"
-                : shapeName + "ErrorPayload";
-        String pointer = context.putSynthesizedSchema(synthesizedName, schema);
-        MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
-                .schema(Schema.builder().ref(pointer).build())
-                .build();
+        MediaTypeObject mediaTypeObject = getMediaTypeObject(context, schema, operationOrError, shape -> {
+            String shapeName = shape.getId().getName();
+            return shape instanceof OperationShape
+                    ? shapeName + "OutputPayload"
+                    : shapeName + "ErrorPayload";
+        });
+
         responseBuilder.putContent(mediaType, mediaTypeObject);
+    }
+
+    // If a synthetic schema is just a wrapper for another schema, create the
+    // MediaTypeObject using the pointer to the existing schema, otherwise add
+    // the synthetic schema and create the MediaTypeObject using a new pointer.
+    private MediaTypeObject getMediaTypeObject(
+            Context<T> context,
+            Schema schema,
+            Shape shape,
+            Function<Shape, String> createSynthesizedName
+    ) {
+        if (!schema.getType().isPresent() && schema.getRef().isPresent()) {
+            return MediaTypeObject.builder()
+                    .schema(Schema.builder().ref(schema.getRef().get()).build())
+                    .build();
+        } else {
+            String synthesizedName = createSynthesizedName.apply(shape);
+            String pointer = context.putSynthesizedSchema(synthesizedName, schema);
+            return MediaTypeObject.builder()
+                    .schema(Schema.builder().ref(pointer).build())
+                    .build();
+        }
     }
 
     private void createResponseDocumentIfNeeded(
