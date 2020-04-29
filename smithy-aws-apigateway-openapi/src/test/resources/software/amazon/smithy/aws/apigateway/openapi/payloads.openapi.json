@@ -29,6 +29,13 @@
         "responses": {
           "200": {
             "description": "FooOperation 200 response",
+            "headers": {
+              "X-Baz-Header": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -54,8 +61,8 @@
       "FooOperationResponseContent": {
         "type": "object",
         "properties": {
-          "baz": {
-            "type": "string"
+          "payload": {
+            "$ref": "#/components/schemas/FooOperationPayload"
           }
         }
       }

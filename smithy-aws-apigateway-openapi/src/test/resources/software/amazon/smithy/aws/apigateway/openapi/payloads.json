@@ -57,8 +57,14 @@
         "example.smithy#FooOperationOutput": {
             "type": "structure",
             "members": {
+                "payload": {
+                    "target": "example.smithy#FooOperationPayload"
+                },
                 "baz": {
-                    "target": "smithy.api#String"
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#httpHeader": "X-Baz-Header"
+                    }
                 }
             }
         }
