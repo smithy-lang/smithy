@@ -271,15 +271,25 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             HttpBinding binding,
             OperationShape operation
     ) {
+        MediaTypeObject mediaTypeObject;
         // API Gateway validation requires that in-line schemas must be objects
         // or arrays. These schemas are synthesized as references so that
         // any schemas with string types will pass validation.
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
-        String synthesizedName = operation.getId().getName() + "InputPayload";
-        String pointer = context.putSynthesizedSchema(synthesizedName, schema);
-        MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
-                .schema(Schema.builder().ref(pointer).build())
-                .build();
+        // If the synthetic schema is just a wrapper for another schema, build
+        // the mediaTypeObject using that pointer directly, otherwise, use the
+        // synthesized schema and create a new pointer.
+        if (!schema.getType().isPresent() && schema.getRef().isPresent()) {
+            mediaTypeObject = MediaTypeObject.builder()
+                    .schema(Schema.builder().ref(schema.getRef().get()).build())
+                    .build();
+        } else {
+            String synthesizedName = operation.getId().getName() + "InputPayload";
+            String pointer = context.putSynthesizedSchema(synthesizedName, schema);
+            mediaTypeObject = MediaTypeObject.builder()
+                    .schema(Schema.builder().ref(pointer).build())
+                    .build();
+        }
         RequestBodyObject requestBodyObject = RequestBodyObject.builder()
                 .putContent(Objects.requireNonNull(mediaTypeRange), mediaTypeObject)
                 .build();
