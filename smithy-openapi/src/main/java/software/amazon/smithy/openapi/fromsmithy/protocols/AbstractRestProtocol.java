@@ -419,18 +419,29 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             ResponseObject.Builder responseBuilder,
             Shape operationOrError
     ) {
+        MediaTypeObject mediaTypeObject;
         // API Gateway validation requires that in-line schemas must be objects
         // or arrays. These schemas are synthesized as references so that
         // any schemas with string types will pass validation.
         Schema schema = context.inlineOrReferenceSchema(binding.getMember());
-        String shapeName = operationOrError.getId().getName();
-        String synthesizedName = operationOrError instanceof OperationShape
-                ? shapeName + "OutputPayload"
-                : shapeName + "ErrorPayload";
-        String pointer = context.putSynthesizedSchema(synthesizedName, schema);
-        MediaTypeObject mediaTypeObject = MediaTypeObject.builder()
-                .schema(Schema.builder().ref(pointer).build())
-                .build();
+
+        // If the synthetic schema is just a wrapper for another schema, build
+        // the mediaTypeObject using that pointer directly, otherwise, use the
+        // synthesized schema and create a new pointer.
+        if (!schema.getType().isPresent() && schema.getRef().isPresent()) {
+            mediaTypeObject = MediaTypeObject.builder()
+                    .schema(Schema.builder().ref(schema.getRef().get()).build())
+                    .build();
+        } else {
+            String shapeName = operationOrError.getId().getName();
+            String synthesizedName = operationOrError instanceof OperationShape
+                    ? shapeName + "OutputPayload"
+                    : shapeName + "ErrorPayload";
+            String pointer = context.putSynthesizedSchema(synthesizedName, schema);
+            mediaTypeObject = MediaTypeObject.builder()
+                    .schema(Schema.builder().ref(pointer).build())
+                    .build();
+        }
         responseBuilder.putContent(mediaType, mediaTypeObject);
     }
 
