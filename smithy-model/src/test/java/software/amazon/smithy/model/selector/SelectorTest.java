@@ -962,4 +962,21 @@ public class SelectorTest {
             Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(expr));
         }
     }
+
+    @Test
+    public void findsOperationsMissingHttpBindings() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("http-model.smithy"))
+                .assemble()
+                .getResult() // ignore built-in errors
+                .get();
+        Set<String> ids = exampleIds(model, "service\n"
+                                            + "$operations(~> operation)\n"
+                                            + "$httpOperations(${operations}[trait|http])\n"
+                                            + "${operations}\n"
+                                            + ":not([trait|http])\n"
+                                            + ":not([@: @{id} = @{var|httpOperations}])");
+
+        assertThat(ids, contains("smithy.example#NoHttp"));
+    }
 }
