@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -27,38 +27,129 @@ import software.amazon.smithy.model.shapes.Shape;
  * an empty result (by virtue of a selector not forwarding a shape to
  * the next selector).
  */
-final class AndSelector implements InternalSelector {
-    private final List<InternalSelector> selectors;
+final class AndSelector {
 
-    private AndSelector(List<InternalSelector> predicates) {
-        this.selectors = predicates;
-    }
+    private AndSelector() {}
 
-    static InternalSelector of(List<InternalSelector> predicates) {
-        switch (predicates.size()) {
+    static InternalSelector of(List<InternalSelector> selectors) {
+        switch (selectors.size()) {
             case 0:
+                // This happens when selectors are optimized (i.e., the first internal
+                // selector is a shape type and it gets applied in Model.shape() before
+                // pushing shapes through the selector.
                 return InternalSelector.IDENTITY;
             case 1:
-                return predicates.get(0);
+                // If there's only a single selector, then no need to wrap.
+                return selectors.get(0);
+            case 2:
+                // Cases 2-7 are optimizations that make selectors about
+                // 40% faster based on JMH benchmarks (at least on my machine,
+                // JDK 11.0.5, Java HotSpot(TM) 64-Bit Server VM, 11.0.5+10-LTS).
+                // I stopped at 7 because, it needs to stop somewhere, and it's lucky.
+                return (c, s, n) -> {
+                    selectors.get(0).push(c, s, (c2, s2) -> {
+                        selectors.get(1).push(c2, s2, n);
+                    });
+                };
+            case 3:
+                return (c, s, n) -> {
+                    selectors.get(0).push(c, s, (c2, s2) -> {
+                        selectors.get(1).push(c2, s2, (c3, s3) -> {
+                            selectors.get(2).push(c3, s3, n);
+                        });
+                    });
+                };
+            case 4:
+                return (c, s, n) -> {
+                    selectors.get(0).push(c, s, (c2, s2) -> {
+                        selectors.get(1).push(c2, s2, (c3, s3) -> {
+                            selectors.get(2).push(c3, s3, (c4, s4) -> {
+                                selectors.get(3).push(c4, s4, n);
+                            });
+                        });
+                    });
+                };
+            case 5:
+                return (c, s, n) -> {
+                    selectors.get(0).push(c, s, (c2, s2) -> {
+                        selectors.get(1).push(c2, s2, (c3, s3) -> {
+                            selectors.get(2).push(c3, s3, (c4, s4) -> {
+                                selectors.get(3).push(c4, s4, (c5, s5) -> {
+                                    selectors.get(4).push(c5, s5, n);
+                                });
+                            });
+                        });
+                    });
+                };
+            case 6:
+                return (c, s, n) -> {
+                    selectors.get(0).push(c, s, (c2, s2) -> {
+                        selectors.get(1).push(c2, s2, (c3, s3) -> {
+                            selectors.get(2).push(c3, s3, (c4, s4) -> {
+                                selectors.get(3).push(c4, s4, (c5, s5) -> {
+                                    selectors.get(4).push(c5, s5, (c6, s6) -> {
+                                        selectors.get(5).push(c6, s6, n);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                };
+            case 7:
+                return (c, s, n) -> {
+                    selectors.get(0).push(c, s, (c2, s2) -> {
+                        selectors.get(1).push(c2, s2, (c3, s3) -> {
+                            selectors.get(2).push(c3, s3, (c4, s4) -> {
+                                selectors.get(3).push(c4, s4, (c5, s5) -> {
+                                    selectors.get(4).push(c5, s5, (c6, s6) -> {
+                                        selectors.get(5).push(c6, s6, (c7, s7) -> {
+                                            selectors.get(6).push(c7, s7, n);
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                };
             default:
-                return new AndSelector(predicates);
+                return new RecursiveAndSelector(selectors);
         }
     }
 
-    @Override
-    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
-        // Compose the next selector from the inside out. Note that there
-        // can never be a single selector provided to this class.
-        BiConsumer<Context, Shape> composedNext = composeNext(selectors.size() - 1, next);
-        for (int i = selectors.size() - 2; i > 0; i--) {
-            composedNext = composeNext(i, composedNext);
+    static final class RecursiveAndSelector implements InternalSelector {
+
+        private final List<InternalSelector> selectors;
+        private final int terminalSelectorIndex;
+
+        private RecursiveAndSelector(List<InternalSelector> selectors) {
+            this.selectors = selectors;
+            this.terminalSelectorIndex = this.selectors.size() - 1;
         }
 
-        // Push to the first selector, which pushes to the next, to the next...
-        selectors.get(0).push(context, shape, composedNext);
-    }
+        @Override
+        public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+            // This is safe since the number of selectors is always >= 2.
+            selectors.get(0).push(context, shape, new State(1, next));
+        }
 
-    private BiConsumer<Context, Shape> composeNext(int position, BiConsumer<Context, Shape> next) {
-        return (c, s) -> selectors.get(position).push(c, s, next);
+        private final class State implements BiConsumer<Context, Shape> {
+
+            private final int position;
+            private final BiConsumer<Context, Shape> downstream;
+
+            private State(int position, BiConsumer<Context, Shape> downstream) {
+                this.position = position;
+                this.downstream = downstream;
+            }
+
+            @Override
+            public void accept(Context context, Shape shape) {
+                if (position == terminalSelectorIndex) {
+                    selectors.get(position).push(context, shape, downstream);
+                } else {
+                    selectors.get(position).push(context, shape, new State(position + 1, downstream));
+                }
+            }
+        }
     }
 }
