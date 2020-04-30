@@ -44,8 +44,6 @@ multiple links per trait. [BC] ([#363](https://github.com/awslabs/smithy/pull/36
 * Added the `smithy.api#noReplace` trait to indicate a PUT lifecycle operation cannot replace the
 existing resource. ([#351](https://github.com/awslabs/smithy/pull/351))
 * Added the `smithy.api#unstable` trait to indicate a shape MAY change. ([#290](https://github.com/awslabs/smithy/pull/290))
-* Added the `aws.protocols#httpContentMd5` trait to indicate an operation requrest requires a
-sending a Content-MD5 header. ([#372](https://github.com/awslabs/smithy/pull/372))
 * Simplified `aws.api#unsignedPayload` to be an annotation. [BC] ([#270](https://github.com/awslabs/smithy/pull/270))
 * Annotation traits are now lossless when loaded with additional properties, meaning they will
 contain those properties when serialized. ([#385](https://github.com/awslabs/smithy/pull/385))

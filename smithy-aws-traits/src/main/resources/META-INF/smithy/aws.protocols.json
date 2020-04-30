@@ -172,15 +172,6 @@
             "traits": {
                 "smithy.api#private": {}
             }
-        },
-        "aws.protocols#httpContentMd5": {
-            "type": "structure",
-            "traits": {
-                "smithy.api#trait": {
-                    "selector": "operation"
-                },
-                "smithy.api#documentation": "Defines if an operation requires the Content-MD5 header set in its HTTP request"
-            }
         }
     }
 }
