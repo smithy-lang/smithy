@@ -66,6 +66,10 @@ keys, was added.
 * The `(length)` function property was added. ([#391](https://github.com/awslabs/smithy/pull/391))
 * Attribute selectors now support CSV values, allowing matching on one or more target values.
 * The `:each` selector is now `:is` for clarity. [BC]
+* The `:of` selector is now removed. Use reverse neighbors instead (e.g., `member (< structure)`). [BC]
+* The semantics of the `:not` selector have changed significantly. `:not(list > member > string)` now means
+  "do not match list shapes that target strings", whereas this previously meant,
+  "do not match string shapes targeted by lists". [BC]
 * Shape IDs with members must now be quoted. [BC]
 * Selector parsing and evaluating now tolerates unknown relationship types. ([#377](https://github.com/awslabs/smithy/pull/377))
 
