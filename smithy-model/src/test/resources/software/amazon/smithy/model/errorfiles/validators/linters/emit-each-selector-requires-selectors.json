@@ -1,0 +1,16 @@
+{
+    "smithy": "1.0.0",
+    "metadata": {
+        "validators": [
+            {
+                "id": "invalid1",
+                "name": "EmitEachSelector",
+                "configuration": {}
+            },
+            {
+                "id": "invalid1",
+                "name": "EmitEachSelector"
+            }
+        ]
+    }
+}

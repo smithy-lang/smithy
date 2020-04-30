@@ -19,6 +19,7 @@ import static java.lang.String.format;
 
 import java.util.Objects;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
@@ -41,6 +42,14 @@ final class ValidatorFromDefinitionFactory {
         } catch (SourceException e) {
             return ValidatedResult.fromErrors(ListUtils.of(ValidationEvent.fromSourceException(
                     e, format("Error creating `%s` validator: ", definition.name))));
+        } catch (RuntimeException e) {
+            return ValidatedResult.fromErrors(ListUtils.of(
+                    ValidationEvent.builder()
+                            .eventId(Validator.MODEL_ERROR)
+                            .sourceLocation(definition.sourceLocation)
+                            .severity(Severity.ERROR)
+                            .message(format("Error creating `%s` validator: %s", definition.name, e.getMessage()))
+                            .build()));
         }
     }
 

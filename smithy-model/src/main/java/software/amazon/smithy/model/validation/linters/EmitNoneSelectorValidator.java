@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.validation.linters;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -69,6 +70,7 @@ public final class EmitNoneSelectorValidator extends AbstractValidator {
 
     private EmitNoneSelectorValidator(Config config) {
         this.config = config;
+        Objects.requireNonNull(config.selector, "selector is required");
     }
 
     @Override
