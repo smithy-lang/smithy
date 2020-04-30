@@ -42,6 +42,7 @@ public final class Smithy2OpenApi implements SmithyBuildPlugin {
         context.getPluginClassLoader().ifPresent(converter::classLoader);
         OpenApiConfig config = OpenApiConfig.fromNode(context.getSettings());
         ShapeId shapeId = config.getService();
+        converter.config(config);
         ObjectNode openApiNode = converter.convertToNode(context.getModel());
         context.getFileManifest().writeJson(shapeId.getName() + ".openapi.json", openApiNode);
     }
