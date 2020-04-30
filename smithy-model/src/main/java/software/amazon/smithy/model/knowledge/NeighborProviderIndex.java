@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.knowledge;
 
+import java.lang.ref.WeakReference;
+import java.util.Objects;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 
@@ -22,12 +24,25 @@ import software.amazon.smithy.model.neighbor.NeighborProvider;
  * Provides a cache of precomputed neighbors for models.
  */
 public final class NeighborProviderIndex implements KnowledgeIndex {
+
     private final NeighborProvider provider;
-    private volatile NeighborProvider reversed;
+    private final NeighborProvider providerWithTraits;
+    private final NeighborProvider reversed;
+    private final WeakReference<Model> model;
+
+    // Lazily computed on first access.
+    private volatile NeighborProvider reversedWithTraits;
 
     public NeighborProviderIndex(Model model) {
         provider = NeighborProvider.precomputed(model);
         reversed = NeighborProvider.reverse(model, provider);
+
+        // Lazily caches the result of finding neighbors + traits.
+        providerWithTraits = NeighborProvider.cached(NeighborProvider.withTraitRelationships(model, provider));
+
+        // Store a WeakReference to the model since the reversed provider that includes
+        // traits is lazily computed.
+        this.model = new WeakReference<>(model);
     }
 
     /**
@@ -40,11 +55,43 @@ public final class NeighborProviderIndex implements KnowledgeIndex {
     }
 
     /**
+     * Gets the neighbor provider that includes trait relationships.
+     *
+     * @return Returns the provider.
+     */
+    public NeighborProvider getProviderWithTraitRelationships() {
+        return providerWithTraits;
+    }
+
+    /**
      * Gets a reversed, bottom up neighbor provider.
      *
      * @return Returns the reversed neighbor provider.
      */
     public NeighborProvider getReverseProvider() {
         return reversed;
+    }
+
+    /**
+     * Gets a reversed, bottom up neighbor provider that includes reverse traits.
+     *
+     * @return Returns the reversed neighbor provider with reverse traits.
+     */
+    public NeighborProvider getReverseProviderWithTraitRelationships() {
+        // Single-checked idiom: there might be multiple initializations, but
+        // that's ok since the computation isn't *that* expensive and the
+        // computation of the result is "pure".
+        NeighborProvider result = reversedWithTraits;
+
+        if (result == null) {
+            result = NeighborProvider.reverse(getOrThrowModel(), providerWithTraits);
+            reversedWithTraits = result;
+        }
+
+        return result;
+    }
+
+    private Model getOrThrowModel() {
+        return Objects.requireNonNull(model.get(), "Model was destroyed before using this knowledge index");
     }
 }

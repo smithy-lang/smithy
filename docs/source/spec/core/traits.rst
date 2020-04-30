@@ -456,7 +456,7 @@ The following example defines two custom traits: ``beta`` and
         namespace smithy.example
 
         /// A trait that can be applied to a member.
-        @trait(selector: "member:of(structure)")
+        @trait(selector: "structure > member")
         structure beta {}
 
         /// A trait that has members.
@@ -494,7 +494,7 @@ The following example defines two custom traits: ``beta`` and
                     "traits": {
                         "smithy.api#type": "structure",
                         "smithy.api#trait": {
-                            "selector": "member:of(structure)"
+                            "selector": "structure > member"
                         },
                         "smithy.api#documentation": "A trait that can be applied to a member."
                     }

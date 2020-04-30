@@ -29,13 +29,13 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-public class NeighborSelectorTest {
+public class ForwardNeighborSelectorTest {
     private static Model model;
 
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(NeighborSelectorTest.class.getResource("neighbor-test.smithy"))
+                .addImport(ForwardNeighborSelectorTest.class.getResource("neighbor-test.smithy"))
                 .assemble()
                 .unwrap();
     }

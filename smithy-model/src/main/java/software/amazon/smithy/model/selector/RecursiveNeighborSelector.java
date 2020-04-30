@@ -26,7 +26,7 @@ import software.amazon.smithy.model.shapes.Shape;
 final class RecursiveNeighborSelector implements InternalSelector {
     @Override
     public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
-        Walker walker = new Walker(context.neighborProvider);
+        Walker walker = new Walker(context.neighborIndex.getProvider());
 
         for (Shape nextShape : walker.walkShapes(shape)) {
             // Don't include the shape being visited.

@@ -652,9 +652,10 @@ Summary
     Binds a member of a structure to be serialized as an event header when
     sent through an event stream.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
-        member:of(structure):test( > :is(boolean, byte, short, integer, long, blob, string, timestamp))
+        structure >
+        :test(member > :test(boolean, byte, short, integer, long, blob, string, timestamp))
 
     *Member of a structure that targets a boolean, byte, short, integer, long, blob, string, or timestamp shape*
 Value type
@@ -716,9 +717,9 @@ Summary
     Binds a member of a structure to be serialized as the payload of an
     event sent through an event stream.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
-        member:of(structure):test(> :is(blob, string, structure, union))
+        structure > :test(member > :test(blob, string, structure, union))
 
     *Structure member that targets a blob, string, structure, or union*
 Value type

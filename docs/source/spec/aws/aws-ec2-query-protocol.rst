@@ -66,7 +66,7 @@ Summary
     Allows a serialized query key to differ from a structure member name when
     used in the model.
 Trait selector
-    ``member:of(structure)``
+    ``structure > member``
 
     *Any structure member*
 Value type

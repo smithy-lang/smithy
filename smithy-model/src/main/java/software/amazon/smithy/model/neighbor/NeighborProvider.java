@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
@@ -96,22 +97,48 @@ public interface NeighborProvider {
      * @return Returns the created neighbor provider.
      */
     static NeighborProvider precomputed(Model model, NeighborProvider provider) {
-        Map<ShapeId, List<Relationship>> relationships = new HashMap<>();
-        model.shapes().forEach(shape -> relationships.put(shape.getId(), provider.getNeighbors(shape)));
-        return shape -> relationships.getOrDefault(shape.getId(), ListUtils.of());
+        Map<Shape, List<Relationship>> relationships = new HashMap<>();
+        model.shapes().forEach(shape -> relationships.put(shape, provider.getNeighbors(shape)));
+        return shape -> relationships.getOrDefault(shape, ListUtils.of());
     }
 
-    static NeighborProvider bottomUp(Model model) {
+    /**
+     * Returns a NeighborProvider that returns relationships that point at a
+     * given shape rather than relationships that the given shape points at.
+     *
+     * @param model Model to build reverse relationships from.
+     * @return Returns the reverse neighbor provider.
+     */
+    static NeighborProvider reverse(Model model) {
         return reverse(model, of(model));
     }
 
-    static NeighborProvider reverse(Model model, NeighborProvider topDown) {
+    /**
+     * Returns a NeighborProvider that returns relationships that point at a
+     * given shape rather than relationships that the given shape points at.
+     *
+     * @param model Model to build reverse relationships from.
+     * @param forwardProvider The forward directed neighbor provider to grab relationships from.
+     * @return Returns the reverse neighbor provider.
+     */
+    static NeighborProvider reverse(Model model, NeighborProvider forwardProvider) {
         Map<ShapeId, List<Relationship>> targetedFrom = model.shapes()
-                .map(topDown::getNeighbors)
+                .map(forwardProvider::getNeighbors)
                 .flatMap(List::stream)
                 .distinct()
                 .collect(Collectors.groupingBy(Relationship::getNeighborShapeId, ListUtils.toUnmodifiableList()));
 
         return shape -> targetedFrom.getOrDefault(shape.getId(), ListUtils.of());
+    }
+
+    /**
+     * Caches the results of calling a delegate provider.
+     *
+     * @param provider Provider to delegate to and cache.
+     * @return Returns the thread-safe caching neighbor provider.
+     */
+    static NeighborProvider cached(NeighborProvider provider) {
+        Map<Shape, List<Relationship>> relationships = new ConcurrentHashMap<>();
+        return shape -> relationships.computeIfAbsent(shape, provider::getNeighbors);
     }
 }

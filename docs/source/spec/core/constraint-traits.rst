@@ -62,7 +62,7 @@ An enum definition is a structure that supports the following members:
       - string
       - Defines documentation about the enum value in the CommonMark_ format.
     * - tags
-      - ``list<string>``
+      - ``[string]``
       - Attaches a list of tags that allow the enum value to be categorized and
         grouped.
     * - deprecated
@@ -514,7 +514,7 @@ Summary
     Marks a structure member as required, meaning a value for the member MUST
     be present.
 Trait selector
-    ``member:of(structure)``
+    ``structure > member``
 
     *Member of a structure*
 Value type

@@ -138,7 +138,7 @@ Summary
     Allows a serialized object property name in a JSON document to differ from
     a structure member name used in the model.
 Trait selector
-    ``member:of(structure)``
+    ``structure > member``
 
     *Any structure member*
 Value type

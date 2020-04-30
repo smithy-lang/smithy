@@ -207,7 +207,7 @@ Summary
     Indicates that the targeted structure member provides an identifier for a
     resource.
 Trait selector
-    ``:test(member:of(structure)[trait|required] > string)``
+    ``structure > :test(member[trait|required] > string)``
 
     *Any required member of a structure that targets a string*
 Value type

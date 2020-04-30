@@ -204,7 +204,7 @@ Each ``example`` trait value is a structure with the following members:
 The values provided for the ``input`` and ``output`` members MUST be
 compatible with the shapes and constraints of the corresponding structure.
 These values use the same semantics and format as
-:ref:`custom trait values <trait-definition-values>`.
+:ref:`custom trait values <trait-node-values>`.
 
 .. tabs::
 

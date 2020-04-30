@@ -204,24 +204,24 @@ structure idempotent {}
 
 /// Defines the input member of an operation that is used by the server to
 /// identify and discard replayed requests.
-@trait(selector: ":test(member:of(structure) > string)",
+@trait(selector: "structure > :test(member > string)",
        structurallyExclusive: "member")
 structure idempotencyToken {}
 
 /// The jsonName trait allows a serialized object property name to differ
 /// from a structure member name used in the model.
-@trait(selector: "member:of(structure)")
+@trait(selector: "structure > member")
 @tags(["diff.error.const"])
 string jsonName
 
 /// Serializes an object property as an XML attribute rather than a nested XML element.
-@trait(selector: ":test(member:of(structure) > :test(boolean, number, string, timestamp))",
-       conflicts: ["xmlNamespace"])
+@trait(selector: "structure > :test(member > :test(boolean, number, string, timestamp))",
+        conflicts: ["xmlNamespace"])
 @tags(["diff.error.const"])
 structure xmlAttribute {}
 
 /// Unwraps the values of a list, set, or map into the containing structure/union.
-@trait(selector: ":test(member:of(structure, union) > :is(collection, map))")
+@trait(selector: ":is(structure, union) > :test(member > :test(collection, map))")
 @tags(["diff.error.const"])
 structure xmlFlattened {}
 
@@ -298,7 +298,7 @@ map NonEmptyStringMap {
 }
 
 /// Indicates that the targeted structure member provides an identifier for a resource.
-@trait(selector: ":test(member:of(structure)[trait|required] > string)")
+@trait(selector: "structure > :test(member[trait|required] > string)")
 @tags(["diff.error.remove"])
 @length(min: 1)
 string resourceIdentifier
@@ -308,7 +308,7 @@ string resourceIdentifier
 structure private {}
 
 /// Indicates that the data stored in the shape or member is sensitive and MUST be handled with care.
-@trait(selector: ":not(:is(service, operation, resource))")
+@trait(selector: ":not(:test(service, operation, resource))")
 structure sensitive {}
 
 /// Defines the version or date in which a shape or member was added to the model.
@@ -403,7 +403,7 @@ structure range {
 string pattern
 
 /// Marks a structure member as required, meaning a value for the member MUST be present.
-@trait(selector: "member:of(structure)")
+@trait(selector: "structure > member")
 @tags(["diff.error.add"])
 structure required {}
 
@@ -470,36 +470,40 @@ structure http {
 }
 
 /// Binds an operation input structure member to an HTTP label.
-@trait(selector: ":test(member:of(structure) > :test(string, number, boolean, timestamp))",
-       conflicts: [httpHeader, httpQuery, httpPrefixHeaders, httpPayload])
+@trait(selector: "structure > :test(member > :test(string, number, boolean, timestamp))",
+        conflicts: [httpHeader, httpQuery, httpPrefixHeaders, httpPayload])
 @tags(["diff.error.const"])
 structure httpLabel {}
 
 /// Binds an operation input structure member to a query string parameter.
-@trait(selector: ":test(member:of(structure) > :test(simpleType, collection > member > simpleType))",
-       conflicts: [httpLabel, httpHeader, httpPrefixHeaders, httpPayload])
+@trait(selector: "structure > :test(member > :test(simpleType, collection > member > simpleType))",
+        conflicts: [httpLabel, httpHeader, httpPrefixHeaders, httpPayload])
 @length(min: 1)
 @tags(["diff.error.const"])
 string httpQuery
 
 /// Binds a structure member to an HTTP header.
-@trait(selector: ":test(member:of(structure) > :test(boolean, number, string, timestamp, collection > member > :test(boolean, number, string, timestamp)))",
-       conflicts: [httpLabel, httpQuery, httpPrefixHeaders, httpPayload])
+@trait(selector: """
+        structure > :test(member > :test(boolean, number, string, timestamp,
+                collection > member > :test(boolean, number, string, timestamp)))""",
+        conflicts: [httpLabel, httpQuery, httpPrefixHeaders, httpPayload])
 @length(min: 1)
 @tags(["diff.error.const"])
 string httpHeader
 
 /// Binds a map of key-value pairs to prefixed HTTP headers.
-@trait(selector: ":test(member:of(structure) > map > member[id|member=value] > :test(simpleType, collection > member > simpleType))",
-       structurallyExclusive: "member",
-       conflicts: [httpLabel, httpQuery, httpHeader, httpPayload])
+@trait(selector: """
+        structure > member
+        :test(> map > member[id|member=value] > :test(simpleType, collection > member > simpleType))""",
+        structurallyExclusive: "member",
+        conflicts: [httpLabel, httpQuery, httpHeader, httpPayload])
 @tags(["diff.error.const"])
 string httpPrefixHeaders
 
 /// Binds a single structure member to the body of an HTTP request.
-@trait(selector: ":test(member:of(structure) > :test(string, blob, structure, union))",
-       conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders],
-       structurallyExclusive: "member")
+@trait(selector: "structure > :test(member > :test(string, blob, structure, union))",
+        conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders],
+        structurallyExclusive: "member")
 @tags(["diff.error.const"])
 structure httpPayload {}
 
@@ -546,15 +550,17 @@ list NonEmptyStringList {
 }
 
 /// Marks a member as the payload of an event.
-@trait(selector: "member:of(structure):test(> :is(blob, string, structure, union))",
-       conflicts: [eventHeader],
-       structurallyExclusive: "member")
+@trait(selector: "structure > :test(member > :test(blob, string, structure, union))",
+        conflicts: [eventHeader],
+        structurallyExclusive: "member")
 @tags(["diff.error.const"])
 structure eventPayload {}
 
 /// Marks a member as a header of an event.
-@trait(selector: "member:of(structure):test( > :is(boolean, byte, short, integer, long, blob, string, timestamp))",
-       conflicts: [eventPayload])
+@trait(selector: """
+        structure >
+        :test(member > :test(boolean, byte, short, integer, long, blob, string, timestamp))""",
+        conflicts: [eventPayload])
 @tags(["diff.error.const"])
 structure eventHeader {}
 
@@ -624,7 +630,7 @@ structure endpoint {
 
 /// Binds a top-level operation input structure member to a label
 /// in the hostPrefix of an endpoint trait.
-@trait(selector: ":test(member:of(structure)[trait|required] > string)")
+@trait(selector: "structure > :test(member[trait|required] > string)")
 @tags(["diff.error.const"])
 structure hostLabel {}
 

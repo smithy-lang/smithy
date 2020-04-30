@@ -52,7 +52,7 @@ final class MarkAndSweep {
     }
 
     Set<Shape> markAndSweep(Model model) {
-        NeighborProvider reverseNeighbors = NeighborProvider.bottomUp(model);
+        NeighborProvider reverseNeighbors = NeighborProvider.reverse(model);
         MarkerContext context = new MarkerContext(reverseNeighbors, model, sweepFilter);
 
         int currentSize;

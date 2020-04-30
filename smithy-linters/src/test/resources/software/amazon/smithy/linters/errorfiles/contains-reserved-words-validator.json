@@ -220,7 +220,7 @@
                             ]
                         },
                         {
-                            "selector": "member:of(structure)",
+                            "selector": "structure > member",
                             "words": [
                                 "*hermembername",
                                 "string"
