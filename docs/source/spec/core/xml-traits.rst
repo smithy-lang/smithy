@@ -598,13 +598,9 @@ Summary
     Serializes an object property as an XML attribute rather than a nested
     XML element.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
-        :test(
-            member:of(structure) > :test(
-                boolean, number, string, timestamp
-            )
-        )
+        structure > :test(member > :test(boolean, number, string, timestamp))
 
     *Structure members that target boolean, number, string, or timestamp*
 Value type
@@ -705,7 +701,9 @@ The XML serialization is:
 Summary
     Unwraps the values of a list or map into the containing structure.
 Trait selector
-    ``:test(member:of(structure, union) > :is(collection, map))``
+    .. code-block:: none
+
+        :is(structure, union) > :test(member > :test(collection, map))
 
     *Member of a structure or union that targets a list, set, or map*
 Value type

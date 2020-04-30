@@ -19,7 +19,7 @@ public class RecursiveNeighborSelectorTest {
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(NeighborSelectorTest.class.getResource("neighbor-test.smithy"))
+                .addImport(ForwardNeighborSelectorTest.class.getResource("neighbor-test.smithy"))
                 .assemble()
                 .unwrap();
     }

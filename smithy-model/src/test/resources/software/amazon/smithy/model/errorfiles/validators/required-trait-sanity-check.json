@@ -1,0 +1,31 @@
+{
+    "smithy": "1.0.0",
+    "shapes": {
+        "ns.foo#Operation": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#required": {}
+            }
+        },
+        "ns.foo#Structure": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#required": {}
+            }
+        },
+        "ns.foo#Blob": {
+            "type": "blob",
+            "traits": {
+                "smithy.api#required": {}
+            }
+        }
+    }
+}

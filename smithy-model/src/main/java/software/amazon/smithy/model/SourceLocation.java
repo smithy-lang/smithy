@@ -88,9 +88,13 @@ public final class SourceLocation implements FromSourceLocation {
 
     @Override
     public int hashCode() {
-        if (hash == 0) {
-            hash = 1 + filename.hashCode() + line * 17 + column;
+        int h = hash;
+
+        if (h == 0) {
+            h = 1 + filename.hashCode() + line * 17 + column;
+            hash = h;
         }
-        return hash;
+
+        return h;
     }
 }

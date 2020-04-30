@@ -983,12 +983,13 @@ selectors yield zero or more shapes by traversing the relationships of
 a shape.
 
 
-Undirected neighbor
--------------------
+Forward undirected neighbor
+----------------------------
 
-An :token:`undirected neighbor <selector_undirected_neighbor>` (``>``) yields
-every shape that is connected to the current shape. For example, the following
-selector matches the key and value members of every map:
+A :token:`forward undirected neighbor <selector_forward_undirected_neighbor>`
+(``>``) yields every shape that is connected to the current shape. For
+example, the following selector matches the key and value members of
+every map:
 
 .. code-block:: none
 
@@ -1002,19 +1003,19 @@ selector yields strings that are targeted by list members:
     list > member > string
 
 
-Directed neighbors
-------------------
+Forward directed neighbors
+--------------------------
 
-The undirected neighbor selector (``>``) is an *undirected* edge traversal.
-Sometimes, a directed edge traversal is necessary. For example, the following
-selector matches the "bound", "input", "output", and "errors" relationships
-of each operation:
+The forward undirected neighbor selector (``>``) is an *undirected* edge
+traversal. Sometimes, a directed edge traversal is necessary. For example,
+the following selector matches the "bound", "input", "output", and "error"
+relationships of each operation:
 
 .. code-block:: none
 
     operation > *
 
-A directed edge traversal is applied using :token:`selector_directed_neighbor`
+A forward directed edge traversal is applied using :token:`selector_forward_directed_neighbor`
 (``-[X, Y, Z]->``). The following selector matches all structure shapes
 referenced as operation ``input`` or ``output``.
 
@@ -1028,33 +1029,37 @@ shapes that define an identifier:
 
 .. code-block:: none
 
-    resource:test(-[identifier]->)
+    resource :test(-[identifier]->)
 
 Relationships from a shape to the traits applied to the shape can be traversed
-using a directed relationship named ``trait``. It is atypical to traverse
-``trait`` relationships, therefore they are only yielded by selectors when
-explicitly requested using a ``trait`` directed relationship. The following
-selector finds all service shapes that have a protocol trait applied to it
-(that is, a trait that is marked with the :ref:`protocolDefinition-trait`):
+using a forward directed relationship named ``trait``. It is atypical to
+traverse ``trait`` relationships, therefore they are only yielded by
+selectors when explicitly requested using a ``trait`` directed relationship.
+The following selector finds all service shapes that have a protocol trait
+applied to it (that is, a trait that is marked with the
+:ref:`protocolDefinition-trait`):
 
 .. code-block:: none
 
-    service:test(-[trait]-> [trait|protocolDefinition])
+    service :test(-[trait]-> [trait|protocolDefinition])
 
 
-Recursive neighbors
--------------------
+Forward recursive neighbors
+---------------------------
 
-The recursive neighbor selector (``~>``) yields all shapes that are
-recursively connected in the closure of another shape.
+The forward recursive neighbor selector (``~>``) yields all shapes that are
+recursively connected in the closure of another shape. The shapes yielded
+by this selector are equivalent to yielding every shape connected to the
+current shape using a forward undirected neighbor, yielding every shape
+connected to those shapes, and so on.
 
-The following selector matches all operations that are connected to a service:
+The following selector matches operations that are connected to a service:
 
 .. code-block:: none
 
     service ~> operation
 
-The following selector finds all operations that do not have the :ref:`http-trait`
+The following selector finds operations that do not have the :ref:`http-trait`
 that are in the closure of a service marked with the ``aws.protocols#restJson``
 trait:
 
@@ -1062,6 +1067,61 @@ trait:
 
     service[trait|aws.protocols#restJson1]
         ~> operation:not([trait|http])
+
+
+Reverse undirected neighbor
+---------------------------
+
+A *reverse undirected neighbor* yields all of the shapes that have a
+relationship that points to the current shape.
+
+The following selector matches strings that are targeted by members of lists:
+
+.. code-block:: none
+
+    string :test(< member < list)
+
+The following selector yields all shapes that are not traits and are not
+referenced by other shapes:
+
+.. code-block:: none
+
+    :not([trait|trait]) :not(< *)
+
+The following selectors are equivalent; however, a forward neighbor traversal
+is preferred over a reverse neighbor traversal when possible.
+
+.. code-block:: none
+
+    * Reverse: string < member < list
+    * Forward: list :test(> member > string)
+
+
+Reverse directed neighbor
+-------------------------
+
+A *reverse directed neighbor* yields all of the shapes that have a
+relationship of a specific type that points to the current shape.
+
+For example, shapes marked with the :ref:`streaming-trait` can only
+be targeted by top-level members of operation input or output structures.
+The following selector finds all shapes that target a streaming shape
+and violate this constraint:
+
+.. code-block:: none
+
+    [trait|streaming]
+    :test(<)
+    :not(< member < structure <-[input, output]- operation)
+
+Like forward directed neighbors, ``trait`` relationships are only included
+when explicitly provided in the list of relationships to traverse. The
+following selector yields all shapes that are traits that are not applied
+to any shapes:
+
+.. code-block:: none
+
+    [trait|trait] :not(<-[trait]-)
 
 
 .. _selector-relationships:
@@ -1299,36 +1359,6 @@ trait applied to it:
     service :not(-[trait]-> [trait|protocolDefinition])
 
 
-``:of``
--------
-
-The ``:of`` function is used to filter members based on their containers
-(that is, the shape that defines the member). The ``:of`` function accepts
-one or more selector arguments. The function iterates over each selector
-and provides it the containing shape of the current shape. The first
-selector to yield a shape causes the function to stop testing selectors
-and the function immediately yields the current shape.
-
-The following selector yields members that are part of a structure:
-
-.. code-block:: none
-
-    member:of(structure)
-
-The following selector yields members that are part of a structure or list:
-
-.. code-block:: none
-
-    member:of(structure, list)
-
-The following selector yields members that are part of a structure that
-contains one or more required members:
-
-.. code-block:: none
-
-    member:of(structure > member[trait|required])
-
-
 .. _selector-variables:
 
 Variables
@@ -1454,51 +1484,55 @@ Selectors are defined by the following ABNF_ grammar.
    changing the semantics of a selector.
 
 .. productionlist:: selectors
-    selector                        :`selector_expression` *(`selector_expression`)
-    selector_expression             :`selector_shape_types`
-                                    :/ `selector_attr`
-                                    :/ `selector_scoped_attr`
-                                    :/ `selector_function_expression`
-                                    :/ `selector_neighbor`
-                                    :/ `selector_variable_set`
-                                    :/ `selector_variable_get`
-    selector_shape_types            :"*" / `identifier`
-    selector_neighbor               :`selector_undirected_neighbor`
-                                    :/ `selector_directed_neighbor`
-                                    :/ `selector_recursive_neighbor`
-    selector_undirected_neighbor    :">"
-    selector_directed_neighbor      :"-[" `selector_rel_type` *("," `selector_rel_type`) "]->"
-    selector_recursive_neighbor     :"~>"
-    selector_rel_type               :`identifier`
-    selector_attr                   :"[" `selector_key` *(`selector_comparator` `selector_values` ["i"]) "]"
-    selector_key                    :`identifier` ["|" `selector_path`]
-    selector_path                   :`selector_path_segment` *("|" `selector_path_segment`)
-    selector_path_segment           :`selector_value` / `selector_function_property`
-    selector_value                  :`selector_text` / `number` / `root_shape_id`
-    selector_function_property      :"(" `identifier` ")"
-    selector_values                 :`selector_value` *("," `selector_value`)
-    selector_comparator             :`selector_string_comparator`
-                                    :/ `selector_numeric_comparator`
-                                    :/ `selector_projection_comparator`
-    selector_string_comparator      :"^=" / "$=" / "*=" / "!=" / "=" / "?="
-    selector_numeric_comparator     :">=" / ">" / "<=" / "<"
-    selector_projection_comparator  :"{=}" / "{!=}" / "{<}" / "{<<}"
-    selector_absolute_root_shape_id :`namespace` "#" `identifier`
-    selector_scoped_attr            :"[@" [`selector_key`] ":" `selector_scoped_assertions` "]"
-    selector_scoped_assertions      :`selector_scoped_assertion` *("&&" `selector_scoped_assertion`)
-    selector_scoped_assertion       :`selector_scoped_value` `selector_comparator` `selector_scoped_values` ["i"]
-    selector_scoped_value           :`selector_value` / `selector_context_value`
-    selector_context_value          :"@{" `selector_path` "}"
-    selector_scoped_values          :`selector_scoped_value` *("," `selector_scoped_value`)
-    selector_function_expression    :":" `selector_function` "(" `selector` *("," `selector`) ")"
-    selector_function               :`identifier`
-    selector_text                   :`selector_single_quoted_text` / `selector_double_quoted_text`
-    selector_single_quoted_text     :"'" 1*`selector_single_quoted_char` "'"
-    selector_double_quoted_text     :DQUOTE 1*`selector_double_quoted_char` DQUOTE
-    selector_single_quoted_char     :%x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
-    selector_double_quoted_char     :%x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (")
-    selector_variable_set           :"$" `identifier` "(" selector ")"
-    selector_variable_get           :"${" `identifier` "}"
+    selector                             :`selector_expression` *(`selector_expression`)
+    selector_expression                  :`selector_shape_types`
+                                         :/ `selector_attr`
+                                         :/ `selector_scoped_attr`
+                                         :/ `selector_function_args`
+                                         :/ `selector_forward_undirected_neighbor`
+                                         :/ `selector_reverse_undirected_neighbor`
+                                         :/ `selector_forward_directed_neighbor`
+                                         :/ `selector_reverse_directed_neighbor`
+                                         :/ `selector_forward_recursive_neighbor`
+                                         :/ `selector_variable_set`
+                                         :/ `selector_variable_get`
+    selector_shape_types                 :"*" / `identifier`
+    selector_forward_undirected_neighbor :">"
+    selector_reverse_undirected_neighbor :"<"
+    selector_forward_directed_neighbor   :"-[" `selector_directed_relationships` "]->"
+    selector_reverse_directed_neighbor   :"<-[" selector_directed_relationships "]-"
+    selector_directed_relationships      :`identifier` *("," `identifier`)
+    selector_forward_recursive_neighbor  :"~>"
+    selector_attr                        :"[" `selector_key` [selector_attr_comparison] "]"
+    selector_attr_comparison             :`selector_comparator` `selector_attr_values` ["i"]
+    selector_key                         :`identifier` ["|" `selector_path`]
+    selector_path                        :`selector_path_segment` *("|" `selector_path_segment`)
+    selector_path_segment                :`selector_value` / `selector_function_property`
+    selector_value                       :`selector_text` / `number` / `root_shape_id`
+    selector_function_property           :"(" `identifier` ")"
+    selector_attr_values                 :`selector_value` *("," `selector_value`)
+    selector_comparator                  :`selector_string_comparator`
+                                         :/ `selector_numeric_comparator`
+                                         :/ `selector_projection_comparator`
+    selector_string_comparator           :"^=" / "$=" / "*=" / "!=" / "=" / "?="
+    selector_numeric_comparator          :">=" / ">" / "<=" / "<"
+    selector_projection_comparator       :"{=}" / "{!=}" / "{<}" / "{<<}"
+    selector_absolute_root_shape_id      :`namespace` "#" `identifier`
+    selector_scoped_attr                 :"[@" [`selector_key`] ":" `selector_scoped_assertions` "]"
+    selector_scoped_assertions           :`selector_scoped_assertion` *("&&" `selector_scoped_assertion`)
+    selector_scoped_assertion            :`selector_scoped_value` `selector_comparator` `selector_scoped_values` ["i"]
+    selector_scoped_value                :`selector_value` / `selector_context_value`
+    selector_context_value               :"@{" `selector_path` "}"
+    selector_scoped_values               :`selector_scoped_value` *("," `selector_scoped_value`)
+    selector_function                    :":" `identifier` "(" `selector_function_args` ")"
+    selector_function_args               :`selector` *("," `selector`)
+    selector_text                        :`selector_single_quoted_text` / `selector_double_quoted_text`
+    selector_single_quoted_text          :"'" 1*`selector_single_quoted_char` "'"
+    selector_double_quoted_text          :DQUOTE 1*`selector_double_quoted_char` DQUOTE
+    selector_single_quoted_char          :%x20-26 / %x28-5B / %x5D-10FFFF ; Excludes (')
+    selector_double_quoted_char          :%x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (")
+    selector_variable_set                :"$" `identifier` "(" selector ")"
+    selector_variable_get                :"${" `identifier` "}"
 
 .. _ABNF: https://tools.ietf.org/html/rfc5234
 .. _set: https://en.wikipedia.org/wiki/Set_(abstract_data_type)

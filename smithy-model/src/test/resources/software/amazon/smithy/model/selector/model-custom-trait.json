@@ -5,7 +5,7 @@
             "type": "structure",
             "traits": {
                 "smithy.api#trait": {
-                    "selector": "member:of(structure)"
+                    "selector": "member:test(< structure)"
                 }
             }
         },

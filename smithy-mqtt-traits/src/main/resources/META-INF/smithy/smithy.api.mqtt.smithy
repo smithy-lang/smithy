@@ -20,5 +20,5 @@ string publish
 @pattern("^[^#+]+$")
 string subscribe
 
-@trait(selector: "member[trait|required]:test(> :test(string, byte, short, integer, long, boolean, timestamp))")
+@trait(selector: "member[trait|required] :test(> :test(string, byte, short, integer, long, boolean, timestamp))")
 structure topicLabel {}

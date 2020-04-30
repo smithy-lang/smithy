@@ -91,7 +91,7 @@ final class Parser {
         switch (charPeek()) {
             case ':': // function
                 position++;
-                return parseFunction();
+                return parseSelectorFunction();
             case '[': // attribute
                 position++;
                 if (charPeek() == '@') {
@@ -100,17 +100,26 @@ final class Parser {
                 } else {
                     return parseAttribute();
                 }
-            case '>': // undirected neighbor
+            case '>': // forward undirected neighbor
                 position++;
-                return new NeighborSelector(ListUtils.of());
+                return new ForwardNeighborSelector(ListUtils.of());
+            case '<': // reverse [un]directed neighbor
+                position++;
+                if (charPeek() == '-') { // reverse directed neighbor (<-[X, Y, Z]-)
+                    position++;
+                    expect('[');
+                    return parseSelectorDirectedReverseNeighbor();
+                } else { // reverse undirected neighbor (<)
+                    return new ReverseNeighborSelector(ListUtils.of());
+                }
             case '~': // ~>
                 position++;
                 expect('>');
                 return new RecursiveNeighborSelector();
-            case '-': // directed neighbor
+            case '-': // forward directed neighbor
                 position++;
                 expect('[');
-                return parseMultiEdgeDirectedNeighbor();
+                return parseSelectorForwardDirectedNeighbor();
             case '*': // Any shape
                 position++;
                 return InternalSelector.IDENTITY;
@@ -199,8 +208,22 @@ final class Parser {
         return new VariableStoreSelector(name, selector);
     }
 
-    private InternalSelector parseMultiEdgeDirectedNeighbor() {
-        // Parses a multi edge neighbor selector: "-[" relationship-type *("," relationship-type) "]"
+    // Parses a multi edge neighbor selector: "-[" relationship-type *("," relationship-type) "]"
+    private InternalSelector parseSelectorForwardDirectedNeighbor() {
+        List<String> relationships = parseSelectorDirectedRelationships();
+        // Get the remainder of the "]->" token.
+        expect('-');
+        expect('>');
+        return new ForwardNeighborSelector(relationships);
+    }
+
+    private InternalSelector parseSelectorDirectedReverseNeighbor() {
+        List<String> relationships = parseSelectorDirectedRelationships();
+        expect('-');
+        return new ReverseNeighborSelector(relationships);
+    }
+
+    private List<String> parseSelectorDirectedRelationships() {
         List<String> relationships = new ArrayList<>();
         String next;
         char peek;
@@ -222,17 +245,13 @@ final class Parser {
             peek = expect(']', ',');
         } while (peek != ']');
 
-        // Get the remainder of the "]->" token.
-        expect('-');
-        expect('>');
-
-        return new NeighborSelector(relationships);
+        return relationships;
     }
 
-    private InternalSelector parseFunction() {
+    private InternalSelector parseSelectorFunction() {
         int functionPosition = position;
         String name = parseIdentifier();
-        List<InternalSelector> selectors = parseVariadic();
+        List<InternalSelector> selectors = parseSelectorFunctionArgs();
         switch (name) {
             case "not":
                 if (selectors.size() != 1) {
@@ -247,15 +266,13 @@ final class Parser {
             case "each":
                 LOGGER.warning("The `:each` selector function has been renamed to `:is`: " + expression);
                 return IsSelector.of(selectors);
-            case "of":
-                return new OfSelector(selectors);
             default:
                 LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s", name, expression));
                 return (context, shape, next) -> { };
         }
     }
 
-    private List<InternalSelector> parseVariadic() {
+    private List<InternalSelector> parseSelectorFunctionArgs() {
         ws();
         List<InternalSelector> selectors = new ArrayList<>();
         expect('(');

@@ -20,7 +20,7 @@ Summary
     Defines the input member of an operation that is used by the server to
     identify and discard replayed requests.
 Trait selector
-    ``:test(member:of(structure) > string)``
+    ``structure > :test(member > string)``
 
     *Any structure member that targets a string*
 Value type

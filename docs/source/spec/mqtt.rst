@@ -178,7 +178,9 @@ MQTT topic templates MUST adhere to the following constraints:
 Trait summary
     Binds an operation to send a PUBLISH control packet via the MQTT protocol.
 Trait selector
-    ``operation:not(-[output]->)``
+    .. code-block:: none
+
+        operation:not(-[output]->)
 
     *An operation that does not define output*
 Trait value
@@ -282,7 +284,9 @@ Trait summary
     Binds an operation to send one or more SUBSCRIBE control packets
     via the MQTT protocol.
 Trait selector
-    ``operation:test(-[output]-> structure > member > union[trait|streaming])``
+    .. code-block:: none
+
+        operation:test(-[output]-> structure > member > union[trait|streaming])
 
     *An operation with an output event stream*
 Trait value
@@ -426,7 +430,7 @@ Subscribe validation
 Trait summary
     Binds a structure member to an :ref:`MQTT topic label <mqtt-topic-label>`.
 Trait selector
-    ``member[trait|required]:test( > :test(string, byte, short, integer, long, boolean, timestamp))``
+    ``member[trait|required] :test(> :test(string, byte, short, integer, long, boolean, timestamp))``
 
     *Required structure member that targets a string, byte, short, integer, long, boolean, or timestamp*
 Trait value
@@ -519,7 +523,13 @@ MQTT protocol bindings.
 
 .. code-block:: smithy
 
+    $version: "1.0.0"
+
     namespace smithy.mqtt
+
+    @trait(selector: "service")
+    @protocolDefinition
+    structure mqttJson {}
 
     @trait(selector: "operation:not(-[output]->)",
            conflicts: ["smithy.mqtt#subscribe"])
@@ -535,8 +545,9 @@ MQTT protocol bindings.
     @pattern("^[^#+]+$")
     string subscribe
 
-    @trait(selector: "member[trait|required]:test(> :test(string, byte, short, integer, long, boolean, timestamp))")
+    @trait(selector: "member[trait|required] :test(> :test(string, byte, short, integer, long, boolean, timestamp))")
     structure topicLabel {}
+
 
 
 .. _MQTT PUBLISH: http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718037

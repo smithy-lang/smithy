@@ -98,4 +98,10 @@
         <Class name="software.amazon.smithy.jsonschema.SchemaDocument"/>
         <Bug pattern="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
     </Match>
+
+    <!-- Objects.requireNonNull does a null existence check -->
+    <Match>
+        <Class name="software.amazon.smithy.model.knowledge.NeighborProviderIndex"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
 </FindBugsFilter>

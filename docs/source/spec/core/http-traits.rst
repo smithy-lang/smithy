@@ -444,7 +444,7 @@ following rules are in place:
 Summary
     Defines an HTTP response code for an operation error.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
         structure[trait|error]
 
@@ -477,14 +477,10 @@ trait can be used to set a custom HTTP response status code.
 Summary
     Binds a structure member to an HTTP header.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
-        :test(
-            member:of(structure) > :test(
-                boolean, number, string, timestamp,
-                collection > member > :test(boolean, number, string, timestamp)
-            )
-        )
+        structure > :test(member > :test(boolean, number, string, timestamp,
+                collection > member > :test(boolean, number, string, timestamp)))
 
     *Structure members that target boolean, number, string, or timestamp; or a structure member that targets a list/set of these types*
 Value type
@@ -578,13 +574,9 @@ Various HTTP headers are highly discouraged for the ``httpHeader`` and
 Summary
     Binds an operation input structure member to an HTTP label.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
-        :test(
-            member:of(structure) > :test(
-                string, number, boolean, timestamp
-            )
-        )
+        structure > :test(member > :test(string, number, boolean, timestamp))
 
     *Structure members that target any simple type other than blobs*
 Value type
@@ -647,13 +639,9 @@ Serialization rules:
 Summary
     Binds a single structure member to the body of an HTTP request.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
-        :test(
-            member:of(structure) > :test(
-                string, blob, structure, union
-            )
-        )
+        structure > :test(member > :test(string, blob, structure, union))
 
     *Structure members that target a string, blob, structure, or union*
 Value type
@@ -696,16 +684,12 @@ Serialization rules:
 Summary
     Binds a map of key-value pairs to prefixed HTTP headers.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
-        :test(
-            member:of(structure) > map > member[id|member=value] > :test(
-                simpleType,
-                collection > member > simpleType
-            )
-        )
+        structure > member
+        :test(> map > member[id|member=value] > :test(simpleType, collection > member > simpleType))
 
-    *Structure member that targets a map of simple types or a map of [simple types]*
+    *Structure member that targets a map of simple types or a map of lists/sets of simple types*
 Value type
     ``string`` value that defines the prefix to prepend to each header field
     name stored in the targeted map member. For example, given a prefix value
@@ -775,14 +759,9 @@ An example HTTP request would be serialized as:
 Summary
     Binds an operation input structure member to a query string parameter.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
-        :test(
-            member:of(structure) > :test(
-                simpleType,
-                collection > member > simpleType
-            )
-        )
+        structure > :test(member > :test(simpleType, collection > member > simpleType))
 
     *Structure members that target simple types or lists/sets of simple types*
 Value type

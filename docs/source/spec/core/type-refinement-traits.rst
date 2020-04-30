@@ -27,7 +27,7 @@ Summary
     considered boxed if they are marked with the ``box`` trait. All other
     shapes are always considered boxed.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
         :test(boolean, byte, short, integer, long, float, double,
               member > :test(boolean, byte, short, integer, long, float, double))

@@ -80,7 +80,7 @@
                 "id": "MissingDocumentation",
                 "message": "This shape should have documentation",
                 "configuration": {
-                    "selector": "                        :not([trait|documentation])\n                        :not(simpleType)\n                        :not(member:of(:is(list, map)))\n                        :not(:test(member > [trait|documentation]))"
+                    "selector": "                        :not([trait|documentation])\n                        :not(simpleType)\n                        :not(member:test(< list, < map))\n                        :not(:test(member > [trait|documentation]))"
                 }
             }
         ]

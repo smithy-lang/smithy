@@ -63,13 +63,11 @@ public final class PathFinder {
     private static final Logger LOGGER = Logger.getLogger(PathFinder.class.getName());
 
     private final Model model;
-    private final NeighborProvider neighborProvider;
     private final NeighborProvider reverseProvider;
 
-    private PathFinder(Model model, NeighborProvider neighborProvider) {
+    private PathFinder(Model model) {
         this.model = model;
-        this.neighborProvider = neighborProvider;
-        this.reverseProvider = NeighborProvider.reverse(model, neighborProvider);
+        this.reverseProvider = model.getKnowledge(NeighborProviderIndex.class).getReverseProvider();
     }
 
     /**
@@ -79,7 +77,7 @@ public final class PathFinder {
      * @return Returns the crated {@code PathFinder}.
      */
     public static PathFinder create(Model model) {
-        return new PathFinder(model, model.getKnowledge(NeighborProviderIndex.class).getProvider());
+        return new PathFinder(model);
     }
 
     /**
@@ -110,10 +108,7 @@ public final class PathFinder {
         }
 
         // Find all shapes that match the selector then work backwards from there.
-        Set<Shape> candidates = targetSelector.runner()
-                .model(model)
-                .neighborProvider(neighborProvider)
-                .selectShapes();
+        Set<Shape> candidates = targetSelector.select(model);
 
         if (candidates.isEmpty()) {
             LOGGER.info(() -> "No shapes matched the PathFinder selector of `" + targetSelector + "`");

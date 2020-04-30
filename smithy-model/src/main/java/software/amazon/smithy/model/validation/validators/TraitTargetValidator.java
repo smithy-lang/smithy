@@ -22,9 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -43,29 +42,32 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * that is not compatible with the trait selector.
  */
 public final class TraitTargetValidator extends AbstractValidator {
+
+    private static final Pattern SANITIZE = Pattern.compile("\n\\s*");
+
     @Override
     public List<ValidationEvent> validate(Model model) {
         Collection<SelectorTest> tests = createTests(model);
         List<ValidationEvent> events = new ArrayList<>();
-        NeighborProvider neighborProvider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
 
         for (SelectorTest test : tests) {
             // Find the shapes that this trait can be applied to.
-            Set<Shape> matches = test.selector.runner()
-                    .model(model)
-                    .neighborProvider(neighborProvider)
-                    .selectShapes();
+            Set<Shape> matches = test.selector.select(model);
 
             // Remove the allowed locations from the real locations, leaving only
             // the shapes in the set that are invalid.
             test.appliedTo.removeAll(matches);
+
+            // Strip out newlines with successive spaces.
+            String sanitized = SANITIZE.matcher(test.selector.toString()).replaceAll(" ");
 
             for (Shape shape : test.appliedTo) {
                 events.add(error(shape, test.trait, String.format(
                         "Trait `%s` cannot be applied to `%s`. This trait may only be applied "
                         + "to shapes that match the following selector: %s",
                         Trait.getIdiomaticTraitName(test.trait.toShapeId()),
-                        shape.getId(), test.selector)));
+                        shape.getId(),
+                        sanitized)));
             }
         }
 

@@ -330,9 +330,13 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
 
     @Override
     public int hashCode() {
-        if (hash == 0) {
-            hash = 17 + 31 * namespace.hashCode() * 31 + name.hashCode() * 17 + Objects.hashCode(member);
+        int h = hash;
+
+        if (h == 0) {
+            h = 17 + 31 * namespace.hashCode() * 31 + name.hashCode() * 17 + Objects.hashCode(member);
+            hash = h;
         }
-        return hash;
+
+        return h;
     }
 }

@@ -393,7 +393,7 @@ Summary
     Binds a top-level operation input structure member to a label in the
     hostPrefix of an endpoint trait.
 Trait selector
-    ``:test(member:of(structure)[trait|required] > string)``
+    ``structure > member[trait|required] :test(> string)``
 
     *Any required member of a structure that targets a string*
 Value type

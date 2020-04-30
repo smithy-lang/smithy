@@ -73,7 +73,7 @@ public class BottomUpNeighborVisitorTest {
         Model model = Model.builder()
                 .addShapes(shape, listShape, mapShape, structureShape)
                 .build();
-        NeighborProvider neighborVisitor = NeighborProvider.bottomUp(model);
+        NeighborProvider neighborVisitor = NeighborProvider.reverse(model);
 
         assertThat(neighborVisitor.getNeighbors(shape), containsInAnyOrder(
                 Relationship.create(listMemberShape, RelationshipType.MEMBER_TARGET, shape),
@@ -120,7 +120,7 @@ public class BottomUpNeighborVisitorTest {
                 .addShape(tuMemberShape)
                 .addShape(unionShape)
                 .build();
-        NeighborProvider neighborVisitor = NeighborProvider.bottomUp(model);
+        NeighborProvider neighborVisitor = NeighborProvider.reverse(model);
 
         assertThat(neighborVisitor.getNeighbors(listMemberShape), containsInAnyOrder(
                 Relationship.create(listShape, RelationshipType.LIST_MEMBER, listMemberShape)));
@@ -152,7 +152,7 @@ public class BottomUpNeighborVisitorTest {
                 .addError(error.getId())
                 .build();
         Model model = Model.builder().addShapes(fooOperation, barOperation, input, output, error).build();
-        NeighborProvider neighborVisitor = NeighborProvider.bottomUp(model);
+        NeighborProvider neighborVisitor = NeighborProvider.reverse(model);
 
         assertThat(neighborVisitor.getNeighbors(input), containsInAnyOrder(
                 Relationship.create(fooOperation, RelationshipType.INPUT, input),
@@ -178,7 +178,7 @@ public class BottomUpNeighborVisitorTest {
         Model model = Model.builder()
                 .addShapes(service, resourceShape, operationShape)
                 .build();
-        NeighborProvider neighborVisitor = NeighborProvider.bottomUp(model);
+        NeighborProvider neighborVisitor = NeighborProvider.reverse(model);
 
         assertThat(neighborVisitor.getNeighbors(service), containsInAnyOrder(
                 Relationship.create(resourceShape, RelationshipType.BOUND, service),
@@ -209,7 +209,7 @@ public class BottomUpNeighborVisitorTest {
                 .addShapes(parent, resource, child1, child2)
                 .addShape(otherService)
                 .build();
-        NeighborProvider neighborVisitor = NeighborProvider.bottomUp(model);
+        NeighborProvider neighborVisitor = NeighborProvider.reverse(model);
 
         assertThat(neighborVisitor.getNeighbors(child2), containsInAnyOrder(
                 Relationship.create(child1, RelationshipType.RESOURCE, child2)));
@@ -276,7 +276,7 @@ public class BottomUpNeighborVisitorTest {
                 .addShapes(resource, createOperation, getOperation, updateOperation, deleteOperation, listOperation)
                 .addShapes(otherService, namedOperation, collectionOperation, putOperation)
                 .build();
-        NeighborProvider neighborVisitor = NeighborProvider.bottomUp(model);
+        NeighborProvider neighborVisitor = NeighborProvider.reverse(model);
 
         assertThat(neighborVisitor.getNeighbors(namedOperation), containsInAnyOrder(
                 Relationship.create(resource, RelationshipType.OPERATION, namedOperation),
@@ -319,7 +319,7 @@ public class BottomUpNeighborVisitorTest {
         Model model = Model.builder()
                 .addShape(target)
                 .build();
-        NeighborProvider neighborVisitor = NeighborProvider.bottomUp(model);
+        NeighborProvider neighborVisitor = NeighborProvider.reverse(model);
 
         assertThat(neighborVisitor.getNeighbors(target), empty());
     }

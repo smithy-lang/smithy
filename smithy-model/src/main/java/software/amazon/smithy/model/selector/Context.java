@@ -19,8 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
+import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.MapUtils;
 
@@ -29,13 +28,11 @@ import software.amazon.smithy.utils.MapUtils;
  */
 final class Context {
 
-    Model model;
-    NeighborProvider neighborProvider;
+    NeighborProviderIndex neighborIndex;
     private Map<String, Set<Shape>> variables;
 
-    Context(Model model, NeighborProvider neighborProvider) {
-        this.model = model;
-        this.neighborProvider = neighborProvider;
+    Context(NeighborProviderIndex neighborIndex) {
+        this.neighborIndex = neighborIndex;
         this.variables = new HashMap<>();
     }
 

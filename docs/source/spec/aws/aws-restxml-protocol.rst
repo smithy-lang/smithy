@@ -49,7 +49,7 @@ members:
     * - noErrorWrapping
       - ``boolean``
       - Disables the serialization wrapping of error properties in an
-        'Error' XML element. See :ref:`operation error serialization <xml-errors>`
+        'Error' XML element. See :ref:`operation error serialization <restXml-errors>`
         for more information.
 
 Each entry in ``http`` and ``eventStreamHttp`` SHOULD be a valid

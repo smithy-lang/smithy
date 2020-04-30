@@ -22,7 +22,6 @@ import java.util.function.BiConsumer;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -85,7 +84,6 @@ public interface Selector {
 
         private final InternalSelector delegate;
         private Model model;
-        private NeighborProvider neighborProvider;
 
         Runner(InternalSelector delegate) {
             this.delegate = delegate;
@@ -103,32 +101,17 @@ public interface Selector {
         }
 
         /**
-         * Sets a {@link NeighborProvider} to use when matching shapes.
-         *
-         * <p>If not specified, the result of getting the {@link NeighborProviderIndex}
-         * from the Model will be used.
-         *
-         * @param neighborProvider Custom neighbor provider to use.
-         * @return Returns the Runner.
-         */
-        public Runner neighborProvider(NeighborProvider neighborProvider) {
-            this.neighborProvider = neighborProvider;
-            return this;
-        }
-
-        /**
          * Runs the selector and returns the set of matching shapes.
          *
          * @return Returns the set of matching shapes.
          * @throws IllegalStateException if a {@code model} has not been set.
          */
         public Set<Shape> selectShapes() {
-            beforeRun();
+            Context context = createContext();
 
             // The last receiver is used to store all received shapes in Set.
             Set<Shape> result = new HashSet<>();
             BiConsumer<Context, Shape> acceptor = (ctx, s) -> result.add(s);
-            Context context = new Context(model, neighborProvider);
 
             for (Shape shape : model.toSet()) {
                 // Each shape creates a new context, so clear any previous shapes.
@@ -136,6 +119,11 @@ public interface Selector {
             }
 
             return result;
+        }
+
+        private Context createContext() {
+            SmithyBuilder.requiredState("model", model);
+            return new Context(model.getKnowledge(NeighborProviderIndex.class));
         }
 
         /**
@@ -146,21 +134,12 @@ public interface Selector {
          * @throws IllegalStateException if a {@code model} has not been set.
          */
         public void selectMatches(BiConsumer<Shape, Map<String, Set<Shape>>> matchConsumer) {
-            beforeRun();
+            Context context = createContext();
             BiConsumer<Context, Shape> acceptor = (ctx, s) -> matchConsumer.accept(s, ctx.copyVars());
-            Context context = new Context(model, neighborProvider);
 
             for (Shape shape : model.toSet()) {
                 // Each shape creates a new context, so clear any previous shapes.
                 delegate.push(context.clearVars(), shape, acceptor);
-            }
-        }
-
-        private void beforeRun() {
-            SmithyBuilder.requiredState("model", model);
-
-            if (neighborProvider == null) {
-                neighborProvider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
             }
         }
     }

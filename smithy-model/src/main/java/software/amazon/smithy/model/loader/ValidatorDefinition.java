@@ -21,8 +21,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
-import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.selector.Selector;
@@ -56,10 +54,8 @@ final class ValidatorDefinition {
 
         // If there's a selector, create a list of candidate shape IDs that can be emitted.
         if (selector != null) {
-            NeighborProvider provider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
             candidates = selector.runner()
                     .model(model)
-                    .neighborProvider(provider)
                     .selectShapes()
                     .stream()
                     .map(Shape::getId)

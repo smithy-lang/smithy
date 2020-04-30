@@ -46,7 +46,7 @@ The ``params`` property used in both the ``httpRequestTests`` trait and
 to serialize HTTP requests and responses. In order to compare implementation
 specific results against the expected result of each test case across
 different programming languages, parameters are defined in the same format
-specified in :ref:`trait-definition-values` with the following additional
+specified in :ref:`trait-node-values` with the following additional
 constraints:
 
 * Timestamp values must be converted to a Unix timestamp represented
@@ -67,7 +67,7 @@ Summary
     serialized given a specific protocol, authentication scheme, and set of
     input parameters.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
         operation
 Value type
@@ -314,9 +314,9 @@ Summary
     is serialized given a specific protocol, authentication scheme, and set
     of output or error parameters.
 Trait selector
-    .. code-block:: css
+    .. code-block:: none
 
-        :is(operation, structure[trait|error])
+        :test(operation, structure[trait|error])
 Value type
     ``list`` of ``HttpResponseTestCase`` structures
 
