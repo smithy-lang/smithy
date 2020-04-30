@@ -69,6 +69,7 @@ final class ValidationLoader {
         String name = node.expectStringMember("name").getValue();
         String id = node.getStringMemberOrDefault("id", name);
         ValidatorDefinition def = new ValidatorDefinition(name, id);
+        def.sourceLocation = node.getSourceLocation();
         def.message = node.getStringMemberOrDefault("message", null);
         def.severity = node.getStringMember("severity")
                 .map(value -> value.expectOneOf(SEVERITIES))
