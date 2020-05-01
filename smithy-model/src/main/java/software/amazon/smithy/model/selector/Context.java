@@ -18,7 +18,6 @@ package software.amazon.smithy.model.selector;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.MapUtils;
@@ -80,8 +79,15 @@ final class Context {
     /**
      * Placeholder value used to check if a selector emits any values.
      */
-    private static final class Holder {
+    private static final class Holder implements InternalSelector.Receiver {
         boolean set;
+
+        @Override
+        public boolean apply(Context context, Shape shape) {
+            set = true;
+            // Stop receiving shapes once the first value is seen.
+            return false;
+        }
     }
 
     /**
@@ -94,8 +100,7 @@ final class Context {
      */
     boolean receivedShapes(Shape shape, InternalSelector predicate) {
         Holder holder = new Holder();
-        BiConsumer<Context, Shape> test = (c, s) -> holder.set = true;
-        predicate.push(this, shape, test);
+        predicate.push(this, shape, holder);
         return holder.set;
     }
 }

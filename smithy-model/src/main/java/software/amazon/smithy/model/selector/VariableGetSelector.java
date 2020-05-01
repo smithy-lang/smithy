@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.Collections;
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -30,10 +29,15 @@ final class VariableGetSelector implements InternalSelector {
     }
 
     @Override
-    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+    public boolean push(Context context, Shape shape, Receiver next) {
         // Do not fail on an invalid variable access.
         for (Shape v : context.getVars().getOrDefault(variableName, Collections.emptySet())) {
-            next.accept(context, v);
+            if (!next.apply(context, v)) {
+                // Propagate the signal to stop upstream.
+                return false;
+            }
         }
+
+        return true;
     }
 }

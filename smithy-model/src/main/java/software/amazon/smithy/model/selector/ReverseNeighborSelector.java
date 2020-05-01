@@ -16,10 +16,8 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
-import software.amazon.smithy.model.shapes.Shape;
 
 /**
  * Traverses into the reverse neighbors of shapes with an optional
@@ -39,7 +37,7 @@ final class ReverseNeighborSelector extends AbstractNeighborSelector {
     }
 
     @Override
-    void emitMatchingRel(Context context, Relationship rel, BiConsumer<Context, Shape> next) {
-        next.accept(context, rel.getShape());
+    boolean emitMatchingRel(Context context, Relationship rel, Receiver next) {
+        return next.apply(context, rel.getShape());
     }
 }

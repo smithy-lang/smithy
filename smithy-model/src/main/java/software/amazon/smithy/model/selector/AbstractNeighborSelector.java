@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
@@ -33,18 +32,23 @@ abstract class AbstractNeighborSelector implements InternalSelector {
     }
 
     @Override
-    public final void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+    public final boolean push(Context context, Shape shape, Receiver next) {
         NeighborProvider resolvedProvider = getNeighborProvider(context, includeTraits);
         for (Relationship rel : resolvedProvider.getNeighbors(shape)) {
             if (matches(rel)) {
-                emitMatchingRel(context, rel, next);
+                if (!emitMatchingRel(context, rel, next)) {
+                    // Stop pushing shapes upstream and propagate the signal to stop.
+                    return false;
+                }
             }
         }
+
+        return true;
     }
 
     abstract NeighborProvider getNeighborProvider(Context context, boolean includeTraits);
 
-    abstract void emitMatchingRel(Context context, Relationship rel, BiConsumer<Context, Shape> next);
+    abstract boolean emitMatchingRel(Context context, Relationship rel, Receiver next);
 
     private boolean matches(Relationship rel) {
         return rel.getNeighborShape().isPresent()

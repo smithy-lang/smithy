@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -25,14 +24,19 @@ import software.amazon.smithy.model.shapes.Shape;
  */
 final class RecursiveNeighborSelector implements InternalSelector {
     @Override
-    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+    public boolean push(Context context, Shape shape, Receiver next) {
         Walker walker = new Walker(context.neighborIndex.getProvider());
 
         for (Shape nextShape : walker.walkShapes(shape)) {
             // Don't include the shape being visited.
             if (!nextShape.equals(shape)) {
-                next.accept(context, nextShape);
+                if (!next.apply(context, nextShape)) {
+                    // Stop sending recursive neighbors when told to stop and propagate.
+                    return false;
+                }
             }
         }
+
+        return true;
     }
 }

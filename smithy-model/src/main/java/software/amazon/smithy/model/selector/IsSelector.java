@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -34,9 +33,13 @@ final class IsSelector implements InternalSelector {
     }
 
     @Override
-    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+    public boolean push(Context context, Shape shape, Receiver next) {
         for (InternalSelector selector : selectors) {
-            selector.push(context, shape, next);
+            if (!selector.push(context, shape, next)) {
+                return false;
+            }
         }
+
+        return true;
     }
 }

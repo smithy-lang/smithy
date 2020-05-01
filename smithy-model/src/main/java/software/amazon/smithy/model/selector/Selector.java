@@ -111,7 +111,10 @@ public interface Selector {
          */
         public Set<Shape> selectShapes() {
             Set<Shape> result = new HashSet<>();
-            pushShapes((ctx, s) -> result.add(s));
+            pushShapes((ctx, s) -> {
+                result.add(s);
+                return true;
+            });
             return result;
         }
 
@@ -128,10 +131,13 @@ public interface Selector {
          * @throws IllegalStateException if a {@code model} has not been set.
          */
         public void selectMatches(BiConsumer<Shape, Map<String, Set<Shape>>> matchConsumer) {
-            pushShapes((ctx, s) -> matchConsumer.accept(s, ctx.copyVars()));
+            pushShapes((ctx, s) -> {
+                matchConsumer.accept(s, ctx.copyVars());
+                return true;
+            });
         }
 
-        private void pushShapes(BiConsumer<Context, Shape> acceptor) {
+        private void pushShapes(InternalSelector.Receiver acceptor) {
             Context context = createContext();
 
             if (startingShapeType != null) {

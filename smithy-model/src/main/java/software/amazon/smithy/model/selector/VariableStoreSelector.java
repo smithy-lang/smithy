@@ -17,7 +17,6 @@ package software.amazon.smithy.model.selector;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -39,7 +38,7 @@ public class VariableStoreSelector implements InternalSelector {
     }
 
     @Override
-    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+    public boolean push(Context context, Shape shape, Receiver next) {
         // Buffer the result of piping the shape through the selector
         // so that it can be retrieved through context vars.
         Set<Shape> captures = new HashSet<>();
@@ -47,6 +46,6 @@ public class VariableStoreSelector implements InternalSelector {
         context.putVar(variableName, captures);
 
         // Now send the received shape to the next receiver.
-        next.accept(context, shape);
+        return next.apply(context, shape);
     }
 }

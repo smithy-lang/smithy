@@ -18,7 +18,6 @@ package software.amazon.smithy.model.selector;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -70,9 +69,11 @@ final class ScopedAttributeSelector implements InternalSelector {
     }
 
     @Override
-    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+    public boolean push(Context context, Shape shape, Receiver next) {
         if (matchesAssertions(shape, context.getVars())) {
-            next.accept(context, shape);
+            return next.apply(context, shape);
+        } else {
+            return true;
         }
     }
 
