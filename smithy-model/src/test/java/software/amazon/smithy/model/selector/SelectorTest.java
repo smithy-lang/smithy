@@ -972,10 +972,9 @@ public class SelectorTest {
                 .get();
         Set<String> ids = exampleIds(model, "service\n"
                                             + "$operations(~> operation)\n"
-                                            + "$httpOperations(${operations}[trait|http])\n"
+                                            + ":test(${operations}[trait|http])\n"
                                             + "${operations}\n"
-                                            + ":not([trait|http])\n"
-                                            + ":not([@: @{id} = @{var|httpOperations}])");
+                                            + ":not([trait|http])");
 
         assertThat(ids, contains("smithy.example#NoHttp"));
     }
