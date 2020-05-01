@@ -28,7 +28,7 @@ import software.amazon.smithy.model.shapes.Shape;
  * a {@code VariableStoreSelector} start processing shapes from the same
  * point that the variable capture occurred.
  */
-public class VariableStoreSelector implements InternalSelector {
+final class VariableStoreSelector implements InternalSelector {
     private final String variableName;
     private final InternalSelector selector;
 
