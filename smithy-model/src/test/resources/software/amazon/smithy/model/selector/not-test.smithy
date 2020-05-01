@@ -8,12 +8,12 @@ string MyString
 // Does not match - :not(string) :not(float)
 float MyFloat
 
-// does not match - :not(list > member > string)
+// does not match - list :not(> member > string)
 list StringList {
     member: MyString,
 }
 
-// Matches - :not(list > member > string)
+// Matches - list :not(> member > string)
 list FloatList {
     member: MyFloat,
 }

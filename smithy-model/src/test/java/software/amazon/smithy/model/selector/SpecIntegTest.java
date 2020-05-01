@@ -45,7 +45,6 @@ public class SpecIntegTest {
         assertThat(SelectorTest.exampleIds(attributeExistenceModel, "[trait|tags]"),
                    containsInAnyOrder("smithy.example#MyString2"));
 
-        // Empty enum traits still exist.
         assertThat(SelectorTest.exampleIds(attributeExistenceModel, "[trait|enum]"),
                    containsInAnyOrder("smithy.example#MyString3",
                                       "smithy.example#MyString4",

@@ -302,9 +302,10 @@ Relative comparators only match if both values being compared contain valid
     * - ``>``
       - Matches if the attribute value is greater than the comparison value.
 
+        The following selector matches shapes with an :ref:`httpError-trait` value
+        that is greater than `500`:
+
         .. code-block:: none
-            :caption: Matches shapes with an :ref:`httpError-trait` value that is greater than `500`
-            :name: selector-greater-than-example
 
             [trait|httpError > 500]
     * - ``>=``
@@ -372,7 +373,7 @@ above selector:
 Accessing an attribute or nested attribute property that does not exist
 returns an *empty value*. An empty value does not satisfy existence checks,
 returns an empty string when used with string comparators, and returns an
-empty value when attempting to access properties of an empty value.
+empty value when attempting to access any properties.
 
 The following selector attempts to descend into non-existent properties of
 the :ref:`documentation-trait`. This example MUST NOT cause an error and
@@ -546,7 +547,7 @@ to a shape. The ``trait`` attribute supports the following properties:
     Other values are treated as shape IDs, where a relative shape ID is
     resolved to the ``smithy.api`` namespace. If a matching trait with the
     given shape ID is attached to the shape, it's :ref:`node value <node-attribute>`
-    is returned.
+    is returned. An empty value is returned if the trait does not exist.
 
     The following selector matches shapes that have the
     :ref:`deprecated-trait`:
@@ -602,8 +603,8 @@ Node attribute
 
 A *node attribute* is created by retrieving nested values from a ``trait``
 attribute. The node value created from a trait is defined in :ref:`trait-node-values`.
-A node that contains a string, number, or boolean value are converted to
-string values when used by :ref:`string comparators <string-comparators>`
+A node that contains a string, number, or boolean value is converted to a
+string value when used by :ref:`string comparators <string-comparators>`
 (where a boolean creates a string containing "true" or "false"). Other node
 values return empty strings when used by string comparators.
 
@@ -1252,8 +1253,7 @@ a colon (``:``).
 
 The ``:test`` function is used to test if a shape is matched by any of the
 provided predicate selectors. The ``:test`` function stops testing predicates
-and yields the current shape as soon as the first predicates in its argument
-list yields a shape.
+and yields the current shape as soon as the first predicate yields a shape.
 
 The following selector is used to match all list shapes that target a string:
 
