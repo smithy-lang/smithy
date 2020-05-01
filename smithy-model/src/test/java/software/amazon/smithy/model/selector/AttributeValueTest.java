@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
@@ -207,6 +208,30 @@ public class AttributeValueTest {
     }
 
     @Test
+    public void createsIdValueNoMember() {
+        ShapeId shapeId = ShapeId.from("smithy.example#Foo");
+        AttributeValue id = AttributeValue.id(shapeId);
+
+        assertThat(id.toString(), equalTo("smithy.example#Foo"));
+        assertThat(id.getProperty("name").toString(), equalTo("Foo"));
+        assertThat(id.getProperty("namespace").toString(), equalTo("smithy.example"));
+        assertThat(id.getProperty("member").toString(), equalTo(""));
+        assertThat(id.getProperty("(length)").toString(), equalTo(String.valueOf(shapeId.toString().length())));
+    }
+
+    @Test
+    public void createsIdValueWithMember() {
+        ShapeId shapeId = ShapeId.from("smithy.example#Foo$bar");
+        AttributeValue id = AttributeValue.id(shapeId);
+
+        assertThat(id.toString(), equalTo("smithy.example#Foo$bar"));
+        assertThat(id.getProperty("name").toString(), equalTo("Foo"));
+        assertThat(id.getProperty("namespace").toString(), equalTo("smithy.example"));
+        assertThat(id.getProperty("member").toString(), equalTo("bar"));
+        assertThat(id.getProperty("(length)").toString(), equalTo(String.valueOf(shapeId.toString().length())));
+    }
+
+    @Test
     public void createsShapeValue() {
         ServiceShape serviceShape = ServiceShape.builder()
                 .id("foo.baz#Service")
@@ -235,9 +260,9 @@ public class AttributeValueTest {
         AttributeValue service = AttributeValue.shape(serviceShape, MapUtils.of()).getProperty("trait");
 
         assertThat(service.toString(), equalTo(""));
-        assertThat(service.debugString(), equalTo("smithy.api#documentation, smithy.api#tags"));
-        assertThat(service.getPath(ListUtils.of("tags")).debugString(), equalTo("[\"hi\"]"));
-        assertThat(service.getPath(ListUtils.of("smithy.api#tags")).debugString(), equalTo("[\"hi\"]"));
+        assertThat(service.toMessageString(), equalTo("smithy.api#documentation, smithy.api#tags"));
+        assertThat(service.getPath(ListUtils.of("tags")).toMessageString(), equalTo("[\"hi\"]"));
+        assertThat(service.getPath(ListUtils.of("smithy.api#tags")).toMessageString(), equalTo("[\"hi\"]"));
         assertThat(service.getPath(ListUtils.of("documentation")).toString(), equalTo("hi"));
         assertThat(service.getPath(ListUtils.of("smithy.api#documentation")).toString(), equalTo("hi"));
     }
@@ -250,7 +275,7 @@ public class AttributeValueTest {
         AttributeValue p = AttributeValue.projection(ListUtils.of(b, a, c));
 
         assertThat(p.toString(), equalTo(""));
-        assertThat(p.debugString(), equalTo("[a, b, c]"));
+        assertThat(p.toMessageString(), equalTo("[a, b, c]"));
     }
 
     @Test
@@ -258,7 +283,7 @@ public class AttributeValueTest {
         AttributeValue a = AttributeValue.emptyValue();
 
         assertThat(a.toString(), equalTo(""));
-        assertThat(a.debugString(), equalTo("EMPTY"));
+        assertThat(a.toMessageString(), equalTo(""));
         assertThat(a.isPresent(), equalTo(false));
         assertThat(a.getProperty("hi"), equalTo(a));
         assertThat(a.getPath(ListUtils.of("hi")), equalTo(a));
@@ -272,8 +297,8 @@ public class AttributeValueTest {
         AttributeValue attr = AttributeValue.shape(shape, MapUtils.of("a", SetUtils.of(shape2, shape3)));
 
         assertThat(attr.getProperty("var").toString(), equalTo(""));
-        assertThat(attr.getProperty("var").debugString(), equalTo("{\"a\": [\"foo.baz#Foo2\", \"foo.baz#Foo3\"]}"));
-        assertThat(attr.getPath(ListUtils.of("var", "a")).getProperty("id").debugString(),
+        assertThat(attr.getProperty("var").toMessageString(), equalTo(""));
+        assertThat(attr.getPath(ListUtils.of("var", "a")).getProperty("id").toMessageString(),
                    equalTo("[foo.baz#Foo2, foo.baz#Foo3]"));
     }
 }

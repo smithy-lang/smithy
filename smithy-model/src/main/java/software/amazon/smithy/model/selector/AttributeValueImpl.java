@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -51,11 +50,6 @@ final class AttributeValueImpl {
         }
 
         @Override
-        public String debugString() {
-            return "EMPTY";
-        }
-
-        @Override
         public boolean isPresent() {
             return false;
         }
@@ -76,7 +70,7 @@ final class AttributeValueImpl {
      * An attribute that contains a static, scalar String value.
      */
     static final class Literal implements AttributeValue {
-        final Object value;
+        private final Object value;
 
         Literal(Object value) {
             this.value = Objects.requireNonNull(value);
@@ -106,8 +100,11 @@ final class AttributeValueImpl {
      * nodes and array nodes. The (keys) pseudo-property can be used on object nodes.
      */
     static final class NodeValue implements AttributeValue {
-        static final NodeVisitor<String> TO_STRING = new NodeToString();
-        final Node value;
+
+        private static final NodeVisitor<String> TO_STRING = new NodeToString();
+        private final Node value;
+        private String asString;
+        private String messageString;
 
         NodeValue(Node value) {
             this.value = value;
@@ -120,13 +117,24 @@ final class AttributeValueImpl {
 
         @Override
         public String toString() {
-            return value.accept(TO_STRING);
+            String str = asString;
+            if (str == null) {
+                str = value.accept(TO_STRING);
+                asString = str;
+            }
+            return str;
         }
 
         @Override
-        public String debugString() {
-            // Returns the JSON printed string of the Node value (not pretty printed).
-            return Node.printJson(value);
+        public String toMessageString() {
+            String str = messageString;
+            if (str == null) {
+                str = Node.printJson(value);
+                // Returns the JSON printed string of the Node value
+                // The value is *not* pretty printed (no spaces or newlines).
+                messageString = str;
+            }
+            return str;
         }
 
         @Override
@@ -207,8 +215,9 @@ final class AttributeValueImpl {
      * new projections based on properties contained within the projection.
      */
     static final class Projection implements AttributeValue {
-        final Collection<? extends AttributeValue> values;
-        Collection<? extends AttributeValue> flattened;
+        private final Collection<? extends AttributeValue> values;
+        private Collection<? extends AttributeValue> flattened;
+        private String messageString;
 
         Projection(Collection<? extends AttributeValue> values) {
             this.values = values;
@@ -234,12 +243,18 @@ final class AttributeValueImpl {
         }
 
         @Override
-        public String debugString() {
-            // Returns a comma separated, sorted list of each contained, flattend debug string.
-            return getFlattenedValues().stream()
-                    .map(AttributeValue::debugString)
-                    .sorted()
-                    .collect(Collectors.joining(", ", "[", "]"));
+        public String toMessageString() {
+            String str = messageString;
+            if (str == null) {
+                // Returns a comma separated (with a space), sorted list of each flattened
+                // value's debug string.
+                str = getFlattenedValues().stream()
+                        .map(AttributeValue::toMessageString)
+                        .sorted()
+                        .collect(Collectors.joining(", ", "[", "]"));
+                messageString = str;
+            }
+            return str;
         }
 
         /**
@@ -280,7 +295,7 @@ final class AttributeValueImpl {
      * Attribute that contains service shape properties.
      */
     static final class Service implements AttributeValue {
-        final ServiceShape service;
+        private final ServiceShape service;
 
         Service(ServiceShape service) {
             this.service = service;
@@ -316,7 +331,7 @@ final class AttributeValueImpl {
      * </ul>
      */
     static final class Id implements AttributeValue {
-        final ShapeId id;
+        private final ShapeId id;
 
         Id(ShapeId id) {
             this.id = id;
@@ -361,7 +376,8 @@ final class AttributeValueImpl {
      * contains all of the shape IDs of each trait applied to a shape.
      */
     static final class Traits implements AttributeValue {
-        final Shape shape;
+        private final Shape shape;
+        private String messageString;
 
         Traits(Shape shape) {
             this.shape = Objects.requireNonNull(shape);
@@ -373,12 +389,17 @@ final class AttributeValueImpl {
         }
 
         @Override
-        public String debugString() {
-            // Returns a sorted, comma separated list of absolute trait shape IDs.
-            return shape.getAllTraits().keySet().stream()
-                    .map(ShapeId::toString)
-                    .sorted()
-                    .collect(Collectors.joining(", "));
+        public String toMessageString() {
+            String str = messageString;
+            if (str == null) {
+                // Returns a sorted, comma separated list of absolute trait shape IDs.
+                str = shape.getAllTraits().keySet().stream()
+                        .map(ShapeId::toString)
+                        .sorted()
+                        .collect(Collectors.joining(", "));
+                messageString = str;
+            }
+            return str;
         }
 
         @Override
@@ -414,8 +435,8 @@ final class AttributeValueImpl {
     }
 
     static final class ShapeValue implements AttributeValue {
-        final Shape shape;
-        final Map<String, Set<Shape>> vars;
+        private final Shape shape;
+        private final Map<String, Set<Shape>> vars;
 
         ShapeValue(Shape shape, Map<String, Set<Shape>> vars) {
             this.shape = Objects.requireNonNull(shape);
@@ -446,7 +467,7 @@ final class AttributeValueImpl {
     }
 
     static final class VariableValue implements AttributeValue {
-        final Map<String, Set<Shape>> vars;
+        private final Map<String, Set<Shape>> vars;
 
         VariableValue(Map<String, Set<Shape>> vars) {
             this.vars = vars;
@@ -455,23 +476,6 @@ final class AttributeValueImpl {
         @Override
         public String toString() {
             return "";
-        }
-
-        @Override
-        public String debugString() {
-            // Creates a JSON version of the variables mapped to shape IDs,
-            // all on one line: (e.g., `{"a": ["com.foo#Bar", "com.foo#Baz"], "b": ["com.foo#Bar"]}`
-            // The keys are sorted, and the values in each key are sorted.
-            StringJoiner joiner = new StringJoiner(", ", "{", "}");
-            for (Map.Entry<String, Set<Shape>> entry : vars.entrySet()) {
-                joiner.add('"' + entry.getKey() + "\": " + entry.getValue().stream()
-                        .map(Shape::toShapeId)
-                        .map(ShapeId::toString)
-                        .map(s -> '"' + s + '"')
-                        .sorted()
-                        .collect(Collectors.joining(", ", "[", "]")));
-            }
-            return joiner.toString();
         }
 
         @Override

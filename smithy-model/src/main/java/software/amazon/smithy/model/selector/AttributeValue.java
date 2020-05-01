@@ -39,12 +39,15 @@ public interface AttributeValue {
     String toString();
 
     /**
-     * Returns a debug string representation useful outside of
-     * comparisons.
+     * Returns a string representation of the value that can be used
+     * for creating formatted messages.
      *
-     * @return Returns the debug string.
+     * <p>This implementation gets the value of {@link #toString()}
+     * by default.
+     *
+     * @return Returns the message string.
      */
-    default String debugString() {
+    default String toMessageString() {
         return toString();
     }
 
