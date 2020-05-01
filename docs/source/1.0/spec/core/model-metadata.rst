@@ -43,8 +43,9 @@ or any shapes are defined.
 
 .. _merging-metadata:
 
+----------------
 Merging metadata
-================
+----------------
 
 When a conflict occurs between top-level metadata key-value pairs,
 metadata is merged using the following logic:

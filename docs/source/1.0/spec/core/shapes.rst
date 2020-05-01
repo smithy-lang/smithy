@@ -795,7 +795,7 @@ aggregate shapes are always considered boxed and have no default values.
 
 
 Recursive shape definitions
----------------------------
+===========================
 
 Smithy allows for recursive shape definitions with the following constraint:
 the member of a list, set, or map cannot directly or transitively target its

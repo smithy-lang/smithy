@@ -577,9 +577,32 @@ table.highlighttable pre {
 }
 
 /* Table of contents "title" */
+
+.contents {
+  padding: 1em 2em;
+  background-color: #eee;
+}
+
+.contents ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.contents li {
+  text-indent: -1.5em;
+  padding-left: 1.5em;
+}
+
+.contents li::before {
+  content: "•";
+  color: rgba(0, 0, 0, 0.5);
+  padding-right: 0.5em;
+}
+
 .topic-title {
   font-weight: 300;
-  color: #777;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 /* -------- Document ---------- */
@@ -689,6 +712,11 @@ table.highlighttable pre {
 }
 
 /* -- admonitions ----------------------------------------------------------- */
+
+.rubric {
+  margin: 2em 0 1em 0;
+  font-weight: bold;
+}
 
 .admonition {
   margin: 20px 0;

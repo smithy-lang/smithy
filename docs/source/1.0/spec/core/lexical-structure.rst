@@ -236,8 +236,7 @@ that the model is compatible. Because this can lead to unexpected parsing
 errors, models SHOULD always include a version.
 
 
-Version compatibility
----------------------
+.. rubric:: Version compatibility
 
 A single version statement can appear in a model file, but different versions
 MAY be encountered when merging multiple model files together. Multiple

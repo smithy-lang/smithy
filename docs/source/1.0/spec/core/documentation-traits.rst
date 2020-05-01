@@ -98,8 +98,7 @@ Value type
         string MyString
 
 
-Effective documentation
-=======================
+.. rubric:: Effective documentation
 
 The *effective documentation trait* of a shape is resolved using the following
 process:
