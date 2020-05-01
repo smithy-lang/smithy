@@ -37,7 +37,7 @@ public final class UnreferencedShapes {
     private final Predicate<Shape> keepFilter;
 
     public UnreferencedShapes() {
-        this(shape -> true);
+        this(FunctionalUtils.alwaysTrue());
     }
 
     /**

@@ -18,12 +18,16 @@ package software.amazon.smithy.model.neighbor;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 
@@ -107,5 +111,23 @@ public class WalkerTest {
         Set<Shape> connected = walker.walkShapes(listMember);
 
         assertThat(connected, containsInAnyOrder(list, listMember, map, key, value, string));
+    }
+
+    @Test
+    public void yieldsUniqueShapes() {
+        OperationShape readOperation = OperationShape.builder()
+                .id("smithy.example#Read")
+                .build();
+        ResourceShape resource = ResourceShape.builder()
+                .id("smithy.example#Resource")
+                .read(readOperation.getId())
+                .build();
+        Model model = Model.builder().addShapes(readOperation, resource).build();
+        Walker walker = new Walker(model);
+
+        List<Shape> shapes = new ArrayList<>();
+        walker.iterateShapes(resource).forEachRemaining(shapes::add);
+
+        assertThat(shapes, containsInAnyOrder(readOperation, resource));
     }
 }

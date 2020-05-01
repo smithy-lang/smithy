@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.selector;
 
+import java.util.Iterator;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -26,8 +27,10 @@ final class RecursiveNeighborSelector implements InternalSelector {
     @Override
     public boolean push(Context context, Shape shape, Receiver next) {
         Walker walker = new Walker(context.neighborIndex.getProvider());
+        Iterator<Shape> shapeIterator = walker.iterateShapes(shape);
 
-        for (Shape nextShape : walker.walkShapes(shape)) {
+        while (shapeIterator.hasNext()) {
+            Shape nextShape = shapeIterator.next();
             // Don't include the shape being visited.
             if (!nextShape.equals(shape)) {
                 if (!next.apply(context, nextShape)) {

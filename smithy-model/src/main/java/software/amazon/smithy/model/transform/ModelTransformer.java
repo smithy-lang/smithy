@@ -313,7 +313,7 @@ public final class ModelTransformer {
      * @return Returns the transformed model.base.
      */
     public Model removeUnreferencedShapes(Model model) {
-        return removeUnreferencedShapes(model, shape -> true);
+        return removeUnreferencedShapes(model, FunctionalUtils.alwaysTrue());
     }
 
     /**
@@ -344,7 +344,7 @@ public final class ModelTransformer {
      * @return Returns the transformed model.base.
      */
     public Model removeUnreferencedTraitDefinitions(Model model) {
-        return removeUnreferencedTraitDefinitions(model, traitDefinition -> true);
+        return removeUnreferencedTraitDefinitions(model, FunctionalUtils.alwaysTrue());
     }
 
     /**
