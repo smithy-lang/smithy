@@ -333,8 +333,8 @@ following constraints:
             selector: """
                 :not([trait|documentation])
                 :not(simpleType)
-                :not(member:test(< :test(list, map)))
-                :not(:test(member > [trait|documentation]))"""
+                :not(member :test(< :test(list, map)))
+                :not(member > [trait|documentation])"""
         }
     }]
 
