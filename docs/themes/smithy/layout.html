@@ -74,8 +74,8 @@
             </div>
             <ul id="page-navigation">
                 <li class="site-page first"><a href="{{ pathto('quickstart') }}">Quick Start</a></li>
-                <li class="site-page"><a href="{{ pathto('spec/index') }}">Specifications</a></li>
-                <li class="site-page"><a href="{{ pathto('guides/index') }}">Guides</a></li>
+                <li class="site-page"><a href="{{ pathto(version + '/spec/index') }}">Specifications</a></li>
+                <li class="site-page"><a href="{{ pathto(version + '/guides/index') }}">Guides</a></li>
                 <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
                 <li class="site-search hidden-sm">
                     <form action="{{ pathto('search') }}" method="get">
