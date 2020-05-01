@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -33,13 +32,16 @@ final class TestSelector implements InternalSelector {
     }
 
     @Override
-    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
-        // The instant something matches, stop piping through.
+    public boolean push(Context context, Shape shape, Receiver next) {
         for (InternalSelector predicate : selectors) {
             if (context.receivedShapes(shape, predicate)) {
-                next.accept(context, shape);
-                return;
+                // The instant something matches, stop testing selectors.
+                return next.apply(context, shape);
             }
         }
+
+        // Note that this does not return false when there is not a match,
+        // since it should to continue to receive shapes to test.
+        return true;
     }
 }

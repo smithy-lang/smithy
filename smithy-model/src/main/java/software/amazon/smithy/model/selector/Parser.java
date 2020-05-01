@@ -277,7 +277,7 @@ final class Parser {
                 return IsSelector.of(selectors);
             default:
                 LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s", name, expression));
-                return (context, shape, next) -> { };
+                return (context, shape, next) -> true;
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -60,9 +59,11 @@ final class AttributeSelector implements InternalSelector {
     }
 
     @Override
-    public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+    public boolean push(Context context, Shape shape, Receiver next) {
         if (matchesAttribute(shape, context)) {
-            next.accept(context, shape);
+            return next.apply(context, shape);
+        } else {
+            return true;
         }
     }
 

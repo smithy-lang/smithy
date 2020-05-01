@@ -16,7 +16,6 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
@@ -47,35 +46,35 @@ final class AndSelector {
                 // JDK 11.0.5, Java HotSpot(TM) 64-Bit Server VM, 11.0.5+10-LTS).
                 // I stopped at 7 because, it needs to stop somewhere, and it's lucky.
                 return (c, s, n) -> {
-                    selectors.get(0).push(c, s, (c2, s2) -> {
-                        selectors.get(1).push(c2, s2, n);
+                    return selectors.get(0).push(c, s, (c2, s2) -> {
+                        return selectors.get(1).push(c2, s2, n);
                     });
                 };
             case 3:
                 return (c, s, n) -> {
-                    selectors.get(0).push(c, s, (c2, s2) -> {
-                        selectors.get(1).push(c2, s2, (c3, s3) -> {
-                            selectors.get(2).push(c3, s3, n);
+                    return selectors.get(0).push(c, s, (c2, s2) -> {
+                        return selectors.get(1).push(c2, s2, (c3, s3) -> {
+                            return selectors.get(2).push(c3, s3, n);
                         });
                     });
                 };
             case 4:
                 return (c, s, n) -> {
-                    selectors.get(0).push(c, s, (c2, s2) -> {
-                        selectors.get(1).push(c2, s2, (c3, s3) -> {
-                            selectors.get(2).push(c3, s3, (c4, s4) -> {
-                                selectors.get(3).push(c4, s4, n);
+                    return selectors.get(0).push(c, s, (c2, s2) -> {
+                        return selectors.get(1).push(c2, s2, (c3, s3) -> {
+                            return selectors.get(2).push(c3, s3, (c4, s4) -> {
+                                return selectors.get(3).push(c4, s4, n);
                             });
                         });
                     });
                 };
             case 5:
                 return (c, s, n) -> {
-                    selectors.get(0).push(c, s, (c2, s2) -> {
-                        selectors.get(1).push(c2, s2, (c3, s3) -> {
-                            selectors.get(2).push(c3, s3, (c4, s4) -> {
-                                selectors.get(3).push(c4, s4, (c5, s5) -> {
-                                    selectors.get(4).push(c5, s5, n);
+                    return selectors.get(0).push(c, s, (c2, s2) -> {
+                        return selectors.get(1).push(c2, s2, (c3, s3) -> {
+                            return selectors.get(2).push(c3, s3, (c4, s4) -> {
+                                return selectors.get(3).push(c4, s4, (c5, s5) -> {
+                                    return selectors.get(4).push(c5, s5, n);
                                 });
                             });
                         });
@@ -83,12 +82,12 @@ final class AndSelector {
                 };
             case 6:
                 return (c, s, n) -> {
-                    selectors.get(0).push(c, s, (c2, s2) -> {
-                        selectors.get(1).push(c2, s2, (c3, s3) -> {
-                            selectors.get(2).push(c3, s3, (c4, s4) -> {
-                                selectors.get(3).push(c4, s4, (c5, s5) -> {
-                                    selectors.get(4).push(c5, s5, (c6, s6) -> {
-                                        selectors.get(5).push(c6, s6, n);
+                    return selectors.get(0).push(c, s, (c2, s2) -> {
+                        return selectors.get(1).push(c2, s2, (c3, s3) -> {
+                            return selectors.get(2).push(c3, s3, (c4, s4) -> {
+                                return selectors.get(3).push(c4, s4, (c5, s5) -> {
+                                    return selectors.get(4).push(c5, s5, (c6, s6) -> {
+                                        return selectors.get(5).push(c6, s6, n);
                                     });
                                 });
                             });
@@ -97,13 +96,13 @@ final class AndSelector {
                 };
             case 7:
                 return (c, s, n) -> {
-                    selectors.get(0).push(c, s, (c2, s2) -> {
-                        selectors.get(1).push(c2, s2, (c3, s3) -> {
-                            selectors.get(2).push(c3, s3, (c4, s4) -> {
-                                selectors.get(3).push(c4, s4, (c5, s5) -> {
-                                    selectors.get(4).push(c5, s5, (c6, s6) -> {
-                                        selectors.get(5).push(c6, s6, (c7, s7) -> {
-                                            selectors.get(6).push(c7, s7, n);
+                    return selectors.get(0).push(c, s, (c2, s2) -> {
+                        return selectors.get(1).push(c2, s2, (c3, s3) -> {
+                            return selectors.get(2).push(c3, s3, (c4, s4) -> {
+                                return selectors.get(3).push(c4, s4, (c5, s5) -> {
+                                    return selectors.get(4).push(c5, s5, (c6, s6) -> {
+                                        return selectors.get(5).push(c6, s6, (c7, s7) -> {
+                                            return selectors.get(6).push(c7, s7, n);
                                         });
                                     });
                                 });
@@ -127,27 +126,27 @@ final class AndSelector {
         }
 
         @Override
-        public void push(Context context, Shape shape, BiConsumer<Context, Shape> next) {
+        public boolean push(Context context, Shape shape, Receiver next) {
             // This is safe since the number of selectors is always >= 2.
-            selectors.get(0).push(context, shape, new State(1, next));
+            return selectors.get(0).push(context, shape, new State(1, next));
         }
 
-        private final class State implements BiConsumer<Context, Shape> {
+        private final class State implements Receiver {
 
             private final int position;
-            private final BiConsumer<Context, Shape> downstream;
+            private final Receiver downstream;
 
-            private State(int position, BiConsumer<Context, Shape> downstream) {
+            private State(int position, Receiver downstream) {
                 this.position = position;
                 this.downstream = downstream;
             }
 
             @Override
-            public void accept(Context context, Shape shape) {
+            public boolean apply(Context context, Shape shape) {
                 if (position == terminalSelectorIndex) {
-                    selectors.get(position).push(context, shape, downstream);
+                    return selectors.get(position).push(context, shape, downstream);
                 } else {
-                    selectors.get(position).push(context, shape, new State(position + 1, downstream));
+                    return selectors.get(position).push(context, shape, new State(position + 1, downstream));
                 }
             }
         }

@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 
@@ -28,9 +27,11 @@ final class ShapeTypeSelector implements InternalSelector {
     }
 
     @Override
-    public void push(Context ctx, Shape shape, BiConsumer<Context, Shape> next) {
+    public boolean push(Context ctx, Shape shape, Receiver next) {
         if (shape.getType() == shapeType) {
-            next.accept(ctx, shape);
+            return next.apply(ctx, shape);
         }
+
+        return true;
     }
 }
