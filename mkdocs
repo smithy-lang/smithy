@@ -10,23 +10,45 @@
 
 set -e
 
+#### Load library version ####
+
+# Load the version number of the library (used to version javadocs)
+library_version=$(cat VERSION)
+library_version=${library_version%%*( )}
+
+if [ -z "${library_version}" ]; then
+    echo "Unable to find the version property or it is empty"
+    exit 1
+fi
+
+#### Clone the docs branch ####
+
 # Clone a copy of smithy into a staging directory
 rm -rf /tmp/_smithy-docs
 git clone https://github.com/awslabs/smithy.git --branch gh-pages --single-branch /tmp/_smithy-docs
 cd /tmp/_smithy-docs
 git checkout gh-pages
-
-# Remove docs that might have been deleted or moved as part of the update.
-# These docs will get added back by copying them over from build directories.
-rm -rf {_sources, _static, guides, spec}
-
 cd -
 
-# Build javadoc
-./gradlew javadoc
-cp -R build/docs/javadoc/* /tmp/_smithy-docs/javadoc
+#### Build javadoc ####
 
-# Build Sphinx docs.
+./gradlew javadoc
+# Always build javadoc into each version.
+cp -R build/docs/javadoc/* /tmp/_smithy-docs/javadoc/${library_version}
+# Create a redirect from "latest" to the version:
+rm -rf /tmp/_smithy-docs/javadoc/latest
+mkdir -p /tmp/_smithy-docs/javadoc/latest
+
+# Create an HTML redirect from javadoc/latest/ to, for example, javadoc/1.0.0
+cat << EOF > /tmp/_smithy-docs/javadoc/latest/index.html
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Redirecting to latest javadocs</title>
+<meta http-equiv="refresh" content="0; URL=../${library_version}/">
+EOF
+
+#### Build Sphinx docs ####
+
 cd docs
 pip install -r requirements.txt
 make clean && make html
@@ -40,6 +62,8 @@ cd -
 
 cd /tmp/_smithy-docs
 git status
+
+#### Deploy the docs ####
 
 # We can automate this eventually
 read -p "Publish docs? [y/n]" -n 1 -r

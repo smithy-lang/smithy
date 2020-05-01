@@ -12,7 +12,7 @@ of resources, operations, and shapes.
 Status of this specification
 ----------------------------
 
-This specification is at version |version|.
+This specification is at version |release|.
 
 
 ---------------------

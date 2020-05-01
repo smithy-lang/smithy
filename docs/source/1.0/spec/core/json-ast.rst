@@ -41,7 +41,7 @@ properties:
     * - smithy
       - ``string``
       - **Required**. Defines the :ref:`version <smithy-version>` of the
-        Smithy specification (e.g., "|version|").
+        Smithy specification (e.g., "|release|").
     * - metadata
       - object
       - Defines all of the :ref:`metadata <metadata>` about the model

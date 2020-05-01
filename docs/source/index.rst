@@ -6,5 +6,5 @@ Smithy
     :maxdepth: 1
 
     quickstart
-    spec/index
-    guides/index
+    1.0/spec/index
+    1.0/guides/index

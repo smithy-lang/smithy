@@ -24,12 +24,20 @@ plugins {
     id("me.champeau.gradle.jmh") version "0.4.6"
 }
 
+// Load the Smithy version from VERSION.
+val libraryVersion = project.file("VERSION")
+        .inputStream()
+        .bufferedReader()
+        .use{ it.readText() }
+        .replace("\n", "")
+println("Smithy version: '$libraryVersion'")
+
 // Set a global group ID and version on each project. This version might
 // need to be overridden is a project ever needs to be version bumped out
 // of band with the rest of the projects.
 allprojects {
     group = "software.amazon.smithy"
-    version = "1.0.0"
+    version = libraryVersion
 }
 
 // The root project doesn't produce a JAR.
