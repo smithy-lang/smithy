@@ -514,20 +514,19 @@ optional members:
          Example: "AWS::IAM::Role"
     * - service
       - ``string``
-      - The Smithy service shape ID that is referenced by the ARN. This
-        shape ID MAY be relative to the current namespace. The targeted
-        service is not required to be found in the model, allowing for
-        external shapes to be referenced without needing to take on an
-        additional dependency.
+      - The Smithy service absolute shape ID that is referenced by the ARN.
+        The targeted service is not required to be found in the model,
+        allowing for external shapes to be referenced without needing to
+        take on an additional dependency.
     * - resource
       - ``string``
-      - A shape ID that references the Smithy resource type contained in the
-        ARN (e.g., ``com.foo#SomeResource``). This shape ID MAY be relative to
-        the current namespace. The targeted resource is not required to be
-        found in the model, allowing for external shapes to be referenced
-        without needing to take on an additional dependency. If the shape is
-        found in the model, it MUST target a resource shape, and the resource
-        MUST be found within the closure of the referenced service shape.
+      - An absolute shape ID that references the Smithy resource type
+        contained in the ARN (e.g., ``com.foo#SomeResource``). The targeted
+        resource is not required to be found in the model, allowing for
+        external shapes to be referenced without needing to take on an
+        additional dependency. If the shape is found in the model, it MUST
+        target a resource shape, and the resource MUST be found within the
+        closure of the referenced service shape.
 
 The following example defines a string shape that targets an AWS resource.
 The CloudFormation name of the resource and the Smithy service and resource
