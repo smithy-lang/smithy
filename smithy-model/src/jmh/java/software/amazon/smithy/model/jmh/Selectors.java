@@ -61,19 +61,17 @@ public class Selectors {
         private Selector createSuboptimalHttpBindingIncompatibilitySelector() {
             return Selector.parse("$service(service) ${service}\n"
                                   + "$operations(~> operation)\n"
-                                  + "$httpOperations(${operations}[trait|http])\n"
+                                  + ":test(${operations}[trait|http])\n"
                                   + "${operations}\n"
-                                  + ":not([trait|http])\n"
-                                  + ":not([@: @{id} = @{var|httpOperations}])");
+                                  + ":not([trait|http])");
         }
 
         private Selector createHttpBindingIncompatibilitySelector() {
             return Selector.parse("service\n"
                                   + "$operations(~> operation)\n"
-                                  + "$httpOperations(${operations}[trait|http])\n"
+                                  + ":test(${operations}[trait|http])\n"
                                   + "${operations}\n"
-                                  + ":not([trait|http])\n"
-                                  + ":not([@: @{id} = @{var|httpOperations}])");
+                                  + ":not([trait|http])");
         }
     }
 
