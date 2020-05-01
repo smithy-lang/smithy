@@ -94,9 +94,9 @@ public final class ModelSerializer {
      * Builder used to create {@link ModelSerializer}.
      */
     public static final class Builder implements SmithyBuilder<ModelSerializer> {
-        private Predicate<String> metadataFilter = pair -> true;
-        private Predicate<Shape> shapeFilter = shape -> true;
-        private Predicate<Trait> traitFilter = trait -> true;
+        private Predicate<String> metadataFilter = FunctionalUtils.alwaysTrue();
+        private Predicate<Shape> shapeFilter = FunctionalUtils.alwaysTrue();
+        private Predicate<Trait> traitFilter = FunctionalUtils.alwaysTrue();
 
         private Builder() {}
 

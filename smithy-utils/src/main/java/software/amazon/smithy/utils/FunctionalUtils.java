@@ -21,6 +21,10 @@ import java.util.function.Predicate;
  * Utilities for working with functions, predicates, etc.
  */
 public final class FunctionalUtils {
+
+    @SuppressWarnings("rawtypes")
+    private static final Predicate ALWAYS_TRUE = x -> true;
+
     private FunctionalUtils() {}
 
     /**
@@ -32,5 +36,16 @@ public final class FunctionalUtils {
      */
     public static <T> Predicate<T> not(Predicate<T> predicate) {
         return predicate.negate();
+    }
+
+    /**
+     * Returns a {@link Predicate} that always returns true.
+     *
+     * @param <T> Value that the predicate accepts.
+     * @return Returns the predicate.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Predicate<T> alwaysTrue() {
+        return (Predicate<T>) ALWAYS_TRUE;
     }
 }

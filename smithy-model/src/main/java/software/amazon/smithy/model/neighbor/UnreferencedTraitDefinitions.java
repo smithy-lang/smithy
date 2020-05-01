@@ -36,7 +36,7 @@ public final class UnreferencedTraitDefinitions {
     private final Predicate<Shape> keepFilter;
 
     public UnreferencedTraitDefinitions() {
-        this(traitDefinition -> true);
+        this(FunctionalUtils.alwaysTrue());
     }
 
     /**
