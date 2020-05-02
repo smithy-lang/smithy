@@ -161,6 +161,13 @@ Simple types
 ------------
 
 *Simple types* are types that do not contain nested types or shape references.
+Shapes that are simple types are defined using the following grammar:
+
+.. productionlist:: smithy
+    simple_shape            :`simple_type_name` `identifier`
+    simple_type_name        :"blob" / "boolean" / "document" / "string" / "byte" / "short"
+                            :/ "integer" / "long" / "float" / "double" / "bigInteger"
+                            :/ "bigDecimal" / "timestamp"
 
 .. list-table::
     :header-rows: 1
@@ -196,14 +203,6 @@ Simple types
         :ref:`protocol <protocolDefinition-trait>`.
     * - document
       - A protocol-specific untyped value.
-
-Simply types are defined using the following grammar:
-
-.. productionlist:: smithy
-    simple_shape            :`simple_shape_name` `identifier`
-    simple_shape_name       :"blob" / "boolean" / "document" / "string" / "byte" / "short"
-                            :/ "integer" / "long" / "float" / "double" / "bigInteger"
-                            :/ "bigDecimal" / "timestamp"
 
 The following example defines a shape for each simple type in the
 ``smithy.example`` namespace:
@@ -470,16 +469,7 @@ Set
 ===
 
 The :dfn:`set` type represents an unordered collection of unique homogeneous
-values.
-
-.. note::
-
-    Not all languages support set data structures. Such languages SHOULD
-    represent sets as a custom set data structure that can interpret value
-    hash codes and equality, or alternatively, store the values of a set
-    data structure in a list and rely on validation to ensure uniqueness.
-
-Sets are defined using the following grammar:
+values. Sets are defined using the following grammar:
 
 .. productionlist:: smithy
     set_statement           :"set" `list_and_set_body`
@@ -534,6 +524,13 @@ Traits can be applied to the set shape and its members:
                 }
             }
         }
+
+.. note::
+
+    Not all languages support set data structures. Such languages SHOULD
+    represent sets as a custom set data structure that can interpret value
+    hash codes and equality, or alternatively, store the values of a set
+    data structure in a list and rely on validation to ensure uniqueness.
 
 
 .. _map:
@@ -673,8 +670,7 @@ The following example defines a structure with two members:
             }
         }
 
-Traits can be applied to members inside of the structure or externally
-using the ``apply`` statement:
+Traits can be applied to structure members:
 
 .. tabs::
 
@@ -743,8 +739,11 @@ The following example defines a union shape with several members:
 
         union MyUnion {
             i32: Integer,
+
             stringA: String,
-            @sensitive stringB: String,
+
+            @sensitive
+            stringB: String,
         }
 
     .. code-tab:: json
@@ -776,7 +775,7 @@ The following example defines a union shape with several members:
 .. _default-values:
 
 Default values
---------------
+==============
 
 The values provided for :ref:`members <member>` of
 :ref:`aggregate shapes <aggregate-types>` are either always present and

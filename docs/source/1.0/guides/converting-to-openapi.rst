@@ -35,14 +35,14 @@ Differences between Smithy and OpenAPI
 Smithy and OpenAPI take very different approaches to modeling APIs. Smithy is
 *protocol agnostic*, which means it focuses on the interfaces and abstractions
 that are provided to end-users rather than how the data is sent over the wire.
-While Smithy can define RESTful APIs, OpenAPI *specializes* in defining *only*
-RESTful APIs. Both approaches have their own strengths and weaknesses. For
-example, while Smithy can define a much broader set of functionality and
-services, it requires abstractions that have their own underlying complexity.
-OpenAPI is more permissive in the kinds of services it can describe, making it
-easier to adapt to existing web services, but at the same time making it easier
-to author APIs that provide a poor customer experience when using clients in
-strongly-typed languages.
+While Smithy can define RESTful APIs, RPC APIs, pub/sub APIs, and more, OpenAPI
+*only* defines RESTful APIs. Both approaches have their own strengths and
+weaknesses. For example, while Smithy can define a much broader set of
+functionality, services, and client behaviors, it requires abstractions that
+have their own underlying complexity. OpenAPI is more permissive in the kinds
+of services it can describe, making it easier to adapt to existing web
+services, but at the same time making it easier to author APIs that provide
+a poor customer experience when using clients in strongly-typed languages.
 
 
 Unsupported features

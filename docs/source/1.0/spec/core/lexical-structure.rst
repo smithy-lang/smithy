@@ -63,7 +63,7 @@ is insignificant. Comments in Smithy are defined using two forward slashes
 followed by any character. A newline terminates a comment.
 
 .. productionlist:: smithy
-    line_comment        :"//" *(start_comment *`not_newline`)
+    line_comment        :"//" *(`start_comment` *`not_newline`)
     start_comment       :%x09 / %x20-%x46 / %x48-10FFFF ; Any character except "/" and newline
     not_newline         :%x09 / %x20-10FFFF ; Any character except newline
 
@@ -98,8 +98,8 @@ Successive documentation comments are combined together using a newline
 
 .. note::
 
-    Documentation comments are just syntactic sugar for applying
-    the :ref:`documentation-trait`.
+    Documentation comments are syntactic sugar equivalent to applying the
+    :ref:`documentation-trait`.
 
 The following Smithy IDL example,
 
@@ -141,8 +141,9 @@ is equivalent to the following JSON AST model:
         }
     }
 
+Documentation comments MUST NOT be applied to anything other than shapes.
 Documentation comments MUST appear immediately before a shape, and they MUST
-appear **before** any traits applied to the shape.
+appear **before** any :ref:`traits <traits>` applied to the shape.
 
 The following example is valid because the documentation comment comes
 before the traits applied to a shape:
@@ -164,28 +165,6 @@ Documentation comments can be applied to members of a shape.
         foo: String,
     }
 
-Documentation comments MUST NOT be applied to anything other than shapes.
-The following documentation comments are all invalid.
-
-.. code-block:: smithy
-
-    /// Invalid (cannot apply to control statements)
-    $version: "1.0.0"
-
-    /// Invalid (cannot apply to namespaces)
-    namespace smithy.example
-
-    /// Invalid (cannot apply to metadata)
-    metadata foo = "baz"
-
-    @deprecated
-    /// Invalid (comes after the @deprecated trait)
-    structure Example {
-        /// Invalid (cannot apply docs to '}')
-    }
-
-    /// Invalid (nothing comes after the comment)
-
 
 .. _control-statement:
 
@@ -193,8 +172,9 @@ The following documentation comments are all invalid.
 Control statement
 -----------------
 
-Control statements apply metadata to a file. Control statements MUST be
-defined at the beginning of a Smithy file before any other statements.
+Control statements apply metadata to a specific file. Control statements,
+if defined, MUST appear at the beginning of a Smithy file before any other
+statements.
 
 .. productionlist:: smithy
     control_statement       :"$" `text` ":" `node_value`
@@ -278,11 +258,11 @@ Shape ID ABNF
 Shape IDs are formally defined by the following ABNF:
 
 .. productionlist:: smithy
-    identifier             :(ALPHA / "_") *(ALPHA / DIGIT / "_")
-    namespace              :`identifier` *("." `identifier`)
     shape_id               :`root_shape_id` [`shape_id_member`]
     root_shape_id          :`absolute_shape_id` / `identifier`
     absolute_shape_id      :`namespace` "#" `identifier`
+    namespace              :`identifier` *("." `identifier`)
+    identifier             :(ALPHA / "_") *(ALPHA / DIGIT / "_")
     shape_id_member        :"$" `identifier`
     LOALPHA                :%x61-7A ; a-z
 
@@ -297,8 +277,8 @@ Shape IDs are formally defined by the following ABNF:
 Shape ID member names
 =====================
 
-A :ref:`member` of an :ref:`aggregate shape <aggregate-types>` can be
-referenced in a shape ID by appending "``$``" followed by the
+A :ref:`member <member>` of an :ref:`aggregate shape <aggregate-types>` can be
+referenced in a shape ID by appending a dollar sign (``$``) followed by the
 appropriate member name. Member names for each shape are defined as follows:
 
 .. list-table::
@@ -553,10 +533,8 @@ a string value using the Unicode escape ``\u000d``.
 String escape characters
 ========================
 
-The Smithy IDL supports escape sequences only within quoted strings. Smithy
-supports all of the same escape sequences as JSON.
-
-The following sequences are allowed:
+The Smithy IDL supports escape sequences only within quoted strings.  The following
+escape sequences are allowed:
 
 .. list-table::
     :header-rows: 1
@@ -604,9 +582,9 @@ Any other sequence following a backslash is an error.
 Unquoted strings
 ================
 
-Unquoted strings that appear in the IDL as part of a trait value or metadata
-value are treated as shape IDs. Strings MUST be quoted if a value is not
-intended to be converted into a resolved shape ID.
+Unquoted strings that appear in the IDL are treated as shape IDs. Strings
+MUST be quoted if a value is not intended to be converted into a resolved
+shape ID.
 
 .. seealso::
 
