@@ -15,12 +15,12 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.List;
+import java.util.function.BiConsumer;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.ListUtils;
 
 abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T extends Trait>
         implements NodeValidatorPlugin {
@@ -35,15 +35,14 @@ abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T exte
         this.traitClass = traitClass;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    public final List<String> apply(Shape shape, Node value, Model model) {
+    public final void apply(Shape shape, Node value, Model model, BiConsumer<FromSourceLocation, String> emitter) {
         if (nodeClass.isInstance(value)
                 && shape.getTrait(traitClass).isPresent()
                 && isMatchingShape(shape, model)) {
-            return check(shape, shape.getTrait(traitClass).get(), (N) value, model);
+            check(shape, shape.getTrait(traitClass).get(), (N) value, model, emitter);
         }
-
-        return ListUtils.of();
     }
 
     private boolean isMatchingShape(Shape shape, Model model) {
@@ -59,5 +58,10 @@ abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T exte
                 .isPresent();
     }
 
-    protected abstract List<String> check(Shape shape, T trait, N value, Model model);
+    protected abstract void check(
+            Shape shape,
+            T trait,
+            N value,
+            Model model,
+            BiConsumer<FromSourceLocation, String> emitter);
 }

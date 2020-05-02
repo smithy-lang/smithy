@@ -15,36 +15,38 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.validation.ValidationUtils;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates the enum trait on string shapes.
  */
-@SmithyInternalApi
-public final class StringEnumPlugin extends FilteredPlugin<StringShape, StringNode> {
-    public StringEnumPlugin() {
+final class StringEnumPlugin extends FilteredPlugin<StringShape, StringNode> {
+
+    StringEnumPlugin() {
         super(StringShape.class, StringNode.class);
     }
 
     @Override
-    protected List<String> check(StringShape shape, StringNode node, Model model) {
-        List<String> messages = new ArrayList<>();
-        // Validate the enum trait.
+    protected void check(
+            StringShape shape,
+            StringNode node,
+            Model model,
+            BiConsumer<FromSourceLocation, String> emitter
+    ) {
         shape.getTrait(EnumTrait.class).ifPresent(trait -> {
             List<String> values = trait.getEnumDefinitionValues();
             if (!values.contains(node.getValue())) {
-                messages.add(String.format(
+                emitter.accept(node, String.format(
                         "String value provided for `%s` must be one of the following values: %s",
                         shape.getId(), ValidationUtils.tickedList(values)));
             }
         });
-        return messages;
     }
 }

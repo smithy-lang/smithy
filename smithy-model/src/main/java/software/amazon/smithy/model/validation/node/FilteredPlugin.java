@@ -15,11 +15,11 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.List;
+import java.util.function.BiConsumer;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.ListUtils;
 
 abstract class FilteredPlugin<S extends Shape, N extends Node> implements NodeValidatorPlugin {
     private final Class<S> shapeClass;
@@ -30,14 +30,13 @@ abstract class FilteredPlugin<S extends Shape, N extends Node> implements NodeVa
         this.nodeClass = nodeClass;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    public final List<String> apply(Shape shape, Node node, Model model) {
-        if (shapeClass.isInstance(shape) && nodeClass.isInstance(node)) {
-            return check((S) shape, (N) node, model);
-        } else {
-            return ListUtils.of();
+    public final void apply(Shape shape, Node value, Model model, BiConsumer<FromSourceLocation, String> emitter) {
+        if (shapeClass.isInstance(shape) && nodeClass.isInstance(value)) {
+            check((S) shape, (N) value, model, emitter);
         }
     }
 
-    abstract List<String> check(S shape, N node, Model model);
+    abstract void check(S shape, N node, Model model, BiConsumer<FromSourceLocation, String> emitter);
 }
