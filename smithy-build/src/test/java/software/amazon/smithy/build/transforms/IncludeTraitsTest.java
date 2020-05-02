@@ -56,8 +56,8 @@ public class IncludeTraitsTest {
         assertThat(result.expectShape(ShapeId.from("ns.foo#baz")).getTrait(SensitiveTrait.class),
                    is(Optional.empty()));
 
-        assertTrue(result.getTraitDefinition("smithy.api#documentation").isPresent());
-        assertFalse(result.getTraitDefinition("smithy.api#sensitive").isPresent());
+        assertTrue(result.getTraitDefinition(ShapeId.from("smithy.api#documentation")).isPresent());
+        assertFalse(result.getTraitDefinition(ShapeId.from("smithy.api#sensitive")).isPresent());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class IncludeTraitsTest {
                    not(Optional.empty()));
         assertThat(result.expectShape(ShapeId.from("ns.foo#baz")).getTrait(SensitiveTrait.class),
                    not(Optional.empty()));
-        assertTrue(result.getTraitDefinition("smithy.api#documentation").isPresent());
-        assertTrue(result.getTraitDefinition("smithy.api#sensitive").isPresent());
+        assertTrue(result.getTraitDefinition(ShapeId.from("smithy.api#documentation")).isPresent());
+        assertTrue(result.getTraitDefinition(ShapeId.from("smithy.api#sensitive")).isPresent());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,18 +16,16 @@
 package software.amazon.smithy.model;
 
 import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -43,38 +41,32 @@ import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * A Smithy model, including shapes, traits, custom traits, validators,
- * suppressions and metadata.
- *
- * <p>A "model" contains all of the loaded shapes (including their traits),
- * validator definitions, suppression definitions, metadata properties,
- * the Smithy version number, and all custom trait definitions. Each of
- * these properties of a model contain a {@link SourceLocation}, allowing
- * a reference back to where they were defined and how they were originally
- * grouped into separate document files.
+ * A Smithy model that contains shapes, traits, metadata, and various
+ * computed information used to interpret the model.
  */
 public final class Model implements ToSmithyBuilder<Model> {
+
     /** Specifies the highest supported version of the IDL. */
     public static final String MODEL_VERSION = "1.0.0";
 
+    /** The map of metadata keys to their "node" values. */
     private final Map<String, Node> metadata;
-
-    /** Lazily computed map of trait definitions. */
-    private Map<Shape, TraitDefinition> traitDefinitions;
-
-    /** Cache of computed {@link KnowledgeIndex} instances. */
-    private final Map<Class<? extends KnowledgeIndex>, KnowledgeIndex> blackboard = new ConcurrentHashMap<>();
 
     /** A map of shape ID to shapes that backs the shape map. */
     private final Map<ShapeId, Shape> shapeMap;
 
     /** A cache of shapes of a specific type. */
-    private final Map<Class<? extends Shape>, Collection<Shape>> cachedTypes = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Shape>, Set<? extends Shape>> cachedTypes = new ConcurrentHashMap<>();
+
+    /** Cache of computed {@link KnowledgeIndex} instances. */
+    private final Map<Class<? extends KnowledgeIndex>, KnowledgeIndex> blackboard = new ConcurrentHashMap<>();
+
+    /** Lazily computed trait mappings. */
+    private volatile TraitCache traitCache;
 
     /** Lazily computed hashcode. */
     private int hash;
@@ -141,22 +133,6 @@ public final class Model implements ToSmithyBuilder<Model> {
     }
 
     /**
-     * Returns are trait shapes in the model as a map of {@code Shape}
-     * objects to their {@link TraitDefinition} traits.
-     *
-     * @return Returns all trait definitions in the model.
-     */
-    public Map<Shape, TraitDefinition> getTraitDefinitions() {
-        if (traitDefinitions == null) {
-            traitDefinitions = Collections.unmodifiableMap(shapes()
-                    .flatMap(shape -> Trait.flatMapStream(shape, TraitDefinition.class))
-                    .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
-        }
-
-        return traitDefinitions;
-    }
-
-    /**
      * Gets the trait definition of a specific trait shape ID.
      *
      * @param traitId ID of the shape to get the trait definition of.
@@ -167,20 +143,56 @@ public final class Model implements ToSmithyBuilder<Model> {
     }
 
     /**
-     * Gets the trait definition of a specific trait shape ID.
+     * Gets a set of shapes in the model marked with a specific trait.
      *
-     * @param traitId ID of the shape to get the trait definition of.
-     * @return Returns the optionally found trait definition.
+     * @param trait Trait shape ID to look for on shapes.
+     * @return Returns the immutable set of matching shapes.
      */
-    public Optional<TraitDefinition> getTraitDefinition(String traitId) {
-        return getTraitDefinition(ShapeId.from(Trait.makeAbsoluteName(traitId)));
+    public Set<Shape> getShapesWithTrait(ToShapeId trait) {
+        Map<ShapeId, Set<Shape>> mappings = getTraitCache().traitIdsToShapes;
+        return Collections.unmodifiableSet(mappings.getOrDefault(trait.toShapeId(), Collections.emptySet()));
+    }
+
+    private TraitCache getTraitCache() {
+        TraitCache cache = traitCache;
+        if (cache == null) {
+            cache = new TraitCache(this.shapeMap.values());
+            traitCache = cache;
+        }
+        return cache;
     }
 
     /**
-     * @return Returns all trait definition shapes in the model.
+     * Gets a set of shapes in the model marked with a specific trait.
+     *
+     * <p>The result is an exact match on trait classes and does not utilize
+     * any kind of polymorphic instance of checks.
+     *
+     * @param trait Trait class to look for on shapes.
+     * @return Returns the immutable set of matching shapes.
      */
-    public Collection<Shape> getTraitShapes() {
-        return getTraitDefinitions().keySet();
+    public Set<Shape> getShapesWithTrait(Class<? extends Trait> trait) {
+        Map<Class<? extends Trait>, Set<Shape>> mappings = getTraitCache().traitsToShapes;
+        return Collections.unmodifiableSet(mappings.getOrDefault(trait, Collections.emptySet()));
+    }
+
+    /**
+     * Gets a set of every trait shape ID that is used in the model.
+     *
+     * @return Returns the shape IDs of traits used in the model.
+     */
+    public Set<ShapeId> getAppliedTraits() {
+        return Collections.unmodifiableSet(getTraitCache().traitIdsToShapes.keySet());
+    }
+
+    /**
+     * Returns true if the given trait shape ID was used in the model.
+     *
+     * @param trait The trait class to check.
+     * @return Returns true if the trait was used in the model.
+     */
+    public boolean isTraitApplied(Class<? extends Trait> trait) {
+        return !getShapesWithTrait(trait).isEmpty();
     }
 
     /**
@@ -249,23 +261,34 @@ public final class Model implements ToSmithyBuilder<Model> {
      * @param <T> Shape type to stream from the index.
      * @return A stream of shapes of {@code T} matching {@code shapeType}.
      */
-    @SuppressWarnings("unchecked")
     public <T extends Shape> Stream<T> shapes(Class<T> shapeType) {
-        return (Stream<T>) cachedTypes.computeIfAbsent(shapeType, t -> {
-            List<Shape> result = new ArrayList<>();
+        return toSet(shapeType).stream();
+    }
+
+    /**
+     * Gets an immutable Set of shapes of a specific type.
+     *
+     * @param shapeType Type of shape to get a set of.
+     * @param <T> Shape type to get from the index.
+     * @return Returns an unmodifiable set of shapes.
+     */
+    @SuppressWarnings("unchecked")
+    private <T extends Shape> Set<T> toSet(Class<T> shapeType) {
+        return (Set<T>) cachedTypes.computeIfAbsent(shapeType, t -> {
+            Set<T> result = new HashSet<>();
             for (Shape shape : shapeMap.values()) {
                 if (shape.getClass() == shapeType) {
-                    result.add(shape);
+                    result.add((T) shape);
                 }
             }
-            return result;
-        }).stream();
+            return Collections.unmodifiableSet(result);
+        });
     }
 
     /**
      * Converts the model to an immutable Set of shapes.
      *
-     * @return Returns an unmodifiable set of Shapes in the index.
+     * @return Returns an unmodifiable set of shapes.
      */
     public Set<Shape> toSet() {
         return new AbstractSet<Shape>() {
@@ -466,6 +489,20 @@ public final class Model implements ToSmithyBuilder<Model> {
         @Override
         public Model build() {
             return new Model(this);
+        }
+    }
+
+    private static final class TraitCache {
+        private Map<ShapeId, Set<Shape>> traitIdsToShapes = new HashMap<>();
+        private Map<Class<? extends Trait>, Set<Shape>> traitsToShapes = new HashMap<>();
+
+        TraitCache(Collection<Shape> shapes) {
+            for (Shape shape : shapes) {
+                for (Trait trait : shape.getAllTraits().values()) {
+                    traitIdsToShapes.computeIfAbsent(trait.toShapeId(), id -> new HashSet<>()).add(shape);
+                    traitsToShapes.computeIfAbsent(trait.getClass(), id -> new HashSet<>()).add(shape);
+                }
+            }
         }
     }
 }

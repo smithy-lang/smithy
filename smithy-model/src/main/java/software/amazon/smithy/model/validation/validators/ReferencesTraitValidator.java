@@ -37,7 +37,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ReferencesTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -50,10 +49,13 @@ public final class ReferencesTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes()
-                .flatMap(shape -> Trait.flatMapStream(shape, ReferencesTrait.class))
-                .flatMap(pair -> validateShape(model, pair.getLeft(), pair.getRight()).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+
+        for (Shape shape : model.getShapesWithTrait(ReferencesTrait.class)) {
+            events.addAll(validateShape(model, shape, shape.expectTrait(ReferencesTrait.class)));
+        }
+
+        return events;
     }
 
     private List<ValidationEvent> validateShape(Model model, Shape shape, ReferencesTrait trait) {

@@ -66,10 +66,10 @@ public class RemoveUnusedShapesTest {
                 .build();
         Model result = new RemoveUnusedShapes().transform(context);
 
-        assertTrue(result.getTraitDefinition("ns.foo#bar").isPresent());
+        assertTrue(result.getTraitDefinition(ShapeId.from("ns.foo#bar")).isPresent());
         assertTrue(result.getShape(ShapeId.from("ns.foo#bar")).isPresent());
         assertTrue(result.getShape(ShapeId.from("ns.foo#BarTraitShapeMember")).isPresent());
-        assertFalse(result.getTraitDefinition("ns.foo#QuuxTraitShapeMember").isPresent());
+        assertFalse(result.getTraitDefinition(ShapeId.from("ns.foo#QuuxTraitShapeMember")).isPresent());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class RemoveUnusedShapesTest {
                 .build();
         Model result = new RemoveUnusedShapes().transform(context);
 
-        assertFalse(result.getTraitDefinition("ns.foo#quux").isPresent());
+        assertFalse(result.getTraitDefinition(ShapeId.from("ns.foo#quux")).isPresent());
         assertFalse(result.getShape(ShapeId.from("ns.foo#QuuxTraitShape")).isPresent());
     }
 }

@@ -20,13 +20,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -42,10 +39,13 @@ public final class EnumTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(StringShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, EnumTrait.class))
-                .flatMap(pair -> validateEnumTrait(pair.getLeft(), pair.getRight()).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+
+        for (Shape shape : model.getShapesWithTrait(EnumTrait.class)) {
+            events.addAll(validateEnumTrait(shape, shape.expectTrait(EnumTrait.class)));
+        }
+
+        return events;
     }
 
     private List<ValidationEvent> validateEnumTrait(Shape shape, EnumTrait trait) {

@@ -274,13 +274,13 @@ public final class Prelude {
 
             // Sanity check to ensure that the prelude model and the tracked prelude traits are consistent.
             // TODO: Can this be moved to a build step in Gradle?
-            for (Shape trait : preludeModel.getTraitShapes()) {
+            for (Shape trait : preludeModel.getShapesWithTrait(TraitDefinition.class)) {
                 if (!PRELUDE_TRAITS.contains(trait.getId())) {
                     throw new IllegalStateException(
                             "PRELUDE_TRAITS property of prelude is inconsistent with the traits defined in the "
                             + "prelude-traits.smithy file. This property MUST be kept consistent with the file. "
                             + PRELUDE_TRAITS + " in PRELUDE_TRAITS vs "
-                            + preludeModel.getTraitShapes().stream()
+                            + preludeModel.getShapesWithTrait(TraitDefinition.class).stream()
                                     .map(Shape::getId)
                                     .collect(Collectors.toList()));
                 }

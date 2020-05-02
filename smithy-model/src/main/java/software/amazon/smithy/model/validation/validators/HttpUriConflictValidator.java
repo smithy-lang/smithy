@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -44,6 +45,10 @@ public final class HttpUriConflictValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
+        if (!model.isTraitApplied(HttpTrait.class)) {
+            return Collections.emptyList();
+        }
+
         return model.shapes(ServiceShape.class)
                 .flatMap(shape -> validateService(model, shape).stream())
                 .collect(Collectors.toList());

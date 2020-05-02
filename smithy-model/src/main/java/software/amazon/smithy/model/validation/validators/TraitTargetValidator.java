@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,10 +17,8 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.Model;
@@ -28,7 +26,6 @@ import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -47,8 +44,8 @@ public final class TraitTargetValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        Collection<SelectorTest> tests = createTests(model);
         List<ValidationEvent> events = new ArrayList<>();
+        Collection<SelectorTest> tests = createTests(model);
 
         for (SelectorTest test : tests) {
             // Find the shapes that this trait can be applied to.
@@ -58,11 +55,10 @@ public final class TraitTargetValidator extends AbstractValidator {
             // the shapes in the set that are invalid.
             test.appliedTo.removeAll(matches);
 
-            // Strip out newlines with successive spaces.
-            String sanitized = SANITIZE.matcher(test.selector.toString()).replaceAll(" ");
-
             for (Shape shape : test.appliedTo) {
-                events.add(error(shape, test.trait, String.format(
+                // Strip out newlines with successive spaces.
+                String sanitized = SANITIZE.matcher(test.selector.toString()).replaceAll(" ");
+                events.add(error(shape, shape.findTrait(test.trait).get(), String.format(
                         "Trait `%s` cannot be applied to `%s`. This trait may only be applied "
                         + "to shapes that match the following selector: %s",
                         Trait.getIdiomaticTraitName(test.trait.toShapeId()),
@@ -75,44 +71,28 @@ public final class TraitTargetValidator extends AbstractValidator {
     }
 
     private Collection<SelectorTest> createTests(Model model) {
-        Map<ShapeId, SelectorTest> tests = new HashMap<>();
-        Map<ShapeId, Selector> selectors = new HashMap<>();
+        List<SelectorTest> tests = new ArrayList<>(model.getAppliedTraits().size());
 
-        for (Shape shape : model.toSet()) {
-            for (Trait trait : shape.getAllTraits().values()) {
-                // The trait selector has to be resolved against the model,
-                // and possibly defaulted. This just caches that result since
-                // it's called for every single trait applied to a shape.
-                Selector selector = selectors.computeIfAbsent(trait.toShapeId(), id -> resolveSelector(id, model));
-
-                // Only need to test the location for traits that have some
-                // kind of constraint.
-                if (!selector.toString().trim().equals("*")) {
-                    SelectorTest test = tests.computeIfAbsent(
-                            trait.toShapeId(),
-                            id -> new SelectorTest(trait, selector));
-                    test.appliedTo.add(shape);
-                }
-            }
+        for (ShapeId traitId : model.getAppliedTraits()) {
+            // This set is mutated later, so make a copy.
+            Set<Shape> shapes = new HashSet<>(model.getShapesWithTrait(traitId));
+            model.getTraitDefinition(traitId).ifPresent(definition -> {
+                tests.add(new SelectorTest(traitId, definition.getSelector(), shapes));
+            });
         }
 
-        return tests.values();
-    }
-
-    private Selector resolveSelector(ShapeId id, Model model) {
-        return model.getTraitDefinition(id)
-                .map(TraitDefinition::getSelector)
-                .orElse(Selector.IDENTITY);
+        return tests;
     }
 
     private static final class SelectorTest {
-        final Trait trait;
+        final ShapeId trait;
         final Selector selector;
-        final Set<Shape> appliedTo = new HashSet<>();
+        final Set<Shape> appliedTo;
 
-        SelectorTest(Trait trait, Selector selector) {
+        SelectorTest(ShapeId trait, Selector selector, Set<Shape> appliedTo) {
             this.trait = trait;
             this.selector = selector;
+            this.appliedTo = appliedTo;
         }
     }
 }

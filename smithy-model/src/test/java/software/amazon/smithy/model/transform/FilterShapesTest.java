@@ -17,6 +17,7 @@ package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.hamcrest.Matchers;
@@ -142,7 +143,11 @@ public class FilterShapesTest {
 
         ModelTransformer transformer = ModelTransformer.create();
         Model result = transformer.filterShapes(model, shape -> !shape.getId().toString().equals("ns.foo#baz"));
-        Map<Shape, TraitDefinition> definitions = result.getTraitDefinitions();
+
+        Map<Shape, TraitDefinition> definitions = new HashMap<>();
+        for (Shape shape : result.getShapesWithTrait(TraitDefinition.class)) {
+            definitions.put(shape, shape.expectTrait(TraitDefinition.class));
+        }
 
         assertThat(definitions.size(), Matchers.is(1));
         assertThat(definitions, Matchers.hasKey(barTrait));

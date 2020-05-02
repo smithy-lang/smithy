@@ -18,7 +18,6 @@ package software.amazon.smithy.model.validation.validators;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -42,11 +41,13 @@ public final class ExclusiveStructureMemberTraitValidator extends AbstractValida
         // Find all traits that are exclusive by member and target.
         Set<ShapeId> exclusiveMemberTraits = new HashSet<>();
         Set<ShapeId> exclusiveTargetTraits = new HashSet<>();
-        for (Map.Entry<Shape, TraitDefinition> entry : model.getTraitDefinitions().entrySet()) {
-            if (entry.getValue().isStructurallyExclusiveByTarget()) {
-                exclusiveTargetTraits.add(entry.getKey().getId());
-            } else if (entry.getValue().isStructurallyExclusiveByMember()) {
-                exclusiveMemberTraits.add(entry.getKey().getId());
+
+        for (Shape shape : model.getShapesWithTrait(TraitDefinition.class)) {
+            TraitDefinition definition = shape.expectTrait(TraitDefinition.class);
+            if (definition.isStructurallyExclusiveByTarget()) {
+                exclusiveTargetTraits.add(shape.getId());
+            } else if (definition.isStructurallyExclusiveByMember()) {
+                exclusiveMemberTraits.add(shape.getId());
             }
         }
 

@@ -150,6 +150,8 @@ reference lookups. ([#287](https://github.com/awslabs/smithy/pull/287))
 * Removed `software.amazon.smithy.model.shapes.Shape#visitor` and
   `software.amazon.smithy.model.shapes.ShapeVisitor$Builder`. Use
   `software.amazon.smithy.model.shapes.ShapeVisitor$Default` instead [BC].
+* `software.amazon.smithy.model.Model#getTraitDefinitions` and `getTraitShapes` were removed in favor of
+  `software.amazon.smithy.model.Model#getShapesWithTrait` [BC] ([#412](https://github.com/awslabs/smithy/pull/412))
 
 #### Deprecation cleanup
 

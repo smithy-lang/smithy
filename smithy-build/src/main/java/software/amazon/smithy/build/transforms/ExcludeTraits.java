@@ -23,6 +23,7 @@ import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.Pair;
 
@@ -93,7 +94,7 @@ public final class ExcludeTraits extends BackwardCompatHelper<ExcludeTraits.Conf
         Model model = context.getModel();
         ModelTransformer transformer = context.getTransformer();
 
-        Set<Shape> removeTraits = model.getTraitShapes().stream()
+        Set<Shape> removeTraits = model.getShapesWithTrait(TraitDefinition.class).stream()
                 .filter(trait -> TraitRemovalUtils.matchesTraitDefinition(trait, names, namespaces))
                 .collect(Collectors.toSet());
 

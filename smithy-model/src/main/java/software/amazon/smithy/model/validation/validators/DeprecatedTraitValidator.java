@@ -19,11 +19,8 @@ import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -34,30 +31,24 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class DeprecatedTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        Set<ShapeId> deprecatedTraits = model.getTraitShapes().stream()
-                .filter(trait -> trait.hasTrait(DeprecatedTrait.class))
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
-
-        return model.shapes()
-                .flatMap(shape -> validateShape(model, shape, deprecatedTraits).stream())
-                .collect(Collectors.toList());
-    }
-
-    private List<ValidationEvent> validateShape(Model model, Shape shape, Set<ShapeId> deprecatedTraits) {
         List<ValidationEvent> events = new ArrayList<>();
-        shape.getAllTraits().forEach((shapeId, trait) -> {
-            if (!deprecatedTraits.contains(trait.toShapeId())) {
-                return;
+
+        // Get all shapes marked as deprecated.
+        for (Shape trait : model.getShapesWithTrait(DeprecatedTrait.class)) {
+            // Get all shapes that use the shapes marked as deprecated as traits.
+            for (Shape shape : model.getShapesWithTrait(trait)) {
+                // Any match here must use the trait shape as an actual trait.
+                DeprecatedTrait deprecatedTrait = model.expectShape(trait.toShapeId())
+                        .expectTrait(DeprecatedTrait.class);
+                String traitMessage = trait.toShapeId().toString();
+                if (deprecatedTrait.getMessage().isPresent()) {
+                    traitMessage = traitMessage + ", " + deprecatedTrait.getMessage().get();
+                }
+                events.add(warning(shape, trait, format(
+                        "This shape applies a trait that is deprecated: %s", traitMessage)));
             }
-            DeprecatedTrait deprecatedTrait = model.expectShape(trait.toShapeId()).expectTrait(DeprecatedTrait.class);
-            String traitMessage = trait.toShapeId().toString();
-            if (deprecatedTrait.getMessage().isPresent()) {
-                traitMessage = traitMessage + ", " + deprecatedTrait.getMessage().get();
-            }
-            events.add(warning(shape, trait, format("This shape applies a trait that is deprecated: %s",
-                    traitMessage)));
-        });
+        }
+
         return events;
     }
 }

@@ -17,13 +17,11 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.ExamplesTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -35,10 +33,14 @@ public final class ExamplesTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(OperationShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, ExamplesTrait.class))
-                .flatMap(pair -> validateExamples(model, pair.getLeft(), pair.getRight()).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(ExamplesTrait.class)) {
+            shape.asOperationShape().ifPresent(operation -> {
+                events.addAll(validateExamples(model, operation, operation.expectTrait(ExamplesTrait.class)));
+            });
+        }
+
+        return events;
     }
 
     private List<ValidationEvent> validateExamples(Model model, OperationShape shape, ExamplesTrait trait) {

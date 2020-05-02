@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -57,6 +58,10 @@ public final class HttpHeaderTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
+        if (!model.isTraitApplied(HttpHeaderTrait.class)) {
+            return Collections.emptyList();
+        }
+
         List<ValidationEvent> events = model.shapes(StructureShape.class)
                 .flatMap(shape -> validateStructure(shape).stream())
                 .collect(Collectors.toList());

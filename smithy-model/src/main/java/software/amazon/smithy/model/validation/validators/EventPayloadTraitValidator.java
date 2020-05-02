@@ -15,9 +15,10 @@
 
 package software.amazon.smithy.model.validation.validators;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -39,24 +40,29 @@ import software.amazon.smithy.utils.FunctionalUtils;
 public final class EventPayloadTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(StructureShape.class)
-                .flatMap(this::validateEvent)
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(EventPayloadTrait.class)) {
+            shape.asMemberShape().ifPresent(member -> {
+                model.getShape(member.getContainer()).flatMap(Shape::asStructureShape).ifPresent(structure -> {
+                    validateEvent(structure, member).ifPresent(events::add);
+                });
+            });
+        }
+
+        return events;
     }
 
-    private Stream<ValidationEvent> validateEvent(StructureShape shape) {
+    private Optional<ValidationEvent> validateEvent(StructureShape shape, MemberShape payload) {
         List<String> unmarked = shape.getAllMembers().values().stream()
                 .filter(FunctionalUtils.not(this::isMarked))
                 .map(MemberShape::getMemberName)
                 .collect(Collectors.toList());
-        boolean payloads = shape.getAllMembers().values().stream()
-                .anyMatch(value -> value.getTrait(EventPayloadTrait.class).isPresent());
 
-        if (unmarked.isEmpty() || !payloads) {
-            return Stream.empty();
+        if (unmarked.isEmpty()) {
+            return Optional.empty();
         }
 
-        return Stream.of(error(shape, String.format(
+        return Optional.of(error(shape, String.format(
                 "This event structure contains a member marked with the `eventPayload` trait, so all other members "
                 + "must be marked with the `eventHeader` trait. However, the following member(s) are not marked "
                 + "with the eventHeader trait: %s", ValidationUtils.tickedList(unmarked))));

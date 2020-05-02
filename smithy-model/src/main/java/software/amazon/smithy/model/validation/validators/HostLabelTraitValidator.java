@@ -18,6 +18,7 @@ package software.amazon.smithy.model.validation.validators;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -60,6 +61,10 @@ public final class HostLabelTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
+        if (!model.isTraitApplied(EndpointTrait.class) && !model.isTraitApplied(HostLabelTrait.class)) {
+            return Collections.emptyList();
+        }
+
         // Validate all operation shapes with the `endpoint` trait.
         return model.shapes(OperationShape.class)
                 .flatMap(shape -> Trait.flatMapStream(shape, EndpointTrait.class))

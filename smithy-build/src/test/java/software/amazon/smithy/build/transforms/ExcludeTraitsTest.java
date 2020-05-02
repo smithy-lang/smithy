@@ -54,6 +54,6 @@ public class ExcludeTraitsTest {
                    is(Optional.empty()));
         assertThat(result.expectShape(ShapeId.from("ns.foo#baz")).getTrait(SensitiveTrait.class),
                    not(Optional.empty()));
-        assertFalse(result.getTraitDefinition("smithy.api#documentation").isPresent());
+        assertFalse(result.getTraitDefinition(ShapeId.from("smithy.api#documentation")).isPresent());
     }
 }
