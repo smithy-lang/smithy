@@ -25,7 +25,6 @@ import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -39,11 +38,7 @@ public final class PrivateAccessValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        Set<ShapeId> privateShapes = model.shapes()
-                .filter(shape -> shape.getTrait(PrivateTrait.class).isPresent())
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
-
+        Set<Shape> privateShapes = model.getShapesWithTrait(PrivateTrait.class);
         NeighborProvider provider = model.getKnowledge(NeighborProviderIndex.class).getProvider();
         return model.shapes()
                 .filter(shape -> !(shape instanceof SimpleShape))
@@ -54,10 +49,10 @@ public final class PrivateAccessValidator extends AbstractValidator {
     private Stream<ValidationEvent> validateNeighbors(
             Shape shape,
             List<Relationship> relationships,
-            Set<ShapeId> privateShapes
+            Set<Shape> privateShapes
     ) {
         return relationships.stream()
-                .filter(rel -> privateShapes.contains(rel.getNeighborShapeId()))
+                .filter(rel -> privateShapes.contains(rel.getNeighborShape().orElse(null)))
                 .filter(rel -> !rel.getNeighborShapeId().getNamespace().equals(shape.getId().getNamespace()))
                 .map(rel -> error(shape, String.format(
                         "This shape has an invalid %s relationship that targets a private shape, `%s`, in "

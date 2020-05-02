@@ -201,10 +201,13 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      */
     @SuppressWarnings("unchecked")
     public final <T extends Trait> Optional<T> getTrait(Class<T> traitClass) {
-        return traits.values().stream()
-                .filter(traitClass::isInstance)
-                .findFirst()
-                .map(trait -> (T) trait);
+        for (Trait trait : traits.values()) {
+            if (traitClass.isInstance(trait)) {
+                return Optional.of((T) trait);
+            }
+        }
+
+        return Optional.empty();
     }
 
     /**

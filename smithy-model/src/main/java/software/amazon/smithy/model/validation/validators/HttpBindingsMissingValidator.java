@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.validation.validators;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,6 +35,10 @@ import software.amazon.smithy.utils.ListUtils;
 public final class HttpBindingsMissingValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
+        if (!model.isTraitApplied(HttpTrait.class)) {
+            return Collections.emptyList();
+        }
+
         TopDownIndex topDownIndex = model.getKnowledge(TopDownIndex.class);
         return model.shapes(ServiceShape.class)
                 .flatMap(shape -> validateService(topDownIndex, shape).stream())

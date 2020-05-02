@@ -27,6 +27,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.TraitDefinition;
 
 public class IncludeTraitsByTagTest {
     @Test
@@ -40,7 +41,7 @@ public class IncludeTraitsByTagTest {
                 .settings(Node.objectNode().withMember("tags", Node.fromStrings("baz")))
                 .build();
         Model result = new IncludeTraitsByTag().transform(context);
-        Set<String> traits = result.getTraitShapes().stream()
+        Set<String> traits = result.getShapesWithTrait(TraitDefinition.class).stream()
                 .map(Shape::getId)
                 .map(ShapeId::toString)
                 .collect(Collectors.toSet());

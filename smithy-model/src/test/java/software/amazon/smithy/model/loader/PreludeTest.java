@@ -24,10 +24,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.model.validation.validators.TraitValueValidator;
 
 public class PreludeTest {
     @Test
@@ -58,5 +60,24 @@ public class PreludeTest {
                 .collect(Collectors.toSet());
 
         assertThat(unreferencedPrivateShapes, emptyCollectionOf(ShapeId.class));
+    }
+
+    /**
+     * This test ensures that the prelude is valid.
+     *
+     * <p>Under normal circumstances, the prelude is not validated using the
+     * {@link TraitValueValidator} when validating a model. This cuts down on
+     * how much work this expensive validator needs to do. However, we still need
+     * to make sure that changes made to the prelude itself is valid. That's the
+     * job of this test. It sets a special property in the metadata of the model
+     * to turn on prelude validation.
+     */
+    @Test
+    public void ensurePreludeIsValid() {
+        Model.assembler()
+                .putMetadata(TraitValueValidator.VALIDATE_PRELUDE, Node.from(true))
+                .assemble()
+                // If the prelude is invalid, then this will throw an exception.
+                .unwrap();
     }
 }

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
@@ -33,7 +32,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.PaginatedTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -67,11 +65,16 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
         TopDownIndex topDown = model.getKnowledge(TopDownIndex.class);
+        List<ValidationEvent> events = new ArrayList<>();
 
-        return model.shapes(OperationShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, PaginatedTrait.class))
-                .flatMap(pair -> validateOperation(model, topDown, opIndex, pair.left, pair.right).stream())
-                .collect(Collectors.toList());
+        for (Shape shape : model.getShapesWithTrait(PaginatedTrait.class)) {
+            shape.asOperationShape().ifPresent(operation -> {
+                PaginatedTrait paginatedTrait = shape.expectTrait(PaginatedTrait.class);
+                events.addAll(validateOperation(model, topDown, opIndex, operation, paginatedTrait));
+            });
+        }
+
+        return events;
     }
 
     private List<ValidationEvent> validateOperation(

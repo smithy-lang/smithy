@@ -97,7 +97,7 @@ public final class IncludeTraits extends BackwardCompatHelper<IncludeTraits.Conf
         Model model = context.getModel();
         ModelTransformer transformer = context.getTransformer();
 
-        Set<Shape> removeTraits = model.getTraitShapes().stream()
+        Set<Shape> removeTraits = model.getShapesWithTrait(TraitDefinition.class).stream()
                 .filter(trait -> !TraitRemovalUtils.matchesTraitDefinition(trait, names, namespaces))
                 .collect(Collectors.toSet());
 

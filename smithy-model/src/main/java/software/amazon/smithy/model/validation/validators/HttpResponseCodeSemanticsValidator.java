@@ -18,7 +18,6 @@ package software.amazon.smithy.model.validation.validators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -29,7 +28,6 @@ import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Ensures that HTTP response codes are appropriate for operations and errors.
@@ -39,28 +37,33 @@ public final class HttpResponseCodeSemanticsValidator extends AbstractValidator 
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        events.addAll(validateOperations(model));
-        events.addAll(validateErrors(model));
+
+        for (Shape shape : model.getShapesWithTrait(HttpTrait.class)) {
+            shape.asOperationShape().ifPresent(operation -> {
+                validateOperationsWithHttpTrait(operation).ifPresent(events::add);
+            });
+        }
+
+        for (Shape shape : model.getShapesWithTrait(ErrorTrait.class)) {
+            shape.asStructureShape().ifPresent(structure -> {
+                validateError(structure, structure.expectTrait(ErrorTrait.class)).ifPresent(events::add);
+            });
+        }
+
         return events;
     }
 
-    private List<ValidationEvent> validateOperations(Model model) {
-        return model.shapes(OperationShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, HttpTrait.class))
-                .filter(pair -> pair.getRight().getCode() < 200 || pair.getRight().getCode() >= 300)
-                .map(pair -> invalidOperation(pair.getLeft(), pair.getRight()))
-                .collect(Collectors.toList());
+    private Optional<ValidationEvent> validateOperationsWithHttpTrait(OperationShape operation) {
+        HttpTrait trait = operation.expectTrait(HttpTrait.class);
+        if (trait.getCode() < 200 || trait.getCode() >= 300) {
+            return Optional.of(invalidOperation(operation, trait));
+        }
+
+        return Optional.empty();
     }
 
     private ValidationEvent invalidOperation(Shape shape, HttpTrait trait) {
         return danger(shape, trait, "Expected an `http` code in the 2xx range, but found " + trait.getCode());
-    }
-
-    private List<ValidationEvent> validateErrors(Model model) {
-        return model.shapes(StructureShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, ErrorTrait.class))
-                .flatMap(pair -> OptionalUtils.stream(validateError(pair.getLeft(), pair.getRight())))
-                .collect(Collectors.toList());
     }
 
     private Optional<ValidationEvent> validateError(StructureShape shape, ErrorTrait error) {

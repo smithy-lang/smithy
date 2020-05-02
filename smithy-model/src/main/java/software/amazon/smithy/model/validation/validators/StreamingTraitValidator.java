@@ -46,6 +46,10 @@ import software.amazon.smithy.utils.Pair;
 public class StreamingTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
+        if (!model.isTraitApplied(StreamingTrait.class)) {
+            return Collections.emptyList();
+        }
+
         List<ValidationEvent> events = validateStreamingTargets(model);
         events.addAll(validateAllEventStreamMembers(model));
         return events;

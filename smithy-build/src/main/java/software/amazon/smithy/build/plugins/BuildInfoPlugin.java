@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.TraitDefinition;
 
 /**
  * Writes a build info file for each projection. This file contains the
@@ -65,7 +66,7 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
         info.setProjection(context.getProjection().orElse(null));
         info.setValidationEvents(context.getEvents());
         info.setTraitNames(findTraitNames(context.getModel()));
-        info.setTraitDefNames(context.getModel().getTraitShapes().stream()
+        info.setTraitDefNames(context.getModel().getShapesWithTrait(TraitDefinition.class).stream()
                 .map(Shape::getId)
                 .sorted()
                 .collect(Collectors.toList()));

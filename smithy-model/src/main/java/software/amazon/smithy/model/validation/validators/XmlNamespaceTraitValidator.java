@@ -17,17 +17,14 @@ package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.XmlNamespaceTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.OptionalUtils;
 
 /**
  * Validates that the xmlNamespace traits are applied correctly for structures.
@@ -40,14 +37,16 @@ public class XmlNamespaceTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(StructureShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, XmlNamespaceTrait.class))
-                .flatMap(pair -> OptionalUtils.stream(validateTrait(pair.getLeft(), pair.getRight())))
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(XmlNamespaceTrait.class)) {
+            validateTrait(shape, shape.expectTrait(XmlNamespaceTrait.class)).ifPresent(events::add);
+        }
+
+        return events;
     }
 
     private Optional<ValidationEvent> validateTrait(Shape shape, XmlNamespaceTrait xmlNamespace) {
-        // Validate the xmlNamepace URI against the URI specification.
+        // Validate the xmlNamespace URI against the URI specification.
         try {
             new java.net.URI(xmlNamespace.getUri());
         } catch (java.net.URISyntaxException uriSyntaxException) {

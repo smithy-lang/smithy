@@ -25,6 +25,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
@@ -108,7 +109,7 @@ public class ModifiedTrait extends AbstractDiffEvaluator {
     }
 
     private static Set<ShapeId> findMatchingTraitDefNamesWithTag(Model model, String tag) {
-        return model.getTraitShapes().stream()
+        return model.getShapesWithTrait(TraitDefinition.class).stream()
                 .filter(def -> def.getTags().contains(tag))
                 .map(Shape::getId)
                 .collect(Collectors.toSet());

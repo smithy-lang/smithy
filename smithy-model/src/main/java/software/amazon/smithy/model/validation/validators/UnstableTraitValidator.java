@@ -19,11 +19,8 @@ import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.UnstableTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -34,25 +31,15 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class UnstableTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        Set<ShapeId> unstableTraits = model.getTraitShapes().stream()
-                .filter(trait -> trait.hasTrait(UnstableTrait.class))
-                .map(Shape::getId)
-                .collect(Collectors.toSet());
+        List<ValidationEvent> events = new ArrayList<>(0);
 
-        return model.shapes()
-                .flatMap(shape -> validateShape(shape, unstableTraits).stream())
-                .collect(Collectors.toList());
-    }
-
-    private List<ValidationEvent> validateShape(Shape shape, Set<ShapeId> unstableTraits) {
-        List<ValidationEvent> events = new ArrayList<>();
-        shape.getAllTraits().forEach((shapeId, trait) -> {
-            if (!unstableTraits.contains(trait.toShapeId())) {
-                return;
+        for (Shape trait : model.getShapesWithTrait(UnstableTrait.class)) {
+            for (Shape appliedTo : model.getShapesWithTrait(trait)) {
+                events.add(warning(appliedTo, trait, format(
+                        "This shape applies a trait that is unstable: %s", trait.toShapeId())));
             }
-            events.add(warning(shape, trait, format("This shape applies a trait that is unstable: %s",
-                    trait.toShapeId())));
-        });
+        }
+
         return events;
     }
 }

@@ -56,7 +56,7 @@ public class ModelTest {
                 .build();
 
         assertTrue(model.getMetadataProperty("name.name").isPresent());
-        assertThat(model.getTraitDefinitions().entrySet(), hasSize(1));
+        assertThat(model.getShapesWithTrait(TraitDefinition.class), hasSize(1));
     }
 
     @Test

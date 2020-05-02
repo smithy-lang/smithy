@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -46,6 +47,11 @@ public final class HttpPayloadValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
+        // Skip the expensive checks if the httpPayload trait isn't event used.
+        if (!model.isTraitApplied(HttpPayloadTrait.class)) {
+            return Collections.emptyList();
+        }
+
         OperationIndex opIndex = model.getKnowledge(OperationIndex.class);
         HttpBindingIndex bindings = model.getKnowledge(HttpBindingIndex.class);
         List<ValidationEvent> events = new ArrayList<>();
