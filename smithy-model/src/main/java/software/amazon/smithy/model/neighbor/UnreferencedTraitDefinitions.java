@@ -23,6 +23,7 @@ import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 
@@ -50,7 +51,7 @@ public final class UnreferencedTraitDefinitions {
         Walker walker = new Walker(model.getKnowledge(NeighborProviderIndex.class).getProvider());
 
         // Begin with a mutable set of all trait definitions contained in the model
-        Set<Shape> unused = model.getTraitShapes().stream()
+        Set<Shape> unused = model.getShapesWithTrait(TraitDefinition.class).stream()
                 // Exclude prelude traits -- these are defined by Smithy, not by the model itself
                 .filter(FunctionalUtils.not(Prelude::isPreludeShape))
                 .collect(Collectors.toSet());

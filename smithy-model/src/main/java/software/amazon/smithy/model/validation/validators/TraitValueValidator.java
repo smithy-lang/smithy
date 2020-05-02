@@ -15,9 +15,10 @@
 
 package software.amazon.smithy.model.validation.validators;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
@@ -25,29 +26,45 @@ import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that trait values are valid for their trait definitions.
  */
 public final class TraitValueValidator implements Validator {
 
+    public static final String VALIDATE_PRELUDE = "__validatePrelude__";
     private static final String NAME = "TraitValue";
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes()
-                // Get pairs of <Shape, Trait>
-                .flatMap(shape -> shape.getAllTraits().values().stream().map(t -> Pair.of(shape, t)))
-                .flatMap(pair -> validateTrait(model, pair.left, pair.right).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        boolean validatePrelude = model.getMetadataProperty(VALIDATE_PRELUDE).isPresent();
+        for (Shape shape : model.toSet()) {
+            for (Trait trait : shape.getAllTraits().values()) {
+                events.addAll(validateTrait(model, shape, trait, validatePrelude));
+            }
+        }
+
+        return events;
     }
 
-    private List<ValidationEvent> validateTrait(Model model, Shape targetShape, Trait trait) {
+    private List<ValidationEvent> validateTrait(
+            Model model,
+            Shape targetShape,
+            Trait trait,
+            boolean validatePrelude
+    ) {
         ShapeId shape = trait.toShapeId();
 
         if (!model.getShape(shape).isPresent()) {
             // Punt; invalid ID targets are validated in TraitDefinitionShapeValidator.
+            return ListUtils.of();
+        }
+
+        if (!validatePrelude && Prelude.isPreludeShape(targetShape)) {
+            // The prelude is validated through tests in smithy-model and does not
+            // need to be validated here since traits can't be applied to shapes in
+            // the prelude outside of the prelude.
             return ListUtils.of();
         }
 

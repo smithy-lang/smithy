@@ -16,18 +16,18 @@
 package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.IdempotentTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -63,11 +63,19 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
+        if (!model.isTraitApplied(HttpTrait.class)) {
+            return Collections.emptyList();
+        }
+
         HttpBindingIndex bindingIndex = model.getKnowledge(HttpBindingIndex.class);
-        return model.shapes(OperationShape.class)
-                .flatMap(shape -> Trait.flatMapStream(shape, HttpTrait.class))
-                .flatMap(pair -> validateOperation(bindingIndex, pair.getLeft(), pair.getRight()).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(HttpTrait.class)) {
+            shape.asOperationShape().ifPresent(operation -> {
+                events.addAll(validateOperation(bindingIndex, operation, operation.expectTrait(HttpTrait.class)));
+            });
+        }
+
+        return events;
     }
 
     private List<ValidationEvent> validateOperation(

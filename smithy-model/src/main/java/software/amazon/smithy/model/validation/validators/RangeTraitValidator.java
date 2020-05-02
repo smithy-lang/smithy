@@ -21,12 +21,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.RangeTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.Pair;
@@ -38,10 +36,12 @@ public final class RangeTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes()
-                .flatMap(shape -> Trait.flatMapStream(shape, RangeTrait.class))
-                .flatMap(pair -> validateRangeTrait(model, pair.getLeft(), pair.getRight()).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(RangeTrait.class)) {
+            events.addAll(validateRangeTrait(model, shape, shape.expectTrait(RangeTrait.class)));
+        }
+
+        return events;
     }
 
     private List<ValidationEvent> validateRangeTrait(Model model, Shape shape, RangeTrait trait) {

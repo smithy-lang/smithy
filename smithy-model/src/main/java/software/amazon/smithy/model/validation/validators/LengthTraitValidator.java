@@ -17,11 +17,9 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.LengthTrait;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.Pair;
@@ -29,13 +27,15 @@ import software.amazon.smithy.utils.Pair;
 public final class LengthTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes()
-                .flatMap(shape -> Trait.flatMapStream(shape, LengthTrait.class))
-                .flatMap(pair -> validateLengthTrait(model, pair.getLeft(), pair.getRight()).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(LengthTrait.class)) {
+            events.addAll(validateLengthTrait(shape, shape.expectTrait(LengthTrait.class)));
+        }
+
+        return events;
     }
 
-    private List<ValidationEvent> validateLengthTrait(Model model, Shape shape, LengthTrait trait) {
+    private List<ValidationEvent> validateLengthTrait(Shape shape, LengthTrait trait) {
         List<ValidationEvent> events = new ArrayList<>();
         trait.getMin()
                 .filter(min -> min < 0)

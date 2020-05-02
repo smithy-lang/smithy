@@ -27,6 +27,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.TraitDefinition;
 
 public class ExcludeTraitsByTagTest {
     @Test
@@ -40,7 +41,7 @@ public class ExcludeTraitsByTagTest {
                 .settings(Node.objectNode().withMember("tags", Node.fromStrings("qux")))
                 .build();
         Model result = new ExcludeTraitsByTag().transform(context);
-        Set<ShapeId> traits = result.getTraitShapes().stream()
+        Set<ShapeId> traits = result.getShapesWithTrait(TraitDefinition.class).stream()
                 .map(Shape::getId)
                 .collect(Collectors.toSet());
 
