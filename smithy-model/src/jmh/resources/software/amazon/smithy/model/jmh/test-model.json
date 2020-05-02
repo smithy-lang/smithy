@@ -1,0 +1,91 @@
+{
+    "smithy": "1.0.0",
+    "shapes": {
+        "smithy.example#Example": {
+            "type": "service",
+            "version": "2019-04-02",
+            "operations": [
+                {
+                    "target": "smithy.example#ServiceOperation"
+                }
+            ],
+            "resources": [
+                {
+                    "target": "smithy.example#Resource1"
+                },
+                {
+                    "target": "smithy.example#Resource2"
+                }
+            ]
+        },
+        "smithy.example#Resource1": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "smithy.example#Resource1Operation"
+                }
+            ],
+            "resources": [
+                {
+                    "target": "smithy.example#Resource1_1"
+                },
+                {
+                    "target": "smithy.example#Resource1_2"
+                }
+            ]
+        },
+        "smithy.example#Resource1Operation": {
+            "type": "operation"
+        },
+        "smithy.example#Resource1_1": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "smithy.example#Resource1_1_Operation"
+                }
+            ],
+            "resources": [
+                {
+                    "target": "smithy.example#Resource1_1_1"
+                },
+                {
+                    "target": "smithy.example#Resource1_1_2"
+                }
+            ]
+        },
+        "smithy.example#Resource1_1_1": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "smithy.example#Resource1_1_1_Operation"
+                }
+            ]
+        },
+        "smithy.example#Resource1_1_1_Operation": {
+            "type": "operation"
+        },
+        "smithy.example#Resource1_1_2": {
+            "type": "resource",
+            "operations": [
+                {
+                    "target": "smithy.example#Resource1_1_2_Operation"
+                }
+            ]
+        },
+        "smithy.example#Resource1_1_2_Operation": {
+            "type": "operation"
+        },
+        "smithy.example#Resource1_1_Operation": {
+            "type": "operation"
+        },
+        "smithy.example#Resource1_2": {
+            "type": "resource"
+        },
+        "smithy.example#Resource2": {
+            "type": "resource"
+        },
+        "smithy.example#ServiceOperation": {
+            "type": "operation"
+        }
+    }
+}

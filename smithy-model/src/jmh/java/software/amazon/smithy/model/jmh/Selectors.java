@@ -48,6 +48,8 @@ public class Selectors {
         public Model model;
         public Selector suboptimalHttpBindingSelector = createSuboptimalHttpBindingIncompatibilitySelector();
         public Selector httpBindingSelector = createHttpBindingIncompatibilitySelector();
+        public String testIdlModelLocation = "test-model.smithy";
+        public String testJsonModelLocation = "test-model.json";
 
         @Setup
         public void prepare() {
@@ -73,6 +75,32 @@ public class Selectors {
                                   + "${operations}\n"
                                   + ":not([trait|http])");
         }
+    }
+
+    @Benchmark
+    public Model loadsIdlModelWithoutValidation(SelectorState state) {
+        return Model.assembler()
+                .addImport(Selectors.class.getResource(state.testIdlModelLocation))
+                .disableValidation()
+                .assemble()
+                .unwrap();
+    }
+
+    @Benchmark
+    public Model loadsIdlModelWithValidation(SelectorState state) {
+        return Model.assembler()
+                .addImport(Selectors.class.getResource(state.testIdlModelLocation))
+                .assemble()
+                .unwrap();
+    }
+
+    @Benchmark
+    public Model loadsJsonModelWithoutValidation(SelectorState state) {
+        return Model.assembler()
+                .addImport(Selectors.class.getResource(state.testJsonModelLocation))
+                .disableValidation()
+                .assemble()
+                .unwrap();
     }
 
     // Benchmarks just parsing the selector.
