@@ -1,19 +1,16 @@
 # Smithy
 [![Build Status](https://travis-ci.com/awslabs/smithy.svg?branch=master)](https://travis-ci.com/awslabs/smithy)
 
-**Smithy** is a protocol-agnostic interface definition language and set of
-tools for generating clients, servers, and documentation for any programming
-language.
+Smithy defines and generates clients, services, and documentation for
+any protocol.
 
 * [Smithy Homepage][docs]
 * [Specifications][specs]
 * [Java API documentation][javadocs]
 * [Smithy Gradle Plugin][Smithy Gradle Plugin]
 
-> **NOTE**: Smithy is a developer preview; we will continue to provide updates with new
-features, integrations, and fixes.
 
-# Modeling in Smithy
+# Smithy IDL
 
 Smithy models define a service as a collection of resources, operations, and
 shapes.
@@ -22,16 +19,16 @@ shapes.
 namespace example.weather
 
 service Weather {
-  version: "2006-03-01",
-  resources: [City],
-  operations: [GetCurrentTime]
+    version: "2006-03-01",
+    resources: [City],
+    operations: [GetCurrentTime]
 }
 
 resource City {
-  identifiers: { cityId: CityId },
-  read: GetCity,
-  list: ListCities,
-  resources: [Forecast],
+    identifiers: { cityId: CityId },
+    read: GetCity,
+    list: ListCities,
+    resources: [Forecast],
 }
 
 // See the full example at https://awslabs.github.io/smithy/quickstart.html#complete-example
@@ -70,7 +67,7 @@ Smithy Models][building] guide.
 This library is licensed under the Apache 2.0 License.
 
 [docs]: https://awslabs.github.io/smithy/
-[specs]: https://awslabs.github.io/smithy/spec/
+[specs]: https://awslabs.github.io/smithy/1.0/spec/
 [javadocs]: https://awslabs.github.io/smithy/javadoc/latest/
 [quickstart]: https://awslabs.github.io/smithy/quickstart.html
 [Smithy Gradle Plugin]: https://github.com/awslabs/smithy-gradle-plugin/
