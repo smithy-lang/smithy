@@ -468,4 +468,17 @@ public class ModelAssemblerTest {
         assertTrue(result.getResult().isPresent());
         assertTrue(result.getResult().get().getShape(ShapeId.from("foo.baz#MyString")).isPresent());
     }
+
+    @Test
+    public void canDisableValidation() {
+        String document = "namespace foo.baz\n"
+                          + "@idempotent\n" // < this is invalid
+                          + "string MyString\n";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel("foo.smithy", document)
+                .disableValidation()
+                .assemble();
+
+        assertFalse(result.isBroken());
+    }
 }

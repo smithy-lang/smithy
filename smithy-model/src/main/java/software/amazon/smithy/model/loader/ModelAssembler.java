@@ -81,6 +81,7 @@ public final class ModelAssembler {
 
     private TraitFactory traitFactory;
     private ValidatorFactory validatorFactory;
+    private boolean disableValidation;
 
     /**
      * A map of files to parse and load into the Model.
@@ -144,6 +145,7 @@ public final class ModelAssembler {
         assembler.metadata.putAll(metadata);
         assembler.disablePrelude = disablePrelude;
         assembler.properties.putAll(properties);
+        assembler.disableValidation = disableValidation;
         return assembler;
     }
 
@@ -161,6 +163,7 @@ public final class ModelAssembler {
      *     <li>Models registered via {@link #addModel}</li>
      *     <li>Shape registered via {@link #addModel}</li>
      *     <li>Metadata registered via {@link #putMetadata}</li>
+     *     <li>Validation is re-enabled if it was disabled.</li>
      * </ul>
      *
      * <p>The state of {@link #disablePrelude} is reset such that the prelude
@@ -176,6 +179,7 @@ public final class ModelAssembler {
         validators.clear();
         documentNodes.clear();
         disablePrelude = false;
+        disableValidation = false;
         return this;
     }
 
@@ -452,6 +456,16 @@ public final class ModelAssembler {
     }
 
     /**
+     * Disables additional validation of the model.
+     *
+     * @return Returns the assembler.
+     */
+    public ModelAssembler disableValidation() {
+        this.disableValidation = true;
+        return this;
+    }
+
+    /**
      * Assembles the model and returns the validated result.
      *
      * @return Returns the validated result that optionally contains a Model
@@ -510,6 +524,10 @@ public final class ModelAssembler {
     }
 
     private ValidatedResult<Model> validate(Model model, List<ValidationEvent> modelResultEvents) {
+        if (disableValidation) {
+            return new ValidatedResult<>(model, modelResultEvents);
+        }
+
         if (validatorFactory == null) {
             validatorFactory = LazyValidatorFactoryHolder.INSTANCE;
         }

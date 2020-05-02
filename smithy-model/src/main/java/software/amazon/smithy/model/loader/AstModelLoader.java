@@ -15,12 +15,12 @@
 
 package software.amazon.smithy.model.loader;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -323,12 +323,13 @@ enum AstModelLoader {
         return referenceObject.expectStringMember(TARGET).expectShapeId();
     }
 
-    private List<ShapeId> loadOptionalTargetList(
-            LoaderVisitor visitor, ShapeId id, ObjectNode node, String member) {
-        return node.getArrayMember(member)
-                .map(array -> array.getElements().stream()
-                        .map(e -> loadReferenceBody(visitor, id, e))
-                        .collect(Collectors.toList()))
-                .orElseGet(Collections::emptyList);
+    private List<ShapeId> loadOptionalTargetList(LoaderVisitor visitor, ShapeId id, ObjectNode node, String member) {
+        return node.getArrayMember(member).map(array -> {
+            List<ShapeId> ids = new ArrayList<>(array.size());
+            for (Node element : array.getElements()) {
+                ids.add(loadReferenceBody(visitor, id, element));
+            }
+            return ids;
+        }).orElseGet(Collections::emptyList);
     }
 }
