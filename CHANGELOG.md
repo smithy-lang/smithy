@@ -157,7 +157,7 @@ reference lookups. ([#287](https://github.com/awslabs/smithy/pull/287))
 * The `aws.api#service` trait no longer supports the deprecated
 `sdkServiceId`, `arnService`, or `productName` properties. ([#268](https://github.com/awslabs/smithy/pull/268))
 * The deprecated `TemplateEngine` and `DefaultDataTemplateEngine` have been removed. ([#268](https://github.com/awslabs/smithy/pull/268))
-* The deprecated `smithy.validators` and `smithy.suppressions` are no loner used as aliases for
+* The deprecated `smithy.validators` and `smithy.suppressions` are no longer used as aliases for
 validators and suppressions. ([#268](https://github.com/awslabs/smithy/pull/268))
 * The `smithy.api#references` and `smithy.api#idRef` traits no longer support relative shape IDs. ([#268](https://github.com/awslabs/smithy/pull/268))
 

@@ -248,8 +248,6 @@ Applies the transforms defined in the given projection names.
 excludeShapesByTag
 ------------------
 
-Aliases: ``excludeByTag`` (deprecated)
-
 Removes shapes if they are tagged with one or more of the given ``tags`` via
 the :ref:`tags trait <tags-trait>`.
 
@@ -274,7 +272,7 @@ the :ref:`tags trait <tags-trait>`.
                 "exampleProjection": {
                     "transforms": [
                         {
-                            "name": "excludeByTag",
+                            "name": "excludeShapesByTag",
                             "args": {
                                 "tags": ["foo", "baz"]
                             }
@@ -293,8 +291,6 @@ the :ref:`tags trait <tags-trait>`.
 
 includeShapesByTag
 ------------------
-
-Aliases: ``includeByTag`` (deprecated)
 
 Removes shapes that are not tagged with at least one of the given ``tags``
 via the :ref:`tags trait <tags-trait>`.
@@ -320,7 +316,7 @@ via the :ref:`tags trait <tags-trait>`.
                 "exampleProjection": {
                     "transforms": [
                         {
-                            "name": "includeByTag",
+                            "name": "includeShapesByTag",
                             "args": {
                                 "tags": ["foo", "baz"]
                             }
@@ -745,12 +741,90 @@ orphaned shapes.
     This transformer does not remove shapes from the prelude.
 
 
+.. _excludeMetadata-transform:
+
+excludeMetadata
+---------------
+
+Removes :ref:`metadata` key-value pairs from a model if the key is in the
+provided ``keys`` list.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - keys
+      - ``[string]``
+      - The set of metadata keys that are removed from the model.
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "excludeMetadata",
+                            "args": {
+                                "keys": ["suppressions"]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+
+.. _includeMetadata-transform:
+
+includeMetadata
+---------------
+
+Removes :ref:`metadata` key-value pairs from a model if the key is not in
+the provided ``keys`` list.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - keys
+      - ``[string]``
+      - The set of metadata keys that are retained in the model.
+
+.. tabs::
+
+    .. code-tab:: json
+
+        {
+            "version": "1.0",
+            "projections": {
+                "exampleProjection": {
+                    "transforms": [
+                        {
+                            "name": "includeMetadata",
+                            "args": {
+                                "keys": ["authors"]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+
 .. _removeUnusedShapes-transform:
 
 removeUnusedShapes
 ------------------
-
-Aliases: ``treeShaker`` (deprecated)
 
 Removes shapes from the model that are not connected to any service shape
 or to a shape definition.
@@ -824,7 +898,7 @@ Consider the following ``smithy-build.json`` file:
             "a": {
                 "transforms": [
                     {
-                        "${NAME_KEY}": "includeByTag",
+                        "${NAME_KEY}": "includeShapesByTag",
                         "args": {
                             "tags": ["${FOO}", "\\${BAZ}"]
                         }
@@ -845,7 +919,7 @@ environment variable set to "hi", this file is equivalent to:
             "a": {
                 "transforms": [
                     {
-                        "name": "includeByTag",
+                        "name": "includeShapesByTag",
                         "args": {
                             "tags": ["Hi", "${BAZ}"]
                         }

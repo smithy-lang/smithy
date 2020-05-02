@@ -4,7 +4,7 @@
     "a": {
       "transforms": [
         {
-          "name": "includeByTag",
+          "name": "includeShapesByTag",
           "args": {
             "projections": [
               "foo",

@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.build.transforms;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import software.amazon.smithy.build.TransformContext;
@@ -65,11 +64,6 @@ public final class IncludeShapesByTag extends BackwardCompatHelper<IncludeShapes
     @Override
     public String getName() {
         return "includeShapesByTag";
-    }
-
-    @Override
-    public Collection<String> getAliases() {
-        return Collections.singleton("includeByTag");
     }
 
     @Override

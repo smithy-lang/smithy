@@ -15,14 +15,12 @@
 
 package software.amazon.smithy.build;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Function;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Creates a model transformer by name.
@@ -34,15 +32,6 @@ public interface ProjectionTransformer {
      * @return Returns the name (e.g., "traits").
      */
     String getName();
-
-    /**
-     * Returns a list of aliases that the transformer also answers to.
-     *
-     * @return True if this transformer is responsible for the given name.
-     */
-    default Collection<String> getAliases() {
-        return ListUtils.of();
-    }
 
     /**
      * Transforms the given model using the provided {@link TransformContext}.
@@ -77,7 +66,6 @@ public interface ProjectionTransformer {
         Map<String, ProjectionTransformer> map = new HashMap<>();
         for (ProjectionTransformer transformer : transformers) {
             map.put(transformer.getName(), transformer);
-            transformer.getAliases().forEach(alias -> map.put(alias, transformer));
         }
         return name -> Optional.ofNullable(map.get(name));
     }

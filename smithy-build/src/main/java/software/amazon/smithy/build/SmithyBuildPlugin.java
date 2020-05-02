@@ -16,12 +16,10 @@
 package software.amazon.smithy.build;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Function;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Plugin extension class for SmithyBuild.
@@ -37,15 +35,6 @@ public interface SmithyBuildPlugin {
      * @return Returns the name (e.g., "MyPlugin").
      */
     String getName();
-
-    /**
-     * Returns a list of aliases that the plugin also answers to.
-     *
-     * @return True if this plugin is responsible for the given name.
-     */
-    default Collection<String> getAliases() {
-        return ListUtils.of();
-    }
 
     /**
      * Plugins can choose whether or not to create artifacts based on whether
@@ -94,7 +83,7 @@ public interface SmithyBuildPlugin {
         List<SmithyBuildPlugin> pluginList = new ArrayList<>();
         plugins.forEach(pluginList::add);
         return name -> pluginList.stream()
-                .filter(plugin -> plugin.getName().equals(name) || plugin.getAliases().contains(name))
+                .filter(plugin -> plugin.getName().equals(name))
                 .findFirst();
     }
 

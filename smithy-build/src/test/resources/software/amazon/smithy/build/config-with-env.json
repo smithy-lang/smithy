@@ -4,7 +4,7 @@
     "a": {
       "transforms": [
         {
-          "${NAME_KEY}": "includeByTag",
+          "${NAME_KEY}": "includeShapesByTag",
           "args": {
             "tags": [
               "${FOO}",
