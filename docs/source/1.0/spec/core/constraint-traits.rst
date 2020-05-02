@@ -458,7 +458,7 @@ Trait selector
 Value type
     ``structure``
 
-The length trait is a structure that contains the following members:
+The range trait is a structure that contains the following members:
 
 .. list-table::
     :header-rows: 1

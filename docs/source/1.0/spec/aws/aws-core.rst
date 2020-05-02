@@ -687,7 +687,7 @@ The effective data classifications in the previous example are as follows:
 .. note::
 
     This trait should be used in conjunction with the
-    :ref:`sensitive-trait` trait as necessary.
+    :ref:`sensitive-trait` as necessary.
 
 
 .. _data-classifications:
@@ -710,10 +710,12 @@ applied through the ``aws.api#data`` trait.
         AWS for processing, storage or hosting by AWS services in connection
         with the customer’s accounts and any computational results that
         customers or any customer end user derive from the foregoing through
-        their use of AWS services.
+        their use of AWS services. Data of this classification should be marked
+        with the :ref:`sensitive-trait`.
     * - ``account``
       - Designates information about customers that customers provide to AWS in
         connection with the creation or administration of customers’ accounts.
+        Data of this classification should be marked with the :ref:`sensitive-trait`.
     * - ``usage``
       - Designates data related to a customer’s account, such as resource
         identifiers, usage statistics, logging data, and analytics.
@@ -721,7 +723,8 @@ applied through the ``aws.api#data`` trait.
       - Designates metadata tags applied to AWS resources.
     * - ``permissions``
       - Designates security and access roles, rules, usage policies, and
-        permissions.
+        permissions. Data of this classification should be marked with the
+        :ref:`sensitive-trait`.
 
 
 .. _aws.api#controlPlane-trait:

@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.build.transforms;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -43,7 +42,7 @@ public final class RemoveUnusedShapes extends BackwardCompatHelper<RemoveUnusedS
         /**
          * You can <em>export</em> shapes that are not connected to any service
          * shape by applying specific tags to the shape and adding the list of
-         * export tags as arguments to the treeShaker.
+         * export tags an argument to the transformer.
          *
          * @param exportByTags Tags that cause shapes to be exported.
          */
@@ -69,11 +68,6 @@ public final class RemoveUnusedShapes extends BackwardCompatHelper<RemoveUnusedS
     @Override
     public String getName() {
         return "removeUnusedShapes";
-    }
-
-    @Override
-    public Collection<String> getAliases() {
-        return Collections.singleton("treeShaker");
     }
 
     @Override

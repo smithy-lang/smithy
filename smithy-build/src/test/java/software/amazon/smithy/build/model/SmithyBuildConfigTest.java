@@ -125,7 +125,7 @@ public class SmithyBuildConfigTest {
         TransformConfig transform = config.getProjections().get("a").getTransforms().get(0);
 
         // Did the key expand?
-        assertThat(transform.getName(), equalTo("includeByTag"));
+        assertThat(transform.getName(), equalTo("includeShapesByTag"));
         // Did the array and string values in it expand?
         assertThat(transform.getArgs(), equalTo(Node.objectNode()
                 .withMember("tags", Node.fromStrings("Hi", "${BAZ}"))));
