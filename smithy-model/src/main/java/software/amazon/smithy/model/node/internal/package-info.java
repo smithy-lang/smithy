@@ -29,6 +29,13 @@
  *     <li>Classes that aren't used were removed.</li>
  *     <li>Pretty printing was modified to use fewer classes and to accept a
  *     String rather than char[].</li>
+ *     <li>All {@code Location} classes were converted to be
+ *     {@link software.amazon.smithy.model.SourceLocation}</li>
+ *     <li>{@link software.amazon.smithy.model.loader.ModelSyntaxException} is now
+ *     thrown instead of {@code ParseException}.</li>
+ *     <li>Several methods were removed from {@code JsonHandler} that weren't
+ *     being used.</li>
+ *     <li>A SourceLocation is now passed in all relevant JsonHandler end* methods.</li>
  * </ul>
  *
  * <p>The original copyright is as-follows:

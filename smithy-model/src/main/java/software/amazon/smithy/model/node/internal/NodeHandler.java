@@ -17,13 +17,11 @@ package software.amazon.smithy.model.node.internal;
 
 import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
@@ -37,23 +35,12 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class NodeHandler extends JsonHandler<List<Node>, Map<StringNode, Node>> {
 
     private Node value;
-    private String filename;
-    private ArrayDeque<SourceLocation> locations = new ArrayDeque<>();
-
-    NodeHandler(String filename) {
-        this.filename = filename;
-    }
 
     @SmithyInternalApi
     public static Node parse(String filename, String content, boolean allowComments) {
-        try {
-            NodeHandler handler = new NodeHandler(filename);
-            new JsonParser(handler, allowComments).parse(content);
-            return handler.value;
-        } catch (ParseException e) {
-            SourceLocation location = new SourceLocation(filename, e.getLocation().line, e.getLocation().column);
-            throw new ModelSyntaxException("Error parsing JSON: " + e.getMessage(), location);
-        }
+        NodeHandler handler = new NodeHandler();
+        new JsonParser(filename, handler, allowComments).parse(content);
+        return handler.value;
     }
 
     @SmithyInternalApi
@@ -73,49 +60,31 @@ public final class NodeHandler extends JsonHandler<List<Node>, Map<StringNode, N
     }
 
     @Override
-    void startNull() {
-        locations.push(getSourceLocation());
+    void endNull(SourceLocation location) {
+        value = new NullNode(location);
     }
 
     @Override
-    void endNull() {
-        value = new NullNode(locations.pop());
-    }
-
-    void startBoolean() {
-        locations.push(getSourceLocation());
+    void endBoolean(boolean bool, SourceLocation location) {
+        value = new BooleanNode(bool, location);
     }
 
     @Override
-    void endBoolean(boolean bool) {
-        value = new BooleanNode(bool, locations.pop());
-    }
-
-    void startString() {
-        locations.push(getSourceLocation());
+    void endString(String string, SourceLocation location) {
+        value = new StringNode(string, location);
     }
 
     @Override
-    void endString(String string) {
-        value = new StringNode(string, locations.pop());
-    }
-
-    void startNumber() {
-        locations.push(getSourceLocation());
-    }
-
-    @Override
-    void endNumber(String string) {
+    void endNumber(String string, SourceLocation location) {
         if (string.contains(".")) {
-            value = new NumberNode(new BigDecimal(string), locations.pop());
+            value = new NumberNode(new BigDecimal(string), location);
         } else {
-            value = new NumberNode(Long.parseLong(string), locations.pop());
+            value = new NumberNode(Long.parseLong(string), location);
         }
     }
 
     @Override
     List<Node> startArray() {
-        locations.push(getSourceLocation());
         return new ArrayList<>();
     }
 
@@ -125,34 +94,23 @@ public final class NodeHandler extends JsonHandler<List<Node>, Map<StringNode, N
     }
 
     @Override
-    void endArray(List<Node> array) {
-        value = new ArrayNode(array, locations.pop());
+    void endArray(List<Node> array, SourceLocation location) {
+        value = new ArrayNode(array, location);
     }
 
     @Override
     Map<StringNode, Node> startObject() {
-        locations.push(getSourceLocation());
         return new LinkedHashMap<>();
     }
 
     @Override
-    void startObjectName(Map<StringNode, Node> object) {
-        locations.push(getSourceLocation());
-    }
-
-    @Override
-    void endObjectValue(Map<StringNode, Node> object, String name) {
-        StringNode key = new StringNode(name, locations.pop());
+    void endObjectValue(Map<StringNode, Node> object, String name, SourceLocation keyLocation) {
+        StringNode key = new StringNode(name, keyLocation);
         object.put(key, value);
     }
 
     @Override
-    void endObject(Map<StringNode, Node> object) {
-        value = new ObjectNode(object, locations.pop());
-    }
-
-    private SourceLocation getSourceLocation() {
-        Location location = getLocation();
-        return new SourceLocation(filename, location.line, location.column);
+    void endObject(Map<StringNode, Node> object, SourceLocation location) {
+        value = new ObjectNode(object, location);
     }
 }

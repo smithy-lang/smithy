@@ -18,6 +18,7 @@ package software.amazon.smithy.model.node;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -207,5 +208,12 @@ public class NodeParserTest {
     @Test
     public void requiresNonEmptyString() {
         Assertions.assertThrows(ModelSyntaxException.class, () -> Node.parse(""));
+    }
+
+    @Test
+    public void usesCorrectErrorMessage() {
+        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class, () -> Node.parse("{"));
+
+        assertThat(e.getMessage(), startsWith("Error parsing JSON: "));
     }
 }

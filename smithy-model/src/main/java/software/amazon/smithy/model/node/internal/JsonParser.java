@@ -25,17 +25,30 @@ package software.amazon.smithy.model.node.internal;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.loader.ModelSyntaxException;
 
 /**
  * A streaming parser for JSON text. The parser reports all events to a given handler.
  *
  * This is mostly a 1:1 copy, but support for comments using "//" was added by Smithy team.
+ * All instances of {@code Location} in the original implementation were converted
+ * to Smithy {@link SourceLocation}. All {@code ParseException}s were converted
+ * to Smithy {@link ModelSyntaxException}. All "end*" methods of the handler now pass in
+ * the source location of the parser of when the element was started.
  */
 final class JsonParser {
 
     private static final int MAX_NESTING_LEVEL = 1000;
     private static final int MIN_BUFFER_SIZE = 10;
     private static final int DEFAULT_BUFFER_SIZE = 1024;
+
+    // Added by Smithy team to show SourceLocation.
+    // All instances of Location from the old class were converted to
+    // SourceLocation.
+    private final String filename;
+    // Added by Smithy team to allow for whitespace comments.
+    private boolean allowComments;
 
     private final JsonHandler<Object, Object> handler;
     private Reader reader;
@@ -49,8 +62,6 @@ final class JsonParser {
     private StringBuilder captureBuffer;
     private int captureStart;
     private int nestingLevel;
-    // Added by Smithy team
-    private boolean allowComments;
 
     /*
      * |                      bufferOffset
@@ -68,13 +79,14 @@ final class JsonParser {
      * @param handler the handler to process parser events
      */
     @SuppressWarnings("unchecked")
-    JsonParser(JsonHandler<?, ?> handler, boolean allowComments) {
+    JsonParser(String filename, JsonHandler<?, ?> handler, boolean allowComments) {
         if (handler == null) {
             throw new NullPointerException("handler is null");
         }
         this.handler = (JsonHandler<Object, Object>) handler;
-        handler.parser = this;
+
         // Added by Smithy team
+        this.filename = filename;
         this.allowComments = allowComments;
     }
 
@@ -83,7 +95,7 @@ final class JsonParser {
      * with whitespace.
      *
      * @param string the input string, must be valid JSON
-     * @throws ParseException if the input is not valid JSON
+     * @throws ModelSyntaxException if the input is not valid JSON
      */
     void parse(String string) {
         if (string == null) {
@@ -108,7 +120,7 @@ final class JsonParser {
      *
      * @param reader the reader to read the input from
      * @throws IOException if an I/O error occurs in the reader
-     * @throws ParseException if the input is not valid JSON
+     * @throws ModelSyntaxException if the input is not valid JSON
      */
     void parse(Reader reader) throws IOException {
         parse(reader, DEFAULT_BUFFER_SIZE);
@@ -125,7 +137,7 @@ final class JsonParser {
      * @param reader the reader to read the input from
      * @param buffersize the size of the input buffer in chars
      * @throws IOException if an I/O error occurs in the reader
-     * @throws ParseException if the input is not valid JSON
+     * @throws ModelSyntaxException if the input is not valid JSON
      */
     void parse(Reader reader, int buffersize) throws IOException {
         if (reader == null) {
@@ -191,6 +203,7 @@ final class JsonParser {
     }
 
     private void readArray() throws IOException {
+        SourceLocation location = getSourceLocation();
         Object array = handler.startArray();
         read();
         if (++nestingLevel > MAX_NESTING_LEVEL) {
@@ -199,12 +212,12 @@ final class JsonParser {
         skipWhiteSpace();
         if (readChar(']')) {
             nestingLevel--;
-            handler.endArray(array);
+            handler.endArray(array, location);
             return;
         }
         do {
             skipWhiteSpace();
-            handler.startArrayValue(array);
+            // handler.startArrayValue(array);
             readValue();
             handler.endArrayValue(array);
             skipWhiteSpace();
@@ -213,10 +226,11 @@ final class JsonParser {
             throw expected("',' or ']'");
         }
         nestingLevel--;
-        handler.endArray(array);
+        handler.endArray(array, location);
     }
 
     private void readObject() throws IOException {
+        SourceLocation objectLocation = getSourceLocation();
         Object object = handler.startObject();
         read();
         if (++nestingLevel > MAX_NESTING_LEVEL) {
@@ -225,29 +239,30 @@ final class JsonParser {
         skipWhiteSpace();
         if (readChar('}')) {
             nestingLevel--;
-            handler.endObject(object);
+            handler.endObject(object, objectLocation);
             return;
         }
         do {
             skipWhiteSpace();
-            handler.startObjectName(object);
+            SourceLocation nameLocation = getSourceLocation();
+            // handler.startObjectName(object);
             String name = readName();
-            handler.endObjectName(object, name);
+            // handler.endObjectName(object, name);
             skipWhiteSpace();
             if (!readChar(':')) {
                 throw expected("':'");
             }
             skipWhiteSpace();
-            handler.startObjectValue(object, name);
+            // handler.startObjectValue(object, name);
             readValue();
-            handler.endObjectValue(object, name);
+            handler.endObjectValue(object, name, nameLocation);
             skipWhiteSpace();
         } while (readChar(','));
         if (!readChar('}')) {
             throw expected("',' or '}'");
         }
         nestingLevel--;
-        handler.endObject(object);
+        handler.endObject(object, objectLocation);
     }
 
     private String readName() throws IOException {
@@ -258,31 +273,34 @@ final class JsonParser {
     }
 
     private void readNull() throws IOException {
-        handler.startNull();
+        SourceLocation location = getSourceLocation();
+        // handler.startNull();
         read();
         readRequiredChar('u');
         readRequiredChar('l');
         readRequiredChar('l');
-        handler.endNull();
+        handler.endNull(location);
     }
 
     private void readTrue() throws IOException {
-        handler.startBoolean();
+        SourceLocation location = getSourceLocation();
+        // handler.startBoolean();
         read();
         readRequiredChar('r');
         readRequiredChar('u');
         readRequiredChar('e');
-        handler.endBoolean(true);
+        handler.endBoolean(true, location);
     }
 
     private void readFalse() throws IOException {
-        handler.startBoolean();
+        SourceLocation location = getSourceLocation();
+        // handler.startBoolean();
         read();
         readRequiredChar('a');
         readRequiredChar('l');
         readRequiredChar('s');
         readRequiredChar('e');
-        handler.endBoolean(false);
+        handler.endBoolean(false, location);
     }
 
     private void readRequiredChar(char ch) throws IOException {
@@ -292,8 +310,9 @@ final class JsonParser {
     }
 
     private void readString() throws IOException {
-        handler.startString();
-        handler.endString(readStringInternal());
+        SourceLocation location = getSourceLocation();
+        // handler.startString();
+        handler.endString(readStringInternal(), location);
     }
 
     private String readStringInternal() throws IOException {
@@ -356,7 +375,8 @@ final class JsonParser {
     }
 
     private void readNumber() throws IOException {
-        handler.startNumber();
+        SourceLocation location = getSourceLocation();
+        // handler.startNumber();
         startCapture();
         readChar('-');
         int firstDigit = current;
@@ -369,7 +389,7 @@ final class JsonParser {
         }
         readFraction();
         readExponent();
-        handler.endNumber(endCapture());
+        handler.endNumber(endCapture(), location);
     }
 
     private boolean readFraction() throws IOException {
@@ -499,21 +519,21 @@ final class JsonParser {
         return new String(buffer, start, end - start);
     }
 
-    Location getLocation() {
+    private SourceLocation getSourceLocation() {
         int offset = bufferOffset + index - 1;
         int column = offset - lineOffset + 1;
-        return new Location(offset, line, column);
+        return new SourceLocation(filename, line, column);
     }
 
-    private ParseException expected(String expected) {
+    private ModelSyntaxException expected(String expected) {
         if (isEndOfText()) {
             return error("Unexpected end of input");
         }
         return error("Expected " + expected);
     }
 
-    private ParseException error(String message) {
-        return new ParseException(message, getLocation());
+    private ModelSyntaxException error(String message) {
+        return new ModelSyntaxException("Error parsing JSON: " + message, getSourceLocation());
     }
 
     private boolean isWhiteSpace() {
