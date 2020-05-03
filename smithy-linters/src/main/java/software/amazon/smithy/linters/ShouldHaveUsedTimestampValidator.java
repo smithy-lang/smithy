@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package software.amazon.smithy.linters;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -23,15 +24,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.NodeMapper;
-import software.amazon.smithy.model.shapes.FloatShape;
-import software.amazon.smithy.model.shapes.IntegerShape;
-import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.ShortShape;
-import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -111,15 +108,27 @@ public final class ShouldHaveUsedTimestampValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeVisitor<List<ValidationEvent>> visitor = Shape.<List<ValidationEvent>>visitor()
-                .when(StringShape.class, s -> validateSimpleShape(s, patterns))
-                .when(ShortShape.class, s -> validateSimpleShape(s, patterns))
-                .when(IntegerShape.class, s -> validateSimpleShape(s, patterns))
-                .when(LongShape.class, s -> validateSimpleShape(s, patterns))
-                .when(FloatShape.class, s -> validateSimpleShape(s, patterns))
-                .when(StructureShape.class, shape -> validateStructure(shape, model, patterns))
-                .when(UnionShape.class, shape -> validateUnion(shape, model, patterns))
-                .orElse(ListUtils.of());
+        ShapeVisitor<List<ValidationEvent>> visitor = new ShapeVisitor.Default<List<ValidationEvent>>() {
+            @Override
+            protected List<ValidationEvent> getDefault(Shape shape) {
+                if (shape.isStringShape() || shape instanceof NumberShape) {
+                    return validateSimpleShape(shape, patterns);
+                } else {
+                    return Collections.emptyList();
+                }
+            }
+
+            @Override
+            public List<ValidationEvent> structureShape(StructureShape shape) {
+                return validateStructure(shape, model, patterns);
+            }
+
+            @Override
+            public List<ValidationEvent> unionShape(UnionShape shape) {
+                return validateUnion(shape, model, patterns);
+            }
+        };
+
         return model.shapes().flatMap(shape -> shape.accept(visitor).stream()).collect(Collectors.toList());
     }
 

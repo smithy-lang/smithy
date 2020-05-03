@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,20 +15,11 @@
 
 package software.amazon.smithy.model.shapes;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import software.amazon.smithy.utils.SmithyBuilder;
-
 /**
  * Shape visitor pattern.
  *
  * @param <R> Return type of the visitor.
  * @see Default
- * @see Shape#visitor()
- * @see Builder
  */
 public interface ShapeVisitor<R> {
 
@@ -75,89 +66,6 @@ public interface ShapeVisitor<R> {
     R memberShape(MemberShape shape);
 
     R timestampShape(TimestampShape shape);
-
-    /**
-     * Creates a {@link ShapeVisitor} used to dispatch to functions based
-     * on a model type.
-     *
-     * @param <R> Return value from each case.
-     */
-    final class Builder<R> implements SmithyBuilder<ShapeVisitor<R>> {
-
-        private Map<Class<? extends Shape>, Function<? extends Shape, R>> functions = new HashMap<>();
-        private Function<Shape, R> orElse = shape -> {
-            throw new IllegalStateException("Unexpected shape: " + shape.getClass().getCanonicalName());
-        };
-
-        Builder() {}
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public ShapeVisitor<R> build() {
-            return new Default<R>() {
-                protected R getDefault(Shape shape) {
-                    Function<Shape, R> f = (Function<Shape, R>) functions.get(shape.getClass());
-                    return f != null ? f.apply(shape) : orElse.apply(shape);
-                }
-            };
-        }
-
-        /**
-         * Register a case for unhandled shapes and builds the Cases.
-         *
-         * @param f Function to use for unhandled visitor.
-         * @return Returns the built {@link ShapeVisitor}
-         */
-        public ShapeVisitor<R> orElseGet(Function<Shape, R> f) {
-            orElse = Objects.requireNonNull(f);
-            return build();
-        }
-
-        /**
-         * Register a case for unhandled shapes and builds the Cases.
-         *
-         * @param f Supplier to use for unhandled visitor.
-         * @return Returns the built {@link ShapeVisitor}
-         */
-        public ShapeVisitor<R> orElseGet(Supplier<R> f) {
-            return orElseGet(shape -> f.get());
-        }
-
-        /**
-         * Return a value for all unhandled nodes.
-         *
-         * @param defaultValue Default value to return for unhandled visitor.
-         * @return Returns the built {@link ShapeVisitor}
-         */
-        public ShapeVisitor<R> orElse(R defaultValue) {
-            return orElseGet(shape -> defaultValue);
-        }
-
-        /**
-         * Register a case for unhandled shapes that throws an exception.
-         *
-         * @param e Exception to throw if an unhandled case is encountered.
-         * @return Returns the built {@link ShapeVisitor}
-         */
-        public ShapeVisitor<R> orElseThrow(RuntimeException e) {
-            return orElseGet(shape -> {
-                throw e;
-            });
-        }
-
-        /**
-         * Invoked when a specific shape type is encountered.
-         *
-         * @param type Shape type to handle.
-         * @param f Function that accepts the shape and returns R.
-         * @param <T> The shape type being handled.
-         * @return Returns the visitor builder.
-         */
-        public <T extends Shape> Builder<R> when(Class<T> type, Function<T, R> f) {
-            functions.put(type, Objects.requireNonNull(f));
-            return this;
-        }
-    }
 
     /**
      * Creates {@link ShapeVisitor} that return a value when necessary

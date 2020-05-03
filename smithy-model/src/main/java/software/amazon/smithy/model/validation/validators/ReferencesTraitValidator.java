@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -87,10 +88,13 @@ public final class ReferencesTraitValidator extends AbstractValidator {
             ReferencesTrait trait,
             ResourceShape target
     ) {
-        return shape.accept(Shape.<List<ValidationEvent>>visitor()
-                .when(StructureShape.class, s -> validateStructureRef(model, reference, s, trait, target))
-                .when(StringShape.class, s -> validateStringShapeRef(reference, s, trait, target))
-                .orElse(ListUtils.of()));
+        if (shape.asStructureShape().isPresent()) {
+            return validateStructureRef(model, reference, shape.asStructureShape().get(), trait, target);
+        } else if (shape.asStringShape().isPresent()) {
+            return validateStringShapeRef(reference, shape.asStringShape().get(), trait, target);
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private List<ValidationEvent> validateStringShapeRef(
