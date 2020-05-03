@@ -17,6 +17,10 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 /**
  * Immutable identifier for each shape in a model.
@@ -39,6 +43,9 @@ import java.util.Optional;
  */
 public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
 
+    /** LRA (least recently added) cache of parsed shape IDs. */
+    private static final ConcurrentLraCache<String, ShapeId> CACHE = new ConcurrentLraCache<>(1024);
+
     private final String namespace;
     private final String name;
     private final String member;
@@ -59,32 +66,34 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
     /**
      * Creates an absolute shape ID from the given string.
      *
-     * @param absoluteShapeId Shape ID to parse.
+     * @param id Shape ID to parse.
      * @return The parsed ID.
      * @throws ShapeIdSyntaxException when the ID is malformed.
      */
-    public static ShapeId from(String absoluteShapeId) {
-        int namespacePosition = absoluteShapeId.indexOf('#');
-        if (namespacePosition <= 0 || namespacePosition == absoluteShapeId.length() - 1) {
-            throw new ShapeIdSyntaxException("Invalid shape ID: " + absoluteShapeId);
-        }
+    public static ShapeId from(String id) {
+        return CACHE.get(id, absoluteShapeId -> {
+            int namespacePosition = absoluteShapeId.indexOf('#');
+            if (namespacePosition <= 0 || namespacePosition == absoluteShapeId.length() - 1) {
+                throw new ShapeIdSyntaxException("Invalid shape ID: " + absoluteShapeId);
+            }
 
-        String namespace = absoluteShapeId.substring(0, namespacePosition);
-        String name;
-        String memberName = null;
+            String namespace = absoluteShapeId.substring(0, namespacePosition);
+            String name;
+            String memberName = null;
 
-        int memberPosition = absoluteShapeId.indexOf('$');
-        if (memberPosition == -1) {
-            name = absoluteShapeId.substring(namespacePosition + 1);
-        } else if (memberPosition < namespacePosition) {
-            throw new ShapeIdSyntaxException("Invalid shape ID: " + absoluteShapeId);
-        } else {
-            name = absoluteShapeId.substring(namespacePosition + 1, memberPosition);
-            memberName = absoluteShapeId.substring(memberPosition + 1);
-        }
+            int memberPosition = absoluteShapeId.indexOf('$');
+            if (memberPosition == -1) {
+                name = absoluteShapeId.substring(namespacePosition + 1);
+            } else if (memberPosition < namespacePosition) {
+                throw new ShapeIdSyntaxException("Invalid shape ID: " + absoluteShapeId);
+            } else {
+                name = absoluteShapeId.substring(namespacePosition + 1, memberPosition);
+                memberName = absoluteShapeId.substring(memberPosition + 1);
+            }
 
-        validateParts(absoluteShapeId, namespace, name, memberName);
-        return new ShapeId(absoluteShapeId, namespace, name, memberName);
+            validateParts(absoluteShapeId, namespace, name, memberName);
+            return new ShapeId(absoluteShapeId, namespace, name, memberName);
+        });
     }
 
     /**
@@ -338,5 +347,43 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
         }
 
         return h;
+    }
+
+    private static final class ConcurrentLraCache<K, V> {
+        private final int maxSize;
+        private final ConcurrentLinkedQueue<K> queue = new ConcurrentLinkedQueue<>();
+        private final ConcurrentMap<K, V> map;
+
+        ConcurrentLraCache(final int maxSize) {
+            this.maxSize = maxSize;
+            map = new ConcurrentHashMap<>(maxSize);
+        }
+
+        public V get(final K key, Function<K, V> creator) {
+            V value = map.get(key);
+
+            // Return the value if it exists in the cache.
+            if (value != null) {
+                return value;
+            }
+
+            value = creator.apply(key);
+
+            // Only update the queue if the value is new to the map.
+            if (map.put(key, value) == null) {
+                queue.offer(key);
+                // Purge least recently added items from the cache. The result of
+                // map.size is an estimate, but that's ok for a cache.
+                while (map.size() >= maxSize) {
+                    // Remove the element from the map, and break early if the
+                    // queue element can't be found in the map for some reason.
+                    if (map.remove(queue.poll()) == null) {
+                        break;
+                    }
+                }
+            }
+
+            return value;
+        }
     }
 }
