@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import software.amazon.smithy.utils.Tagged;
  * compared in the context of a Model that forbids shape ID conflicts.
  */
 public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Comparable<Shape> {
+
     private final ShapeId id;
     private final Map<ShapeId, Trait> traits;
     private final transient SourceLocation source;
@@ -114,16 +115,6 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
      * @return Returns the result.
      */
     public abstract <R> R accept(ShapeVisitor<R> cases);
-
-    /**
-     * Creates a {@link ShapeVisitor.Builder}.
-     *
-     * @param <R> Return type of the visitor.
-     * @return Shape visitor builder.
-     */
-    public static <R> ShapeVisitor.Builder<R> visitor() {
-        return new ShapeVisitor.Builder<>();
-    }
 
     /**
      * Get the {@link ShapeId} of the shape.

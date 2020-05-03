@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
 
 package software.amazon.smithy.linters;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -43,11 +42,12 @@ public final class StutteredShapeNameValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ShapeVisitor<List<ValidationEvent>> visitor = Shape.<List<ValidationEvent>>visitor()
-                .when(UnionShape.class, shape -> validateNames(model, shape, shape.getMemberNames()))
-                .when(StructureShape.class, shape -> validateNames(model, shape, shape.getMemberNames()))
-                .orElseGet(Collections::emptyList);
-        return model.shapes().flatMap(shape -> shape.accept(visitor).stream()).collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        model.shapes(StructureShape.class)
+                .forEach(shape -> events.addAll(validateNames(model, shape, shape.getMemberNames())));
+        model.shapes(UnionShape.class)
+                .forEach(shape -> events.addAll(validateNames(model, shape, shape.getMemberNames())));
+        return events;
     }
 
     private List<ValidationEvent> validateNames(Model model, Shape shape, Collection<String> memberNames) {

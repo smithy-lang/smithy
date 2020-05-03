@@ -147,6 +147,9 @@ reference lookups. ([#287](https://github.com/awslabs/smithy/pull/287))
 `Pattern` class. ([#315](https://github.com/awslabs/smithy/pull/315))
 * Removed the `Triple` class from `smithy-utils`. ([#313](https://github.com/awslabs/smithy/pull/313))
 * Normalized class names for OpenAPI `SecurityScemeConverter` implementations. ([#291](https://github.com/awslabs/smithy/pull/291))
+* Removed `software.amazon.smithy.model.shapes.Shape#visitor` and
+  `software.amazon.smithy.model.shapes.ShapeVisitor$Builder`. Use
+  `software.amazon.smithy.model.shapes.ShapeVisitor$Default` instead [BC].
 
 #### Deprecation cleanup
 
