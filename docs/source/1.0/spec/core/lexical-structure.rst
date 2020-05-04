@@ -123,7 +123,7 @@ is equivalent to the following JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MyString": {
                 "type": "string",
@@ -193,28 +193,52 @@ Implementations MUST ignore unknown control statements.
 Version statement
 =================
 
-The Smithy specification is versioned using a `semver <https://semver.org/>`_
-``major`` . ``minor`` . ``patch`` version string. The version string does
-not support semver extensions.
+The Smithy specification is versioned using a ``major`` . ``minor``
+versioning scheme. A version requirement is specified for a model file using
+the ``$version`` control statement. When no version number is specified in
+the IDL, an implementation SHOULD assume that the model can be loaded.
+Because this can lead to unexpected parsing errors, models SHOULD always
+include a version.
 
-The following example sets the version to "1.0.0":
+The value provided in a version control statement is a string that MUST
+adhere to the following ABNF:
+
+.. productionlist:: smithy
+    version_string :`major_version` [ "." `minor_version` ]
+    major_version  :1*(1 / 2 / 3 / 4 / 5 / 6 / 7 / 8 / 9)
+    minor_version  :1*DIGIT
+
+The following example sets the version to ``1``, meaning that tooling MUST
+support a version greater than or equal to ``1.0`` and less than ``2.0``:
 
 .. tabs::
 
     .. code-tab:: smithy
 
-        $version: "1.0.0"
+        $version: "1"
 
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0"
+            "smithy": "1"
         }
 
-When no version number is specified in the IDL, an implementation will assume
-that the model is compatible. Because this can lead to unexpected parsing
-errors, models SHOULD always include a version.
+A minor version SHOULD be provided when a model depends on a feature released
+in a minor update of the specification. The following example sets the
+version requirement of a file to ``1.1``, meaning that tooling MUST support a
+version greater than or equal to ``1.1`` and less than ``2.0``:
 
+.. tabs::
+
+    .. code-tab:: smithy
+
+        $version: "1.1"
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.1"
+        }
 
 .. rubric:: Version compatibility
 
@@ -359,7 +383,7 @@ resolves to the string literal ``"smithy.api#String"``.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "metadata": {
                 "String": "smithy.api#String"
             }

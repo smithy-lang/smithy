@@ -60,7 +60,7 @@ The following example sets the ``X-API-Key`` header as the API key source.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#Weather": {
                     "type": "service",
@@ -295,7 +295,7 @@ Then following example enables request validation on a service:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#Weather": {
                     "type": "service",
@@ -423,7 +423,7 @@ operation within the service.
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#Weather": {
                 "type": "service",
@@ -535,7 +535,7 @@ The following example defines an operation that uses a mock integration.
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MyOperation": {
                 "type": "operation",

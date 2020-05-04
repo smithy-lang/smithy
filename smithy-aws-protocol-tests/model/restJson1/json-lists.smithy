@@ -1,6 +1,6 @@
 // This file defines test cases that serialize lists in JSON documents.
 
-$version: "1.0.0"
+$version: "1.0"
 
 namespace aws.protocoltests.restjson
 

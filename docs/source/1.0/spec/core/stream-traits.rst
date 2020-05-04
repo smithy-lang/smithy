@@ -143,7 +143,7 @@ stream in its input by referencing a member that targets a union:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#PublishMessages": {
                     "type": "operation",
@@ -221,7 +221,7 @@ stream in its output:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#SubscribeToMovements": {
                     "type": "operation",
@@ -332,7 +332,7 @@ service, followed by the events sent in the payload of the HTTP message.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#PublishMessages": {
                     "type": "operation",
@@ -435,7 +435,7 @@ message.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#PublishMessages": {
                     "type": "operation",
@@ -576,7 +576,7 @@ headers and the "c" member as the payload.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#ExampleEvent": {
                     "type": "structure",
@@ -621,7 +621,7 @@ based protocol, the event payload is serialized as a JSON object:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#ExampleEvent": {
                     "type": "structure",
@@ -686,7 +686,7 @@ The following example defines multiple event headers:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#ExampleEvent": {
                     "type": "structure",
@@ -756,7 +756,7 @@ of an event:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#ExampleEvent": {
                     "type": "structure",

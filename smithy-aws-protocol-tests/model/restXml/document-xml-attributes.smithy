@@ -1,6 +1,6 @@
 // This file defines test cases that serialize XML attributes.
 
-$version: "1.0.0"
+$version: "1.0"
 
 namespace aws.protocoltests.restxml
 

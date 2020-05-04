@@ -51,7 +51,7 @@ syntax, similar to:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",

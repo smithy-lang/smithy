@@ -362,8 +362,8 @@ final class IdlModelLoader {
             throw syntax("Cannot define multiple versions in the same file");
         }
 
-        if (!SmithyVersion.isSupported(parsedVersion)) {
-            throw syntax(format("Invalid Smithy version number: %s", parsedVersion));
+        if (!visitor.isVersionSupported(parsedVersion)) {
+            throw syntax("Unsupported Smithy version number: " + parsedVersion);
         }
 
         definedVersion = parsedVersion;

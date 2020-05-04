@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0.0",
+    "smithy": "1.0",
     "metadata": {
         "exp1": 10.0,
         "exp2": 10.0,

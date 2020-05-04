@@ -89,7 +89,7 @@ members that target it. Given the following:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#A": {
                     "type": "structure",
@@ -257,7 +257,7 @@ change the nested element name. For example, given the following:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#Foo": {
                     "type": "structure",
@@ -469,7 +469,7 @@ into a containing structure/union. For example, given the following:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#Bar": {
                     "type": "structure",
@@ -625,7 +625,7 @@ member name. For example, given the following:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -668,7 +668,7 @@ Given the following:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -729,7 +729,7 @@ Given the following:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#Foo": {
                     "type": "structure",
@@ -790,7 +790,7 @@ Maps can be flattened into structures too. Given the following:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#Foo": {
                     "type": "structure",
@@ -881,7 +881,7 @@ elements using the same name as the structure member name. Given the following:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -976,7 +976,7 @@ Given the following:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",

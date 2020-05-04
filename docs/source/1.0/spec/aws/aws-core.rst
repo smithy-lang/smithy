@@ -39,7 +39,7 @@ The following example defines an AWS service that uses the default values of
 
     .. code-tab:: smithy
 
-        $version: "1.0.0"
+        $version: "1.0"
         namespace aws.fooBaz
 
         use aws.api#service
@@ -52,7 +52,7 @@ The following example defines an AWS service that uses the default values of
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "aws.fooBaz#FooBaz": {
                     "type": "service",
@@ -72,7 +72,7 @@ The following example provides explicit values for all properties:
 
     .. code-tab:: smithy
 
-        $version: "1.0.0"
+        $version: "1.0"
         namespace aws.fooBaz
 
         use aws.api#service
@@ -89,7 +89,7 @@ The following example provides explicit values for all properties:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "aws.fooBaz#FooBaz": {
                     "type": "service",
@@ -386,7 +386,7 @@ For example, given the following service:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#FooBaz": {
                     "type": "service",
@@ -452,7 +452,7 @@ resource.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyResource": {
                     "type": "resource",
@@ -550,7 +550,7 @@ referenced resource.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#SomeResourceId": {
                     "type": "string",
@@ -573,7 +573,7 @@ previous example:
 
     .. code-tab:: smithy
 
-        $version: "1.0.0"
+        $version: "1.0"
         namespace smithy.example
 
         use aws.api#arnReference
@@ -584,7 +584,7 @@ previous example:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#SomeResourceId": {
                     "type": "string",
@@ -638,7 +638,7 @@ structure, union, or collection unless overridden.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -764,7 +764,7 @@ plane unless an operation or resource is marked with the
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#PutThings": {
                     "type": "operation",
@@ -818,7 +818,7 @@ plane unless an operation or resource is marked with the
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#PutThings": {
                     "type": "operation",
@@ -1014,7 +1014,7 @@ using an ``clientEndpointDiscoveryId``.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "ns.foo#FooService": {
                     "type": "service",

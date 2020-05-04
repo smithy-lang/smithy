@@ -68,7 +68,7 @@ The following example defines an operation that uses a custom endpoint:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",
@@ -134,7 +134,7 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",
@@ -203,7 +203,7 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",
@@ -268,7 +268,7 @@ invalid because the ``{foo}`` and ``{bar}`` labels are adjacent:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",
@@ -336,7 +336,7 @@ Given the following operation,
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",
@@ -427,7 +427,7 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#GetStatus": {
                     "type": "operation",

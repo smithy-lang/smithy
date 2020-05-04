@@ -680,4 +680,14 @@ final class LoaderVisitor {
             onError(event);
         }
     }
+
+    /**
+     * Checks if the given version string is supported.
+     *
+     * @param versionString Version string to check (e.g., 1, 1.0).
+     * @return Returns true if this is a supported model version.
+     */
+    boolean isVersionSupported(String versionString) {
+        return versionString.equals("1") || versionString.equals("1.0");
+    }
 }

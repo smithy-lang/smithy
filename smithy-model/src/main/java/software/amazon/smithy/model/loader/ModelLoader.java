@@ -73,18 +73,16 @@ final class ModelLoader {
     // is then used to delegate loading to different versions of the
     // Smithy JSON AST format.
     //
-    // This loader supports version 1.0.0. Support for 0.5.0 and 0.4.0 was
-    // removed in 0.10.
+    // This loader supports version 1.0. Support for 0.5 and 0.4 was removed in 0.10.
     static boolean loadParsedNode(Node node, LoaderVisitor visitor) {
         ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
         StringNode version = model.expectStringMember(SMITHY);
 
-        if (version.getValue().equals(SmithyVersion.VERSION_1_0_0.value)) {
+        if (visitor.isVersionSupported(version.getValue())) {
             AstModelLoader.INSTANCE.load(model, visitor);
             return true;
         } else {
-            String message = String.format("Smithy model AST version %s is not supported", version.getValue());
-            throw new ModelSyntaxException(message, version);
+            throw new ModelSyntaxException("Unsupported Smithy version number: " + version.getValue(), version);
         }
     }
 

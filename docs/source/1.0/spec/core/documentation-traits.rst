@@ -56,7 +56,7 @@ The ``deprecated`` trait is a structure that supports the following members:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#SomeString": {
                     "type": "string",
@@ -128,7 +128,7 @@ For example, given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#Foo": {
                     "type": "structure",

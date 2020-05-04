@@ -101,7 +101,7 @@ The following Smithy document applies a custom validator named "SomeValidator":
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata validators = [
         {
@@ -204,7 +204,7 @@ for the ``smithy.example#MyString`` shape:
 
     .. code-tab:: smithy
 
-        $version: "1.0.0"
+        $version: "1.0"
 
         namespace smithy.example
 
@@ -249,7 +249,7 @@ in the ``foo.baz`` namespace with an ID of ``UnreferencedShape``:
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata suppressions = [
         {
@@ -264,7 +264,7 @@ ID of ``OverlyBroadValidator``:
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata suppressions = [
         {
@@ -323,7 +323,7 @@ following constraints:
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata validators = [{
         name: "EmitEachSelector",
@@ -344,7 +344,7 @@ input/output that has a shape name that does not case-insensitively end with
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata validators = [
         {
@@ -371,7 +371,7 @@ as lifecycle 'read' or 'delete' that has a shape name that does not start with
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata validators = [
         {
@@ -428,7 +428,7 @@ traits.
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata validators = [{
         name: "EmitNoneSelector",
