@@ -1,0 +1,824 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>11. Behavior traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="12. Resource traits" href="resource-traits.html" />
+    <link rel="prev" title="10. Authentication traits" href="auth-traits.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="behavior-traits">
+<h1>11. Behavior traits<a class="headerlink" href="#behavior-traits" title="Permalink to this headline">¶</a></h1>
+<p>Behavior traits are used to alter the behavior of operations.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#idempotencytoken-trait" id="id6"><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
+<li><a class="reference internal" href="#idempotent-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
+<li><a class="reference internal" href="#readonly-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
+<li><a class="reference internal" href="#retryable-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
+<li><a class="reference internal" href="#paginated-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></li>
+</ul>
+</div>
+<div class="section" id="idempotencytoken-trait">
+<span id="id1"></span><h2>11.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait<a class="headerlink" href="#idempotencytoken-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Defines the input member of an operation that is used by the server to
+identify and discard replayed requests.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">:test(member</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></p>
+<p class="last"><em>Any structure member that targets a string</em></p>
+</dd>
+<dt>Value type</dt>
+<dd>Annotation trait</dd>
+</dl>
+<p>Only a single member of the input of an operation can be targeted by the
+<code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait; only top-level structure members of the input of an
+operation are considered.</p>
+<p>A unique identifier (typically a <a class="reference external" href="https://tools.ietf.org/html/rfc4122">UUID</a>) SHOULD be used by the client when
+providing the value for the request token member. When the request token is
+present, the service MUST ensure that the request is not replayed within a
+service-defined period of time. This allows the client to safely retry
+operation invocations, including operations that are not read-only, that fail
+due to networking issues or internal server errors. The service uses the
+provided request token to identify and discard duplicate requests.</p>
+<p>Client implementations MAY automatically provide a value for a request token
+member if and only if the member is not explicitly provided.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation</span><span class="nc"> AllocateWidget</span> {
+    <span class="nl">input:</span> <span class="vc">AllocateWidgetInput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> AllocateWidgetInput</span> {
+    <span class="nd">@idempotencyToken</span>
+    <span class="nl">clientToken:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="idempotent-trait">
+<span id="id2"></span><h2>11.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait<a class="headerlink" href="#idempotent-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that the intended effect on the server of multiple identical
+requests with an operation is the same as the effect for a single such
+request.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt>
+<dd>Annotation trait</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="#readonly-trait"><span class="std std-ref">readonly trait</span></a></dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@idempotent</span>
+<span class="kd">operation</span><span class="nc"> DeleteSomething</span> {
+    <span class="nl">input:</span> <span class="vc">DeleteSomethingInput</span>,
+    <span class="nl">output:</span> <span class="vc">DeleteSomethingOutput</span>
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All operations that are marked as <a class="reference internal" href="#readonly-trait"><span class="std std-ref">readonly trait</span></a> are inherently
+idempotent.</p>
+</div>
+</div>
+<div class="section" id="readonly-trait">
+<span id="id3"></span><h2>11.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait<a class="headerlink" href="#readonly-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that an operation is effectively read-only.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt>
+<dd>Annotation trait</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="#idempotent-trait"><span class="std std-ref">idempotent trait</span></a></dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
+<span class="kd">operation</span><span class="nc"> GetSomething</span> {
+    <span class="nl">input:</span> <span class="vc">GetSomethingInput</span>,
+    <span class="nl">output:</span> <span class="vc">GetSomethingOutput</span>
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="retryable-trait">
+<span id="id4"></span><h2>11.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait<a class="headerlink" href="#retryable-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that an error MAY be retried by the client.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure[trait|error]</span></code></p>
+<p class="last"><em>A structure shape with the error trait</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The retryable trait is a structure that contains the following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>throttling</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Indicates that the error is a retryable throttling error.</td>
+</tr>
+</tbody>
+</table>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;server&quot;</span>)
+<span class="nd">@retryable</span>
+<span class="nd">@httpError</span>(<span class="m">503</span>)
+<span class="kd">structure</span><span class="nc"> ServiceUnavailableError</span> {}
+
+<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nd">@retryable</span>(<span class="nl">throttling:</span> <span class="kc">true</span>)
+<span class="nd">@httpError</span>(<span class="m">429</span>)
+<span class="kd">structure</span><span class="nc"> ThrottlingError</span> {}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="paginated-trait">
+<span id="pagination"></span><span id="id5"></span><h2>11.5. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait<a class="headerlink" href="#paginated-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait indicates that an operation intentionally limits
+the number of results returned in a single response and that multiple
+invocations might be necessary to retrieve all results.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:is(operation,</span> <span class="pre">service)</span></code></p>
+<p class="last"><em>An operation or service</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>Pagination is the process of dividing large result sets into discrete
+pages. Smithy provides a built-in pagination mechanism that utilizes a
+cursor.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait is a structure that contains the following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>inputToken</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The name of the operation input member that contains a continuation
+token. When this value is provided as input, the service returns
+results from where the previous response left off. This input member
+MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and MUST target a string shape.</p>
+<p class="last">When contained within a service, a paginated operation MUST either
+configure <code class="docutils literal notranslate"><span class="pre">inputToken</span></code> on the operation itself or inherit it from
+the service that contains the operation.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>outputToken</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The path to the operation output member that contains an optional
+continuation token. When this value is present in operation output,
+it indicates that there are more results to retrieve. To get the next
+page of results, the client passes the received output continuation
+token to the input continuation token of the next request. This
+output member MUST NOT be marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> and MUST target a
+string shape.</p>
+<p class="last">When contained within a service, a paginated operation MUST either
+configure <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> on the operation itself or inherit it from
+the service that contains the operation.</p>
+</td>
+</tr>
+<tr class="row-even"><td>items</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The path to an output member of the operation that contains
+the data that is being paginated across many responses. The named
+output member, if specified, MUST target a list or map.</td>
+</tr>
+<tr class="row-odd"><td>pageSize</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The name of an operation input member that limits the maximum number
+of results to include in the operation output. This input member
+SHOULD NOT be required and MUST target an integer shape.</p>
+<div class="last admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Do not attempt to fill response pages to meet the value provided
+for the <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> member of a paginated operation. Attempting to
+match a target number of elements results in an unbounded API with
+an unpredictable latency.</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The following example defines a paginated operation that sets each value
+explicitly on the operation.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@collection</span> <span class="nd">@readonly</span>
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
+           <span class="nl">pageSize:</span> <span class="s2">&quot;maxResults&quot;</span>, <span class="nl">items:</span> <span class="s2">&quot;foos&quot;</span>)
+<span class="kd">operation</span><span class="nc"> GetFoos</span> {
+    <span class="nl">input:</span> <span class="vc">GetFoosInput</span>,
+    <span class="nl">output:</span> <span class="vc">GetFoosOutput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> GetFoosInput</span> {
+    <span class="nl">maxResults:</span> <span class="vc">Integer</span>,
+    <span class="nl">nextToken:</span> <span class="vc">String</span>
+}
+
+<span class="kd">structure</span><span class="nc"> GetFoosOutput</span> {
+    <span class="nl">nextToken:</span> <span class="vc">String</span>,
+
+    <span class="nd">@required</span>
+    <span class="nl">foos:</span> <span class="vc">StringList</span>,
+}
+
+<span class="kd">list</span><span class="nc"> StringList</span> {
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#GetFoos&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetFoosInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetFoosOutput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#readonly&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#collection&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#paginated&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;inputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;outputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;pageSize&quot;</span><span class="p">:</span> <span class="s2">&quot;maxResults&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="s2">&quot;foos&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#GetFoosInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;maxResults&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;nextToken&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#GetFoosOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;nextToken&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;foos&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#StringList&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#StringList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Attaching the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait to a service provides default pagination
+configuration settings to all operations bound within the closure of the
+service. Pagination settings configured on an operation override any inherited
+service setting.</p>
+<p>The following example defines a paginated operation that inherits some
+settings from a service.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;nextToken&quot;</span>,
+           <span class="nl">pageSize:</span> <span class="s2">&quot;maxResults&quot;</span>)
+<span class="kd">service</span><span class="nc"> Example</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2019-06-27&quot;</span>,
+    <span class="nl">operations:</span> [<span class="vc">GetFoos</span>],
+}
+
+<span class="nd">@collection</span> <span class="nd">@readonly</span> <span class="nd">@paginated</span>(<span class="nl">items:</span> <span class="s2">&quot;foos&quot;</span>)
+<span class="kd">operation</span><span class="nc"> GetFoos</span> {
+    <span class="nl">input:</span> <span class="vc">GetFoosInput</span>,
+    <span class="nl">output:</span> <span class="vc">GetFoosOutput</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Example&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-06-27&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#paginated&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;inputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;outputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;pageSize&quot;</span><span class="p">:</span> <span class="s2">&quot;maxResults&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#GetFoos&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetFoosInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetFoosOutput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#readonly&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#collection&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#paginated&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="s2">&quot;foos&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The values for <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> and <code class="docutils literal notranslate"><span class="pre">items</span></code> are paths. <em class="dfn">Paths</em> are a series of
+identifiers separated by dots (<code class="docutils literal notranslate"><span class="pre">.</span></code>) where each identifier represents a
+member name in a structure. The first member name MUST correspond to a member
+of the output structure and each subsequent member name MUST correspond to a
+member in the previously referenced structure. Paths MUST adhere to the
+following ABNF.</p>
+<pre>
+<strong id="grammar-token-path">path</strong> =
+    <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>)
+</pre>
+<p>The following example defines a paginated operation which uses a result
+wrapper where the output token and items are referenced by paths.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@readonly</span>
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span> <span class="s2">&quot;nextToken&quot;</span>, <span class="nl">outputToken:</span> <span class="s2">&quot;result.nextToken&quot;</span>,
+           <span class="nl">pageSize:</span> <span class="s2">&quot;maxResults&quot;</span>, <span class="nl">items:</span> <span class="s2">&quot;result.foos&quot;</span>)
+<span class="kd">operation</span><span class="nc"> GetFoos</span> {
+    <span class="nl">input:</span> <span class="vc">GetFoosInput</span>,
+    <span class="nl">output:</span> <span class="vc">GetFoosOutput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> GetFoosInput</span> {
+    <span class="nl">maxResults:</span> <span class="vc">Integer</span>,
+    <span class="nl">nextToken:</span> <span class="vc">String</span>
+}
+
+<span class="kd">structure</span><span class="nc"> GetFoosOutput</span> {
+    <span class="nd">@required</span>
+    <span class="nl">result:</span> <span class="vc">ResultWrapper</span>
+}
+
+<span class="kd">structure</span><span class="nc"> ResultWrapper</span> {
+    <span class="nl">nextToken:</span> <span class="vc">String</span>,
+
+    <span class="nd">@required</span>
+    <span class="nl">foos:</span> <span class="vc">StringList</span>,
+}
+
+<span class="kd">list</span><span class="nc"> StringList</span> {
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#GetFoos&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetFoosInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetFoosOutput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#readonly&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#paginated&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;inputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;outputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;result.nextToken&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;pageSize&quot;</span><span class="p">:</span> <span class="s2">&quot;maxResults&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="s2">&quot;result.foos&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#GetFoosInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;maxResults&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;nextToken&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#GetFoosOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#ResultWrapper&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#ResultWrapper&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;nextToken&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;foos&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#StringList&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#StringList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pagination-behavior">
+<h3>11.5.1. Pagination Behavior<a class="headerlink" href="#pagination-behavior" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>If an operation returns a naturally size-limited subset of data
+(e.g., a top-ten list of users sorted by rank), then the operation
+SHOULD NOT be paginated.</li>
+<li>Only one list or map per operation can be paginated.</li>
+<li>Paginated responses MUST NOT return the same item of a paginated result
+set more than once (i.e., a paginated result set is a disjoint union of the
+subsets partitioned by the referenced <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> input member and the SLA
+defined by the service).</li>
+<li>If a paginated request returns data in a sorted order that is not an
+immutable strict total ordering of items, then the paginated request MUST
+provide a temporally static view of the underlying data that does not
+modify the order topology during pagination. For example, a game’s
+leaderboard of top-scoring players cannot have players move from position
+#10 to position #12 during pagination, the last player on page N has to
+have a higher score than the first player on page N+1, no players that
+exist when pagination begins are to be skipped, and players MUST NOT be
+repeated due to moves in the underlying data.</li>
+<li>If pagination is ordered and newly created resources are returned, then
+newly created resources MUST appear in order on the appropriate page.</li>
+</ol>
+</div>
+<div class="section" id="client-behavior">
+<h3>11.5.2. Client behavior<a class="headerlink" href="#client-behavior" title="Permalink to this headline">¶</a></h3>
+<p>Smithy clients SHOULD provide abstractions that can be used to automatically
+iterate over paginated responses. The following steps describe the process a
+client MUST follow when iterating over paginated API calls:</p>
+<ol class="arabic simple">
+<li>Send the initial request to a paginated operation.</li>
+<li>If the received response does not contain a continuation token in the
+referenced <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> member, then there are no more results to
+retrieve and the process is complete.</li>
+<li>If there is a continuation token in the referenced <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> member
+of the response, then the client sends a subsequent request using the same
+input parameters as the original call, but including the last received
+continuation token. Clients are free to change the designated <code class="docutils literal notranslate"><span class="pre">pageSize</span></code>
+input parameter at this step as needed.</li>
+<li>If a client receives an identical continuation token from a service in back
+to back calls, then the client MAY choose to stop sending requests. This
+scenario implies a &quot;tail&quot; style API operation where clients are running in
+an infinite loop to send requests to a service in order to retrieve results
+as they are available.</li>
+<li>Return to step 2.</li>
+</ol>
+</div>
+<div class="section" id="continuation-tokens">
+<h3>11.5.3. Continuation tokens<a class="headerlink" href="#continuation-tokens" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait indicates that an operation utilizes cursor-based
+pagination. When a paginated operation truncates its output, it MUST return a
+continuation token in the operation output that can be used to get the next
+page of results. This token can then be provided along with the original input
+to request additional results from the operation.</p>
+<ol class="arabic">
+<li><p class="first"><strong>Continuation tokens SHOULD be opaque.</strong></p>
+<p>Plain text continuation tokens inappropriately expose implementation details
+to the client, resulting in consumers building systems that manually
+construct continuation tokens. Making backwards compatible changes to a
+plain text continuation token format is extremely hard to manage.</p>
+</li>
+<li><p class="first"><strong>Continuation tokens SHOULD be versioned.</strong></p>
+<p>The parameters and context needed to paginate an API call can evolve over
+time. To future-proof these APIs, services SHOULD include some kind of
+version identifier in their continuation tokens. Once the version identifier
+of a token is recognized, a service will then know the appropriate operation
+for decoding and returning the next response for a paginated request.</p>
+</li>
+<li><p class="first"><strong>Continuation tokens SHOULD expire after a period of time.</strong></p>
+<p>Continuation tokens SHOULD expire after a short period of time (e.g., 24
+hours is a reasonable default for many services). This allows services
+to quickly phase out deprecated continuation token formats, and helps to set
+the expectation that continuation tokens are ephemeral and MUST NOT be used
+after extended periods of time. Services MUST reject a request with a client
+error when a client uses an expired continuation token.</p>
+</li>
+<li><p class="first"><strong>Continuation tokens MUST be bound to a fixed set of filtering parameters.</strong></p>
+<p>Services MUST reject a request that changes filtering input parameters while
+paging through responses. Services MUST require clients to send the same
+filtering request parameters used in the initial pagination request to all
+subsequent pagination requests.</p>
+<p><em class="dfn">Filtering parameters</em> are defined as parameters that remove certain
+elements from appearing in the result set of a paginated API call. Filtering
+parameters do not influence the presentation of results (e.g., the
+designated <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> input parameter partitions a result set into smaller
+subsets but does not change the sum of the parts). Services MUST allow
+clients to change presentation based parameters while paginating through a
+result set.</p>
+</li>
+<li><p class="first"><strong>Continuation tokens MUST NOT influence authorization.</strong></p>
+<p>A service MUST NOT evaluate authorization differently depending on the
+presence, absence, or contents of a continuation token.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="auth-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 10. Authentication traits</a>
+                        
+                        <a href="resource-traits.html" title="next chapter" class="next-page clearfix">12. Resource traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="auth-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="resource-traits.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">11. Behavior traits</a><ul>
+<li><a class="reference internal" href="#idempotencytoken-trait">11.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
+<li><a class="reference internal" href="#idempotent-trait">11.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
+<li><a class="reference internal" href="#readonly-trait">11.3. <code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
+<li><a class="reference internal" href="#retryable-trait">11.4. <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
+<li><a class="reference internal" href="#paginated-trait">11.5. <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a><ul>
+<li><a class="reference internal" href="#pagination-behavior">11.5.1. Pagination Behavior</a></li>
+<li><a class="reference internal" href="#client-behavior">11.5.2. Client behavior</a></li>
+<li><a class="reference internal" href="#continuation-tokens">11.5.3. Continuation tokens</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

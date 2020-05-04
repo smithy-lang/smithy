@@ -1,0 +1,223 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>4. Prelude model &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="5. Traits" href="traits.html" />
+    <link rel="prev" title="3. Shapes" href="shapes.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="prelude-model">
+<span id="prelude"></span><h1>4. Prelude model<a class="headerlink" href="#prelude-model" title="Permalink to this headline">¶</a></h1>
+<p>All Smithy models automatically include a <em>prelude</em>. The prelude defines
+various simple shapes and every trait defined in the core specification.
+Shapes defined in the prelude can be referenced from within any namespace
+using a relative shape ID.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Prelude shapes SHOULD be used when possible to minimize duplication
+in models.</p>
+</div>
+<div class="section" id="prelude-shapes">
+<h2>4.1. Prelude shapes<a class="headerlink" href="#prelude-shapes" title="Permalink to this headline">¶</a></h2>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Smithy prelude</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+
+<span class="kd">namespace</span><span class="nc"> smithy.api</span>
+
+<span class="kd">string</span><span class="nc"> String</span>
+
+<span class="kd">blob</span><span class="nc"> Blob</span>
+
+<span class="kd">bigInteger</span><span class="nc"> BigInteger</span>
+
+<span class="kd">bigDecimal</span><span class="nc"> BigDecimal</span>
+
+<span class="kd">timestamp</span><span class="nc"> Timestamp</span>
+
+<span class="kd">document</span><span class="nc"> Document</span>
+
+<span class="nd">@box</span>
+<span class="kd">boolean</span><span class="nc"> Boolean</span>
+
+<span class="kd">boolean</span><span class="nc"> PrimitiveBoolean</span>
+
+<span class="nd">@box</span>
+<span class="kd">byte</span><span class="nc"> Byte</span>
+
+<span class="kd">byte</span><span class="nc"> PrimitiveByte</span>
+
+<span class="nd">@box</span>
+<span class="kd">short</span><span class="nc"> Short</span>
+
+<span class="kd">short</span><span class="nc"> PrimitiveShort</span>
+
+<span class="nd">@box</span>
+<span class="kd">integer</span><span class="nc"> Integer</span>
+
+<span class="kd">integer</span><span class="nc"> PrimitiveInteger</span>
+
+<span class="nd">@box</span>
+<span class="kd">long</span><span class="nc"> Long</span>
+
+<span class="kd">long</span><span class="nc"> PrimitiveLong</span>
+
+<span class="nd">@box</span>
+<span class="kd">float</span><span class="nc"> Float</span>
+
+<span class="kd">float</span><span class="nc"> PrimitiveFloat</span>
+
+<span class="nd">@box</span>
+<span class="kd">double</span><span class="nc"> Double</span>
+
+<span class="kd">double</span><span class="nc"> PrimitiveDouble</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="shapes.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 3. Shapes</a>
+                        
+                        <a href="traits.html" title="next chapter" class="next-page clearfix">5. Traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="shapes.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="traits.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">4. Prelude model</a><ul>
+<li><a class="reference internal" href="#prelude-shapes">4.1. Prelude shapes</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

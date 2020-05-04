@@ -1,0 +1,616 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>7. Documentation traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="8. Type refinement traits" href="type-refinement-traits.html" />
+    <link rel="prev" title="6. Constraint traits" href="constraint-traits.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="documentation-traits">
+<span id="id1"></span><h1>7. Documentation traits<a class="headerlink" href="#documentation-traits" title="Permalink to this headline">¶</a></h1>
+<p>Documentation traits are used to document and describe shapes in the model
+in a way that does not materially affect the semantics of the model.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#deprecated-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait</a></li>
+<li><a class="reference internal" href="#documentation-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a></li>
+<li><a class="reference internal" href="#examples-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a></li>
+<li><a class="reference internal" href="#externaldocumentation-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></li>
+<li><a class="reference internal" href="#sensitive-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></li>
+<li><a class="reference internal" href="#since-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></li>
+<li><a class="reference internal" href="#tags-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></li>
+<li><a class="reference internal" href="#title-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></li>
+<li><a class="reference internal" href="#unstable-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></li>
+</ul>
+</div>
+<div class="section" id="deprecated-trait">
+<span id="id2"></span><h2>7.1. <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait<a class="headerlink" href="#deprecated-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Marks a shape or member as deprecated.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait is a structure that supports the following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>message</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Provides a plain text message for a deprecated shape or member.</td>
+</tr>
+<tr class="row-odd"><td>since</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Provides a plain text date or version for when a shape or member was
+deprecated.</td>
+</tr>
+</tbody>
+</table>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@deprecated</span>
+<span class="kd">string</span><span class="nc"> SomeString</span>
+
+<span class="nd">@deprecated</span>(<span class="nl">message:</span> <span class="s2">&quot;This shape is no longer used.&quot;</span>, <span class="nl">since:</span> <span class="s2">&quot;1.3&quot;</span>)
+<span class="kd">string</span><span class="nc"> OtherString</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#SomeString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#deprecated&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#OtherString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#deprecated&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;This shape is no longer used.&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;since&quot;</span><span class="p">:</span> <span class="s2">&quot;1.3&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="documentation-trait">
+<span id="id3"></span><h2>7.2. <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait<a class="headerlink" href="#documentation-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Adds documentation to a shape or member using the <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a> format.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;This *is* documentation about the shape.&quot;</span>)
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p class="rubric">Effective documentation</p>
+<p>The <em>effective documentation trait</em> of a shape is resolved using the following
+process:</p>
+<ol class="arabic simple">
+<li>Use the <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait of the shape, if present.</li>
+<li>If the shape is a <a class="reference internal" href="shapes.html#member"><span class="std std-ref">Member</span></a>, then use the <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait of
+the shape targeted by the member, if present.</li>
+</ol>
+<p>For example, given the following model,</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> Foo</span> {
+    <span class="nd">@documentation</span>(<span class="s2">&quot;Member documentation&quot;</span>)
+    <span class="nl">baz:</span> <span class="vc">Baz</span>,
+
+    <span class="nl">bar:</span> <span class="vc">Baz</span>,
+
+    <span class="nl">qux:</span> <span class="vc">String</span>,
+}
+
+<span class="nd">@documentation</span>(<span class="s2">&quot;Shape documentation&quot;</span>)
+<span class="kd">string</span><span class="nc"> Baz</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;baz&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Baz&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;Member documentation&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;bar&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Baz&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;qux&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Baz&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;Shape documentation&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>the effective documentation of <code class="docutils literal notranslate"><span class="pre">Foo$baz</span></code> resolves to &quot;Member documentation&quot;,
+<code class="docutils literal notranslate"><span class="pre">Foo$bar</span></code> resolves to &quot;Shape documentation&quot;, <code class="docutils literal notranslate"><span class="pre">Foo$qux</span></code> is not documented,
+<code class="docutils literal notranslate"><span class="pre">Baz</span></code> resolves to &quot;Shape documentation&quot;, and <code class="docutils literal notranslate"><span class="pre">Foo</span></code> is not documented.</p>
+</div>
+<div class="section" id="examples-trait">
+<span id="id4"></span><h2>7.3. <code class="docutils literal notranslate"><span class="pre">examples</span></code> trait<a class="headerlink" href="#examples-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Provides example inputs and outputs for operations.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of example structures</dd>
+</dl>
+<p>Each <code class="docutils literal notranslate"><span class="pre">example</span></code> trait value is a structure with the following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>title</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. A short title that defines the example.</td>
+</tr>
+<tr class="row-odd"><td>documentation</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A longer description of the example in the <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a> format.</td>
+</tr>
+<tr class="row-even"><td>input</td>
+<td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td>Provides example input parameters for the operation. Each key is
+the name of a top-level input structure member, and each value is the
+value of the member.</td>
+</tr>
+<tr class="row-odd"><td>output</td>
+<td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td>Provides example output parameters for the operation. Each key is
+the name of a top-level output structure member, and each value is the
+value of the member.</td>
+</tr>
+</tbody>
+</table>
+<p>The values provided for the <code class="docutils literal notranslate"><span class="pre">input</span></code> and <code class="docutils literal notranslate"><span class="pre">output</span></code> members MUST be
+compatible with the shapes and constraints of the corresponding structure.
+These values use the same semantics and format as
+<a class="reference internal" href="traits.html#trait-node-values"><span class="std std-ref">custom trait values</span></a>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span>
+<span class="kd">operation</span><span class="nc"> MyOperation</span> {
+    <span class="nl">input:</span> <span class="vc">MyOperationInput</span>,
+    <span class="nl">output:</span> <span class="vc">MyOperationOutput</span>
+}
+
+<span class="kd">apply</span><span class="nc"> MyOperation</span> <span class="nd">@examples</span>([
+    {
+        <span class="nl">title:</span> <span class="s2">&quot;Invoke MyOperation&quot;</span>,
+        <span class="nl">input:</span> {
+            <span class="nl">tags:</span> [<span class="s2">&quot;foo&quot;</span>, <span class="s2">&quot;baz&quot;</span>, <span class="s2">&quot;bar&quot;</span>],
+        },
+        <span class="nl">output:</span> {
+            <span class="nl">status:</span> <span class="s2">&quot;PENDING&quot;</span>,
+        }
+    },
+    {
+        <span class="nl">title:</span> <span class="s2">&quot;Another example for MyOperation&quot;</span>,
+        <span class="nl">input:</span> {
+            <span class="nl">foo:</span> <span class="s2">&quot;baz&quot;</span>,
+        },
+        <span class="nl">output:</span> {
+            <span class="nl">status:</span> <span class="s2">&quot;PENDING&quot;</span>,
+        }
+    },
+])
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="externaldocumentation-trait">
+<span id="id5"></span><h2>7.4. <code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait<a class="headerlink" href="#externaldocumentation-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Provides named links to external documentation for a shape.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> containing a name to <code class="docutils literal notranslate"><span class="pre">string</span></code> containing a valid
+URL.</dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@externalDocumentation</span>(
+    <span class="s2">&quot;Homepage&quot;</span>: <span class="s2">&quot;https://www.example.com/&quot;</span>,
+    <span class="s2">&quot;API Reference&quot;</span>: <span class="s2">&quot;https://www.example.com/api-ref&quot;</span>,
+)
+<span class="kd">service</span><span class="nc"> MyService</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>,
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="sensitive-trait">
+<span id="id6"></span><h2>7.5. <code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait<a class="headerlink" href="#sensitive-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that the data stored in the shape or member is sensitive
+and MUST be handled with care.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:not(:is(service,</span> <span class="pre">operation,</span> <span class="pre">resource))</span></code></p>
+<p class="last"><em>Any shape that is not a service, operation, or resource.</em></p>
+</dd>
+<dt>Value type</dt>
+<dd>Annotation trait</dd>
+</dl>
+<p>Sensitive data MUST NOT be exposed in things like exception messages or log
+output. Application of this trait SHOULD NOT affect wire logging
+(i.e., logging of all data transmitted to and from servers or clients).</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@sensitive</span>
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="since-trait">
+<span id="id7"></span><h2>7.6. <code class="docutils literal notranslate"><span class="pre">since</span></code> trait<a class="headerlink" href="#since-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Defines the version or date in which a shape or member was added to
+the model.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> representing the date it was added.</dd>
+</dl>
+</div>
+<div class="section" id="tags-trait">
+<span id="id8"></span><h2>7.7. <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait<a class="headerlink" href="#tags-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Tags a shape with arbitrary tag names that can be used to filter and group
+shapes in the model.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">[string]</span></code></dd>
+</dl>
+<p>Tools can use these tags to filter shapes that should not be visible for a
+particular consumer of a model. The string values that can be provided to the
+tags trait are arbitrary and up to the model author.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@tags</span>([<span class="s2">&quot;experimental&quot;</span>, <span class="s2">&quot;public&quot;</span>])
+<span class="kd">string</span><span class="nc"> SomeStructure</span> {}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="title-trait">
+<span id="id9"></span><h2>7.8. <code class="docutils literal notranslate"><span class="pre">title</span></code> trait<a class="headerlink" href="#title-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Defines a proper name for a service or resource shape. This title can be
+used in automatically generated documentation and other contexts to
+provide a user friendly name for services and resources.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:is(service,</span> <span class="pre">resource)</span></code></p>
+<p class="last"><em>Any service or resource</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> acme.example</span>
+
+<span class="nd">@title</span>(<span class="s2">&quot;ACME Simple Image Service&quot;</span>)
+<span class="kd">service</span><span class="nc"> MySimpleImageService</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2006-03-01&quot;</span>,
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="unstable-trait">
+<span id="id10"></span><h2>7.9. <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait<a class="headerlink" href="#unstable-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates a shape is unstable and MAY change in the future. This trait can
+be applied to trait shapes to indicate that a trait is unstable or
+experimental. If possible, code generators SHOULD use this trait to warn
+when code generated from unstable features are used.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
+<dt>Value type</dt>
+<dd>Annotation trait</dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@unstable</span>
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="constraint-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 6. Constraint traits</a>
+                        
+                        <a href="type-refinement-traits.html" title="next chapter" class="next-page clearfix">8. Type refinement traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="constraint-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="type-refinement-traits.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">7. Documentation traits</a><ul>
+<li><a class="reference internal" href="#deprecated-trait">7.1. <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait</a></li>
+<li><a class="reference internal" href="#documentation-trait">7.2. <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a></li>
+<li><a class="reference internal" href="#examples-trait">7.3. <code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a></li>
+<li><a class="reference internal" href="#externaldocumentation-trait">7.4. <code class="docutils literal notranslate"><span class="pre">externalDocumentation</span></code> trait</a></li>
+<li><a class="reference internal" href="#sensitive-trait">7.5. <code class="docutils literal notranslate"><span class="pre">sensitive</span></code> trait</a></li>
+<li><a class="reference internal" href="#since-trait">7.6. <code class="docutils literal notranslate"><span class="pre">since</span></code> trait</a></li>
+<li><a class="reference internal" href="#tags-trait">7.7. <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait</a></li>
+<li><a class="reference internal" href="#title-trait">7.8. <code class="docutils literal notranslate"><span class="pre">title</span></code> trait</a></li>
+<li><a class="reference internal" href="#unstable-trait">7.9. <code class="docutils literal notranslate"><span class="pre">unstable</span></code> trait</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,467 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>9. Protocol traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="10. Authentication traits" href="auth-traits.html" />
+    <link rel="prev" title="8. Type refinement traits" href="type-refinement-traits.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="protocol-traits">
+<h1>9. Protocol traits<a class="headerlink" href="#protocol-traits" title="Permalink to this headline">¶</a></h1>
+<p>Serialization and protocol traits define how data is transferred over
+the wire.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#protocoldefinition-trait" id="id5"><code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></li>
+<li><a class="reference internal" href="#jsonname-trait" id="id6"><code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></li>
+<li><a class="reference internal" href="#mediatype-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a></li>
+<li><a class="reference internal" href="#timestampformat-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a></li>
+</ul>
+</div>
+<div class="section" id="protocoldefinition-trait">
+<span id="id1"></span><h2>9.1. <code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait<a class="headerlink" href="#protocoldefinition-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>A meta-trait that marks a trait as a protocol definition trait. Traits
+that are marked with this trait are applied to service shapes to
+define the protocols supported by a service. A client MUST understand
+at least one of the protocols in order to successfully communicate
+with the service.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">[trait|trait]</span></code></dd>
+<dt>Value type</dt>
+<dd><p class="first">An object with the following properties:</p>
+<table border="1" class="colwidths-given last docutils">
+<colgroup>
+<col width="10%" />
+<col width="23%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>traits</td>
+<td>[<a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">Shape ID</span></a>]</td>
+<td>List of shape IDs that protocol implementations MUST understand
+in order to successfully use the protocol. Each shape MUST exist
+and MUST be a trait. Code generators SHOULD ensure that they
+support each listed trait.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Smithy is protocol agnostic, which means it focuses on the interfaces and
+abstractions that are provided to end-users rather than how the data is sent
+over the wire. In Smithy, a <em>protocol</em> is a named set of rules that defines
+the syntax and semantics of how a client and server communicate. This
+includes the application layer protocol of a service (for example, HTTP)
+and the serialization formats used in messages (for example, JSON). Traits
+MAY be used to influence how messages are serialized (for example,
+<a class="reference internal" href="#jsonname-trait"><span class="std std-ref">jsonName trait</span></a> and <a class="reference internal" href="xml-traits.html#xmlattribute-trait"><span class="std std-ref">xmlAttribute trait</span></a>).</p>
+<p>The following example defines a service that supports both the hypothetical
+<code class="docutils literal notranslate"><span class="pre">jsonExample</span></code> and <code class="docutils literal notranslate"><span class="pre">xmlExample</span></code> protocols.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="cm">/// An example JSON protocol.</span>
+<span class="nd">@protocolDefinition</span>
+<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;service&quot;</span>)
+<span class="kd">structure</span><span class="nc"> jsonExample</span> {}
+
+<span class="cm">/// An example XML protocol.</span>
+<span class="nd">@protocolDefinition</span>
+<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;service&quot;</span>)
+<span class="kd">structure</span><span class="nc"> xmlExample</span> {}
+
+<span class="nd">@jsonExample</span>
+<span class="nd">@xmlExample</span>
+<span class="kd">service</span><span class="nc"> WeatherService</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#WeatherService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.example#jsonExample&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.example#xmlExample&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#jsonExample&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;An example JSON protocol.&quot;</span>
+                <span class="s2">&quot;smithy.api#protocolDefinition&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#trait&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;selector&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#xmlExample&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;An example JSON protocol.&quot;</span>
+                <span class="s2">&quot;smithy.api#protocolDefinition&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#trait&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;selector&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Because protocol definitions are just specialized shapes, they can also
+support configuration settings.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@protocolDefinition</span>
+<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;service&quot;</span>)
+<span class="kd">structure</span><span class="nc"> configurableExample</span> {
+    <span class="nd">@required</span>
+    <span class="nl">version:</span> <span class="vc">String</span>
+}
+
+<span class="nd">@configurableExample</span>(<span class="nl">version:</span> <span class="s2">&quot;1.0&quot;</span>)
+<span class="kd">service</span><span class="nc"> WeatherService</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2017-02-11&quot;</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="jsonname-trait">
+<span id="id2"></span><h2>9.2. <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait<a class="headerlink" href="#jsonname-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Allows a serialized object property name in a JSON document to differ from
+a structure member name used in the model.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
+<p class="last"><em>Any structure member</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</dl>
+<p>Given the following structure definition,</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="nd">@jsonName</span>(<span class="s2">&quot;Foo&quot;</span>)
+    <span class="nl">foo:</span> <span class="vc">String</span>,
+
+    <span class="nl">bar:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#jsonName&quot;</span><span class="p">:</span> <span class="s2">&quot;Foo&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;bar&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>and the following values provided for <code class="docutils literal notranslate"><span class="pre">MyStructure</span></code>,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;foo&quot;</span> <span class="o">=</span> <span class="s2">&quot;abc&quot;</span>
+<span class="s2">&quot;bar&quot;</span> <span class="o">=</span> <span class="s2">&quot;def&quot;</span>
+</pre></div>
+</div>
+<p>the JSON representation of the value would be serialized with the
+following document:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;Foo&quot;</span><span class="p">:</span> <span class="s2">&quot;abc&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;def&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mediatype-trait">
+<span id="id3"></span><h2>9.3. <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait<a class="headerlink" href="#mediatype-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Describes the contents of a blob or string shape using a media type as
+defined by <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6838.html"><strong>RFC 6838</strong></a> (e.g., &quot;video/quicktime&quot;).</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:is(blob,</span> <span class="pre">string)</span></code></p>
+<p class="last"><em>Any blob or string</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> can be used in tools for documentation, validation,
+automated conversion or encoding in code, automatically determining an
+appropriate Content-Type for an HTTP-based protocol, etc.</p>
+<p>The following example defines a video/quicktime blob:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@mediaType</span>(<span class="s2">&quot;video/quicktime&quot;</span>)
+<span class="kd">blob</span><span class="nc"> VideoData</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="timestampformat-trait">
+<span id="id4"></span><h2>9.4. <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait<a class="headerlink" href="#timestampformat-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Defines a custom timestamp serialization format.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:test(timestamp,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">timestamp)</span></code></p>
+<p class="last"><em>timestamp or member that targets a timestamp</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</dl>
+<p>The serialization format of a timestamp shape is normally dictated by the
+<a class="reference internal" href="#protocoldefinition-trait"><span class="std std-ref">protocol</span></a> of a service. In order to
+interoperate with other web services or frameworks, it is sometimes
+necessary to use a specific serialization format that differs from the
+protocol.</p>
+<p>Smithy defines the following built-in timestamp formats:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Format</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>date-time</td>
+<td>Date time as defined by the <code class="docutils literal notranslate"><span class="pre">date-time</span></code> production in
+<a class="reference external" href="https://xml2rfc.tools.ietf.org/public/rfc/html/rfc3339.html#anchor14">RFC3339 section 5.6</a>
+with no UTC offset (for example, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>).</td>
+</tr>
+<tr class="row-odd"><td>http-date</td>
+<td>An HTTP date as defined by the <code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> production in
+<span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7231.html#section-7.1.1.1"><strong>RFC 7231#section-7.1.1.1</strong></a> (for example,
+<code class="docutils literal notranslate"><span class="pre">Tue,</span> <span class="pre">29</span> <span class="pre">Apr</span> <span class="pre">2014</span> <span class="pre">18:30:38</span> <span class="pre">GMT</span></code>).</td>
+</tr>
+<tr class="row-even"><td>epoch-seconds</td>
+<td>Also known as Unix time, the number of seconds that have elapsed since
+00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
+with decimal precision (for example, <code class="docutils literal notranslate"><span class="pre">1515531081.1234</span></code>).</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">This trait SHOULD NOT be used unless the intended serialization format of
+a timestamp differs from the default protocol format. Using this trait too
+liberally can cause other tooling to improperly interpret the timestamp.</p>
+</div>
+<p>See <a class="reference internal" href="shapes.html#timestamp-serialization-format"><span class="std std-ref">Timestamp serialization format</span></a> for information on how to
+determine the serialization format of a timestamp.</p>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="type-refinement-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 8. Type refinement traits</a>
+                        
+                        <a href="auth-traits.html" title="next chapter" class="next-page clearfix">10. Authentication traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="type-refinement-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="auth-traits.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">9. Protocol traits</a><ul>
+<li><a class="reference internal" href="#protocoldefinition-trait">9.1. <code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></li>
+<li><a class="reference internal" href="#jsonname-trait">9.2. <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></li>
+<li><a class="reference internal" href="#mediatype-trait">9.3. <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a></li>
+<li><a class="reference internal" href="#timestampformat-trait">9.4. <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

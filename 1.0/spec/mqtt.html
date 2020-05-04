@@ -1,0 +1,752 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>MQTT Protocol Bindings &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="AWS specifications" href="aws/index.html" />
+    <link rel="prev" title="HTTP Protocol Compliance Tests" href="http-protocol-compliance-tests.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="index.html">Specifications</a></li>
+                <li class="site-page"><a href="../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="index.html" accesskey="U">Specifications</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="mqtt-protocol-bindings">
+<span id="mqtt-bindings"></span><h1>MQTT Protocol Bindings<a class="headerlink" href="#mqtt-protocol-bindings" title="Permalink to this headline">¶</a></h1>
+<p>This document defines traits that bind Smithy operations, inputs, and
+outputs to the <a class="reference external" href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html">MQTT</a>
+messaging transport protocol. In addition to traits, it defines the
+requirements, limitations, and expected client behavior when decorating
+Smithy models with MQTT metadata.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The MQTT traits defined in this specification are still evolving and
+subject to change.</p>
+</div>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id5">Introduction</a><ul>
+<li><a class="reference internal" href="#mqtt-overview" id="id6">MQTT overview</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mqtt-topic-templates" id="id7">MQTT topic templates</a></li>
+<li><a class="reference internal" href="#smithy-mqtt-publish-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait</a><ul>
+<li><a class="reference internal" href="#publish-validation" id="id9">Publish validation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smithy-mqtt-subscribe-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait</a><ul>
+<li><a class="reference internal" href="#subscribe-validation" id="id11">Subscribe validation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smithy-mqtt-topiclabel-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait</a><ul>
+<li><a class="reference internal" href="#label-serialization" id="id13">Label serialization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#topic-conflicts" id="id14">Topic conflicts</a></li>
+<li><a class="reference internal" href="#model-definition" id="id15">Model definition</a></li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Smithy is a protocol-agnostic model format that abstracts the transmission
+and serialization of operations, their inputs, and outputs. This abstraction
+allows MQTT services to be modeled in Smithy using MQTT protocol binding
+traits. A Smithy service that supports MQTT protocol bindings can also
+support other protocol bindings like <a class="reference internal" href="core/http-traits.html#http-traits"><span class="std std-ref">HTTP bindings</span></a>.
+The MQTT protocol binding traits defined in this document do not define the
+serialization format of complex payloads; the serialization format of complex
+payloads is protocol-specific.</p>
+<div class="section" id="mqtt-overview">
+<h3>MQTT overview<a class="headerlink" href="#mqtt-overview" title="Permalink to this headline">¶</a></h3>
+<p>MQTT is a stateful protocol in which zero or more clients establish
+long-lived sessions with a server that acts as a message broker between
+them. Clients subscribe to topics and publish and receive messages. All
+messages have a hierarchical topic, and clients subscribed to a particular
+topic or to a matching topic filter receive messages published to that
+topic. Messages are published with a requested quality of service (QoS) level
+which determines to what degree the broker must ensure the message has
+been delivered before discarding it. Smithy does not define the QoS levels
+that are supported by a service or operation.</p>
+<p>There is no support at the MQTT protocol level for responses or errors. A
+message may be published in reply to another or to alert a peer to error
+conditions, but this must be done according to semantic conventions
+established by the clients and server.</p>
+<p>Smithy models explicitly define the PUBLISH and SUBSCRIBE MQTT control
+packets using the <a class="reference internal" href="#smithy-mqtt-publish-trait"><span class="std std-ref">smithy.mqtt#publish trait</span></a> and
+<a class="reference internal" href="#smithy-mqtt-subscribe-trait"><span class="std std-ref">smithy.mqtt#subscribe trait</span></a>. Clients publish and subscribe to MQTT
+topics using separate operations. The CONNECT, DISCONNECT, and other MQTT
+control packets SHOULD be handled as implementation details in Smithy
+clients that connect to a service that utilizes MQTT protocol bindings.</p>
+</div>
+</div>
+<div class="section" id="mqtt-topic-templates">
+<span id="id1"></span><h2>MQTT topic templates<a class="headerlink" href="#mqtt-topic-templates" title="Permalink to this headline">¶</a></h2>
+<p>An <em>MQTT topic template</em> declares an MQTT topic to be used for a given
+operation and to bind components of the topic to fields in the operations's
+input structure. The <a class="reference internal" href="#smithy-mqtt-publish-trait"><span class="std std-ref">smithy.mqtt#publish trait</span></a> and
+<a class="reference internal" href="#smithy-mqtt-subscribe-trait"><span class="std std-ref">smithy.mqtt#subscribe trait</span></a> are defined using MQTT topic templates.</p>
+<p id="mqtt-topic-label"><em>Labels</em> are used in the topic template to bind operation input structure
+members to placeholders in the topic. Labels are defined in the topic template
+using an opening brace (&quot;{&quot;), followed by a member name, followed by a closing
+brace (&quot;}&quot;). Each member name referenced in a label MUST case-sensitively
+correspond to a single member by name in the input structure of an operation
+that is targeted by both the <a class="reference internal" href="core/constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a> and the
+<a class="reference internal" href="#smithy-mqtt-topiclabel-trait"><span class="std std-ref">smithy.mqtt#topicLabel trait</span></a>. The values of the corresponding members
+are substituted into the topic template at runtime to resolve the actual
+MQTT topic.</p>
+<p>The following example defines a publish operation with two labels, <code class="docutils literal notranslate"><span class="pre">{first}</span></code>
+and <code class="docutils literal notranslate"><span class="pre">{second}</span></code>, in the MQTT topic template:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> smithy.mqtt#publish</span>
+<span class="kd">use</span><span class="nc"> smithy.mqtt#topicLabel</span>
+
+<span class="nd">@publish</span>(<span class="s2">&quot;{first}/{second}&quot;</span>)
+<span class="kd">operation</span><span class="nc"> ExampleOperation</span> {
+    <span class="nl">input:</span> <span class="vc">ExampleOperationInput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> ExampleOperationInput</span> {
+    <span class="nd">@required</span>
+    <span class="nd">@topicLabel</span>
+    <span class="nl">first:</span> <span class="vc">String</span>,
+
+    <span class="nd">@required</span>
+    <span class="nd">@topicLabel</span>
+    <span class="nl">second:</span> <span class="vc">String</span>,
+
+    <span class="nl">message:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#ExampleOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#ExampleOperationInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.mqtt#publish&quot;</span><span class="p">:</span> <span class="s2">&quot;{first}/{second}&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#ExampleOperationInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;first&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                        <span class="nt">&quot;smithy.mqtt#topicLabel&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;second&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                        <span class="nt">&quot;smithy.mqtt#topicLabel&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>MQTT topic templates MUST adhere to the following constraints:</p>
+<ul class="simple">
+<li>The topic template MUST adhere to the constraints defined in
+<a class="reference external" href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718106">section 4.7</a>
+of the MQTT specification (e.g., it MUST consist of one or more
+UTF-8 characters).</li>
+<li>The topic template MUST not contain wildcard topic characters &quot;+&quot; and &quot;#&quot;.</li>
+<li>Labels present in a topic template MUST span an entire topic level.
+For example, &quot;foo/baz/{bar}&quot; is <strong>valid</strong> while &quot;foo/baz-{bar}&quot; is
+<strong>invalid</strong>.</li>
+<li>The &quot;{&quot; and &quot;}&quot; characters are reserved for use as topic labels and
+MUST NOT be used as literal characters.</li>
+<li>The text inside of each label MUST case-sensitively match a single member by
+name of the input structure of an operation.</li>
+<li>Operation input structures MUST NOT contain extraneous members marked with
+the <code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait that do not have corresponding labels
+in the topic template.</li>
+</ul>
+</div>
+<div class="section" id="smithy-mqtt-publish-trait">
+<span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait<a class="headerlink" href="#smithy-mqtt-publish-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Trait summary</dt>
+<dd>Binds an operation to send a PUBLISH control packet via the MQTT protocol.</dd>
+<dt>Trait selector</dt>
+<dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>operation:not(-[output]-&gt;)
+</pre></div>
+</div>
+<p class="last"><em>An operation that does not define output</em></p>
+</dd>
+<dt>Trait value</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that is a valid
+<a class="reference internal" href="#mqtt-topic-templates"><span class="std std-ref">MQTT topic template</span></a>. The provided topic
+defines the MQTT topic to which messages are published. The MQTT topic
+template MAY contain <a class="reference internal" href="#mqtt-topic-label"><span class="std std-ref">label placeholders</span></a> that
+reference top-level input members of the operation by case-sensitive
+member name.</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="#smithy-mqtt-subscribe-trait"><span class="std std-ref">smithy.mqtt#subscribe trait</span></a></dd>
+</dl>
+<p>Input members that are not marked with the <a class="reference internal" href="#smithy-mqtt-topiclabel-trait"><span class="std std-ref">smithy.mqtt#topicLabel trait</span></a>
+come together to form the protocol-specific payload of the PUBLISH message.</p>
+<p>The following example defines an operation that publishes messages to the
+<code class="docutils literal notranslate"><span class="pre">foo/{bar}</span></code> topic:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> smithy.mqtt#publish</span>
+<span class="kd">use</span><span class="nc"> smithy.mqtt#topicLabel</span>
+
+<span class="nd">@publish</span>(<span class="s2">&quot;foo/{bar}&quot;</span>)
+<span class="kd">operation</span><span class="nc"> PostFoo</span> {
+    <span class="nl">input:</span> <span class="vc">PostFooInput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> PostFooInput</span> {
+    <span class="nd">@required</span>
+    <span class="nd">@topicLabel</span>
+    <span class="nl">bar:</span> <span class="vc">String</span>,
+
+    <span class="nl">someValue:</span> <span class="vc">String</span>,
+    <span class="nl">anotherValue:</span> <span class="vc">Boolean</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PostFoo&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PostFooInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.mqtt#publish&quot;</span><span class="p">:</span> <span class="s2">&quot;foo/{bar}&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#PostFooInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;bar&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                        <span class="nt">&quot;smithy.mqtt#topicLabel&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;anotherValue&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Boolean&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The &quot;bar&quot; member of the above <code class="docutils literal notranslate"><span class="pre">PostFoo</span></code> operation is marked with the
+<a class="reference internal" href="#smithy-mqtt-topiclabel-trait"><span class="std std-ref">smithy.mqtt#topicLabel trait</span></a>, indicating that the member provides a
+value for the &quot;{bar}&quot; label of the MQTT topic template. The &quot;message&quot; and
+&quot;anotherValue&quot; members come together to form a protocol-specific document
+that is sent in the payload of the message.</p>
+<div class="section" id="publish-validation">
+<h3>Publish validation<a class="headerlink" href="#publish-validation" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Publish operations MUST NOT define output.</li>
+<li>Publish operations MUST NOT utilize input event streams.</li>
+<li>Publish operations SHOULD NOT define errors.</li>
+<li>Publish MQTT topics MUST NOT conflict with other publish MQTT topics or
+the resolved MQTT topics of subscribe operations.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="smithy-mqtt-subscribe-trait">
+<span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait<a class="headerlink" href="#smithy-mqtt-subscribe-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Trait summary</dt>
+<dd>Binds an operation to send one or more SUBSCRIBE control packets
+via the MQTT protocol.</dd>
+<dt>Trait selector</dt>
+<dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>operation:test(-[output]-&gt; structure &gt; member &gt; union[trait|streaming])
+</pre></div>
+</div>
+<p class="last"><em>An operation with an output event stream</em></p>
+</dd>
+<dt>Trait value</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that is a valid <a class="reference internal" href="#mqtt-topic-templates"><span class="std std-ref">MQTT topic template</span></a>.
+The MQTT topic template MAY contain label placeholders that reference
+top-level input members of the operation by case-sensitive member name.</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="#smithy-mqtt-publish-trait"><span class="std std-ref">smithy.mqtt#publish trait</span></a></dd>
+</dl>
+<p>No message is published when using an operation marked with the
+<code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait. All members of the input of the operation
+MUST be marked with valid <code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> traits.</p>
+<p>The operation MUST define an output shape targets a union with the
+<a class="reference internal" href="core/stream-traits.html#streaming-trait"><span class="std std-ref">streaming</span></a>. The top-level output member referenced
+by this trait represents the message(s) sent over the MQTT topic. An
+abstraction for automatically subscribing to and asynchronously receiving
+events SHOULD be provided by Smithy clients. When that abstraction is
+destroyed, the client SHOULD provide the ability to automatically UNSUBSCRIBE
+from topics.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Events MAY contain a member marked with
+<a class="reference internal" href="core/stream-traits.html#eventpayload-trait"><span class="std std-ref">eventPayload trait</span></a>, which allows for a custom
+payload to be sent as the payload of a message.</p>
+</div>
+<p>The following example operation subscribes to the <code class="docutils literal notranslate"><span class="pre">events/{id}</span></code>
+topic using an <a class="reference internal" href="core/stream-traits.html#event-streams"><span class="std std-ref">event stream</span></a>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> smithy.mqtt#subscribe</span>
+<span class="kd">use</span><span class="nc"> smithy.mqtt#topicLabel</span>
+
+<span class="nd">@subscribe</span>(<span class="s2">&quot;events/{id}&quot;</span>)
+<span class="kd">operation</span><span class="nc"> SubscribeForEvents</span> {
+    <span class="nl">input:</span> <span class="vc">SubscribeForEventsInput</span>,
+    <span class="nl">output:</span> <span class="vc">SubscribeForEventsOutput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> SubscribeForEventsInput</span> {
+    <span class="nd">@required</span>
+    <span class="nd">@topicLabel</span>
+    <span class="nl">id:</span> <span class="vc">String</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> SubscribeForEventsOutput</span> {
+    <span class="nl">events:</span> <span class="vc">EventStream</span>,
+}
+
+<span class="nd">@streaming</span>
+<span class="kd">union</span><span class="nc"> EventStream</span> {
+    <span class="nl">message:</span> <span class="vc">Event</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> Event</span> {
+    <span class="nl">message:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#SubscribeForEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SubscribeForEventsInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.mqtt#subscribe&quot;</span><span class="p">:</span> <span class="s2">&quot;events/{id}&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#SubscribeForEventsInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                        <span class="nt">&quot;smithy.mqtt#topicLabel&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#SubscribeForEventsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;events&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#EventStream&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#EventStream&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Event&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#streaming&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Event&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="subscribe-validation">
+<h3>Subscribe validation<a class="headerlink" href="#subscribe-validation" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Subscribe operations MUST NOT define event streams with an
+<a class="reference internal" href="core/stream-traits.html#initial-response"><span class="std std-ref">initial-response</span></a>; only a single member can appear
+in the output of a subscribe operation.</li>
+<li>Every member of the input of a subscribe operation MUST be marked with the
+<a class="reference internal" href="#smithy-mqtt-topiclabel-trait"><span class="std std-ref">smithy.mqtt#topicLabel trait</span></a>.</li>
+<li>Subscribe operations SHOULD NOT define errors.</li>
+<li>Subscribe MQTT topics MUST NOT conflict with other topics.</li>
+<li>Event stream events over MQTT SHOULD NOT contain the
+<a class="reference internal" href="core/stream-traits.html#eventheader-trait"><span class="std std-ref">eventHeader trait</span></a>. Support for this trait MAY be
+added to this specification once MQTT adds support for variable length
+custom headers to messages.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="smithy-mqtt-topiclabel-trait">
+<span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait<a class="headerlink" href="#smithy-mqtt-topiclabel-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Trait summary</dt>
+<dd>Binds a structure member to an <a class="reference internal" href="#mqtt-topic-label"><span class="std std-ref">MQTT topic label</span></a>.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">member[trait|required]</span> <span class="pre">:test(&gt;</span> <span class="pre">:test(string,</span> <span class="pre">byte,</span> <span class="pre">short,</span> <span class="pre">integer,</span> <span class="pre">long,</span> <span class="pre">boolean,</span> <span class="pre">timestamp))</span></code></p>
+<p class="last"><em>Required structure member that targets a string, byte, short, integer, long, boolean, or timestamp</em></p>
+</dd>
+<dt>Trait value</dt>
+<dd>Annotation trait</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait binds the value of a structure member
+so that it provides a value at runtime for a corresponding MQTT topic template
+label specified in a <a class="reference internal" href="#smithy-mqtt-publish-trait"><span class="std std-ref">smithy.mqtt#publish trait</span></a> and
+<a class="reference internal" href="#smithy-mqtt-subscribe-trait"><span class="std std-ref">smithy.mqtt#subscribe trait</span></a>. All labels defined in an MQTT topic
+template MUST have corresponding input structure members with the same
+case-sensitive member name that is marked with the <code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code>
+trait, marked with the <code class="docutils literal notranslate"><span class="pre">required</span></code> trait, and targets a string, byte, short,
+integer, long, boolean, or timestamp shape.</p>
+<div class="section" id="label-serialization">
+<h3>Label serialization<a class="headerlink" href="#label-serialization" title="Permalink to this headline">¶</a></h3>
+<p>The value of the member is substituted into an MQTT topic template using the
+following serialization:</p>
+<ul class="simple">
+<li>Strings are serialized as is, but &quot;/&quot; is replaced with %2F.</li>
+<li>Numeric values are serialized using an exact string representation of
+the number.</li>
+<li>Boolean values are serialized as the strings <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
+<li>Timestamp values are serialized as <code class="docutils literal notranslate"><span class="pre">date-time</span></code> strings as specified
+in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="topic-conflicts">
+<h2>Topic conflicts<a class="headerlink" href="#topic-conflicts" title="Permalink to this headline">¶</a></h2>
+<p>MQTT topics in Smithy are fully-typed; MQTT topics modeled in Smithy are
+associated with exactly one shape that defines the payload that can be
+published to a topic. Multiple operations and events in a model MAY resolve
+to the same MQTT topic if and only if each conflicting topic targets the
+same shape in the Smithy model.</p>
+<p>Two resolved topics are considered conflicting if all of the following
+conditions are met:</p>
+<ul class="simple">
+<li>Both topics contain the same case-sensitive static levels and labels
+in the same topic level positions (regardless of the label name).</li>
+<li>One topic is not more specific than the other; both topics have the
+same number of levels.</li>
+<li>The topic payloads target different shapes.</li>
+</ul>
+<p>The following table provides examples of when topics do and do not conflict:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="40%" />
+<col width="40%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Topic A</th>
+<th class="head">Topic B</th>
+<th class="head">Conflict?</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">a/{x}</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">a/{y}</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">{x}/{y}</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">{y}/{x}</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">a/{b}/c/{d}</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">a/{d}/c/{b}</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">a/b/c</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">A/B/C</span></code></td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">{x}/{y}</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">{x}/{y}/{z}</span></code></td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">a/{x}</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">b/{x}</span></code></td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">a/b/c</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">a/b/notC</span></code></td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">a/b/c</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">a/b/c/d</span></code></td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="model-definition">
+<h2>Model definition<a class="headerlink" href="#model-definition" title="Permalink to this headline">¶</a></h2>
+<p>The following Smithy model defines the traits and shapes used to define
+MQTT protocol bindings.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+
+<span class="kd">namespace</span><span class="nc"> smithy.mqtt</span>
+
+<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;service&quot;</span>)
+<span class="nd">@protocolDefinition</span>
+<span class="kd">structure</span><span class="nc"> mqttJson</span> {}
+
+<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;operation:not(-[output]-&gt;)&quot;</span>,
+       <span class="nl">conflicts:</span> [<span class="s2">&quot;smithy.mqtt#subscribe&quot;</span>])
+<span class="nd">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])
+<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span>
+<span class="nd">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)
+<span class="kd">string</span><span class="nc"> publish</span>
+
+<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;operation:test(-[output]-&gt; structure &gt; member &gt; union[trait|streaming])&quot;</span>,
+       <span class="nl">conflicts:</span> [<span class="s2">&quot;smithy.mqtt#publish&quot;</span>])
+<span class="nd">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])
+<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span>
+<span class="nd">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)
+<span class="kd">string</span><span class="nc"> subscribe</span>
+
+<span class="nd">@trait</span>(<span class="nl">selector:</span> <span class="s2">&quot;member[trait|required] :test(&gt; :test(string, byte, short, integer, long, boolean, timestamp))&quot;</span>)
+<span class="kd">structure</span><span class="nc"> topicLabel</span> {}
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="http-protocol-compliance-tests.html" title="previous chapter" class="previous-page clearfix hidden-xs">← HTTP Protocol Compliance Tests</a>
+                        
+                        <a href="aws/index.html" title="next chapter" class="next-page clearfix">AWS specifications →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="http-protocol-compliance-tests.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="aws/index.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">MQTT Protocol Bindings</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#mqtt-overview">MQTT overview</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mqtt-topic-templates">MQTT topic templates</a></li>
+<li><a class="reference internal" href="#smithy-mqtt-publish-trait"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait</a><ul>
+<li><a class="reference internal" href="#publish-validation">Publish validation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smithy-mqtt-subscribe-trait"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait</a><ul>
+<li><a class="reference internal" href="#subscribe-validation">Subscribe validation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smithy-mqtt-topiclabel-trait"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait</a><ul>
+<li><a class="reference internal" href="#label-serialization">Label serialization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#topic-conflicts">Topic conflicts</a></li>
+<li><a class="reference internal" href="#model-definition">Model definition</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

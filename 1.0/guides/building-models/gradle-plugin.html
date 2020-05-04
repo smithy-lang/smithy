@@ -1,0 +1,547 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Smithy Gradle Plugin &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Model linters" href="../model-linters.html" />
+    <link rel="prev" title="Using SmithyBuild" href="build-config.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../../spec/index.html">Specifications</a></li>
+                <li class="site-page"><a href="../index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Smithy Guides</a></li>
+                    <li><a href="index.html" accesskey="U">Building Smithy Models</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="smithy-gradle-plugin">
+<h1>Smithy Gradle Plugin<a class="headerlink" href="#smithy-gradle-plugin" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin/">Smithy Gradle plugin</a> integrates Smithy with <a class="reference external" href="https://gradle.org/">Gradle</a>. This plugin can
+build artifacts from Smithy models, generate JARs that contain Smithy models
+found in Java projects, and generate JARs that contain filtered <a class="reference internal" href="build-config.html#projections"><span class="std std-ref">projections</span></a>
+of Smithy models.</p>
+<div class="section" id="installation">
+<span id="plugin-install"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The Smithy Gradle plugin is applied using the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy</span></code> plugin.
+The following example configures a project to use the Smithy Gradle plugin:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-S290bGlu docutils container">
+<div class="docutils container">
+Kotlin</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-S290bGlu active docutils container">
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span> <span class="p">{</span>
+    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="n">version</span><span class="p">(</span><span class="s">&quot;0.4.3&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="smithy-model-sources">
+<span id="id1"></span><h2>Smithy model sources<a class="headerlink" href="#smithy-model-sources" title="Permalink to this headline">¶</a></h2>
+<p>When a JAR is generated for a project, any Smithy models found in the
+following directories will be added to the JAR:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">model/</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">src/main/smithy</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">src/main/resources/META-INF/smithy</span></code></li>
+</ul>
+<p>Models found in these directories are combined into a flattened directory
+structure and used to validate and build the Smithy model. A Smithy manifest
+file is automatically created for the detected models, and it along with the
+model files, are placed in the <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/</span></code> resource of the created
+JAR. Any project that then depends on this created JAR will be able to find
+and use the Smithy models contained in the JAR when using <em>model discovery</em>.</p>
+</div>
+<div class="section" id="building-smithy-models">
+<span id="id2"></span><h2>Building Smithy models<a class="headerlink" href="#building-smithy-models" title="Permalink to this headline">¶</a></h2>
+<p>This plugin operates in two different modes:</p>
+<ol class="arabic simple">
+<li>If no <code class="docutils literal notranslate"><span class="pre">projection</span></code> is specified for the <code class="docutils literal notranslate"><span class="pre">SmithyExtension</span></code>, then the plugin
+runs a &quot;source&quot; build using the &quot;source&quot; projection.</li>
+<li>If a <code class="docutils literal notranslate"><span class="pre">projection</span></code> is specified for the <code class="docutils literal notranslate"><span class="pre">SmithyExtension</span></code>, then the plugin
+runs in a &quot;projection&quot; mode.</li>
+</ol>
+</div>
+<div class="section" id="smithy-extension-properties">
+<span id="id3"></span><h2>Smithy extension properties<a class="headerlink" href="#smithy-extension-properties" title="Permalink to this headline">¶</a></h2>
+<p>This plugin is configured using the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.gradle.SmithyExtension</span></code>
+extension:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-S290bGlu docutils container">
+<div class="docutils container">
+Kotlin</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-S290bGlu active docutils container">
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">configure</span><span class="p">&lt;</span><span class="n">software</span><span class="p">.</span><span class="n">amazon</span><span class="p">.</span><span class="n">smithy</span><span class="p">.</span><span class="n">gradle</span><span class="p">.</span><span class="n">SmithyExtension</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">projection</span> <span class="p">=</span> <span class="s">&quot;foo&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This extension supports the following properties:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>projection</td>
+<td><code class="docutils literal notranslate"><span class="pre">String</span></code></td>
+<td>Sets the <a class="reference internal" href="build-config.html#projections"><span class="std std-ref">projection</span></a> name to build. There must
+be a corresponding projection definition in the <a class="reference internal" href="build-config.html#smithy-build-json"><span class="std std-ref">smithy-build.json</span></a>
+file in the project.</td>
+</tr>
+<tr class="row-odd"><td>projectionSourceTags</td>
+<td><code class="docutils literal notranslate"><span class="pre">Set&lt;String&gt;</span></code></td>
+<td>Get the tags that are searched for in classpaths when determining
+which models are projected into the created JAR. This plugin will look
+through the JARs in the buildscript classpath to see if they contain a
+META-INF/MANIFEST.MF attribute named &quot;Smithy-Tags&quot; that matches any of
+the given projection source tags. The Smithy models found in each
+matching JAR are copied into the JAR being projected. This allows a
+projection JAR to aggregate models into a single JAR.</td>
+</tr>
+<tr class="row-even"><td>tags</td>
+<td><code class="docutils literal notranslate"><span class="pre">Set&lt;String&gt;</span></code></td>
+<td>Set the tags that are added to the JAR. These tags are placed in the
+META-INF/MANIFEST.MF attribute named &quot;Smithy-Tags&quot; as a comma
+separated list. JARs with Smithy-Tags can be queried when building
+projections so that the Smithy models found in each matching JAR are
+placed into the projection JAR.</td>
+</tr>
+<tr class="row-odd"><td>smithyBuildConfigs</td>
+<td><code class="docutils literal notranslate"><span class="pre">FileCollection</span></code></td>
+<td>Sets a custom collection of smithy-build.json files to use when
+building the model.</td>
+</tr>
+<tr class="row-even"><td>allowsUnknownTraits</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Sets whether or not unknown traits in the model should be ignored. By
+default, the build will fail if unknown traits are encountered.</td>
+</tr>
+<tr class="row-odd"><td>outputDirectory</td>
+<td><code class="docutils literal notranslate"><span class="pre">File</span></code></td>
+<td>Defines where Smithy build artifacts are written.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="building-a-source-model">
+<span id="building-source-model"></span><h3>Building a source model<a class="headerlink" href="#building-a-source-model" title="Permalink to this headline">¶</a></h3>
+<p>A &quot;source&quot; build is run when no <code class="docutils literal notranslate"><span class="pre">projection</span></code> is configured in
+<code class="docutils literal notranslate"><span class="pre">SmithyExtension</span></code>. Because no projection was specified, <strong>smithy-build</strong> is
+executed using the <code class="docutils literal notranslate"><span class="pre">compileClasspath</span></code> plus the <code class="docutils literal notranslate"><span class="pre">buildscript</span></code> classpath. To
+prevent accidentally relying on Smithy models that are only available to
+build scripts, Smithy models are discovered using only the
+<code class="docutils literal notranslate"><span class="pre">compileClasspath</span></code> and <code class="docutils literal notranslate"><span class="pre">runtimeClasspath</span></code>.</p>
+<p>The following example <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> will build a Smithy model using a
+&quot;source&quot; build:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-S290bGlu docutils container">
+<div class="docutils container">
+Kotlin</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-S290bGlu active docutils container">
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span> <span class="p">{</span>
+    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="n">version</span><span class="p">(</span><span class="s">&quot;0.4.3&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// The SmithyExtension is used to customize the build. This example</span>
+<span class="c1">// doesn&#39;t set any values and can be completely omitted.</span>
+<span class="n">configure</span><span class="p">&lt;</span><span class="n">software</span><span class="p">.</span><span class="n">amazon</span><span class="p">.</span><span class="n">smithy</span><span class="p">.</span><span class="n">gradle</span><span class="p">.</span><span class="n">SmithyExtension</span><span class="p">&gt;</span> <span class="p">{}</span>
+
+<span class="n">repositories</span> <span class="p">{</span>
+    <span class="n">mavenLocal</span><span class="p">()</span>
+    <span class="n">mavenCentral</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">dependencies</span> <span class="p">{</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.0&quot;</span><span class="p">)</span>
+
+    <span class="c1">// These are just examples of dependencies. This model has a dependency on</span>
+    <span class="c1">// a &quot;common&quot; model package and uses the external AWS traits.</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;com.foo.baz:foo-model-internal-common:1.0.0&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.0.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="generating-a-projection">
+<span id="generating-projection"></span><h3>Generating a projection<a class="headerlink" href="#generating-a-projection" title="Permalink to this headline">¶</a></h3>
+<p>A &quot;projection&quot; build is run when a :ref:<code class="docutils literal notranslate"><span class="pre">`projection</span></code> &lt;projections&gt;` is
+specified in the <code class="docutils literal notranslate"><span class="pre">SmithyExtension</span></code>. You might want to create a projection of
+a model if you need to maintain an internal version of a model that contains
+more information and features than an external version of a model published to
+your customers.</p>
+<p>A &quot;projection&quot; build is executed using only the <code class="docutils literal notranslate"><span class="pre">buildscript</span></code> classpath, and
+Smithy models are discovered using only the <code class="docutils literal notranslate"><span class="pre">buildscript</span></code> classpath. This
+prevents models discovered in the original model from appearing in the
+projected version of the model.</p>
+<p>The following example <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file will run a &quot;projection&quot;
+build that uses the &quot;external&quot; projection.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-S290bGlu docutils container">
+<div class="docutils container">
+Kotlin</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-S290bGlu active docutils container">
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span> <span class="p">{</span>
+    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="n">version</span><span class="p">(</span><span class="s">&quot;0.4.3&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">buildscript</span> <span class="p">{</span>
+    <span class="n">repositories</span> <span class="p">{</span>
+        <span class="n">mavenLocal</span><span class="p">()</span>
+        <span class="n">mavenCentral</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="n">dependencies</span> <span class="p">{</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.0.0&quot;</span><span class="p">)</span>
+
+        <span class="c1">// Take a dependency on the internal model package. This</span>
+        <span class="c1">// dependency *must* be a buildscript only dependency to ensure</span>
+        <span class="c1">// that is does not appear in the generated JAR.</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;com.foo.baz:foo-internal-model:1.0.0&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Use the &quot;external&quot; projection. This projection must be found in the</span>
+<span class="c1">// smithy-build.json file. This also ensures that models found in the</span>
+<span class="c1">// foo-internal-package that weren&#39;t filtered out are copied into the</span>
+<span class="c1">// projection created by this package.</span>
+<span class="n">configure</span><span class="p">&lt;</span><span class="n">software</span><span class="p">.</span><span class="n">amazon</span><span class="p">.</span><span class="n">smithy</span><span class="p">.</span><span class="n">gradle</span><span class="p">.</span><span class="n">SmithyExtension</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">projection</span> <span class="p">=</span> <span class="s">&quot;external&quot;</span>
+    <span class="n">projectionSourceTags</span> <span class="p">=</span> <span class="n">setOf</span><span class="p">(</span><span class="s">&quot;com.foo.baz:foo-internal-model&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">repositories</span> <span class="p">{</span>
+    <span class="n">mavenLocal</span><span class="p">()</span>
+    <span class="n">mavenCentral</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">dependencies</span> <span class="p">{</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.0.0&quot;</span><span class="p">)</span>
+
+    <span class="c1">// Any dependencies that the projected model needs must be (re)declared</span>
+    <span class="c1">// here. For example, let&#39;s assume that the smithy-aws-traits package is</span>
+    <span class="c1">// needed in the projected model too.</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.0.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Because the <code class="docutils literal notranslate"><span class="pre">projection</span></code> of the <code class="docutils literal notranslate"><span class="pre">SmithyExtension</span></code> was set to <code class="docutils literal notranslate"><span class="pre">external</span></code>, a
+<code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file <strong>must</strong> be found that defines the <code class="docutils literal notranslate"><span class="pre">external</span></code>
+projection. For example:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;projections&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;external&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;transforms&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeShapesByTag&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;internal&quot;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeTraitsByTag&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;internal&quot;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;excludeMetadata&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;keys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;suppressions&quot;</span><span class="p">,</span> <span class="s2">&quot;validators&quot;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;removeUnusedShapes&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="projection-tags">
+<span id="id4"></span><h3>Projection tags<a class="headerlink" href="#projection-tags" title="Permalink to this headline">¶</a></h3>
+<p>Projections are meant to <em>project</em> and filter other models into another
+model. You need to specify which dependencies are being projected into your
+JAR by setting the <code class="docutils literal notranslate"><span class="pre">projectionSourceTags</span></code> property.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-S290bGlu docutils container">
+<div class="docutils container">
+Kotlin</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-S290bGlu active docutils container">
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">configure</span><span class="p">&lt;</span><span class="n">software</span><span class="p">.</span><span class="n">amazon</span><span class="p">.</span><span class="n">smithy</span><span class="p">.</span><span class="n">gradle</span><span class="p">.</span><span class="n">SmithyExtension</span><span class="p">&gt;</span> <span class="p">{</span>
+      <span class="n">projection</span> <span class="p">=</span> <span class="s">&quot;external&quot;</span>
+      <span class="n">projectionSourceTags</span> <span class="p">=</span> <span class="n">setOf</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">,</span> <span class="s">&quot;com.baz:bar&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Tags are used to logically group packages to make it easier to build
+projections. The <code class="docutils literal notranslate"><span class="pre">tags</span></code> property is used to add <code class="docutils literal notranslate"><span class="pre">Smithy-Tags</span></code> to a JAR.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-S290bGlu docutils container">
+<div class="docutils container">
+Kotlin</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-S290bGlu active docutils container">
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">configure</span><span class="p">&lt;</span><span class="n">software</span><span class="p">.</span><span class="n">amazon</span><span class="p">.</span><span class="n">smithy</span><span class="p">.</span><span class="n">gradle</span><span class="p">.</span><span class="n">SmithyExtension</span><span class="p">&gt;</span> <span class="p">{</span>
+    <span class="n">tags</span> <span class="p">=</span> <span class="n">setOf</span><span class="p">(</span><span class="s">&quot;X&quot;</span><span class="p">,</span> <span class="s">&quot;foobaz-model&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For example, if your service is made up of 10 packages, you can add the
+&quot;foobaz-model&quot; Smithy tag to each package so that the only value that needs
+to be provided for <code class="docutils literal notranslate"><span class="pre">tags</span></code> to correctly project your model is &quot;foobaz-model&quot;.</p>
+<p>When building a model package, this plugin will automatically add the group
+name of the package being built, the group name + &quot;:&quot; + name of the package,
+and group name + &quot;:&quot; + name + &quot;:&quot; version. This allows models to always
+be queried by group and artifact names in addition to custom tags.</p>
+</div>
+<div class="section" id="building-artifacts-from-smithy-models">
+<span id="artifacts-from-smithy-models"></span><h3>Building artifacts from Smithy models<a class="headerlink" href="#building-artifacts-from-smithy-models" title="Permalink to this headline">¶</a></h3>
+<p>If a <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file is found at the root of the project, then it
+will be used to generate <a class="reference internal" href="build-config.html#projection-artifacts"><span class="std std-ref">artifacts</span></a> from the Smithy model.</p>
+<p>The following example generates an OpenAPI model from a Smithy model:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== active docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;openapi&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;foo.baz#MyService&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The above Smithy plugin also requires a <code class="docutils literal notranslate"><span class="pre">buildscript</span></code> dependency in
+<code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-S290bGlu docutils container">
+<div class="docutils container">
+Kotlin</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-S290bGlu active docutils container">
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+    <span class="n">dependencies</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+
+        <span class="c1">// This dependency is required in order to apply the &quot;openapi&quot;</span>
+        <span class="c1">// plugin in smithy-build.json</span>
+        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-openapi:1.0.0&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="build-config.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Using SmithyBuild</a>
+                        
+                        <a href="../model-linters.html" title="next chapter" class="next-page clearfix">Model linters →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="build-config.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="../model-linters.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">Smithy Gradle Plugin</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#smithy-model-sources">Smithy model sources</a></li>
+<li><a class="reference internal" href="#building-smithy-models">Building Smithy models</a></li>
+<li><a class="reference internal" href="#smithy-extension-properties">Smithy extension properties</a><ul>
+<li><a class="reference internal" href="#building-a-source-model">Building a source model</a></li>
+<li><a class="reference internal" href="#generating-a-projection">Generating a projection</a></li>
+<li><a class="reference internal" href="#projection-tags">Projection tags</a></li>
+<li><a class="reference internal" href="#building-artifacts-from-smithy-models">Building artifacts from Smithy models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

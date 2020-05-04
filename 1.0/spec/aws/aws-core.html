@@ -1,0 +1,1955 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>AWS Core Specification &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="AWS Authentication Traits" href="aws-auth.html" />
+    <link rel="prev" title="AWS specifications" href="index.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">AWS specifications</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="aws-core-specification">
+<h1>AWS Core Specification<a class="headerlink" href="#aws-core-specification" title="Permalink to this headline">¶</a></h1>
+<p>Various AWS-specific traits are used to integrate Smithy models with other
+AWS products like AWS CloudFormation and tools like the AWS SDKs.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#aws-api-service-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a><ul>
+<li><a class="reference internal" href="#sdkid" id="id9"><code class="docutils literal notranslate"><span class="pre">sdkId</span></code></a></li>
+<li><a class="reference internal" href="#cloudformationname" id="id10"><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code></a></li>
+<li><a class="reference internal" href="#arnnamespace" id="id11"><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code></a></li>
+<li><a class="reference internal" href="#cloudtraileventsource" id="id12"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></li>
+<li><a class="reference internal" href="#abbreviation" id="id13"><code class="docutils literal notranslate"><span class="pre">abbreviation</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-api-arn-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>
+<li><a class="reference internal" href="#format-of-an-arn" id="id15">Format of an ARN</a></li>
+<li><a class="reference internal" href="#relative-arn-templates" id="id16">Relative ARN templates</a></li>
+<li><a class="reference internal" href="#using-an-arn-as-a-resource-identifier" id="id17">Using an ARN as a resource identifier</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-api-arnreference-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-data-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul>
+<li><a class="reference internal" href="#data-classifications" id="id20">Data Classifications</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-api-controlplane-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-dataplane-trait" id="id22"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></li>
+<li><a class="reference internal" href="#client-endpoint-discovery" id="id23">Client Endpoint Discovery</a><ul>
+<li><a class="reference internal" href="#aws-api-clientendpointdiscovery-trait" id="id24"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-clientdiscoveredendpoint-trait" id="id25"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-clientendpointdiscoveryid-trait" id="id26"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></li>
+<li><a class="reference internal" href="#example-model" id="id27">Example Model</a></li>
+<li><a class="reference internal" href="#client-behavior" id="id28">Client Behavior</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#appendix" id="id29">Appendix</a><ul>
+<li><a class="reference internal" href="#appendix-a-example-sdk-service-ids" id="id30">Appendix A: Example SDK service IDs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="aws-api-service-trait">
+<span id="id1"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait<a class="headerlink" href="#aws-api-service-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>An AWS service is defined using the <code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait. This
+trait provides information about the service like the name used to
+generate AWS SDK client classes and the namespace used in ARNs.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Value type</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span></code> that contains the following members:</p>
+<ul class="last simple">
+<li><a class="reference internal" href="#service-sdk-id"><span class="std std-ref">sdkId</span></a> (required)</li>
+<li><a class="reference internal" href="#service-cloudformation-name"><span class="std std-ref">cloudFormationName</span></a></li>
+<li><a class="reference internal" href="#service-arn-namespace"><span class="std std-ref">arnNamespace</span></a></li>
+<li><a class="reference internal" href="#service-cloudtrail-event-source"><span class="std std-ref">cloudTrailEventSource</span></a></li>
+<li><a class="reference internal" href="#service-abbreviation"><span class="std std-ref">abbreviation</span></a></li>
+</ul>
+</dd>
+</dl>
+<p>The following example defines an AWS service that uses the default values of
+<code class="docutils literal notranslate"><span class="pre">cloudFormationService</span></code>, <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>, and <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
+
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
+
+<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
+<span class="kd">service</span><span class="nc"> FooBaz</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;aws.fooBaz#FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;sdkId&quot;</span><span class="p">:</span> <span class="s2">&quot;Some Value&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The following example provides explicit values for all properties:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
+
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
+
+<span class="nd">@service</span>(
+    <span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>,
+    <span class="nl">cloudFormationName:</span> <span class="s2">&quot;FooBaz&quot;</span>,
+    <span class="nl">arnNamespace:</span> <span class="s2">&quot;myservice&quot;</span>,
+    <span class="nl">cloudTrailEventSource:</span> <span class="s2">&quot;myservice.amazon.aws&quot;</span>)
+<span class="kd">service</span><span class="nc"> FooBaz</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;aws.fooBaz#FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;sdkId&quot;</span><span class="p">:</span> <span class="s2">&quot;Some Value&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;cloudFormationName&quot;</span><span class="p">:</span> <span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span> <span class="s2">&quot;myservice&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;cloudTrailEventSource&quot;</span><span class="p">:</span> <span class="s2">&quot;myservice.amazon.aws&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sdkid">
+<span id="service-sdk-id"></span><h3><code class="docutils literal notranslate"><span class="pre">sdkId</span></code><a class="headerlink" href="#sdkid" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> property is a <strong>required</strong> <code class="docutils literal notranslate"><span class="pre">string</span></code> value that specifies
+the AWS SDK service ID (e.g., &quot;API Gateway&quot;). This value is used for
+generating client names in SDKs and for linking between services.</p>
+<ul class="simple">
+<li>The value MUST be unique across all AWS services.</li>
+<li>The value must match the following regex: <code class="docutils literal notranslate"><span class="pre">^[a-zA-Z][a-zA-Z0-9]*(</span> <span class="pre">[a-zA-Z0-9]+)*$</span></code>.
+To summarize, the value can only contain alphanumeric characters and spaces. However,
+the first character cannot be a number, and when using spaces, each space must be
+between two alphanumeric characters.</li>
+<li>The value MUST NOT contain &quot;AWS&quot;, &quot;Aws&quot;, or &quot;Amazon&quot;.</li>
+<li>The value must not case-insensitively end with &quot;API&quot;, &quot;Client&quot;, or &quot;Service&quot;.</li>
+<li>The value MUST NOT change change once a service is publicly released. If the value
+does change, the service will be considered a brand new service in the AWS SDKs
+and Tools.</li>
+</ul>
+<div class="section" id="choosing-an-sdk-service-id">
+<h4>Choosing an SDK service ID<a class="headerlink" href="#choosing-an-sdk-service-id" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> value should reasonably represent the service it identifies. <code class="docutils literal notranslate"><span class="pre">sdkId</span></code>
+MUST NOT be an arbitrary value; for example for Amazon DynamoDB, an appropriate
+&quot;serviceId&quot; would be &quot;DynamoDB&quot; while an inappropriate value would be &quot;Foo&quot;.</p>
+<p>The following steps can be taken to produce a <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> that should generally work
+for most services:</p>
+<ol class="arabic simple">
+<li>Pick a base to derive the &quot;sdkId&quot;. If available, use the <code class="docutils literal notranslate"><span class="pre">abbreviation</span></code>
+property of the <code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait as the base. An example of an official
+service abbreviation is <code class="docutils literal notranslate"><span class="pre">Amazon</span> <span class="pre">S3</span></code> for <code class="docutils literal notranslate"><span class="pre">Amazon</span> <span class="pre">Simple</span> <span class="pre">Storage</span> <span class="pre">Service</span></code>.
+If the service has no official service abbreviation, then use the service's
+official name as specified by the <a class="reference internal" href="../core/documentation-traits.html#title-trait"><span class="std std-ref">title trait</span></a> (for example,
+<code class="docutils literal notranslate"><span class="pre">Amazon</span> <span class="pre">Simple</span> <span class="pre">Storage</span> <span class="pre">Service</span></code>).</li>
+<li>Remove &quot;Service&quot;, &quot;Client&quot;, and &quot;API&quot; from the end of the base string.
+The only acceptable reason for including these in the base is if one of
+those words are actually part of the official name of a service.</li>
+<li>Remove any use of AWS or Amazon from the base.</li>
+<li>Strip off any leading or trailing whitespace.</li>
+<li>Remove any characters that are not alphanumeric or spaces.</li>
+<li>Remove any leading digits until the value begins with a letter.</li>
+</ol>
+<p>See <a class="reference internal" href="#aws-service-appendix-a"><span class="std std-ref">Appendix A: Example SDK service IDs</span></a> for a table containing various AWS services
+and their SDK service IDs.</p>
+</div>
+<div class="section" id="using-sdk-service-id-for-client-naming">
+<h4>Using SDK service ID for client naming<a class="headerlink" href="#using-sdk-service-id-for-client-naming" title="Permalink to this headline">¶</a></h4>
+<p>Unless explicitly overridden though other traits or configuration, AWS SDKs
+SHOULD use the <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> property when choosing the name of a client class.</p>
+<p>For the AWS CLI, the typical value need to use a command involves both
+lower-casing all characters of the <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> and removing all spaces. So
+for the &quot;serviceId&quot; of &quot;API Gateway&quot;, the CLI command would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ aws apigateway
+</pre></div>
+</div>
+<p>In the AWS SDK for PHP, a client class name SHOULD be derived by lower-casing
+all letters that are not the first letter of a word, removing all spaces, and
+appending the word &quot;Client&quot; to the final transformed &quot;serviceId&quot;. So for the
+&quot;serviceId&quot; of &quot;API Gateway&quot;, the PHP client would be: <code class="docutils literal notranslate"><span class="pre">ApiGatewayClient</span></code>.</p>
+<p>Other AWS SDKs SHOULD follow a similar pattern when choosing client names.</p>
+</div>
+</div>
+<div class="section" id="cloudformationname">
+<span id="service-cloudformation-name"></span><h3><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code><a class="headerlink" href="#cloudformationname" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that specifies
+the <a class="reference external" href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws.template-resource-type-ref.html">AWS CloudFormation service name</a> (e.g., <code class="docutils literal notranslate"><span class="pre">ApiGateway</span></code>). When not set,
+this value defaults to the name of the service shape. This value is part of
+the CloudFormation resource type name that is automatically assigned to
+resources in the service (e.g., <code class="docutils literal notranslate"><span class="pre">AWS::&lt;NAME&gt;::resourceName</span></code>). This value
+must match the following regex: <code class="docutils literal notranslate"><span class="pre">^[A-Z][A-Za-z0-9]+$</span></code>.</p>
+</div>
+<div class="section" id="arnnamespace">
+<span id="service-arn-namespace"></span><h3><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code><a class="headerlink" href="#arnnamespace" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the
+<a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces">ARN service namespace</a> of the service (e.g., &quot;apigateway&quot;). This value is
+used in ARNs assigned to resources in the service. If not set, this value
+defaults to the lowercase name of the service shape. This value must match
+the following regex: <code class="docutils literal notranslate"><span class="pre">^[a-z0-9.\-]{1,63}$</span></code>.</p>
+<p>If not set, this value defaults to the name of the service shape converted
+to lowercase. This value is combined with resources contained within the
+service to form ARNs for resources. Only resources that explicitly define
+the <a class="reference internal" href="#aws-api-arn-trait"><span class="std std-ref">aws.api#arn trait</span></a> are assigned ARNs, and their relative ARNs
+are combined with the service's arnNamespace to form an ARN.</p>
+</div>
+<div class="section" id="cloudtraileventsource">
+<span id="service-cloudtrail-event-source"></span><h3><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code><a class="headerlink" href="#cloudtraileventsource" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the
+<em>eventSource</em> property contained in CloudTrail <a class="reference external" href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html">event records</a>
+emitted by the service. If not specified, this value defaults to the
+<code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> plus .amazonaws.com. For example:</p>
+<ul class="simple">
+<li>AWS CloudFormation has an <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> of <code class="docutils literal notranslate"><span class="pre">cloudformation</span></code> and an
+event source of <code class="docutils literal notranslate"><span class="pre">cloudformation.amazonaws.com</span></code>.</li>
+<li>Amazon EC2 has an <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> of <code class="docutils literal notranslate"><span class="pre">ec2</span></code> and an event source of
+<code class="docutils literal notranslate"><span class="pre">ec2.amazonaws.com</span></code>.</li>
+<li>Amazon Simple Workflow Service has an <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> of <code class="docutils literal notranslate"><span class="pre">swf</span></code> and
+an event source of <code class="docutils literal notranslate"><span class="pre">swf.amazonaws.com</span></code>.</li>
+</ul>
+<p>This convention has some exceptions. For example, the event source for
+Amazon CloudWatch is <code class="docutils literal notranslate"><span class="pre">monitoring.amazonaws.com</span></code>. Such services will
+need to explicitly configure the <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> setting.</p>
+</div>
+<div class="section" id="abbreviation">
+<span id="service-abbreviation"></span><h3><code class="docutils literal notranslate"><span class="pre">abbreviation</span></code><a class="headerlink" href="#abbreviation" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">abbreviation</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the official
+abbreviation of a service. For example, the official abbreviation of
+&quot;Amazon Simple Storage Service&quot; is &quot;Amazon S3&quot;, and the abbreviation of
+&quot;Amazon Kinesis Firehose&quot; is &quot;Firehose&quot;.</p>
+<p>See <a class="reference internal" href="#aws-service-appendix-a"><span class="std std-ref">Appendix A: Example SDK service IDs</span></a> for a table containing various AWS services
+and their abbreviations.</p>
+</div>
+</div>
+<div class="section" id="aws-api-arn-trait">
+<span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait<a class="headerlink" href="#aws-api-arn-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Trait summary</dt>
+<dd>Defines an ARN of a Smithy resource shape.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
+<dt>Trait value</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait is a structure that supports the following
+members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>template</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong> Defines the ARN template. The provided string contains
+URI-template style label placeholders that contain the name of one of
+the identifiers defined in the <code class="docutils literal notranslate"><span class="pre">identifiers</span></code> property of the
+resource. These labels can be substituted at runtime with the actual
+identifiers of the resource. Every identifier name of the resource
+MUST have corresponding label of the same name. Note that
+percent-encoding <strong>is not</strong> performed on these placeholder values;
+they are to be replaced literally. For relative ARN templates that
+have not set <code class="docutils literal notranslate"><span class="pre">absolute</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the template string contains
+only the resource part of the ARN (for example, <code class="docutils literal notranslate"><span class="pre">foo/{MyResourceId}</span></code>).
+Relative ARNs MUST NOT start with &quot;/&quot;.</td>
+</tr>
+<tr class="row-odd"><td>noRegion</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Set to true to specify that the ARN does not contain a region.
+If not set, or if set to false, the resolved ARN will contain a
+placeholder for the region. This can only be set to true if
+<code class="docutils literal notranslate"><span class="pre">absolute</span></code> is not set or is false.</td>
+</tr>
+<tr class="row-even"><td>noAccount</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Set to true to specify that the ARN does not contain an account ID.
+If not set, or if set to false, the resolved ARN will contain a
+placeholder for the customer account ID. This can only be set to
+true if absolute is not set or is false.</td>
+</tr>
+<tr class="row-odd"><td>absolute</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Set to true to indicate that the ARN template contains a fully-formed
+ARN that does not need to be merged with the service. This type of
+ARN MUST be used when the identifier of a resource is an ARN or is
+based on the ARN identifier of a parent resource.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="format-of-an-arn">
+<h3>Format of an ARN<a class="headerlink" href="#format-of-an-arn" title="Permalink to this headline">¶</a></h3>
+<p>An ARN is is a structured URI made up of the following components:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>arn:partition:service:region:account-id:resource
+                         \       /
+                     Both are optional
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>partition</dt>
+<dd>The partition that the resource is in. For standard AWS regions, the
+partition is &quot;aws&quot;. If you have resources in other partitions, the
+partition is aws-partitionname. For example, the partition for resources
+in the China (Beijing) region is aws-cn.</dd>
+<dt>service</dt>
+<dd>The service namespace that identifies the AWS product (for example,
+Amazon S3 is &quot;s3&quot;, IAM is &quot;iam&quot;, and Amazon RDS is &quot;rds&quot;). For a list
+of namespaces, see <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces">AWS Service Namespaces</a>. The namespace used by
+Smithy services is defined by the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> property of the
+<a class="reference internal" href="#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a>.</dd>
+<dt>region</dt>
+<dd>The region the resource resides in. Note that the ARNs for some resources
+do not require a region, so this component MAY be omitted.</dd>
+<dt>account-id</dt>
+<dd>The ID of the AWS account that owns the resource, without the hyphens. For
+example, <code class="docutils literal notranslate"><span class="pre">123456789012</span></code>. Note that the ARNs for some resources don't
+require an account number, so this component MAY be omitted.</dd>
+<dt>resource</dt>
+<dd>Defines a specific resource within a service. The content of this segment of
+an ARN varies by service. It often includes an indicator of the type of
+resource—for example, an IAM user or Amazon RDS database —followed by a
+slash (/) or a colon (:), followed by the resource name itself. Some
+services allow paths for resource names, as described in Paths in ARNs.</dd>
+</dl>
+<p>Some example ARNs from various services include:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>// Elastic Beanstalk application version
+arn:aws:elasticbeanstalk:us-east-1:123456789012:environment/My App/MyEnvironment
+
+// IAM user name
+arn:aws:iam::123456789012:user/David
+
+// Amazon RDS instance used for tagging
+arn:aws:rds:eu-west-1:123456789012:db:mysql-db
+
+// Object in an Amazon S3 bucket
+arn:aws:s3:::my_corporate_bucket/exampleobject.png
+</pre></div>
+</div>
+</div>
+<div class="section" id="relative-arn-templates">
+<h3>Relative ARN templates<a class="headerlink" href="#relative-arn-templates" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">arn</span></code> traits with relative templates are combined with the service to form an
+absolute ARN template. This ARN template can only be expanded at runtime with
+actual values for the partition, region name, account ID, and identifier
+label placeholders.</p>
+<p>For example, given the following service:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> aws.fooBaz</span>
+
+<span class="kd">use</span><span class="nc"> aws.api#service</span>
+<span class="kd">use</span><span class="nc"> aws.api#arn</span>
+
+<span class="nd">@service</span>(<span class="nl">sdkId:</span> <span class="s2">&quot;Some Value&quot;</span>)
+<span class="kd">service</span><span class="nc"> FooBaz</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2018-03-17&quot;</span>,
+    <span class="nl">resources:</span> [<span class="vc">MyResource</span>],
+}
+
+<span class="nd">@arn</span>(<span class="nl">template:</span> <span class="s2">&quot;myresource/{myId}&quot;</span>)
+<span class="kd">resource</span><span class="nc"> MyResource</span> {
+    <span class="nl">identifiers:</span> {<span class="nl">myId:</span> <span class="vc">MyResourceId</span>},
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#FooBaz&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;sdkId&quot;</span><span class="p">:</span> <span class="s2">&quot;Some Value&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;myId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyResourceId&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#arn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;template&quot;</span><span class="p">:</span> <span class="s2">&quot;myresource/{myId}&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The ARN template assigned to <code class="docutils literal notranslate"><span class="pre">MyResource</span></code> when used with the <code class="docutils literal notranslate"><span class="pre">FooBaz</span></code>
+service expands to <code class="docutils literal notranslate"><span class="pre">arn:{AWS::partition}:myservice:{AWS::Region}:{AWS::AccountId}:myresource/{myId}</span></code>
+at runtime. The label <code class="docutils literal notranslate"><span class="pre">{myId}</span></code> indicates that the value of the resource's
+identifier is to be inserted into the ARN template when resolving it at
+runtime.</p>
+</div>
+<div class="section" id="using-an-arn-as-a-resource-identifier">
+<h3>Using an ARN as a resource identifier<a class="headerlink" href="#using-an-arn-as-a-resource-identifier" title="Permalink to this headline">¶</a></h3>
+<p><em>Absolute</em> ARN templates are used to provide an entire ARN to a resource that
+is not combined with the service ARN namespace. When a resource uses an ARN as
+its identifier, an absolute ARN template MUST be defined on the resource
+that uses a placeholder containing the name of the identifier of the
+resource.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#arn</span>
+<span class="kd">use</span><span class="nc"> aws.api#arnReference</span>
+
+<span class="nd">@arn</span>(<span class="nl">template:</span> <span class="s2">&quot;{arn}&quot;</span>, <span class="nl">absolute:</span> <span class="kc">true</span>)
+<span class="kd">resource</span><span class="nc"> MyResource</span> {
+    <span class="nl">identifiers:</span> {<span class="nl">arn:</span> <span class="vc">Arn</span>}
+}
+
+<span class="nd">@arnReference</span>(<span class="nl">service:</span> <span class="vc">FooBaz</span>, <span class="nl">resource:</span> <span class="vc">MyResource</span>)
+<span class="kd">string</span><span class="nc"> Arn</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;arn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Arn&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#arn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;template&quot;</span><span class="p">:</span> <span class="s2">&quot;{arn}&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;absolute&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Arn&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;resource&quot;</span><span class="p">:</span> <span class="s2">&quot;MyResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="aws-api-arnreference-trait">
+<span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait<a class="headerlink" href="#aws-api-arnreference-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Trait summary</dt>
+<dd>Specifies that a string shape contains a fully formed AWS ARN.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+<dt>Trait value</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>Smithy models can refer to AWS resources using ARNs. The
+<code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> can be applied to a string shape to indicate
+that the string contains an ARN and what resource is targeted by the
+ARN.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait is a structure that supports the following
+optional members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>type</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The AWS <a class="reference external" href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation resource type</a> contained in the ARN.
+Example: &quot;AWS::IAM::Role&quot;</td>
+</tr>
+<tr class="row-odd"><td>service</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The Smithy service absolute shape ID that is referenced by the ARN.
+The targeted service is not required to be found in the model,
+allowing for external shapes to be referenced without needing to
+take on an additional dependency.</td>
+</tr>
+<tr class="row-even"><td>resource</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>An absolute shape ID that references the Smithy resource type
+contained in the ARN (e.g., <code class="docutils literal notranslate"><span class="pre">com.foo#SomeResource</span></code>). The targeted
+resource is not required to be found in the model, allowing for
+external shapes to be referenced without needing to take on an
+additional dependency. If the shape is found in the model, it MUST
+target a resource shape, and the resource MUST be found within the
+closure of the referenced service shape.</td>
+</tr>
+</tbody>
+</table>
+<p>The following example defines a string shape that targets an AWS resource.
+The CloudFormation name of the resource and the Smithy service and resource
+shape IDs are provided to give tooling additional information about the
+referenced resource.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> aws.api#arnReference</span>
+
+<span class="nd">@arnReference</span>(
+    <span class="nl">type:</span> <span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span>,
+    <span class="nl">service:</span> <span class="vc">com.foo#SomeService</span>,
+    <span class="nl">resource:</span> <span class="vc">com.foo#SomeResource</span>)
+<span class="kd">string</span><span class="nc"> SomeResourceId</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#SomeResourceId&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;com.foo#SomeService&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;resource&quot;</span><span class="p">:</span> <span class="s2">&quot;com.foo#SomeResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The following example defines an ARN reference that doesn't provide an context
+about the referenced shape. While this is valid, it is not as useful as the
+previous example:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span>
+<span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> aws.api#arnReference</span>
+
+<span class="nd">@arnReference</span>
+<span class="kd">string</span><span class="nc"> SomeResourceId</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#SomeResourceId&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="aws-api-data-trait">
+<span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait<a class="headerlink" href="#aws-api-data-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that the target contains data of the specified classification.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">:test(simpleType,</span> <span class="pre">collection,</span> <span class="pre">structure,</span> <span class="pre">union,</span> <span class="pre">member)</span></code></dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code> that is one of: <code class="docutils literal notranslate"><span class="pre">content</span></code>, <code class="docutils literal notranslate"><span class="pre">account</span></code>, <code class="docutils literal notranslate"><span class="pre">usage</span></code>,
+<code class="docutils literal notranslate"><span class="pre">tagging</span></code>, or <code class="docutils literal notranslate"><span class="pre">permissions</span></code>. See <a class="reference internal" href="#data-classifications"><span class="std std-ref">Data Classifications</span></a> for more
+information.</dd>
+</dl>
+<p>Data classifications are resolved hierarchically: the data classification
+of a member inherits the effective data classification applied to a parent
+structure, union, or collection unless overridden.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#data</span>
+
+<span class="nd">@data</span>(<span class="s2">&quot;permissions&quot;</span>)
+<span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="nl">name:</span> <span class="vc">String</span>,
+
+    <span class="nd">@data</span>(<span class="s2">&quot;content&quot;</span>)
+    <span class="nl">content:</span> <span class="vc">String</span>,
+
+    <span class="nl">tags:</span> <span class="vc">TagList</span>,
+}
+
+<span class="nd">@data</span>(<span class="s2">&quot;tagging&quot;</span>)
+<span class="kd">list</span><span class="nc"> TagList</span> {
+    <span class="nl">member:</span> <span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;aws.api#data&quot;</span><span class="p">:</span> <span class="s2">&quot;content&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#TagList&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#TagList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;aws.api#data&quot;</span><span class="p">:</span> <span class="s2">&quot;tagging&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The effective data classifications in the previous example are as follows:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Shape ID</th>
+<th class="head">Data Classification</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">smithy.example#MyStructure</span></code></td>
+<td>&quot;permissions&quot;</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">smithy.example#MyStructure$name</span></code></td>
+<td>&quot;permissions&quot;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">smithy.example#MyStructure$content</span></code></td>
+<td>&quot;content&quot;</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">smithy.example#MyStructure$tags</span></code></td>
+<td>&quot;tagging&quot;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">smithy.example#TagList</span></code></td>
+<td>&quot;tagging&quot;</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This trait should be used in conjunction with the
+<a class="reference internal" href="../core/documentation-traits.html#sensitive-trait"><span class="std std-ref">sensitive trait</span></a> as necessary.</p>
+</div>
+<div class="section" id="data-classifications">
+<span id="id5"></span><h3>Data Classifications<a class="headerlink" href="#data-classifications" title="Permalink to this headline">¶</a></h3>
+<p>The following table describes the available data classifications that can be
+applied through the <code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">content</span></code></td>
+<td>Designates software (including machine images), data, text, audio,
+video or images that customers or any customer end user transfers to
+AWS for processing, storage or hosting by AWS services in connection
+with the customer’s accounts and any computational results that
+customers or any customer end user derive from the foregoing through
+their use of AWS services. Data of this classification should be marked
+with the <a class="reference internal" href="../core/documentation-traits.html#sensitive-trait"><span class="std std-ref">sensitive trait</span></a>.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">account</span></code></td>
+<td>Designates information about customers that customers provide to AWS in
+connection with the creation or administration of customers’ accounts.
+Data of this classification should be marked with the <a class="reference internal" href="../core/documentation-traits.html#sensitive-trait"><span class="std std-ref">sensitive trait</span></a>.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">usage</span></code></td>
+<td>Designates data related to a customer’s account, such as resource
+identifiers, usage statistics, logging data, and analytics.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">tagging</span></code></td>
+<td>Designates metadata tags applied to AWS resources.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">permissions</span></code></td>
+<td>Designates security and access roles, rules, usage policies, and
+permissions. Data of this classification should be marked with the
+<a class="reference internal" href="../core/documentation-traits.html#sensitive-trait"><span class="std std-ref">sensitive trait</span></a>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="aws-api-controlplane-trait">
+<span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait<a class="headerlink" href="#aws-api-controlplane-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that a service, resource, or operation is considered part of
+the <em>control plane</em>.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></dd>
+<dt>Value type</dt>
+<dd>Annotation trait</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="#aws-api-dataplane-trait"><span class="std std-ref">aws.api#dataPlane trait</span></a></dd>
+</dl>
+<p>This trait is effectively inherited by shapes bound within a service or
+resource. When applied to a service or resource shape, all resources and
+operations bound within the shape are also considered part of the control
+plane unless an operation or resource is marked with the
+<a class="reference internal" href="#aws-api-dataplane-trait"><span class="std std-ref">aws.api#dataPlane trait</span></a>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#controlPlane</span>
+
+<span class="nd">@controlPlane</span>
+<span class="kd">operation</span><span class="nc"> PutThings</span> {
+    <span class="nl">input:</span> <span class="vc">PutThingsInput</span>,
+    <span class="nl">output:</span> <span class="vc">PutThingsOutput</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PutThings&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PutThingsInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PutThingsOutput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#controlPlane&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="aws-api-dataplane-trait">
+<span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait<a class="headerlink" href="#aws-api-dataplane-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that a service, resource, or operation is considered part of
+the <em>data plane</em>.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></dd>
+<dt>Value type</dt>
+<dd>Annotation trait</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="#aws-api-controlplane-trait"><span class="std std-ref">aws.api#controlPlane trait</span></a></dd>
+</dl>
+<p>This trait is effectively inherited by shapes bound within a service or
+resource. When applied to a service or resource shape, all resources and
+operations bound within the shape are also considered part of the data
+plane unless an operation or resource is marked with the
+<a class="reference internal" href="#aws-api-controlplane-trait"><span class="std std-ref">aws.api#controlPlane trait</span></a>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.api#controlPlane</span>
+
+<span class="nd">@dataPlane</span>
+<span class="kd">operation</span><span class="nc"> PutThings</span> {
+    <span class="nl">input:</span> <span class="vc">PutThingsInput</span>,
+    <span class="nl">output:</span> <span class="vc">PutThingsOutput</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PutThings&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PutThingsInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PutThingsOutput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#dataPlane&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="client-endpoint-discovery">
+<span id="endpoint-discovery"></span><h2>Client Endpoint Discovery<a class="headerlink" href="#client-endpoint-discovery" title="Permalink to this headline">¶</a></h2>
+<p>Services running on cellular infrastructure may wish to enable automatic
+endpoint discovery in clients. The AWS SDKs provide functionality to
+automatically discover, cache, and connect to service endpoints. The
+following traits provide the information needed to perform this.</p>
+<div class="section" id="aws-api-clientendpointdiscovery-trait">
+<span id="client-endpoint-discovery-trait"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait<a class="headerlink" href="#aws-api-clientendpointdiscovery-trait" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Trait summary</dt>
+<dd>The <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscovery</span></code> trait indicates the operation that the
+client should use to discover endpoints for the service and the error
+returned when the endpoint being accessed has expired.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Trait value</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait is a structure that supports the
+following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>operation</td>
+<td><code class="docutils literal notranslate"><span class="pre">shapeId</span></code></td>
+<td><strong>REQUIRED</strong> The operation used to discover endpoints for the service. The
+operation MUST be bound to the service.</td>
+</tr>
+<tr class="row-odd"><td>error</td>
+<td><code class="docutils literal notranslate"><span class="pre">shapeId</span></code></td>
+<td><strong>REQUIRED</strong> An error shape which indicates to a client that an endpoint they are
+using is no longer valid. This error MUST be bound to any operation marked with
+the <code class="docutils literal notranslate"><span class="pre">clientDiscoveredEndpoint</span></code> trait that is bound to the service.</td>
+</tr>
+</tbody>
+</table>
+<p>The input of the operation targeted by <code class="docutils literal notranslate"><span class="pre">operation</span></code> MAY contain none, either,
+or both of the following members:</p>
+<ul class="simple">
+<li>a <code class="docutils literal notranslate"><span class="pre">string</span></code> member named <code class="docutils literal notranslate"><span class="pre">Operation</span></code></li>
+<li>a <code class="docutils literal notranslate"><span class="pre">map</span></code> member named <code class="docutils literal notranslate"><span class="pre">Identifiers</span></code> whose key and value types are
+<code class="docutils literal notranslate"><span class="pre">string</span></code> types.</li>
+</ul>
+<p>The operation output MUST contain a member <code class="docutils literal notranslate"><span class="pre">Endpoints</span></code> that is a list of
+<code class="docutils literal notranslate"><span class="pre">Endpoint</span></code> structures, which are made up of two members:</p>
+<ul class="simple">
+<li>a <code class="docutils literal notranslate"><span class="pre">string</span></code> member named <code class="docutils literal notranslate"><span class="pre">Address</span></code></li>
+<li>a <code class="docutils literal notranslate"><span class="pre">long</span></code> member named <code class="docutils literal notranslate"><span class="pre">CachePeriodInMinutes</span></code></li>
+</ul>
+</div>
+<div class="section" id="aws-api-clientdiscoveredendpoint-trait">
+<span id="client-discovered-endpoint-trait"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait<a class="headerlink" href="#aws-api-clientdiscoveredendpoint-trait" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Trait summary</dt>
+<dd>The <code class="docutils literal notranslate"><span class="pre">clientDiscoveredEndpoint</span></code> trait indicates that the target operation
+should use the client's endpoint discovery logic.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Trait value</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait is a structure that supports the
+following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>required</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>This field denotes whether or not this operation requires the use of a
+specific endpoint. If this field is false, the standard regional
+endpoint for a service can handle this request. The client will start
+sending requests to the standard regional endpoint while working to
+discover a more specific endpoint.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="aws-api-clientendpointdiscoveryid-trait">
+<span id="client-endpoint-discovery-id-trait"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait<a class="headerlink" href="#aws-api-clientendpointdiscoveryid-trait" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>The <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscoveryId</span></code> trait indicates which member(s) of the
+operation input should be used to discover an endpoint for the service.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">operation[trait|aws.api#clientDiscoveredEndpoint]</span> <span class="pre">-[input]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">:test(member[trait|required]</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></dd>
+<dt>Trait value</dt>
+<dd>Annotation trait</dd>
+</dl>
+</div>
+<div class="section" id="example-model">
+<h3>Example Model<a class="headerlink" href="#example-model" title="Permalink to this headline">¶</a></h3>
+<p>The following model illustrates an API that uses a <code class="docutils literal notranslate"><span class="pre">DescribeEndpoints</span></code>
+operation to perform endpoint discovery for a <code class="docutils literal notranslate"><span class="pre">GetObject</span></code> operation
+using an <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscoveryId</span></code>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@aws.api#clientEndpointDiscovery</span>(
+    <span class="nl">operation:</span> <span class="vc">DescribeEndpoints</span>,
+    <span class="nl">error:</span> <span class="vc">InvalidEndpointError</span>,
+)
+<span class="kd">service</span><span class="nc"> FooService</span> {
+  <span class="nl">version:</span> <span class="s2">&quot;2019-09-10&quot;</span>,
+  <span class="nl">operations:</span> [<span class="vc">DescribeEndpoints</span>, <span class="vc">GetObject</span>]
+}
+
+<span class="kd">operation</span><span class="nc"> DescribeEndpoints</span> {
+    <span class="nl">input:</span> <span class="vc">DescribeEndpointsInput</span>,
+    <span class="nl">output:</span> <span class="vc">DescribeEndpointsOutput</span>,
+    <span class="nl">errors:</span> [<span class="vc">InvalidEndpointError</span>]
+}
+
+<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nd">@httpError</span>(<span class="m">421</span>)
+<span class="kd">structure</span><span class="nc"> InvalidEndpointError</span> {}
+
+<span class="kd">structure</span><span class="nc"> DescribeEndpointsInput</span> {
+  <span class="nl">Operation:</span> <span class="vc">String</span>,
+  <span class="nl">Identifiers:</span> <span class="vc">Identifiers</span>,
+}
+
+<span class="kd">map</span><span class="nc"> Identifiers</span> {
+  <span class="nl">key:</span> <span class="vc">String</span>,
+  <span class="nl">value:</span> <span class="vc">String</span>
+}
+
+<span class="kd">structure</span><span class="nc"> DescribeEndpointsOutput</span> {
+  <span class="nl">Endpoints:</span> <span class="vc">Endpoints</span>,
+}
+
+<span class="kd">list</span><span class="nc"> Endpoints</span> {
+  <span class="nl">member:</span> <span class="vc">Endpoint</span>
+}
+
+<span class="kd">structure</span><span class="nc"> Endpoint</span> {
+  <span class="nl">Address:</span> <span class="vc">String</span>,
+  <span class="nl">CachePeriodInMinutes:</span> <span class="vc">Long</span>,
+}
+
+<span class="nd">@aws.api#clientDiscoveredEndpoint</span>(<span class="nl">required:</span> <span class="kc">true</span>)
+<span class="kd">operation</span><span class="nc"> GetObject</span> {
+    <span class="nl">input:</span> <span class="vc">GetObjectInput</span>,
+    <span class="nl">output:</span> <span class="vc">GetObjectOutput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> GetObjectInput</span> {
+  <span class="nd">@clientEndpointDiscoveryId</span>
+  <span class="nd">@required</span>
+  <span class="nl">Id:</span> <span class="vc">String</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> GetObjectOutput</span> {
+  <span class="nl">Object:</span> <span class="vc">Blob</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;ns.foo#FooService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-09-10&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#DescribeEndpoints&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#GetObject&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#clientEndpointDiscovery&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#DescribeEndpoints&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;InvalidEndpointError&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;ns.foo#DescribeEndpoints&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#DescribeEndpointsInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#DescribeEndpointsOutput&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;ns.foo#DescribeEndpointsInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;Operation&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;Identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#Identifiers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;ns.foo#Identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;map&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;key&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;ns.foo#DescribeEndpointsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;Endpoints&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#Endpoints&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;ns.foo#Endpoints&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#Endpoint&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;ns.foo#Endpoint&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;Address&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;CachePeriodInMinutes&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Long&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;ns.foo#GetObject&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#GetObjectInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#GetObjectOutput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;errors&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;ns.foo#InvalidEndpointError&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.api#clientDiscoveredEndpoint&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;required&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;ns.foo#GetObjectInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;Id&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;aws.api#clientEndpointDiscoveryId&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;ns.foo#GetObjectOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;Object&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Blob&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;ns.foo#InvalidEndpointError&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;client&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;smithy.api#httpError&quot;</span><span class="p">:</span> <span class="mi">421</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="client-behavior">
+<h3>Client Behavior<a class="headerlink" href="#client-behavior" title="Permalink to this headline">¶</a></h3>
+<p>When a client calls an operation which has the <code class="docutils literal notranslate"><span class="pre">clientDiscoveredEndpoint</span></code>
+trait where <code class="docutils literal notranslate"><span class="pre">required</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> or where the client has explicitly
+enabled endpoint discovery, the client MUST attempt to perform endpoint
+discovery synchronously.</p>
+<p>When a client calls an operation which has the <code class="docutils literal notranslate"><span class="pre">clientDiscoveredEndpoint</span></code>
+trait where <code class="docutils literal notranslate"><span class="pre">required</span></code> is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, the client SHOULD attempt to
+perform endpoint discovery asynchronously.</p>
+<p>To perform endpoint discovery, the client MUST first make a request
+to the operation targeted by the value of <code class="docutils literal notranslate"><span class="pre">operation</span></code> on the service's
+<code class="docutils literal notranslate"><span class="pre">clientEndpointDiscovery</span></code> trait or attempt to retrieve a previously cached
+response.</p>
+<p>When calling the endpoint operation, the client MUST provide the following
+parameters if they are in the endpoint operation's input shape:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Operation</span></code> - the name of the client operation to be called.</li>
+<li><code class="docutils literal notranslate"><span class="pre">Identifiers</span></code> - a map of member name to member value of all
+members in the client operation's input shape that have the
+<code class="docutils literal notranslate"><span class="pre">clientEndpointDiscoveryId</span></code> trait.</li>
+</ul>
+<p>The client MUST then use an endpoint from the <code class="docutils literal notranslate"><span class="pre">Endpoints</span></code> list in the
+response. The client SHOULD prioritize endpoints by the order in which they
+appear in the list.</p>
+<div class="section" id="caching">
+<h4>Caching<a class="headerlink" href="#caching" title="Permalink to this headline">¶</a></h4>
+<p>In order to reduce the necessary number of calls needed, clients SHOULD cache
+the endpoints returned in the response. Clients SHOULD evict an endpoint from
+the cache after a number of minutes defined in the <code class="docutils literal notranslate"><span class="pre">CachePeriodInMinutes</span></code>
+member of the <code class="docutils literal notranslate"><span class="pre">Endpoint</span></code> shape. Clients SHOULD attempt to refresh the cache
+before the final endpoint in the cache expires. Clients MAY choose to refresh
+the cache after cache period of the highest priority endpoint.</p>
+<p>If a call to refresh the cache fails, the client SHOULD continue to use the
+previous endpoint until the cache can be successfully refreshed, or until the
+service returns the error targeted by the <code class="docutils literal notranslate"><span class="pre">error</span></code> property of the service's
+<code class="docutils literal notranslate"><span class="pre">clientEndpointDiscovery</span></code> trait.</p>
+<p>Cache keys MUST include the AWS Access Key ID used to make the request.
+Additionally, they MUST include the values of the <code class="docutils literal notranslate"><span class="pre">Operation</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Identifiers</span></code> members passed in with the call to the endpoint discovery
+operation if those members are present. Cache keys MAY include additional
+context.</p>
+<p>Clients SHOULD use an LRU cache implementation with an initial cache limit of
+1000 entries. The cache limit SHOULD be configurable by the client.</p>
+<p>Clients SHOULD scope the cache globally or to a specific client instance.</p>
+</div>
+</div>
+</div>
+<div class="section" id="appendix">
+<h2>Appendix<a class="headerlink" href="#appendix" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="appendix-a-example-sdk-service-ids">
+<span id="aws-service-appendix-a"></span><h3>Appendix A: Example SDK service IDs<a class="headerlink" href="#appendix-a-example-sdk-service-ids" title="Permalink to this headline">¶</a></h3>
+<p>The following, non-exhaustive, table defines the SDK service ID of many
+existing AWS services.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="40%" />
+<col width="40%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">sdkId</th>
+<th class="head">title trait</th>
+<th class="head">abbreviation</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>ACM</td>
+<td>AWS Certificate Manager</td>
+<td>ACM</td>
+</tr>
+<tr class="row-odd"><td>API Gateway</td>
+<td>Amazon API Gateway</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Application Auto Scaling</td>
+<td>Application Auto Scaling</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>AppStream</td>
+<td>Amazon AppStream</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Athena</td>
+<td>Amazon Athena</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Auto Scaling</td>
+<td>Auto Scaling</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Batch</td>
+<td>AWS Batch</td>
+<td>AWS Batch</td>
+</tr>
+<tr class="row-odd"><td>Budgets</td>
+<td>AWS Budgets</td>
+<td>AWSBudgets</td>
+</tr>
+<tr class="row-even"><td>CloudDirectory</td>
+<td>Amazon CloudDirectory</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>CloudFormation</td>
+<td>AWS CloudFormation</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>CloudFront</td>
+<td>Amazon CloudFront</td>
+<td>CloudFront</td>
+</tr>
+<tr class="row-odd"><td>CloudHSM</td>
+<td>Amazon CloudHSM</td>
+<td>CloudHSM</td>
+</tr>
+<tr class="row-even"><td>CloudHSM V2</td>
+<td>AWS CloudHSM V2</td>
+<td>CloudHSM V2</td>
+</tr>
+<tr class="row-odd"><td>CloudSearch</td>
+<td>Amazon CloudSearch</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>CloudSearch Domain</td>
+<td>Amazon CloudSearch Domain</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>CloudTrail</td>
+<td>AWS CloudTrail</td>
+<td>CloudTrail</td>
+</tr>
+<tr class="row-even"><td>CloudWatch</td>
+<td>Amazon CloudWatch</td>
+<td>CloudWatch</td>
+</tr>
+<tr class="row-odd"><td>CodeBuild</td>
+<td>AWS CodeBuild</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>CodeCommit</td>
+<td>AWS CodeCommit</td>
+<td>CodeCommit</td>
+</tr>
+<tr class="row-odd"><td>CodeDeploy</td>
+<td>AWS CodeDeploy</td>
+<td>CodeDeploy</td>
+</tr>
+<tr class="row-even"><td>CodePipeline</td>
+<td>AWS CodePipeline</td>
+<td>CodePipeline</td>
+</tr>
+<tr class="row-odd"><td>CodeStar</td>
+<td>AWS CodeStar</td>
+<td>CodeStar</td>
+</tr>
+<tr class="row-even"><td>Cognito Identity</td>
+<td>Amazon Cognito Identity</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Cognito Identity Provider</td>
+<td>Amazon Cognito Identity Provider</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Cognito Sync</td>
+<td>Amazon Cognito Sync</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Config Service</td>
+<td>AWS Config</td>
+<td>Config Service</td>
+</tr>
+<tr class="row-even"><td>Cost and Usage Report Service</td>
+<td>AWS Cost and Usage Report Service</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Data Pipeline</td>
+<td>AWS Data Pipeline</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>DAX</td>
+<td>Amazon DynamoDB Accelerator (DAX)</td>
+<td>Amazon DAX</td>
+</tr>
+<tr class="row-odd"><td>Device Farm</td>
+<td>AWS Device Farm</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Direct Connect</td>
+<td>AWS Direct Connect</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Application Discovery Service</td>
+<td>AWS Application Discovery Service</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Database Migration Service</td>
+<td>AWS Database Migration Service</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Directory Service</td>
+<td>AWS Directory Service</td>
+<td>Directory Service</td>
+</tr>
+<tr class="row-even"><td>DynamoDB</td>
+<td>Amazon DynamoDB</td>
+<td>DynamoDB</td>
+</tr>
+<tr class="row-odd"><td>DynamoDB Streams</td>
+<td>Amazon DynamoDB Streams</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>EC2</td>
+<td>Amazon Elastic Compute Cloud</td>
+<td>Amazon EC2</td>
+</tr>
+<tr class="row-odd"><td>ECR</td>
+<td>Amazon EC2 Container Registry</td>
+<td>Amazon ECR</td>
+</tr>
+<tr class="row-even"><td>ECS</td>
+<td>Amazon EC2 Container Service</td>
+<td>Amazon ECS</td>
+</tr>
+<tr class="row-odd"><td>EFS</td>
+<td>Amazon Elastic File System</td>
+<td>EFS</td>
+</tr>
+<tr class="row-even"><td>ElastiCache</td>
+<td>Amazon ElastiCache</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Elastic Beanstalk</td>
+<td>AWS Elastic Beanstalk</td>
+<td>Elastic Beanstalk</td>
+</tr>
+<tr class="row-even"><td>Elastic Transcoder</td>
+<td>Amazon Elastic Transcoder</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Elastic Load Balancing</td>
+<td>Elastic Load Balancing</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Elastic Load Balancing v2</td>
+<td>Elastic Load Balancing</td>
+<td>Elastic Load Balancing v2</td>
+</tr>
+<tr class="row-odd"><td>EMR</td>
+<td>Amazon Elastic MapReduce</td>
+<td>Amazon EMR</td>
+</tr>
+<tr class="row-even"><td>Elasticsearch Service</td>
+<td>Amazon Elasticsearch Service</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>CloudWatch Events</td>
+<td>Amazon CloudWatch Events</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Firehose</td>
+<td>Amazon Kinesis Firehose</td>
+<td>Firehose</td>
+</tr>
+<tr class="row-odd"><td>GameLift</td>
+<td>Amazon GameLift</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Glacier</td>
+<td>Amazon Glacier</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Glue</td>
+<td>AWS Glue</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Greengrass</td>
+<td>AWS Greengrass</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Health</td>
+<td>AWS Health APIs and Notifications</td>
+<td>AWSHealth</td>
+</tr>
+<tr class="row-even"><td>IAM</td>
+<td>AWS Identity and Access Management</td>
+<td>IAM</td>
+</tr>
+<tr class="row-odd"><td>ImportExport</td>
+<td>AWS Import/Export</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Inspector</td>
+<td>Amazon Inspector</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>IoT</td>
+<td>AWS IoT</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>IoT Data Plane</td>
+<td>AWS IoT Data Plane</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Kinesis</td>
+<td>Amazon Kinesis</td>
+<td>Kinesis</td>
+</tr>
+<tr class="row-even"><td>Kinesis Analytics</td>
+<td>Amazon Kinesis Analytics</td>
+<td>Kinesis Analytics</td>
+</tr>
+<tr class="row-odd"><td>KMS</td>
+<td>AWS Key Management Service</td>
+<td>KMS</td>
+</tr>
+<tr class="row-even"><td>Lambda</td>
+<td>AWS Lambda</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Lex Model Building Service</td>
+<td>Amazon Lex Model Building Service</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Lex Runtime Service</td>
+<td>Amazon Lex Runtime Service</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Lightsail</td>
+<td>Amazon Lightsail</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>CloudWatch Logs</td>
+<td>Amazon CloudWatch Logs</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Machine Learning</td>
+<td>Amazon Machine Learning</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Marketplace Entitlement Service</td>
+<td>AWS Marketplace Entitlement Service</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Marketplace Commerce Analytics</td>
+<td>AWS Marketplace Commerce Analytics</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Marketplace Metering</td>
+<td>AWS Marketplace Metering</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Migration Hub</td>
+<td>AWS Migration Hub</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Mobile</td>
+<td>AWS Mobile</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>MTurk</td>
+<td>Amazon Mechanical Turk</td>
+<td>Amazon MTurk</td>
+</tr>
+<tr class="row-even"><td>OpsWorks</td>
+<td>AWS OpsWorks</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>OpsWorksCM</td>
+<td>AWS OpsWorks for Chef Automate</td>
+<td>OpsWorksCM</td>
+</tr>
+<tr class="row-even"><td>Organizations</td>
+<td>AWS Organizations</td>
+<td>Organizations</td>
+</tr>
+<tr class="row-odd"><td>Pinpoint</td>
+<td>Amazon Pinpoint</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Polly</td>
+<td>Amazon Polly</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>RDS</td>
+<td>Amazon Relational Database Service</td>
+<td>Amazon RDS</td>
+</tr>
+<tr class="row-even"><td>Redshift</td>
+<td>Amazon Redshift</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Rekognition</td>
+<td>Amazon Rekognition</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>Resource Groups Tagging API</td>
+<td>AWS Resource Groups Tagging API</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Route 53</td>
+<td>Amazon Route 53</td>
+<td>Route 53</td>
+</tr>
+<tr class="row-even"><td>Route 53 Domains</td>
+<td>Amazon Route 53 Domains</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>S3</td>
+<td>Amazon Simple Storage Service</td>
+<td>Amazon S3</td>
+</tr>
+<tr class="row-even"><td>SimpleDB</td>
+<td>Amazon SimpleDB</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>Service Catalog</td>
+<td>AWS Service Catalog</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>SES</td>
+<td>Amazon Simple Email Service</td>
+<td>Amazon SES</td>
+</tr>
+<tr class="row-odd"><td>Shield</td>
+<td>AWS Shield</td>
+<td>AWS Shield</td>
+</tr>
+<tr class="row-even"><td>SMS</td>
+<td>AWS Server Migration Service</td>
+<td>SMS</td>
+</tr>
+<tr class="row-odd"><td>Snowball</td>
+<td>Amazon Import/Export Snowball</td>
+<td>Amazon Snowball</td>
+</tr>
+<tr class="row-even"><td>SNS</td>
+<td>Amazon Simple Notification Service</td>
+<td>Amazon SNS</td>
+</tr>
+<tr class="row-odd"><td>SQS</td>
+<td>Amazon Simple Queue Service</td>
+<td>Amazon SQS</td>
+</tr>
+<tr class="row-even"><td>SSM</td>
+<td>Amazon Simple Systems Manager (SSM)</td>
+<td>Amazon SSM</td>
+</tr>
+<tr class="row-odd"><td>SFN</td>
+<td>AWS Step Functions</td>
+<td>AWS SFN</td>
+</tr>
+<tr class="row-even"><td>Storage Gateway</td>
+<td>AWS Storage Gateway</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>STS</td>
+<td>AWS Security Token Service</td>
+<td>AWS STS</td>
+</tr>
+<tr class="row-even"><td>Support</td>
+<td>AWS Support</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>SWF</td>
+<td>Amazon Simple Workflow Service</td>
+<td>Amazon SWF</td>
+</tr>
+<tr class="row-even"><td>WAF</td>
+<td>AWS WAF</td>
+<td>WAF</td>
+</tr>
+<tr class="row-odd"><td>WAF Regional</td>
+<td>AWS WAF Regional</td>
+<td>WAF Regional</td>
+</tr>
+<tr class="row-even"><td>WorkDocs</td>
+<td>Amazon WorkDocs</td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td>WorkSpaces</td>
+<td>Amazon WorkSpaces</td>
+<td>None</td>
+</tr>
+<tr class="row-even"><td>XRay</td>
+<td>AWS X-Ray</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="index.html" title="previous chapter" class="previous-page clearfix hidden-xs">← AWS specifications</a>
+                        
+                        <a href="aws-auth.html" title="next chapter" class="next-page clearfix">AWS Authentication Traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="index.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="aws-auth.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">AWS Core Specification</a><ul>
+<li><a class="reference internal" href="#aws-api-service-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#service</span></code> trait</a><ul>
+<li><a class="reference internal" href="#sdkid"><code class="docutils literal notranslate"><span class="pre">sdkId</span></code></a><ul>
+<li><a class="reference internal" href="#choosing-an-sdk-service-id">Choosing an SDK service ID</a></li>
+<li><a class="reference internal" href="#using-sdk-service-id-for-client-naming">Using SDK service ID for client naming</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cloudformationname"><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code></a></li>
+<li><a class="reference internal" href="#arnnamespace"><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code></a></li>
+<li><a class="reference internal" href="#cloudtraileventsource"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></li>
+<li><a class="reference internal" href="#abbreviation"><code class="docutils literal notranslate"><span class="pre">abbreviation</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-api-arn-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arn</span></code> trait</a><ul>
+<li><a class="reference internal" href="#format-of-an-arn">Format of an ARN</a></li>
+<li><a class="reference internal" href="#relative-arn-templates">Relative ARN templates</a></li>
+<li><a class="reference internal" href="#using-an-arn-as-a-resource-identifier">Using an ARN as a resource identifier</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-api-arnreference-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#arnReference</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-data-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#data</span></code> trait</a><ul>
+<li><a class="reference internal" href="#data-classifications">Data Classifications</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-api-controlplane-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#controlPlane</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-dataplane-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait</a></li>
+<li><a class="reference internal" href="#client-endpoint-discovery">Client Endpoint Discovery</a><ul>
+<li><a class="reference internal" href="#aws-api-clientendpointdiscovery-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscovery</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-clientdiscoveredendpoint-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientDiscoveredEndpoint</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-api-clientendpointdiscoveryid-trait"><code class="docutils literal notranslate"><span class="pre">aws.api#clientEndpointDiscoveryId</span></code> trait</a></li>
+<li><a class="reference internal" href="#example-model">Example Model</a></li>
+<li><a class="reference internal" href="#client-behavior">Client Behavior</a><ul>
+<li><a class="reference internal" href="#caching">Caching</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#appendix">Appendix</a><ul>
+<li><a class="reference internal" href="#appendix-a-example-sdk-service-ids">Appendix A: Example SDK service IDs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

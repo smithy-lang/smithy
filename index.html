@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Smithy &#8212; Smithy 0.5.0 documentation</title><link rel="stylesheet" href="_static/bootstrap-reboot.css" type="text/css" />
+    <title>Smithy &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="_static/bootstrap-reboot.css" type="text/css" />
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -65,6 +65,7 @@
             scrollSpy();
         });
     </script>
+    <link rel="shortcut icon" href="_static/favicon.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Quick start" href="quickstart.html" />
@@ -75,13 +76,13 @@
         <div class="header-flex width-wrapper">
             <div class="site-logo">
                 <a href="#">
-                    <span class="logo-icon">⚒️</span><span class="logo-text">Smithy</span><span class="beta-text">beta</span>
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
                 </a>
             </div>
             <ul id="page-navigation">
                 <li class="site-page first"><a href="quickstart.html">Quick Start</a></li>
-                <li class="site-page"><a href="spec/index.html">Specifications</a></li>
-                <li class="site-page"><a href="guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="1.0/spec/index.html">Specifications</a></li>
+                <li class="site-page"><a href="1.0/guides/index.html">Guides</a></li>
                 <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
                 <li class="site-search hidden-sm">
                     <form action="search.html" method="get">
@@ -102,9 +103,9 @@
                 <div class="splash-column">
                     <h1>Smithy, an extensible API definition language</h1>
                     <div class="headline">
-                        Smithy is a protocol-agnostic interface definition language
-                        and set of tools for building clients, servers, and
-                        documentation for any programming language.
+                        Smithy <span class="splash-highlight">defines</span> and
+                        <span class="splash-highlight">generates</span> clients,
+                        services, and documentation for any protocol.
                     </div>
                     <a class="splash-link" href="quickstart.html">Get started</a>
                     <a class="splash-link-small" href="spec/index.html">Specifications</a>
@@ -117,15 +118,15 @@
 
 <span class="kd">service</span><span class="nc"> Weather</span> {
   <span class="nl">version:</span> <span class="s2">"2006-03-01"</span>,
-  <span class="nl">resources:</span> [<span class="n">City</span>],
-  <span class="nl">operations:</span> [<span class="n">GetCurrentTime</span>]
+  <span class="nl">resources:</span> [<span class="vc">City</span>],
+  <span class="nl">operations:</span> [<span class="vc">GetCurrentTime</span>]
 }
 
-<span class="kd">resource</span><span class="nc"> City</span> {
-  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="n">CityId</span> },
-  <span class="nl">read:</span> <span class="n">GetCity</span>,
-  <span class="nl">list:</span> <span class="n">ListCities</span>,
-  <span class="nl">resources:</span> [<span class="n">Forecast</span>],
+<span class="kd">resource</span><span class="vc"> City</span> {
+  <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="vc">CityId</span> },
+  <span class="nl">read:</span> <span class="vc">GetCity</span>,
+  <span class="nl">list:</span> <span class="vc">ListCities</span>,
+  <span class="nl">resources:</span> [<span class="vc">Forecast</span>],
 }
 </pre>
                         </div>
@@ -138,37 +139,38 @@
     <div class="width-wrapper">
         <div class="splash-row">
             <div class="splash-column">
-                <h2>Protocol-agnostic</h2>
+                <h2>🤖 &nbsp;Protocol-agnostic</h2>
                 <p>Smithy is designed to work with any programming language, describe
-                    services running in any environment, and work with any kind of transport or
-                    serialization format.</p>
+                    services running in any environment, and work with any kind of
+                    transport or serialization format.</p>
             </div>
             <div class="splash-column">
-                <h2>Extensible</h2>
-                <p>Smithy models can be extended through <em>traits</em>. There are
-                    many built-in traits to affect things like behavior and serialization,
-                    and custom traits can be added for additional functionality.</p>
+                <h2>🧬 &nbsp;Designed to evolve</h2>
+                <p>Smithy is extended through <em>traits</em>. Smithy's extensible
+                   meta-model can evolve and capture more information about services
+                   without breaking changes.</p>
             </div>
         </div>
         <div class="splash-row">
             <div class="splash-column">
-                <h2>Enforce standards &amp; consistency</h2>
-                <p>Customizable standards and validation constraints ensure that APIs
-                    adhere to any kind of standard or convention. Rule sets can be
-                    shared and applied to all APIs in an organization.</p>
+                <h2>⚖ &nbsp;Codify and enforce API governance</h2>
+                <p>Customizable API standards help to automatically ensure that APIs
+                    meet customer expectations. Validation rules can be shared and
+                    applied to all APIs in an organization.</p>
             </div>
             <div class="splash-column">
-                <h2>Resource based</h2>
-                <p>Smithy is defined in terms of resources and operations you can enact on
-                    them. Explicitly defining resources provides rich metadata about an API
-                    that can be used to build higher-level client tooling and derive
-                    artifacts from a model.</p>
+                <h2>🖇️ &nbsp;Resource based</h2>
+                <p>Smithy models are defined by resources and operations. Defining
+                    services with resources helps lead to better APIs and provides
+                    rich information for model transformations.</p>
             </div>
         </div>
     </div>
 
     <div class="faq">
         <div class="width-wrapper">
+            <h2 class="faq-heading">FAQs</h2>
+
             <h2>Why did you develop Smithy?</h2>
             <p>Smithy is based on an interface definition language that has been widely
                 used within Amazon and AWS for over a decade. We decided to release Smithy
@@ -178,8 +180,8 @@
                 to make it easier for developers to maintain open source AWS SDKs.</p>
 
             <h2>Does Smithy only work with AWS?</h2>
-            <p>No. Smithy can be used with any kind of service. In fact, all
-                AWS-specific metadata in Smithy is loaded using additional packages.</p>
+            <p>No. Smithy can be used with any kind of service. All AWS-specific metadata
+                in Smithy is implemented as decoupled packages.</p>
 
             <h2>Why not just use an existing IDL?</h2>
             <p>At AWS, we rely heavily on metadata, code generation, service frameworks,
@@ -215,11 +217,6 @@
                 and external version of a model and providing beta models to customers
                 as part of a private beta.</p>
 
-            <h2>What is the main difference between Smithy and OpenAPI?</h2>
-            <p>The primary difference between Smithy and OpenAPI is that Smithy is
-                protocol-agnostic, allowing Smithy to describe a broader range of
-                services, metadata, and capabilities.</p>
-
             <h2>What does protocol-agnostic mean?</h2>
             <p>Protocol-agnostic means that the model is an abstraction that specifies
                 the rules and semantics of how a client and server communicate. The
@@ -228,85 +225,18 @@
                 a service owner may wish to evolve their serialization format (e.g.,
                 move from text to binary), their connection type (e.g., move from
                 HTTP/1 to HTTP/2), or launch entirely new capabilities.</p>
+
+            <h2>What is the main difference between Smithy and OpenAPI?</h2>
+            <p>The primary difference between Smithy and OpenAPI is that Smithy is
+                protocol-agnostic, allowing Smithy to describe a broader range of
+                services, metadata, and capabilities. Smithy can be used alongside
+                OpenAPI by <a href="guides/converting-to-openapi.html">converting Smithy models to OpenAPI</a>.</p>
+
+            <section class="relations">
+                <a class="next-page clearfix" href="quickstart.html">Quick start -&gt;</a>
+            </section>
         </div>
     </div>
-
-    <div class="width-wrapper">
-        <h2>Site map</h2>
-        <div class="learn-more">
-        <ul>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#what-is-smithy">What is Smithy?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#shapes-and-traits">Shapes and traits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#weather-service">Weather Service</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#defining-resources">Defining resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#defining-operations">Defining operations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#listing-resources">Listing resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#non-lifecycle-operations">Non-Lifecycle Operations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#next-steps">Next steps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#complete-example">Complete example</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="spec/index.html">Specifications</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="spec/index.html#core-specifications">Core specifications</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="spec/core.html">Smithy core specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spec/language-specification.html">Smithy Language Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spec/selectors.html">Selectors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spec/event-streams.html">Event stream specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spec/http.html">HTTP protocol bindings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spec/xml.html">XML bindings</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="spec/index.html#additional-specifications">Additional specifications</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="spec/validation.html">Model Validation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spec/mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spec/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="spec/index.html#aws-specifications">AWS specifications</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="spec/aws-core.html">AWS Core Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spec/aws-iam.html">AWS IAM traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spec/amazon-apigateway.html">Amazon API Gateway Integrations</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="guides/index.html">Smithy Guides</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="guides/building-models/index.html">Building Smithy Models</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="guides/building-models/build-config.html">Using SmithyBuild</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="guides/evolving-models.html">Evolving Models</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="guides/evolving-models.html#updating-operations">Updating operations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/evolving-models.html#updating-structures">Updating structures</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/evolving-models.html#booleans-and-api-evolution">Booleans and API evolution</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/evolving-models.html#updating-unions">Updating unions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/evolving-models.html#boxed-shapes">Boxed shapes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/evolving-models.html#updating-traits">Updating traits</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="guides/style-guide.html">Style Guide</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="guides/style-guide.html#model-files">Model files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/style-guide.html#model-file-structure">Model file structure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/style-guide.html#formatting">Formatting</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/style-guide.html#naming">Naming</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="guides/converting-to-openapi.html#introduction">Introduction</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/converting-to-openapi.html#differences-between-smithy-and-openapi">Differences between Smithy and OpenAPI</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/converting-to-openapi.html#converting-to-openapi-with-smithy-build">Converting to OpenAPI with smithy-build</a></li>
-<li class="toctree-l3"><a class="reference internal" href="guides/converting-to-openapi.html#converting-to-openapi-with-code">Converting to OpenAPI with code</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-        </div>
-    </div>
-
 </section>
         
         
@@ -314,7 +244,7 @@
 <footer id="footer">
     <div class="width-wrapper">
         <div class="copyright">
-            <p>©2019, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
         </div>
     </div>
 </footer>

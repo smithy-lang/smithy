@@ -1,0 +1,586 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>AWS restXml protocol &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="AWS query protocol" href="aws-query-protocol.html" />
+    <link rel="prev" title="AWS JSON 1.1 protocol" href="aws-json-1_1-protocol.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">AWS specifications</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="aws-restxml-protocol">
+<span id="id1"></span><h1>AWS restXml protocol<a class="headerlink" href="#aws-restxml-protocol" title="Permalink to this headline">¶</a></h1>
+<p>This specification defines the <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#aws-protocols-restxml-trait" id="id3"><code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> trait</a></li>
+<li><a class="reference internal" href="#supported-traits" id="id4">Supported traits</a></li>
+<li><a class="reference internal" href="#content-type" id="id5">Content-Type</a></li>
+<li><a class="reference internal" href="#xml-shape-serialization" id="id6">XML shape serialization</a></li>
+<li><a class="reference internal" href="#http-binding-serialization" id="id7">HTTP binding serialization</a></li>
+<li><a class="reference internal" href="#operation-error-serialization" id="id8">Operation error serialization</a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests" id="id9">Protocol compliance tests</a></li>
+</ul>
+</div>
+<div class="section" id="aws-protocols-restxml-trait">
+<span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> trait<a class="headerlink" href="#aws-protocols-restxml-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Adds support for an HTTP-based protocol that sends XML requests and
+responses.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Value type</dt>
+<dd>Structure</dd>
+</dl>
+<p><code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> is a structure that supports the following
+members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>http</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td>The priority ordered list of supported HTTP protocol versions.</td>
+</tr>
+<tr class="row-odd"><td>eventStreamHttp</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td>The priority ordered list of supported HTTP protocol versions
+that are required when using <a class="reference internal" href="../core/stream-traits.html#event-streams"><span class="std std-ref">event streams</span></a>
+with the service. If not set, this value defaults to the value
+of the <code class="docutils literal notranslate"><span class="pre">http</span></code> member. Any entry in <code class="docutils literal notranslate"><span class="pre">eventStreamHttp</span></code> MUST
+also appear in <code class="docutils literal notranslate"><span class="pre">http</span></code>.</td>
+</tr>
+<tr class="row-even"><td>noErrorWrapping</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Disables the serialization wrapping of error properties in an
+'Error' XML element. See <a class="reference internal" href="#restxml-errors"><span class="std std-ref">operation error serialization</span></a>
+for more information.</td>
+</tr>
+</tbody>
+</table>
+<p>Each entry in <code class="docutils literal notranslate"><span class="pre">http</span></code> and <code class="docutils literal notranslate"><span class="pre">eventStreamHttp</span></code> SHOULD be a valid
+<a class="reference external" href="https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids">Application-Layer Protocol Negotiation (ALPN) Protocol ID</a> (for example,
+<code class="docutils literal notranslate"><span class="pre">http/1.1</span></code>, <code class="docutils literal notranslate"><span class="pre">h2</span></code>, etc). Clients SHOULD pick the first protocol in the
+list they understand when connecting to a service. A client SHOULD assume
+that a service supports <code class="docutils literal notranslate"><span class="pre">http/1.1</span></code> when no <code class="docutils literal notranslate"><span class="pre">http</span></code> or <code class="docutils literal notranslate"><span class="pre">eventStreamHttp</span></code>
+values are provided.</p>
+<p>The following example defines a service that uses <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> aws.protocols#restXml</span>
+
+<span class="nd">@restXml</span>
+<span class="kd">service</span><span class="nc"> MyService</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-04-02&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.protocols#restXml&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The following example defines a service that requires the use of
+<code class="docutils literal notranslate"><span class="pre">h2</span></code> when using event streams.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> aws.protocols#restXml</span>
+
+<span class="nd">@restXml</span>(<span class="nl">eventStreamHttp:</span> [<span class="s2">&quot;h2&quot;</span>])
+<span class="kd">service</span><span class="nc"> MyService</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+<p>The following example defines a service that requires the use of
+<code class="docutils literal notranslate"><span class="pre">h2</span></code> or <code class="docutils literal notranslate"><span class="pre">http/1.1</span></code> when using event streams, where <code class="docutils literal notranslate"><span class="pre">h2</span></code> is
+preferred over <code class="docutils literal notranslate"><span class="pre">http/1.1</span></code>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> aws.protocols#restXml</span>
+
+<span class="nd">@restXml</span>(<span class="nl">eventStreamHttp:</span> [<span class="s2">&quot;h2&quot;</span>, <span class="s2">&quot;http/1.1&quot;</span>])
+<span class="kd">service</span><span class="nc"> MyService</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+<p>The following example defines a service that requires the use of
+<code class="docutils literal notranslate"><span class="pre">h2</span></code> for all requests, including event streams.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> aws.protocols#restXml</span>
+
+<span class="nd">@restXml</span>(<span class="nl">http:</span> [<span class="s2">&quot;h2&quot;</span>])
+<span class="kd">service</span><span class="nc"> MyService</span> {
+    <span class="nl">version:</span> <span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="supported-traits">
+<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol supports the following traits
+that affect serialization:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Trait</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="../core/http-traits.html#cors-trait"><span class="std std-ref">cors</span></a></td>
+<td>Indicates that the service supports CORS.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/endpoint-traits.html#endpoint-trait"><span class="std std-ref">endpoint</span></a></td>
+<td>Configures a custom operation endpoint.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/endpoint-traits.html#hostlabel-trait"><span class="std std-ref">hostLabel</span></a></td>
+<td>Binds a top-level operation input structure member to a label in
+the hostPrefix of an endpoint trait.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/http-traits.html#http-trait"><span class="std std-ref">http</span></a></td>
+<td>Configures the HTTP bindings of an operation. An operation that
+does not define the <code class="docutils literal notranslate"><span class="pre">http</span></code> trait is ineligible for use with
+this protocol.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/http-traits.html#httperror-trait"><span class="std std-ref">httpError</span></a></td>
+<td>A <code class="docutils literal notranslate"><span class="pre">client</span></code> error has a default status code of <code class="docutils literal notranslate"><span class="pre">400</span></code>, and a
+<code class="docutils literal notranslate"><span class="pre">server</span></code> error has a default status code of <code class="docutils literal notranslate"><span class="pre">500</span></code>. The
+<code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait is used to define a custom status code.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/http-traits.html#httpheader-trait"><span class="std std-ref">httpHeader</span></a></td>
+<td>Binds a top-level input, output, or error structure member to
+an HTTP header instead of the payload.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/http-traits.html#httplabel-trait"><span class="std std-ref">httpLabel</span></a></td>
+<td>Binds a top-level input structure member to a URI label instead
+of the payload.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload</span></a></td>
+<td>Binds a top-level input or output structure member as the payload
+of a request or response.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/http-traits.html#httpprefixheaders-trait"><span class="std std-ref">httpPrefixHeaders</span></a></td>
+<td>Binds a top-level input, output, or error member to a map of
+prefixed HTTP headers.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/http-traits.html#httpquery-trait"><span class="std std-ref">httpQuery</span></a></td>
+<td>Binds a top-level input structure member to a query string parameter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/xml-traits.html#xmlattribute-trait"><span class="std std-ref">xmlAttrubute</span></a></td>
+<td>Serializes an object property as an XML attribute rather than a nested
+XML element.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened</span></a></td>
+<td>By default, entries in lists, sets, and maps have values serialized in
+nested XML elements specific to their type. The <code class="docutils literal notranslate"><span class="pre">xmlFlattened</span></code> trait
+unwraps these elements into the containing structure.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName</span></a></td>
+<td>By default, the XML element names used in serialized structures are
+the same as a structure member name. The <code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait changes
+the XML element name to a custom value.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace</span></a></td>
+<td>Adds an xmlns namespace definition URI to XML element(s) generated
+for the targeted shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a></td>
+<td>Defines a custom timestamp serialization format.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="content-type">
+<h2>Content-Type<a class="headerlink" href="#content-type" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol uses a default Content-Type
+of <code class="docutils literal notranslate"><span class="pre">application/xml</span></code>.</p>
+<p>Input or output shapes that apply the <a class="reference internal" href="../core/http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a> on one of
+their top-level members MUST use a Content-Type that is appropriate for
+the payload. The following table defines the expected Content-Type header
+for requests and responses based on the shape targeted by the member marked
+with the <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Targeted shape</th>
+<th class="head">Content-Type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Has <a class="reference internal" href="../core/protocol-traits.html#mediatype-trait"><span class="std std-ref">mediaType trait</span></a></td>
+<td>Use the value of the <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait if present.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">text/plain</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">blob</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">application/octet-stream</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td>Undefined. Document shapes are not recommended for use in XML based
+protocols.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">application/xml</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">application/xml</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="xml-shape-serialization">
+<h2>XML shape serialization<a class="headerlink" href="#xml-shape-serialization" title="Permalink to this headline">¶</a></h2>
+<p>XML requests and responses are serialized within an XML root node with the
+name of the operation's input, output, or error shape that is being serialized.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Smithy type</th>
+<th class="head">XML entity</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">blob</span></code></td>
+<td>XML text node with a value that is base64 encoded.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>XML text node with a value either &quot;true&quot; or &quot;false&quot;.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">byte</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">short</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">long</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">float</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">double</span></code></td>
+<td>XML text node with a value of the number.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code></td>
+<td>XML text node with a value of the number, using scientific notation if
+an exponent is needed. Unfortunately, many XML parsers will either
+truncate the value or be unable to parse numbers that exceed the size
+of a double.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">bigInteger</span></code></td>
+<td>XML text node with a value of the number, using scientific notation if
+an exponent is needed. Unfortunately, many XML parsers will either
+truncate the value or be unable to parse numbers that exceed the size
+of a double.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>XML text node with an XML-safe, UTF-8 value of the string.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">timestamp</span></code></td>
+<td>XML text node with a value of the timestamp. This protocol uses
+<code class="docutils literal notranslate"><span class="pre">date-time</span></code> as the default serialization. However, the
+<a class="reference internal" href="../core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a> MAY be used to
+customize timestamp serialization.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td>Undefined. Document shapes are not recommended for use in XML based
+protocols.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">list</span></code></td>
+<td>XML element. Each value provided in the list is serialized as a nested
+XML element with the name <code class="docutils literal notranslate"><span class="pre">member</span></code>. The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be
+used to serialize a property using a custom name. The
+<a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to unwrap the values into a
+containing structure or union, with the value XML element using the
+structure or union member name.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">set</span></code></td>
+<td>XML element. A set is serialized identically as a <code class="docutils literal notranslate"><span class="pre">list</span></code> shape,
+but only contains unique values.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">map</span></code></td>
+<td>XML element. Each key-value pair provided in the map is serialized in
+a nested XML element with the name <code class="docutils literal notranslate"><span class="pre">entry</span></code> that contains nested
+elements <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code> for the pair. The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a>
+can be used to serialize key or value properties using a custom name,
+it cannot be used to influence the <code class="docutils literal notranslate"><span class="pre">entry</span></code> name. The
+<a class="reference internal" href="../core/xml-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened trait</span></a> can be used to unwrap the entries into a
+containing structure or union, with the entry XML element using the
+structure or union member name.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code></td>
+<td>XML element. Each member value provided for the structure is
+serialized as a nested XML element where the element name is the
+same as the member name. The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to
+serialize a property using a custom name. The <a class="reference internal" href="../core/xml-traits.html#xmlattribute-trait"><span class="std std-ref">xmlAttribute trait</span></a>
+can be used to serialize a property in an attribute of the containing
+element.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code></td>
+<td>XML element. A union is serialized identically as a <code class="docutils literal notranslate"><span class="pre">structure</span></code>
+shape, but only a single member can be set to a non-null value.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">See <a class="reference internal" href="../core/xml-traits.html#serializing-xml-shapes"><span class="std std-ref">Serializing XML shapes</span></a> for comprehensive documentation,
+including examples and behaviors when using multiple XML traits.</p>
+</div>
+</div>
+<div class="section" id="http-binding-serialization">
+<h2>HTTP binding serialization<a class="headerlink" href="#http-binding-serialization" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol supports all of the HTTP binding traits
+defined in the <a class="reference internal" href="../core/http-traits.html#http-traits"><span class="std std-ref">HTTP protocol bindings</span></a> specification. The
+serialization formats and and behaviors described for each trait are supported
+as defined in the <code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> protocol.</p>
+</div>
+<div class="section" id="operation-error-serialization">
+<span id="restxml-errors"></span><h2>Operation error serialization<a class="headerlink" href="#operation-error-serialization" title="Permalink to this headline">¶</a></h2>
+<p>Error responses in the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol are wrapped in one additional
+nested XML element with the name <code class="docutils literal notranslate"><span class="pre">Error</span></code> by default. All error structure
+members are serialized within this element, unless bound to another location
+with HTTP protocol bindings.</p>
+<p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
+that contains only the <a class="reference internal" href="../core/lexical-structure.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+<a class="reference internal" href="../core/lexical-structure.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
+serialized in the response.</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;ErrorResponse&gt;</span>
+    <span class="nt">&lt;Error&gt;</span>
+        <span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
+        <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
+        <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
+        <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/Message&gt;</span>
+    <span class="nt">&lt;/Error&gt;</span>
+    <span class="nt">&lt;RequestId&gt;</span>foo-id<span class="nt">&lt;/RequestId&gt;</span>
+<span class="nt">&lt;/ErrorResponse&gt;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">noErrorWrapping</span></code> setting on the <code class="docutils literal notranslate"><span class="pre">restXml</span></code> protocol trait disables
+using this additional nested XML element.</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;ErrorResponse&gt;</span>
+    <span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
+    <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
+    <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
+    <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/Message&gt;</span>
+    <span class="nt">&lt;RequestId&gt;</span>foo-id<span class="nt">&lt;/RequestId&gt;</span>
+<span class="nt">&lt;/ErrorResponse&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="protocol-compliance-tests">
+<h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">¶</a></h2>
+<p>A full compliance test suite is provided and SHALL be considered a normative
+reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/restXml">https://github.com/awslabs/smithy/tree/master/smithy-aws-protocol-tests/model/restXml</a></p>
+<p>These compliance tests define a model that is used to define test cases and
+the expected serialized HTTP requests and responses for each case.</p>
+<p><em>TODO: Add event stream handling specifications.</em></p>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="aws-json-1_1-protocol.html" title="previous chapter" class="previous-page clearfix hidden-xs">← AWS JSON 1.1 protocol</a>
+                        
+                        <a href="aws-query-protocol.html" title="next chapter" class="next-page clearfix">AWS query protocol →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="aws-json-1_1-protocol.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="aws-query-protocol.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">AWS restXml protocol</a><ul>
+<li><a class="reference internal" href="#aws-protocols-restxml-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#restXml</span></code> trait</a></li>
+<li><a class="reference internal" href="#supported-traits">Supported traits</a></li>
+<li><a class="reference internal" href="#content-type">Content-Type</a></li>
+<li><a class="reference internal" href="#xml-shape-serialization">XML shape serialization</a></li>
+<li><a class="reference internal" href="#http-binding-serialization">HTTP binding serialization</a></li>
+<li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a></li>
+<li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

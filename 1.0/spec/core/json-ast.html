@@ -1,0 +1,801 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>21. JSON AST &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="HTTP Protocol Compliance Tests" href="../http-protocol-compliance-tests.html" />
+    <link rel="prev" title="20. Merging models" href="merging-models.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="json-ast">
+<span id="id1"></span><h1>21. JSON AST<a class="headerlink" href="#json-ast" title="Permalink to this headline">¶</a></h1>
+<p>Smithy models written using the Smithy IDL have an isomorphic JSON
+abstract syntax tree (AST) representation that can be used to more easily
+integrate Smithy into languages and tools that do not have a Smithy IDL
+parser.</p>
+<ul class="simple">
+<li>Smithy JSON models can be merged together with other JSON models or other
+Smithy IDL models using the rules defined in <a class="reference internal" href="merging-models.html#merging-models"><span class="std std-ref">Merging models</span></a>.</li>
+<li>Unless specified otherwise, the same constraints and logic is used to load
+JSON models that is used to load Smithy IDL models.</li>
+<li>All shape IDs in the JSON AST MUST be absolute shape IDs that contain a
+namespace. One of the main drivers of the simplicity of the the JSON AST
+over the Smithy IDL is that relative and forward references never need to
+be resolved.</li>
+</ul>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#top-level-properties" id="id5">Top level properties</a></li>
+<li><a class="reference internal" href="#ast-shapes" id="id6">AST shapes</a></li>
+<li><a class="reference internal" href="#simple-shapes" id="id7">Simple shapes</a></li>
+<li><a class="reference internal" href="#list-and-set-shapes" id="id8">List and set shapes</a></li>
+<li><a class="reference internal" href="#ast-member" id="id9">AST member</a></li>
+<li><a class="reference internal" href="#ast-shape-reference" id="id10">AST shape reference</a></li>
+<li><a class="reference internal" href="#map-shape" id="id11">Map shape</a></li>
+<li><a class="reference internal" href="#structure-and-union-shapes" id="id12">Structure and union shapes</a></li>
+<li><a class="reference internal" href="#service-shape" id="id13">Service shape</a></li>
+<li><a class="reference internal" href="#resource-shape" id="id14">Resource shape</a></li>
+<li><a class="reference internal" href="#operation-shape" id="id15">Operation shape</a></li>
+<li><a class="reference internal" href="#ast-apply-type" id="id16">AST apply type</a></li>
+</ul>
+</div>
+<div class="section" id="top-level-properties">
+<h2>21.1. Top level properties<a class="headerlink" href="#top-level-properties" title="Permalink to this headline">¶</a></h2>
+<p>Smithy JSON models are objects that can contain the following top-level
+properties:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="30%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>smithy</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. Defines the <a class="reference internal" href="lexical-structure.html#smithy-version"><span class="std std-ref">version</span></a> of the
+Smithy specification (e.g., &quot;1.0&quot;).</td>
+</tr>
+<tr class="row-odd"><td>metadata</td>
+<td>object</td>
+<td>Defines all of the <a class="reference internal" href="model-metadata.html#metadata"><span class="std std-ref">metadata</span></a> about the model
+using a JSON object. Each key is the metadata key to set, and each
+value is the metadata value to assign to the key.</td>
+</tr>
+<tr class="row-even"><td>shapes</td>
+<td>Map&lt;<a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape ID</span></a>, <a class="reference internal" href="#ast-shapes"><span class="std std-ref">AST shape</span></a>&gt;</td>
+<td>A map of absolute shape IDs to shape definitions.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="ast-shapes">
+<span id="id2"></span><h2>21.2. AST shapes<a class="headerlink" href="#ast-shapes" title="Permalink to this headline">¶</a></h2>
+<p>AST <a class="reference internal" href="shapes.html#shapes"><span class="std std-ref">shapes</span></a> are defined using objects that always contain
+a <code class="docutils literal notranslate"><span class="pre">type</span></code> property to define the shape type or <code class="docutils literal notranslate"><span class="pre">apply</span></code>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>All entries in the <code class="docutils literal notranslate"><span class="pre">shapes</span></code> map can contain a <code class="docutils literal notranslate"><span class="pre">traits</span></code> property that
+defines the traits attached to the shape. <code class="docutils literal notranslate"><span class="pre">traits</span></code> is a map of where
+each key is the absolute shape ID of a trait shape and each value is
+the value to assign to the trait.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;Hi!&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;smithy.example#tags&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;a&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;b&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The following example defines a string shape with a documentation trait.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;My documentation string&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="simple-shapes">
+<h2>21.3. Simple shapes<a class="headerlink" href="#simple-shapes" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="shapes.html#simple-types"><span class="std std-ref">Simple shapes</span></a> are defined as an object. The following
+example defines a shape for each simple type:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Blob&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;blob&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Boolean&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;boolean&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Document&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;document&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#String&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Byte&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;byte&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Short&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;short&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Integer&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Long&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;long&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Float&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Double&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;double&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#BigInteger&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bigInteger&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#BigDecimal&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bigDecimal&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Timestamp&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;timestamp&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-and-set-shapes">
+<h2>21.4. List and set shapes<a class="headerlink" href="#list-and-set-shapes" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="shapes.html#list"><span class="std std-ref">List</span></a> and <a class="reference internal" href="shapes.html#set"><span class="std std-ref">Set</span></a> shapes have a required <code class="docutils literal notranslate"><span class="pre">member</span></code> property
+that is an <a class="reference internal" href="#ast-member"><span class="std std-ref">AST member</span></a>.</p>
+<p>The following example defines a list with a string member:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The following example defines a set with a string member:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MySet&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;set&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ast-member">
+<span id="id3"></span><h2>21.5. AST member<a class="headerlink" href="#ast-member" title="Permalink to this headline">¶</a></h2>
+<p>An <em>AST member definition</em> defines a member of a shape. It is a special
+kind of <a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a> that also
+contains an optional <code class="docutils literal notranslate"><span class="pre">traits</span></code> property that defines traits attached to
+the member. Each key in the <code class="docutils literal notranslate"><span class="pre">traits</span></code> property is the absolute shape ID
+of the trait to apply, and each value is the value to assign to the
+trait.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyShape&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;Hi!&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The following example defines a list shape and its member.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;Member documentation&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ast-shape-reference">
+<span id="id4"></span><h2>21.6. AST shape reference<a class="headerlink" href="#ast-shape-reference" title="Permalink to this headline">¶</a></h2>
+<p>An <em>AST shape reference</em> is an object with a single property, <code class="docutils literal notranslate"><span class="pre">target</span></code>
+that maps to an absolute shape ID.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyShape&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The following example defines a shape reference inside of the <code class="docutils literal notranslate"><span class="pre">operations</span></code>
+list of a service shape.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Service&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Operation&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Operation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="map-shape">
+<h2>21.7. Map shape<a class="headerlink" href="#map-shape" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="shapes.html#map"><span class="std std-ref">Map</span></a> shape has a required <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code>
+<a class="reference internal" href="#ast-member"><span class="std std-ref">AST member</span></a>. The shape referenced by the <code class="docutils literal notranslate"><span class="pre">key</span></code> member
+MUST target a string shape.</p>
+<p>The following example defines a map of strings to numbers:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#IntegerMap&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;map&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;key&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="structure-and-union-shapes">
+<h2>21.8. Structure and union shapes<a class="headerlink" href="#structure-and-union-shapes" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="shapes.html#structure"><span class="std std-ref">Structure</span></a> and <a class="reference internal" href="shapes.html#union"><span class="std std-ref">union</span></a> shapes are defined
+with a <code class="docutils literal notranslate"><span class="pre">members</span></code> property that contains a map of member names to
+<a class="reference internal" href="#ast-member"><span class="std std-ref">AST member</span></a> definitions. A union shape requires at least
+one member, and a structure shape MAY omit the <code class="docutils literal notranslate"><span class="pre">members</span></code> property
+entirely if the structure contains no members.</p>
+<p>Structure and union member names MUST be case-insensitively unique across the
+entire set of members. Each member name MUST adhere to the <a class="reference internal" href="lexical-structure.html#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">identifier</span></code></a>
+ABNF grammar.</p>
+<p>The following example defines a structure with one required and one optional
+member:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;stringMember&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;numberMember&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The following example defines a union:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyUnion&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="service-shape">
+<span id="service-ast-shape"></span><h2>21.9. Service shape<a class="headerlink" href="#service-shape" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="shapes.html#service"><span class="std std-ref">Service</span></a> shapes are defined using an object. Service
+shapes defined in JSON support the same properties as the Smithy IDL.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="28%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>type</td>
+<td>string</td>
+<td><code class="docutils literal notranslate"><span class="pre">service</span></code></td>
+</tr>
+<tr class="row-odd"><td>version</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. Defines the version of the service. The version can be
+provided in any format (e.g., <code class="docutils literal notranslate"><span class="pre">2017-02-11</span></code>, <code class="docutils literal notranslate"><span class="pre">2.0</span></code>, etc).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="shapes.html#service-operations"><span class="std std-ref">operations</span></a></td>
+<td>[<a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>]</td>
+<td>Binds a list of operations to the service. Each reference MUST target
+an operation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="shapes.html#service-resources"><span class="std std-ref">resources</span></a></td>
+<td>[<a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>]</td>
+<td>Binds a list of resources to the service. Each reference MUST target
+a resource.</td>
+</tr>
+<tr class="row-even"><td>traits</td>
+<td>Map&lt;<a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape ID</span></a>, trait value&gt;</td>
+<td>Traits to apply to the service</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetServerTime&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SomeResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="resource-shape">
+<span id="resource-ast-shape"></span><h2>21.10. Resource shape<a class="headerlink" href="#resource-shape" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="shapes.html#resource"><span class="std std-ref">Resource</span></a> shapes are defined using an object. Resource
+shapes defined in JSON support the same properties as the Smithy IDL.</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="28%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>type</td>
+<td>string</td>
+<td><code class="docutils literal notranslate"><span class="pre">service</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="shapes.html#resource-identifiers"><span class="std std-ref">identifiers</span></a></td>
+<td>Map&lt;String, <a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>&gt;</td>
+<td>Defines identifier names and shape IDs used to identify the resource.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="shapes.html#create-lifecycle"><span class="std std-ref">create</span></a></td>
+<td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
+<td>Defines the lifecycle operation used to create a resource using one
+or more identifiers created by the service.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="shapes.html#put-lifecycle"><span class="std std-ref">put</span></a></td>
+<td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
+<td>Defines an idempotent lifecycle operation used to create a resource
+using identifiers provided by the client.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="shapes.html#read-lifecycle"><span class="std std-ref">read</span></a></td>
+<td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
+<td>Defines the lifecycle operation used to retrieve the resource.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="shapes.html#update-lifecycle"><span class="std std-ref">update</span></a></td>
+<td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
+<td>Defines the lifecycle operation used to update the resource.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="shapes.html#delete-lifecycle"><span class="std std-ref">delete</span></a></td>
+<td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
+<td>Defines the lifecycle operation used to delete the resource.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="shapes.html#list-lifecycle"><span class="std std-ref">list</span></a></td>
+<td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
+<td>Defines the lifecycle operation used to list resources of this type.</td>
+</tr>
+<tr class="row-even"><td>operations</td>
+<td>[<a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>]</td>
+<td>Binds a list of non-lifecycle instance operations to the resource.
+Each reference MUST target an operation.</td>
+</tr>
+<tr class="row-odd"><td>collectionOperations</td>
+<td>[<a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>]</td>
+<td>Binds a list of non-lifecycle collection operations to the resource.
+Each reference MUST target an operation.</td>
+</tr>
+<tr class="row-even"><td>resources</td>
+<td>[<a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>]</td>
+<td>Binds a list of resources to this resource as a child resource,
+forming a containment relationship. The resources MUST NOT have a
+cyclical containment hierarchy, and a resource can not be bound more
+than once in the entire closure of a resource or service.
+Each reference MUST target a resource.</td>
+</tr>
+<tr class="row-odd"><td>traits</td>
+<td>Map&lt;<a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape ID</span></a>, trait value&gt;</td>
+<td>Traits to apply to the resource.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Thing&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;identifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;forecastId&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;create&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#CreateThing&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;read&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetThing&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;update&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Updatething&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;delete&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#DeleteThing&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;list&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#ListThings&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SomeInstanceOperation&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;collectionOperations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SomeCollectionOperation&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;resources&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SomeResource&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="operation-shape">
+<span id="operation-ast-shape"></span><h2>21.11. Operation shape<a class="headerlink" href="#operation-shape" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="shapes.html#operation"><span class="std std-ref">Operation</span></a> shapes are defined using an object with the
+following properties:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="28%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>type</td>
+<td>string</td>
+<td><code class="docutils literal notranslate"><span class="pre">operation</span></code></td>
+</tr>
+<tr class="row-odd"><td>input</td>
+<td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
+<td>Defines the optional input structure of the operation. The <code class="docutils literal notranslate"><span class="pre">input</span></code>
+of an operation MUST resolve to a <a class="reference internal" href="shapes.html#structure"><span class="std std-ref">Structure</span></a>.</td>
+</tr>
+<tr class="row-even"><td>output</td>
+<td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
+<td>Defines the optional output structure of the operation. The <code class="docutils literal notranslate"><span class="pre">output</span></code>
+of an operation MUST resolve to a <a class="reference internal" href="shapes.html#structure"><span class="std std-ref">Structure</span></a>.</td>
+</tr>
+<tr class="row-odd"><td>errors</td>
+<td>[<a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>]</td>
+<td>Defines the list of errors that MAY be encountered when invoking
+the operation. Each reference MUST resolve to a <a class="reference internal" href="shapes.html#structure"><span class="std std-ref">Structure</span></a>
+shape that is marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> trait.</td>
+</tr>
+<tr class="row-even"><td>traits</td>
+<td>Map&lt;<a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape ID</span></a>, trait value&gt;</td>
+<td>Traits to apply to the operation.</td>
+</tr>
+</tbody>
+</table>
+<p>The following example defines an operation, its input, output, and errors:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyOperationInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyOperationOutput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;errors&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#BadRequestError&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#NotFoundError&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyOperationInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyOperationOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#BadRequestError&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;client&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#NotFoundError&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;client&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ast-apply-type">
+<h2>21.12. AST apply type<a class="headerlink" href="#ast-apply-type" title="Permalink to this headline">¶</a></h2>
+<p>Traits can be applied to shapes outside of their definition by setting
+<code class="docutils literal notranslate"><span class="pre">type</span></code> to <code class="docutils literal notranslate"><span class="pre">apply</span></code>. The <code class="docutils literal notranslate"><span class="pre">apply</span></code> type does not actually define a shape
+for the shape ID; the shape ID MUST reference a shape or member of a shape.
+The <code class="docutils literal notranslate"><span class="pre">apply</span></code> type allows only the <code class="docutils literal notranslate"><span class="pre">traits</span></code> property.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Struct&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Struct$foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;apply&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;My documentation string&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="merging-models.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 20. Merging models</a>
+                        
+                        <a href="../http-protocol-compliance-tests.html" title="next chapter" class="next-page clearfix">HTTP Protocol Compliance Tests →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="merging-models.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="../http-protocol-compliance-tests.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">21. JSON AST</a><ul>
+<li><a class="reference internal" href="#top-level-properties">21.1. Top level properties</a></li>
+<li><a class="reference internal" href="#ast-shapes">21.2. AST shapes</a></li>
+<li><a class="reference internal" href="#simple-shapes">21.3. Simple shapes</a></li>
+<li><a class="reference internal" href="#list-and-set-shapes">21.4. List and set shapes</a></li>
+<li><a class="reference internal" href="#ast-member">21.5. AST member</a></li>
+<li><a class="reference internal" href="#ast-shape-reference">21.6. AST shape reference</a></li>
+<li><a class="reference internal" href="#map-shape">21.7. Map shape</a></li>
+<li><a class="reference internal" href="#structure-and-union-shapes">21.8. Structure and union shapes</a></li>
+<li><a class="reference internal" href="#service-shape">21.9. Service shape</a></li>
+<li><a class="reference internal" href="#resource-shape">21.10. Resource shape</a></li>
+<li><a class="reference internal" href="#operation-shape">21.11. Operation shape</a></li>
+<li><a class="reference internal" href="#ast-apply-type">21.12. AST apply type</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

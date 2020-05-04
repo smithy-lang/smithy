@@ -1,0 +1,1043 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>13. Streaming Traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="14. HTTP protocol binding traits" href="http-traits.html" />
+    <link rel="prev" title="12. Resource traits" href="resource-traits.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="streaming-traits">
+<span id="stream-traits"></span><h1>13. Streaming Traits<a class="headerlink" href="#streaming-traits" title="Permalink to this headline">¶</a></h1>
+<p>A streaming shape is a shape which represents data that is not returned all at
+once. This includes both streaming binary data and event streams.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#streaming-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></li>
+<li><a class="reference internal" href="#requireslength-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></li>
+<li><a class="reference internal" href="#event-streams" id="id12">Event streams</a><ul>
+<li><a class="reference internal" href="#initial-messages" id="id13">Initial messages</a><ul>
+<li><a class="reference internal" href="#initial-request" id="id14">Initial-request</a></li>
+<li><a class="reference internal" href="#initial-response" id="id15">Initial-response</a></li>
+<li><a class="reference internal" href="#initial-message-client-and-server-behavior" id="id16">Initial message client and server behavior</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#client-behavior" id="id17">Client behavior</a></li>
+<li><a class="reference internal" href="#event-message-serialization" id="id18">Event message serialization</a></li>
+<li><a class="reference internal" href="#event-stream-traits" id="id19">Event stream traits</a><ul>
+<li><a class="reference internal" href="#eventheader-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
+<li><a class="reference internal" href="#eventpayload-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="streaming-trait">
+<span id="id1"></span><h2>13.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait<a class="headerlink" href="#streaming-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd><p class="first">Indicates that the data represented by the shape needs to be streamed.</p>
+<p>When applied to a blob, this simply means that the data could be very
+large and thus should not be stored in memory or that the size is unknown
+at the start of the request.</p>
+<p class="last">When applied to a union, it indicates that shape represents an
+<a class="reference internal" href="#event-streams"><span class="std std-ref">event stream</span></a>.</p>
+</dd>
+<dt>Trait selector::</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">:is(blob,</span> <span class="pre">union)</span></code></dd>
+<dt>Value type</dt>
+<dd>Annotation trait</dd>
+<dt>Validation</dt>
+<dd><ul class="first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">streaming</span></code> shapes can only be referenced from top-level members
+of operation input or output structures.</li>
+<li>Structures that contain a member that targets a <code class="docutils literal notranslate"><span class="pre">streaming</span></code> shape
+MUST NOT be targeted by other members.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait is <em>structurally exclusive by target</em>, meaning
+only a single member of a structure can target a shape marked as
+<code class="docutils literal notranslate"><span class="pre">streaming</span></code>.</li>
+</ul>
+</dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation</span><span class="nc"> StreamingOperation</span> {
+    <span class="nl">output:</span> <span class="vc">StreamingOperationOutput</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> StreamingOperationOutput</span> {
+    <span class="nd">@required</span>
+    <span class="nl">streamId:</span> <span class="vc">String</span>
+    <span class="nl">output:</span> <span class="vc">StreamingBlob</span>,
+}
+
+<span class="nd">@streaming</span>
+<span class="kd">blob</span><span class="nc"> StreamingBlob</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="requireslength-trait">
+<span id="id2"></span><h2>13.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait<a class="headerlink" href="#requireslength-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd><p class="first">Indicates that the streaming blob MUST be finite and has a known size.</p>
+<p class="last">In an HTTP-based protocol, for instance, this trait indicates that the
+<code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header MUST be sent prior to a client or server
+sending the payload of a message. This can be useful for services that
+need to determine if a request will be accepted based on its size or
+where to store data based on the size of the stream.</p>
+</dd>
+<dt>Trait selector::</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">blob[trait|streaming]</span></code></p>
+<p class="last"><em>A blob shape marked with the streaming trait</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@streaming</span>
+<span class="nd">@requiresLength</span>
+<span class="kd">blob</span><span class="nc"> FiniteStreamingBlob</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="event-streams">
+<span id="id3"></span><h2>13.3. Event streams<a class="headerlink" href="#event-streams" title="Permalink to this headline">¶</a></h2>
+<p>An event stream is an abstraction that allows multiple messages to be sent
+asynchronously between a client and server. Event streams support both duplex
+and simplex streaming. The serialization format and framing of messages sent
+over event streams is defined by the <a class="reference internal" href="protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol</span></a>
+of a service.</p>
+<p>An event stream is formed when an input or output member of an operation
+targets a union marked with the <a class="reference internal" href="#streaming-trait"><span class="std std-ref">streaming trait</span></a>. An event stream is
+capable of streaming any number of named event structure shapes defined by a
+union. Each member of the targeted union MUST target a structure shape. The
+member names of the union define the name that is used to identify each event
+that is sent over the event stream.</p>
+<p id="input-eventstream">The following example defines an operation that uses an event
+stream in its input by referencing a member that targets a union:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">operation</span><span class="nc"> PublishMessages</span> {
+    <span class="nl">input:</span> <span class="vc">PublishMessagesInput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
+    <span class="nl">room:</span> <span class="vc">String</span>,
+    <span class="nl">messages:</span> <span class="vc">PublishEvents</span>,
+}
+
+<span class="nd">@streaming</span>
+<span class="kd">union</span><span class="nc"> PublishEvents</span> {
+    <span class="nl">message:</span> <span class="vc">Message</span>,
+    <span class="nl">leave:</span> <span class="vc">LeaveEvent</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> Message</span> {
+    <span class="nl">message:</span> <span class="vc">String</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> LeaveEvent</span> {}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishEvents&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#PublishEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Message&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;leave&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#LeaveEvent&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#streaming&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Message&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p id="output-eventstream">The following example defines an operation that uses an event
+stream in its output:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">operation</span><span class="nc"> SubscribeToMovements</span> {
+    <span class="nl">output:</span> <span class="vc">SubscribeToMovementsOutput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> SubscribeToMovementsOutput</span> {
+    <span class="nl">movements:</span> <span class="vc">MovementEvents</span>,
+}
+
+<span class="nd">@streaming</span>
+<span class="kd">union</span><span class="nc"> MovementEvents</span> {
+    <span class="nl">up:</span> <span class="vc">Movement</span>,
+    <span class="nl">down:</span> <span class="vc">Movement</span>,
+    <span class="nl">left:</span> <span class="vc">Movement</span>,
+    <span class="nl">right:</span> <span class="vc">Movement</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> Movement</span> {
+    <span class="nl">velocity:</span> <span class="vc">Float</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#SubscribeToMovements&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#SubscribeToMovementsOutput&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#SubscribeToMovementsOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;movements&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MovementEvents&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MovementEvents&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;down&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;left&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;right&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Movement&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#streaming&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Movement&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;velocity&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Float&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="initial-messages">
+<span id="id4"></span><h3>13.3.1. Initial messages<a class="headerlink" href="#initial-messages" title="Permalink to this headline">¶</a></h3>
+<p>An <em>initial message</em> is comprised of the top-level input or output members
+of an operation that do not target the event stream union. Initial
+messages provide an opportunity for a client or server to provide metadata
+about an event stream before transmitting events.</p>
+<div class="section" id="initial-request">
+<span id="id5"></span><h4>13.3.1.1. Initial-request<a class="headerlink" href="#initial-request" title="Permalink to this headline">¶</a></h4>
+<p>An <em>initial-request</em> is an initial message that can be sent from a client to
+a server for an operation with an input event stream. The structure of an
+initial-request is the input of an operation with no value provided for the
+event stream member. An initial-request, if sent, is sent from a client to a
+server before sending any event stream events.</p>
+<p>When using <a class="reference internal" href="http-traits.html#http-traits"><span class="std std-ref">HTTP bindings</span></a>, initial-request fields are
+mapped to specific locations in the HTTP request such as headers or the
+URI. In other bindings or protocols, the initial-request can be
+sent however is necessary for the protocol.</p>
+<p>The following example defines an operation with an input event stream with
+an initial-request. The client will first send the initial-request to the
+service, followed by the events sent in the payload of the HTTP message.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;POST&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages/{room}&quot;</span>)
+<span class="kd">operation</span><span class="nc"> PublishMessages</span> {
+    <span class="nl">input:</span> <span class="vc">PublishMessagesInput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> PublishMessagesInput</span> {
+    <span class="nd">@httpLabel</span>
+    <span class="nd">@required</span>
+    <span class="nl">room:</span> <span class="vc">String</span>,
+
+    <span class="nd">@httpPayload</span>
+    <span class="nl">messages:</span> <span class="vc">MessageStream</span>,
+}
+
+<span class="nd">@streaming</span>
+<span class="kd">union</span><span class="nc"> MessageStream</span> {
+    <span class="nl">message:</span> <span class="vc">Message</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> Message</span> {
+    <span class="nl">message:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/messages/{room}&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#PublishMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpLabel:&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MessageStream&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpPayload&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MessageStream&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Message&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#streaming&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#Message&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="initial-response">
+<span id="id6"></span><h4>13.3.1.2. Initial-response<a class="headerlink" href="#initial-response" title="Permalink to this headline">¶</a></h4>
+<p>An <em>initial-response</em> is an initial message that can be sent from a server
+to a client for an operation with an output event stream. The structure of
+an initial-response is the output of an operation with no value provided for
+the event stream member. An initial-response, if sent, is sent from the
+server to the client before sending any event stream events.</p>
+<p>When using <a class="reference internal" href="http-traits.html#http-traits"><span class="std std-ref">HTTP bindings</span></a>, initial-response fields are
+mapped to HTTP headers. In other protocols, the initial-response can be sent
+however is necessary for the protocol.</p>
+<p>The following example defines an operation with an output event stream with
+an initial-response. The client will first receive and process the
+initial-response, followed by the events sent in the payload of the HTTP
+message.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@http</span>(<span class="nl">method:</span> <span class="s2">&quot;GET&quot;</span>, <span class="nl">uri:</span> <span class="s2">&quot;/messages/{room}&quot;</span>)
+<span class="kd">operation</span><span class="nc"> SubscribeToMessages</span> {
+    <span class="nl">input:</span> <span class="vc">SubscribeToMessagesInput</span>,
+    <span class="nl">output:</span> <span class="vc">SubscribeToMessagesOutput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> SubscribeToMessagesInput</span> {
+    <span class="nd">@httpLabel</span>
+    <span class="nd">@required</span>
+    <span class="nl">room:</span> <span class="vc">String</span>
+}
+
+<span class="kd">structure</span><span class="nc"> SubscribeToMessagesOutput</span> {
+    <span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Connection-Lifetime&quot;</span>)
+    <span class="nl">connectionLifetime:</span> <span class="vc">Integer</span>,
+
+    <span class="nd">@httpPayload</span>
+    <span class="nl">messages:</span> <span class="vc">MessageStream</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#PublishMessages&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#PublishMessagesInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/messages/{room}&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#SubscribeToMessagesInput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;room&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpLabel:&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#SubscribeToMessagesOutput&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;connectionLifetime&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Integer&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpHeader:&quot;</span><span class="p">:</span> <span class="s2">&quot;X-Connection-Lifetime&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MessageStream&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#httpPayload&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="initial-message-client-and-server-behavior">
+<h4>13.3.1.3. Initial message client and server behavior<a class="headerlink" href="#initial-message-client-and-server-behavior" title="Permalink to this headline">¶</a></h4>
+<p>Initial messages, if received, MUST be provided to applications
+before event stream events.</p>
+<p>It is a backward compatible change to add an initial-request or
+initial-response to an existing operation; clients MUST NOT fail if an
+unexpected initial-request or initial-response is received. Clients and
+servers MUST NOT fail if an initial-request or initial-response is not
+received for an initial message that contains only optional members.</p>
+</div>
+</div>
+<div class="section" id="client-behavior">
+<span id="event-stream-client-behavior"></span><h3>13.3.2. Client behavior<a class="headerlink" href="#client-behavior" title="Permalink to this headline">¶</a></h3>
+<p>Clients that send or receive event streams are expected to
+provide an abstraction to end-users that allows values to be produced or
+consumed asynchronously for each named member of the targeted union. Adding
+new events to an event stream union is considered a backward compatible
+change; clients SHOULD NOT fail when an unknown event is received. Clients
+MUST provide access to the <a class="reference internal" href="#initial-messages"><span class="std std-ref">initial-message</span></a> of an
+event stream when necessary.</p>
+<p>Clients SHOULD expose type-safe functionality that is used to dispatch based
+on the name of an event. For example, given the following event stream:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">operation</span><span class="nc"> SubscribeToEvents</span> {
+    <span class="nl">output:</span> <span class="vc">SubscribeToEventsOutput</span>
+}
+
+<span class="kd">structure</span><span class="nc"> SubscribeToEventsOutput</span> {
+    <span class="nl">events:</span> <span class="vc">Events</span>,
+}
+
+<span class="nd">@streaming</span>
+<span class="kd">union</span><span class="nc"> Events</span> {
+    <span class="nl">a:</span> <span class="vc">Event1</span>,
+    <span class="nl">b:</span> <span class="vc">Event2</span>,
+    <span class="nl">c:</span> <span class="vc">Event3</span>,
+}
+
+<span class="kd">structure</span><span class="nc"> Event1</span> {}
+<span class="kd">structure</span><span class="nc"> Event2</span> {}
+<span class="kd">structure</span><span class="nc"> Event3</span> {}
+</pre></div>
+</div>
+<p>An abstraction SHOULD be provided that is used to dispatch based on the
+name of an event (that is, <code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code>, or <code class="docutils literal notranslate"><span class="pre">c</span></code>) and provide the associated
+type (for example, when <code class="docutils literal notranslate"><span class="pre">a</span></code> is received, an event of type <code class="docutils literal notranslate"><span class="pre">Event1</span></code> is
+provided).</p>
+</div>
+<div class="section" id="event-message-serialization">
+<span id="id7"></span><h3>13.3.3. Event message serialization<a class="headerlink" href="#event-message-serialization" title="Permalink to this headline">¶</a></h3>
+<p>While the framing and serialization of an event stream is protocol-specific,
+traits can be used to influence the serialization of an event stream event.
+Structure members that are sent as part of an event stream are serialized
+in either a header or the payload of an event.</p>
+<p>The <a class="reference internal" href="#eventheader-trait"><span class="std std-ref">eventHeader trait</span></a> is used to serialize a structure member as an
+event header. The payload of an event is defined by either marking a single
+member with the <a class="reference internal" href="#eventpayload-trait"><span class="std std-ref">eventPayload trait</span></a>, or by combining all members that
+are not marked with the <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> or <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait into a
+protocol-specific document.</p>
+<p>The following example serializes the &quot;a&quot; and &quot;b&quot; members as event
+headers and the &quot;c&quot; member as the payload.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span> {
+    <span class="nd">@eventHeader</span>
+    <span class="nl">a:</span> <span class="vc">String</span>,
+
+    <span class="nd">@eventHeader</span>
+    <span class="nl">b:</span> <span class="vc">String</span>,
+
+    <span class="nd">@eventPayload</span>
+    <span class="nl">c:</span> <span class="vc">Blob</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventPayload&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventPayload&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;c&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Blob&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventPayload&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The following example serializes the &quot;a&quot;, &quot;b&quot;, and &quot;c&quot; members as the payload
+of the event using a protocol-specific document. For example, when using a JSON
+based protocol, the event payload is serialized as a JSON object:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span> {
+    <span class="nl">a:</span> <span class="vc">String</span>,
+    <span class="nl">b:</span> <span class="vc">String</span>,
+    <span class="nl">c:</span> <span class="vc">Blob</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;c&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#Blob&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="event-stream-traits">
+<h3>13.3.4. Event stream traits<a class="headerlink" href="#event-stream-traits" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="eventheader-trait">
+<span id="id8"></span><h4>13.3.4.1. <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait<a class="headerlink" href="#eventheader-trait" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Binds a member of a structure to be serialized as an event header when
+sent through an event stream.</dd>
+<dt>Trait selector</dt>
+<dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt;
+:test(member &gt; :test(boolean, byte, short, integer, long, blob, string, timestamp))
+</pre></div>
+</div>
+<p class="last"><em>Member of a structure that targets a boolean, byte, short, integer, long, blob, string, or timestamp shape</em></p>
+</dd>
+<dt>Value type</dt>
+<dd>Annotation trait.</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="#eventpayload-trait"><span class="std std-ref">eventPayload trait</span></a></dd>
+</dl>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Not all protocols support event headers. For example, MQTT version 3.1.1
+does not support custom message headers. It is a protocol-level concern
+as to if and how event stream headers are serialized.</p>
+</div>
+<p>The following example defines multiple event headers:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span> {
+    <span class="nd">@eventHeader</span>
+    <span class="nl">a:</span> <span class="vc">String</span>,
+
+    <span class="nd">@eventHeader</span>
+    <span class="nl">b:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventHeader&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventHeader&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="eventpayload-trait">
+<span id="id9"></span><h4>13.3.4.2. <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait<a class="headerlink" href="#eventpayload-trait" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Binds a member of a structure to be serialized as the payload of an
+event sent through an event stream.</dd>
+<dt>Trait selector</dt>
+<dd><div class="first highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; :test(member &gt; :test(blob, string, structure, union))
+</pre></div>
+</div>
+<p class="last"><em>Structure member that targets a blob, string, structure, or union</em></p>
+</dd>
+<dt>Value type</dt>
+<dd>Annotation trait.</dd>
+<dt>Conflicts with</dt>
+<dd><a class="reference internal" href="#eventheader-trait"><span class="std std-ref">eventHeader trait</span></a></dd>
+<dt>Validation</dt>
+<dd><ol class="first last arabic simple">
+<li>This trait is <em>structurally exclusive by member</em>, meaning only a
+single member of a structure can be targeted by the trait.</li>
+<li>If the <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait is applied to a structure member,
+then all other members of the structure MUST be marked with the
+<code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait.</li>
+</ol>
+</dd>
+</dl>
+<p>Event payload is serialized using the following logic:</p>
+<ul class="simple">
+<li>A blob and string is serialized using the bytes of the string or blob.</li>
+<li>A structure and union is serialized as a protocol-specific document.</li>
+</ul>
+<p>The following example defines an event header and sends a blob as the payload
+of an event:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span> {
+    <span class="nd">@eventPayload</span>
+    <span class="nl">a:</span> <span class="vc">String</span>,
+
+    <span class="nd">@eventHeader</span>
+    <span class="nl">b:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#ExampleEvent&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventPayload&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#eventHeader&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The following structure is <strong>invalid</strong> because the &quot;a&quot; member is bound to the
+<code class="docutils literal notranslate"><span class="pre">eventPayload</span></code>, and the &quot;b&quot; member is not bound to an <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> ExampleEvent</span> {
+    <span class="nd">@eventPayload</span>
+    <span class="nl">a:</span> <span class="vc">String</span>,
+
+    <span class="nl">b:</span> <span class="vc">String</span>,
+    <span class="c">// ^ Error: not bound to an eventHeader.</span>
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="resource-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 12. Resource traits</a>
+                        
+                        <a href="http-traits.html" title="next chapter" class="next-page clearfix">14. HTTP protocol binding traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="resource-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="http-traits.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">13. Streaming Traits</a><ul>
+<li><a class="reference internal" href="#streaming-trait">13.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></li>
+<li><a class="reference internal" href="#requireslength-trait">13.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></li>
+<li><a class="reference internal" href="#event-streams">13.3. Event streams</a><ul>
+<li><a class="reference internal" href="#initial-messages">13.3.1. Initial messages</a><ul>
+<li><a class="reference internal" href="#initial-request">13.3.1.1. Initial-request</a></li>
+<li><a class="reference internal" href="#initial-response">13.3.1.2. Initial-response</a></li>
+<li><a class="reference internal" href="#initial-message-client-and-server-behavior">13.3.1.3. Initial message client and server behavior</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#client-behavior">13.3.2. Client behavior</a></li>
+<li><a class="reference internal" href="#event-message-serialization">13.3.3. Event message serialization</a></li>
+<li><a class="reference internal" href="#event-stream-traits">13.3.4. Event stream traits</a><ul>
+<li><a class="reference internal" href="#eventheader-trait">13.3.4.1. <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code> trait</a></li>
+<li><a class="reference internal" href="#eventpayload-trait">13.3.4.2. <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code> trait</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

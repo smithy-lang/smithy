@@ -1,0 +1,885 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>6. Constraint traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="7. Documentation traits" href="documentation-traits.html" />
+    <link rel="prev" title="5. Traits" href="traits.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="constraint-traits">
+<h1>6. Constraint traits<a class="headerlink" href="#constraint-traits" title="Permalink to this headline">¶</a></h1>
+<p>Constraint traits are used to constrain the values that can be provided
+for a shape.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#enum-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">enum</span></code> trait</a></li>
+<li><a class="reference internal" href="#idref-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait</a></li>
+<li><a class="reference internal" href="#length-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></li>
+<li><a class="reference internal" href="#pattern-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait</a></li>
+<li><a class="reference internal" href="#private-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></li>
+<li><a class="reference internal" href="#range-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></li>
+<li><a class="reference internal" href="#required-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
+<li><a class="reference internal" href="#uniqueitems-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></li>
+</ul>
+</div>
+<div class="section" id="enum-trait">
+<span id="id1"></span><h2>6.1. <code class="docutils literal notranslate"><span class="pre">enum</span></code> trait<a class="headerlink" href="#enum-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Constrains the acceptable values of a string to a fixed set.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of enum definition structures.</dd>
+</dl>
+<p>Smithy models SHOULD apply the enum trait when string shapes have a fixed
+set of allowable values.</p>
+<p>An enum definition is a structure that supports the following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>value</td>
+<td>string</td>
+<td><strong>Required</strong>. Defines the enum value that is sent over the wire.
+Values MUST be unique across all enum definitions in an <code class="docutils literal notranslate"><span class="pre">enum</span></code> trait.</td>
+</tr>
+<tr class="row-odd"><td>name</td>
+<td>string</td>
+<td><p class="first">Defines a constant name to use when referencing an enum value.</p>
+<p>Enum constant names MUST start with an upper or lower case ASCII Latin
+letter (<code class="docutils literal notranslate"><span class="pre">A-Z</span></code> or <code class="docutils literal notranslate"><span class="pre">a-z</span></code>), or the ASCII underscore (<code class="docutils literal notranslate"><span class="pre">_</span></code>) and be
+followed by zero or more upper or lower case ASCII Latin letters
+(<code class="docutils literal notranslate"><span class="pre">A-Z</span></code> or <code class="docutils literal notranslate"><span class="pre">a-z</span></code>), ASCII underscores (<code class="docutils literal notranslate"><span class="pre">_</span></code>), or ASCII digits
+(<code class="docutils literal notranslate"><span class="pre">0-9</span></code>). That is, enum constant names MUST match the following
+regular expression: <code class="docutils literal notranslate"><span class="pre">^[a-zA-Z_]+[a-zA-Z_0-9]*$</span></code>.</p>
+<p>The following stricter rules are recommended for consistency: Enum
+constant names SHOULD NOT contain any lowercase ASCII Latin letters
+(<code class="docutils literal notranslate"><span class="pre">a-z</span></code>) and SHOULD NOT start with an ASCII underscore (<code class="docutils literal notranslate"><span class="pre">_</span></code>). That
+is, enum names SHOULD match the following regular expression:
+<code class="docutils literal notranslate"><span class="pre">^[A-Z]+[A-Z_0-9]*$</span></code>.</p>
+<p class="last">Names MUST be unique across all enum definitions in an <code class="docutils literal notranslate"><span class="pre">enum</span></code> trait.</p>
+</td>
+</tr>
+<tr class="row-even"><td>documentation</td>
+<td>string</td>
+<td>Defines documentation about the enum value in the <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a> format.</td>
+</tr>
+<tr class="row-odd"><td>tags</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td>Attaches a list of tags that allow the enum value to be categorized and
+grouped.</td>
+</tr>
+<tr class="row-even"><td>deprecated</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Whether the enum value should be considered deprecated for consumers of
+the Smithy model.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Consumers of a Smithy model MAY choose to represent enum values as
+constants. Those that do SHOULD use the enum definition's <code class="docutils literal notranslate"><span class="pre">name</span></code>
+property, if specified. Consumers that choose to represent enums as
+constants SHOULD ensure that unknown enum names returned from a service
+do not cause runtime failures.</p>
+</div>
+<p>The following example defines an enum of valid string values for <code class="docutils literal notranslate"><span class="pre">MyString</span></code>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@enum</span>([
+    {
+        <span class="nl">value:</span> <span class="s2">&quot;t2.nano&quot;</span>,
+        <span class="nl">name:</span> <span class="s2">&quot;T2_NANO&quot;</span>,
+        <span class="nl">documentation:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            T2 instances are Burstable Performance</span>
+<span class="s2">            Instances that provide a baseline level of CPU</span>
+<span class="s2">            performance with the ability to burst above the</span>
+<span class="s2">            baseline.&quot;&quot;&quot;</span>,
+        <span class="nl">tags:</span> [<span class="s2">&quot;ebsOnly&quot;</span>]
+    },
+    {
+        <span class="nl">value:</span> <span class="s2">&quot;t2.micro&quot;</span>,
+        <span class="nl">name:</span> <span class="s2">&quot;T2_MICRO&quot;</span>,
+        <span class="nl">documentation:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            T2 instances are Burstable Performance</span>
+<span class="s2">            Instances that provide a baseline level of CPU</span>
+<span class="s2">            performance with the ability to burst above the</span>
+<span class="s2">            baseline.&quot;&quot;&quot;</span>,
+        <span class="nl">tags:</span> [<span class="s2">&quot;ebsOnly&quot;</span>]
+    },
+    {
+        <span class="nl">value:</span> <span class="s2">&quot;m256.mega&quot;</span>,
+        <span class="nl">name:</span> <span class="s2">&quot;M256_MEGA&quot;</span>,
+        <span class="nl">deprecated:</span> <span class="kc">true</span>
+    }
+])
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#enum&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;t2.nano&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;T2_NANO&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;T2 instances are ...&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;ebsOnly&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;t2.micro&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;T2_MICRO&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;T2 instances are ...&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;ebsOnly&quot;</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;m256.mega&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;M256_MEGA&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;deprecated&quot;</span><span class="p">:</span> <span class="kc">true</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="idref-trait">
+<span id="id2"></span><h2>6.2. <code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait<a class="headerlink" href="#idref-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd><p class="first">Indicates that a string value MUST contain a valid absolute
+<a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">shape ID</span></a>.</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait is used primarily when declaring
+<a class="reference internal" href="traits.html#trait-shapes"><span class="std std-ref">trait shapes</span></a> in a model. A trait shape
+that targets a string shape with the <code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait indicates that when
+the defined trait is applied to a shape, the value of the trait MUST be
+a valid shape ID. The <code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait can also be applied at any level of
+nesting on shapes referenced by trait shapes.</p>
+</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:test(string,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></p>
+<p class="last"><em>A string shape or a member that targets a string shape</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait is a structure that supports the following optional
+members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>failWhenMissing</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>When set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the shape ID MUST target a shape that can be
+found in the model.</td>
+</tr>
+<tr class="row-odd"><td>selector</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">Defines the <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a> that the resolved shape,
+if found, MUST match.</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">selector</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">*</span></code> when not defined.</p>
+</td>
+</tr>
+<tr class="row-even"><td>errorMessage</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">Defines a custom error message to use when the shape ID cannot be
+found or does not match the <code class="docutils literal notranslate"><span class="pre">selector</span></code>.</p>
+<p class="last">A default message is generated when <code class="docutils literal notranslate"><span class="pre">errorMessage</span></code> is not defined.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>To illustrate an example, a custom trait named <code class="docutils literal notranslate"><span class="pre">integerRef</span></code> is defined.
+This trait can be attached to any shape, and the value of the trait MUST
+contain a valid shape ID that targets an integer shape in the model.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@trait</span>
+<span class="nd">@idRef</span>(<span class="nl">failWhenMissing:</span> <span class="kc">true</span>, <span class="nl">selector:</span> <span class="s2">&quot;integer&quot;</span>)
+<span class="kd">string</span><span class="nc"> IntegerRefTraitValue</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#integerRef&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#trait&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#idRef&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;failWhenMissing&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nt">&quot;selector&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Given the following model,</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@integerRef</span>(<span class="vc">NotFound</span>)
+<span class="kd">string</span><span class="nc"> InvalidShape1</span>
+
+<span class="nd">@integerRef</span>(<span class="vc">String</span>)
+<span class="kd">string</span><span class="nc"> InvalidShape2</span>
+
+<span class="nd">@integerRef</span>(<span class="s2">&quot;invalid-shape-id!&quot;</span>)
+<span class="kd">string</span><span class="nc"> InvalidShape3</span>
+
+<span class="nd">@integerRef</span>(<span class="vc">Integer</span>)
+<span class="kd">string</span><span class="nc"> ValidShape</span>
+
+<span class="nd">@integerRef</span>(<span class="vc">MyShape</span>)
+<span class="kd">string</span><span class="nc"> ValidShape2</span>
+
+<span class="kd">integer</span><span class="nc"> MyShape</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#InvalidShape1&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.example#integerRef&quot;</span><span class="p">:</span> <span class="s2">&quot;NotFound&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#InvalidShape2&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.example#integerRef&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#InvalidShape3&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.example#integerRef&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid-shape-id!&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#ValidShape&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.example#integerRef&quot;</span><span class="p">:</span> <span class="s2">&quot;Integer&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#ValidShape2&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.example#integerRef&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#MyShape&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#MyShape&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">InvalidShape1</span></code> is invalid because the &quot;NotFound&quot; shape cannot be
+found in the model.</li>
+<li><code class="docutils literal notranslate"><span class="pre">InvalidShape2</span></code> is invalid because &quot;smithy.api#String&quot; targets a
+string which does not match the &quot;integer&quot; selector.</li>
+<li><code class="docutils literal notranslate"><span class="pre">InvalidShape3</span></code> is invalid because &quot;invalid-shape-id!&quot; is not a
+syntactically correct absolute shape ID.</li>
+<li><code class="docutils literal notranslate"><span class="pre">ValidShape</span></code> is valid because &quot;smithy.api#Integer&quot; targets an integer.</li>
+<li><code class="docutils literal notranslate"><span class="pre">ValidShape2</span></code> is valid because &quot;MyShape&quot; is a relative ID that targets
+<code class="docutils literal notranslate"><span class="pre">smithy.example#MyShape</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="length-trait">
+<span id="id3"></span><h2>6.3. <code class="docutils literal notranslate"><span class="pre">length</span></code> trait<a class="headerlink" href="#length-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Constrains a shape to minimum and maximum number of elements or size.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:test(list,</span> <span class="pre">map,</span> <span class="pre">string,</span> <span class="pre">blob,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">:is(list,</span> <span class="pre">map,</span> <span class="pre">string,</span> <span class="pre">blob))</span></code></p>
+<p class="last"><em>Any list, map, string, or blob; or a member that targets one of these shapes</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The length trait is a structure that contains the following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>min</td>
+<td><code class="docutils literal notranslate"><span class="pre">number</span></code></td>
+<td>Integer value that represents the minimum inclusive length of a shape.</td>
+</tr>
+<tr class="row-odd"><td>max</td>
+<td><code class="docutils literal notranslate"><span class="pre">number</span></code></td>
+<td>Integer value that represents the maximum inclusive length of a shape.</td>
+</tr>
+</tbody>
+</table>
+<p>At least one of min, max is required.</p>
+<p>The following table describes what a length trait constrains when applied to
+the corresponding shape:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Shape</th>
+<th class="head">Length constrains</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>list</td>
+<td>The number of members</td>
+</tr>
+<tr class="row-odd"><td>map</td>
+<td>The number of key-value pairs</td>
+</tr>
+<tr class="row-even"><td>string</td>
+<td>The number of Unicode code points</td>
+</tr>
+<tr class="row-odd"><td>blob</td>
+<td>The size of the blob in bytes</td>
+</tr>
+</tbody>
+</table>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@length</span>(<span class="nl">min:</span> <span class="m">1</span>, <span class="nl">max:</span> <span class="m">10</span>)
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#length&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="pattern-trait">
+<span id="id4"></span><h2>6.4. <code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait<a class="headerlink" href="#pattern-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Restricts string shape values to a specified regular expression.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:test(string,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></p>
+<p class="last"><em>A string or a member that targets a string</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</dl>
+<p>Smithy regular expressions MUST be valid regular expressions according to the
+<a class="reference external" href="https://www.ecma-international.org/ecma-262/8.0/index.html#sec-patterns">ECMA 262 regular expression dialect</a>. Patterns SHOULD avoid the use of
+conditionals, directives, recursion, lookahead, look-behind, back-references,
+and look-around in order to ensure maximum compatibility across programming
+languages.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@pattern</span>(<span class="s2">&quot;\\w+&quot;</span>)
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#pattern&quot;</span><span class="p">:</span> <span class="s2">&quot;\\w+&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="private-trait">
+<span id="id5"></span><h2>6.5. <code class="docutils literal notranslate"><span class="pre">private</span></code> trait<a class="headerlink" href="#private-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Prevents models defined in a different namespace from referencing the
+targeted shape.</dd>
+<dt>Trait selector</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
+<dt>Value type</dt>
+<dd>Annotation trait</dd>
+</dl>
+<p>Shapes marked as <code class="docutils literal notranslate"><span class="pre">private</span></code> cannot be accessed outside of the namespace in
+which the shape is defined. The <code class="docutils literal notranslate"><span class="pre">private</span></code> trait is meant only to control
+access from within the model itself and SHOULD NOT influence code-generation
+of the targeted shape.</p>
+</div>
+<div class="section" id="range-trait">
+<span id="id6"></span><h2>6.6. <code class="docutils literal notranslate"><span class="pre">range</span></code> trait<a class="headerlink" href="#range-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Restricts allowed values of byte, short, integer, long, float, double,
+bigDecimal, and bigInteger shapes within an acceptable lower and upper
+bound.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:test(number,</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">number)</span></code></p>
+<p class="last"><em>A number or a member that targets a number</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The range trait is a structure that contains the following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>min</td>
+<td><code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code></td>
+<td>Specifies the allowed inclusive minimum value.</td>
+</tr>
+<tr class="row-odd"><td>max</td>
+<td><code class="docutils literal notranslate"><span class="pre">bigDecimal</span></code></td>
+<td>Specifies the allowed inclusive maximum value.</td>
+</tr>
+</tbody>
+</table>
+<p>At least one of <code class="docutils literal notranslate"><span class="pre">min</span></code> or <code class="docutils literal notranslate"><span class="pre">max</span></code> is required. <code class="docutils literal notranslate"><span class="pre">min</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span></code> accept both
+integers and real numbers. Real numbers may only be applied to float, double,
+or bigDecimal shapes. <code class="docutils literal notranslate"><span class="pre">min</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span></code> MUST fall within the allowable range
+of the targeted numeric shape to which it is applied.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@range</span>(<span class="nl">min:</span> <span class="m">1</span>, <span class="nl">max:</span> <span class="m">10</span>)
+<span class="kd">integer</span><span class="nc"> MyInt</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyInt&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">10</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="required-trait">
+<span id="id7"></span><h2>6.7. <code class="docutils literal notranslate"><span class="pre">required</span></code> trait<a class="headerlink" href="#required-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Marks a structure member as required, meaning a value for the member MUST
+be present.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
+<p class="last"><em>Member of a structure</em></p>
+</dd>
+<dt>Value type</dt>
+<dd>Annotation trait.</dd>
+</dl>
+<p>The required trait applies to structure data, operation input, output, and
+errors. When a member that is part of the input of an operation is marked as
+required, a client MUST provide a value for the member when calling the
+operation. When a member that is part of the output of an operation or an
+error is marked as required, a service MUST provide a value for the member
+in a response.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="nd">@required</span>
+    <span class="nl">foo:</span> <span class="vc">FooString</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;foo&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#FooString&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;smithy.api#required&quot;</span><span class="p">:</span> <span class="p">{}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="uniqueitems-trait">
+<span id="uniqueitems"></span><h2>6.8. <code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait<a class="headerlink" href="#uniqueitems-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that the items in a <a class="reference internal" href="shapes.html#list"><span class="std std-ref">List</span></a> MUST be unique.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:test(list</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">&gt;</span> <span class="pre">simpleType)</span></code></p>
+<p class="last"><em>A list that targets any simple type.</em></p>
+</dd>
+<dt>Value type</dt>
+<dd>Annotation trait.</dd>
+</dl>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@uniqueItems</span>
+<span class="kd">list</span><span class="nc"> MyList</span> {
+    <span class="nl">member:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;member&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#uniqueItems&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 5. Traits</a>
+                        
+                        <a href="documentation-traits.html" title="next chapter" class="next-page clearfix">7. Documentation traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="documentation-traits.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">6. Constraint traits</a><ul>
+<li><a class="reference internal" href="#enum-trait">6.1. <code class="docutils literal notranslate"><span class="pre">enum</span></code> trait</a></li>
+<li><a class="reference internal" href="#idref-trait">6.2. <code class="docutils literal notranslate"><span class="pre">idRef</span></code> trait</a></li>
+<li><a class="reference internal" href="#length-trait">6.3. <code class="docutils literal notranslate"><span class="pre">length</span></code> trait</a></li>
+<li><a class="reference internal" href="#pattern-trait">6.4. <code class="docutils literal notranslate"><span class="pre">pattern</span></code> trait</a></li>
+<li><a class="reference internal" href="#private-trait">6.5. <code class="docutils literal notranslate"><span class="pre">private</span></code> trait</a></li>
+<li><a class="reference internal" href="#range-trait">6.6. <code class="docutils literal notranslate"><span class="pre">range</span></code> trait</a></li>
+<li><a class="reference internal" href="#required-trait">6.7. <code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
+<li><a class="reference internal" href="#uniqueitems-trait">6.8. <code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

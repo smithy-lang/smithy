@@ -1,0 +1,1071 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>2. Smithy IDL lexical structure &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="3. Shapes" href="shapes.html" />
+    <link rel="prev" title="1. Introduction" href="intro.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="smithy-idl-lexical-structure">
+<span id="lexical-structure"></span><h1>2. Smithy IDL lexical structure<a class="headerlink" href="#smithy-idl-lexical-structure" title="Permalink to this headline">¶</a></h1>
+<p>This document defines the <a class="reference external" href="https://tools.ietf.org/html/rfc5234">ABNF</a> grammar and syntax for defining models using
+the <em>Smithy interface definition language</em> (IDL).</p>
+<p>Smithy models are defined using either the Smithy IDL or the
+<a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON abstract syntax tree</span></a> (AST). The IDL is the preferred
+format for authoring and reading models, while the JSON format is preferred
+for tooling and integrations.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#smithy-idl-abnf" id="id14">Smithy IDL ABNF</a></li>
+<li><a class="reference internal" href="#lexical-notes" id="id15">Lexical notes</a><ul>
+<li><a class="reference internal" href="#comments" id="id16">Comments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#control-statement" id="id17">Control statement</a><ul>
+<li><a class="reference internal" href="#version-statement" id="id18">Version statement</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#shape-id" id="id19">Shape ID</a><ul>
+<li><a class="reference internal" href="#shape-id-abnf" id="id20">Shape ID ABNF</a></li>
+<li><a class="reference internal" href="#shape-id-member-names" id="id21">Shape ID member names</a></li>
+<li><a class="reference internal" href="#shape-id-conflicts" id="id22">Shape ID conflicts</a></li>
+<li><a class="reference internal" href="#syntactic-shape-ids-in-the-idl" id="id23">Syntactic shape IDs in the IDL</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#node-values" id="id24">Node values</a></li>
+<li><a class="reference internal" href="#string-values" id="id25">String values</a><ul>
+<li><a class="reference internal" href="#string-escape-characters" id="id26">String escape characters</a></li>
+<li><a class="reference internal" href="#unquoted-strings" id="id27">Unquoted strings</a></li>
+<li><a class="reference internal" href="#text-blocks" id="id28">Text blocks</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="smithy-idl-abnf">
+<span id="id1"></span><h2>2.1. Smithy IDL ABNF<a class="headerlink" href="#smithy-idl-abnf" title="Permalink to this headline">¶</a></h2>
+<p>The Smithy IDL is a series of statements separated by newlines.</p>
+<pre>
+<strong id="grammar-token-idl">idl</strong> =
+    [<a class="reference internal" href="#grammar-token-statement"><code class="xref docutils literal notranslate"><span class="pre">statement</span></code></a> *(1*<a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a> <a class="reference internal" href="#grammar-token-statement"><code class="xref docutils literal notranslate"><span class="pre">statement</span></code></a>)]
+
+<strong id="grammar-token-statement">statement</strong> =
+    <a class="reference internal" href="#grammar-token-control_statement"><code class="xref docutils literal notranslate"><span class="pre">control_statement</span></code></a>
+  / <a class="reference internal" href="model-metadata.html#grammar-token-metadata_statement"><code class="xref docutils literal notranslate"><span class="pre">metadata_statement</span></code></a>
+  / <a class="reference internal" href="shapes.html#grammar-token-use_statement"><code class="xref docutils literal notranslate"><span class="pre">use_statement</span></code></a>
+  / <a class="reference internal" href="shapes.html#grammar-token-namespace_statement"><code class="xref docutils literal notranslate"><span class="pre">namespace_statement</span></code></a>
+  / <a class="reference internal" href="traits.html#grammar-token-apply_statement"><code class="xref docutils literal notranslate"><span class="pre">apply_statement</span></code></a>
+  / <a class="reference internal" href="#grammar-token-documentation_comment"><code class="xref docutils literal notranslate"><span class="pre">documentation_comment</span></code></a>
+  / <a class="reference internal" href="shapes.html#grammar-token-shape_statement"><code class="xref docutils literal notranslate"><span class="pre">shape_statement</span></code></a>
+</pre>
+</div>
+<div class="section" id="lexical-notes">
+<h2>2.2. Lexical notes<a class="headerlink" href="#lexical-notes" title="Permalink to this headline">¶</a></h2>
+<p>Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
+line endings (<code class="docutils literal notranslate"><span class="pre">\n</span></code>).</p>
+<p>Whitespace is insignificant except for the following cases:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#grammar-token-br"><code class="xref std std-token docutils literal notranslate"><span class="pre">br</span></code></a> production which indicates that a new line MUST occur</li>
+<li><a class="reference internal" href="#shape-id-abnf"><span class="std std-ref">shape ID ABNF productions</span></a></li>
+</ul>
+<pre>
+<strong id="grammar-token-br">br</strong> =
+    %x0A / %x0D.0A ; \n and \r\n
+</pre>
+<div class="section" id="comments">
+<span id="id2"></span><h3>2.2.1. Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h3>
+<p>Comments can occur at any place in the IDL between tokens where whitespace
+is insignificant. Comments in Smithy are defined using two forward slashes
+followed by any character. A newline terminates a comment.</p>
+<pre>
+<strong id="grammar-token-line_comment">line_comment</strong> =
+    &quot;//&quot; *(<a class="reference internal" href="#grammar-token-start_comment"><code class="xref docutils literal notranslate"><span class="pre">start_comment</span></code></a> *<a class="reference internal" href="#grammar-token-not_newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a>)
+
+<strong id="grammar-token-start_comment">start_comment</strong> =
+    %x09 / %x20-%x46 / %x48-10FFFF ; Any character except &quot;/&quot; and newline
+
+<strong id="grammar-token-not_newline">not_newline</strong> =
+    %x09 / %x20-10FFFF ; Any character except newline
+</pre>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id13" title="Permalink to this code">¶</a></div>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// This is a comment</span>
+<span class="kd">namespace</span><span class="nc"> com.foo</span> <span class="c">// This is also a comment</span>
+
+<span class="c">// Another comment</span>
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="documentation-comment">
+<span id="id3"></span><h4>2.2.1.1. Documentation comment<a class="headerlink" href="#documentation-comment" title="Permalink to this headline">¶</a></h4>
+<p>Documentation comments are a special kind of comment that provide
+documentation for shapes. A documentation comment is formed when three
+forward slashes (<code class="docutils literal notranslate"><span class="pre">&quot;///&quot;</span></code>) appear as the first non-whitespace characters
+on a line.</p>
+<pre>
+<strong id="grammar-token-documentation_comment">documentation_comment</strong> =
+    &quot;///&quot; *(<a class="reference internal" href="#grammar-token-not_newline"><code class="xref docutils literal notranslate"><span class="pre">not_newline</span></code></a>)
+</pre>
+<p>Documentation comments are defined using <a class="reference external" href="https://spec.commonmark.org/">CommonMark</a>. The text after the
+forward slashes is considered the contents of the line. If the text starts
+with a space (&quot; &quot;), the leading space is removed from the content.
+Successive documentation comments are combined together using a newline
+(&quot;\n&quot;) to form the documentation of a shape.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Documentation comments are syntactic sugar equivalent to applying the
+<a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>.</p>
+</div>
+<p>The following Smithy IDL example,</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="cm">/// This is documentation about a shape.</span>
+<span class="cm">///</span>
+<span class="cm">/// - This is a list</span>
+<span class="cm">/// - More of the list.</span>
+<span class="kd">string</span><span class="nc"> MyString</span>
+
+<span class="cm">/// This is documentation about a trait shape.</span>
+<span class="cm">///   More docs here.</span>
+<span class="nd">@trait</span>
+<span class="kd">structure</span><span class="nc"> myTrait</span> {}
+</pre></div>
+</div>
+<p>is equivalent to the following JSON AST model:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;This is documentation about a shape.\n\n- This is a list\n- More of the list.&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#myTrait&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#trait&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;This is documentation about a trait shapes.\n  More docs here.&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Documentation comments MUST NOT be applied to anything other than shapes.
+Documentation comments MUST appear immediately before a shape, and they MUST
+appear <strong>before</strong> any <a class="reference internal" href="traits.html#traits"><span class="std std-ref">traits</span></a> applied to the shape.</p>
+<p>The following example is valid because the documentation comment comes
+before the traits applied to a shape:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="cm">/// A deprecated string.</span>
+<span class="nd">@deprecated</span>
+<span class="kd">string</span><span class="nc"> MyString</span>
+</pre></div>
+</div>
+<p>Documentation comments can be applied to members of a shape.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// Documentation about the structure.</span>
+<span class="kd">structure</span><span class="nc"> Example</span> {
+    <span class="cm">/// Documentation about the member.</span>
+    <span class="nd">@sensitive</span>
+    <span class="nl">foo:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="control-statement">
+<span id="id4"></span><h2>2.3. Control statement<a class="headerlink" href="#control-statement" title="Permalink to this headline">¶</a></h2>
+<p>Control statements apply metadata to a specific file. Control statements,
+if defined, MUST appear at the beginning of a Smithy file before any other
+statements.</p>
+<pre>
+<strong id="grammar-token-control_statement">control_statement</strong> =
+    &quot;$&quot; <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+</pre>
+<p>Implementations MUST ignore unknown control statements.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Control statements differ from <a class="reference internal" href="model-metadata.html#metadata"><span class="std std-ref">metadata</span></a> because
+control statements apply metadata to a single file, whereas metadata
+is applied to the entire model.</p>
+</div>
+<div class="section" id="version-statement">
+<span id="smithy-version"></span><h3>2.3.1. Version statement<a class="headerlink" href="#version-statement" title="Permalink to this headline">¶</a></h3>
+<p>The Smithy specification is versioned using a <code class="docutils literal notranslate"><span class="pre">major</span></code> . <code class="docutils literal notranslate"><span class="pre">minor</span></code>
+versioning scheme. A version requirement is specified for a model file using
+the <code class="docutils literal notranslate"><span class="pre">$version</span></code> control statement. When no version number is specified in
+the IDL, an implementation SHOULD assume that the model can be loaded.
+Because this can lead to unexpected parsing errors, models SHOULD always
+include a version.</p>
+<p>The value provided in a version control statement is a string that MUST
+adhere to the following ABNF:</p>
+<pre>
+<strong id="grammar-token-version_string">version_string</strong> =
+    <a class="reference internal" href="#grammar-token-major_version"><code class="xref docutils literal notranslate"><span class="pre">major_version</span></code></a> [ &quot;.&quot; <a class="reference internal" href="#grammar-token-minor_version"><code class="xref docutils literal notranslate"><span class="pre">minor_version</span></code></a> ]
+
+<strong id="grammar-token-major_version">major_version</strong> =
+    1*(1 / 2 / 3 / 4 / 5 / 6 / 7 / 8 / 9)
+
+<strong id="grammar-token-minor_version">minor_version</strong> =
+    1*DIGIT
+</pre>
+<p>The following example sets the version to <code class="docutils literal notranslate"><span class="pre">1</span></code>, meaning that tooling MUST
+support a version greater than or equal to <code class="docutils literal notranslate"><span class="pre">1.0</span></code> and less than <code class="docutils literal notranslate"><span class="pre">2.0</span></code>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>A minor version SHOULD be provided when a model depends on a feature released
+in a minor update of the specification. The following example sets the
+version requirement of a file to <code class="docutils literal notranslate"><span class="pre">1.1</span></code>, meaning that tooling MUST support a
+version greater than or equal to <code class="docutils literal notranslate"><span class="pre">1.1</span></code> and less than <code class="docutils literal notranslate"><span class="pre">2.0</span></code>:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.1&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p class="rubric">Version compatibility</p>
+<p>A single version statement can appear in a model file, but different versions
+MAY be encountered when merging multiple model files together. Multiple
+versions are supported if and only if all of the version statements are
+supported by the tool loading the models.</p>
+</div>
+</div>
+<div class="section" id="shape-id">
+<span id="id5"></span><h2>2.4. Shape ID<a class="headerlink" href="#shape-id" title="Permalink to this headline">¶</a></h2>
+<p>A <em class="dfn">shape ID</em> is used to refer to shapes and traits in the model.
+Shape IDs adhere to the following syntax:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>com.foo.baz#ShapeName$memberName
+\_________/ \_______/ \________/
+     |          |          |
+ Namespace  Shape name  Member name
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Absolute shape ID</dt>
+<dd>An <em class="dfn">absolute shape ID</em> starts with a <a class="reference internal" href="#grammar-token-namespace"><code class="xref std std-token docutils literal notranslate"><span class="pre">namespace</span></code></a> name,
+followed by &quot;<code class="docutils literal notranslate"><span class="pre">#</span></code>&quot;, followed by a <em>relative shape ID</em>.</dd>
+<dt>Relative shape ID</dt>
+<dd>A <em class="dfn">relative shape ID</em> contains a <a class="reference internal" href="#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a>
+and an optional <a class="reference internal" href="#grammar-token-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a>. The shape name and
+member name are separated by the &quot;<code class="docutils literal notranslate"><span class="pre">$</span></code>&quot; symbol if a member name is
+present.</dd>
+</dl>
+<div class="section" id="shape-id-abnf">
+<span id="id6"></span><h3>2.4.1. Shape ID ABNF<a class="headerlink" href="#shape-id-abnf" title="Permalink to this headline">¶</a></h3>
+<p>Shape IDs are formally defined by the following ABNF:</p>
+<pre>
+<strong id="grammar-token-shape_id">shape_id</strong> =
+    <a class="reference internal" href="#grammar-token-root_shape_id"><code class="xref docutils literal notranslate"><span class="pre">root_shape_id</span></code></a> [<a class="reference internal" href="#grammar-token-shape_id_member"><code class="xref docutils literal notranslate"><span class="pre">shape_id_member</span></code></a>]
+
+<strong id="grammar-token-root_shape_id">root_shape_id</strong> =
+    <a class="reference internal" href="#grammar-token-absolute_shape_id"><code class="xref docutils literal notranslate"><span class="pre">absolute_shape_id</span></code></a> / <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+
+<strong id="grammar-token-absolute_shape_id">absolute_shape_id</strong> =
+    <a class="reference internal" href="#grammar-token-namespace"><code class="xref docutils literal notranslate"><span class="pre">namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+
+<strong id="grammar-token-namespace">namespace</strong> =
+    <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>)
+
+<strong id="grammar-token-identifier">identifier</strong> =
+    (ALPHA / &quot;_&quot;) *(ALPHA / DIGIT / &quot;_&quot;)
+
+<strong id="grammar-token-shape_id_member">shape_id_member</strong> =
+    &quot;$&quot; <a class="reference internal" href="#grammar-token-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+
+<strong id="grammar-token-LOALPHA">LOALPHA</strong> =
+    %x61-7A ; a-z
+</pre>
+<div class="important admonition">
+<p class="first admonition-title">Lexical note</p>
+<p class="last">Whitespace is <strong>significant</strong> in all shape ID productions.</p>
+</div>
+</div>
+<div class="section" id="shape-id-member-names">
+<span id="id7"></span><h3>2.4.2. Shape ID member names<a class="headerlink" href="#shape-id-member-names" title="Permalink to this headline">¶</a></h3>
+<p>A <a class="reference internal" href="shapes.html#member"><span class="std std-ref">member</span></a> of an <a class="reference internal" href="shapes.html#aggregate-types"><span class="std std-ref">aggregate shape</span></a> can be
+referenced in a shape ID by appending a dollar sign (<code class="docutils literal notranslate"><span class="pre">$</span></code>) followed by the
+appropriate member name. Member names for each shape are defined as follows:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="40%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Shape ID</th>
+<th class="head">Syntax</th>
+<th class="head">Example</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="shapes.html#structure"><span class="std std-ref">Structure</span></a> member</td>
+<td><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;$&lt;member-name&gt;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ns.example#Shape$baz</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="shapes.html#union"><span class="std std-ref">Union</span></a> member</td>
+<td><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;$&lt;member-name&gt;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ns.example#Shape$baz</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="shapes.html#list"><span class="std std-ref">List</span></a> member</td>
+<td><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;$member</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ns.example#Shape$member</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="shapes.html#set"><span class="std std-ref">Set</span></a> member</td>
+<td><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;$member</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ns.example#Shape$member</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="shapes.html#map"><span class="std std-ref">Map</span></a> key</td>
+<td><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;$key</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ns.example#Shape$key</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="shapes.html#map"><span class="std std-ref">Map</span></a> value</td>
+<td><code class="docutils literal notranslate"><span class="pre">&lt;name&gt;$value</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">ns.example#Shape$value</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="shape-id-conflicts">
+<span id="id8"></span><h3>2.4.3. Shape ID conflicts<a class="headerlink" href="#shape-id-conflicts" title="Permalink to this headline">¶</a></h3>
+<p>While shape IDs used within a model are case-sensitive, no two shapes in
+the model can have the same case-insensitive shape ID. For example,
+<code class="docutils literal notranslate"><span class="pre">com.Foo#baz</span></code> and <code class="docutils literal notranslate"><span class="pre">com.foo#baz</span></code> are not allowed in the same model. This
+property also extends to member names: <code class="docutils literal notranslate"><span class="pre">com.foo#Baz$bar</span></code> and
+<code class="docutils literal notranslate"><span class="pre">com.foo#Baz$Bar</span></code> are not allowed on the same structure.</p>
+</div>
+<div class="section" id="syntactic-shape-ids-in-the-idl">
+<span id="syntactic-shape-ids"></span><h3>2.4.4. Syntactic shape IDs in the IDL<a class="headerlink" href="#syntactic-shape-ids-in-the-idl" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="#grammar-token-unquoted_text"><code class="xref std std-token docutils literal notranslate"><span class="pre">Unquoted</span> <span class="pre">string</span> <span class="pre">values</span></code></a> in the Smithy IDL are considered
+shape IDs and are resolved to absolute shape IDs using the process defined
+in <a class="reference internal" href="#relative-shape-id"><span class="std std-ref">Relative shape ID resolution</span></a>. Values that are not meant to be shape IDs
+MUST be quoted.</p>
+<p>For example, the following model resolves the value of the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>
+to the shape ID <code class="docutils literal notranslate"><span class="pre">&quot;smithy.example#client&quot;</span></code> rather than using the string
+literal value of <code class="docutils literal notranslate"><span class="pre">&quot;client&quot;</span></code>, causing the model to be invalid:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="nd">@error</span>(<span class="vc">client</span>) <span class="c">// &lt;-- This should be &quot;client&quot;</span>
+<span class="kd">structure</span><span class="nc"> Error</span>
+
+<span class="kd">string</span><span class="nc"> client</span>
+</pre></div>
+</div>
+<p>Object keys in the IDL are not treated as shape IDs. Consider the following
+<a class="reference internal" href="model-metadata.html#metadata"><span class="std std-ref">metadata</span></a> definition. The object key remains the same literal
+string value of <code class="docutils literal notranslate"><span class="pre">String</span></code> while the value is treated as a shape ID and
+resolves to the string literal <code class="docutils literal notranslate"><span class="pre">&quot;smithy.api#String&quot;</span></code>.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> {
+    <span class="nl">String:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;String&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="relative-shape-id-resolution">
+<span id="relative-shape-id"></span><h4>2.4.4.1. Relative shape ID resolution<a class="headerlink" href="#relative-shape-id-resolution" title="Permalink to this headline">¶</a></h4>
+<p>In the Smithy IDL, relative shape IDs are resolved using the following process:</p>
+<ol class="arabic simple">
+<li>If a <a class="reference internal" href="shapes.html#grammar-token-use_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">use_statement</span></code></a> has imported a shape with the same name,
+the shape ID resolves to the imported shape ID.</li>
+<li>If a shape is defined in the same namespace as the shape with the same name,
+the namespace of the shape resolves to the <em>current namespace</em>.</li>
+<li>If a shape is defined in the <a class="reference internal" href="prelude-model.html#prelude"><span class="std std-ref">prelude</span></a> with the same name,
+the namespace resolves to <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code>.</li>
+<li>If a relative shape ID does not satisfy one of the above cases, the shape
+ID is invalid, and the namespace is inherited from the <em>current namespace</em>.</li>
+</ol>
+<p>The following example Smithy model contains comments above each member of
+the shape named <code class="docutils literal notranslate"><span class="pre">MyStructure</span></code> that describes the shape the member resolves
+to.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span>
+
+<span class="kd">use</span><span class="nc"> foo.baz#Bar</span>
+
+<span class="kd">string</span><span class="nc"> MyString</span>
+
+<span class="kd">structure</span><span class="nc"> MyStructure</span> {
+    <span class="c">// Resolves to smithy.example#MyString</span>
+    <span class="c">// There is a shape named MyString defined in the same namespace.</span>
+    <span class="nl">a:</span> <span class="vc">MyString</span>,
+
+    <span class="c">// Resolves to smithy.example#MyString</span>
+    <span class="c">// Absolute shape IDs do not perform namespace resolution.</span>
+    <span class="nl">b:</span> <span class="vc">smithy.example#MyString</span>,
+
+    <span class="c">// Resolves to foo.baz#Bar</span>
+    <span class="c">// The &quot;use foo.baz#Bar&quot; statement imported the Bar symbol,</span>
+    <span class="c">// allowing the shape to be referenced using a relative shape ID.</span>
+    <span class="nl">c:</span> <span class="vc">Bar</span>,
+
+    <span class="c">// Resolves to foo.baz#Bar</span>
+    <span class="c">// Absolute shape IDs do not perform namespace resolution.</span>
+    <span class="nl">d:</span> <span class="vc">foo.baz#Bar</span>,
+
+    <span class="c">// Resolves to foo.baz#MyString</span>
+    <span class="c">// Absolute shape IDs do not perform namespace resolution.</span>
+    <span class="nl">e:</span> <span class="vc">foo.baz#MyString</span>,
+
+    <span class="c">// Resolves to smithy.api#String</span>
+    <span class="c">// No shape named String was imported through a use statement</span>
+    <span class="c">// the smithy.example namespace does not contain a shape named</span>
+    <span class="c">// String, and the prelude model contains a shape named String.</span>
+    <span class="nl">f:</span> <span class="vc">String</span>,
+
+    <span class="c">// Resolves to smithy.example#MyBoolean.</span>
+    <span class="c">// There is a shape named MyBoolean defined in the same namespace.</span>
+    <span class="c">// Forward references are supported both within the same file and</span>
+    <span class="c">// across multiple files.</span>
+    <span class="nl">g:</span> <span class="vc">MyBoolean</span>,
+
+    <span class="c">// Invalid. A shape by this name has not been imported through a</span>
+    <span class="c">// use statement, a shape by this name does not exist in the</span>
+    <span class="c">// current namespace, and a shape by this name does not exist in</span>
+    <span class="c">// the prelude model.</span>
+    <span class="nl">h:</span> <span class="vc">InvalidShape</span>,
+}
+
+<span class="kd">boolean</span><span class="nc"> MyBoolean</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="node-values">
+<span id="id9"></span><h2>2.5. Node values<a class="headerlink" href="#node-values" title="Permalink to this headline">¶</a></h2>
+<p><em>Node values</em> are analogous to JSON values. Node values are used to define
+<a class="reference internal" href="model-metadata.html#metadata"><span class="std std-ref">metadata</span></a> and <a class="reference internal" href="traits.html#trait-values"><span class="std std-ref">trait values</span></a>.</p>
+<p>Smithy's node values have many advantages over JSON: comments,
+unquoted keys, unquoted strings, single quoted strings, long strings,
+and trailing commas.</p>
+<pre>
+<strong id="grammar-token-node_value">node_value</strong> =
+    <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> / <a class="reference internal" href="#grammar-token-number"><code class="xref docutils literal notranslate"><span class="pre">number</span></code></a> / <a class="reference internal" href="#grammar-token-node_array"><code class="xref docutils literal notranslate"><span class="pre">node_array</span></code></a> / <a class="reference internal" href="#grammar-token-node_object"><code class="xref docutils literal notranslate"><span class="pre">node_object</span></code></a>
+
+<strong id="grammar-token-node_array">node_array</strong> =
+    &quot;[&quot; [<a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>)] (( &quot;,&quot; &quot;]&quot; ) / &quot;]&quot; )
+
+<strong id="grammar-token-node_object">node_object</strong> =
+    &quot;{&quot; [<a class="reference internal" href="#grammar-token-node_object_kvp"><code class="xref docutils literal notranslate"><span class="pre">node_object_kvp</span></code></a> *(&quot;,&quot; <a class="reference internal" href="#grammar-token-node_object_kvp"><code class="xref docutils literal notranslate"><span class="pre">node_object_kvp</span></code></a>)] (( &quot;,&quot; &quot;}&quot; ) / &quot;}&quot; )
+
+<strong id="grammar-token-node_object_kvp">node_object_kvp</strong> =
+    <a class="reference internal" href="#grammar-token-text"><code class="xref docutils literal notranslate"><span class="pre">text</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-node_value"><code class="xref docutils literal notranslate"><span class="pre">node_value</span></code></a>
+
+<strong id="grammar-token-number">number</strong> =
+    [<a class="reference internal" href="#grammar-token-minus"><code class="xref docutils literal notranslate"><span class="pre">minus</span></code></a>] <a class="reference internal" href="#grammar-token-int"><code class="xref docutils literal notranslate"><span class="pre">int</span></code></a> [<a class="reference internal" href="#grammar-token-frac"><code class="xref docutils literal notranslate"><span class="pre">frac</span></code></a>] [<a class="reference internal" href="#grammar-token-exp"><code class="xref docutils literal notranslate"><span class="pre">exp</span></code></a>]
+
+<strong id="grammar-token-decimal_point">decimal_point</strong> =
+    %x2E ; .
+
+<strong id="grammar-token-digit1_9">digit1_9</strong> =
+    %x31-39 ; 1-9
+
+<strong id="grammar-token-e">e</strong> =
+    %x65 / %x45 ; e E
+
+<strong id="grammar-token-exp">exp</strong> =
+    <a class="reference internal" href="#grammar-token-e"><code class="xref docutils literal notranslate"><span class="pre">e</span></code></a> [<a class="reference internal" href="#grammar-token-minus"><code class="xref docutils literal notranslate"><span class="pre">minus</span></code></a> / <a class="reference internal" href="#grammar-token-plus"><code class="xref docutils literal notranslate"><span class="pre">plus</span></code></a>] 1*DIGIT
+
+<strong id="grammar-token-frac">frac</strong> =
+    <a class="reference internal" href="#grammar-token-decimal_point"><code class="xref docutils literal notranslate"><span class="pre">decimal_point</span></code></a> 1*DIGIT
+
+<strong id="grammar-token-int">int</strong> =
+    <a class="reference internal" href="#grammar-token-zero"><code class="xref docutils literal notranslate"><span class="pre">zero</span></code></a> / (<a class="reference internal" href="#grammar-token-digit1_9"><code class="xref docutils literal notranslate"><span class="pre">digit1_9</span></code></a> *DIGIT)
+
+<strong id="grammar-token-minus">minus</strong> =
+    %x2D ; -
+
+<strong id="grammar-token-plus">plus</strong> =
+    %x2B ; +
+
+<strong id="grammar-token-zero">zero</strong> =
+    %x30 ; 0
+</pre>
+<p>The following example defines a string metadata key:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> <span class="s2">&quot;baz&quot;</span>
+</pre></div>
+</div>
+<p>The following example defines an integer metadata key:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> <span class="m">100</span>
+</pre></div>
+</div>
+<p>The following example defines an array metadata key:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> [<span class="s2">&quot;hello&quot;</span>, <span class="m">123</span>, <span class="kc">true</span>, [<span class="kc">false</span>]]
+</pre></div>
+</div>
+<p>The following example defines a complex object metadata key:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> foo </span><span class="nd">=</span> {
+    <span class="nl">hello:</span> <span class="m">123</span>,
+    <span class="s1">&#39;foo&#39;</span>: <span class="s2">&quot;456&quot;</span>,
+    <span class="nl">testing:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Hello!</span>
+<span class="s2">        &quot;&quot;&quot;</span>,
+    <span class="nl">an_array:</span> [<span class="m">10.5</span>],
+    <span class="nl">nested-object:</span> {
+        <span class="nl">hello-there$:</span> <span class="kc">true</span>
+    }, <span class="c">// &lt;-- Trailing comma</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="string-values">
+<h2>2.6. String values<a class="headerlink" href="#string-values" title="Permalink to this headline">¶</a></h2>
+<pre>
+<strong id="grammar-token-text">text</strong> =
+    <a class="reference internal" href="#grammar-token-unquoted_text"><code class="xref docutils literal notranslate"><span class="pre">unquoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-quoted_text"><code class="xref docutils literal notranslate"><span class="pre">quoted_text</span></code></a> / <a class="reference internal" href="#grammar-token-text_block"><code class="xref docutils literal notranslate"><span class="pre">text_block</span></code></a>
+
+<strong id="grammar-token-unquoted_text">unquoted_text</strong> =
+    (ALPHA / &quot;_&quot;) *(ALPHA / DIGIT / &quot;_&quot; / &quot;$&quot; / &quot;.&quot; / &quot;#&quot;)
+
+<strong id="grammar-token-escaped_char">escaped_char</strong> =
+    <a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> (<a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> / &quot;'&quot; / DQUOTE / &quot;b&quot; / &quot;f&quot; / &quot;n&quot; / &quot;r&quot; / &quot;t&quot; / &quot;/&quot; / <a class="reference internal" href="#grammar-token-unicode_escape"><code class="xref docutils literal notranslate"><span class="pre">unicode_escape</span></code></a>)
+
+<strong id="grammar-token-unicode_escape">unicode_escape</strong> =
+    &quot;u&quot; <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a> <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a> <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a> <a class="reference internal" href="#grammar-token-hex"><code class="xref docutils literal notranslate"><span class="pre">hex</span></code></a>
+
+<strong id="grammar-token-hex">hex</strong> =
+     DIGIT / %x41-46 / %x61-66
+
+<strong id="grammar-token-quoted_text">quoted_text</strong> =
+    DQUOTE *<a class="reference internal" href="#grammar-token-quoted_char"><code class="xref docutils literal notranslate"><span class="pre">quoted_char</span></code></a> DQUOTE
+
+<strong id="grammar-token-quoted_char">quoted_char</strong> =
+    %x20-21
+  / %x23-5B
+  / %x5D-10FFFF
+  / <a class="reference internal" href="#grammar-token-escaped_char"><code class="xref docutils literal notranslate"><span class="pre">escaped_char</span></code></a>
+  / <a class="reference internal" href="#grammar-token-preserved_double"><code class="xref docutils literal notranslate"><span class="pre">preserved_double</span></code></a>
+
+<strong id="grammar-token-preserved_double">preserved_double</strong> =
+    <a class="reference internal" href="#grammar-token-escape"><code class="xref docutils literal notranslate"><span class="pre">escape</span></code></a> (%x20-21 / %x23-5B / %x5D-10FFFF)
+
+<strong id="grammar-token-escape">escape</strong> =
+    %x5C ; backslash
+
+<strong id="grammar-token-text_block">text_block</strong> =
+    DQUOTE DQUOTE DQUOTE <a class="reference internal" href="#grammar-token-br"><code class="xref docutils literal notranslate"><span class="pre">br</span></code></a> <a class="reference internal" href="#grammar-token-quoted_char"><code class="xref docutils literal notranslate"><span class="pre">quoted_char</span></code></a> DQUOTE DQUOTE DQUOTE
+</pre>
+<p>New lines in strings are normalized from CR (u000D) and CRLF (u000Du000A)
+to LF (u000A). This ensures that strings defined in a Smithy model are
+equivalent across platforms. If a literal <code class="docutils literal notranslate"><span class="pre">\r</span></code> is desired, it can be added
+a string value using the Unicode escape <code class="docutils literal notranslate"><span class="pre">\u000d</span></code>.</p>
+<div class="section" id="string-escape-characters">
+<span id="id10"></span><h3>2.6.1. String escape characters<a class="headerlink" href="#string-escape-characters" title="Permalink to this headline">¶</a></h3>
+<p>The Smithy IDL supports escape sequences only within quoted strings.  The following
+escape sequences are allowed:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="35%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Unicode code point</th>
+<th class="head">Smithy escape</th>
+<th class="head">Meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>U+0022</td>
+<td><code class="docutils literal notranslate"><span class="pre">\&quot;</span></code></td>
+<td>double quote</td>
+</tr>
+<tr class="row-odd"><td>U+005C</td>
+<td><code class="docutils literal notranslate"><span class="pre">\\</span></code></td>
+<td>backslash</td>
+</tr>
+<tr class="row-even"><td>U+002F</td>
+<td><code class="docutils literal notranslate"><span class="pre">\/</span></code></td>
+<td>forward slash</td>
+</tr>
+<tr class="row-odd"><td>U+0008</td>
+<td><code class="docutils literal notranslate"><span class="pre">\b</span></code></td>
+<td>backspace BS</td>
+</tr>
+<tr class="row-even"><td>U+000C</td>
+<td><code class="docutils literal notranslate"><span class="pre">\f</span></code></td>
+<td>form feed FF</td>
+</tr>
+<tr class="row-odd"><td>U+000A</td>
+<td><code class="docutils literal notranslate"><span class="pre">\n</span></code></td>
+<td>line feed LF</td>
+</tr>
+<tr class="row-even"><td>U+000D</td>
+<td><code class="docutils literal notranslate"><span class="pre">\r</span></code></td>
+<td>carriage return CR</td>
+</tr>
+<tr class="row-odd"><td>U+0009</td>
+<td><code class="docutils literal notranslate"><span class="pre">\t</span></code></td>
+<td>horizontal tab HT</td>
+</tr>
+<tr class="row-even"><td>U+HHHH</td>
+<td><code class="docutils literal notranslate"><span class="pre">\uHHHH</span></code></td>
+<td>4-digit hexadecimal Unicode code point</td>
+</tr>
+<tr class="row-odd"><td><em>nothing</em></td>
+<td><code class="docutils literal notranslate"><span class="pre">\\r\n</span></code>, <code class="docutils literal notranslate"><span class="pre">\\r</span></code>, <code class="docutils literal notranslate"><span class="pre">\\n</span></code></td>
+<td>escaped new line expands to nothing</td>
+</tr>
+</tbody>
+</table>
+<p>Any other sequence following a backslash is an error.</p>
+</div>
+<div class="section" id="unquoted-strings">
+<span id="id11"></span><h3>2.6.2. Unquoted strings<a class="headerlink" href="#unquoted-strings" title="Permalink to this headline">¶</a></h3>
+<p>Unquoted strings that appear in the IDL are treated as shape IDs. Strings
+MUST be quoted if a value is not intended to be converted into a resolved
+shape ID.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Refer to <a class="reference internal" href="#syntactic-shape-ids"><span class="std std-ref">Syntactic shape IDs in the IDL</span></a> for more information.</p>
+</div>
+</div>
+<div class="section" id="text-blocks">
+<span id="id12"></span><h3>2.6.3. Text blocks<a class="headerlink" href="#text-blocks" title="Permalink to this headline">¶</a></h3>
+<p>A text block is a string literal that can span multiple lines and
+automatically removes any incidental whitespace. A text block is opened with
+three double quotes (&quot;&quot;&quot;), followed by a newline, zero or more content
+characters, and closed with three double quotes.</p>
+<p><em>Smithy text blocks are heavily based on text blocks defined in</em> <a class="reference external" href="https://openjdk.java.net/jeps/355">JEP 355</a></p>
+<p>Text blocks differentiate <em>incidental whitespace</em> from
+<em>significant whitespace</em>. Smithy will re-indent the content of a text block by
+removing all incidental whitespace.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    &lt;div&gt;</span>
+<span class="s2">        &lt;p&gt;Hello!&lt;/p&gt;</span>
+<span class="s2">    &lt;/div&gt;</span>
+<span class="s2">    &quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+<p>The four leading spaces in the above text block are considered insignificant
+because they are common across all lines. Because the closing delimiter
+appears on its own line, a trailing new line is added to the result. The
+content of the text block is re-indented to remove the insignificant
+whitespace, making it equivalent to the following:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&lt;div&gt;\n    &lt;p&gt;Hello!&lt;/p&gt;\n&lt;/div&gt;\n&quot;</span>)
+</pre></div>
+</div>
+<p>The closing delimiter can be placed on the same line as content if no new line
+is desired at the end of the result. The above example could be rewritten to
+not including a trailing new line:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    &lt;div&gt;</span>
+<span class="s2">        &lt;p&gt;Hello!&lt;/p&gt;</span>
+<span class="s2">    &lt;/div&gt;&quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+<p>This example is equivalent to the following:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&lt;div&gt;\n    &lt;p&gt;Hello!&lt;/p&gt;\n&lt;/div&gt;&quot;</span>)
+</pre></div>
+</div>
+<p>The following text blocks are ill-formed:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;foo&quot;&quot;&quot;</span>  <span class="c">// missing new line following open delimiter</span>
+<span class="s2">&quot;&quot;&quot; &quot;&quot;&quot;</span>    <span class="c">// missing new line following open delimiter</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&quot;</span>          <span class="c">// missing closing delimiter</span>
+</pre></div>
+</div>
+<div class="section" id="incidental-white-space-removal">
+<span id="incidental-whitespace"></span><h4>2.6.3.1. Incidental white space removal<a class="headerlink" href="#incidental-white-space-removal" title="Permalink to this headline">¶</a></h4>
+<p>Smithy will re-indent the content of a text block by removing all
+incidental whitespace using the following algorithm:</p>
+<ol class="arabic">
+<li><p class="first">Split the content of the text block at every LF, producing a list of lines.
+The opening LF of the text block is not considered.</p>
+<p>Given the following example (&quot;.&quot; is used to represent spaces),</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">....Foo</span>
+<span class="s2">........Baz</span>
+
+<span class="s2">..</span>
+<span class="s2">....Bar</span>
+<span class="s2">....&quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+<p>the following lines are produced:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s2">&quot;    Foo&quot;</span><span class="p">,</span> <span class="s2">&quot;        Baz&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="s2">&quot;    Bar&quot;</span><span class="p">,</span> <span class="s2">&quot;    &quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Compute the <em>common whitespace prefix</em> by iterating over each line,
+counting the number of leading spaces (&quot; &quot;) and taking the minimum count.
+Except for the last line of content, lines that are empty or consist wholly
+of whitespace are not considered. If the last line of content (that is, the
+line that contains the closing delimiter) appears on its own line, then
+that line's leading whitespace <strong>is</strong> considered when determining the
+common whitespace prefix, allowing the closing delimiter to determine the
+amount of indentation to remove.</p>
+<p>Using the previous example, the common whitespace prefix is four spaces.
+The empty third line and the blank fourth lines are not considered when
+computing the common whitespace. The following uses &quot;.&quot; to represent the
+common whitespace prefix:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">....Foo</span>
+<span class="s2">....    Baz</span>
+
+<span class="s2">....</span>
+<span class="s2">....Bar</span>
+<span class="s2">....&quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+</li>
+<li><p class="first">Remove the common white space prefix from each line.</p>
+<p>This step produces the following values from the previous example:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s2">&quot;Foo&quot;</span><span class="p">,</span> <span class="s2">&quot;    Baz&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Bar&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Remove any trailing spaces from each line.</p>
+</li>
+<li><p class="first">Concatenate each line together, separated by LF.</p>
+<p>This step produces the following result (&quot;|&quot; is used to represent the
+left margin):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>|Foo
+|    Baz
+|
+|
+|Bar
+|
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="significant-trailing-line">
+<h4>2.6.3.2. Significant trailing line<a class="headerlink" href="#significant-trailing-line" title="Permalink to this headline">¶</a></h4>
+<p>The last line of text block content is used when determining the common
+whitespace prefix.</p>
+<p>Consider the following example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    Foo</span>
+<span class="s2">        Baz</span>
+<span class="s2">    Bar</span>
+<span class="s2">&quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+<p>Because the closing delimiter is at the margin and left of the rest of the
+content, the common whitespace prefix is 0 characters, resulting in the
+following equivalent string:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;    Foo\n        Baz\n    Bar\n&quot;</span>)
+</pre></div>
+</div>
+<p>If the closing delimiter is moved to the right of the content, then it has
+no bearing on the common whitespace prefix. The common whitespace prefix in
+the following example is visualized using &quot;.&quot; to represent spaces:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">....Foo</span>
+<span class="s2">....    Baz</span>
+<span class="s2">....Bar</span>
+<span class="s2">        &quot;&quot;&quot;</span>)
+</pre></div>
+</div>
+<p>Because lines are trimmed when they are added to the result, the above example
+is equivalent to the following:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@documentation</span>(<span class="s2">&quot;Foo\n    Baz\nBar\n&quot;</span>)
+</pre></div>
+</div>
+</div>
+<div class="section" id="escapes-in-text-blocks">
+<h4>2.6.3.3. Escapes in text blocks<a class="headerlink" href="#escapes-in-text-blocks" title="Permalink to this headline">¶</a></h4>
+<p>Text blocks support all of the <a class="reference internal" href="#string-escape-characters"><span class="std std-ref">string escape characters</span></a>
+of other strings. The use of three double quotes allows unescaped double quotes
+(&quot;) to appear in text blocks. The following text block is interpreted as
+<code class="docutils literal notranslate"><span class="pre">&quot;hello!&quot;</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&quot;</span><span class="vc">hello</span><span class="err">!</span><span class="s2">&quot;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Three quotes can appear in a text block without being treated as the closing
+delimiter as long as one of the quotes are escaped. The following text block
+is interpreted as <code class="docutils literal notranslate"><span class="pre">foo</span> <span class="pre">&quot;&quot;&quot;\nbaz</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">foo \&quot;&quot;&quot;</span>
+<span class="s2">baz&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>String escapes are interpreted <strong>after</strong> <a class="reference internal" href="#incidental-whitespace"><span class="std std-ref">incidental whitespace</span></a>
+is removed from a text block. The following example uses &quot;.&quot; to denote spaces:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">..&lt;div&gt;</span>
+<span class="s2">....&lt;p&gt;Hi\\n....bar&lt;/p&gt;</span>
+<span class="s2">..&lt;/div&gt;</span>
+<span class="s2">..&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Because string escapes are expanded after incidental whitespace is removed, it
+is interpreted as:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;
+..&lt;p&gt;Hi
+....bar&lt;/p&gt;
+&lt;/div&gt;
+</pre></div>
+</div>
+<p>New lines in the text block can be escaped. This allows for long, single-line
+strings to be broken into multiple lines in the IDL. The following example
+is interpreted as <code class="docutils literal notranslate"><span class="pre">Foo</span> <span class="pre">Baz</span> <span class="pre">Bam</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Foo \</span>
+<span class="s2">Baz \</span>
+<span class="s2">Bam&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Escaped new lines can be intermixed with unescaped newlines. The following
+example is interpreted as <code class="docutils literal notranslate"><span class="pre">Foo\nBaz</span> <span class="pre">Bam</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Foo</span>
+<span class="s2">Baz \</span>
+<span class="s2">Bam&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="intro.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 1. Introduction</a>
+                        
+                        <a href="shapes.html" title="next chapter" class="next-page clearfix">3. Shapes →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="intro.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="shapes.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">2. Smithy IDL lexical structure</a><ul>
+<li><a class="reference internal" href="#smithy-idl-abnf">2.1. Smithy IDL ABNF</a></li>
+<li><a class="reference internal" href="#lexical-notes">2.2. Lexical notes</a><ul>
+<li><a class="reference internal" href="#comments">2.2.1. Comments</a><ul>
+<li><a class="reference internal" href="#documentation-comment">2.2.1.1. Documentation comment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#control-statement">2.3. Control statement</a><ul>
+<li><a class="reference internal" href="#version-statement">2.3.1. Version statement</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#shape-id">2.4. Shape ID</a><ul>
+<li><a class="reference internal" href="#shape-id-abnf">2.4.1. Shape ID ABNF</a></li>
+<li><a class="reference internal" href="#shape-id-member-names">2.4.2. Shape ID member names</a></li>
+<li><a class="reference internal" href="#shape-id-conflicts">2.4.3. Shape ID conflicts</a></li>
+<li><a class="reference internal" href="#syntactic-shape-ids-in-the-idl">2.4.4. Syntactic shape IDs in the IDL</a><ul>
+<li><a class="reference internal" href="#relative-shape-id-resolution">2.4.4.1. Relative shape ID resolution</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#node-values">2.5. Node values</a></li>
+<li><a class="reference internal" href="#string-values">2.6. String values</a><ul>
+<li><a class="reference internal" href="#string-escape-characters">2.6.1. String escape characters</a></li>
+<li><a class="reference internal" href="#unquoted-strings">2.6.2. Unquoted strings</a></li>
+<li><a class="reference internal" href="#text-blocks">2.6.3. Text blocks</a><ul>
+<li><a class="reference internal" href="#incidental-white-space-removal">2.6.3.1. Incidental white space removal</a></li>
+<li><a class="reference internal" href="#significant-trailing-line">2.6.3.2. Significant trailing line</a></li>
+<li><a class="reference internal" href="#escapes-in-text-blocks">2.6.3.3. Escapes in text blocks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>

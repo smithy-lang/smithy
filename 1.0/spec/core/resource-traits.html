@@ -1,0 +1,438 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>12. Resource traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/tabs.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/segment.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/menu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/sphinx_tabs/semantic-ui-2.2.10/tab.min.js"></script>
+    <script type="text/javascript">
+        function _scroll(subjectId) {
+            var subjectElement = $(subjectId);
+            var actualSubjectHeight = subjectElement.height();
+            var startingPosition = subjectElement[0].getBoundingClientRect().top;
+            return function() {
+                var availableHeight = $(window).height() - startingPosition;
+                // Subtract the scroll position to account for sticky movement.
+                availableHeight += Math.min($(window).scrollTop(), 40);
+                var cappedHeight = Math.min(actualSubjectHeight, availableHeight);
+                if (subjectElement.css("height") !== cappedHeight) {
+                    subjectElement.css("height", cappedHeight);
+                }
+            };
+        }
+
+        // Scroll and resize the the columns when scrolled.
+        $(function() {
+            var rightScroll = _scroll("#right-column > .column-body");
+            var scrollFn = function() {
+                rightScroll.call(this, arguments);
+            };
+            scrollFn();
+            $(window).scroll(scrollFn);
+            $(window).resize(scrollFn);
+        });
+
+        // Scroll spy to change highlighted navigation element.
+        $(function() {
+            var section = document.querySelectorAll(".section");
+            var sections = {};
+            var i = 0;
+            Array.prototype.forEach.call(section, function(e) {
+                sections[e.id] = e.offsetTop;
+            });
+            var scrollSpy = function() {
+                var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop;
+                for (i in sections) {
+                    if (sections[i] <= scrollPosition) {
+                        $('#right-column .current').removeClass('current');
+                        $("#right-column a[href='#" + i + "']").addClass('current');
+                    }
+                }
+            };
+            $(window).scroll(scrollSpy);
+            scrollSpy();
+        });
+    </script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="13. Streaming Traits" href="stream-traits.html" />
+    <link rel="prev" title="11. Behavior traits" href="behavior-traits.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span><span class="version-text">1.0</span>
+                </a>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article id="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="resource-traits">
+<h1>12. Resource traits<a class="headerlink" href="#resource-traits" title="Permalink to this headline">¶</a></h1>
+<p>Resource traits augment resources and resource operation semantics.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#noreplace-trait" id="id5"><code class="docutils literal notranslate"><span class="pre">noReplace</span></code> trait</a></li>
+<li><a class="reference internal" href="#references-trait" id="id6"><code class="docutils literal notranslate"><span class="pre">references</span></code> trait</a></li>
+<li><a class="reference internal" href="#resourceidentifier-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">resourceIdentifier</span></code> trait</a></li>
+</ul>
+</div>
+<div class="section" id="noreplace-trait">
+<span id="id1"></span><h2>12.1. <code class="docutils literal notranslate"><span class="pre">noReplace</span></code> trait<a class="headerlink" href="#noreplace-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that the <a class="reference internal" href="shapes.html#put-lifecycle"><span class="std std-ref">put lifecycle</span></a> operation of a
+resource can only be used to create a resource and cannot replace an
+existing resource.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">resource:test(-[put]-&gt;)</span></code></p>
+<p class="last"><em>A resource with a put lifecycle operation</em></p>
+</dd>
+<dt>Value type</dt>
+<dd>Annotation trait.</dd>
+</dl>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">put</span></code> lifecycle operations are assumed to both create and
+replace an existing resource. Some APIs, however, do not support this
+behavior and require that a resource is first deleted before it can be
+replaced.</p>
+<p>For example, this is the behavior of Amazon DynamoDB's <a class="reference external" href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_CreateTable.html">CreateTable</a>
+operation. The &quot;Table&quot; resource identifier, &quot;TableName&quot;, is provided by the
+client, making it appropriate to model in Smithy as a <code class="docutils literal notranslate"><span class="pre">put</span></code> lifecycle
+operation. However, <code class="docutils literal notranslate"><span class="pre">UpdateTable</span></code> is used to update a table and attempting
+to call <code class="docutils literal notranslate"><span class="pre">CreateTable</span></code> on a table that already exists will return an error.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+<div class="item sphinx-data-tab-SlNPTg== docutils container">
+<div class="docutils container">
+JSON</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@noReplace</span>
+<span class="kd">resource</span><span class="nc"> Table</span> {
+    <span class="nl">put:</span> <span class="vc">CreateTable</span>
+}
+
+<span class="nd">@idempotent</span>
+<span class="kd">operation</span><span class="nc"> CreateTable</span> {
+    <span class="c">// ...</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-SlNPTg== docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Table&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;put&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#CreateTable&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#noReplace&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#CreateTable&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#idempotent&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="references-trait">
+<span id="id2"></span><h2>12.2. <code class="docutils literal notranslate"><span class="pre">references</span></code> trait<a class="headerlink" href="#references-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd><p class="first">Defines the <a class="reference internal" href="shapes.html#resource"><span class="std std-ref">Resource</span></a> shapes that are referenced by a string shape
+or a structure shape and the members of the structure that provide values
+for the <a class="reference internal" href="shapes.html#resource-identifiers"><span class="std std-ref">identifiers</span></a> of the resource.</p>
+<p class="last">References provide the ability for tooling to <em>dereference</em> a resource
+reference at runtime. For example, if a client receives a response from a
+service that contains references, the client could provide functionality
+to resolve references by name, allowing the end-user to invoke operations
+on a specific referenced resource.</p>
+</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">:is(structure,</span> <span class="pre">string)</span></code></p>
+<p class="last"><em>Any structure or string</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">Reference</span></code> structures</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">references</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">Reference</span></code> structures that contain
+the following members:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="10%" />
+<col width="23%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>service</td>
+<td><a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">Shape ID</span></a></td>
+<td>The absolute shape ID of the service to which the resource is bound.
+As with the <code class="docutils literal notranslate"><span class="pre">resource</span></code> property, the provided shape ID is not
+required to be resolvable at build time.</td>
+</tr>
+<tr class="row-odd"><td>resource</td>
+<td><a class="reference internal" href="lexical-structure.html#shape-id"><span class="std std-ref">Shape ID</span></a></td>
+<td><p class="first"><strong>Required</strong>. The absolute shape ID of the referenced resource.</p>
+<p class="last">The provided shape ID is not required to be part of the model;
+references may refer to resources in other models without directly
+depending on the external package in which the resource is defined.
+The reference will not be resolvable at build time but MAY be resolvable
+at runtime if the tool has loaded more than one model.</p>
+</td>
+</tr>
+<tr class="row-even"><td>ids</td>
+<td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">string&gt;</span></code></td>
+<td><p class="first">Defines a mapping of each resource identifier name to a structure
+member name that provides its value. Each key in the map MUST refer
+to one of the identifier names in the identifiers property of the
+resource, and each value in the map MUST refer to a valid structure
+member name that targets a string shape.</p>
+<ul class="last simple">
+<li>This property MUST be omitted if the <code class="docutils literal notranslate"><span class="pre">references</span></code> trait is applied
+to a string shape.</li>
+<li>This property MAY be omitted if the identifiers of the resource
+can be <a class="reference internal" href="#implicit-ids"><span class="std std-ref">mapped implicitly</span></a>.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td>rel</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines the semantics of the relationship. The <code class="docutils literal notranslate"><span class="pre">rel</span></code> property SHOULD
+contain a link relation as defined in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc5988.html#section-4"><strong>RFC 5988#section-4</strong></a> (i.e.,
+this value SHOULD contain either a <a class="reference external" href="https://www.iana.org/assignments/link-relations/link-relations.xhtml">standard link relation</a> or URI).</td>
+</tr>
+</tbody>
+</table>
+<p>References MAY NOT be resolvable at runtime in the following circumstances:</p>
+<ol class="arabic simple">
+<li>The members that make up the <code class="docutils literal notranslate"><span class="pre">ids</span></code> are not present in a structure at
+runtime (e.g., a member is not marked as <a class="reference internal" href="constraint-traits.html#required-trait"><span class="std std-ref">required trait</span></a>)</li>
+<li>The targeted resource and/or service shape is not part of the model</li>
+<li>The reference is bound to a specific service that is unknown to the tool</li>
+</ol>
+<p>The following example defines several references:</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@references</span>([
+    {<span class="nl">resource:</span> <span class="vc">Forecast</span>},
+    {<span class="nl">resource:</span> <span class="vc">ShapeName</span>},
+    {<span class="nl">resource:</span> <span class="vc">Meteorologist</span>},
+    {
+        <span class="nl">resource:</span> <span class="vc">com.foo.baz#Object</span>,
+        <span class="nl">service:</span> <span class="vc">com.foo.baz#Service</span>,
+        <span class="nl">ids:</span> {<span class="nl">bucket:</span> <span class="s2">&quot;bucketName&quot;</span>, <span class="nl">object:</span> <span class="s2">&quot;objectKey&quot;</span>},
+    ])
+<span class="kd">structure</span><span class="nc"> ForecastInformation</span> {
+    <span class="nl">someId:</span> <span class="vc">SomeShapeIdentifier</span>,
+
+    <span class="nd">@required</span>
+    <span class="nl">forecastId:</span> <span class="vc">ForecastId</span>,
+
+    <span class="nd">@required</span>
+    <span class="nl">meteorologistId:</span> <span class="vc">MeteorologistId</span>,
+
+    <span class="nd">@required</span>
+    <span class="nl">otherData:</span> <span class="vc">SomeOtherShape</span>,
+
+    <span class="nd">@required</span>
+    <span class="nl">bucketName:</span> <span class="vc">BucketName</span>,
+
+    <span class="nd">@required</span>
+    <span class="nl">objectKey:</span> <span class="vc">ObjectKey</span>,
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="implicit-ids">
+<span id="id3"></span><h3>12.2.1. Implicit ids<a class="headerlink" href="#implicit-ids" title="Permalink to this headline">¶</a></h3>
+<p>The &quot;ids&quot; property of a reference MAY be omitted in any of the following
+conditions:</p>
+<ol class="arabic simple">
+<li>The shape that the references trait is applied to is a string shape.</li>
+<li>The shape that the references trait is applied to is a structure shape
+and all of the identifier names of the resource have corresponding member
+names that target string shapes.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="resourceidentifier-trait">
+<span id="id4"></span><h2>12.3. <code class="docutils literal notranslate"><span class="pre">resourceIdentifier</span></code> trait<a class="headerlink" href="#resourceidentifier-trait" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary</dt>
+<dd>Indicates that the targeted structure member provides an identifier for a
+resource.</dd>
+<dt>Trait selector</dt>
+<dd><p class="first"><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">:test(member[trait|required]</span> <span class="pre">&gt;</span> <span class="pre">string)</span></code></p>
+<p class="last"><em>Any required member of a structure that targets a string</em></p>
+</dd>
+<dt>Value type</dt>
+<dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">resourceIdentifier</span></code> trait may only be used on members of structures that
+serve as input shapes for operations bound to resources. The string value
+provided must correspond to the name of an identifier for said resource. The
+trait is not required when the name of the input structure member is an exact
+match for the name of the resource identifier.</p>
+<div class="sphinx-tabs docutils container">
+<div class="ui top attached tabular menu sphinx-menu docutils container">
+<div class="active item sphinx-data-tab-U21pdGh5 docutils container">
+<div class="docutils container">
+Smithy</div>
+</div>
+</div>
+<div class="ui bottom attached sphinx-tab tab segment code-tab sphinx-data-tab-U21pdGh5 active docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource</span><span class="nc"> File</span> {
+    <span class="nl">identifiers:</span> {
+        <span class="nl">directory:</span> <span class="s2">&quot;String&quot;</span>,
+        <span class="nl">fileName:</span> <span class="s2">&quot;String&quot;</span>,
+    },
+    <span class="nl">read:</span> <span class="vc">GetFile</span>,
+}
+
+<span class="nd">@readonly</span>
+<span class="kd">operation</span><span class="nc"> GetFile</span> {
+    <span class="nl">input:</span> <span class="vc">GetFileInput</span>,
+    <span class="nl">output:</span> <span class="vc">GetFileOutput</span>,
+    <span class="nl">errors:</span> [<span class="vc">NoSuchResource</span>]
+}
+
+<span class="kd">structure</span><span class="nc"> GetFileInput</span> {
+    <span class="nd">@required</span>
+    <span class="nl">directory:</span> <span class="vc">String</span>,
+
+    <span class="c">// resourceIdentifier is used because the input member name</span>
+    <span class="c">// does not match the resource identifier name</span>
+    <span class="nd">@resourceIdentifier</span>(<span class="s2">&quot;fileName&quot;</span>)
+    <span class="nd">@required</span>
+    <span class="nl">name:</span> <span class="vc">String</span>,
+}
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+                    
+                    <section class="relations">
+                        
+                        <a href="behavior-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← 11. Behavior traits</a>
+                        
+                        <a href="stream-traits.html" title="next chapter" class="next-page clearfix">13. Streaming Traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="behavior-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">Prev</a>
+                                
+                                <a href="stream-traits.html" title="next chapter" class="next-page clearfix">Next</a>
+                            </section>
+                            
+                            <ul>
+<li><a class="reference internal" href="#">12. Resource traits</a><ul>
+<li><a class="reference internal" href="#noreplace-trait">12.1. <code class="docutils literal notranslate"><span class="pre">noReplace</span></code> trait</a></li>
+<li><a class="reference internal" href="#references-trait">12.2. <code class="docutils literal notranslate"><span class="pre">references</span></code> trait</a><ul>
+<li><a class="reference internal" href="#implicit-ids">12.2.1. Implicit ids</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resourceidentifier-trait">12.3. <code class="docutils literal notranslate"><span class="pre">resourceIdentifier</span></code> trait</a></li>
+</ul>
+</li>
+</ul>
+
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2020, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
+</html>
