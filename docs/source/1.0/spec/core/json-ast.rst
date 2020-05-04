@@ -64,7 +64,7 @@ a ``type`` property to define the shape type or ``apply``.
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MyString": {
                 "type": "string"
@@ -94,7 +94,7 @@ The following example defines a string shape with a documentation trait.
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MyString": {
                 "type": "string",
@@ -116,7 +116,7 @@ example defines a shape for each simple type:
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#Blob": {
                 "type": "blob"
@@ -173,7 +173,7 @@ The following example defines a list with a string member:
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
@@ -189,7 +189,7 @@ The following example defines a set with a string member:
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MySet": {
                 "type": "set",
@@ -228,7 +228,7 @@ The following example defines a list shape and its member.
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
@@ -264,7 +264,7 @@ list of a service shape.
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#Service": {
                 "type": "service",
@@ -294,7 +294,7 @@ The following example defines a map of strings to numbers:
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#IntegerMap": {
                 "type": "map",
@@ -329,7 +329,7 @@ member:
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MyStructure": {
                 "type": "structure",
@@ -353,7 +353,7 @@ The following example defines a union:
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MyUnion": {
                 "type": "union",
@@ -408,7 +408,7 @@ shapes defined in JSON support the same properties as the Smithy IDL.
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MyService": {
                 "type": "service",
@@ -492,7 +492,7 @@ shapes defined in JSON support the same properties as the Smithy IDL.
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#Thing": {
                 "type": "resource",
@@ -577,7 +577,7 @@ The following example defines an operation, its input, output, and errors:
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#MyOperation": {
                 "type": "operation",
@@ -630,7 +630,7 @@ The ``apply`` type allows only the ``traits`` property.
 .. code-block:: json
 
     {
-        "smithy": "1.0.0",
+        "smithy": "1.0",
         "shapes": {
             "smithy.example#Struct": {
                 "type": "structure",

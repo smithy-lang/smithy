@@ -37,7 +37,7 @@ to ``MyString``:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -89,7 +89,7 @@ The following example applies the :ref:`documentation-trait` and
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "apply",
@@ -209,7 +209,7 @@ The following example defines an annotation trait named ``foo``:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#foo": {
                     "type": "structure",
@@ -237,7 +237,7 @@ The following applications of the ``foo`` annotation trait are equivalent:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyString1": {
                     "type": "string",
@@ -276,7 +276,7 @@ after adding a member to the ``foo`` trait:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#foo": {
                     "type": "structure",
@@ -352,7 +352,7 @@ The following example defines a trait named ``myTraitName`` in the
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#myTraitName": {
                     "type": "structure",
@@ -387,7 +387,7 @@ the current namespace:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -487,7 +487,7 @@ The following example defines two custom traits: ``beta`` and
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#beta": {
                     "type": "apply",

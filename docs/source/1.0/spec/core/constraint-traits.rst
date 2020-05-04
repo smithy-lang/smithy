@@ -116,7 +116,7 @@ The following example defines an enum of valid string values for ``MyString``.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -217,7 +217,7 @@ contain a valid shape ID that targets an integer shape in the model.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#integerRef": {
                     "type": "string",
@@ -260,7 +260,7 @@ Given the following model,
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#InvalidShape1": {
                     "type": "string",
@@ -364,7 +364,7 @@ blob         The size of the blob in bytes
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -409,7 +409,7 @@ languages.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -489,7 +489,7 @@ of the targeted numeric shape to which it is applied.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyInt": {
                     "type": "integer",
@@ -539,7 +539,7 @@ in a response.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -583,7 +583,7 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyList": {
                     "type": "list",

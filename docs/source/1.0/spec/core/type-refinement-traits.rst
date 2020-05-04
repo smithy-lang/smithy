@@ -51,7 +51,7 @@ is wrapped in an `Option type`_.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#BoxedInteger": {
                     "type": "integer",

@@ -68,7 +68,7 @@ and the hypothetical ``fooExample`` authentication scheme.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#WeatherService": {
                     "type": "service",
@@ -323,7 +323,7 @@ The following example defines two operations:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#AuthenticatedService": {
                     "type": "service",

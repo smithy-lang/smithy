@@ -10,7 +10,7 @@ the end of this entry.
 
 #### General
 
-* The model format version has beeen updated to `1.0.0` and contains several updates: [BC] ([#357](https://github.com/awslabs/smithy/pull/357), [#381](https://github.com/awslabs/smithy/pull/381))
+* The model format version has beeen updated to `1.0` and contains several updates: [BC] ([#357](https://github.com/awslabs/smithy/pull/357), [#381](https://github.com/awslabs/smithy/pull/381))
   * The JSON AST representation requires describing annotation traits as `{}` instead of `true`.
   * Annotation traits in the IDL are now provided as `@foo` or `@foo()`. Explicit `@foo(true)` and
   `@foo(null)` support was removed.
@@ -23,6 +23,9 @@ from Smithy `Node`s. ([#301](https://github.com/awslabs/smithy/pull/301))
 * Added expect* methods to the base `Shape`. ([#314](https://github.com/awslabs/smithy/pull/314))
 * Added `@SmithyUnstableApi`, `@SmithyInternalApi` and `@SmithyGenerated` Java annotations. ([#297](https://github.com/awslabs/smithy/pull/297))
 * `NodeValidationVisitor`s are marked as internal and/or unstable. ([#375](https://github.com/awslabs/smithy/pull/375))
+* The `$version` control statement can now be set to only a major version (e.g., "1") to indicate that an
+  implementation must support a version >= 1 and < 2. `$version` can now be set to `major.minor` (e.g., "1.1")
+  to indicate that an implementation must support a version >= 1.1 and < 2.
 
 #### Trait updates
 
@@ -321,7 +324,7 @@ complete redesign. Many direct links to components of the documentation will hav
 
 * Fix collection and gradle doc issues ([#145](https://github.com/awslabs/smithy/pull/145))
 * Make `AuthorizerDefinition` definition private ([#146](https://github.com/awslabs/smithy/pull/146))
-* Fix put handling on `ResourceShape` ([#158](https://github.com/awslabs/smithy/pull/158)) 
+* Fix put handling on `ResourceShape` ([#158](https://github.com/awslabs/smithy/pull/158))
 * Fix parse error when `apply` is at eof ([#159](https://github.com/awslabs/smithy/pull/159))
 * Prevent `list`/`set` member from targeting container ([#162](https://github.com/awslabs/smithy/pull/162))
 * Allow model assembling from symlink model files / directory ([#163](https://github.com/awslabs/smithy/pull/163))

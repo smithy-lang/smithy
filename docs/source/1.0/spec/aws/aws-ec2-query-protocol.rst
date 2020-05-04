@@ -43,7 +43,7 @@ Value type
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
@@ -90,7 +90,7 @@ Given the following structure definition:
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyStruct": {
                     "type": "structure",

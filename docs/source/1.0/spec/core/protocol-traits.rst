@@ -77,7 +77,7 @@ The following example defines a service that supports both the hypothetical
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#WeatherService": {
                     "type": "service",
@@ -160,7 +160,7 @@ Given the following structure definition,
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",

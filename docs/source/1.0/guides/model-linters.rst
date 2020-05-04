@@ -79,7 +79,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata validators = [
         {name: "AbbreviationName"}
@@ -121,7 +121,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata validators = [
         {name: "CamelCase"}
@@ -183,7 +183,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata validators = [{
         id: "FooReservedWords"
@@ -338,7 +338,7 @@ Example:
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata validators = [{
         name: "StandardOperationVerb",
@@ -672,7 +672,7 @@ example warns each time the word "meow" appears in documentation:
 
 .. code-block:: smithy
 
-    $version: "1.0.0"
+    $version: "1.0"
 
     metadata validators = [
         {
@@ -691,7 +691,7 @@ example warns each time the word "meow" appears in documentation:
 
     .. code-block:: smithy
 
-        $version: "1.0.0"
+        $version: "1.0"
 
         metadata validators = [
             {

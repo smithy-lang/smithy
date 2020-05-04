@@ -55,7 +55,7 @@ to call ``CreateTable`` on a table that already exists will return an error.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#Table": {
                     "type": "resource",

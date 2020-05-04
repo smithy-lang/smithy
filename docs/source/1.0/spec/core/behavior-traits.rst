@@ -266,7 +266,7 @@ explicitly on the operation.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#GetFoos": {
                     "type": "operation",
@@ -351,7 +351,7 @@ settings from a service.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#Example": {
                     "type": "service",
@@ -434,7 +434,7 @@ wrapper where the output token and items are referenced by paths.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#GetFoos": {
                     "type": "operation",

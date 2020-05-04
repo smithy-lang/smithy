@@ -77,7 +77,7 @@ The following example defines a service that uses ``aws.protocols#restXml``.
     .. code-tab:: json
 
         {
-            "smithy": "1.0.0",
+            "smithy": "1.0",
             "shapes": {
                 "smithy.example#MyService": {
                     "type": "service",
