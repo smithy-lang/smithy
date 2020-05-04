@@ -1,5 +1,5 @@
 // This file defines test cases that test HTTP query string bindings.
-// See: https://awslabs.github.io/smithy/spec/http.html#httpquery-trait
+// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpquery-trait
 
 $version: "1.0.0"
 

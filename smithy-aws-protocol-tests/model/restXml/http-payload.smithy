@@ -1,5 +1,5 @@
 // This file defines test cases that test HTTP payload bindings.
-// See: https://awslabs.github.io/smithy/spec/http.html#httppayload-trait
+// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httppayload-trait
 
 $version: "1.0.0"
 
