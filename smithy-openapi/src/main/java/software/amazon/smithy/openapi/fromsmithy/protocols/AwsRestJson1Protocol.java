@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.aws.traits.protocols.RestJson1Trait;
 import software.amazon.smithy.jsonschema.Schema;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.HttpBinding;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -38,7 +39,7 @@ public final class AwsRestJson1Protocol extends AbstractRestProtocol<RestJson1Tr
     }
 
     @Override
-    public void updateDefaultSettings(OpenApiConfig config) {
+    public void updateDefaultSettings(Model model, OpenApiConfig config) {
         config.setUseJsonName(true);
         config.setDefaultTimestampFormat(TimestampFormatTrait.Format.EPOCH_SECONDS);
     }

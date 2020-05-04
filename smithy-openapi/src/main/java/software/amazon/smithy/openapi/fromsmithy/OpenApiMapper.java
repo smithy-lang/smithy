@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -64,9 +65,10 @@ public interface OpenApiMapper {
      * is possible, but might be too late in the process for those
      * configuration changes to take effect.
      *
+     * @param model Model being converted.
      * @param config Configuration object to modify.
      */
-    default void updateDefaultSettings(OpenApiConfig config) {}
+    default void updateDefaultSettings(Model model, OpenApiConfig config) {}
 
     /**
      * Updates an operation.
@@ -244,9 +246,9 @@ public interface OpenApiMapper {
 
         return new OpenApiMapper() {
             @Override
-            public void updateDefaultSettings(OpenApiConfig config) {
+            public void updateDefaultSettings(Model model, OpenApiConfig config) {
                 for (OpenApiMapper plugin : sorted) {
-                    plugin.updateDefaultSettings(config);
+                    plugin.updateDefaultSettings(model, config);
                 }
             }
 

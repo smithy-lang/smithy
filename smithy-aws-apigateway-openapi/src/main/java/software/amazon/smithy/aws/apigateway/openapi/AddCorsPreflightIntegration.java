@@ -131,7 +131,7 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
             SecuritySchemeConverter<T> converter
     ) {
         T t = context.getService().expectTrait(converter.getAuthSchemeType());
-        return converter.getAuthRequestHeaders(t);
+        return converter.getAuthRequestHeaders(context, t);
     }
 
     private static Collection<String> findAllHeaders(String path, PathItem pathItem) {

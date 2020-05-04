@@ -49,7 +49,7 @@ public final class HttpApiKeyAuthConverter implements SecuritySchemeConverter<Ht
     }
 
     @Override
-    public Set<String> getAuthRequestHeaders(HttpApiKeyAuthTrait trait) {
+    public Set<String> getAuthRequestHeaders(Context<? extends Trait> context, HttpApiKeyAuthTrait trait) {
         return SetUtils.of(trait.getName());
     }
 }

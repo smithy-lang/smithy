@@ -66,6 +66,6 @@ enum CorsHeader {
             SecuritySchemeConverter<T> converter
     ) {
         T t = context.getService().expectTrait(converter.getAuthSchemeType());
-        return converter.getAuthResponseHeaders(t);
+        return converter.getAuthResponseHeaders(context, t);
     }
 }

@@ -17,6 +17,7 @@ package software.amazon.smithy.openapi.fromsmithy;
 
 import java.util.Optional;
 import java.util.Set;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -51,9 +52,10 @@ public interface OpenApiProtocol<T extends Trait> {
      * Sets protocol-specific default values on the OpenAPI configuration
      * object.
      *
+     * @param model Model being converted.
      * @param config Configuration object to modify.
      */
-    default void updateDefaultSettings(OpenApiConfig config) {
+    default void updateDefaultSettings(Model model, OpenApiConfig config) {
     }
 
     /**

@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.List;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.openapi.OpenApiConfig;
 
 /**
@@ -28,7 +29,7 @@ final class AddDefaultConfigSettings implements ApiGatewayMapper {
     }
 
     @Override
-    public void updateDefaultSettings(OpenApiConfig config) {
+    public void updateDefaultSettings(Model model, OpenApiConfig config) {
         config.setAlphanumericOnlyRefs(true);
     }
 }

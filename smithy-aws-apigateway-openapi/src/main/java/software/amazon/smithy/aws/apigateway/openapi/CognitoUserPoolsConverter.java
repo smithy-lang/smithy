@@ -61,7 +61,7 @@ final class CognitoUserPoolsConverter implements SecuritySchemeConverter<Cognito
     }
 
     @Override
-    public Set<String> getAuthRequestHeaders(CognitoUserPoolsTrait trait) {
+    public Set<String> getAuthRequestHeaders(Context<? extends Trait> context, CognitoUserPoolsTrait trait) {
         return REQUEST_HEADERS;
     }
 }
