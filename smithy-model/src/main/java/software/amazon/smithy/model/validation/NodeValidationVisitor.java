@@ -15,13 +15,13 @@
 
 package software.amazon.smithy.model.validation;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.knowledge.BoxIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeType;
@@ -52,19 +52,10 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.validation.node.BlobLengthPlugin;
-import software.amazon.smithy.model.validation.node.CollectionLengthPlugin;
-import software.amazon.smithy.model.validation.node.IdRefPlugin;
-import software.amazon.smithy.model.validation.node.MapLengthPlugin;
 import software.amazon.smithy.model.validation.node.NodeValidatorPlugin;
-import software.amazon.smithy.model.validation.node.PatternTraitPlugin;
-import software.amazon.smithy.model.validation.node.RangeTraitPlugin;
-import software.amazon.smithy.model.validation.node.StringEnumPlugin;
-import software.amazon.smithy.model.validation.node.StringLengthPlugin;
 import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Validates {@link Node} values provided for {@link Shape} definitions.
@@ -78,12 +69,13 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 public final class NodeValidationVisitor implements ShapeVisitor<List<ValidationEvent>> {
 
+    private static final List<NodeValidatorPlugin> BUILTIN = NodeValidatorPlugin.getBuiltins();
+
     private final String eventId;
     private final Node value;
     private final Model model;
     private final String context;
     private final ShapeId eventShapeId;
-    private final List<NodeValidatorPlugin> plugins;
     private final TimestampValidationStrategy timestampValidationStrategy;
     private final boolean allowBoxedNull;
 
@@ -95,18 +87,6 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         this.eventShapeId = builder.eventShapeId;
         this.timestampValidationStrategy = builder.timestampValidationStrategy;
         this.allowBoxedNull = builder.allowBoxedNull;
-
-        plugins = Arrays.asList(
-                new BlobLengthPlugin(),
-                new CollectionLengthPlugin(),
-                new IdRefPlugin(),
-                new MapLengthPlugin(),
-                new PatternTraitPlugin(),
-                new RangeTraitPlugin(),
-                new StringEnumPlugin(),
-                new StringLengthPlugin(),
-                timestampValidationStrategy
-        );
     }
 
     public static Builder builder() {
@@ -168,9 +148,9 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         return value.asNumberNode()
                 .map(number -> {
                     if (!number.isNaturalNumber()) {
-                        return ListUtils.of(event(
-                                shape.getType() + " shapes must not have floating point values, but found `"
-                                + number.getValue() + "` provided for `" + shape.getId() + "`"));
+                        return ListUtils.of(event(String.format(
+                                "%s shapes must not have floating point values, but found `%s` provided for `%s`",
+                                shape.getType(), number.getValue(), shape.getId())));
                     }
 
                     Long numberValue = number.getValue().longValue();
@@ -273,19 +253,21 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                     object.getMembers().forEach((keyNode, value) -> {
                         String key = keyNode.getValue();
                         if (!members.containsKey(key)) {
-                            events.add(event("Invalid structure member `" + key + "` found for `"
-                                             + shape.getId() + "`", Severity.WARNING));
+                            String message = String.format(
+                                    "Invalid structure member `%s` found for `%s`", key, shape.getId());
+                            events.add(event(message, Severity.WARNING));
                         } else {
                             events.addAll(withNode(key, value).memberShape(members.get(key)));
                         }
                     });
+
                     members.forEach((memberName, member) -> {
                         if (member.isRequired()
                                 && !object.getMember(memberName).isPresent()
                                 // Ignore missing required primitive members because they have a default value.
                                 && !isMemberPrimitive(member)) {
-                            events.add(event("Missing required structure member `" + memberName + "` for `"
-                                             + shape.getId() + "`"));
+                            events.add(event(String.format(
+                                    "Missing required structure member `%s` for `%s`", memberName, shape.getId())));
                         }
                     });
                     return events;
@@ -309,8 +291,8 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                         object.getMembers().forEach((keyNode, value) -> {
                             String key = keyNode.getValue();
                             if (!members.containsKey(key)) {
-                                events.add(event(
-                                        "Invalid union member `" + key + "` found for `" + shape.getId() + "`"));
+                                events.add(event(String.format(
+                                        "Invalid union member `%s` found for `%s`", key, shape.getId())));
                             } else {
                                 events.addAll(withNode(key, value).memberShape(members.get(key)));
                             }
@@ -373,20 +355,32 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     private ValidationEvent event(String message, Severity severity) {
+        return event(message, severity, value.getSourceLocation());
+    }
+
+    private ValidationEvent event(String message, Severity severity, SourceLocation sourceLocation) {
         return ValidationEvent.builder()
                 .eventId(eventId)
                 .severity(severity)
-                .sourceLocation(value.getSourceLocation())
+                .sourceLocation(sourceLocation)
                 .shapeId(eventShapeId)
                 .message(context.isEmpty() ? message : context + ": " + message)
                 .build();
     }
 
     private List<ValidationEvent> applyPlugins(Shape shape) {
-        return plugins.stream()
-                .flatMap(plugin -> plugin.apply(shape, value, model).stream())
-                .map(this::event)
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        timestampValidationStrategy.apply(shape, value, model, (location, message) -> {
+            events.add(event(message, Severity.ERROR, location.getSourceLocation()));
+        });
+
+        for (NodeValidatorPlugin plugin : BUILTIN) {
+            plugin.apply(shape, value, model, (location, message) -> {
+                events.add(event(message, Severity.ERROR, location.getSourceLocation()));
+            });
+        }
+
+        return events;
     }
 
     /**
@@ -470,7 +464,6 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          * @param timestampValidationStrategy Timestamp validation strategy.
          * @return Returns the builder.
          */
-        @SmithyUnstableApi
         public Builder timestampValidationStrategy(TimestampValidationStrategy timestampValidationStrategy) {
             this.timestampValidationStrategy = timestampValidationStrategy;
             return this;

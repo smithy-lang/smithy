@@ -16,9 +16,12 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.util.List;
+import java.util.function.BiConsumer;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -28,13 +31,29 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  */
 @SmithyInternalApi
 public interface NodeValidatorPlugin {
+
     /**
      * Applies the plugin to the given shape, node value, and model.
      *
      * @param shape Shape being checked.
      * @param value Value being evaluated.
      * @param model Model to traverse.
-     * @return Returns any validation messages that were encountered.
+     * @param emitter Consumer to notify of validation event locations and messages.
      */
-    List<String> apply(Shape shape, Node value, Model model);
+    void apply(Shape shape, Node value, Model model, BiConsumer<FromSourceLocation, String> emitter);
+
+    /**
+     * @return Gets the built-in Node validation plugins.
+     */
+    static List<NodeValidatorPlugin> getBuiltins() {
+        return ListUtils.of(
+                new BlobLengthPlugin(),
+                new CollectionLengthPlugin(),
+                new IdRefPlugin(),
+                new MapLengthPlugin(),
+                new PatternTraitPlugin(),
+                new RangeTraitPlugin(),
+                new StringEnumPlugin(),
+                new StringLengthPlugin());
+    }
 }

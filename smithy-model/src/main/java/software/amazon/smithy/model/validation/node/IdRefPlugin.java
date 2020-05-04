@@ -15,7 +15,8 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.List;
+import java.util.function.BiConsumer;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.StringNode;
@@ -23,7 +24,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -32,30 +32,36 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * matching the selector.
  */
 @SmithyInternalApi
-public final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, IdRefTrait> {
+final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, IdRefTrait> {
 
-    public IdRefPlugin() {
+    IdRefPlugin() {
         super(StringShape.class, StringNode.class, IdRefTrait.class);
     }
 
     @Override
-    protected List<String> check(Shape shape, IdRefTrait trait, StringNode node, Model model) {
+    protected void check(
+            Shape shape,
+            IdRefTrait trait,
+            StringNode node,
+            Model model,
+            BiConsumer<FromSourceLocation, String> emitter
+    ) {
         try {
             ShapeId target = node.expectShapeId();
             Shape resolved = model.getShape(target).orElse(null);
 
             if (resolved == null) {
-                return trait.failWhenMissing()
-                       ? failWhenNoMatch(trait, String.format("Shape ID `%s` was not found in the model", target))
-                       : ListUtils.of();
-            } else if (matchesSelector(trait, resolved.getId(), model)) {
-                return ListUtils.of();
+                if (trait.failWhenMissing()) {
+                    failWhenNoMatch(node, trait, emitter, String.format(
+                            "Shape ID `%s` was not found in the model", target));
+                }
+            } else if (!matchesSelector(trait, resolved.getId(), model)) {
+                failWhenNoMatch(node, trait, emitter, String.format(
+                        "Shape ID `%s` does not match selector `%s`",
+                        resolved.getId(), trait.getSelector()));
             }
-
-            return failWhenNoMatch(trait, String.format(
-                    "Shape ID `%s` does not match selector `%s`", resolved.getId(), trait.getSelector()));
         } catch (SourceException e) {
-            return ListUtils.of(e.getMessage());
+            emitter.accept(node, e.getMessageWithoutLocation());
         }
     }
 
@@ -65,7 +71,12 @@ public final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, St
                 .anyMatch(shapeId -> shapeId.equals(needle));
     }
 
-    private List<String> failWhenNoMatch(IdRefTrait trait, String message) {
-        return ListUtils.of(trait.getErrorMessage().orElse(message));
+    private void failWhenNoMatch(
+            FromSourceLocation location,
+            IdRefTrait trait,
+            BiConsumer<FromSourceLocation, String> emitter,
+            String message
+    ) {
+        emitter.accept(location, trait.getErrorMessage().orElse(message));
     }
 }

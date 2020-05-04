@@ -16,8 +16,8 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.BiConsumer;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -29,28 +29,35 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * Validates length trait on blob shapes and members that target blob shapes.
  */
 @SmithyInternalApi
-public final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, StringNode, LengthTrait> {
-    public BlobLengthPlugin() {
+final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, StringNode, LengthTrait> {
+
+    BlobLengthPlugin() {
         super(BlobShape.class, StringNode.class, LengthTrait.class);
     }
 
     @Override
-    protected List<String> check(Shape shape, LengthTrait trait, StringNode node, Model model) {
+    protected void check(
+            Shape shape,
+            LengthTrait trait,
+            StringNode node,
+            Model model,
+            BiConsumer<FromSourceLocation, String> emitter
+    ) {
         String value = node.getValue();
-        List<String> messages = new ArrayList<>();
         int size = value.getBytes(Charset.forName("UTF-8")).length;
+
         trait.getMin().ifPresent(min -> {
             if (size < min) {
-                messages.add("Value provided for `" + shape.getId() + "` must have at least "
-                             + min + " bytes, but the provided value only has " + size + " bytes");
+                emitter.accept(node, "Value provided for `" + shape.getId() + "` must have at least "
+                                     + min + " bytes, but the provided value only has " + size + " bytes");
             }
         });
+
         trait.getMax().ifPresent(max -> {
             if (value.getBytes(Charset.forName("UTF-8")).length > max) {
-                messages.add("Value provided for `" + shape.getId() + "` must have no more than "
-                             + max + " bytes, but the provided value has " + size + " bytes");
+                emitter.accept(node, "Value provided for `" + shape.getId() + "` must have no more than "
+                                     + max + " bytes, but the provided value has " + size + " bytes");
             }
         });
-        return messages;
     }
 }
