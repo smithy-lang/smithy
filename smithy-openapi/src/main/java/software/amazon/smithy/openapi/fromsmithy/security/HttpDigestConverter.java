@@ -20,10 +20,12 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Applies Digest HTTP auth.
  */
+@SmithyInternalApi
 public final class HttpDigestConverter implements SecuritySchemeConverter<HttpDigestAuthTrait> {
     @Override
     public Class<HttpDigestAuthTrait> getAuthSchemeType() {

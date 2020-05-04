@@ -25,7 +25,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Creates a NOTE event when a trait definition is added.
  */
-public class AddedTraitDefinition extends AbstractDiffEvaluator {
+public final class AddedTraitDefinition extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.addedShapes()

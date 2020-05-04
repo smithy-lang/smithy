@@ -13,22 +13,14 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.aws.apigateway.openapi;
-
-import java.util.List;
-import software.amazon.smithy.openapi.OpenApiConfig;
-
 /**
- * API Gateway does not allow characters like "_".
+ * Smithy validators. All validator implementations in this package
+ * should be considered internal. They are subject to change and
+ * should not be used directly outside of the Smithy project. For
+ * example, some of these validators may get removed and replaced
+ * with mode-only validation.
  */
-final class AddDefaultConfigSettings implements ApiGatewayMapper {
-    @Override
-    public List<ApiGatewayConfig.ApiType> getApiTypes() {
-        return null;
-    }
+@SmithyInternalApi
+package software.amazon.smithy.model.validation.validators;
 
-    @Override
-    public void updateDefaultSettings(OpenApiConfig config) {
-        config.setAlphanumericOnlyRefs(true);
-    }
-}
+import software.amazon.smithy.utils.SmithyInternalApi;

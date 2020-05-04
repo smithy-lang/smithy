@@ -34,7 +34,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * Validates that an operation is only bound to once in an entire
  * service closure.
  */
-public class SingleOperationBindingValidator extends AbstractValidator {
+public final class SingleOperationBindingValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {

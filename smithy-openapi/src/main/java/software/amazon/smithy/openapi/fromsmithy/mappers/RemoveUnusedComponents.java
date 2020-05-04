@@ -36,6 +36,7 @@ import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.OperationObject;
 import software.amazon.smithy.openapi.model.PathItem;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Removes unused components from the OpenAPI model.
@@ -46,7 +47,8 @@ import software.amazon.smithy.utils.SetUtils;
  *
  * <p>TODO: This plugin currently only supports the removal of schemas and security schemes.
  */
-public class RemoveUnusedComponents implements OpenApiMapper {
+@SmithyInternalApi
+public final class RemoveUnusedComponents implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(RemoveUnusedComponents.class.getName());
 
     @Override

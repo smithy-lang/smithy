@@ -29,7 +29,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * target them.
  */
 @SmithyInternalApi
-public class CollectionLengthPlugin extends MemberAndShapeTraitPlugin<CollectionShape, ArrayNode, LengthTrait> {
+public final class CollectionLengthPlugin extends MemberAndShapeTraitPlugin<CollectionShape, ArrayNode, LengthTrait> {
     public CollectionLengthPlugin() {
         super(CollectionShape.class, ArrayNode.class, LengthTrait.class);
     }

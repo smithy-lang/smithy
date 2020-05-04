@@ -20,10 +20,12 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Uses the Bearer scheme of the Authentication header.
  */
+@SmithyInternalApi
 public final class HttpBearerConverter implements SecuritySchemeConverter<HttpBearerAuthTrait> {
     @Override
     public Class<HttpBearerAuthTrait> getAuthSchemeType() {

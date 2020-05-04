@@ -32,7 +32,7 @@ import software.amazon.smithy.utils.Pair;
  * Emits a NOTE when a new enum value is added, emits an ERROR when an
  * enum value is removed, and emits an ERROR when an enum name changes.
  */
-public class ChangedEnumTrait extends AbstractDiffEvaluator {
+public final class ChangedEnumTrait extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes()

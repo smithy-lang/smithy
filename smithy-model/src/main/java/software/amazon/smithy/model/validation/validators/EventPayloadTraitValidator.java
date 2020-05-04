@@ -36,7 +36,7 @@ import software.amazon.smithy.utils.FunctionalUtils;
  * <p>Only a single member can be marked with the eventPayload trait, and
  * this is validated using {@link ExclusiveStructureMemberTraitValidator}.
  */
-public class EventPayloadTraitValidator extends AbstractValidator {
+public final class EventPayloadTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         return model.shapes(StructureShape.class)

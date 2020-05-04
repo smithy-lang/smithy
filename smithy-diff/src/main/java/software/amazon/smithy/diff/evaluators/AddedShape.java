@@ -23,7 +23,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Creates a NOTE event when a shape is added.
  */
-public class AddedShape extends AbstractDiffEvaluator {
+public final class AddedShape extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.addedShapes()

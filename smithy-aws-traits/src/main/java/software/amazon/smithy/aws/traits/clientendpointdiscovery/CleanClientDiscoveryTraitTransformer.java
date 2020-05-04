@@ -30,11 +30,13 @@ import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.transform.ModelTransformerPlugin;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Removes the endpoint discovery trait from a service if the referenced operation or error are removed.
  */
-public class CleanClientDiscoveryTraitTransformer implements ModelTransformerPlugin {
+@SmithyInternalApi
+public final class CleanClientDiscoveryTraitTransformer implements ModelTransformerPlugin {
     @Override
     public Model onRemove(ModelTransformer transformer, Collection<Shape> shapes, Model model) {
         Set<ShapeId> removedOperations = shapes.stream()

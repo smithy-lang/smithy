@@ -43,7 +43,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * code generators where a list of itself or a list of maps of itself
  * is impossible to define.
  */
-public class ShapeRecursionValidator extends AbstractValidator {
+public final class ShapeRecursionValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {

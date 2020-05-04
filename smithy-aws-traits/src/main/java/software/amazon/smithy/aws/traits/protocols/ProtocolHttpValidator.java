@@ -24,11 +24,13 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Ensures that every entry in {@code eventStreamHttp} also appears in
  * the {@code http} property of a protocol trait.
  */
+@SmithyInternalApi
 public final class ProtocolHttpValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {

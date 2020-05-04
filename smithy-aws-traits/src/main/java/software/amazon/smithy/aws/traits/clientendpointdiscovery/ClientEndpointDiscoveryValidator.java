@@ -36,8 +36,10 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
-public class ClientEndpointDiscoveryValidator extends AbstractValidator {
+@SmithyInternalApi
+public final class ClientEndpointDiscoveryValidator extends AbstractValidator {
     private static final Set<String> VALID_INPUT_MEMBERS = SetUtils.of("Operation", "Identifiers");
 
     @Override

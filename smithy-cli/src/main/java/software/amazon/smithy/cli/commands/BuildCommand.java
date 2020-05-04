@@ -42,7 +42,9 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public final class BuildCommand implements Command {
     private static final Logger LOGGER = Logger.getLogger(BuildCommand.class.getName());
 

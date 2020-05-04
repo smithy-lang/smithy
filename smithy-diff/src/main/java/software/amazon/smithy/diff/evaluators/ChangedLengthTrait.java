@@ -23,7 +23,7 @@ import software.amazon.smithy.model.traits.LengthTrait;
  * Detects when the Length trait is made more restrictive by either
  * raising the min or lowering the max.
  */
-public class ChangedLengthTrait extends AbstractLengthAndRangeValidator<LengthTrait> {
+public final class ChangedLengthTrait extends AbstractLengthAndRangeValidator<LengthTrait> {
     @Override
     protected Class<LengthTrait> getTraitType() {
         return LengthTrait.class;

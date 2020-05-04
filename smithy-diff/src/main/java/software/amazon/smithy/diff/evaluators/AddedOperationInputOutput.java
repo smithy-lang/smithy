@@ -38,7 +38,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  *
  * <p>TODO: Also check for the addition of streaming and event streams.
  */
-public class AddedOperationInputOutput implements DiffEvaluator {
+public final class AddedOperationInputOutput implements DiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(OperationShape.class)

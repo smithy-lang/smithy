@@ -51,7 +51,7 @@ import software.amazon.smithy.model.validation.ValidationUtils;
  *     each operation is a valid RFC 3896 host.</li>
  * </ul>
  */
-public class HostLabelTraitValidator extends AbstractValidator {
+public final class HostLabelTraitValidator extends AbstractValidator {
     /**
      * Match the expanded template to be a valid RFC 3896 host.
      */

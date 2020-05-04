@@ -24,7 +24,9 @@ import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public final class ValidateCommand implements Command {
     @Override
     public String getName() {

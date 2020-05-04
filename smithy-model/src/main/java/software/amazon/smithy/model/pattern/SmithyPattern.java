@@ -63,7 +63,7 @@ public class SmithyPattern {
      *
      * @return All segments, in order, in an unmodifiable list.
      */
-    public List<Segment> getSegments() {
+    public final List<Segment> getSegments() {
         return Collections.unmodifiableList(segments);
     }
 
@@ -72,7 +72,7 @@ public class SmithyPattern {
      *
      * @return Label segments in an unmodifiable list.
      */
-    public List<Segment> getLabels() {
+    public final List<Segment> getLabels() {
         return Collections.unmodifiableList(
                 segments.stream().filter(Segment::isLabel).collect(Collectors.toList()));
     }
@@ -83,7 +83,7 @@ public class SmithyPattern {
      * @param name Name of the label to retrieve.
      * @return An optionally found label.
      */
-    public Optional<Segment> getLabel(String name) {
+    public final Optional<Segment> getLabel(String name) {
         String searchKey = name.toLowerCase(Locale.US);
         return segments.stream()
                        .filter(Segment::isLabel)
@@ -96,7 +96,7 @@ public class SmithyPattern {
      *
      * @return Returns the optionally found segment that is a greedy label.
      */
-    public Optional<Segment> getGreedyLabel() {
+    public final Optional<Segment> getGreedyLabel() {
         return segments.stream().filter(Segment::isGreedyLabel).findFirst();
     }
 

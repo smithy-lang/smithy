@@ -32,7 +32,7 @@ import software.amazon.smithy.utils.MapUtils;
  * Computes the API Gateway integration for each operation,
  * resource, and service shape in a model.
  */
-public class IntegrationTraitIndex implements KnowledgeIndex {
+public final class IntegrationTraitIndex implements KnowledgeIndex {
     private Map<ShapeId, Map<ShapeId, Trait>> traits = new HashMap<>();
 
     public IntegrationTraitIndex(Model model) {

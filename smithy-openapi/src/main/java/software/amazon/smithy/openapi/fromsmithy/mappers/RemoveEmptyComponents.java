@@ -22,12 +22,14 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Removes empty key-value pairs in the "components" of a model if empty, and
  * removes the "components" key-value pair of a model if it is empty.
  */
-public class RemoveEmptyComponents implements OpenApiMapper {
+@SmithyInternalApi
+public final class RemoveEmptyComponents implements OpenApiMapper {
     private static final String COMPONENTS = "components";
 
     @Override

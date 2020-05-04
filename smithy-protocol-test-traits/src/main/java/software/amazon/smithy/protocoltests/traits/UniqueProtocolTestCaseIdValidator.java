@@ -29,12 +29,14 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates that the "id" property of {@code smithy.test#httpRequestTests}
  * and {@code smithy.test#httpResponseTests} are unique across all test
  * cases.
  */
+@SmithyInternalApi
 public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
 
     @Override

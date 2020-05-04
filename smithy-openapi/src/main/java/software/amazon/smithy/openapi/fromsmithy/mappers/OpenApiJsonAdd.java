@@ -25,6 +25,7 @@ import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Adds JSON values into the generated OpenAPI model using a JSON Patch
@@ -34,6 +35,7 @@ import software.amazon.smithy.openapi.model.OpenApi;
  * <p>This mapper is applied using the contents of {@code openapi.jsonAdd}.
  * This is run after substitutions so it is unaffected by them.
  */
+@SmithyInternalApi
 public final class OpenApiJsonAdd implements OpenApiMapper {
 
     private static final Logger LOGGER = Logger.getLogger(OpenApiJsonAdd.class.getName());

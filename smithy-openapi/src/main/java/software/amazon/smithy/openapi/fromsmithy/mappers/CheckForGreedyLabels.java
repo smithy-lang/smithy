@@ -21,6 +21,7 @@ import software.amazon.smithy.openapi.OpenApiException;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Checks for greedy labels and fails/warns depending on configuration.
@@ -28,6 +29,7 @@ import software.amazon.smithy.openapi.model.OpenApi;
  * <p>Some vendors like API Gateway support greedy labels in the form of
  * "{foo+}", while others do not.
  */
+@SmithyInternalApi
 public class CheckForGreedyLabels implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(CheckForGreedyLabels.class.getName());
 

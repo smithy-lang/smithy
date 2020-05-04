@@ -30,7 +30,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * Ensures that no two shapes in the model have the same case-insensitive
  * shape ID.
  */
-public class ShapeIdConflictValidator extends AbstractValidator {
+public final class ShapeIdConflictValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         Map<String, List<Shape>> conflicts = model.shapes()

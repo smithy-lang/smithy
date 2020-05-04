@@ -22,6 +22,7 @@ import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Uses an HTTP header named X-Api-Key that contains an API key.
@@ -30,6 +31,7 @@ import software.amazon.smithy.utils.SetUtils;
  *
  * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-key-source.html">API Gateway documentation</a>
  */
+@SmithyInternalApi
 public final class HttpApiKeyAuthConverter implements SecuritySchemeConverter<HttpApiKeyAuthTrait> {
     @Override
     public Class<HttpApiKeyAuthTrait> getAuthSchemeType() {

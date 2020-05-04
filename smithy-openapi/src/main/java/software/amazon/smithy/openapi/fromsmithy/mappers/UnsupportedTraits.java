@@ -27,11 +27,13 @@ import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Logs each instance of traits and features that are known to not
  * work in OpenAPI.
  */
+@SmithyInternalApi
 public final class UnsupportedTraits implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(UnsupportedTraits.class.getName());
     private static final Set<String> TRAITS = SetUtils.of("endpoint", "hostLabel");

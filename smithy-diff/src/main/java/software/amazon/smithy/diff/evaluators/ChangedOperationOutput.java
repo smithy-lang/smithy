@@ -25,7 +25,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * Emits an ERROR when the output shape of an operation is changed to
  * another shape.
  */
-public class ChangedOperationOutput extends AbstractDiffEvaluator {
+public final class ChangedOperationOutput extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(OperationShape.class)

@@ -20,10 +20,12 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Applies Basic HTTP auth.
  */
+@SmithyInternalApi
 public final class HttpBasicConverter implements SecuritySchemeConverter<HttpBasicAuthTrait> {
     @Override
     public Class<HttpBasicAuthTrait> getAuthSchemeType() {

@@ -25,6 +25,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.ResolvedTopicIndex;
 import software.amazon.smithy.mqtt.traits.TopicBinding;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates that no two MQTT topics conflict.
@@ -32,6 +33,7 @@ import software.amazon.smithy.utils.Pair;
  * <p>MQTT topics are allowed to conflict if both topics target the
  * same shape.
  */
+@SmithyInternalApi
 public final class MqttTopicConflictValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {

@@ -24,11 +24,13 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Substitutes JSON string values using the mapping defined in
  * {@code openapi.substitutions}.
  */
+@SmithyInternalApi
 public final class OpenApiJsonSubstitutions implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(OpenApiJsonSubstitutions.class.getName());
 

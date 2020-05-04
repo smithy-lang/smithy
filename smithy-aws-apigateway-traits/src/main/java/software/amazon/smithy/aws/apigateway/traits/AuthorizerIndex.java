@@ -35,7 +35,7 @@ import software.amazon.smithy.model.shapes.ToShapeId;
  * operation has the authorizer trait, then the resource an operation
  * is bound to, then the service.
  */
-public class AuthorizerIndex implements KnowledgeIndex {
+public final class AuthorizerIndex implements KnowledgeIndex {
 
     private static final Selector SELECTOR = Selector.parse("operation");
 

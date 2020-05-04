@@ -23,10 +23,12 @@ import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.SecuritySchemeConverter;
 import software.amazon.smithy.openapi.model.SecurityScheme;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Adds AWS signature version in a way that"s compatible with AWS API Gateway.
  */
+@SmithyInternalApi
 public final class AwsV4Converter implements SecuritySchemeConverter<SigV4Trait> {
     private static final String AUTH_HEADER = "Authorization";
     private static final Set<String> REQUEST_HEADERS = SetUtils.of(

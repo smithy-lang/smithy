@@ -42,7 +42,7 @@ import software.amazon.smithy.utils.SetUtils;
 /**
  * Validates that neighbors target resolvable shapes of the correct type.
  */
-public class TargetValidator extends AbstractValidator {
+public final class TargetValidator extends AbstractValidator {
 
     private static final Set<ShapeType> INVALID_MEMBER_TARGETS = SetUtils.of(
             ShapeType.SERVICE, ShapeType.RESOURCE, ShapeType.OPERATION, ShapeType.MEMBER);

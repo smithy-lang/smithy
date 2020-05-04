@@ -34,7 +34,7 @@ import software.amazon.smithy.utils.Pair;
 /**
  * Ensures that range traits are valid.
  */
-public class RangeTraitValidator extends AbstractValidator {
+public final class RangeTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {

@@ -54,7 +54,7 @@ import software.amazon.smithy.utils.Pair;
  * detected for an operation or resource are emitted as an ERROR, and all
  * other forbidden conflicts are emitted as DANGER.
  */
-public class ServiceValidator extends AbstractValidator {
+public final class ServiceValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {

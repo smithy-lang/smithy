@@ -26,7 +26,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.Pair;
 
-public class LengthTraitValidator extends AbstractValidator {
+public final class LengthTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         return model.shapes()

@@ -35,7 +35,7 @@ import software.amazon.smithy.model.validation.ValidationUtils;
 /**
  * Validates traits that can only be applied to a single structure member.
  */
-public class ExclusiveStructureMemberTraitValidator extends AbstractValidator {
+public final class ExclusiveStructureMemberTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {

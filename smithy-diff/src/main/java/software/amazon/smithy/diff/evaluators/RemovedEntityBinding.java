@@ -34,7 +34,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * removed, and a "RemovedResourceBinding" eventId is used when a
  * resource is removed.
  */
-public class RemovedEntityBinding extends AbstractDiffEvaluator {
+public final class RemovedEntityBinding extends AbstractDiffEvaluator {
     private static final String REMOVED_RESOURCE = "RemovedResourceBinding";
     private static final String REMOVED_OPERATION = "RemovedOperationBinding";
 

@@ -25,7 +25,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Creates a DANGER event when metadata is removed.
  */
-public class RemovedMetadata extends AbstractDiffEvaluator {
+public final class RemovedMetadata extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.removedMetadata()

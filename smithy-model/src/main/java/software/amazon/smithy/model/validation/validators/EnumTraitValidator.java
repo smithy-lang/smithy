@@ -37,7 +37,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * a name. All enum values and names must be unique across the list of
  * definitions.
  */
-public class EnumTraitValidator extends AbstractValidator {
+public final class EnumTraitValidator extends AbstractValidator {
     private static final Pattern RECOMMENDED_NAME_PATTERN = Pattern.compile("^[A-Z]+[A-Z_0-9]*$");
 
     @Override

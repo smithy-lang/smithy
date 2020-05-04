@@ -34,6 +34,7 @@ import software.amazon.smithy.mqtt.traits.PublishTrait;
 import software.amazon.smithy.mqtt.traits.SubscribeTrait;
 import software.amazon.smithy.mqtt.traits.Topic;
 import software.amazon.smithy.mqtt.traits.TopicLabelTrait;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates that labels are correct for MQTT topics on
@@ -45,6 +46,7 @@ import software.amazon.smithy.mqtt.traits.TopicLabelTrait;
  *     <li>The input must not contain extraneous labels.</li>
  * </ul>
  */
+@SmithyInternalApi
 public class MqttTopicLabelValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
