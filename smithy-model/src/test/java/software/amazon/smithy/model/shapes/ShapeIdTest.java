@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.shapes;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -285,5 +287,18 @@ public class ShapeIdTest {
                 {ShapeId.fromParts("ns.foo", "n", "a"), ShapeId.fromParts("ns.foo", "n", "a"), true},
                 {ShapeId.fromParts("ns.foo", "n", "a"), ShapeId.fromParts("ns.foo", "n", "c"), false},
         });
+    }
+
+    @Test
+    public void replacesNamespace() {
+        ShapeId id = ShapeId.from("foo.baz#Bar$baz");
+
+        assertThat(id.withNamespace("foo.baz"), equalTo(id));
+        assertThat(id.withNamespace("foo.bam").toString(), equalTo("foo.bam#Bar$baz"));
+    }
+
+    @Test
+    public void validatesNamespacesWhenReplaced() {
+        Assertions.assertThrows(ShapeIdSyntaxException.class, () -> ShapeId.from("foo#Baz").withNamespace("!"));
     }
 }

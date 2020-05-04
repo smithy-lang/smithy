@@ -440,7 +440,7 @@ final class LoaderVisitor {
             // First, resolve to a shape in the current namespace if one exists.
             if (!hasDefinedShape(resolver.expectedId)) {
                 // Next resolve to a prelude shape if one exists and is public.
-                ShapeId preludeId = ShapeId.fromParts(Prelude.NAMESPACE, resolver.expectedId.asRelativeReference());
+                ShapeId preludeId = resolver.expectedId.withNamespace(Prelude.NAMESPACE);
                 if (Prelude.isPublicPreludeShape(preludeId)) {
                     resolver.consumer.accept(preludeId);
                     continue;

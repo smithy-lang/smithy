@@ -86,6 +86,11 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
             return false;
         }
 
+        // Shortcut for prelude namespaces.
+        if (namespace.equals(Prelude.NAMESPACE)) {
+            return true;
+        }
+
         boolean start = true;
         for (int position = 0; position < namespace.length(); position++) {
             char c = namespace.charAt(position);
@@ -297,6 +302,23 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      */
     public String asRelativeReference() {
         return member == null ? name : name + "$" + member;
+    }
+
+    /**
+     * Creates a shape ID that uses a different namespace than the current ID.
+     *
+     * @param namespace Namespace to use.
+     * @return Returns the shape ID with the changed namespace.
+     * @throws ShapeIdSyntaxException if the namespace is invalid.
+     */
+    public ShapeId withNamespace(String namespace) {
+        if (this.namespace.equals(namespace)) {
+            return this;
+        } else if (!isValidNamespace(namespace)) {
+            throw new ShapeIdSyntaxException("Invalid shape ID: " + namespace);
+        } else {
+            return new ShapeId(namespace, name, member);
+        }
     }
 
     /**
