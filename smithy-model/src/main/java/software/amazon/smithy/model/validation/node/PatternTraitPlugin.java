@@ -15,32 +15,35 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.List;
+import java.util.function.BiConsumer;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.PatternTrait;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates the pattern trait on string shapes or members that target them.
  */
-@SmithyInternalApi
-public final class PatternTraitPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, PatternTrait> {
-    public PatternTraitPlugin() {
+final class PatternTraitPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNode, PatternTrait> {
+
+    PatternTraitPlugin() {
         super(StringShape.class, StringNode.class, PatternTrait.class);
     }
 
     @Override
-    protected List<String> check(Shape shape, PatternTrait trait, StringNode node, Model model) {
+    protected void check(
+            Shape shape,
+            PatternTrait trait,
+            StringNode node,
+            Model model,
+            BiConsumer<FromSourceLocation, String> emitter
+    ) {
         if (!trait.getPattern().matcher(node.getValue()).find()) {
-            return ListUtils.of(String.format(
+            emitter.accept(node, String.format(
                     "String value provided for `%s` must match regular expression: %s",
                     shape.getId(), trait.getPattern().pattern()));
         }
-
-        return ListUtils.of();
     }
 }

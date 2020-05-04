@@ -15,8 +15,8 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.BiConsumer;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.shapes.CollectionShape;
@@ -29,28 +29,34 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * target them.
  */
 @SmithyInternalApi
-public final class CollectionLengthPlugin extends MemberAndShapeTraitPlugin<CollectionShape, ArrayNode, LengthTrait> {
-    public CollectionLengthPlugin() {
+final class CollectionLengthPlugin extends MemberAndShapeTraitPlugin<CollectionShape, ArrayNode, LengthTrait> {
+
+    CollectionLengthPlugin() {
         super(CollectionShape.class, ArrayNode.class, LengthTrait.class);
     }
 
     @Override
-    protected List<String> check(Shape shape, LengthTrait trait, ArrayNode node, Model model) {
-        List<String> messages = new ArrayList<>();
+    protected void check(
+            Shape shape,
+            LengthTrait trait,
+            ArrayNode node,
+            Model model,
+            BiConsumer<FromSourceLocation, String> emitter
+    ) {
         trait.getMin().ifPresent(min -> {
             if (node.size() < min) {
-                messages.add(String.format(
+                emitter.accept(node, String.format(
                         "Value provided for `%s` must have at least %d elements, but the provided value only "
                         + "has %d elements", shape.getId(), min, node.size()));
             }
         });
+
         trait.getMax().ifPresent(max -> {
             if (node.size() > max) {
-                messages.add(String.format(
+                emitter.accept(node, String.format(
                         "Value provided for `%s` must have no more than %d elements, but the provided value "
                         + "has %d elements", shape.getId(), max, node.size()));
             }
         });
-        return messages;
     }
 }

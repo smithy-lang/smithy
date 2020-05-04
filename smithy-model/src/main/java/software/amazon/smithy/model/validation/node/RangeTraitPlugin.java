@@ -16,43 +16,48 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.BiConsumer;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.RangeTrait;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates the range trait on number shapes or members that target them.
  */
-@SmithyInternalApi
-public final class RangeTraitPlugin extends MemberAndShapeTraitPlugin<NumberShape, NumberNode, RangeTrait> {
-    public RangeTraitPlugin() {
+final class RangeTraitPlugin extends MemberAndShapeTraitPlugin<NumberShape, NumberNode, RangeTrait> {
+
+    RangeTraitPlugin() {
         super(NumberShape.class, NumberNode.class, RangeTrait.class);
     }
 
     @Override
-    protected List<String> check(Shape shape, RangeTrait trait, NumberNode node, Model model) {
-        List<String> messages = new ArrayList<>();
+    protected void check(
+            Shape shape,
+            RangeTrait trait,
+            NumberNode node,
+            Model model,
+            BiConsumer<FromSourceLocation, String> emitter
+    ) {
         Number number = node.getValue();
         BigDecimal decimal = new BigDecimal(number.toString());
+
         trait.getMin().ifPresent(min -> {
             if (decimal.compareTo(new BigDecimal(min.toString())) < 0) {
-                messages.add(String.format(
+                emitter.accept(node, String.format(
                         "Value provided for `%s` must be greater than or equal to %s, but found %s",
                         shape.getId(), min.toString(), number));
             }
         });
+
         trait.getMax().ifPresent(max -> {
             if (decimal.compareTo(new BigDecimal(max.toString())) > 0) {
-                messages.add(String.format(
+                emitter.accept(node, String.format(
                         "Value provided for `%s` must be less than or equal to %s, but found %s",
                         shape.getId(), max.toString(), number));
             }
         });
-        return messages;
     }
 }
