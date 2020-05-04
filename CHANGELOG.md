@@ -27,11 +27,11 @@ from Smithy `Node`s. ([#301](https://github.com/awslabs/smithy/pull/301))
 #### Trait updates
 
 * Individual protocols are now defined as individual traits that are annotated with
-[the `protocolDefinition` trait.](https://awslabs.github.io/smithy/spec/core/protocol-traits.html#protocoldefinition-trait) [BC] ([#273](https://github.com/awslabs/smithy/pull/273), [#280](https://github.com/awslabs/smithy/pull/280), [#379](https://github.com/awslabs/smithy/pull/379), [#390](https://github.com/awslabs/smithy/pull/390))
-  * Previously listed [AWS protocols now have trait implementations.](https://awslabs.github.io/smithy/spec/aws/index.html#aws-protocols)
+[the `protocolDefinition` trait.](https://awslabs.github.io/smithy/1.0/spec/core/protocol-traits.html#protocoldefinition-trait) [BC] ([#273](https://github.com/awslabs/smithy/pull/273), [#280](https://github.com/awslabs/smithy/pull/280), [#379](https://github.com/awslabs/smithy/pull/379), [#390](https://github.com/awslabs/smithy/pull/390))
+  * Previously listed [AWS protocols now have trait implementations.](https://awslabs.github.io/smithy/1.0/spec/aws/index.html#aws-protocols)
 * Individual authentication schemes are now defined as individual traits that are annotated with
-[the `authDefinition` trait.](https://awslabs.github.io/smithy/spec/core/auth-traits.html#authdefinition-trait) [BC] ([#273](https://github.com/awslabs/smithy/pull/273), [#280](https://github.com/awslabs/smithy/pull/280))
-  * Previously listed [authentication schemes now have trait implementations.](https://awslabs.github.io/smithy/spec/core/auth-traits.html)
+[the `authDefinition` trait.](https://awslabs.github.io/smithy/1.0/spec/core/auth-traits.html#authdefinition-trait) [BC] ([#273](https://github.com/awslabs/smithy/pull/273), [#280](https://github.com/awslabs/smithy/pull/280))
+  * Previously listed [authentication schemes now have trait implementations.](https://awslabs.github.io/smithy/1.0/spec/core/auth-traits.html)
 * The `smithy.api#enum` trait is now a list of enum definitions instead of a map of string keys to
 enum definitions to improve clarity and encourage adding more properties to definitions. [BC] ([#326](https://github.com/awslabs/smithy/pull/326))
 * The `aws.api#streaming` trait is now applied to shapes directly instead of members. [BC] ([#340](https://github.com/awslabs/smithy/pull/340))
@@ -132,6 +132,8 @@ reference lookups. ([#287](https://github.com/awslabs/smithy/pull/287))
 
 ### Breaking changes
 
+All changes listed in this heading and any sub-headings are breaking changes. 
+
 * The `BooleanTrait` abstract class in `smithy-model` was renamed `AnnotationTrait`. ([#381](https://github.com/awslabs/smithy/pull/381))
 * The traits in the `aws.apigateway` namespace have moved from `smithy-aws-traits` to the
 `smithy-aws-apigateway-traits` package for more granular use. ([#322](https://github.com/awslabs/smithy/pull/322))
@@ -147,11 +149,13 @@ reference lookups. ([#287](https://github.com/awslabs/smithy/pull/287))
 `Pattern` class. ([#315](https://github.com/awslabs/smithy/pull/315))
 * Removed the `Triple` class from `smithy-utils`. ([#313](https://github.com/awslabs/smithy/pull/313))
 * Normalized class names for OpenAPI `SecurityScemeConverter` implementations. ([#291](https://github.com/awslabs/smithy/pull/291))
+* Removed alias functionality from `software.amazon.smithy.build.SmithyBuildPlugin` and
+  `software.amazon.smithy.build.ProjectionTransformer`. ([#409](https://github.com/awslabs/smithy/pull/409))
 * Removed `software.amazon.smithy.model.shapes.Shape#visitor` and
   `software.amazon.smithy.model.shapes.ShapeVisitor$Builder`. Use
-  `software.amazon.smithy.model.shapes.ShapeVisitor$Default` instead [BC].
+  `software.amazon.smithy.model.shapes.ShapeVisitor$Default` instead. ([#413](https://github.com/awslabs/smithy/pull/413))
 * `software.amazon.smithy.model.Model#getTraitDefinitions` and `getTraitShapes` were removed in favor of
-  `software.amazon.smithy.model.Model#getShapesWithTrait` [BC] ([#412](https://github.com/awslabs/smithy/pull/412))
+  `software.amazon.smithy.model.Model#getShapesWithTrait`. ([#412](https://github.com/awslabs/smithy/pull/412))
 
 #### Deprecation cleanup
 

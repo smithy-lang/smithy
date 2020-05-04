@@ -1,5 +1,5 @@
 // This file defines test cases that test httpPrefix headers.
-// See: https://awslabs.github.io/smithy/spec/http.html#httpprefixheaders-trait
+// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpprefixheaders-trait
 
 $version: "1.0.0"
 
@@ -12,7 +12,7 @@ use smithy.test#httpResponseTests
 /// This examples adds headers to the input of a request and response by prefix.
 @readonly
 @http(uri: "/HttpPrefixHeaders", method: "GET")
-@externalDocumentation("httpPrefixHeaders Trait": "https://awslabs.github.io/smithy/spec/http.html#httpprefixheaders-trait")
+@externalDocumentation("httpPrefixHeaders Trait": "https://awslabs.github.io/smithy/1.0/spec/http.html#httpprefixheaders-trait")
 operation HttpPrefixHeaders  {
     input: HttpPrefixHeadersInputOutput,
     output: HttpPrefixHeadersInputOutput
