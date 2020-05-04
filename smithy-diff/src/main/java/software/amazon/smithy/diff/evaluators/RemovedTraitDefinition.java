@@ -25,7 +25,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Creates an ERROR event when a trait definition is removed.
  */
-public class RemovedTraitDefinition extends AbstractDiffEvaluator {
+public final class RemovedTraitDefinition extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.removedShapes()

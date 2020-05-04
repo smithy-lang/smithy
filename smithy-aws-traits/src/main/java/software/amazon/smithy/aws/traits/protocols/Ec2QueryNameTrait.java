@@ -23,7 +23,7 @@ import software.amazon.smithy.model.traits.StringTrait;
  * Indicates the serialized name of a structure member when that structure is
  * serialized for the input of an EC2 operation.
  */
-public class Ec2QueryNameTrait extends StringTrait {
+public final class Ec2QueryNameTrait extends StringTrait {
     public static final ShapeId ID = ShapeId.from("aws.protocols#ec2QueryName");
 
     public Ec2QueryNameTrait(String value, SourceLocation sourceLocation) {

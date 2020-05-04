@@ -35,7 +35,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * to authentication traits applied to service shapes that enclose the
  * operation.
  */
-public class AuthTraitValidator extends AbstractValidator {
+public final class AuthTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();

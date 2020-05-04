@@ -26,6 +26,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.SubscribeTrait;
 import software.amazon.smithy.mqtt.traits.TopicLabelTrait;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates {@code @smithy.mqtt#subscribe} operation input.
@@ -34,6 +35,7 @@ import software.amazon.smithy.utils.OptionalUtils;
  *     <li>Subscribe operation input members must all have mqttLabel trait.</li>
  * </ul>
  */
+@SmithyInternalApi
 public final class MqttSubscribeInputValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {

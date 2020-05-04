@@ -33,7 +33,7 @@ import software.amazon.smithy.model.validation.ValidationUtils;
  * Validates that a resource is only bound to once in an entire
  * service closure.
  */
-public class SingleResourceBindingValidator extends AbstractValidator {
+public final class SingleResourceBindingValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {

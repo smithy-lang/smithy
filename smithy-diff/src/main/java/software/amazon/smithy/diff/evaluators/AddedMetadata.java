@@ -25,7 +25,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Creates a NOTE event when metadata is added.
  */
-public class AddedMetadata extends AbstractDiffEvaluator {
+public final class AddedMetadata extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.addedMetadata()

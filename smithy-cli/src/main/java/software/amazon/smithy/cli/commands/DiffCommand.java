@@ -30,7 +30,9 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+@SmithyInternalApi
 public final class DiffCommand implements Command {
     private static final Logger LOGGER = Logger.getLogger(DiffCommand.class.getName());
 

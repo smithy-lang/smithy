@@ -29,7 +29,7 @@ import software.amazon.smithy.model.Model;
  * transform needs this functionality. We could *maybe* address
  * this later if we really care that much.
  */
-public class Apply extends BackwardCompatHelper<Apply.Config> {
+public final class Apply extends BackwardCompatHelper<Apply.Config> {
 
     /**
      * {@code apply} configuration.

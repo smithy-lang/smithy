@@ -27,6 +27,7 @@ import software.amazon.smithy.mqtt.traits.PublishTrait;
 import software.amazon.smithy.mqtt.traits.SubscribeTrait;
 import software.amazon.smithy.mqtt.traits.TopicBinding;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates that {@code @smithy.mqtt#publish} and {@code subscribe}
@@ -35,6 +36,7 @@ import software.amazon.smithy.utils.OptionalUtils;
  * <p>Errors have to just come back in the event stream of the output.
  * This violation may be suppressed since it emits a DANGER event.
  */
+@SmithyInternalApi
 public final class MqttUnsupportedErrorsValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {

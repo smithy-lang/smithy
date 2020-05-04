@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Container for parsed command line arguments meant to be queried by Commands.
@@ -28,6 +29,7 @@ import java.util.Objects;
  * with a short name of "-h" and a long name of "--help" would be made
  * available in an {@code Arguments} instance as "--help" and not "-h".
  */
+@SmithyUnstableApi
 public final class Arguments {
     private final Map<String, List<String>> arguments;
     private final List<String> positionalArguments;

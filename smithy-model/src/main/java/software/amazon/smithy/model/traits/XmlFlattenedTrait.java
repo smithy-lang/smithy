@@ -19,7 +19,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-public class XmlFlattenedTrait extends AnnotationTrait {
+public final class XmlFlattenedTrait extends AnnotationTrait {
     public static final ShapeId ID = ShapeId.from("smithy.api#xmlFlattened");
 
     public XmlFlattenedTrait(ObjectNode node) {

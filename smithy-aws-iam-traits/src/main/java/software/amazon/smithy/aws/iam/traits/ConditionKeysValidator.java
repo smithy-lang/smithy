@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Ensures that condition keys referenced by operations bound within the
@@ -37,7 +38,8 @@ import software.amazon.smithy.model.validation.ValidationUtils;
  * <p>Condition keys that refer to global "aws:*" keys are allowed to not
  * be defined on the service.
  */
-public class ConditionKeysValidator extends AbstractValidator {
+@SmithyInternalApi
+public final class ConditionKeysValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         ConditionKeysIndex conditionIndex = model.getKnowledge(ConditionKeysIndex.class);

@@ -34,7 +34,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * added, and an "AddedResourceBinding" eventId is used when a
  * resource is added.
  */
-public class AddedEntityBinding extends AbstractDiffEvaluator {
+public final class AddedEntityBinding extends AbstractDiffEvaluator {
     private static final String ADDED_RESOURCE = "AddedResourceBinding";
     private static final String ADDED_OPERATION = "AddedOperationBinding";
 

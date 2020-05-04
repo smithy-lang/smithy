@@ -23,7 +23,7 @@ import software.amazon.smithy.model.traits.RangeTrait;
  * Detects when the Range trait is made more restrictive by either
  * raising the min or lowering the max.
  */
-public class ChangedRangeTrait extends AbstractLengthAndRangeValidator<RangeTrait> {
+public final class ChangedRangeTrait extends AbstractLengthAndRangeValidator<RangeTrait> {
     @Override
     protected Class<RangeTrait> getTraitType() {
         return RangeTrait.class;

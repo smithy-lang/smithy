@@ -15,9 +15,12 @@
 
 package software.amazon.smithy.cli;
 
+import software.amazon.smithy.utils.SmithyUnstableApi;
+
 /**
  * Provides an abstraction for printing with ANSI colors if it is supported.
  */
+@SmithyUnstableApi
 public enum Colors {
     BLACK(30),
     RED(31),

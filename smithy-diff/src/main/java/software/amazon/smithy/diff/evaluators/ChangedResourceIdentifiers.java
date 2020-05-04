@@ -24,7 +24,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Creates an ERROR event when the identifiers of a resource changes.
  */
-public class ChangedResourceIdentifiers extends AbstractDiffEvaluator {
+public final class ChangedResourceIdentifiers extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(ResourceShape.class)

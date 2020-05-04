@@ -26,11 +26,13 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.PublishTrait;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Publish operations must not contain event streams.
  */
-public class MqttPublishInputValidator extends AbstractValidator {
+@SmithyInternalApi
+public final class MqttPublishInputValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         return model.shapes(OperationShape.class)

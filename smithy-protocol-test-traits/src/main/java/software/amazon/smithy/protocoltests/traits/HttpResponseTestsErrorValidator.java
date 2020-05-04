@@ -18,10 +18,12 @@ package software.amazon.smithy.protocoltests.traits;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates that protocol tests on errors use the correct params.
  */
+@SmithyInternalApi
 public final class HttpResponseTestsErrorValidator extends HttpResponseTestsOutputValidator {
 
     public HttpResponseTestsErrorValidator() {

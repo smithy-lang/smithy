@@ -42,7 +42,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  *     <li>diff.error.const: It is an error to add, remove, or change a trait.</li>
  * </ul>
  */
-public class ModifiedTrait extends AbstractDiffEvaluator {
+public final class ModifiedTrait extends AbstractDiffEvaluator {
     /** Tags that indicates a breaking change if a trait is added. */
     public static final String DIFF_ERROR_ADD = "diff.error.add";
 

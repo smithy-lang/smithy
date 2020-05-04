@@ -24,7 +24,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Creates an ERROR event when a non-private shape is removed.
  */
-public class RemovedShape extends AbstractDiffEvaluator {
+public final class RemovedShape extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.removedShapes()

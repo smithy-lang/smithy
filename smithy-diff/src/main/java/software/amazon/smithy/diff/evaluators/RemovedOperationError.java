@@ -28,7 +28,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Emits a warning when an error is removed from an operation.
  */
-public class RemovedOperationError extends AbstractDiffEvaluator {
+public final class RemovedOperationError extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(OperationShape.class)

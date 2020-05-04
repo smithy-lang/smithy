@@ -24,7 +24,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Emits an ERROR when the output shape is removed from an operation.
  */
-public class RemovedOperationOutput extends AbstractDiffEvaluator {
+public final class RemovedOperationOutput extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(OperationShape.class)

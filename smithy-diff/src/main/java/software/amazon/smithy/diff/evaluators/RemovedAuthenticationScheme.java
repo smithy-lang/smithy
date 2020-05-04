@@ -23,7 +23,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * TODO: Implement evaluator to find removed authentication schemes.
  */
-public class RemovedAuthenticationScheme extends AbstractDiffEvaluator {
+public final class RemovedAuthenticationScheme extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return Collections.emptyList();

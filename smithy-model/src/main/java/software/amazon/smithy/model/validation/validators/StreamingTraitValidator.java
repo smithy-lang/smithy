@@ -43,7 +43,7 @@ import software.amazon.smithy.utils.Pair;
  *
  * <p>If the targeted shape is a union, ensures that all members are structures.
  */
-public class StreamingTraitValidator extends AbstractValidator {
+public final class StreamingTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = validateStreamingTargets(model);

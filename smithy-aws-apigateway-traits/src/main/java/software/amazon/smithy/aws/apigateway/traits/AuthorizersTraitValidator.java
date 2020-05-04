@@ -28,12 +28,14 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Each authorizer resolved within a service must use a scheme that
  * matches one of the schemes of the protocols of the service.
  */
-public class AuthorizersTraitValidator extends AbstractValidator {
+@SmithyInternalApi
+public final class AuthorizersTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         return model.shapes(ServiceShape.class)

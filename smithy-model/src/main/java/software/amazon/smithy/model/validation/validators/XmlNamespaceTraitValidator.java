@@ -36,7 +36,7 @@ import software.amazon.smithy.utils.OptionalUtils;
  *     <li>Validates that uri is valid.</li>
  * </ul>
  */
-public class XmlNamespaceTraitValidator extends AbstractValidator {
+public final class XmlNamespaceTraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {

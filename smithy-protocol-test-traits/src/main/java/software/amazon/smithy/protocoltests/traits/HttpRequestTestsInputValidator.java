@@ -19,11 +19,13 @@ import java.util.List;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Ensures that input parameters of protocol request test cases are
  * valid for the attached operation.
  */
+@SmithyInternalApi
 public final class HttpRequestTestsInputValidator extends ProtocolTestCaseValidator<HttpRequestTestsTrait> {
 
     public HttpRequestTestsInputValidator() {

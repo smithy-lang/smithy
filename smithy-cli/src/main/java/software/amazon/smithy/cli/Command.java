@@ -15,9 +15,12 @@
 
 package software.amazon.smithy.cli;
 
+import software.amazon.smithy.utils.SmithyUnstableApi;
+
 /**
  * Represents a CLI command.
  */
+@SmithyUnstableApi
 public interface Command {
     /**
      * Gets the name of the command.

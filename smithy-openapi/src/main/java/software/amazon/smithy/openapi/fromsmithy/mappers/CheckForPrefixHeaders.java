@@ -29,6 +29,7 @@ import software.amazon.smithy.openapi.fromsmithy.Context;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiMapper;
 import software.amazon.smithy.openapi.fromsmithy.OpenApiProtocol;
 import software.amazon.smithy.openapi.model.OpenApi;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Checks for prefix headers in the input or output of an operation,
@@ -38,6 +39,7 @@ import software.amazon.smithy.openapi.model.OpenApi;
  * <p>Custom values for this setting need to be handled in a
  * {@link OpenApiProtocol}.
  */
+@SmithyInternalApi
 public class CheckForPrefixHeaders implements OpenApiMapper {
     private static final Logger LOGGER = Logger.getLogger(CheckForGreedyLabels.class.getName());
 

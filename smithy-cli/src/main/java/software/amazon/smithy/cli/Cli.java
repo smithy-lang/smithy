@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * This class provides a very basic CLI abstraction.
@@ -54,6 +55,7 @@ import java.util.logging.SimpleFormatter;
  * CLI features are supported in case we want to migrate to a library or
  * event a different language.
  */
+@SmithyUnstableApi
 public final class Cli {
     public static final String HELP = "--help";
     public static final String NO_COLOR = "--no-color";

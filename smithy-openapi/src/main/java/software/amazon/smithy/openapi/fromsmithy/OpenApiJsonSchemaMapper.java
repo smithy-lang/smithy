@@ -44,7 +44,7 @@ import software.amazon.smithy.utils.SetUtils;
  * <p>Note: the properties and features added by this mapper can be removed using
  * {@link OpenApiConfig#setDisableFeatures}.
  */
-public class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
+public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
 
     /** See https://swagger.io/docs/specification/data-models/keywords/. */
     private static final Set<String> UNSUPPORTED_KEYWORD_DIRECTIVES = SetUtils.of(

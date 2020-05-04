@@ -25,7 +25,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Creates a WARNING event when metadata is changed.
  */
-public class ChangedMetadata extends AbstractDiffEvaluator {
+public final class ChangedMetadata extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedMetadata()

@@ -61,7 +61,7 @@ import software.amazon.smithy.model.traits.Trait;
  * operations where an event member is marked with the {@code eventPayload}
  * trait.
  */
-public class TopicBinding<T extends Trait> {
+public final class TopicBinding<T extends Trait> {
     private final OperationShape operation;
     private final T mqttTrait;
     private final Topic topic;

@@ -23,10 +23,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Defines the CLI argument parser of a {@link Command}.
  */
+@SmithyUnstableApi
 public final class Parser {
     private String positionalName;
     private String positionalHelp;

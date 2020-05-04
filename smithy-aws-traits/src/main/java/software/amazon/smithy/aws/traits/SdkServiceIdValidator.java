@@ -31,6 +31,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates that SDK service IDs are correct and do not match any
@@ -42,6 +43,7 @@ import software.amazon.smithy.utils.SetUtils;
  *     <li>Must not case-insensitively end with "Service", "Client", or "API".</li>
  * </ul>
  */
+@SmithyInternalApi
 public final class SdkServiceIdValidator extends AbstractValidator {
     private static final Set<String> COMPANY_NAMES = SetUtils.of("AWS", "Aws", "Amazon");
     private static final Set<String> DISALLOWED_ENDINGS = SetUtils.of("service", "client", "api");

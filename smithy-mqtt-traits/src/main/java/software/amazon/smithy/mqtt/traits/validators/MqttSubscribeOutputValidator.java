@@ -34,6 +34,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.mqtt.traits.SubscribeTrait;
 import software.amazon.smithy.utils.OptionalUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates {@code subscribe} operation output.
@@ -44,6 +45,7 @@ import software.amazon.smithy.utils.OptionalUtils;
  *     <li>Subscribe operations should not use eventHeader traits.</li>
  * </ul>
  */
+@SmithyInternalApi
 public final class MqttSubscribeOutputValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {

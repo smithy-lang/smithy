@@ -34,11 +34,13 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Ensures that all arn traits for a service are valid and that their templates
  * only reference valid resource identifiers.
  */
+@SmithyInternalApi
 public final class ArnTemplateValidator extends AbstractValidator {
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile("^[!|+]?[a-zA-Z_][a-zA-Z0-9_]*$");
 

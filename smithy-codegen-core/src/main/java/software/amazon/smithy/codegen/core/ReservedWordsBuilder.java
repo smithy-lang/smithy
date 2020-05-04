@@ -36,7 +36,7 @@ import software.amazon.smithy.utils.StringUtils;
  * Builds a {@link ReservedWords} implementation from explicit
  * mappings and from line-delimited files that contain reserved words.
  */
-public class ReservedWordsBuilder {
+public final class ReservedWordsBuilder {
 
     private final Map<String, String> mappings = new HashMap<>();
     private final List<ReservedWords> delegates = new ArrayList<>();

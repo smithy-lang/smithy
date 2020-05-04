@@ -34,7 +34,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * a simple shape of the same type with the same traits, then the emitted
  * event is a WARNING. All other changes are ERROR events.
  */
-public class ChangedMemberTarget extends AbstractDiffEvaluator {
+public final class ChangedMemberTarget extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(MemberShape.class)

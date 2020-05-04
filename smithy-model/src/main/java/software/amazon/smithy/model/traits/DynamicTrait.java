@@ -22,7 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * A general-purpose trait used to represent traits that are defined in the
  * model and have no concrete implementation.
  */
-public class DynamicTrait extends AbstractTrait {
+public final class DynamicTrait extends AbstractTrait {
 
     private final Node value;
 

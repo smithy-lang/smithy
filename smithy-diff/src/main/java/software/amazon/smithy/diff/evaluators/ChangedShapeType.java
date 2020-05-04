@@ -23,7 +23,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 /**
  * Creates an ERROR event when the type of a shape changes.
  */
-public class ChangedShapeType extends AbstractDiffEvaluator {
+public final class ChangedShapeType extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes()

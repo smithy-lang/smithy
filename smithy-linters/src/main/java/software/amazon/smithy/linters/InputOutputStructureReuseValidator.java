@@ -39,7 +39,7 @@ import software.amazon.smithy.utils.Pair;
  * Checks if a structure is used as both input and output and if the same
  * input or output structures are used across multiple operations.
  */
-public class InputOutputStructureReuseValidator extends AbstractValidator {
+public final class InputOutputStructureReuseValidator extends AbstractValidator {
 
     public static final class Provider extends ValidatorService.Provider {
         public Provider() {
