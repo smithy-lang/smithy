@@ -38,6 +38,6 @@ public class HttpApiKeyAuthConverterTest {
                 .in(HttpApiKeyAuthTrait.Location.HEADER)
                 .build();
 
-        assertThat(converter.getAuthRequestHeaders(trait), containsInAnyOrder("x-api-key"));
+        assertThat(converter.getAuthRequestHeaders(null, trait), containsInAnyOrder("x-api-key"));
     }
 }

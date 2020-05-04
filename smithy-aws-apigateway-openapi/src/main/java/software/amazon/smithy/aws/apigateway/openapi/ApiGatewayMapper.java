@@ -17,6 +17,7 @@ package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.List;
 import java.util.Map;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -93,9 +94,9 @@ public interface ApiGatewayMapper extends OpenApiMapper {
             }
 
             @Override
-            public void updateDefaultSettings(OpenApiConfig config) {
+            public void updateDefaultSettings(Model model, OpenApiConfig config) {
                 if (matchesApiType(config)) {
-                    delegate.updateDefaultSettings(config);
+                    delegate.updateDefaultSettings(model, config);
                 }
             }
 

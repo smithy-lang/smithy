@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -200,10 +200,10 @@ public final class OpenApiConverter {
         // because the JSON schema machinery uses configuration settings like
         // `alphanumericOnlyRefs` when it is created.
         OpenApiMapper composedMapper = createComposedMapper(extensions, mappers);
-        composedMapper.updateDefaultSettings(config);
+        composedMapper.updateDefaultSettings(model, config);
 
         // Update with protocol default values.
-        openApiProtocol.updateDefaultSettings(config);
+        openApiProtocol.updateDefaultSettings(model, config);
         jsonSchemaConverterBuilder.config(config);
 
         // Only convert shapes in the closure of the targeted service.

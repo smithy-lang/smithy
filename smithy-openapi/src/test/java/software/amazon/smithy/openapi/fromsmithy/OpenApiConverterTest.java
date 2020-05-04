@@ -340,7 +340,7 @@ public class OpenApiConverterTest {
         OpenApiConverter.create()
                 .addOpenApiMapper(new OpenApiMapper() {
                     @Override
-                    public void updateDefaultSettings(OpenApiConfig config) {
+                    public void updateDefaultSettings(Model model, OpenApiConfig config) {
                         config.putExtension("hello", "goodbye");
                     }
                 })
