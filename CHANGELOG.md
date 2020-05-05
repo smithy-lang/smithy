@@ -1,6 +1,6 @@
 # Smithy Changelog
 
-## 1.0.0 (2020-??-??)
+## 1.0.0 (2020-05-04)
 
 ***Note***: Changes marked with "[BC]" are breaking changes more accurately described in the
 specific section. A list of further intended breaking changes have a specific section near
