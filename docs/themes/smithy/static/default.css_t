@@ -35,7 +35,7 @@ blockquote {
   color: #777;
   border-left: 0.5rem solid #eee;
   font-family: {{ theme_code_font }};
-  font-size: 1rem;
+  font-size: 1em;
 }
 
 .width-wrapper  {
@@ -120,7 +120,7 @@ h7 {
 .headline {
   font-weight: bold;
   color: #fff;
-  font-size: 2.3rem;
+  font-size: 2.1em;
 }
 
 @media (max-width: 600px) {
@@ -165,7 +165,11 @@ h7 {
   justify-content: top;
   width: 50%;
   padding: 0 20px;
-  margin-top: 2rem;
+  margin-top: 2em;
+}
+
+#splash .splash-column {
+  margin-top: 0;
 }
 
 .splash-column h2,
@@ -173,7 +177,7 @@ h7 {
   color: {{ theme_color }};
   font-weight: bold;
   padding: 0;
-  font-size: 1.5rem;
+  font-size: 1.5em;
   text-align: left;
   border: none;
 }
@@ -182,7 +186,7 @@ h7 {
   text-align: center;
   color: {{ text_color }};
   margin: 2rem 0;
-  font-size: 2rem;
+  font-size: 2em;
 }
 
 .splash-column h2 {
@@ -387,7 +391,7 @@ header {
 }
 
 footer {
-  padding: 2rem;
+  padding: 2em;
   background-color: {{ theme_secondary_background }};
   color: #fefefe;
 }
@@ -490,14 +494,17 @@ code {
 }
 
 pre {
-  padding: 16px;
+  padding: 1em;
   overflow: auto;
   line-height: 1.45;
   background-color: #2f2d2a;
   border-radius: 3px;
-  font-size: 1rem;
+  font-size: 1em;
   color: #A9B7C6;
   overflow-x: auto
+  white-space: pre;
+  word-break: normal;
+  word-wrap: normal;
 }
 
 code, pre {
@@ -733,7 +740,7 @@ table.highlighttable pre {
 }
 
 .admonition-title {
-  margin: 0px 0 1rem;
+  margin: 0px 0 1em;
   padding: 0;
   font-size: 1em;
   line-height: 1.1;
@@ -838,13 +845,13 @@ dt:target, .highlighted {
 }
 
 .next-previous {
-  font-size: 0.8rem;
+  font-size: 0.8em;
   text-align: right;
 }
 
 #right-column .next-previous a {
   display: inline;
-  padding-right: 2rem;
+  padding-right: 2em;
 }
 
 /* -------- toctree --------- */
@@ -854,18 +861,18 @@ dt:target, .highlighted {
 }
 
 .large-toctree .toctree-l1 {
-  margin-bottom: 2rem;
+  margin-bottom: 2em;
   list-style-type: none;
 }
 
 .large-toctree .toctree-l1:not(:last-child) {
   border-bottom: 1px solid #ccc;
-  padding-bottom: 2rem;
+  padding-bottom: 2em;
 }
 
 .large-toctree .toctree-l1 > a {
   font-weight: bold;
-  padding-bottom: 1rem;
+  padding-bottom: 1em;
   display: block;
 }
 
@@ -955,6 +962,10 @@ dt:target, .highlighted {
     display: block;
     width: 100%;
     padding: 0;
+  }
+
+  body, pre {
+    font-size: 0.9em;
   }
 }
 
