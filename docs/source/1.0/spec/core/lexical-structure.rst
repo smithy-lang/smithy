@@ -64,7 +64,7 @@ followed by any character. A newline terminates a comment.
 
 .. productionlist:: smithy
     line_comment        :"//" *(`start_comment` *`not_newline`)
-    start_comment       :%x09 / %x20-%x46 / %x48-10FFFF ; Any character except "/" and newline
+    start_comment       :%x09 / %x20-46 / %x48-10FFFF ; Any character except "/" and newline
     not_newline         :%x09 / %x20-10FFFF ; Any character except newline
 
 .. code-block:: smithy
