@@ -19,7 +19,7 @@ extra["moduleName"] = "software.amazon.smithy.cli"
 
 plugins {
     application
-    id("org.beryx.runtime") version "1.1.6"
+    id("org.beryx.runtime") version "1.8.4"
 }
 
 dependencies {
@@ -32,10 +32,16 @@ dependencies {
 application {
     mainClassName = "software.amazon.smithy.cli.SmithyCli"
     applicationName = "smithy"
-    applicationDefaultJvmArgs = listOf("-XX:TieredStopAtLevel=2", "-Xshare:auto", "-XX:SharedArchiveFile=app-cds.jsa")
+    applicationDefaultJvmArgs = listOf("-XX:TieredStopAtLevel=2", "-Xshare:auto")
 }
 
 runtime {
     addOptions("--compress", "0", "--strip-debug", "--no-header-files", "--no-man-pages")
     addModules("java.logging")
 }
+
+tasks.register<Exec>("optimizeCli") {
+    commandLine("${project.buildDir}/image/bin/java", "-Xshare:dump")
+}
+
+tasks["runtime"].finalizedBy("optimizeCli")
