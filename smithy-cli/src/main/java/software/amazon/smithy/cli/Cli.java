@@ -31,6 +31,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * This class provides a very basic CLI abstraction.
@@ -274,7 +275,7 @@ public final class Cli {
         for (Map.Entry<String, Command> entry : commands.entrySet()) {
             table.put("  " + entry.getKey(), entry.getValue().getSummary());
         }
-        stdout(createTable(table).trim());
+        stdout(StringUtils.stripEnd(createTable(table), " \t\r\n"));
     }
 
     private String createTable(Map<String, String> table) {
@@ -302,14 +303,7 @@ public final class Cli {
             // Omit the built-in --help arguments.
             if (!arg.getLongName().filter(name -> name.equals(HELP)).isPresent()) {
                 example.append(" [");
-                arg.getShortName().ifPresent(example::append);
-                if (arg.getShortName().isPresent() && arg.getLongName().isPresent()) {
-                    example.append(" | ");
-                }
-                arg.getLongName().ifPresent(example::append);
-                if (arg.getArity() == Parser.Arity.MANY) {
-                    example.append(" ...");
-                }
+                writeArgHelp(arg, example);
                 example.append("]");
             }
         });
@@ -326,14 +320,7 @@ public final class Cli {
         Map<String, String> table = new LinkedHashMap<>();
         parser.getArgs().forEach(arg -> {
             StringBuilder key = new StringBuilder("  ");
-            arg.getShortName().ifPresent(key::append);
-            if (arg.getShortName().isPresent() && arg.getLongName().isPresent()) {
-                key.append(" | ");
-            }
-            arg.getLongName().ifPresent(key::append);
-            if (arg.getArity() == Parser.Arity.MANY) {
-                key.append(" ...");
-            }
+            writeArgHelp(arg, key);
             table.put(key.toString(), arg.getHelp());
         });
 
@@ -350,6 +337,17 @@ public final class Cli {
         }
 
         stdout(body.toString());
+    }
+
+    private void writeArgHelp(Parser.Argument arg, StringBuilder sink) {
+        arg.getShortName().ifPresent(sink::append);
+        if (arg.getShortName().isPresent() && arg.getLongName().isPresent()) {
+            sink.append(" | ");
+        }
+        arg.getLongName().ifPresent(sink::append);
+        if (arg.getArity() == Parser.Arity.MANY) {
+            sink.append(" ...");
+        }
     }
 
     private static final class BasicFormatter extends SimpleFormatter {
