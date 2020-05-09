@@ -1,5 +1,11 @@
 # Smithy Changelog
 
+## 1.0.1 (TBD)
+
+### Features
+
+* `httpPayload` can now target document shapes.
+
 ## 1.0.0 (2020-05-04)
 
 ***Note***: Changes marked with "[BC]" are breaking changes more accurately described in the
