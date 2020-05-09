@@ -17,6 +17,8 @@ package software.amazon.smithy.cli.commands;
 
 import static java.lang.String.format;
 
+import java.util.Set;
+import java.util.function.Consumer;
 import software.amazon.smithy.cli.Cli;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.Colors;
@@ -29,35 +31,55 @@ import software.amazon.smithy.model.validation.ValidatedResult;
  * Shares logic for validating a model and printing out events.
  */
 final class Validator {
+
     private Validator() {}
 
-    static void validate(ValidatedResult<Model> result) {
+    /**
+     * Validation features.
+     */
+    enum Feature {
+        /** Shows validation events, but does not show the summary. */
+        QUIET,
+
+        /** Writes validation events to STDOUT instead of stderr. */
+        STDOUT
+    }
+
+    static void validate(ValidatedResult<Model> result, Set<Feature> features) {
         ContextualValidationEventFormatter formatter = new ContextualValidationEventFormatter();
+
+        boolean stdout = features.contains(Feature.STDOUT);
+        boolean quiet = features.contains(Feature.QUIET);
+        Consumer<String> writer = stdout ? Cli.getStdout() : Cli.getStderr();
 
         result.getValidationEvents().stream()
                 .filter(event -> event.getSeverity() != Severity.SUPPRESSED)
                 .sorted()
                 .forEach(event -> {
                     if (event.getSeverity() == Severity.WARNING) {
-                        Colors.YELLOW.out(formatter.format(event));
+                        Colors.YELLOW.write(writer, formatter.format(event));
                     } else if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
-                        Colors.RED.out(formatter.format(event));
+                        Colors.RED.write(writer, formatter.format(event));
                     } else {
-                        Cli.stdout(event);
+                        writer.accept(event.toString());
                     }
-                    Cli.stdout("");
+                    writer.accept("");
                 });
 
         long errors = result.getValidationEvents(Severity.ERROR).size();
         long dangers = result.getValidationEvents(Severity.DANGER).size();
 
-        String line = format(
-                "Validation result: %s ERROR(s), %d DANGER(s), %d WARNING(s), %d NOTE(s)",
-                errors, dangers, result.getValidationEvents(Severity.WARNING).size(),
-                result.getValidationEvents(Severity.NOTE).size());
-        Cli.stdout(line);
-        result.getResult().ifPresent(model -> Cli.stdout(String.format(
-                "Validated %d shapes in model", model.shapes().count())));
+        if (!quiet) {
+            String line = format(
+                    "Validation result: %s ERROR(s), %d DANGER(s), %d WARNING(s), %d NOTE(s)",
+                    errors, dangers, result.getValidationEvents(Severity.WARNING).size(),
+                    result.getValidationEvents(Severity.NOTE).size());
+            writer.accept(line);
+
+            result.getResult().ifPresent(model -> {
+                writer.accept(String.format("Validated %d shapes in model", model.shapes().count()));
+            });
+        }
 
         if (!result.getResult().isPresent() || errors + dangers > 0) {
             // Show the error and danger severity events.

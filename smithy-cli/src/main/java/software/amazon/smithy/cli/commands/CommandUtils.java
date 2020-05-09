@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,30 +21,45 @@ import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.validation.ValidatedResult;
 
 final class CommandUtils {
+
     private static final Logger LOGGER = Logger.getLogger(CommandUtils.class.getName());
 
     private CommandUtils() {}
 
-    static void handleUnknownTraitsOption(Arguments arguments, ModelAssembler assembler) {
-        if (arguments.has(SmithyCli.ALLOW_UNKNOWN_TRAITS)) {
-            LOGGER.fine("Ignoring unknown traits");
-            assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
-        }
+    static Model buildModel(Arguments arguments, ClassLoader classLoader, Set<Validator.Feature> features) {
+        List<String> models = arguments.positionalArguments();
+        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
+        CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
+        CommandUtils.handleUnknownTraitsOption(arguments, assembler);
+        models.forEach(assembler::addImport);
+        ValidatedResult<Model> result = assembler.assemble();
+        Validator.validate(result, features);
+        return result.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
     }
 
     static ModelAssembler createModelAssembler(ClassLoader classLoader) {
         return Model.assembler(classLoader).putProperty(ModelAssembler.DISABLE_JAR_CACHE, true);
     }
 
-    static void handleModelDiscovery(Arguments arguments, ModelAssembler assembler, ClassLoader baseLoader) {
+    private static void handleUnknownTraitsOption(Arguments arguments, ModelAssembler assembler) {
+        if (arguments.has(SmithyCli.ALLOW_UNKNOWN_TRAITS)) {
+            LOGGER.fine("Ignoring unknown traits");
+            assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
+        }
+    }
+
+    private static void handleModelDiscovery(Arguments arguments, ModelAssembler assembler, ClassLoader baseLoader) {
         if (arguments.has(SmithyCli.DISCOVER_CLASSPATH)) {
             discoverModelsWithClasspath(arguments, assembler);
         } else if (arguments.has(SmithyCli.DISCOVER)) {

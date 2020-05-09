@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ import software.amazon.smithy.cli.Colors;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.ModelAssembler;
-import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -52,14 +50,7 @@ public final class ValidateCommand implements Command {
     public void execute(Arguments arguments, ClassLoader classLoader) {
         List<String> models = arguments.positionalArguments();
         Colors.BRIGHT_WHITE.out(String.format("Validating Smithy model sources: %s", models));
-
-        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
-        CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
-        CommandUtils.handleUnknownTraitsOption(arguments, assembler);
-
-        models.forEach(assembler::addImport);
-        ValidatedResult<Model> modelResult = assembler.assemble();
-        Validator.validate(modelResult);
+        CommandUtils.buildModel(arguments, classLoader, SetUtils.of());
         Colors.BRIGHT_BOLD_GREEN.out("Smithy validation complete");
     }
 }

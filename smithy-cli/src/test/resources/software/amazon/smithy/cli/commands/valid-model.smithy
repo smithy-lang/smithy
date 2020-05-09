@@ -1,7 +1,7 @@
 namespace smithy.example
 
 resource Foo {
-    identifier: {id: FooId},
+    identifiers: {id: FooId},
     read: GetFoo,
 }
 
