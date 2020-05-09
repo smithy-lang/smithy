@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -246,18 +246,17 @@ public final class Parser {
         private String positionalHelp;
         private List<Argument> arguments = new ArrayList<>();
 
-        private Builder() {
+        @Override
+        public Parser build() {
             // Always include --help, --debug, --stacktrace, and --no-color options; and --logging X.
+            // This is done during build to move them to the end. Note that this could duplicate
+            // arguments if a builder is reused, but that seems highly unlikely.
             option(Cli.HELP, "-h", "Print this help");
             option(Cli.DEBUG, "Display debug information");
             option(Cli.STACKTRACE, "Display a stacktrace on error");
             option(Cli.NO_COLOR, "Explicitly disable ANSI colors");
             option(Cli.FORCE_COLOR, "Explicitly enables ANSI colors");
             parameter(Cli.LOGGING, "Sets the log level to one of OFF, SEVERE, WARNING, INFO, FINE, ALL");
-        }
-
-        @Override
-        public Parser build() {
             return new Parser(this);
         }
 

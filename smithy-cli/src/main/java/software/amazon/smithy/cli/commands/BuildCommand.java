@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -39,9 +39,8 @@ import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.Parser;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.Severity;
-import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -106,8 +105,8 @@ public final class BuildCommand implements Command {
 
         SmithyBuildConfig smithyBuildConfig = configBuilder.build();
 
-        // Build the model and fail if there are errors.
-        Model model = buildModel(classLoader, models, arguments);
+        // Build the model and fail if there are errors. Prints errors to stdout.
+        Model model = CommandUtils.buildModel(arguments, classLoader, SetUtils.of(Validator.Feature.STDOUT));
 
         SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
                 .config(smithyBuildConfig)
@@ -145,16 +144,6 @@ public final class BuildCommand implements Command {
                     resultConsumer.failedProjections.size(),
                     resultConsumer.failedProjections));
         }
-    }
-
-    private Model buildModel(ClassLoader classLoader, List<String> models, Arguments arguments) {
-        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
-        CommandUtils.handleModelDiscovery(arguments, assembler, classLoader);
-        CommandUtils.handleUnknownTraitsOption(arguments, assembler);
-        models.forEach(assembler::addImport);
-        ValidatedResult<Model> result = assembler.assemble();
-        Validator.validate(result);
-        return result.getResult().orElseThrow(() -> new RuntimeException("No result; expected Validator to throw"));
     }
 
     private static final class ResultConsumer implements Consumer<ProjectionResult>, BiConsumer<String, Throwable> {

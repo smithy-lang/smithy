@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -168,6 +168,24 @@ public final class Cli {
      */
     public static void setStderr(Consumer<String> printer) {
         stderr = printer;
+    }
+
+    /**
+     * Gets the stdout consumer.
+     *
+     * @return Returns the stdout consumer.
+     */
+    public static Consumer<String> getStdout() {
+        return stdout;
+    }
+
+    /**
+     * Gets the stderr consumer.
+     *
+     * @return Returns the stderr consumer.
+     */
+    public static Consumer<String> getStderr() {
+        return stderr;
     }
 
     /**
