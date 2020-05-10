@@ -24,7 +24,11 @@ import software.amazon.smithy.model.SourceLocation;
  */
 public class ModelSyntaxException extends SourceException {
     public ModelSyntaxException(String message, int line, int column) {
-        this(message, new SourceLocation(SourceLocation.NONE.getFilename(), line, column));
+        this(message, SourceLocation.NONE.getFilename(), line, column);
+    }
+
+    public ModelSyntaxException(String message, String filename, int line, int column) {
+        this(message, new SourceLocation(filename, line, column));
     }
 
     public ModelSyntaxException(String message, FromSourceLocation sourceLocation) {

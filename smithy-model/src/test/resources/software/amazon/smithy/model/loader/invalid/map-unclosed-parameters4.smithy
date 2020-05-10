@@ -1,3 +1,3 @@
-// Parse error at line 3, column 61 near `smithy.api#String`: Unexpected EOF
+// Parse error at line 4, column 1 near `[EOF]`: Expected: '}', but found '[EOF]'
 namespace com.foo
 map MyMap { key: smithy.api#String, value: smithy.api#String

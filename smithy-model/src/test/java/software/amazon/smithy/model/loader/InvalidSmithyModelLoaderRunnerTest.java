@@ -52,7 +52,6 @@ public class InvalidSmithyModelLoaderRunnerTest {
             String actualMessage = e.getMessage().replace("\n", "\\n");
             String expectedMessage = expectedError.replace("\n", "\\n");
             if (!actualMessage.contains(expectedMessage)) {
-                new SmithyModelLexer(file, contents).forEachRemaining(System.out::println);
                 throw new IllegalStateException(
                         String.format("Expected a different parse error for %s.\nExpected (%s)\nFound (%s)",
                                       file, expectedMessage, actualMessage),

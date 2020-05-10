@@ -1,4 +1,4 @@
-// Parse error at line 7, column 1 near `use`: A use statement must come before any shape definition
+// Parse error at line 7, column 4 near ` smithy`: A use statement must come before any shape definition
 namespace smithy.example
 
 @trait

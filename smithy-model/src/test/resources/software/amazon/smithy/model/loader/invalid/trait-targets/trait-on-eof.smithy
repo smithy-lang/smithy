@@ -1,4 +1,4 @@
-// Parse error at line 4, column 1 near `deprecated`: Found a trait doesn't apply to anything
+// Parse error at line 5, column 1 near `[EOF]`: Expected a valid identifier character, but found '[EOF]'
 namespace com.foo
 
 @deprecated

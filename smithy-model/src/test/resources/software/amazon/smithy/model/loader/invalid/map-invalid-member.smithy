@@ -1,4 +1,4 @@
-// Parse error at line 7, column 3 near `fuzz`: Invalid member `fuzz` found in map shape `com.foo#MyMap`. Expected one of the following members: [`key`, `value`]
+// Parse error at line 7, column 7 near `: `: Unexpected member of com.foo#MyMap: 'fuzz'
 namespace com.foo
 
 map MyMap {

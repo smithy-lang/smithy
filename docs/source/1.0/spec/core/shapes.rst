@@ -12,11 +12,22 @@ Shapes
     :backlinks: none
 
 
+-------------
+Shape section
+-------------
+
+The shape section of the IDL is used to define shapes and apply traits to
+shapes. It comes after any :token:`control statements <control_section>` and
+:token:`metadata statements <metadata_section>`.
+
+.. productionlist:: smithy
+    shape_section :[`namespace_statement` [`use_section`] [`shape_statements`]]
+
+
 .. _namespaces:
 
-----------
 Namespaces
-----------
+==========
 
 Shapes are defined inside a :dfn:`namespace`. A namespace is mechanism for
 logically grouping shapes in a way that makes them reusable alongside other
@@ -24,12 +35,11 @@ models without naming conflicts.
 
 .. _namespace-statement:
 
-The namespace statement is used to set the *current namespace*. Shapes
-can only be defined if a current namespace is defined, and only a single
+Shapes can only be defined if a namespace is declared, and only a single
 namespace can appear in an IDL model file.
 
 .. productionlist:: smithy
-    namespace_statement     :"namespace" `namespace`
+    namespace_statement :"namespace" `ws` `namespace` `br`
 
 The following example defines a string shape named ``MyString`` in the
 ``smithy.example`` namespace:
@@ -54,19 +64,17 @@ The following example defines a string shape named ``MyString`` in the
         }
 
 
--------------------
-Referring to shapes
--------------------
-
 .. _use-statement:
 
-A use statement is used to import shapes and traits into the current namespace
-so that they can be referred to using relative shape. A use statement MUST
-come after a :ref:`namespace statement <namespace-statement>` and before any
-shapes are defined in an IDL model file.
+Referring to shapes
+===================
+
+The *use section* of the IDL is used to import shapes into the current
+namespace so that they can be referred to using a relative shape.
 
 .. productionlist:: smithy
-    use_statement         :"use" `absolute_shape_id`
+    use_section   :*(`use_statement`)
+    use_statement :"use" `ws` `absolute_root_shape_id` `br`
 
 The following example imports ``smithy.example#Foo`` and
 ``smithy.example#Baz`` so that they can be referred to by
@@ -100,16 +108,83 @@ traits so that they can be applied using relative shape IDs:
     @test // <-- Resolves to smithy.example#test
     string MyString
 
-.. important::
+.. rubric:: Validation
 
-    #. A shape cannot be defined in a file with the same name as one of the
-       shapes imported with a ``use`` statement.
-    #. Shapes IDs with members names cannot be imported with a use statement.
+#. A shape cannot be defined in a file with the same name as one of the
+   shapes imported with a ``use`` statement.
+#. Shapes IDs with members names cannot be imported with a use statement.
 
-.. seealso::
 
-    Refer to :ref:`relative-shape-id` for an in-depth description of how
-    relative shape IDs are resolved in the IDL.
+.. _relative-shape-id:
+
+Relative shape ID resolution
+----------------------------
+
+In the Smithy IDL, relative shape IDs are resolved using the following process:
+
+#. If a :token:`use_statement` has imported a shape with the same name,
+   the shape ID resolves to the imported shape ID.
+#. If a shape is defined in the same namespace as the shape with the same name,
+   the namespace of the shape resolves to the *current namespace*.
+#. If a shape is defined in the :ref:`prelude <prelude>` with the same name,
+   the namespace resolves to ``smithy.api``.
+#. If a relative shape ID does not satisfy one of the above cases, the shape
+   ID is invalid, and the namespace is inherited from the *current namespace*.
+
+The following example Smithy model contains comments above each member of
+the shape named ``MyStructure`` that describes the shape the member resolves
+to.
+
+.. code-block:: smithy
+
+    namespace smithy.example
+
+    use foo.baz#Bar
+
+    string MyString
+
+    structure MyStructure {
+        // Resolves to smithy.example#MyString
+        // There is a shape named MyString defined in the same namespace.
+        a: MyString,
+
+        // Resolves to smithy.example#MyString
+        // Absolute shape IDs do not perform namespace resolution.
+        b: smithy.example#MyString,
+
+        // Resolves to foo.baz#Bar
+        // The "use foo.baz#Bar" statement imported the Bar symbol,
+        // allowing the shape to be referenced using a relative shape ID.
+        c: Bar,
+
+        // Resolves to foo.baz#Bar
+        // Absolute shape IDs do not perform namespace resolution.
+        d: foo.baz#Bar,
+
+        // Resolves to foo.baz#MyString
+        // Absolute shape IDs do not perform namespace resolution.
+        e: foo.baz#MyString,
+
+        // Resolves to smithy.api#String
+        // No shape named String was imported through a use statement
+        // the smithy.example namespace does not contain a shape named
+        // String, and the prelude model contains a shape named String.
+        f: String,
+
+        // Resolves to smithy.example#MyBoolean.
+        // There is a shape named MyBoolean defined in the same namespace.
+        // Forward references are supported both within the same file and
+        // across multiple files.
+        g: MyBoolean,
+
+        // Invalid. A shape by this name has not been imported through a
+        // use statement, a shape by this name does not exist in the
+        // current namespace, and a shape by this name does not exist in
+        // the prelude model.
+        h: InvalidShape,
+    }
+
+    boolean MyBoolean
 
 
 ---------------
@@ -119,17 +194,20 @@ Defining shapes
 Shape statements are used to define shapes.
 
 .. productionlist:: smithy
-    shape_statement         :[*`trait` `br`] `shape_body`
-    shape_body              :`service_statement`
-                            :/ `resource_statement`
-                            :/ `operation_statement`
-                            :/ `structure_statement`
-                            :/ `union_statement`
-                            :/ `list_statement`
-                            :/ `set_statement`
-                            :/ `map_statement`
-                            :/ `simple_shape`
-
+    shape_statements             :*(`shape_statement` / `apply_statement`)
+    shape_statement              :[`shape_documentation_comments` `ws`]
+                                 :  `trait_statements`
+                                 :  `shape_body` `br`
+    shape_documentation_comments :*(`documentation_comment`)
+    shape_body                   :`simple_shape_statement`
+                                 :/ `list_statement`
+                                 :/ `set_statement`
+                                 :/ `map_statement`
+                                 :/ `structure_statement`
+                                 :/ `union_statement`
+                                 :/ `service_statement`
+                                 :/ `operation_statement`
+                                 :/ `resource_statement`
 
 .. _shape-names:
 
@@ -164,10 +242,11 @@ Simple types
 Shapes that are simple types are defined using the following grammar:
 
 .. productionlist:: smithy
-    simple_shape            :`simple_type_name` `identifier`
-    simple_type_name        :"blob" / "boolean" / "document" / "string" / "byte" / "short"
-                            :/ "integer" / "long" / "float" / "double" / "bigInteger"
-                            :/ "bigDecimal" / "timestamp"
+    simple_shape_statement :`simple_type_name` `ws` `identifier`
+    simple_type_name       :"blob" / "boolean" / "document" / "string"
+                           :/ "byte" / "short" / "integer" / "long"
+                           :/ "float" / "double" / "bigInteger"
+                           :/ "bigDecimal" / "timestamp"
 
 .. list-table::
     :header-rows: 1
@@ -388,18 +467,29 @@ targets the ``MyString`` shape in the same namespace.
             }
         }
 
+All shapes that contain members use following ABNF to define members:
+
+.. productionlist:: smithy
+    shape_members           :`empty_shape_members` / `populated_shape_members`
+    empty_shape_members     :"{" `ws` "}"
+    populated_shape_members :"{" `ws` `shape_member_kvp`
+                            :  *(`comma` `shape_member_kvp` `ws`) `trailing_comma` "}"
+    shape_member_kvp        :[`shape_documentation_comments`]
+                            :  `trait_statements`
+                            :  `identifier` `ws` ":" `ws` `shape_id`
+
 
 .. _list:
 
 List
 ====
 
-The :dfn:`list` type represents a homogeneous collection of values. Lists
-are defined using the following grammar:
+The :dfn:`list` type represents a homogeneous collection of values. A list
+statement requires that a :ref:`member <member>` named ``member`` is defined
+in its body. Lists are defined using the following grammar:
 
 .. productionlist:: smithy
-    list_statement          :"list" `list_and_set_body`
-    list_and_set_body       :`identifier` "{" *`trait` "member" ":" `shape_id` [","] "}"
+    list_statement :"list" `ws` `identifier` `ws` `shape_members`
 
 The following example defines a list with a string member from the
 :ref:`prelude <prelude>`:
@@ -469,10 +559,12 @@ Set
 ===
 
 The :dfn:`set` type represents an unordered collection of unique homogeneous
-values. Sets are defined using the following grammar:
+values. A set statement requires that a :ref:`member <member>` named
+``member`` is defined in its body. Sets are defined using the following
+grammar:
 
 .. productionlist:: smithy
-    set_statement           :"set" `list_and_set_body`
+    set_statement :"set" `ws` `identifier` `ws` `shape_members`
 
 The following example defines a set of strings:
 
@@ -539,16 +631,14 @@ Map
 ===
 
 The :dfn:`map` type represents a map data structure that maps string keys to
-homogeneous values. A map cannot contain duplicate keys. The ``key`` member
-of a map MUST target a ``string`` shape.
+homogeneous values. A map cannot contain duplicate keys. A map statement
+requires that a ``key`` and ``value`` :ref:`member <member>` are defined in
+its body. The ``key`` member of a map MUST target a ``string`` shape.
 
 Maps are defined using the following grammar:
 
 .. productionlist:: smithy
-    map_statement           :"map" `identifier` "{" `map_body` [","] "}"
-    map_body                :(map_key "," map_value) / (map_value "," map_key)
-    map_key                 :*`trait` "key" ":" `shape_id`
-    map_value               :*`trait` "value" ":" `shape_id`
+    map_statement :"map" `ws` `identifier` `ws` `shape_members`
 
 The following example defines a map of strings to integers:
 
@@ -631,14 +721,11 @@ Structure
 
 The :dfn:`structure` type represents a fixed set of named, unordered,
 heterogeneous members. A member name maps to exactly one structure
-:ref:`member <member>` definition.
-
-A structure is defined using the following grammar:
+:ref:`member <member>` definition. A structure is defined using the
+following grammar:
 
 .. productionlist:: smithy
-    structure_statement     :"structure" `structured_body`
-    structured_body         :`identifier` "{" [`structured_member` *("," `structured_member`)] "}"
-    structured_member       :*`trait` `identifier` ":" `shape_id`
+    structure_statement     :"structure" `ws` `identifier` `ws` `shape_members`
 
 The following example defines a structure with two members:
 
@@ -724,12 +811,10 @@ Union
 
 The union type represents a `tagged union data structure`_ that can take
 on several different, but fixed, types. Only one type can be used at any
-one time.
-
-A union is defined using the following grammar:
+one time. A union is defined using the following grammar:
 
 .. productionlist:: smithy
-    union_statement         :"union" `structured_body`
+    union_statement :"union" `ws` `identifier` `ws` `shape_members`
 
 The following example defines a union shape with several members:
 
@@ -894,34 +979,10 @@ Service
 A :dfn:`service` is the entry point of an API that aggregates resources and
 operations together. The :ref:`resources <resource>` and
 :ref:`operations <operation>` of an API are bound within the closure of a
-service.
-
-A service is defined using the following grammar:
+service. A service shape is defined by the following grammar:
 
 .. productionlist:: smithy
-    service_statement       :"service" `identifier` `node_object`
-
-The following example defines a service with no operations or resources.
-
-.. tabs::
-
-    .. code-tab:: smithy
-
-        service MyService {
-            version: "2017-02-11"
-        }
-
-    .. code-tab:: json
-
-        {
-            "smithy": "1.0",
-            "shapes": {
-                "smithy.example#MyService": {
-                    "type": "service",
-                    "version": "2017-02-11"
-                }
-            }
-        }
+    service_statement :"service" `ws` `identifier` `ws` `node_object`
 
 The service shape supports the following members:
 
@@ -944,6 +1005,28 @@ The service shape supports the following members:
       - [:ref:`shape-id`]
       - Binds a list of resources to the service. Each element in the list is
         a shape ID that MUST target a resource.
+
+The following example defines a service with no operations or resources.
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        service MyService {
+            version: "2017-02-11"
+        }
+
+    .. code-tab:: json
+
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#MyService": {
+                    "type": "service",
+                    "version": "2017-02-11"
+                }
+            }
+        }
 
 
 .. _service-operations:
@@ -1077,17 +1160,11 @@ Operation
 
 The :dfn:`operation` type represents the input, output, and possible errors of
 an API operation. Operation shapes are bound to :ref:`resource <resource>`
-shapes and :ref:`service <service>` shapes.
-
-Operations are defined using the following grammar:
+shapes and :ref:`service <service>` shapes. An operation shape is defined by
+the following grammar:
 
 .. productionlist:: smithy
-    operation_statement     :"operation" `identifier` "{" [`operation_body` [","] ] "}"
-    operation_body          :`operation_body_entry` *("," `operation_body_entry`)
-    operation_body_entry    :`operation_input` / `operation_output` / `operation_errors`
-    operation_input         :"input" ":" `shape_id`
-    operation_output        :"output" ":" `shape_id`
-    operation_errors        :"errors" ":" "[" [`shape_id` *("," `shape_id`) [","] ] "]"
+    operation_statement :"operation" `ws` `identifier` `ws` `node_object`
 
 An operation supports the following members:
 
@@ -1260,12 +1337,10 @@ Resource
 ========
 
 Smithy defines a :dfn:`resource` as an entity with an identity that has a
-set of operations.
-
-A resource shape is defined using the following grammar:
+set of operations. A resource shape is defined by the following grammar:
 
 .. productionlist:: smithy
-    resource_statement      :"resource" `identifier` `node_object`
+    resource_statement :"resource" `ws` `identifier` `ws` `node_object`
 
 A resource supports the following members:
 

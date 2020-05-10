@@ -1,0 +1,65 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#DiscardLastLineOffset": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Hello\nThere\nOk\n"
+            }
+        },
+        "smithy.example#EmbeddedQuotesTextBlock": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "\"Hi\""
+            }
+        },
+        "smithy.example#EmptyLinesAreIncidentalWs": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Hello\n\nthere\n"
+            }
+        },
+        "smithy.example#EmptyString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": ""
+            }
+        },
+        "smithy.example#EscapedNewlineString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Hi there bye"
+            }
+        },
+        "smithy.example#NewlineString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "\n"
+            }
+        },
+        "smithy.example#NoTrailingNewlineString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Hello"
+            }
+        },
+        "smithy.example#SingleCharacterTextBlock": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "f"
+            }
+        },
+        "smithy.example#TrailingNewlineString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Hello\n"
+            }
+        },
+        "smithy.example#WithUnicode": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Hi \uE05A.\n"
+            }
+        }
+    }
+}

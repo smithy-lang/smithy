@@ -72,7 +72,7 @@ model that applies documentation traits to the shapes.
 Apply statements are formed using the following grammar:
 
 .. productionlist:: smithy
-    apply_statement         :"apply" `shape_id` `trait`
+    apply_statement :"apply" `ws` `shape_id` `ws` `trait` `br`
 
 The following example applies the :ref:`documentation-trait` and
 :ref:`length-trait` to the ``smithy.example#MyString`` shape:
@@ -138,10 +138,12 @@ trait is defined in the IDL by enclosing the value in parenthesis. Trait values
 can only appear immediately before a shape.
 
 .. productionlist:: smithy
-    trait                   :"@" `shape_id` ["(" `trait_body_value` ")"]
-    trait_body_value        :`trait_structure` / `node_value`
-    trait_structure         :`trait_structure_kvp` *("," `trait_structure_kvp`)
-    trait_structure_kvp     :`text` ":" `node_value`
+    trait_statements    : *(`ws` `trait`) `ws`
+    trait               :"@" `shape_id` [`trait_body`]
+    trait_body          :"(" `ws` `trait_body_value` `ws` ")"
+    trait_body_value    :`trait_structure` / `node_value`
+    trait_structure     :`trait_structure_kvp` *(`ws` `comma` `trait_structure_kvp`)
+    trait_structure_kvp :`node_object_key` `ws` ":" `ws` `node_value`
 
 The following example applies various traits to a structure shape and its
 members.

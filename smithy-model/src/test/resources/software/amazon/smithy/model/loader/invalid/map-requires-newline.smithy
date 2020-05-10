@@ -1,4 +1,4 @@
-// Parse error at line 6, column 3 near `string`: Expected a new line before this token
+// Parse error at line 6, column 3 near `string`: Expected a line break
 namespace com.foo
 map MyMap {
   key: smithy.api#String,

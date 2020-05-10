@@ -1,4 +1,2 @@
-// Parse error at line 4, column 1 near `$version `: Expected one of the following characters: [:]
-namespace foo.baz
-
+// Parse error at line 2, column 10 near `"1`: Expected: ':', but found '"'
 $version "1.0"

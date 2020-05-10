@@ -1,1 +1,1 @@
-[ERROR] -: Duplicate shape definition for `com.foo#Map$key` found at | Model
+[ERROR] -: Parse error at line 5, column 8 near `: `: Unexpected member of com.foo#Map: 'key' | Model

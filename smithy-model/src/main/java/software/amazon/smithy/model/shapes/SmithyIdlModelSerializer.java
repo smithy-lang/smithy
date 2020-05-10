@@ -140,7 +140,7 @@ public final class SmithyIdlModelSerializer {
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(entry -> {
                     codeWriter.trimTrailingSpaces(false)
-                            .writeInline("metadata $M = ", entry.getKey())
+                            .writeInline("metadata $K = ", entry.getKey())
                             .trimTrailingSpaces();
                     nodeSerializer.serialize(entry.getValue());
                     codeWriter.write("");
@@ -642,7 +642,7 @@ public final class SmithyIdlModelSerializer {
                     member = shape;
                 }
 
-                codeWriter.writeInline("\n$M: ", name.getValue());
+                codeWriter.writeInline("\n$K: ", name.getValue());
                 serialize(value, member);
                 codeWriter.writeInline(",");
             });
@@ -656,7 +656,7 @@ public final class SmithyIdlModelSerializer {
      * <p>Provides a built in $I formatter that formats shape ids, automatically trimming namespace where possible.
      */
     private static final class SmithyCodeWriter extends CodeWriter {
-        private static final Pattern UNQUOTED_STRING = Pattern.compile("[a-zA-Z_][\\w$.#]*");
+        private static final Pattern UNQUOTED_KEY_STRING = Pattern.compile("[a-zA-Z_][a-zA-Z_0-9]*");
         private final String namespace;
         private final Model model;
         private final Set<ShapeId> imports;
@@ -669,7 +669,7 @@ public final class SmithyIdlModelSerializer {
             trimTrailingSpaces();
             trimBlankLines();
             putFormatter('I', (s, i) -> formatShapeId(s));
-            putFormatter('M', this::optionallyQuoteString);
+            putFormatter('K', this::optionallyQuoteKey);
         }
 
         /**
@@ -769,11 +769,11 @@ public final class SmithyIdlModelSerializer {
         }
 
         /**
-         * Formatter that quotes (and escapes) a string unless it's a valid unquoted string.
+         * Formatter that quotes (and escapes) a string unless it's a valid object key string.
          */
-        private String optionallyQuoteString(Object key, String indent) {
+        private String optionallyQuoteKey(Object key, String indent) {
             String formatted = CodeWriter.formatLiteral(key);
-            if (UNQUOTED_STRING.matcher(formatted).matches()) {
+            if (UNQUOTED_KEY_STRING.matcher(formatted).matches()) {
                 return formatted;
             }
             return StringUtils.escapeJavaString(formatted, indent);

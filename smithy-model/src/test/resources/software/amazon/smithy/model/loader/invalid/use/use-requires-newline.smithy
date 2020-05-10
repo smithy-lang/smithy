@@ -1,4 +1,4 @@
-// Parse error at line 6, column 24 near `use`: Expected a new line before this token
+// Parse error at line 6, column 24 near `use`: Expected a line break
 $version: "1.0"
 
 namespace foo.baz

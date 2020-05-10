@@ -1,4 +1,4 @@
-// Parse error at line 6, column 5 near `_$#Bar`: Invalid shape ID: _$#Bar
+// Parse error at line 6, column 6 near `$#`: Expected: '#', but found '$'
 $version: "1.0"
 
 namespace smithy.example

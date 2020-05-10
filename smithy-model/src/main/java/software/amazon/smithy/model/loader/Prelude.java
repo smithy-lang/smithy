@@ -269,7 +269,7 @@ public final class Prelude {
             // Register prelude trait definitions.
             String filename = "prelude-traits.smithy";
 
-            IdlModelLoader.load(filename, () -> Prelude.class.getResourceAsStream(filename), visitor);
+            ModelLoader.load(filename, () -> Prelude.class.getResourceAsStream(filename), visitor);
             Model preludeModel = visitor.onEnd().unwrap();
 
             // Sanity check to ensure that the prelude model and the tracked prelude traits are consistent.
