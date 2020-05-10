@@ -1,3 +1,3 @@
-// Parse error at line 3, column 6 near `"`: Unexpected syntax. Perhaps an unclosed quote?
+// Parse error at line 4, column 1 near `[EOF]`: Expected: '"', but found '[EOF]'
 namespace abc.def
 @foo("

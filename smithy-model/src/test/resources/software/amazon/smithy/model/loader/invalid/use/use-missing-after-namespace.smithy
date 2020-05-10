@@ -1,4 +1,4 @@
-// Parse error at line 6, column 5 near `invalid#`: Invalid shape ID: invalid#
+// Parse error at line 6, column 13 near `\n[EOF]`: Expected a valid identifier character, but found '\n'
 $version: "1.0"
 
 namespace smithy.example

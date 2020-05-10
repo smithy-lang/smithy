@@ -1,4 +1,4 @@
-// Parse error at line 5, column 3 near `foo`: Invalid member `foo` found in set shape `com.foo#MySet`. Expected one of the following members: [`member`]
+// Parse error at line 5, column 6 near `: `: Unexpected member of com.foo#MySet: 'foo'
 namespace com.foo
 
 set MySet {

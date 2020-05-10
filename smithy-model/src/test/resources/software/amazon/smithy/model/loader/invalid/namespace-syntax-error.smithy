@@ -1,2 +1,2 @@
-// Invalid namespace name `not.valid.trailing.`
+// Expected a valid identifier character, but found '\n'
 namespace not.valid.trailing.

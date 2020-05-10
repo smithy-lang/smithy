@@ -165,6 +165,12 @@
                 "smithy.api#documentation": "This is a\nstring defined on multiple lines.\nIt can span\na\ngreat\nmany\nlines."
             }
         },
+        "com.example#V": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": ""
+            }
+        },
         "com.example#numeric": {
             "type": "integer",
             "traits": {

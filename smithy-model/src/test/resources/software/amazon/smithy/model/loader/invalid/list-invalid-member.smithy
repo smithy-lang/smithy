@@ -1,4 +1,4 @@
-// Parse error at line 5, column 3 near `foo`: Invalid member `foo` found in list shape `com.foo#MyList`. Expected one of the following members: [`member`]
+// Parse error at line 5, column 6 near `: `: Unexpected member of com.foo#MyList: 'foo' | Model
 namespace com.foo
 
 list MyList {

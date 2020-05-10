@@ -24,17 +24,13 @@ for tooling and integrations.
 Smithy IDL ABNF
 ---------------
 
-The Smithy IDL is a series of statements separated by newlines.
+The Smithy IDL is defined by the following ABNF:
 
 .. productionlist:: smithy
-    idl                     :[`statement` *(1*`br` `statement`)]
-    statement               :`control_statement`
-                            :/ `metadata_statement`
-                            :/ `use_statement`
-                            :/ `namespace_statement`
-                            :/ `apply_statement`
-                            :/ `documentation_comment`
-                            :/ `shape_statement`
+    idl:`ws`
+       :/ `control_section`
+       :/ `metadata_section`
+       :/ `shape_section`
 
 
 -------------
@@ -42,15 +38,14 @@ Lexical notes
 -------------
 
 Smithy models MUST be encoded using UTF-8 and SHOULD use Unix style
-line endings (``\n``).
-
-Whitespace is insignificant except for the following cases:
-
-* :token:`br` production which indicates that a new line MUST occur
-* :ref:`shape ID ABNF productions <shape-id-abnf>`
+line endings (``\n``). The Smithy ABNF is whitespace sensitive.
+Whitespace is controlled using the following productions:
 
 .. productionlist:: smithy
-    br                  :%x0A / %x0D.0A ; \n and \r\n
+    ws      :*(`sp` / `newline` / `line_comment`) ; whitespace
+    sp      :*(%x20  / %x09) ; " " and \t
+    br      :`sp` (`line_comment` / `newline`) `sp` ; break
+    newline :%x0A / %x0D.0A ; \n and \r\n
 
 
 .. _comments:
@@ -59,13 +54,12 @@ Comments
 ========
 
 Comments can occur at any place in the IDL between tokens where whitespace
-is insignificant. Comments in Smithy are defined using two forward slashes
-followed by any character. A newline terminates a comment.
+(:token:`ws`) can occur. Comments in Smithy are defined using two forward
+slashes followed by any character. A newline terminates a comment.
 
 .. productionlist:: smithy
-    line_comment        :"//" *(`start_comment` *`not_newline`)
-    start_comment       :%x09 / %x20-46 / %x48-10FFFF ; Any character except "/" and newline
-    not_newline         :%x09 / %x20-10FFFF ; Any character except newline
+    line_comment: "//" *`not_newline` `newline`
+    not_newline: %x09 / %x20-10FFFF ; Any character except newline
 
 .. code-block:: smithy
     :caption: Example
@@ -88,7 +82,7 @@ forward slashes (``"///"``) appear as the first non-whitespace characters
 on a line.
 
 .. productionlist:: smithy
-    documentation_comment   :"///" *(`not_newline`)
+    documentation_comment:"///" *`not_newline` `br`
 
 Documentation comments are defined using CommonMark_. The text after the
 forward slashes is considered the contents of the line. If the text starts
@@ -141,12 +135,13 @@ is equivalent to the following JSON AST model:
         }
     }
 
-Documentation comments MUST NOT be applied to anything other than shapes.
-Documentation comments MUST appear immediately before a shape, and they MUST
-appear **before** any :ref:`traits <traits>` applied to the shape.
+Documentation comments are only treated as shape documentation when the
+comment appears immediately before a shape, and documentation comments MUST
+appear **before** any :ref:`traits <traits>` applied to the shape in order
+for the documentation to be applied to a shape.
 
-The following example is valid because the documentation comment comes
-before the traits applied to a shape:
+The following example applies a documentation trait to the shape because the
+documentation comment comes before the traits applied to a shape:
 
 .. code-block:: smithy
 
@@ -154,11 +149,11 @@ before the traits applied to a shape:
     @deprecated
     string MyString
 
-Documentation comments can be applied to members of a shape.
+Documentation comments can also be applied to members of a shape.
 
 .. code-block:: smithy
 
-    // Documentation about the structure.
+    /// Documentation about the structure.
     structure Example {
         /// Documentation about the member.
         @sensitive
@@ -168,24 +163,19 @@ Documentation comments can be applied to members of a shape.
 
 .. _control-statement:
 
------------------
-Control statement
------------------
+---------------
+Control section
+---------------
 
-Control statements apply metadata to a specific file. Control statements,
-if defined, MUST appear at the beginning of a Smithy file before any other
-statements.
+The *control section* of a model contains :token:`control statements <control_statement>`
+that apply metadata to a *specific file*. Control statements, if defined,
+MUST appear at the beginning of a Smithy file before any other statements.
 
 .. productionlist:: smithy
-    control_statement       :"$" `text` ":" `node_value`
+    control_section   :*(`control_statement`)
+    control_statement :"$" `ws` `node_object_key` `ws` ":" `ws` `node_value` `br`
 
 Implementations MUST ignore unknown control statements.
-
-.. note::
-
-    Control statements differ from :ref:`metadata <metadata>` because
-    control statements apply metadata to a single file, whereas metadata
-    is applied to the entire model.
 
 
 .. _smithy-version:
@@ -204,9 +194,7 @@ The value provided in a version control statement is a string that MUST
 adhere to the following ABNF:
 
 .. productionlist:: smithy
-    version_string :`major_version` [ "." `minor_version` ]
-    major_version  :1*(1 / 2 / 3 / 4 / 5 / 6 / 7 / 8 / 9)
-    minor_version  :1*DIGIT
+    version_string :1*DIGIT [ "." 1*DIGIT ]
 
 The following example sets the version to ``1``, meaning that tooling MUST
 support a version greater than or equal to ``1.0`` and less than ``2.0``:
@@ -283,17 +271,11 @@ Shape IDs are formally defined by the following ABNF:
 
 .. productionlist:: smithy
     shape_id               :`root_shape_id` [`shape_id_member`]
-    root_shape_id          :`absolute_shape_id` / `identifier`
-    absolute_shape_id      :`namespace` "#" `identifier`
+    root_shape_id          :`absolute_root_shape_id` / `identifier`
+    absolute_root_shape_id :`namespace` "#" `identifier`
     namespace              :`identifier` *("." `identifier`)
     identifier             :(ALPHA / "_") *(ALPHA / DIGIT / "_")
     shape_id_member        :"$" `identifier`
-    LOALPHA                :%x61-7A ; a-z
-
-.. admonition:: Lexical note
-   :class: important
-
-   Whitespace is **significant** in all shape ID productions.
 
 
 .. _shape-id-member-names:
@@ -349,10 +331,10 @@ property also extends to member names: ``com.foo#Baz$bar`` and
 Syntactic shape IDs in the IDL
 ==============================
 
-:token:`Unquoted string values <unquoted_text>` in the Smithy IDL are considered
-shape IDs and are resolved to absolute shape IDs using the process defined
-in :ref:`relative-shape-id`. Values that are not meant to be shape IDs
-MUST be quoted.
+Unquoted string values that are not object keys in the Smithy IDL are
+considered shape IDs and are resolved to absolute shape IDs using the
+process defined in :ref:`relative-shape-id`. Values that are not meant to be
+shape IDs MUST be quoted.
 
 For example, the following model resolves the value of the :ref:`error-trait`
 to the shape ID ``"smithy.example#client"`` rather than using the string
@@ -362,7 +344,7 @@ literal value of ``"client"``, causing the model to be invalid:
 
     namespace smithy.example
 
-    @error(client) // <-- This should be "client"
+    @error(client) // <-- This MUST be "client"
     structure Error
 
     string client
@@ -390,78 +372,6 @@ resolves to the string literal ``"smithy.api#String"``.
         }
 
 
-.. _relative-shape-id:
-
-Relative shape ID resolution
-----------------------------
-
-In the Smithy IDL, relative shape IDs are resolved using the following process:
-
-#. If a :token:`use_statement` has imported a shape with the same name,
-   the shape ID resolves to the imported shape ID.
-#. If a shape is defined in the same namespace as the shape with the same name,
-   the namespace of the shape resolves to the *current namespace*.
-#. If a shape is defined in the :ref:`prelude <prelude>` with the same name,
-   the namespace resolves to ``smithy.api``.
-#. If a relative shape ID does not satisfy one of the above cases, the shape
-   ID is invalid, and the namespace is inherited from the *current namespace*.
-
-The following example Smithy model contains comments above each member of
-the shape named ``MyStructure`` that describes the shape the member resolves
-to.
-
-.. code-block:: smithy
-
-    namespace smithy.example
-
-    use foo.baz#Bar
-
-    string MyString
-
-    structure MyStructure {
-        // Resolves to smithy.example#MyString
-        // There is a shape named MyString defined in the same namespace.
-        a: MyString,
-
-        // Resolves to smithy.example#MyString
-        // Absolute shape IDs do not perform namespace resolution.
-        b: smithy.example#MyString,
-
-        // Resolves to foo.baz#Bar
-        // The "use foo.baz#Bar" statement imported the Bar symbol,
-        // allowing the shape to be referenced using a relative shape ID.
-        c: Bar,
-
-        // Resolves to foo.baz#Bar
-        // Absolute shape IDs do not perform namespace resolution.
-        d: foo.baz#Bar,
-
-        // Resolves to foo.baz#MyString
-        // Absolute shape IDs do not perform namespace resolution.
-        e: foo.baz#MyString,
-
-        // Resolves to smithy.api#String
-        // No shape named String was imported through a use statement
-        // the smithy.example namespace does not contain a shape named
-        // String, and the prelude model contains a shape named String.
-        f: String,
-
-        // Resolves to smithy.example#MyBoolean.
-        // There is a shape named MyBoolean defined in the same namespace.
-        // Forward references are supported both within the same file and
-        // across multiple files.
-        g: MyBoolean,
-
-        // Invalid. A shape by this name has not been imported through a
-        // use statement, a shape by this name does not exist in the
-        // current namespace, and a shape by this name does not exist in
-        // the prelude model.
-        h: InvalidShape,
-    }
-
-    boolean MyBoolean
-
-
 .. _node-values:
 
 -----------
@@ -470,16 +380,44 @@ Node values
 
 *Node values* are analogous to JSON values. Node values are used to define
 :ref:`metadata <metadata>` and :ref:`trait values <trait-values>`.
-
 Smithy's node values have many advantages over JSON: comments,
 unquoted keys, unquoted strings, single quoted strings, long strings,
 and trailing commas.
 
 .. productionlist:: smithy
-    node_value          :`text` / `number` / `node_array` / `node_object`
-    node_array          :"[" [`node_value` *("," `node_value`)] (( "," "]" ) / "]" )
-    node_object         :"{" [`node_object_kvp` *("," `node_object_kvp`)] (( "," "}" ) / "}" )
-    node_object_kvp     :`text` ":" `node_value`
+    node_value :`node_array`
+               :/ `node_object`
+               :/ `number`
+               :/ `node_keywords`
+               :/ `shape_id`
+               :/ `text_block`
+               :/ `quoted_text`
+
+.. rubric:: Array node
+
+.. productionlist:: smithy
+    node_array          :`empty_node_array` / `populated_node_array`
+    empty_node_array    :"[" `ws` "]"
+    populated_node_array:"[" `ws` `node_value` `ws`
+                        :       *(`comma` `node_value` `ws`)
+                        :       `trailing_comma` "]"
+    trailing_comma      :[`comma`]
+    comma               :"," `ws`
+
+.. rubric:: Object node
+
+.. productionlist:: smithy
+    node_object          :`empty_node_object` / `populated_node_object`
+    empty_node_object    :"{" `ws` "}"
+    populated_node_object:"{" `ws` `node_object_kvp` `ws`
+                         :       *(`comma` `node_object_kvp` `ws`)
+                         :       `trailing_comma` "}"
+    node_object_kvp      :`node_object_key` `ws` ":" `ws` `node_value`
+    node_object_key      :`quoted_text` / `identifier`
+
+.. rubric:: Number node
+
+.. productionlist:: smithy
     number              :[`minus`] `int` [`frac`] [`exp`]
     decimal_point       :%x2E ; .
     digit1_9            :%x31-39 ; 1-9
@@ -491,25 +429,41 @@ and trailing commas.
     plus                :%x2B ; +
     zero                :%x30 ; 0
 
-The following example defines a string metadata key:
+.. rubric:: Node keywords
+
+Several keywords are used when parsing :token:`node_value`.
+
+.. productionlist:: smithy
+    node_keywords: "true" / "false" / "null"
+
+* ``true``: The value is treated as a boolean ``true``
+* ``false``: The value is treated as a boolean ``false``
+* ``null``: The value is treated like a JSON ``null``
+
+.. rubric:: Node examples
+
+The following examples apply metadata to a model to demonstrate how node
+values are defined.
+
+The following example defines a string metadata entry:
 
 .. code-block:: smithy
 
     metadata foo = "baz"
 
-The following example defines an integer metadata key:
+The following example defines an integer metadata entry:
 
 .. code-block:: smithy
 
     metadata foo = 100
 
-The following example defines an array metadata key:
+The following example defines an array metadata entry:
 
 .. code-block:: smithy
 
     metadata foo = ["hello", 123, true, [false]]
 
-The following example defines a complex object metadata key:
+The following example defines a complex object metadata entry:
 
 .. code-block:: smithy
 
@@ -531,20 +485,19 @@ String values
 -------------
 
 .. productionlist:: smithy
-    text                :`unquoted_text` / `quoted_text` / `text_block`
-    unquoted_text       :(ALPHA / "_") *(ALPHA / DIGIT / "_" / "$" / "." / "#")
+    quoted_text         :DQUOTE *`quoted_char` DQUOTE
+    quoted_char         :%x20-21        ; space - "!"
+                        :/ %x23-5B        ; "#" - "["
+                        :/ %x5D-10FFFF    ; "]"+
+                        :/ `escaped_char`
+                        :/ `preserved_double`
     escaped_char        :`escape` (`escape` / "'" / DQUOTE / "b" / "f" / "n" / "r" / "t" / "/" / `unicode_escape`)
     unicode_escape      :"u" `hex` `hex` `hex` `hex`
     hex                 : DIGIT / %x41-46 / %x61-66
-    quoted_text         :DQUOTE *`quoted_char` DQUOTE
-    quoted_char         :%x20-21
-                        :/ %x23-5B
-                        :/ %x5D-10FFFF
-                        :/ `escaped_char`
-                        :/ `preserved_double`
     preserved_double    :`escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
     escape              :%x5C ; backslash
-    text_block          :DQUOTE DQUOTE DQUOTE `br` `quoted_char` DQUOTE DQUOTE DQUOTE
+    text_block          :`three_dquotes` `br` *`quoted_char` `three_dquotes`
+    three_dquotes       :DQUOTE DQUOTE DQUOTE
 
 New lines in strings are normalized from CR (\u000D) and CRLF (\u000D\u000A)
 to LF (\u000A). This ensures that strings defined in a Smithy model are
@@ -562,10 +515,10 @@ escape sequences are allowed:
 
 .. list-table::
     :header-rows: 1
-    :widths: 10 35 55
+    :widths: 20 30 50
 
     * - Unicode code point
-      - Smithy escape
+      - Escape
       - Meaning
     * - U+0022
       - ``\"``
@@ -599,20 +552,6 @@ escape sequences are allowed:
       - escaped new line expands to nothing
 
 Any other sequence following a backslash is an error.
-
-
-.. _unquoted-strings:
-
-Unquoted strings
-================
-
-Unquoted strings that appear in the IDL are treated as shape IDs. Strings
-MUST be quoted if a value is not intended to be converted into a resolved
-shape ID.
-
-.. seealso::
-
-   Refer to :ref:`syntactic-shape-ids` for more information.
 
 
 .. _text-blocks:

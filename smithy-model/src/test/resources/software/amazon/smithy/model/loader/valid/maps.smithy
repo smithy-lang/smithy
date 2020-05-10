@@ -20,7 +20,7 @@ map D { key : String ,value: String }
 @since("1.0")
 map E {
   @sensitive @since("1.1") key: String ,
-  value:String
+  value:String, // trailing comma
 }
 
 @deprecated @since("1.0")

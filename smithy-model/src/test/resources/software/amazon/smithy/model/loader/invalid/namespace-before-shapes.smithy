@@ -1,2 +1,2 @@
-// A namespace must be set before shapes or traits can be defined
+// A namespace must be defined before a use statement or shapes
 string MyString

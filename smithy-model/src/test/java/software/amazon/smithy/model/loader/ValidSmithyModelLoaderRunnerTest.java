@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +27,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
-import software.amazon.smithy.utils.IoUtils;
 
 /**
  * Loads all of the ".smithy" files in idl/valid.
@@ -57,26 +54,18 @@ public class ValidSmithyModelLoaderRunnerTest {
                     .assemble()
                     .unwrap();
         } catch (Exception e) {
-            List<SmithyModelLexer.Token> tokens = getTokens(smithyFilename.toString());
             throw new IllegalStateException(
-                    String.format("Error parsing: %s\n\n%s\n\nTokens:\n%s", smithyFilename, e.getMessage(), tokens),
+                    String.format("Error parsing: %s\n\n%s", smithyFilename, e.getMessage()),
                     e);
         }
 
         if (!result.equals(expected)) {
             throw new IllegalStateException(String.format(
-                    "Result did not match the expected model for %s.\nResult:\n\n%s\n\nExpected:\n\n%s\n\nTokens:\n%s",
+                    "Result did not match the expected model for %s.\nResult:\n\n%s\n\nExpected:\n\n%s",
                     file,
                     formatModel(result),
-                    formatModel(expected),
-                    getTokens(smithyFilename.toString())));
+                    formatModel(expected)));
         }
-    }
-
-    private static List<SmithyModelLexer.Token> getTokens(String smithyFilename) {
-        List<SmithyModelLexer.Token> tokens = new ArrayList<>();
-        new SmithyModelLexer(smithyFilename, IoUtils.readUtf8File(smithyFilename)).forEachRemaining(tokens::add);
-        return tokens;
     }
 
     private static String formatModel(Model model) {

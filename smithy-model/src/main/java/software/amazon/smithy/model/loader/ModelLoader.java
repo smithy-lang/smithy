@@ -26,6 +26,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.utils.IoUtils;
 
 /**
  * Used to load Smithy models from .json, .smithy, and .jar files.
@@ -56,7 +57,7 @@ final class ModelLoader {
         if (filename.endsWith(".json")) {
             return loadParsedNode(Node.parse(contentSupplier.get(), filename), visitor);
         } else if (filename.endsWith(".smithy")) {
-            IdlModelLoader.load(filename, contentSupplier, visitor);
+            new IdlModelParser(filename, IoUtils.toUtf8String(contentSupplier.get()), visitor).parse();
             return true;
         } else if (filename.endsWith(".jar")) {
             return loadJar(filename, visitor);

@@ -1,4 +1,4 @@
-// Parse error at line 6, column 5 near `smithy.api`: Invalid shape ID: smithy.api
+// Parse error at line 6, column 15 near `\n[EOF]`: Expected: '#', but found '\n'
 $version: "1.0"
 
 namespace smithy.example

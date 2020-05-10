@@ -26,6 +26,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeIdSyntaxException;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Represents a string node.
@@ -61,6 +62,7 @@ public final class StringNode extends Node {
      * @param sourceLocation Location of where the value was originally defined.
      * @return Returns a pair of the string node and the supplier to invoke with the value.
      */
+    @SmithyInternalApi
     public static Pair<StringNode, Consumer<String>> createLazyString(
             String placeholder, SourceLocation sourceLocation) {
         StringNode result = new StringNode(placeholder, sourceLocation);

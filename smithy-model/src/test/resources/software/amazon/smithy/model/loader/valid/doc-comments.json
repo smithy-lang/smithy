@@ -1,6 +1,9 @@
 {
     "smithy": "1.0",
     "shapes": {
+        "smithy.example#NotDocumented": {
+            "type": "string"
+        },
         "smithy.example#MyString": {
             "type": "string",
             "traits": {
@@ -19,8 +22,12 @@
                 "baz": {
                     "target": "smithy.api#String",
                     "traits": {
+                        "smithy.api#required": {},
                         "smithy.api#documentation": "Docs on another member!"
                     }
+                },
+                "bam": {
+                    "target": "smithy.api#String"
                 }
             },
             "traits": {

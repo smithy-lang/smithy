@@ -41,7 +41,10 @@ string EmptyBody
 @MapTrait(
     bar: "baz",
     foo: "bar",
-    "must be quoted": "bam",
+    "must be quoted": "bam1",
+    "must.be.quoted": "bam2",
+    "must.be#quoted": "bam3",
+    "must.be#quoted$too": "bam4",
 )
 @StructureTrait(
     collectionMember: [

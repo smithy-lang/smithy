@@ -1,3 +1,3 @@
-// Parse error at line 3, column 48 near `AnotherShape`: Unexpected EOF
+// Parse error at line 4, column 1 near `[EOF]`: Expected: '}', but found '[EOF]'
 namespace com.foo
 map MyMap { key: SomeShape, value: AnotherShape

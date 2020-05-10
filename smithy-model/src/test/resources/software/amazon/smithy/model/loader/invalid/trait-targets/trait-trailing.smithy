@@ -1,4 +1,4 @@
-// Parse error at line 7, column 3 near `deprecated`: Traits cannot be applied to `}`
+// Parse error at line 8, column 1 near `}\n`: Expected a valid identifier character, but found '}'
 namespace com.foo
 
 structure Foo {

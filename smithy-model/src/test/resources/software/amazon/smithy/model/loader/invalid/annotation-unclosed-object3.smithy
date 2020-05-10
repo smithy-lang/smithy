@@ -1,4 +1,4 @@
-// Parse error at line 4, column 8 near `MyString`: Expected one of [RPAREN, COMMA]
+// Parse error at line 4, column 8 near `MyString`: Expected: ',', but found 'M'
 namespace com.foo
 @foo(bar:
 string MyString
