@@ -641,3 +641,8 @@ list suppress {
     @length(min: 1)
     member: String
 }
+
+/// Marks an operation as requiring checksum in its HTTP request.
+/// For now, we assume checksum is a MD5 checksum.
+@trait(selector: "operation")
+structure httpChecksumRequired {}

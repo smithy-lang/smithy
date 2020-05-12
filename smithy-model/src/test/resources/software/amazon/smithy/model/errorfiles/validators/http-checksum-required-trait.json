@@ -1,0 +1,90 @@
+{
+  "smithy": "1.0",
+  "shapes": {
+    "ns.foo#Blob": {
+      "type": "blob"
+    },
+    "ns.foo#ValidOperation": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      },
+      "traits": {
+        "smithy.api#httpChecksumRequired": {}
+      }
+    },
+    "ns.foo#Input": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        }
+      }
+    },
+    "ns.foo#Output": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        }
+      }
+    },
+    "ns.foo#InvalidOperation": {
+      "type": "operation",
+      "input": {
+        "target": "ns.foo#Input"
+      },
+      "output": {
+        "target": "ns.foo#Output"
+      }
+    },
+    "ns.foo#InvalidInput": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        }
+      },
+      "traits": {
+        "smithy.api#httpChecksumRequired": {}
+      }
+    },
+    "ns.foo#InvalidOutput": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        }
+      },
+      "traits": {
+        "smithy.api#httpChecksumRequired": {}
+      }
+    },
+    "ns.foo#InvalidError": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob"
+        }
+      },
+      "traits": {
+        "smithy.api#error": "client",
+        "smithy.api#httpChecksumRequired": {}
+      }
+    },
+    "ns.foo#InvalidStructure": {
+      "type": "structure",
+      "members": {
+        "Body": {
+          "target": "smithy.api#Blob",
+          "traits": {
+            "smithy.api#httpChecksumRequired": {}
+          }
+        }
+      }
+    }
+  }
+}

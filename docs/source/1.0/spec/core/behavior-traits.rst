@@ -609,3 +609,30 @@ to request additional results from the operation.
    presence, absence, or contents of a continuation token.
 
 .. _UUID: https://tools.ietf.org/html/rfc4122
+
+
+.. _httpChecksumRequired-trait:
+
+--------------------------------------
+``httpChecksumRequired`` trait
+--------------------------------------
+
+Summary
+    Indicates that an operation requires the checksum present in its HTTP
+    request. For now, we assume checksum is a MD5 checksum.
+Trait selector
+    ``operation``
+Value type
+    Annotation trait.
+See
+    :rfc:`1864`
+
+.. tabs::
+
+    .. code-tab:: smithy
+
+        @httpChecksumRequired
+        operation PutSomething {
+            input: PutSomethingInput,
+            output: PutSomethingOutput
+        }

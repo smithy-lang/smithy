@@ -53,6 +53,7 @@ import software.amazon.smithy.model.traits.HostLabelTrait;
 import software.amazon.smithy.model.traits.HttpApiKeyAuthTrait;
 import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
 import software.amazon.smithy.model.traits.HttpBearerAuthTrait;
+import software.amazon.smithy.model.traits.HttpChecksumRequiredTrait;
 import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
 import software.amazon.smithy.model.traits.HttpErrorTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
@@ -158,6 +159,7 @@ public final class Prelude {
             ExamplesTrait.ID,
             ExternalDocumentationTrait.ID,
             HostLabelTrait.ID,
+            HttpChecksumRequiredTrait.ID,
             HttpErrorTrait.ID,
             HttpHeaderTrait.ID,
             HttpLabelTrait.ID,
