@@ -643,6 +643,7 @@ list suppress {
 }
 
 /// Marks an operation as requiring checksum in its HTTP request.
-/// For now, we assume checksum is a MD5 checksum.
+/// By default, the checksum used for a service is a MD5 checksum
+/// passed in the Content-MD5 header.
 @trait(selector: "operation")
 structure httpChecksumRequired {}

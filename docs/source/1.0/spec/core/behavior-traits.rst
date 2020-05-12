@@ -613,13 +613,14 @@ to request additional results from the operation.
 
 .. _httpChecksumRequired-trait:
 
---------------------------------------
+------------------------------
 ``httpChecksumRequired`` trait
---------------------------------------
+------------------------------
 
 Summary
-    Indicates that an operation requires the checksum present in its HTTP
-    request. For now, we assume checksum is a MD5 checksum.
+    Indicates that an operation requires a checksum in its HTTP request. By
+    default, the checksum used for a service is a MD5 checksum passed in the
+    Content-MD5 header.
 Trait selector
     ``operation``
 Value type
