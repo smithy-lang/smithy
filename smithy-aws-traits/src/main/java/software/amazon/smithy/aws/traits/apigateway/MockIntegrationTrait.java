@@ -121,7 +121,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
      * @return Returns the request parameters.
      * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration-requestParameters.html">Request parameters</a>
      */
-    public Map<String, String> getRequestParameters() {
+    public Map<String, String> getAllRequestParameters() {
         return requestParameters;
     }
 
@@ -141,7 +141,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
      * @return Returns a map of MIME types to request templates.
      * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration-requestTemplates.html">Request templates</a>
      */
-    public Map<String, String> getRequestTemplates() {
+    public Map<String, String> getAllRequestTemplates() {
         return requestTemplates;
     }
 
@@ -161,7 +161,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
      * @return Returns a map of status code regular expressions to responses.
      * @see <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration-responses.html">Integration responses</a>
      */
-    public Map<String, IntegrationResponse> getResponses() {
+    public Map<String, IntegrationResponse> getAllResponses() {
         return responses;
     }
 
@@ -264,7 +264,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          * @param input Input request expression.
          * @param output Output request expression.
          * @return Returns the builder.
-         * @see IntegrationTrait#getRequestParameters()
+         * @see IntegrationTrait#getAllRequestParameters()
          */
         public Builder putRequestParameter(String input, String output) {
             requestParameters.put(input, output);
@@ -276,7 +276,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          *
          * @param requestParameters Map of parameters to add.
          * @return Returns the builder.
-         * @see IntegrationTrait#getRequestParameters()
+         * @see IntegrationTrait#getAllRequestParameters()
          */
         public Builder requestParameters(Map<String, String> requestParameters) {
             this.requestParameters.clear();
@@ -301,7 +301,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          * @param mimeType MIME type of the request template to set.
          * @param template Request template to set.
          * @return Returns the builder.
-         * @see IntegrationTrait#getRequestTemplates()
+         * @see IntegrationTrait#getAllRequestTemplates()
          */
         public Builder putRequestTemplate(String mimeType, String template) {
             requestTemplates.put(mimeType, template);
@@ -313,7 +313,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          *
          * @param requestTemplates Map of MIME types to the corresponding template.
          * @return Returns the builder.
-         * @see IntegrationTrait#getRequestTemplates()
+         * @see IntegrationTrait#getAllRequestTemplates()
          */
         public Builder requestTemplates(Map<String, String> requestTemplates) {
             this.requestTemplates.clear();
@@ -338,7 +338,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          * @param statusCodeRegex Status code regular expression.
          * @param integrationResponse Integration response to set.
          * @return Returns the builder.
-         * @see IntegrationTrait#getResponses()
+         * @see IntegrationTrait#getAllResponses()
          */
         public Builder putResponse(String statusCodeRegex, IntegrationResponse integrationResponse) {
             responses.put(statusCodeRegex, integrationResponse);
@@ -350,7 +350,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          *
          * @param responses Map of regular expressions to responses.
          * @return Returns the builder.
-         * @see IntegrationTrait#getResponses()
+         * @see IntegrationTrait#getAllResponses()
          */
         public Builder responses(Map<String, IntegrationResponse> responses) {
             this.responses.clear();
