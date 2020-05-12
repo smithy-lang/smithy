@@ -37,6 +37,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
     public static final ShapeId ID = ShapeId.from("aws.apigateway#mockIntegration");
 
     private static final String PASS_THROUGH_BEHAVIOR_KEY = "passThroughBehavior";
+    private static final String CONTENT_HANDLING_KEY = "contentHandling";
     private static final String REQUEST_PARAMETERS_KEY = "requestParameters";
     private static final String REQUEST_TEMPLATES_KEY = "requestTemplates";
     private static final String RESPONSES_KEY = "responses";
@@ -44,6 +45,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
             PASS_THROUGH_BEHAVIOR_KEY, REQUEST_PARAMETERS_KEY, REQUEST_TEMPLATES_KEY, RESPONSES_KEY);
 
     private final String passThroughBehavior;
+    private final String contentHandling;
     private final Map<String, String> requestParameters;
     private final Map<String, String> requestTemplates;
     private final Map<String, IntegrationResponse> responses;
@@ -51,6 +53,7 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
     private MockIntegrationTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         passThroughBehavior = builder.passThroughBehavior;
+        contentHandling = builder.contentHandling;
         requestParameters = MapUtils.copyOf(builder.requestParameters);
         requestTemplates = MapUtils.copyOf(builder.requestTemplates);
         responses = MapUtils.copyOf(builder.responses);
@@ -70,6 +73,9 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
             node.getStringMember(PASS_THROUGH_BEHAVIOR_KEY)
                     .map(StringNode::getValue)
                     .ifPresent(builder::passThroughBehavior);
+            node.getStringMember(CONTENT_HANDLING_KEY)
+                    .map(StringNode::getValue)
+                    .ifPresent(builder::contentHandling);
             node.getObjectMember(REQUEST_PARAMETERS_KEY)
                     .map(ObjectNode::getMembers)
                     .ifPresent(members -> members.forEach(
@@ -169,10 +175,20 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
         return Optional.ofNullable(responses.get(statusCode));
     }
 
+    /**
+     * Gets the contentHandling property of the integration.
+     *
+     * @return Returns the contentHandling property.
+     */
+    public Optional<String> getContentHandling() {
+        return Optional.ofNullable(contentHandling);
+    }
+
     @Override
     protected ObjectNode createNode() {
         return Node.objectNode()
                 .withOptionalMember(PASS_THROUGH_BEHAVIOR_KEY, getPassThroughBehavior().map(Node::from))
+                .withOptionalMember(CONTENT_HANDLING_KEY, getContentHandling().map(Node::from))
                 .withOptionalMember(REQUEST_PARAMETERS_KEY, requestParameters.size() > 0
                         ? Optional.of(ObjectNode.fromStringMap(requestParameters))
                         : Optional.empty())
@@ -187,15 +203,17 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
 
     @Override
     public Builder toBuilder() {
-        Builder builder = builder().passThroughBehavior(passThroughBehavior);
-        requestParameters.forEach(builder::putRequestParameter);
-        requestTemplates.forEach(builder::putRequestTemplate);
-        responses.forEach(builder::putResponse);
-        return builder;
+        return builder()
+                .passThroughBehavior(passThroughBehavior)
+                .contentHandling(contentHandling)
+                .requestParameters(requestParameters)
+                .requestTemplates(requestTemplates)
+                .responses(responses);
     }
 
     public static final class Builder extends AbstractTraitBuilder<MockIntegrationTrait, Builder> {
         private String passThroughBehavior;
+        private String contentHandling;
         private final Map<String, String> requestParameters = new HashMap<>();
         private final Map<String, String> requestTemplates = new HashMap<>();
         private final Map<String, IntegrationResponse> responses = new HashMap<>();
@@ -218,7 +236,30 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
         }
 
         /**
-         * Adds a request template.
+         * Set the Request payload encoding conversion types.
+         *
+         * <p>Valid values are:
+         *
+         * <ul>
+         *     <li>CONVERT_TO_TEXT, for converting a binary payload into a
+         *     Base64-encoded string or converting a text payload into a
+         *     utf-8-encoded string or passing through the text payload natively
+         *     without modification</li>
+         *     <li>CONVERT_TO_BINARY, for converting a text payload into
+         *     Base64-decoded blob or passing through a binary payload natively
+         *     without modification.</li>
+         * </ul>
+         *
+         * @param contentHandling Content handling property.
+         * @return Returns the builder.
+         */
+        public Builder contentHandling(String contentHandling) {
+            this.contentHandling = contentHandling;
+            return this;
+        }
+
+        /**
+         * Adds a request parameters.
          *
          * @param input Input request expression.
          * @param output Output request expression.
@@ -227,6 +268,19 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          */
         public Builder putRequestParameter(String input, String output) {
             requestParameters.put(input, output);
+            return this;
+        }
+
+        /**
+         * Sets request parameters.
+         *
+         * @param requestParameters Map of parameters to add.
+         * @return Returns the builder.
+         * @see IntegrationTrait#getAllRequestParameters()
+         */
+        public Builder requestParameters(Map<String, String> requestParameters) {
+            this.requestParameters.clear();
+            this.requestParameters.putAll(requestParameters);
             return this;
         }
 
@@ -255,6 +309,19 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
         }
 
         /**
+         * Sets request templates.
+         *
+         * @param requestTemplates Map of MIME types to the corresponding template.
+         * @return Returns the builder.
+         * @see IntegrationTrait#getAllRequestTemplates()
+         */
+        public Builder requestTemplates(Map<String, String> requestTemplates) {
+            this.requestTemplates.clear();
+            this.requestTemplates.putAll(requestTemplates);
+            return this;
+        }
+
+        /**
          * Removes a request template by MIME type.
          *
          * @param mimeType MIME type to remove.
@@ -275,6 +342,19 @@ public final class MockIntegrationTrait extends AbstractTrait implements ToSmith
          */
         public Builder putResponse(String statusCodeRegex, IntegrationResponse integrationResponse) {
             responses.put(statusCodeRegex, integrationResponse);
+            return this;
+        }
+
+        /**
+         * Sets responses for the given response regular expressions.
+         *
+         * @param responses Map of regular expressions to responses.
+         * @return Returns the builder.
+         * @see IntegrationTrait#getAllResponses()
+         */
+        public Builder responses(Map<String, IntegrationResponse> responses) {
+            this.responses.clear();
+            this.responses.putAll(responses);
             return this;
         }
 
