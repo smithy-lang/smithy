@@ -66,9 +66,8 @@ h2 {
 }
 
 h2, h3, h4, h5, h6, h7 {
-  padding: 1.5em 0 0.4em 0;
-  border-top: 2px solid #ccc;
-  margin-top: 2em;
+  padding: 0 0 0.4em 0;
+  margin-top: 2.5em;
 }
 
 h3 {
