@@ -1,10 +1,25 @@
 # Smithy Changelog
 
-## 1.0.1 (TBD)
+## 1.0.1 (2020-05-13)
 
 ### Features
 
-* `httpPayload` can now target document shapes.
+* The `smithy.api#httpPayload` trait can now target document shapes. ([#431](https://github.com/awslabs/smithy/pull/431))
+* Updated the IDL grammar to include many previously enforced parsing rules. ([#434](https://github.com/awslabs/smithy/pull/434))
+* Added the `select` command to the CLI to print out shapes from a model that match a selector. ([#430](https://github.com/awslabs/smithy/pull/430))
+* Added the `ast` command to the CLI to convert 0 or more Smithy models into a JSON AST. ([#435](https://github.com/awslabs/smithy/pull/435))
+* Added a Dockerfile for building Smithy as a Docker image. ([#427](https://github.com/awslabs/smithy/pull/427)) 
+
+### Optimizations
+
+* The Smithy IDL parser has been rewritten and optimized. ([#434](https://github.com/awslabs/smithy/pull/434))
+* Generate a class data share to speed up the CLI. ([#429](https://github.com/awslabs/smithy/pull/429))
+
+### Bug Fixes
+
+* Fix several ambiguities and issues in the IDL grammar. ([#434](https://github.com/awslabs/smithy/pull/434))
+* JSON pretty printing of the AST now uses 4 spaces for indentation. ([#435](https://github.com/awslabs/smithy/pull/435))
+* Fix CLI `--help` output alignment. ([#429](https://github.com/awslabs/smithy/pull/429))
 
 ## 1.0.0 (2020-05-04)
 
@@ -16,7 +31,7 @@ the end of this entry.
 
 #### General
 
-* The model format version has beeen updated to `1.0` and contains several updates: [BC] ([#357](https://github.com/awslabs/smithy/pull/357), [#381](https://github.com/awslabs/smithy/pull/381))
+* The model format version has been updated to `1.0` and contains several updates: [BC] ([#357](https://github.com/awslabs/smithy/pull/357), [#381](https://github.com/awslabs/smithy/pull/381))
   * The JSON AST representation requires describing annotation traits as `{}` instead of `true`.
   * Annotation traits in the IDL are now provided as `@foo` or `@foo()`. Explicit `@foo(true)` and
   `@foo(null)` support was removed.
