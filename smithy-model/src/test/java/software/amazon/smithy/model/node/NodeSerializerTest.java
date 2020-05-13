@@ -12,10 +12,10 @@ public class NodeSerializerTest {
 
         assertThat(Node.printJson(node), equalTo("{\"foo\":\"bar\",\"baz\":true,\"bam\":false,\"boo\":10}"));
         assertThat(Node.prettyPrintJson(node), equalTo("{\n"
-                                                       + "  \"foo\": \"bar\",\n"
-                                                       + "  \"baz\": true,\n"
-                                                       + "  \"bam\": false,\n"
-                                                       + "  \"boo\": 10\n"
+                                                       + "    \"foo\": \"bar\",\n"
+                                                       + "    \"baz\": true,\n"
+                                                       + "    \"bam\": false,\n"
+                                                       + "    \"boo\": 10\n"
                                                        + "}"));
         assertThat(Node.prettyPrintJson(node, "\t"), equalTo("{\n"
                                                              + "\t\"foo\": \"bar\",\n"
@@ -47,22 +47,22 @@ public class NodeSerializerTest {
                 + "\"boo\":10},10,true,false,{},[],\"\",\" \",null,-1,-1.0]"));
         assertThat(Node.prettyPrintJson(node), equalTo(
                 "[\n"
-                + "  {\n"
-                + "    \"foo\": \"\uD83D\uDCA9\",\n"
-                + "    \"baz\": true,\n"
-                + "    \"bam\": false,\n"
-                + "    \"boo\": 10\n"
-                + "  },\n"
-                + "  10,\n"
-                + "  true,\n"
-                + "  false,\n"
-                + "  {},\n" // optimized empty object
-                + "  [],\n" // optimized empty array
-                + "  \"\",\n"
-                + "  \" \",\n"
-                + "  null,\n"
-                + "  -1,\n"
-                + "  -1.0\n"
+                + "    {\n"
+                + "        \"foo\": \"\uD83D\uDCA9\",\n"
+                + "        \"baz\": true,\n"
+                + "        \"bam\": false,\n"
+                + "        \"boo\": 10\n"
+                + "    },\n"
+                + "    10,\n"
+                + "    true,\n"
+                + "    false,\n"
+                + "    {},\n" // optimized empty object
+                + "    [],\n" // optimized empty array
+                + "    \"\",\n"
+                + "    \" \",\n"
+                + "    null,\n"
+                + "    -1,\n"
+                + "    -1.0\n"
                 + "]"));
     }
 }

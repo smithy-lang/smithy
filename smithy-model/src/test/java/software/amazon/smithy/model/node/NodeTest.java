@@ -177,7 +177,8 @@ public class NodeTest {
 
     @Test
     public void prettyPrintsJson() {
-        assertThat(Node.prettyPrintJson(Node.parse("{\"foo\": true}")), equalTo(String.format("{%n  \"foo\": true%n}")));
+        assertThat(Node.prettyPrintJson(Node.parse("{\"foo\": true}")),
+                   equalTo(String.format("{%n    \"foo\": true%n}")));
     }
 
     @Test

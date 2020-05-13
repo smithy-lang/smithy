@@ -138,7 +138,7 @@ public abstract class Node implements FromSourceLocation, ToNode {
      * @return Returns the serialized Node.
      */
     public static String prettyPrintJson(Node node) {
-        return prettyPrintJson(node, "  ");
+        return prettyPrintJson(node, "    ");
     }
 
     /**
